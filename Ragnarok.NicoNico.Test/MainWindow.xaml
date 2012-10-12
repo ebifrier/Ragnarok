@@ -1,0 +1,48 @@
+﻿<Window x:Class="Ragnarok.NicoNico.Test.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="MainWindow" Height="199" Width="266">
+    <Grid Name="layoutBase">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="0" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="3" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="3" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="3" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        
+        <TextBox Grid.Row="0" Grid.Column="0"
+                 IsReadOnly="True"
+                 Text="{Binding LoginState, Mode=OneWay}" />
+
+        <TextBox Grid.Row="4" Grid.Column="0"
+                 Text="{Binding LiveUrl}" />
+        <Button Grid.Row="4" Grid.Column="1"
+                Content="接続"
+                Click="ConnectButton_Click" />
+
+        <TextBox Grid.Row="6" Grid.Column="0"
+                 Text="{Binding Comment}" />
+        <Button Grid.Row="6" Grid.Column="1"
+                Content="送信"
+                Click="SendButton_Click" />
+
+        <StackPanel Grid.Row="8" Grid.ColumnSpan="2"
+                    Orientation="Vertical">
+            <Button Content="ログイン"
+                    Click="LoginButton_Click" />
+            <Button Content="通常コメントテスト"
+                    Click="CommentTestButton_Click" />
+            <Button Content="ネットワーク負荷テスト"
+                    Click="StreamInfoTestButton_Click" />            
+        </StackPanel>        
+    </Grid>
+</Window>

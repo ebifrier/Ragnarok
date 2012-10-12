@@ -1,0 +1,535 @@
+2012-10-08  - Ver 2.3.28
+
+	* Ragnarok.Presentation/Control/NumericUpDown.cs: TextFormatプロパ
+	ティを追加し、数字の表示形式をコントロール可能にしました。
+
+2012-10-05  - Ver 2.3.27
+
+	* Ragnarok.Shogi/GenFiles/castle_list.yaml: 米長玉の判定方法を修正
+	しました。
+	* Ragnarok.Shogi/ShogiParser.cs: PlayerやMoveのOriginalTextから両端
+	の空白を除くようにしました。
+
+2012-09-28  - Ver 2.3.26
+
+	* Ragnarok.Shogi/KifuObject.cs: 記譜用のオブジェクトを追加しました。
+	* Ragnarok.Shogi/File/Ki2Reader.cs: 記譜読み込み用のクラスを追加し
+	ました。
+
+2012-09-24  - Ver 2.3.25
+
+	* Ragnarok/ObjectModel/NotifyObject.cs: SetValueの引数の並びを変更
+	しました。
+
+2012-09-21  - Ver 2.3.24
+
+	* Ragnarok/NicoNico/Live/CommentClient.cs: デッドロックを解消しまし
+	た。
+	* Ragnarok/ObjectModel/LazyModelLock.cs: デッドロックの検出処理を追
+	加しました。
+
+2012-09-08  - Ver 2.3.23
+
+	* Ragnarok/MathEx.cs: DateTime, TimeSpan用のMax/Minメソッドを追加し
+	ました。
+
+2012-09-05  - Ver 2.3.22
+
+	* Ragnarok.Presentation/Extension: Extensionディレクトリを新規に作
+	成し、ファイルをいくつか移動しました。
+
+2012-09-03  - Ver 2.3.21
+
+	* Ragnarok/NicoNico/Live/CommentRoom.cs: ログの抑制フラグを追加し、
+	切断時の理由をログに表示するようにしました。
+
+2012-08-31  - Ver 2.3.20
+
+	* Ragnarok.Shogi/View/ShogiControl.xaml: 後手番表示の符号を修正しま
+	した。
+	* Ragnarok.Shogi/View/ShogiControl.xaml.cs: 表示手番の切り替え機能
+	を追加しました。
+
+2012-08-17  - Ver 2.3.19
+
+	* Ragnarok.Presentation/Debug/ReportDialog.xaml.cs: キャンセルボタ
+	ンが有効にならないバグを修正しました。
+	* Ragnarok.Shogi/View/ShogiControl.xaml.cs: エフェクトマネージャ周
+	りのバグを修正しました。
+
+2012-08-13  - Ver 2.3.18
+
+	* Ragnarok.Shogi/ShogiParser.cs: 差し手パーサーで"同じく"と"卿"を解
+	析可能にしました。
+	* Ragnarok/NicoNico/AccountInfo.cs: ニコニコ動画(ZERO)バージョンの
+	ユーザー情報を取得できるようにしました。
+	* Ragnarok/NicoNico/Login/LoginData.cs: MemberwiseCloneはイベントの
+	内容もコピーするため、使わないようにしました。
+
+2012-08-11  - Ver 2.3.17
+
+	* Ragnarok.Presentation/Themes/Common.xaml: 使用不可なボタンの濃さ
+	を調整し、薄くなるようにしました。
+	* Ragnarok.Shogi/ViewModel/IEffectManager.cs: 投了機能を追加しまし
+	た。
+
+2012-08-06  - Ver 2.3.16
+
+	* Ragnarok.Shogi/BoardExtension.cs: BoardMove => Moveの変換メソッド
+	にバグがありました。(駒打ちが打ちじゃない差し手になることがあった)
+	* Ragnarok/Ragnarok/Util.cs: 半角文字数に換算して文字列を切り取るよ
+	うなメソッドを追加しました。
+
+2012-08-04  - Ver 2.3.15
+
+	* Ragnarok.Shogi/GenFiles/castle_list.yaml: テスト囲いを削除しまし
+	た。
+
+2012-08-03  - Ver 2.3.14
+
+	* Ragnarok.Shogi/View/ShogiControl.xaml.cs: リソースリークをしない
+	ように、また意図しないエラーが発生しないようにしました。
+	* Ragnarok.Shogi/ViewModel/EntityObject.cs: リソースリークをしない
+	ように終了処理を修正しました。
+	* Ragnarok.Presentation/Utility/FrameTimer.cs: フレームレートを固定
+	するためのクラスを追加しました。
+
+2012-08-03  - Ver 2.3.13
+
+	* Ragnarok/Utility/Json.cs: JSON形式のファイルを扱うユーティリティ
+	クラスを追加しました。
+	* Ragnarok.Shogi/View/ShogiControl.xaml.cs: エフェクトがリークして
+	いるようなので、そのバグを修正中です。
+
+2012-07-30  - Ver 2.3.12
+
+	* Ragnarok.Presentation/Control/MessageStatusBar.xaml: 背景色や文字
+	色の設定、また文字のフェードアウト期間を設定できるようにしました。
+
+2012-07-29  - Ver 2.3.11
+
+	* Ragnarok.Shogi/CastleInfo.cs: 駒の先後と最後に指された駒の位置を
+	使い、囲い判定をより正しく行えるようにしました。
+	* Ragnarok.Shogi/GenFiles/castle_list.yaml: 囲いを追加しました。
+	* Ragnarok.Shogi/GenFiles/make_castle.rb: 囲いの基本となる囲いの判
+	定を自動で行うようにしました。
+
+2012-07-28  - Ver 2.3.10
+
+	* Ragnarok.Presentation/Utility/CalcExtension.cs: RoundingModeを追
+	加しました。
+	* Ragnarok.Presentation/Control/MessageStatusBar.xaml: ステータスバ
+	ーにメッセージを表示するためのコントロールを追加しました。
+
+2012-07-26  - Ver 2.3.9
+
+	* Ragnarok.Shogi/View/ShogiControl.xaml.cs: 状態を示すプロパティを
+	追加しました。
+
+2012-07-22  - Ver 2.3.8
+
+	* Ragnarok.Extra/Sound/SoundManager.cs: VC10 C++ Runtimeがなくとも
+	アプリが落ちないようにしました。
+
+2012-07-20  - Ver 2.3.7
+
+	* Ragnarok.Shogi/View/ShogiControl.xaml: 先後に合わせた符号を盤の上
+	下左右に表示するようにしました。
+	* Ragnarok.Presentation/Utility/MultiStyleExtension.cs: 複数のスタ
+	イルを適用するための拡張構文を追加しました。
+
+2012-07-19  - Ver 2.3.6
+
+	* Ragnarok.Presentation/Utility/EnumListExtension.cs: 列挙子の一覧
+	を取得するような拡張構文を作成しました。
+	* Ragnarok.Shogi/View/ShogiControl.xaml.cs: 画像などのデフォルト値
+	をコンストラクタでCloneするようにしました。
+
+2012-07-18  - Ver 2.3.5
+
+	* Ragnarok.Shogi/ViewModel/MakeMeshExtension.cs: メッシュ作成用の拡
+	張構文を追加しました。
+	* Ragnarok.Shogi/ViewModel/Util3D.cs: テクスチャの座標を調整し、右
+	下のラインが間違って出ないようにしました。
+
+2012-07-17  - Ver 2.3.4
+
+	* Ragnarok.Presentation/Utility/ImageUtil.cs: 画像処理用のメソッド
+	などを追加しました。
+
+2012-07-15  - Ver 2.3.3
+
+	* Ragnarok.Shogi/CastleInfo.cs: 囲い検索時に条件に該当する優先度の
+	高い囲い一つのみではなく、該当するすべての囲いを返すようにしました。
+	前の仕様では返された囲いがすでに表示済みのものであると、他に表示可
+	能な囲いがあっても無視されてしまったためです。
+	* Ragnarok.Shogi/CastleInfoTable.cs: 囲いの駒の位置などを修正しまし
+	た。
+	* Ragnarok/Utility/Calculator.cs: 関数が可変長パラメータを扱えるよ
+	うにし、またいくつかの関数を追加しました。
+
+2012-07-15  - Ver 2.3.2
+
+	* Ragnarok.Extra/Sound/SoundManager.cs: サウンド再生時の例外処理を
+	行いました。
+	* Ragnarok.Shogi/View/ShogiControl.xaml.cs: 各フレームの時間管理を
+	他のオブジェクトに任せるようにしました。
+	* Ragnarok.Shogi/ViewModel/EntityObject.cs: 経過時間を内部で計算す
+	るのではなく、外から与えてもらうようにしました。
+
+2012-07-13  - Ver 2.3.1
+
+	* Ragnarok.Shogi/ViewModel/EntityObject.cs: 開始時刻の設定が間違っ
+	ていたため、修正しました。
+	* Ragnarok.Presentation/Utility/CalcExtension.cs: 結果としてint型や
+	uint型を返すような計算用拡張構文を作成しました。
+	* Ragnarok.Shogi/View/ShogiControl.xaml.cs: 背景画像を変更しました。
+	また、描画開始時に呼ばれるイベントを定義しました。
+
+2012-07-12  - Ver 2.3.0
+
+	* Ragnarok.Shogi/ViewModel/EntityObject.cs: オブジェクトの初期化と
+	開始でフレームを分けるようにしました。(初期化に時間のかかることがあ
+	るため)
+	* Ragnarok.Shogi/View/ShogiControl.xaml.cs: 更新ループにウェイトを
+	いれ、CPU負荷を少なくしました。
+
+2012-07-11  - Ver 2.2.9
+
+	* Ragnarok/Ragnarok/Util.cs: ファイルパスからファイル内容を直接取得
+	するメソッドを追加しました。
+	* Ragnarok.Extra/Sound/SoundManager.cs: サウンドの事前読み込み機能
+	をつけました。(初回使用時のロード時間を短縮するため)
+
+2012-07-11  - Ver 2.2.8
+
+	* Ragnarok.Shogi/View/PromoteDialog.xaml: 成り／不成りの選択ダイア
+	ログを少しおしゃれにしようとしました。（開発中）
+	* Ragnarok.Shogi/View/ShogiControl.xaml.cs: 各フレームの更新をタイ
+	マーではなく、ComponentDispatcher.ThreadIdleを使って行うようにしま
+	した。
+
+2012-07-07  - Ver 2.2.7
+
+	* Ragnarok/NicoNico/Live/CommentRoom.cs: 切断時のイベントに切断理由
+	を渡すようにしました。
+	* Ragnarok.Shogi/View/PromoteDialog.xaml: 成り/不成りを選択するダイ
+	アログを新たに追加しました。
+
+2012-07-04  - Ver 2.2.6
+
+	* Ragnarok.Shogi/GenFiles/castle_list.yaml, make_castle.rb: 囲いを
+	追加しました。
+
+2012-07-04  - Ver 2.2.5
+
+	* Ragnarok.Shogi/ViewModel/EntityCollection.cs: EntityObjectのコレ
+	クションクラスを追加しました。（追加・削除時の処理を行うため）
+	* Ragnarok.Shogi/ViewModel/FpsCounter.cs: FPSをカウントするためのク
+	ラスを追加しました。
+	* Ragnarok.Shogi/ViewModel/EntityObject.cs: AutoRemoveプロパティを
+	追加しました。あと、速度アップのための修正をいくつか試みています。
+
+2012-07-03  - Ver 2.2.4
+
+	* tabをスペースに置き換えました。
+	* Ragnarok.Shogi/ViewModel/Scenario.cs: 添付プロパティのsetterを追
+	加しました。（XAML読み込み時に使うみたいです^^）
+
+2012-07-02  - Ver 2.2.3
+
+	* Ragnarok.Shogi/ViewModel/Behaviors: EntityObjectの動作を行うビヘ
+	イビアを追加しました。
+
+2012-07-01  - Ver 2.2.2
+
+	* Ragnarok/Initializer.cs: ライブラリの初期化用クラスを追加しました。
+	* Ragnarok/Net/NtpClient.cs: ネットワーク上での時刻取得に数分単位の
+	時間がかかることがあったため、時刻同期を別スレッド上で行うようにし、
+	また同期間隔も１０分から１日としました。
+	* Ragnarok.Shogi/ViewModel/EntityObject.cs: 終了処理を追加し、終了
+	時にはバインディングをすべてクリアするようにしました。
+	* Ragnarok.Presentation/Utility/EnumList.cs: 列挙子の一覧を取得する
+	ためのXAML用拡張構文を作成しました。
+	* Ragnarok.Presentation/Utility/FileList.cs: あるディレクトリのファ
+	イル一覧を取得するためのXAML用拡張構文を作成しました。
+
+2012-06-29  - Ver 2.2.1
+
+	* Ragnarok.Shogi/Properties/AssemblyInfo.cs: xaml用のネームスペース
+	をRagnarok.Presentationと同じにしました。
+	(xaml上での混乱をさけるためです)
+	* Ragnarok.Shogi/ViewModel/EntityObject.cs: UpdateEventをEnterFrame
+	に変更し、またEnterFrameはDoEnterFrameに変えました。
+	DataContextとParentプロパティを追加し、xamlからDataContextが使える
+	ように、またDataContextは自動的に親から継承するようにしました。
+	拡大縮小や移動行列において、行列表現とベクトル表現のプロパティの内
+	容を同期するようにしました。(完全ではありません)
+	* Ragnarok.Shogi/ViewModel/CellMeshConverter.cs: マスの位置からその
+	マスのメッシュを作成するコンバーターを追加しました。
+	* Ragnarok.Shogi/ViewModel/BindingExtension.cs: EntityObjectに便利
+	なバインディングを作成しました。このバインディングはDataContextを自
+	動的にソースにし、またその変更にも追従します。
+
+2012-06-28  - Ver 2.2.0
+
+	* Ragnarok/MathEx.cs: RandDoubleなどいくつかのメソッドを追加しまし
+	た。
+	* Ragnarok/Utility/Calclator: NParsec.dllを追加し簡単な関数電卓クラ
+	スを作成しました。 
+	* Ragnarok.Presentation/Utility/CalcExtension.cs: ひとつ上のディレ
+	クトリからファイルを移動しました。また、Calclatorクラスを使い、いく
+	つかの関数を含む数式を評価できるようにしました。
+	* Ragnarok.Shogi/ViewModel/BindingExtension.cs: EntityObjectとその
+	派生クラスに便利に使えるBindingExtensionを追加しました。(開発中)
+
+2012-06-27  - Ver 2.1.8
+
+	* Ragnarok.Shogi/ViewModel/EntityObject.cs: EntityObjectの各プロパ
+	ティをアニメーション可能なようにしました。
+	* Ragnarok.Shogi/ViewModel/Scenario.cs: アニメーション指定が増え続
+	けるバグを修正しました。
+
+2012-06-26  - Ver 2.1.7
+
+	* Ragnarok.Shogi/ViewModel/EnterFrameEventArgs.cs: EntityObject.cs
+	からクラスの内容を移動しました。
+	* Ragnarok.Shogi/ViewModel/Scenario.cs: アニメーションのシナリオ記
+	述用クラスを追加しました。
+	* Ragnarok.Shogi/ViewModel/Util3D.cs: 文字列パスから依存プロパティ
+	を探すようなメソッドを追加しました。
+
+2012-06-24  - Ver 2.1.6
+
+	* Ragnarok.Shogi/CastleInfo.cs: 囲いの情報に派生元の囲い（高美濃な
+	ら本美濃など）の情報を追加しました。
+	* Ragnarok.Shogi/ViewModel/Util3D.cs: マスの表示用モデルの各ポリゴ
+	ンにテクスチャの座標情報を追加するようにしました。
+
+2012-06-23  - Ver 2.1.5
+
+	* monoでコンパイルできるようにしました。
+
+2012-06-23  - Ver 2.1.4
+
+	* Ragnarok/Extension.cs: Applyメソッドに値型を渡すと、うまく動かな
+	くなることがあったため、class型のみを渡せるようにしました。
+	* Ragnarok.Shogi/GenFiles, Ragnarok.Shogi/CastleInfo.cs: 囲いを判定
+	するためのデータ生成ファイルやルーチンを追加しました。
+
+2012-06-22  - Ver 2.1.3
+
+	* Ragnarok.Shogi/View/ShogiControl.xaml.cs: 駒の動かせるマスや前回
+	指したマスを光らせるなどのエフェクト表示をIEffectManagerに任せるよ
+	うにし、コントロールはエフェクトには関与しないようにしました。
+	* Ragnarok/MathEx.cs: 角度の計算用メソッドを追加しました。
+
+2012-06-20  - Ver 2.1.2
+
+	* PluginShogiのファイルを一部、Ragnarok.Shogiに移動しました。
+	これは将棋盤をほかのソフトで使う可能性があるためです。
+
+2012-06-19  - Ver 2.1.1
+
+	* Ragnarok.Presentation/Control/DecoratedText.xaml.cs: 文字列サイズ
+	をコンテナに合わせて勝手に拡大縮小しないようにしました。
+
+2012-06-18  - Ver 2.1.0
+
+	* Ragnarok.Extra, Ragnarok.Shogi: ２つのプロジェクトを追加しました。
+
+2012-06-18  - Ver 2.0.9
+
+	* Ragnarok/NicoNico/Live/CommentClient.cs: コメント投稿のチェックを
+	同じタイマー間隔で行うようにし、また更新用メソッドが呼ばれている間
+	は次の更新タイミングになっても処理を行わないようにしました。
+	* Ragnarok/NicoNico/Live/CommentRoom.cs: PostKeyを１００米枚ではな
+	くコメントの投稿時に必ず取得するようにし、またCanPostCommentメソッ
+	ドを削除しました。これはコメントの投稿がPostKeyのせいで失敗するよう
+	になったためです。根本的な修正方法は不明です。
+
+2012-06-17  - Ver 2.0.8
+
+	* Ragnarok.Presentation/Sound: サウンド再生機能を追加しました。
+
+2012-06-12  - Ver 2.0.7
+
+	* Ragnarok/Util.cs: プロパティ変更などを特別な環境で通知するための
+	仕組みを追加しました。
+	* Ragnarok/ObjectModel/NotifyCollection.cs: Ragnarok.Presentation
+	からWpfObservableCollectionを削除し、このクラスを追加しました。
+	* Ragnarok/Wpf/WpfUtil.cs: 不要になったファイルを削除しました。
+
+2012-06-09  - Ver 2.0.6
+
+	* Ragnarok.Wpf: Ragnarok.Presentaionに改名しました。
+
+2012-06-06  - Ver 2.0.5
+
+	* Ragnarok/EnumEx.cs: IsDefinedを追加しました。: 
+
+2012-06-03  - Ver 2.0.4
+
+	* Ragnarok/MathEx.cs: 乱数用メソッドを追加しました。
+
+2012-05-30  - Ver 2.0.3
+
+	* Ragnarok\Utility\AppSettingsBase.cs: GetValue, SetValueメソッドを追加
+	しました。型に合わせたデフォルト値を返すために必要です。
+	* Ragnarok.Wpf\Control\WatermarkTextBox.cs: ファイルを追加しました。
+
+2012-05-26  - Ver 2.0.2
+
+	* Ragnarok.Wpf/AssemblyInfo.cs: XmlnsDefinitionを追加し、URL形式で名前
+	空間を指定することが可能になりました。
+	* Ragnarok/NicoNico/Login/LoginData.cs: NotifyObjectを使用するようにし、 
+	またDataContract/DataMemberを使いシリアライズするプロパティを指定するよ
+	うにしました。
+	* Ragnarok/ObjectModel/NotifyObject.cs: OnDeserializingを持つメソッドを
+	追加し、逆シリアル時にコンストラクタが呼ばれない問題に対処しました。
+	* Ragnarok/Utility/AppSettingsBase.cs: "AS_"から始まるプロパティの場合、
+	値変更時にデータを自動的に保存するようにしました。
+	* Ragnarok.Wpf/Command/RelayCommand.cs: コマンドクラスを追加しました。
+	* Ragnarok/EnumEx.cs: Enum用のクラスを追加しました。 
+
+2012-05-24  - Ver 2.0.1.9
+
+	* Ragnarok/ObjectModel/NotifyObject.cs: プロパティ値変更の通知を簡単に
+	行えるようなクラスを作成しました。	
+	* Ragnarok/Extension.cs: 便利な拡張メソッドを追加しました。
+
+2012-05-19  - Ver 2.0.1.8
+
+	* Ragnarok.Wpf/WpfUtil.cs: WPFのMouse.GetPositionではマウス位置を正しく
+	取れないことがあるので、Win32APIからマウス位置を取得するメソッドを追加
+	しました。
+
+2012-05-14  - Ver 2.0.1.7
+
+	* Ragnarok.Wpf/Debug/ReportDialog.xaml: 不具合などの報告用ダイアログを
+	作成しました。
+	* Ragnarok.Wpf/Control/ProgressDialog.xaml: 処理中に出すダイアログを追
+	加しました。
+
+2012-05-13  - Ver 2.0.1.6
+
+	* Ragnarok/Utility/MethodUtil.cs: monoで使えなかったため、Lazyクラスの
+	使用をやめました。
+
+2012-05-13  - Ver 2.0.1.5
+
+	* Ragnarok/Utility/MethodUtil.cs: プロパティ値の設定と取得をExpression 
+	Treeで作成した専用ラムダから行うようにしました。
+	* Ragnarok/Utility/PassingTmpFile.cs: 一時ファイル作成後に対象となる
+	ファイルを置き換えるためのクラスを追加しました。これにより、
+	ファイルの状態が中途半端な状態で放置されることがなくなります。
+
+2012-05-12  - Ver 2.0.1.4
+
+	* Ragnarok/Utility/StringConverter.cs: 数字=>文字列への変換ルーチンを追
+	加しました。文字列かするときに半角/全角/漢字などを選択できます。
+
+2012-05-04  - Ver 2.0.1.3
+
+	* Resharperによるコードの修正を行いました。
+
+2012-05-02  - Ver 2.0.1.2
+
+	* Ragnarok/NicoNico/Live/LiveInfo.cs: ニコニコ動画(ZERO)バージョンに
+	合わせて、放送情報取得メソッドを修正しました。
+	* Ragnarok.Wpf/WpfUtil.cs: 便利メソッドを追加しました。
+
+2012-04-16  - Ver 2.0.1.1
+
+	* Ragnarok/NicoNico/Live/CommentClientDisconnectedReason.cs:
+	コメントサーバーからの切断理由を分かるようにしようとしました。
+	（開発中）
+
+2012-04-11  - Ver 2.0.1.0
+
+	* Ragnarok/Net/SendData.cs: Callbackをデリゲートからイベントに
+	直しました。
+	* Ragnarok/Utility/AppSettingsBase.cs: 設定ファイルのパスを指定の
+	アセンブリから設定可能にしました。また、シリアライザをXmlSerializerから
+	DataContractSerializerに変更しました。XmlSerializerはコンストラクタが
+	遅いためです。
+	* Ragnarok/Util.cs: 空白文字を調べるためのメソッドを追加しました。
+
+2012-04-07  - Ver 2.0.0.9
+
+	* Ragnarok.Wpf/Debug/SendLogDialog.xaml: ログ送信用のダイアログを
+	追加しました。
+	* Ragnarok/Net/ProtoBuf/PbConnection.cs: 通信プロトコルを変更し、
+	型名を不定長データとして送るようにしました。
+
+2012-04-07  - Ver 2.0.0.8
+
+	* Ragnarok.Wpf/DialogUtil.cs: オーバーロードメソッドを追加しました。
+	* Ragnarok.Wpf/Control/GenericDialog.cs: 表示時にフォーカスがある
+	ボタンを正しく設定できるように修正しました。
+
+2012-04-07  - Ver 2.0.0.7
+
+	* ColorPicker: ColorPickerを削除し、Ragnarok.Wpfにソースコードを
+	統合しました。
+
+2012-03-29  - Ver 2.0.0.6
+
+	* CommentClient.cs: 各放送ルームへの接続時にイベントを呼ぶように
+	しました。
+
+2012-03-26  - Ver 2.0.0.5
+
+	* CommentRoom.cs: lockのタイミングを変更しました。
+	* CommentRoom.cs: 受信処理の効率化を行いました。
+
+2012-03-17  - Ver 2.0.0.4
+
+	* Connection.cs: 切断処理を修正しました。
+	* PbCheckVersion.cs: エラー識別子にTimeoutを追加しました。
+	* CommentClient.cs: 自分のいる部屋にしか接続しないようなオプション
+	を追加しました。
+
+2012-03-08  - Ver 2.0.0.3
+
+	* SendThread.cs: BeginSend(IList<ArraySegment<byte>>, ...)の
+	オーバーロードが使えない環境に対する対策を行いました。
+	* NicoString.cs: heartbeatの取得URLが間違っていたので修正しました。
+
+2012-03-06  - Ver 2.0.0.2
+
+	* NicoNico/Login/LoginData.cs: 比較用メソッドを追加しました。
+	* Net/Connection.cs: サーバーアドレスの指定をIPアドレスではなく
+	ホスト名から指定するようにしました。
+	* Net/SendThread.cs: 複数のデータをまとめて送信可能にしました。
+
+2012-03-02  - Ver 2.0.0.1
+
+	* AppSettingsBase.cs: シリアライザの初期化時にRootNodeを指定するのを
+	やめました。これを指定すると処理速度が異様の遅くなったためです。
+	また、Reload時に全プロパティに更新通知を出すのをやめ、変更された
+	プロパティにのみ変更通知を送るようにしました。
+
+2012-03-01  - Ver 2.0.0.0
+
+	* ChangeLogをつけ始めました。
+	* ColorPicker: 色選択ダイアログを追加しました。
+	* DecoratedText.cs: 背景色の設定を可能にしました。
+	* ColorToSolidColorBrushConverter: 作成するブラシをFreezeするように
+	しました。こうすると速くなるようです。
+	* DialogUtil.cs: フォントダイアログと色選択ダイアログのサポートを
+	追加しました。
+	* AppSettingsBase.cs: Reloadしたときにプロパティの変更通知を送るように
+	しました。また、デフォルト値を設定するための文字列<=>値変換を別メソッド
+	上で行うようにし、派生クラスでカスタマイズできるようにしました。
+	(WPFのSystem.Windows.Media.Colorクラスに対応させるため)
+	このような設計は本来よくありませんが、これで事足りているのでとりあえず
+	はよしとします。
+	* AppSettingsBase.cs: ファイル保存時に一度tmpファイルに出力してから、
+	そのファイル名を改名するようにしました。こうするとシリアライズ失敗時
+	でもファイル内容が中途半端な状態になりません。
+	* WpfSettingsBase.cs: WPFの各クラスも扱えるようにしたAppSettingsBase
+	の派生クラスを追加しました。
+	* ColorDialog.xaml: 色選択ダイアログを追加しました。
+	* ColorAlphaConverter.cs: 色のアルファ値を変更するためのコンバーターを
+	追加しました。

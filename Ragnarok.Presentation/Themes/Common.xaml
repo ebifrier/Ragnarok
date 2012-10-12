@@ -1,0 +1,49 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                    xmlns:l="clr-namespace:Ragnarok.Presentation.Control"
+                    xmlns:conv="clr-namespace:Ragnarok.Presentation.Converter">
+    <conv:ImageConverter x:Key="imageConverter_" />
+    
+    <!-- 文字を画像に変換するテンプレートです。-->
+    <DataTemplate x:Key="ImageTemplate" DataType="BitmapImage">
+        <Image Source="{Binding}" />
+    </DataTemplate>
+
+    <!-- 使用不可時の画像を表示するテンプレートです。-->
+    <DataTemplate x:Key="DisableImageTemplate" DataType="String">
+        <DockPanel>
+            <Image>
+                <Image.Source>
+                    <FormatConvertedBitmap
+                        Source="{Binding Converter={StaticResource imageConverter_}}"
+                        DestinationFormat="Gray8" />
+                </Image.Source>
+
+                <!-- フォーマットをグレースケールにすると透明ピクセルは黒に
+                     なってしまうため不透明度を設定します。-->
+                <Image.OpacityMask>
+                    <ImageBrush
+                        ImageSource="{Binding Converter={StaticResource imageConverter_}}"
+                        Opacity="0.5" />
+                </Image.OpacityMask>
+            </Image>
+        </DockPanel>
+    </DataTemplate>
+
+    <!-- ツールバーのボタンの共通スタイルです。-->
+    <Style x:Key="ToolBarButtonStyle" TargetType="Button">
+        <Setter Property="Margin" Value="2,0,2,0" />
+        <Setter Property="Width" Value="24" />
+        <Setter Property="Height" Value="24" />
+        <Setter Property="ContentTemplate"
+                Value="{StaticResource DisableImageTemplate}" />
+
+        <Style.Triggers>
+            <Trigger Property="IsEnabled" Value="True">
+                <Setter Property="ContentTemplate"
+                        Value="{StaticResource ImageTemplate}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+</ResourceDictionary>

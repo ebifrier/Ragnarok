@@ -1,0 +1,420 @@
+#
+# 囲い情報
+#
+
+#- name: テスト囲い
+#  piece_list:
+#  - Gyoku: 5, 9
+#  - Gin: 3, 8
+#  - Kin: 4, 9
+
+#
+# 振り飛車・美濃囲い
+#
+- name: 片美濃囲い
+  piece_list:
+  - Gyoku: 2, 8
+  - Gin: 3, 8
+  - Kin: 4, 9
+
+- name: 本美濃囲い
+  piece_list:
+  - Gyoku: 2, 8
+  - Gin: 3, 8
+  - Kin: 4, 9
+  - Kin: 5, 8
+
+- name: 高美濃囲い
+  piece_list:
+  - Gyoku: 2, 8
+  - Gin: 3, 8
+  - Kin: 4, 9
+  - Kin: 4, 7
+
+- name: 銀美濃囲い
+  piece_list:
+  - Gyoku: 2, 8
+  - Gin: 3, 8
+  - Kin: 4, 9
+  - Gin: 5, 8
+
+- name: 金美濃囲い
+  piece_list:
+  - Gyoku: 2, 8
+  - Kin: 3, 8
+  - Gin: 4, 8
+
+- name: ダイアモンド美濃
+  piece_list:
+  - Gyoku: 2, 8
+  - Gin: 3, 8
+  - Kin: 4, 9
+  - Kin: 5, 8
+  - Gin: 4, 7
+
+- name: 木村美濃
+  piece_list:
+  - Gyoku: 2, 8
+  - Kin: 3, 8
+  - Gin: 4, 7
+
+- name: ヒラメ
+  piece_list:
+  - Gyoku: 2, 8
+  - Gin: 3, 8
+  - Kin: 4, 9
+  - Kin: 5, 9
+
+#
+# 振り飛車・銀冠
+#
+- name: 片銀冠
+  piece_list:
+  - Gyoku: 2, 8
+  - Gin: 2, 7
+  - Kin: 3, 8
+
+- name: 銀冠
+  piece_list:
+  - Gyoku: 2, 8
+  - Gin: 2, 7
+  - Kin: 3, 8
+  - Kin: 4, 7
+
+- name: 銀冠穴熊
+  piece_list:
+  - Gyoku: 1, 9
+  - Kyo: 1, 8
+  - Kei: 2, 9
+  - Gin: 2, 7
+  - Kin: 3, 8
+
+#
+# 振り飛車・穴熊
+#
+- name: 穴熊
+  piece_list:
+  - Gyoku: 1, 9
+  - Kyo: 1, 8
+  - Kei: 2, 9
+  - Gin: 2, 8
+
+- name: 固い穴熊
+  piece_list:
+  - Gyoku: 1, 9
+  - Kyo: 1, 8
+  - Kei: 2, 9
+  - Gin: 2, 8
+  - Kin: 3, 9
+
+- name: 固い穴熊
+  piece_list:
+  - Gyoku: 1, 9
+  - Kyo: 1, 8
+  - Kei: 2, 9
+  - Gin: 2, 8
+  - Kin: 3, 8
+
+- name: すごく固い穴熊
+  piece_list:
+  - Gyoku: 1, 9
+  - Kyo: 1, 8
+  - Kei: 2, 9
+  - Gin: 2, 8
+  - Kin: 3, 9
+  - Kin: 3, 8
+
+#
+# 振り飛車・その他
+#
+- name: 早囲い
+  piece_list:
+  - Gyoku: 3, 8
+  - Gin: 4, 8
+  - Kin: 4, 9
+
+- name: 金無双
+  piece_list:
+  - Gyoku: 3, 8
+  - Kin: 5, 8
+  - Kin: 4, 8
+  - Gin: 2, 8
+
+- name: 金無双
+  piece_list:
+  - Gyoku: 3, 8
+  - Kin: 5, 8
+  - Kin: 4, 8
+  - Gin: 3, 9
+
+
+#
+# 居飛車・矢倉
+#
+- name: カニ囲い
+  piece_list:
+  - Gyoku: 6, 9
+  - Kin: 7, 8
+  - Gin: 6, 8
+  - Kin: 5, 8
+
+- name: 矢倉
+  piece_list:
+  - Gyoku: 8, 8
+  - Kin: 7, 8
+  - Gin: 7, 7
+  - Kin: 6, 7
+
+- name: 銀立ち矢倉
+  piece_list:
+  - Gyoku: 8, 8
+  - Kin: 7, 8
+  - Kin: 6, 7
+  - Gin: 7, 6
+
+- name: 銀矢倉
+  piece_list:
+  - Gyoku: 8, 8
+  - Kin: 7, 8
+  - Gin: 7, 7
+  - Gin: 6, 7
+
+- name: ボナンザ囲い
+  piece_list:
+  - Gyoku: 7, 8
+  - Gin: 7, 7
+  - Kin: 6, 8
+  - Kin: 5, 8
+
+- name: 総矢倉
+  piece_list:
+  - Gyoku: 8, 8
+  - Kin: 7, 8
+  - Gin: 7, 7
+  - Kin: 6, 7
+  - Gin: 5, 7
+
+- name: 菱矢倉
+  piece_list:
+  - Gyoku: 8, 8
+  - Kin: 7, 8
+  - Gin: 7, 7
+  - Kin: 6, 7
+  - Gin: 6, 6
+
+- name: 菊水矢倉
+  piece_list:
+  - Gyoku: 8, 9
+  - Kin: 7, 8
+  - Gin: 8, 8
+  - Kin: 6, 7
+  - Kei: 7, 7
+
+- name: 凹み矢倉
+  piece_list:
+  - Gyoku: 8, 8
+  - Kin: 7, 8
+  - Gin: 7, 7
+  - Kin: 6, 8
+
+- name: 片矢倉
+  piece_list:
+  - Gyoku: 7, 8
+  - Gin: 7, 7
+  - Kin: 6, 7
+  - Kin: 6, 8
+
+#
+# 居飛車飛車・銀冠
+#
+- name: 居飛車片銀冠
+  piece_list:
+  - Gyoku: 8, 8
+  - Gin: 8, 7
+  - Kin: 7, 8
+
+- name: 居飛車銀冠
+  piece_list:
+  - Gyoku: 8, 8
+  - Gin: 8, 7
+  - Kin: 7, 8
+  - Kin: 6, 7
+
+- name: 居飛車銀冠穴熊
+  piece_list:
+  - Gyoku: 9, 9
+  - Kyo: 9, 8
+  - Kei: 8, 9
+  - Gin: 8, 7
+  - Kin: 7, 8
+
+#
+# 居飛車・穴熊
+#
+- name: 居飛車穴熊
+  piece_list:
+  - Gyoku: 9, 9
+  - Kyo: 9, 8
+  - Kei: 8, 9
+  - Gin: 8, 8
+
+- name: 固い居飛車穴熊
+  piece_list:
+  - Gyoku: 9, 9
+  - Kyo: 9, 8
+  - Kei: 8, 9
+  - Gin: 8, 8
+  - Kin: 7, 9
+
+- name: 固い居飛車穴熊
+  piece_list:
+  - Gyoku: 9, 9
+  - Kyo: 9, 8
+  - Kei: 8, 9
+  - Gin: 8, 8
+  - Kin: 7, 8
+
+- name: 超固い居飛車穴熊
+  piece_list:
+  - Gyoku: 9, 9
+  - Kyo: 9, 8
+  - Kei: 8, 9
+  - Gin: 8, 8
+  - Kin: 7, 9
+  - Kin: 7, 8
+
+- name: 松尾流穴熊
+  piece_list:
+  - Gyoku: 9, 9
+  - Kyo: 9, 8
+  - Kei: 8, 9
+  - Gin: 8, 8
+  - Gin: 7, 9
+  - Kin: 7, 8
+  - Kin: 6, 7
+
+- name: ビッグ４
+  piece_list:
+  - Gyoku: 9, 9
+  - Kyo: 9, 8
+  - Kei: 8, 9
+  - Kin: 8, 8
+  - Kin: 7, 8
+  - Gin: 8, 7
+  - Gin: 7, 7
+
+- name: ミレニアム
+  piece_list:
+  - Gyoku: 8, 9
+  - Kei: 7, 7
+  - Gin: 8, 8
+  - Kin: 7, 9
+  - Kin: 7, 8
+
+#
+# 居飛車・船囲い
+#
+- name: 船囲い
+  piece_list:
+  - Gyoku: 7, 8
+  - Gin: 7, 9
+  - Kin: 6, 9
+  - Kin: 5, 8
+
+- name: 箱入り娘
+  piece_list:
+  - Gyoku: 7, 8
+  - Gin: 7, 9
+  - Kin: 6, 9
+  - Kin: 6, 8
+
+- name: セメント囲い
+  piece_list:
+  - Gyoku: 7, 8
+  - Gin: 6, 7
+  - Gin: 5, 7
+  - Kin: 6, 8
+  - Kin: 5, 8
+
+#
+# 居飛車・横歩など
+#
+- name: 中住まい
+  piece_list:
+  - Gyoku: 5, 8
+  - Kin: 3, 8
+  - Kin: 7, 8
+
+- name: 中原囲い
+  piece_list:
+  - Gyoku: 6, 9
+  - Kin: 5, 9
+  - Gin: 4, 8
+  - Kin: 7, 8
+
+#
+# 居飛車・美濃囲い
+#
+- name: 左美濃
+  piece_list:
+  - Gyoku: 8, 8
+  - Gin: 7, 8
+  - Kin: 6, 9
+
+- name: 天守閣美濃
+  piece_list:
+  - Gyoku: 8, 7
+  - Kaku: 8, 8
+  - Gin: 7, 8
+  - Kin: 6, 9
+  - Kin: 5, 8
+
+#
+# 居飛車・その他
+#
+- name: 米長玉
+  piece_list:
+  - Gyoku: 9, 8
+  - Kyo: 9, 9
+  - Gin: 8, 7
+  - Kin: 7, 8
+
+- name: 串カツ囲い
+  piece_list:
+  - Gyoku: 9, 8
+  - Kyo: 9, 9
+  - Gin: 8, 8
+  - Kin: 7, 9
+  - Kin: 7, 8
+
+- name: 雁木
+  piece_list:
+  - Gyoku: 6, 9
+  - Kin: 7, 8
+  - Kin: 5, 8
+  - Gin: 6, 7
+  - Gin: 5, 7
+
+- name: 無敵囲い
+  piece_list:
+  - Gyoku: 5, 9
+  - Kin: 6, 9
+  - Kin: 4, 9
+  - Gin: 6, 8
+  - Gin: 4, 8
+  - Hisya: 5, 8
+
+- name: 風車
+  piece_list:
+  - Kei: 7, 7
+  - Gin: 6, 7
+  - Kin: 7, 8
+  - Kei: 3, 7
+  - Gin: 4, 7
+
+- name: イチゴ囲い
+  piece_list:
+  - Gyoku: 6, 8
+  - Kin: 7, 8
+  - Kin: 5, 8
+  - Gin: 7, 9

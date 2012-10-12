@@ -1,0 +1,17 @@
+syntax: glob
+Ragnarok/bin/
+Ragnarok/obj/
+Ragnarok.NicoNico.Test/obj/
+Ragnarok.NicoNico.Test/bin/
+RagnarokTest/bin/
+RagnarokTest/obj/
+ColorPicker/bin
+ColorPicker/obj/
+*.user
+_ReSharper.Ragnarok/
+Ragnarok.Presentation/bin/
+Ragnarok.Presentation/obj/
+Ragnarok.Extra/bin/
+Ragnarok.Extra/obj/
+Ragnarok.Shogi/bin/
+Ragnarok.Shogi/obj/

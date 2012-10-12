@@ -1,0 +1,70 @@
+﻿<Window x:Class="Ragnarok.Shogi.View.PromoteDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+        xmlns:p="http://schemas.garnet-alice.net/ragnarok/xaml/presentation"
+        mc:Ignorable="d" 
+        d:DesignHeight="100" d:DesignWidth="100"
+        x:Name="window" Title="成り/不成り"
+        ResizeMode="NoResize" WindowStyle="None" SizeToContent="Height"
+        Background="Black">
+    <Window.Resources>
+        <ResourceDictionary>
+            <p:BooleanToVisibilityConverter x:Key="booleanToVisibilityConverter" />
+            
+            <BitmapImage x:Key="selectedImage"
+                         UriSource="../Resources/Image/select_promote_holder.png" />
+            
+            <Style x:Key="borderStyle" TargetType="Border">
+                <Setter Property="BorderBrush" Value="Transparent" />
+                <Setter Property="BorderThickness" Value="0.0" />
+                
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="BorderBrush" Value="White" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+        </ResourceDictionary>
+    </Window.Resources>
+    
+    <Grid x:Name="LayoutRoot">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+        <Border Grid.Column="0" x:Name="borderP"
+                Style="{StaticResource borderStyle}"
+                Background="{Binding PromotedImage, ElementName=window}"
+                Width="{Binding CellSize.Width, ElementName=window}"
+                Height="{Binding CellSize.Height, ElementName=window}"
+                MouseDown="ImageP_MouseDown">
+            <!--<Image Source="{StaticResource selectedImage}"
+                   Stretch="Fill"
+                   Visibility="{Binding IsMouseOver, ElementName=borderP,
+                                        Converter={StaticResource booleanToVisibilityConverter}}"/>-->
+            <Rectangle Stroke="White"
+                       StrokeThickness="3.0"
+                       Visibility="{Binding IsMouseOver, ElementName=borderP,
+                                            Converter={StaticResource booleanToVisibilityConverter}}"/>
+        </Border>
+
+        <Border Grid.Column="1" x:Name="borderU"
+                Style="{StaticResource borderStyle}"
+                Background="{Binding UnpromotedImage, ElementName=window}"
+                Width="{Binding CellSize.Width, ElementName=window}"
+                Height="{Binding CellSize.Height, ElementName=window}"
+                MouseDown="ImageU_MouseDown">
+            <!--<Image Source="{StaticResource selectedImage}"
+                   Stretch="Fill"
+                   Visibility="{Binding IsMouseOver, ElementName=borderU,
+                                        Converter={StaticResource booleanToVisibilityConverter}}"/>-->
+            <Rectangle Stroke="White"
+                       StrokeThickness="3.0"
+                       Visibility="{Binding IsMouseOver, ElementName=borderU,
+                                            Converter={StaticResource booleanToVisibilityConverter}}"/>
+        </Border>
+    </Grid>
+</Window>
