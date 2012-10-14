@@ -233,7 +233,7 @@ namespace Ragnarok.Extra.Sound
         /// SEを再生します。再生中のファイルがあればその再生の直後に鳴らします。
         /// </summary>
         public void PlaySE(string filename, double volume = 1.0,
-                           bool checkTime = true)
+                           bool checkTime = true, bool ignoreError = false)
         {
             try
             {
@@ -247,9 +247,12 @@ namespace Ragnarok.Extra.Sound
             }
             catch (Exception ex)
             {
-                Log.ErrorException(ex,
-                    "{0}サウンドの再生に失敗しました。",
-                    Path.GetFileName(filename));
+                if (!ignoreError)
+                {
+                    Log.ErrorException(ex,
+                        "{0}サウンドの再生に失敗しました。",
+                        Path.GetFileName(filename));
+                }
             }
         }
         

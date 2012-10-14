@@ -19,7 +19,7 @@ namespace Ragnarok.Shogi.File
             @"^(.+)\s*[：:]\s*(.*?)\s*$",
             RegexOptions.Compiled);
 
-        private StringReader reader = null;
+        private TextReader reader = null;
         private string currentLine;        
 
         /// <summary>
@@ -132,29 +132,21 @@ namespace Ragnarok.Shogi.File
         /// <summary>
         /// ファイル内容から棋譜ファイルを読み込みます。
         /// </summary>
-        public KifuObject LoadFrom(string text)
+        public KifuObject Load(TextReader reader)
         {
-            if (string.IsNullOrEmpty(text))
+            if (reader == null)
             {
-                throw new ArgumentNullException("text");
+                throw new ArgumentNullException("reader");
             }
 
-            try
-            {
-                this.reader = new StringReader(text);
-                this.currentLine = null;
+            this.reader = reader;
+            this.currentLine = null;
 
-                ReadNextLine();
-                var header = ParseHeader(reader);
-                var moveList = ParseMoveLines().ToList();
+            ReadNextLine();
+            var header = ParseHeader(reader);
+            var moveList = ParseMoveLines().ToList();
 
-                return new KifuObject(header, moveList);
-            }
-            finally
-            {
-                this.reader.Close();
-                this.reader = null;
-            }
+            return new KifuObject(header, moveList);
         }
     }
 }

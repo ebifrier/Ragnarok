@@ -65,12 +65,13 @@
     <Compile Include="CastleInfo.cs" />
     <Compile Include="CastleInfoTable.cs" />
     <Compile Include="File\IKifuReader.cs" />
+    <Compile Include="File\IKifuWriter.cs" />
     <Compile Include="KifuReader.cs" />
     <Compile Include="File\KifReader.cs" />
     <Compile Include="HangameSkillLevel.cs" />
     <Compile Include="KifuObject.cs" />
     <Compile Include="File\Ki2Reader.cs" />
-    <Compile Include="File\KifFile.cs" />
+    <Compile Include="File\KifWriter.cs" />
     <Compile Include="Move.cs" />
     <Compile Include="MovePointPair.cs" />
     <Compile Include="MoveStatistics.cs" />
@@ -104,6 +105,7 @@
     <Compile Include="View\ShogiControl.xaml.cs">
       <DependentUpon>ShogiControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="KifuWriter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Ragnarok.Shogi.snk" />

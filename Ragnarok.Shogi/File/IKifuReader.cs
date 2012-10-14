@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.IO;
 
 namespace Ragnarok.Shogi.File
 {
@@ -10,6 +10,6 @@ namespace Ragnarok.Shogi.File
     /// </summary>
     internal interface IKifuReader
     {
-        KifuObject LoadFrom(string text);
+        KifuObject Load(TextReader reader);
     }
 }

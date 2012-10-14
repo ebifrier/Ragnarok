@@ -9,7 +9,7 @@ namespace Ragnarok.Shogi
     using File;
 
     /// <summary>
-    /// 記譜の読み込みを行います。
+    /// 棋譜の読み込みを行います。
     /// </summary>
     public static class KifuReader
     {
@@ -20,7 +20,7 @@ namespace Ragnarok.Shogi
             Encoding.GetEncoding("Shift_JIS");
 
         /// <summary>
-        /// ファイル名から棋譜ファイルを読み込みます。
+        /// 棋譜をファイルから読み込みます。
         /// </summary>
         public static KifuObject LoadFile(string filepath)
         {
@@ -30,15 +30,14 @@ namespace Ragnarok.Shogi
             }
 
             using (var stream = new FileStream(filepath, FileMode.Open))
+            using (var reader = new StreamReader(stream, DefaultEncoding))
             {
-                var text = Util.ReadToEnd(stream, DefaultEncoding);
-
-                return LoadFrom(text);
+                return Load(reader);
             }
         }
 
         /// <summary>
-        /// 記譜ファイルの読み込みます。
+        /// 棋譜を文字列から読み込みます。
         /// </summary>
         public static KifuObject LoadFrom(string text)
         {
@@ -47,18 +46,34 @@ namespace Ragnarok.Shogi
                 throw new ArgumentNullException("text");
             }
 
-            var readers = new IKifuReader[]
+            using (var reader = new StringReader(text))
+            {
+                return Load(reader);
+            }
+        }
+
+        /// <summary>
+        /// 棋譜の読み込みます。
+        /// </summary>
+        public static KifuObject Load(TextReader reader)
+        {
+            if (reader == null)
+            {
+                throw new ArgumentNullException("reader");
+            }
+
+            var kifuReaders = new IKifuReader[]
             {
                 new KifReader(),
                 new Ki2Reader(),
             };
 
             // すべての形式のファイルを読み込んでみます。
-            foreach (var reader in readers)
+            foreach (var kifuReader in kifuReaders)
             {
                 try
                 {
-                    var obj = reader.LoadFrom(text);
+                    var obj = kifuReader.Load(reader);
                     if (obj != null)
                     {
                         return obj;
@@ -71,7 +86,7 @@ namespace Ragnarok.Shogi
             }
 
             throw new ArgumentException(
-                "記譜ファイルの読み込みに失敗しました。");
+                "棋譜の読み込みに失敗しました。");
         }
     }
 }

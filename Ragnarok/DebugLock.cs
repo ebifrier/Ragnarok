@@ -51,14 +51,17 @@ namespace Ragnarok
                 WriteStackTrace();
             }
 
-            /*if (!Monitor.TryEnter(locker, TimeSpan.FromSeconds(20)))
+#if !DEBUG
+            if (!Monitor.TryEnter(locker, TimeSpan.FromSeconds(20)))
             {
                 Log.Error("DeadLock!!!");
 
                 throw new InvalidOperationException(
                     "おそらくデッドロックしたと思われます。");
-            }*/
+            }
+#else
             Monitor.Enter(locker);
+#endif
 
             this.locker = locker;
         }

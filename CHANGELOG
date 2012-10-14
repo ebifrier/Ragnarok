@@ -1,3 +1,15 @@
+2012-10-15  - Ver 2.3.29
+
+	* Ragnarok.Shogi/KifuWriter.cs: 棋譜出力用のオブジェクトを追加。
+	* Ragnarok.Shogi/File/KifWriter.cs: .kif形式の棋譜ファイルの出力用
+	クラスを追加しました。
+	* Ragnarok.Shogi/File/IKifuReader.cs: 棋譜の読み込みをTextReaderク
+	ラスから行うようにしました。
+	* Ragnarok.Shogi/ShogiParser.cs: ごお/ごうで５を、ぱちで８を認識す
+	るようにしました。
+	* Ragnarok.Extra/Sound/SoundManager.cs: ＳＥ再生メソッドに、わざと
+	エラーを記録しないようにするオプションを追加しました。
+
 2012-10-08  - Ver 2.3.28
 
 	* Ragnarok.Presentation/Control/NumericUpDown.cs: TextFormatプロパ

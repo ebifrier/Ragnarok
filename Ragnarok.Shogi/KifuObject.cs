@@ -47,6 +47,9 @@ namespace Ragnarok.Shogi
         }
     }
 
+    /// <summary>
+    /// 指し手や変化など棋譜ファイルに必要な要素を保持します。
+    /// </summary>
     public sealed class KifuObject
     {
         /// <summary>
@@ -79,8 +82,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 指し手ツリーをリスト形式に変換します。
         /// </summary>
-        /// <returns></returns>
-        private IEnumerable<Move> Convert2List(VariationNode root)
+        public static IEnumerable<Move> Convert2List(VariationNode root)
         {
             for (var node = root; node != null; node = node.NextChild)
             {
@@ -91,13 +93,18 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 指し手リストをツリー形式に変換します。
         /// </summary>
-        private VariationNode Convert2Node(IEnumerable<Move> moveList)
+        public static VariationNode Convert2Node(IEnumerable<Move> moveList,
+                                                 int firstMoveCount)
         {
-            VariationNode root = null;
-            var beginNumber = 1 + moveList.Count();
+            if (moveList == null || !moveList.Any())
+            {
+                return null;
+            }
 
-            moveList.Reverse();
-            foreach (var move in moveList)
+            VariationNode root = null;
+            var beginNumber = firstMoveCount + moveList.Count();
+
+            foreach (var move in moveList.Reverse())
             {
                 var node = new VariationNode()
                 {
@@ -145,7 +152,7 @@ namespace Ragnarok.Shogi
             }
 
             MoveList = moveList.ToList();
-            RootNode = Convert2Node(moveList);
+            RootNode = Convert2Node(moveList, 1);
         }
 
         /// <summary>
