@@ -31,9 +31,15 @@ namespace Ragnarok.Shogi.File
         /// </summary>
         private string MakeMoveLine(Move move, int number, bool hasVariation)
         {
-            // kif形式では、不成りは何も書きません。
-            if (move.ActionType == ActionType.Unpromote)
+            if (move.OldPosition == null)
             {
+                // kif形式では、駒を打つ時は必ず'打'と書きます。
+                move = move.Clone();
+                move.ActionType = ActionType.Drop;
+            }
+            else if (move.ActionType == ActionType.Unpromote)
+            {
+                // kif形式では、不成りは何も書きません。
                 move = move.Clone();
                 move.ActionType = ActionType.None;
             }

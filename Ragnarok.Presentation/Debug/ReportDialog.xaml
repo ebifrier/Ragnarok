@@ -85,7 +85,7 @@
             <DockPanel>
                 <TextBlock DockPanel.Dock="Top"
                            Foreground="{x:Static Brushes.DarkGray}"
-                           Text="ログは以下の内容を送信します。&#xd;&#xa;編集出来るので、送りたくない箇所は消してください。" />
+                           Text="ログは以下の内容を送信します。&#xd;&#xa;編集出来ますので、必要な場所は削除してください。" />
 
                 <TextBox DockPanel.Dock="Bottom"
                          Style="{StaticResource commonTextBox}"
