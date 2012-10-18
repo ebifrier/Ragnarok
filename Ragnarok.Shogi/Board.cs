@@ -218,6 +218,20 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
+        /// 手を戻すことができる回数を取得します。
+        /// </summary>
+        public int CanUndoCount
+        {
+            get
+            {
+                using (LazyLock())
+                {
+                    return this.moveList.Count();
+                }
+            }
+        }
+
+        /// <summary>
         /// 手を進めることができるか取得します。
         /// </summary>
         public bool CanRedo
@@ -227,6 +241,20 @@ namespace Ragnarok.Shogi
                 using (LazyLock())
                 {
                     return this.redoList.Any();
+                }
+            }
+        }
+
+        /// <summary>
+        /// 手を進めることができる回数を取得します。
+        /// </summary>
+        public int CanRedoCount
+        {
+            get
+            {
+                using (LazyLock())
+                {
+                    return this.redoList.Count();
                 }
             }
         }

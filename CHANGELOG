@@ -1,3 +1,8 @@
+2012-10-19  - Ver 2.3.30
+
+	* Ragnarok.Shogi/Board.cs: 指し手のアンドゥ／リドゥ可能回数の取得メ
+	ソッドを追加しました。
+
 2012-10-15  - Ver 2.3.29
 
 	* Ragnarok.Shogi/KifuWriter.cs: 棋譜出力用のオブジェクトを追加。
@@ -5,8 +10,8 @@
 	クラスを追加しました。
 	* Ragnarok.Shogi/File/IKifuReader.cs: 棋譜の読み込みをTextReaderク
 	ラスから行うようにしました。
-	* Ragnarok.Shogi/ShogiParser.cs: ごお/ごうで５を、ぱちで８を認識す
-	るようにしました。
+	* Ragnarok.Shogi/ShogiParser.cs: 指し手解析時に、ごお/ごうで５を、
+	ぱちで８を認識するようにしました。
 	* Ragnarok.Extra/Sound/SoundManager.cs: ＳＥ再生メソッドに、わざと
 	エラーを記録しないようにするオプションを追加しました。
 
