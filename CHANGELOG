@@ -1,3 +1,10 @@
+2012-10-20  - Ver 2.4.0
+
+	* 全ライブラリ: ランタイムを.NET Framework 4.0ではなく、4.0のClient 
+	Profileを使うように修正しました。
+	* Ragnarok/Net/WebUtil.cs: System.Web.dllに依存するメソッドは使えな
+	くなるため、すべて代替メソッドで置き換えました。
+
 2012-10-19  - Ver 2.3.30
 
 	* Ragnarok.Shogi/Board.cs: 指し手のアンドゥ／リドゥ可能回数の取得メ

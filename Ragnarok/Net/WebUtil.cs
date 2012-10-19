@@ -43,7 +43,7 @@ namespace Ragnarok.Net
         /// </summary>
         public static string EncodeHtmlText(string text)
         {
-            return HttpUtility.HtmlEncode(text);
+            return WebUtility.HtmlEncode(text);
         }
 
         /// <summary>
@@ -51,7 +51,7 @@ namespace Ragnarok.Net
         /// </summary>
         public static string DecodeHtmlText(string text)
         {
-            return HttpUtility.HtmlDecode(text);
+            return WebUtility.HtmlDecode(text);
         }
 
         /// <summary>
@@ -74,39 +74,6 @@ namespace Ragnarok.Net
             return text;
         }
 
-#if false
-        /// <summary>
-        /// URLをエンコードします。
-        /// </summary>
-        /// <remarks>
-        /// HttpUtilityは.Net4 Client Profileで使えないので、
-        /// 自分で実装しています。
-        /// </remarks>
-        public static string UrlEncode(string uri)
-        {
-            var deData = Encoding.UTF8.GetBytes(uri);
-            var enData = new StringBuilder();
-
-            foreach (var b in deData)
-            {
-                // ASCIIの非予約文字の場合は、文字変換を行いません。
-                if (('a' <= b && b <= 'z') || ('A' <= b && b <= 'Z') ||
-                    ('0' <= b && b <= '9') ||
-                    (b == '!' || b == '-' || b == '_' || b == '.' || b == '~' ||
-                     b == '\'' || b == '(' || b == ')' || b == '*'))
-                {
-                    enData.Append((char)b);
-                    continue;
-                }
-
-                enData.Append('%');
-                enData.Append(Convert.ToString(b, 16));
-            }
-
-            return enData.ToString();
-        }
-#endif
-
         /// <summary>
         /// ポストするURLデータをエンコードします。
         /// </summary>
@@ -123,8 +90,7 @@ namespace Ragnarok.Net
 
                     if (pair.Value != null)
                     {
-                        str += HttpUtility.UrlEncode(
-                            pair.Value.ToString(), Encoding.UTF8);
+                        str += Uri.EscapeDataString(pair.Value.ToString());
                     }
 
                     return str;
