@@ -8,10 +8,8 @@ using NUnit.Framework;
 using Ragnarok;
 using Ragnarok.ObjectModel;
 
-namespace RagnarokTest
+namespace RagnarokTest.ObjectModel
 {
-    using ObjectModel;
-
     [TestFixture()]
     public class ModelBaseTest
     {

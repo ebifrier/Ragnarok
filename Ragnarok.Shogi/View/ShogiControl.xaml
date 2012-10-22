@@ -132,18 +132,20 @@
             <DiffuseMaterial x:Key="komadaiMaterial"
                              Brush="{Binding PieceBoxBrush, ElementName=shogi}" />
 
+            <!-- 右下の駒台の位置 -->
             <Transform3DGroup x:Key="komadai0Transform">
                 <ScaleTransform3D ScaleX="123" ScaleY="230" ScaleZ="1.0" />
                 <TranslateTransform3D OffsetX="574" OffsetY="360" />
             </Transform3DGroup>
 
+            <!-- 左上の駒台の位置 -->
             <Transform3DGroup x:Key="komadai1Transform">
                 <ScaleTransform3D ScaleX="123" ScaleY="230" ScaleZ="1.0" />
                 <TranslateTransform3D OffsetX="66" OffsetY="120" />
             </Transform3DGroup>
 
-            <!-- 駒台の先手・後手などの表示 -->
-            <Style x:Key="blackMaterialStyle" TargetType="rp:DecoratedText">
+            <!-- 右下の駒台表示 -->
+            <Style x:Key="label0MaterialStyle" TargetType="rp:DecoratedText">
                 <Setter Property="Text" Value="先手" />
                 <Style.Triggers>
                     <DataTrigger Binding="{Binding ViewSide, ElementName=shogi}"
@@ -157,13 +159,14 @@
                 <DiffuseMaterial.Brush>
                     <VisualBrush>
                         <VisualBrush.Visual>
-                            <rp:DecoratedText Style="{StaticResource blackMaterialStyle}" />
+                            <rp:DecoratedText Style="{StaticResource label0MaterialStyle}" />
                         </VisualBrush.Visual>
                     </VisualBrush>
                 </DiffuseMaterial.Brush>
             </DiffuseMaterial>
 
-            <Style x:Key="whiteMaterialStyle" TargetType="rp:DecoratedText">
+            <!-- 左上の駒台表示 -->
+            <Style x:Key="label1MaterialStyle" TargetType="rp:DecoratedText">
                 <Setter Property="Text" Value="後手" />
                 <Style.Triggers>
                     <DataTrigger Binding="{Binding ViewSide, ElementName=shogi}"
@@ -177,7 +180,7 @@
                 <DiffuseMaterial.Brush>
                     <VisualBrush>
                         <VisualBrush.Visual>
-                            <rp:DecoratedText Style="{StaticResource whiteMaterialStyle}" />
+                            <rp:DecoratedText Style="{StaticResource label1MaterialStyle}" />
                         </VisualBrush.Visual>
                     </VisualBrush>
                 </DiffuseMaterial.Brush>
@@ -208,6 +211,7 @@
                     <Model3DGroup>
                         <AmbientLight Color="White" />
 
+                        <!-- 将棋盤 -->
                         <GeometryModel3D x:Name="banGeometry"
                                          Geometry="{StaticResource squareMesh}"
                                          Material="{StaticResource banMaterial}"
@@ -216,6 +220,7 @@
                                          Material="{StaticResource banTitleMaterial}"
                                          Transform="{StaticResource banTransform}" />
 
+                        <!-- 右下の駒台 -->
                         <Model3DGroup x:Name="komadai0Geometry"
                                       Transform="{StaticResource komadai0Transform}">
                             <GeometryModel3D Geometry="{StaticResource squareMesh}"
@@ -230,6 +235,7 @@
                             </GeometryModel3D>
                         </Model3DGroup>
 
+                        <!-- 左上の駒台 -->
                         <Model3DGroup x:Name="komadai1Geometry"
                                       Transform="{StaticResource komadai1Transform}">
                             <GeometryModel3D Geometry="{StaticResource squareMesh}"
@@ -246,7 +252,8 @@
                     </Model3DGroup>
                 </ModelUIElement3D.Model>
             </ModelUIElement3D>
-            
+
+            <!-- 将棋盤用のエフェクト -->
             <ModelUIElement3D IsHitTestVisible="False">
                 <ModelUIElement3D.Model>
                     <Model3DGroup x:Name="BanEffectGroup">
@@ -254,12 +261,15 @@
                 </ModelUIElement3D.Model>
             </ModelUIElement3D>
 
+            <!-- 持ち駒の表示 -->
             <ContainerUIElement3D x:Name="CapturedPieceContainer">
             </ContainerUIElement3D>
 
+            <!-- 盤上の駒の表示 -->
             <ContainerUIElement3D x:Name="PieceContainer">
             </ContainerUIElement3D>
 
+            <!-- エフェクト表示 -->
             <ModelUIElement3D IsHitTestVisible="False">
                 <ModelUIElement3D.Model>
                     <Model3DGroup x:Name="EffectGroup">

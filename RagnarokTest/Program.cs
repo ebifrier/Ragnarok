@@ -14,7 +14,7 @@ namespace RagnarokTest
     {
         static void Main(string[] args)
         {
-            var test = new ModelBaseTest();
+            var test = new ObjectModel.ModelBaseTest();
 
             test.AffectOtherPropertyTest();
             test.DependOnPropertyTest();
@@ -35,6 +35,9 @@ namespace RagnarokTest
             var calcTest = new Utility.CalclatorTest();
             calcTest.SimpleTest();
             calcTest.FuncTest();
+
+            var shogiTest = new Shogi.ShogiParserTest();
+            shogiTest.ParseMoveTest();
 
             StringNormalizer.NormalizeText("二十五", NormalizeTextOption.All);
             StringNormalizer.NormalizeText("三千四百万六百十二", NormalizeTextOption.All);

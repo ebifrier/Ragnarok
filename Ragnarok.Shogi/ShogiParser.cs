@@ -224,6 +224,7 @@ namespace Ragnarok.Shogi
             {"角行", Piece.Kaku},
             {"角", Piece.Kaku},
             {"核", Piece.Kaku},
+            {"格", Piece.Kaku},
             {"画", Piece.Kaku},
             {"各", Piece.Kaku},
             {"閣", Piece.Kaku},
