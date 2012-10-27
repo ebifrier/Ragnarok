@@ -46,7 +46,7 @@ namespace Ragnarok.Net
 #if !MONO
             return WebUtility.HtmlEncode(text);
 #else
-            return HtmlUtility.HtmlDecode(text);
+            return HttpUtility.HtmlDecode(text);
 #endif
         }
 
@@ -58,7 +58,7 @@ namespace Ragnarok.Net
 #if !MONO
             return WebUtility.HtmlDecode(text);
 #else
-            return HtmlUtility.HtmlDecode(text);
+            return HttpUtility.HtmlDecode(text);
 #endif
         }
 
