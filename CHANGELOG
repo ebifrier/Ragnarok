@@ -1,3 +1,8 @@
+2012-10-28  - Ver 2.4.3
+
+	* Ragnarok/Ragnarok.Shogi/CastleInfo.cs: 各囲いに英数字のIDを付けま
+	した。
+
 2012-10-27  - Ver 2.4.2
 
 	* Ragnarok/externals/net/System.Data.SQLite.dll: 以前のdllが動かな

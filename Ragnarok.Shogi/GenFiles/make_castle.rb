@@ -32,7 +32,7 @@ end
 # 囲い情報を保持します。
 #
 class Castle
-  attr_accessor :name, :piece_list, :base_list
+  attr_accessor :name, :id, :piece_list, :base_list
   attr_accessor :priority, :updated
 
   def initialize(node)
@@ -44,6 +44,7 @@ class Castle
     end
 
     @name = node["name"]
+    @id = node["id"]
     @base_list = []
     @priority = 0
     @updated = false
@@ -61,7 +62,7 @@ class Castle
   #
   def definition()
     str =  "new CastleInfo(\n"
-    str << "    \"#{@name}\", #{@priority},\n"
+    str << "    \"#{@name}\", \"#{@id}\", #{@priority},\n"
     str << "    new []\n"
     str << "    {\n"
     
@@ -148,9 +149,18 @@ def make_castle_definition_list(castle_list, indent_num)
   end).join("\n\n").gsub("\n", "\n" + indent)
 end
 
+# すべての囲いを処理します。
 castle_list = load_castle_list()
 
+# ボイスのあるパス
+base_path = "E:\\programs\\develop\\VoteSystem\\VoteSystem\\PluginShogi\\ShogiData\\Effect\\Other\\CastleEffect\\Voice"
+
 castle_list.each do |castle|
+  path = File.join(base_path, castle.id + ".wav")
+  if not File.exist?(path)
+    puts "#{castle.id} is not found."
+  end
+
   update_base_castle(castle, castle_list)
 end
 castle_list.each do |castle|

@@ -16,7 +16,7 @@ namespace Ragnarok.Shogi
             new List<CastleInfo>
             {
                 new CastleInfo(
-                    "ダイアモンド美濃", 20,
+                    "ダイアモンド美濃", "DiamondMino", 20,
                     new []
                     {
                         new CastlePiece(PieceType.Gyoku, new Position(2, 8)),
@@ -28,7 +28,7 @@ namespace Ragnarok.Shogi
                     new string[] { "片美濃囲い", "本美濃囲い", }),
                 
                 new CastleInfo(
-                    "すごく固い穴熊", 20,
+                    "すごく固い穴熊", "Anaguma3", 20,
                     new []
                     {
                         new CastlePiece(PieceType.Gyoku, new Position(1, 9)),
@@ -41,7 +41,7 @@ namespace Ragnarok.Shogi
                     new string[] { "穴熊", "固い穴熊", "固い穴熊", }),
                 
                 new CastleInfo(
-                    "超固い居飛車穴熊", 20,
+                    "超固い居飛車穴熊", "IbisyaAnaguma3", 20,
                     new []
                     {
                         new CastlePiece(PieceType.Gyoku, new Position(9, 9)),
@@ -54,7 +54,7 @@ namespace Ragnarok.Shogi
                     new string[] { "居飛車穴熊", "固い居飛車穴熊", "固い居飛車穴熊", }),
                 
                 new CastleInfo(
-                    "松尾流穴熊", 20,
+                    "松尾流穴熊", "MatsuoAnaguma", 20,
                     new []
                     {
                         new CastlePiece(PieceType.Gyoku, new Position(9, 9)),
@@ -68,7 +68,7 @@ namespace Ragnarok.Shogi
                     new string[] { "居飛車穴熊", "固い居飛車穴熊", }),
                 
                 new CastleInfo(
-                    "本美濃囲い", 10,
+                    "本美濃囲い", "HonMino", 10,
                     new []
                     {
                         new CastlePiece(PieceType.Gyoku, new Position(2, 8)),
@@ -79,7 +79,7 @@ namespace Ragnarok.Shogi
                     new string[] { "片美濃囲い", }),
                 
                 new CastleInfo(
-                    "高美濃囲い", 10,
+                    "高美濃囲い", "TakaMino", 10,
                     new []
                     {
                         new CastlePiece(PieceType.Gyoku, new Position(2, 8)),
@@ -90,7 +90,7 @@ namespace Ragnarok.Shogi
                     new string[] { "片美濃囲い", }),
                 
                 new CastleInfo(
-                    "銀美濃囲い", 10,
+                    "銀美濃囲い", "GinMino", 10,
                     new []
                     {
                         new CastlePiece(PieceType.Gyoku, new Position(2, 8)),
@@ -101,7 +101,7 @@ namespace Ragnarok.Shogi
                     new string[] { "片美濃囲い", }),
                 
                 new CastleInfo(
-                    "ヒラメ", 10,
+                    "ヒラメ", "Hirame", 10,
                     new []
                     {
                         new CastlePiece(PieceType.Gyoku, new Position(2, 8)),
@@ -112,7 +112,7 @@ namespace Ragnarok.Shogi
                     new string[] { "片美濃囲い", }),
                 
                 new CastleInfo(
-                    "銀冠", 10,
+                    "銀冠", "Ginkan", 10,
                     new []
                     {
                         new CastlePiece(PieceType.Gyoku, new Position(2, 8)),
@@ -123,7 +123,7 @@ namespace Ragnarok.Shogi
                     new string[] { "片銀冠", }),
                 
                 new CastleInfo(
-                    "固い穴熊", 10,
+                    "固い穴熊", "Anaguma2", 10,
                     new []
                     {
                         new CastlePiece(PieceType.Gyoku, new Position(1, 9)),
@@ -135,7 +135,7 @@ namespace Ragnarok.Shogi
                     new string[] { "穴熊", }),
                 
                 new CastleInfo(
-                    "固い穴熊", 10,
+                    "固い穴熊", "Anaguma2", 10,
                     new []
                     {
                         new CastlePiece(PieceType.Gyoku, new Position(1, 9)),
@@ -147,7 +147,7 @@ namespace Ragnarok.Shogi
                     new string[] { "穴熊", }),
                 
                 new CastleInfo(
-                    "総矢倉", 10,
+                    "総矢倉", "SouYagura", 10,
                     new []
                     {
                         new CastlePiece(PieceType.Gyoku, new Position(8, 8)),
@@ -159,7 +159,7 @@ namespace Ragnarok.Shogi
                     new string[] { "矢倉", }),
                 
                 new CastleInfo(
-                    "菱矢倉", 10,
+                    "菱矢倉", "HishiYagura", 10,
                     new []
                     {
                         new CastlePiece(PieceType.Gyoku, new Position(8, 8)),
@@ -171,7 +171,7 @@ namespace Ragnarok.Shogi
                     new string[] { "矢倉", }),
                 
                 new CastleInfo(
-                    "居飛車銀冠", 10,
+                    "居飛車銀冠", "IbisyaGinkan", 10,
                     new []
                     {
                         new CastlePiece(PieceType.Gyoku, new Position(8, 8)),
@@ -182,7 +182,7 @@ namespace Ragnarok.Shogi
                     new string[] { "居飛車片銀冠", }),
                 
                 new CastleInfo(
-                    "固い居飛車穴熊", 10,
+                    "固い居飛車穴熊", "IbisyaAnaguma2", 10,
                     new []
                     {
                         new CastlePiece(PieceType.Gyoku, new Position(9, 9)),
@@ -194,7 +194,7 @@ namespace Ragnarok.Shogi
                     new string[] { "居飛車穴熊", }),
                 
                 new CastleInfo(
-                    "固い居飛車穴熊", 10,
+                    "固い居飛車穴熊", "IbisyaAnaguma2", 10,
                     new []
                     {
                         new CastlePiece(PieceType.Gyoku, new Position(9, 9)),
@@ -206,7 +206,7 @@ namespace Ragnarok.Shogi
                     new string[] { "居飛車穴熊", }),
                 
                 new CastleInfo(
-                    "ビッグ４", 10,
+                    "ビッグ４", "Big4", 10,
                     new []
                     {
                         new CastlePiece(PieceType.Gyoku, new Position(9, 9)),
@@ -220,7 +220,7 @@ namespace Ragnarok.Shogi
                     new string[] { "居飛車銀冠穴熊", }),
                 
                 new CastleInfo(
-                    "片美濃囲い", 0,
+                    "片美濃囲い", "KataMino", 0,
                     new []
                     {
                         new CastlePiece(PieceType.Gyoku, new Position(2, 8)),
@@ -230,7 +230,7 @@ namespace Ragnarok.Shogi
                     new string[] { }),
                 
                 new CastleInfo(
-                    "金美濃囲い", 0,
+                    "金美濃囲い", "KinMino", 0,
                     new []
                     {
                         new CastlePiece(PieceType.Gyoku, new Position(2, 8)),
@@ -240,7 +240,7 @@ namespace Ragnarok.Shogi
                     new string[] { }),
                 
                 new CastleInfo(
-                    "木村美濃", 0,
+                    "木村美濃", "KimuraMino", 0,
                     new []
                     {
                         new CastlePiece(PieceType.Gyoku, new Position(2, 8)),
@@ -250,7 +250,7 @@ namespace Ragnarok.Shogi
                     new string[] { }),
                 
                 new CastleInfo(
-                    "片銀冠", 0,
+                    "片銀冠", "KataGinkan", 0,
                     new []
                     {
                         new CastlePiece(PieceType.Gyoku, new Position(2, 8)),
@@ -260,7 +260,7 @@ namespace Ragnarok.Shogi
                     new string[] { }),
                 
                 new CastleInfo(
-                    "銀冠穴熊", 0,
+                    "銀冠穴熊", "GinkanAnaguma", 0,
                     new []
                     {
                         new CastlePiece(PieceType.Gyoku, new Position(1, 9)),
@@ -272,7 +272,7 @@ namespace Ragnarok.Shogi
                     new string[] { }),
                 
                 new CastleInfo(
-                    "穴熊", 0,
+                    "穴熊", "Anaguma", 0,
                     new []
                     {
                         new CastlePiece(PieceType.Gyoku, new Position(1, 9)),
@@ -283,7 +283,7 @@ namespace Ragnarok.Shogi
                     new string[] { }),
                 
                 new CastleInfo(
-                    "早囲い", 0,
+                    "早囲い", "Haya", 0,
                     new []
                     {
                         new CastlePiece(PieceType.Gyoku, new Position(3, 8)),
@@ -293,7 +293,7 @@ namespace Ragnarok.Shogi
                     new string[] { }),
                 
                 new CastleInfo(
-                    "金無双", 0,
+                    "金無双", "Kinmusou", 0,
                     new []
                     {
                         new CastlePiece(PieceType.Gyoku, new Position(3, 8)),
@@ -304,7 +304,7 @@ namespace Ragnarok.Shogi
                     new string[] { }),
                 
                 new CastleInfo(
-                    "金無双", 0,
+                    "金無双", "Kinmusou", 0,
                     new []
                     {
                         new CastlePiece(PieceType.Gyoku, new Position(3, 8)),
@@ -315,7 +315,7 @@ namespace Ragnarok.Shogi
                     new string[] { }),
                 
                 new CastleInfo(
-                    "カニ囲い", 0,
+                    "カニ囲い", "Kani", 0,
                     new []
                     {
                         new CastlePiece(PieceType.Gyoku, new Position(6, 9)),
@@ -326,7 +326,7 @@ namespace Ragnarok.Shogi
                     new string[] { }),
                 
                 new CastleInfo(
-                    "矢倉", 0,
+                    "矢倉", "Yagura", 0,
                     new []
                     {
                         new CastlePiece(PieceType.Gyoku, new Position(8, 8)),
@@ -337,7 +337,7 @@ namespace Ragnarok.Shogi
                     new string[] { }),
                 
                 new CastleInfo(
-                    "銀立ち矢倉", 0,
+                    "銀立ち矢倉", "GintachiYagura", 0,
                     new []
                     {
                         new CastlePiece(PieceType.Gyoku, new Position(8, 8)),
@@ -348,7 +348,7 @@ namespace Ragnarok.Shogi
                     new string[] { }),
                 
                 new CastleInfo(
-                    "銀矢倉", 0,
+                    "銀矢倉", "GinYagura", 0,
                     new []
                     {
                         new CastlePiece(PieceType.Gyoku, new Position(8, 8)),
@@ -359,7 +359,7 @@ namespace Ragnarok.Shogi
                     new string[] { }),
                 
                 new CastleInfo(
-                    "ボナンザ囲い", 0,
+                    "ボナンザ囲い", "Bonanza", 0,
                     new []
                     {
                         new CastlePiece(PieceType.Gyoku, new Position(7, 8)),
@@ -370,7 +370,7 @@ namespace Ragnarok.Shogi
                     new string[] { }),
                 
                 new CastleInfo(
-                    "菊水矢倉", 0,
+                    "菊水矢倉", "KikusuiYagura", 0,
                     new []
                     {
                         new CastlePiece(PieceType.Gyoku, new Position(8, 9)),
@@ -382,7 +382,7 @@ namespace Ragnarok.Shogi
                     new string[] { }),
                 
                 new CastleInfo(
-                    "凹み矢倉", 0,
+                    "凹み矢倉", "HekomiYagura", 0,
                     new []
                     {
                         new CastlePiece(PieceType.Gyoku, new Position(8, 8)),
@@ -393,7 +393,7 @@ namespace Ragnarok.Shogi
                     new string[] { }),
                 
                 new CastleInfo(
-                    "片矢倉", 0,
+                    "片矢倉", "KataYagura", 0,
                     new []
                     {
                         new CastlePiece(PieceType.Gyoku, new Position(7, 8)),
@@ -404,7 +404,7 @@ namespace Ragnarok.Shogi
                     new string[] { }),
                 
                 new CastleInfo(
-                    "居飛車片銀冠", 0,
+                    "居飛車片銀冠", "IbisyaKataGinkan", 0,
                     new []
                     {
                         new CastlePiece(PieceType.Gyoku, new Position(8, 8)),
@@ -414,7 +414,7 @@ namespace Ragnarok.Shogi
                     new string[] { }),
                 
                 new CastleInfo(
-                    "居飛車銀冠穴熊", 0,
+                    "居飛車銀冠穴熊", "IbisyaGinkanAnaguma", 0,
                     new []
                     {
                         new CastlePiece(PieceType.Gyoku, new Position(9, 9)),
@@ -426,7 +426,7 @@ namespace Ragnarok.Shogi
                     new string[] { }),
                 
                 new CastleInfo(
-                    "居飛車穴熊", 0,
+                    "居飛車穴熊", "IbisyaAnaguma", 0,
                     new []
                     {
                         new CastlePiece(PieceType.Gyoku, new Position(9, 9)),
@@ -437,7 +437,7 @@ namespace Ragnarok.Shogi
                     new string[] { }),
                 
                 new CastleInfo(
-                    "ミレニアム", 0,
+                    "ミレニアム", "Millennium", 0,
                     new []
                     {
                         new CastlePiece(PieceType.Gyoku, new Position(8, 9)),
@@ -449,7 +449,7 @@ namespace Ragnarok.Shogi
                     new string[] { }),
                 
                 new CastleInfo(
-                    "船囲い", 0,
+                    "船囲い", "Hune", 0,
                     new []
                     {
                         new CastlePiece(PieceType.Gyoku, new Position(7, 8)),
@@ -460,7 +460,7 @@ namespace Ragnarok.Shogi
                     new string[] { }),
                 
                 new CastleInfo(
-                    "箱入り娘", 0,
+                    "箱入り娘", "Hakoirimusume", 0,
                     new []
                     {
                         new CastlePiece(PieceType.Gyoku, new Position(7, 8)),
@@ -471,7 +471,7 @@ namespace Ragnarok.Shogi
                     new string[] { }),
                 
                 new CastleInfo(
-                    "セメント囲い", 0,
+                    "セメント囲い", "Cement", 0,
                     new []
                     {
                         new CastlePiece(PieceType.Gyoku, new Position(7, 8)),
@@ -483,7 +483,7 @@ namespace Ragnarok.Shogi
                     new string[] { }),
                 
                 new CastleInfo(
-                    "中住まい", 0,
+                    "中住まい", "Nakazumai", 0,
                     new []
                     {
                         new CastlePiece(PieceType.Gyoku, new Position(5, 8)),
@@ -493,7 +493,7 @@ namespace Ragnarok.Shogi
                     new string[] { }),
                 
                 new CastleInfo(
-                    "中原囲い", 0,
+                    "中原囲い", "Nakahara", 0,
                     new []
                     {
                         new CastlePiece(PieceType.Gyoku, new Position(6, 9)),
@@ -504,7 +504,7 @@ namespace Ragnarok.Shogi
                     new string[] { }),
                 
                 new CastleInfo(
-                    "左美濃", 0,
+                    "左美濃", "HidariMino", 0,
                     new []
                     {
                         new CastlePiece(PieceType.Gyoku, new Position(8, 8)),
@@ -514,7 +514,7 @@ namespace Ragnarok.Shogi
                     new string[] { }),
                 
                 new CastleInfo(
-                    "天守閣美濃", 0,
+                    "天守閣美濃", "TenshukakuMino", 0,
                     new []
                     {
                         new CastlePiece(PieceType.Gyoku, new Position(8, 7)),
@@ -526,7 +526,7 @@ namespace Ragnarok.Shogi
                     new string[] { }),
                 
                 new CastleInfo(
-                    "米長玉", 0,
+                    "米長玉", "YonenagaGyoku", 0,
                     new []
                     {
                         new CastlePiece(PieceType.Gyoku, new Position(9, 8)),
@@ -537,7 +537,7 @@ namespace Ragnarok.Shogi
                     new string[] { }),
                 
                 new CastleInfo(
-                    "串カツ囲い", 0,
+                    "串カツ囲い", "Kushikatsu", 0,
                     new []
                     {
                         new CastlePiece(PieceType.Gyoku, new Position(9, 8)),
@@ -549,7 +549,7 @@ namespace Ragnarok.Shogi
                     new string[] { }),
                 
                 new CastleInfo(
-                    "雁木", 0,
+                    "雁木", "Gangi", 0,
                     new []
                     {
                         new CastlePiece(PieceType.Gyoku, new Position(6, 9)),
@@ -561,7 +561,7 @@ namespace Ragnarok.Shogi
                     new string[] { }),
                 
                 new CastleInfo(
-                    "無敵囲い", 0,
+                    "無敵囲い", "Muteki", 0,
                     new []
                     {
                         new CastlePiece(PieceType.Gyoku, new Position(5, 9)),
@@ -574,7 +574,7 @@ namespace Ragnarok.Shogi
                     new string[] { }),
                 
                 new CastleInfo(
-                    "風車", 0,
+                    "風車", "Kazaguruma", 0,
                     new []
                     {
                         new CastlePiece(PieceType.Kei, new Position(7, 7)),
@@ -586,7 +586,7 @@ namespace Ragnarok.Shogi
                     new string[] { }),
                 
                 new CastleInfo(
-                    "イチゴ囲い", 0,
+                    "イチゴ囲い", "Ichigo", 0,
                     new []
                     {
                         new CastlePiece(PieceType.Gyoku, new Position(6, 8)),

@@ -60,6 +60,15 @@ namespace Ragnarok.Shogi
         }
         
         /// <summary>
+        /// IDを取得します。
+        /// </summary>
+        public string Id
+        {
+            get;
+            private set;
+        }
+        
+        /// <summary>
         /// 囲いの優先順位を取得します。
         /// </summary>
         public int Priority
@@ -92,11 +101,12 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public CastleInfo(string name, int priority,
+        public CastleInfo(string name, string id, int priority,
                           CastlePiece[] pieceList,
                           string[] baseCastleList)
         {
             Name = name;
+            Id = id;
             Priority = priority;
             PieceList = pieceList;
             BaseCastleList = baseCastleList;
