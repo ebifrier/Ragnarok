@@ -206,7 +206,7 @@ namespace Ragnarok.NicoNico.Live
             {
                 return live;
             }
-            else if (SetCommunityInfoZero(live, pageStr))
+            else if (SetCommunityInfoQ(live, pageStr))
             {
                 return live;
             }
@@ -291,20 +291,20 @@ namespace Ragnarok.NicoNico.Live
             return true;
         }
 
-        private static readonly Regex ZeroCommunityLevelRegex = new Regex(
+        private static readonly Regex QCommunityLevelRegex = new Regex(
             @"<span class=""commu_lv"">レベル：([0-9,]+)</span>",
             RegexOptions.IgnoreCase);
-        private static readonly Regex ZeroCommunityVisitorsRegex = new Regex(
+        private static readonly Regex QCommunityVisitorsRegex = new Regex(
             @"<span class=""visitor_score"">累計来場者数：([0-9,]+)</span>",
             RegexOptions.IgnoreCase);
 
         /// <summary>
-        /// Zeroバージョンのコミュニティ情報(累計来場者数など)を取得します。
+        /// Qバージョンのコミュニティ情報(累計来場者数など)を取得します。
         /// </summary>
-        private static bool SetCommunityInfoZero(LiveInfo live, string pageStr)
+        private static bool SetCommunityInfoQ(LiveInfo live, string pageStr)
         {
             // 累計来場者数
-            var m = ZeroCommunityVisitorsRegex.Match(pageStr);
+            var m = QCommunityVisitorsRegex.Match(pageStr);
             if (!m.Success)
             {
                 throw new NicoLiveException(
@@ -316,7 +316,7 @@ namespace Ragnarok.NicoNico.Live
                 NumberStyles.AllowThousands);
 
             // /レベル
-            m = ZeroCommunityLevelRegex.Match(pageStr);
+            m = QCommunityLevelRegex.Match(pageStr);
             if (!m.Success)
             {
                 throw new NicoLiveException(

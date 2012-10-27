@@ -1,3 +1,11 @@
+2012-10-27  - Ver 2.4.2
+
+	* Ragnarok/externals/net/System.Data.SQLite.dll: 以前のdllが動かな
+	くなってしまったので、野良ビルドdllに差し替えました。
+	* Ragnarok/Ragnarok/NicoNico/AccountInfo.cs, 
+	  Ragnarok/NicoNico/Live/LiveInfo.cs: ニコニコのＱバージョンに対応し
+	ました。
+
 2012-10-23  - Ver 2.4.1
 
 	* externals/net/CookieGetterSharp.dll, NParsec.dll: .NET Framework 

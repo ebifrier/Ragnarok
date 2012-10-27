@@ -153,20 +153,20 @@ namespace Ragnarok.NicoNico
                     "与えられたページは正しくありません。");
             }
 
-            if (userPage.IndexOf("niconico:Zero") >= 0)
+            if (userPage.IndexOf("Qバージョンに変更") >= 0)
             {
-                return GetAccountZero(id, userPage);
+                return GetAccountHarajuku(id, userPage);
             }
             else
             {
-                return GetAccountHarajuku(id, userPage);
+                return GetAccountQ(id, userPage);
             }
         }
 
         /// <summary>
-        /// ニコニコ動画(ZERO)バージョンのアカウント情報を取得します。
+        /// ニコニコ動画(Q)バージョンのアカウント情報を取得します。
         /// </summary>
-        private static AccountInfo GetAccountZero(int id, string userPage)
+        private static AccountInfo GetAccountQ(int id, string userPage)
         {
             var result = new AccountInfo()
             {
