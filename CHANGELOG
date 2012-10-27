@@ -5,6 +5,9 @@
 	* Ragnarok/Ragnarok/NicoNico/AccountInfo.cs, 
 	  Ragnarok/NicoNico/Live/LiveInfo.cs: ニコニコのＱバージョンに対応し
 	ました。
+	* Ragnarok/Ragnarok/Net/WebUtil.cs: MONOの場合のみ、HtmlUtilityのメ
+	ソッドを使うようにしました。.NET 4.0 Client Profileにはこのクラスが
+	存在しないため、代わりにWebUtilityクラスを使っています。
 
 2012-10-23  - Ver 2.4.1
 
