@@ -1,3 +1,8 @@
+2012-11-01  - Ver 2.4.4
+
+	* Ragnarok/Utility/StringNormalizer.cs: ラ行の文字正規化が行われて
+	いなかったため、修正しました。
+
 2012-10-28  - Ver 2.4.3
 
 	* Ragnarok/Ragnarok.Shogi/CastleInfo.cs: 各囲いに英数字のIDを付けま
