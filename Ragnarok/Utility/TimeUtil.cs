@@ -28,9 +28,11 @@ namespace Ragnarok.Utility
             double seconds = 0.0;
             if (!double.TryParse(timeText, out seconds))
             {
-                // TODO
-                return DateTime.Now;
+                return DateTime.MinValue; // エラー
             }
+
+            /*// 失敗時は例外を投げます。
+            double seconds = double.Parse(timeText);*/
 
             // 基準時刻に加算し、ローカル時刻に直します。
             var utc = Epoch.AddSeconds(seconds);

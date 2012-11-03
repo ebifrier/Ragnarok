@@ -351,7 +351,7 @@ namespace Ragnarok.Shogi
                 return false;
             }
 
-            // TODO: 移動前の位置は判定に使うべきかどうか迷う。
+            // 移動前の位置は判定に使うべきかどうか迷う。
             if (OldPosition != other.OldPosition)
             {
                 return false;
