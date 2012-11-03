@@ -7,12 +7,46 @@ using System.Runtime.Serialization;
 namespace Ragnarok.ObjectModel
 {
     /// <summary>
+    /// プロパティごとの変更通知を保持します。
+    /// </summary>
+    internal sealed class PropertyChangedObject
+    {
+        /// <summary>
+        /// プロパティ名を取得または設定します。
+        /// </summary>
+        public string Name
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// コールバックハンドラを取得または設定します。
+        /// </summary>
+        public PropertyChangedEventHandler Handler
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 内部のコールバックハンドラを取得または設定します。
+        /// </summary>
+        public PropertyChangedEventHandler InternalHandler
+        {
+            get;
+            set;
+        }
+    }
+
+    /// <summary>
     /// WPFで動くモデルオブジェクトの基底クラスです。
     /// </summary>
     /// <remarks>
     /// 逆シリアル前には必ず<see cref="OnBeforeDeselialize"/>メソッドを
     /// 呼ぶようにしてください。
     /// </remarks>
+    [Serializable()]
     [DataContract()]
     public class NotifyObject : IParentModel, ILazyModel
     {
@@ -23,7 +57,11 @@ namespace Ragnarok.ObjectModel
         [field: NonSerialized]
         private LazyModelObject lazyModelObject = new LazyModelObject();
         [field: NonSerialized]
-        private Dictionary<string, object> propDic = new Dictionary<string, object>();
+        private Dictionary<string, object> propDic =
+            new Dictionary<string, object>();
+        [field: NonSerialized]
+        private List<PropertyChangedObject> propObjects =
+            new List<PropertyChangedObject>();
 
         /// <summary>
         /// 逆シリアル前に呼ばれます。
@@ -39,6 +77,7 @@ namespace Ragnarok.ObjectModel
             this.dependModelList = new List<object>();
             this.lazyModelObject = new LazyModelObject();
             this.propDic = new Dictionary<string, object>();
+            this.propObjects = new List<PropertyChangedObject>();
         }
 
         /// <summary>
@@ -137,6 +176,77 @@ namespace Ragnarok.ObjectModel
 
                     this.RaisePropertyChanged(name);
                 }
+            }
+        }
+
+        /// <summary>
+        /// プロパティごとにプロパティ変更通知を受け取るようにします。
+        /// </summary>
+        public void AddPropertyChangedHandler(string propertyName,
+                                              PropertyChangedEventHandler handler)
+        {
+            if (string.IsNullOrEmpty(propertyName))
+            {
+                return;
+            }
+
+            if (handler == null)
+            {
+                return;
+            }
+
+            var propObj = new PropertyChangedObject
+            {
+                Name = propertyName,
+                InternalHandler = handler,
+                Handler = (sender, e) =>
+                {
+                    if (e.PropertyName != propertyName)
+                    {
+                        return;
+                    }
+
+                    handler(sender, e);
+                },
+            };
+
+            using (LazyLock())
+            {
+                this.propObjects.Add(propObj);
+
+                PropertyChanged += propObj.Handler;
+            }
+        }
+
+        /// <summary>
+        /// プロパティごとのプロパティ変更通知を削除します。
+        /// </summary>
+        public void RemovePropertyChangedHandler(string propertyName,
+                                                 PropertyChangedEventHandler handler)
+        {
+            if (string.IsNullOrEmpty(propertyName))
+            {
+                return;
+            }
+
+            if (handler == null)
+            {
+                return;
+            }
+
+            using (LazyLock())
+            {
+                var target = this.propObjects.FirstOrDefault(obj =>
+                    obj.Name == propertyName &&
+                    obj.InternalHandler == handler);
+                if (target == null)
+                {
+                    return;
+                }
+
+                this.propObjects.Remove(target);
+
+                PropertyChanged -= target.Handler;
             }
         }
     }

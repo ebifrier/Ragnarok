@@ -2,6 +2,8 @@
 
 	* Ragnarok/Utility/TimeUtil.cs: Unix時刻の文字列→DateTimeの変換に
 	失敗したとき、現在時刻ではなくDateTime.MinValueを返すようにしました。
+	* Ragnarok/ObjectModel/NotifyObject.cs: プロパティごとに変更通知を
+	受け取るための仕組みを追加しました。
 
 2012-11-01  - Ver 2.4.4
 
