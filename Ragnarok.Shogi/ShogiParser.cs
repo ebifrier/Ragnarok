@@ -86,9 +86,7 @@ namespace Ragnarok.Shogi
                 {"や", 8}, {"はっ", 8}, {"はち", 8}, {"ぱち", 8}, {"はーち", 8},
 
             {"9", 9}, {"９", 9}, {"九", 9}, {"Ⅸ", 9}, {"⑨", 9},
-                {"く", 9},
-                // "級"と被ってしまうためひらがなはつけません。
-                // {"きゅう", 9}, {"きゅん", 9},
+                {"く", 9}, {"きゅう", 9}, {"きゅん", 9},
         };
 
         /// <summary>
@@ -252,6 +250,7 @@ namespace Ragnarok.Shogi
             {"GYOKU", Piece.Gyoku},
             {"TAMA", Piece.Gyoku},
             {"OU", Piece.Gyoku},
+            {"KAMI", Piece.Gyoku},
 
             {"金", Piece.Kin},
             {"衾", Piece.Kin},
@@ -309,6 +308,7 @@ namespace Ragnarok.Shogi
             {"KYOUSYA", Piece.Kyo},
             {"KYOU", Piece.Kyo},
             {"KAORI", Piece.Kyo},
+            {"KYO", Piece.Kyo},
 
             {"歩兵", Piece.Hu},
             {"歩", Piece.Hu},

@@ -38,6 +38,7 @@ namespace RagnarokTest
 
             var shogiTest = new Shogi.ShogiParserTest();
             shogiTest.ParseMoveTest();
+            shogiTest.ParsePlayerTest();
 
             StringNormalizer.NormalizeText("二十五", NormalizeTextOption.All);
             StringNormalizer.NormalizeText("三千四百万六百十二", NormalizeTextOption.All);

@@ -1,3 +1,10 @@
+2012-11-08  - Ver 2.4.6
+
+	* Ragnarok.Shogi/ShogiParser.cs: ９を\"きゅう\"や\"く\"で解析可能に
+	しました。今までは級とかぶるため導入していませんでした。
+	* RagnarokTest/Shogi/ShogiParserTest.cs: 将棋プレイヤーの名前などの
+	解析テストを追加しました。
+
 2012-11-03  - Ver 2.4.5
 
 	* Ragnarok/Utility/TimeUtil.cs: Unix時刻の文字列→DateTimeの変換に

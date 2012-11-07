@@ -34,5 +34,49 @@ namespace RagnarokTest.Shogi
                 ShogiParser.ParseMove("ロッパチ銀", true),
                 gin68);
         }
+
+        private bool EqualsPlayer(ShogiPlayer x, ShogiPlayer y)
+        {
+            return (x.Nickname == y.Nickname && x.SkillLevel == y.SkillLevel);
+        }
+
+        [Test()]
+        public void ParsePlayerTest()
+        {
+            var player1 = new ShogiPlayer()
+            {
+                Nickname = "てすと",
+                SkillLevel = new SkillLevel(SkillKind.Kyu, 9),
+            };
+            Assert.IsTrue(EqualsPlayer(
+                ShogiParser.ParsePlayer("9級＠てすと"),
+                player1));
+            Assert.IsTrue(EqualsPlayer(
+                ShogiParser.ParsePlayer("　きゅうきゅう＠てすと"),
+                player1));
+            Assert.IsTrue(EqualsPlayer(
+                ShogiParser.ParsePlayer("  きゅう級＠てすと"),
+                player1));
+            Assert.IsTrue(EqualsPlayer(
+                ShogiParser.ParsePlayer("  ９級  @ てすと "),
+                player1));
+            Assert.IsFalse(EqualsPlayer(
+                ShogiParser.ParsePlayer("  級きゅう＠てすと"),
+                player1));
+
+            var player2 = new ShogiPlayer()
+            {
+                Nickname = "三級",
+            };
+            Assert.IsTrue(EqualsPlayer(
+                ShogiParser.ParsePlayer("三級"),
+                player2));
+            Assert.IsTrue(EqualsPlayer(
+                ShogiParser.ParsePlayer(" ＠ 三級"),
+                player2));
+            Assert.IsFalse(EqualsPlayer(
+                ShogiParser.ParsePlayer("三級＠三級"),
+                player2));
+        }
     }
 }
