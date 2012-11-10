@@ -8,7 +8,7 @@
         </ContentControl>
     </ControlTemplate>
 
-    <Style TargetType="{x:Type l:DecoratedText}">
+    <Style TargetType="l:DecoratedText">
         <Setter Property="Template" Value="{StaticResource decoratedText}" />
     </Style>
 </ResourceDictionary>
