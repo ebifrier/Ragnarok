@@ -67,16 +67,17 @@ namespace Ragnarok.Shogi
                 new KifReader(),
                 new Ki2Reader(),
             };
+            KifuObject result = null;
 
             // すべての形式のファイルを読み込んでみます。
             foreach (var kifuReader in kifuReaders)
             {
                 try
                 {
-                    var obj = kifuReader.Load(reader);
-                    if (obj != null)
+                    result = kifuReader.Load(reader);
+                    if (result != null)
                     {
-                        return obj;
+                        break;
                     }
                 }
                 catch
@@ -85,8 +86,15 @@ namespace Ragnarok.Shogi
                 }
             }
 
-            throw new ArgumentException(
-                "棋譜の読み込みに失敗しました。");
+            if (result == null)
+            {
+                throw new ShogiException(
+                    "棋譜の読み込みに失敗しました。");
+            }
+
+            // 最後に棋譜の指し手のチェックと正規化を行います。
+            result.Normalize();
+            return result;
         }
     }
 }

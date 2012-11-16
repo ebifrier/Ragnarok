@@ -228,7 +228,7 @@ namespace Ragnarok.Shogi.File
         /// <summary>
         /// 変化を既存のノードに追加します。
         /// </summary>
-        private void MergeVariation(VariationNode node, VariationNode source)
+        private void MergeVariation(MoveNode node, MoveNode source)
         {
             while (node.MoveCount != source.MoveCount)
             {
@@ -250,34 +250,9 @@ namespace Ragnarok.Shogi.File
         }
 
         /// <summary>
-        /// 指し手リストをツリー形式に変換します。
-        /// </summary>
-        private VariationNode ConvertNode(List<Move> moveList, int beginNumber)
-        {
-            VariationNode root = null;
-
-            moveList.Reverse();
-            beginNumber += moveList.Count();
-
-            foreach (var move in moveList)
-            {
-                var node = new VariationNode()
-                {
-                    MoveCount = --beginNumber,
-                    Move = move,
-                    NextChild = root,
-                };
-
-                root = node;
-            }
-
-            return root;
-        }
-
-        /// <summary>
         /// 変化をパースします。
         /// </summary>
-        private VariationNode ParseVariationNode()
+        private MoveNode ParseVariationNode()
         {
             var numSet = new HashSet<int>();
             var moveNumber = -1;
@@ -290,7 +265,7 @@ namespace Ragnarok.Shogi.File
                 return null;
             }
 
-            var root = ConvertNode(moveList, moveNumber);
+            var root = KifuObject.Convert2Node(moveList, moveNumber);
 
             // 以下、変化リストをパースします。
             while (numSet.Any())

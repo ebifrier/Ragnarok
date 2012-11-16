@@ -1,3 +1,11 @@
+2012-11-16  - Ver 2.4.7
+
+	* Ragnarok.Shogi/KifuReader.cs: 記譜読み込み後に指し手を正規化する
+	ようにしました。棋譜ファイルのフォーマットによっては文字列が変えら
+	れていることがあるためです。
+	* Ragnarok.Shogi/MoveNode.cs: VariationNodeからクラス名を変更し、ま
+	た指し手の確認や正規化を行うためのメソッドを追加しました。
+
 2012-11-08  - Ver 2.4.6
 
 	* Ragnarok.Shogi/ShogiParser.cs: ９を\"きゅう\"や\"く\"で解析可能に

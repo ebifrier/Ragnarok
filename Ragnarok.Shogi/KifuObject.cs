@@ -6,48 +6,6 @@ using System.Text;
 namespace Ragnarok.Shogi
 {
     /// <summary>
-    /// 変化を木構造で表すためのクラスです。
-    /// </summary>
-    public sealed class VariationNode
-    {
-        /// <summary>
-        /// 手数を取得または設定します。
-        /// </summary>
-        public int MoveCount
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// 指し手を取得または設定します。
-        /// </summary>
-        public Move Move
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// 次の指し手を取得または設定します。
-        /// </summary>
-        public VariationNode NextChild
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// 次の変化の手を取得または設定します。
-        /// </summary>
-        public VariationNode NextVariation
-        {
-            get;
-            set;
-        }
-    }
-
-    /// <summary>
     /// 指し手や変化など棋譜ファイルに必要な要素を保持します。
     /// </summary>
     public sealed class KifuObject
@@ -64,7 +22,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 変化を含んだ指し手の開始ノードを取得します。
         /// </summary>
-        public VariationNode RootNode
+        public MoveNode RootNode
         {
             get;
             private set;
@@ -82,7 +40,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 指し手ツリーをリスト形式に変換します。
         /// </summary>
-        public static IEnumerable<Move> Convert2List(VariationNode root)
+        public static IEnumerable<Move> Convert2List(MoveNode root)
         {
             for (var node = root; node != null; node = node.NextChild)
             {
@@ -93,7 +51,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 指し手リストをツリー形式に変換します。
         /// </summary>
-        public static VariationNode Convert2Node(IEnumerable<Move> moveList,
+        public static MoveNode Convert2Node(IEnumerable<Move> moveList,
                                                  int firstMoveCount)
         {
             if (moveList == null || !moveList.Any())
@@ -101,12 +59,14 @@ namespace Ragnarok.Shogi
                 return null;
             }
 
-            VariationNode root = null;
-            var beginNumber = firstMoveCount + moveList.Count();
+            var clonedMoveList = moveList.ToList();
+            var beginNumber = firstMoveCount + clonedMoveList.Count();
+            MoveNode root = null;
 
-            foreach (var move in moveList.Reverse())
+            clonedMoveList.Reverse();
+            foreach (var move in clonedMoveList)
             {
-                var node = new VariationNode()
+                var node = new MoveNode()
                 {
                     MoveCount = --beginNumber,
                     Move = move,
@@ -130,7 +90,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 変化ツリーのルートノードを設定します。
         /// </summary>
-        public void SetRootNode(VariationNode root)
+        public void SetRootNode(MoveNode root)
         {
             if (root == null)
             {
@@ -189,6 +149,20 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
+        /// 棋譜の確認と指し手の正規化を行います。
+        /// </summary>
+        public void Normalize()
+        {
+            if (Headers == null || RootNode == null)
+            {
+                throw new ShogiException(
+                    "ヘッダーかノードが設定されていません。");
+            }
+
+            RootNode.Normalize(new Board());
+        }
+
+        /// <summary>
         /// コンストラクタ
         /// </summary>
         public KifuObject()
@@ -209,7 +183,7 @@ namespace Ragnarok.Shogi
         /// コンストラクタ
         /// </summary>
         public KifuObject(Dictionary<string, string> header,
-                         VariationNode root)
+                         MoveNode root)
         {
             SetHeader(header);
             SetRootNode(root);

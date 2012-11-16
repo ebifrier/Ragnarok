@@ -27,9 +27,9 @@ namespace Ragnarok.Shogi.File
         }
 
         /// <summary>
-        /// 指し手を出力します。
+        /// 出力用の指し手に変換します。
         /// </summary>
-        private string MakeMoveLine(Move move, int number, bool hasVariation)
+        private Move ModifyMove(Move move)
         {
             if (move.OldPosition == null)
             {
@@ -44,8 +44,18 @@ namespace Ragnarok.Shogi.File
                 move.ActionType = ActionType.None;
             }
 
+            return move;
+        }
+
+        /// <summary>
+        /// 指し手を出力します。
+        /// </summary>
+        private string MakeMoveLine(Move move, int number, bool hasVariation)
+        {
+            var modifiedMove = ModifyMove(move);
+
             // 半角文字相当の文字数で空白を計算します。
-            var moveText = Stringizer.ToString(move, MoveTextStyle.KifFile);
+            var moveText = Stringizer.ToString(modifiedMove, MoveTextStyle.KifFile);
             var hanLen = moveText.HankakuLength();
 
             return string.Format("{0,4} {1}{2} ( 0:00/00:00:00){3}",
@@ -58,7 +68,7 @@ namespace Ragnarok.Shogi.File
         /// <summary>
         /// 変化の分岐を含めて出力します。
         /// </summary>
-        private void WriteMoveNode(TextWriter writer, VariationNode node)
+        private void WriteMoveNode(TextWriter writer, MoveNode node)
         {
             if (node == null || node.Move == null)
             {

@@ -74,6 +74,7 @@
     <Compile Include="File\Ki2Reader.cs" />
     <Compile Include="File\KifWriter.cs" />
     <Compile Include="Move.cs" />
+    <Compile Include="MoveNode.cs" />
     <Compile Include="MovePointPair.cs" />
     <Compile Include="MoveStatistics.cs" />
     <Compile Include="Piece.cs" />
@@ -81,6 +82,7 @@
     <Compile Include="PlayerPool.cs" />
     <Compile Include="Position.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ShogiException.cs" />
     <Compile Include="SampleMove.cs" />
     <Compile Include="ShogiParser.cs" />
     <Compile Include="SkillLevel.cs" />

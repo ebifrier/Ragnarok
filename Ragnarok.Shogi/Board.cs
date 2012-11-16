@@ -524,6 +524,32 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
+        /// 可能な限り局面をUndoします。
+        /// </summary>
+        public void UndoAll()
+        {
+            using (LazyLock())
+            {
+                while (Undo() != null)
+                {
+                }
+            }
+        }
+
+        /// <summary>
+        /// 可能な限り局面をRedoします。
+        /// </summary>
+        public void RedoAll()
+        {
+            using (LazyLock())
+            {
+                while (Redo() != null)
+                {
+                }
+            }
+        }
+
+        /// <summary>
         /// リドゥ用のリストをすべてクリアします。
         /// </summary>
         public void ClearRedoList()
