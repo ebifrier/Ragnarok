@@ -1296,6 +1296,10 @@ namespace Ragnarok.Shogi.View
             // このオブジェクトへの参照を初期化します。
             EffectManager = null;
 
+            // Boardには駒が変化したときのハンドラを設定しているため
+            // 最後に必ずそのハンドラを削除する必要があります。
+            Board = null;
+
             if (this.banEffectObjectRoot != null)
             {
                 this.banEffectObjectRoot.Terminate();

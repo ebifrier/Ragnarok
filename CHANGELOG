@@ -1,3 +1,11 @@
+2012-11-23  - Ver 2.4.8
+
+	* Ragnarok.Presentation/Effect: グレースケールエフェクト用のファイ
+	ルを追加しました。
+	* Ragnarok.Shogi/View/ShogiControl.xaml.cs: コントロール終了時に設
+	定された盤を削除するようにしました。ハンドラを設定している関係で、
+	残った盤が得体のしれない動きをしていました。
+
 2012-11-16  - Ver 2.4.7
 
 	* Ragnarok.Shogi/KifuReader.cs: 記譜読み込み後に指し手を正規化する
