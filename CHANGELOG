@@ -1,3 +1,10 @@
+2012-11-29  - Ver 2.4.9
+
+	* Ragnarok.Shogi/BWType.cs: 先手番なら+1、後手番なら-1を返すような
+	メソッドを追加しました。
+	* Ragnarok/Utility/AppSettingsBase.cs: DefaultSettingValueAttribute
+	の使用をやめ、DefaultValueAttributeを使うようにしました。
+
 2012-11-23  - Ver 2.4.8
 
 	* Ragnarok.Presentation/Effect: グレースケールエフェクト用のファイ

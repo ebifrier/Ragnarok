@@ -53,5 +53,13 @@ namespace Ragnarok.Shogi
                 return BWType.None;
             }
         }
+
+        /// <summary>
+        /// 先手なら+1、後手なら-1を返します。
+        /// </summary>
+        public static int Sign(this BWType self)
+        {
+            return (self == BWType.White ? -1 : +1);
+        }
     }
 }

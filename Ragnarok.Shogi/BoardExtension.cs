@@ -472,8 +472,7 @@ namespace Ragnarok.Shogi
             // 段情報でフィルターされた場合は、段の移動情報を付加します。
             if (tmpMoveList.Count() != boardMoveList.Count())
             {
-                var relRank2 = relRank *
-                    (referenceMove.BWType == BWType.White ? -1 : 1);
+                var relRank2 = relRank * referenceMove.BWType.Sign();
 
                 if (relRank2 < 0)
                 {
@@ -532,8 +531,7 @@ namespace Ragnarok.Shogi
             // 列情報でフィルターされた場合は、列の移動情報を付加します。
             if (tmpMoveList.Count() != boardMoveList.Count())
             {
-                var relFile2 = relFile *
-                    (referenceMove.BWType == BWType.White ? -1 : 1);
+                var relFile2 = relFile * referenceMove.BWType.Sign();
 
                 if (relFile2 < 0)
                 {

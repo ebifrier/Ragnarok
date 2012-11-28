@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Reflection;
-using System.Configuration;
-using System.ComponentModel;
 using System.Xml;
 using System.Xml.Serialization;
 using System.Runtime.Serialization;
@@ -13,6 +12,20 @@ using System.Runtime.Serialization;
 namespace Ragnarok.Utility
 {
     using Ragnarok.ObjectModel;
+
+    /// <summary>
+    /// 設定の読み込み時に使われます。
+    /// </summary>
+    public class SettingsLoadedEventArgs : EventArgs
+    {
+    }
+
+    /// <summary>
+    /// 設定の保存時に使われます。
+    /// </summary>
+    public class SettingsSavingEventArgs : CancelEventArgs
+    {
+    }
 
     /// <summary>
     /// 設定ファイルを保存するための基底ファイルです。
@@ -63,13 +76,13 @@ namespace Ragnarok.Utility
         /// 設定が読み込まれたことを通知します。
         /// </summary>
         [field: NonSerialized()]
-        public virtual event SettingsLoadedEventHandler SettingsLoaded;
+        public virtual event EventHandler<SettingsLoadedEventArgs> SettingsLoaded;
 
         /// <summary>
         /// 設定が読み込まれる前に通知します。
         /// </summary>
         [field:NonSerialized()]
-        public virtual event SettingsSavingEventHandler SettingsSaving;
+        public virtual event EventHandler<SettingsSavingEventArgs> SettingsSaving;
 
         /// <summary>
         /// AutoSave機能を使うかどうかを取得または設定します。
@@ -131,7 +144,7 @@ namespace Ragnarok.Utility
         /// <summary>
         /// 設定が保存される前に通知します。
         /// </summary>
-        protected virtual void NotifySettingsSaving(CancelEventArgs e)
+        protected virtual void NotifySettingsSaving(SettingsSavingEventArgs e)
         {
             var handler = SettingsSaving;
 
@@ -253,7 +266,7 @@ namespace Ragnarok.Utility
         /// <summary>
         /// 設定が保存される前に呼ばれます。
         /// </summary>
-        protected virtual void OnSettingsSaving(object sender, CancelEventArgs e)
+        protected virtual void OnSettingsSaving(object sender, SettingsSavingEventArgs e)
         {
         }
 
@@ -342,7 +355,7 @@ namespace Ragnarok.Utility
 
                     // デフォルト値を属性から設定します。
                     var attributes = property.GetCustomAttributes(
-                        typeof(DefaultSettingValueAttribute),
+                        typeof(DefaultValueAttribute),
                         false);
                     if (!attributes.Any())
                     {
@@ -350,14 +363,20 @@ namespace Ragnarok.Utility
                         continue;
                     }
 
-                    // 文字列から値の変換を試みます。
-                    var attr = (DefaultSettingValueAttribute)attributes[0];
-                    object value;
-                    if (!TryConvertToValue(property.PropertyType, attr.Value,
-                                           out value))
+                    // デフォルト値を取得。
+                    var attr = (DefaultValueAttribute)attributes[0];
+                    var value = attr.Value;
+
+                    // 値が文字列なら値への変換を試みます。
+                    var valueStr = value as string;
+                    if (valueStr != null)
                     {
-                        SetDefaultValue(propertyObj);
-                        continue;
+                        if (!TryConvertToValue(property.PropertyType, valueStr,
+                                               out value))
+                        {
+                            SetDefaultValue(propertyObj);
+                            continue;
+                        }
                     }
 
                     // 値を設定します。
@@ -419,7 +438,7 @@ namespace Ragnarok.Utility
                     "{0}: 設定ファイルの読み込みに失敗しました。", Location);
             }
             
-            NotifySettingsLoaded(new SettingsLoadedEventArgs(null));
+            NotifySettingsLoaded(new SettingsLoadedEventArgs());
         }
 
         /// <summary>
@@ -584,7 +603,7 @@ namespace Ragnarok.Utility
             try
             {
                 // 保存はキャンセルできます。
-                var e = new CancelEventArgs();
+                var e = new SettingsSavingEventArgs();
                 NotifySettingsSaving(e);
                 if (e.Cancel)
                 {
