@@ -11,6 +11,12 @@ namespace Ragnarok.Shogi
     public sealed class KifuObject
     {
         /// <summary>
+        /// sjisが基本。
+        /// </summary>
+        public static readonly Encoding DefaultEncoding =
+            Encoding.GetEncoding("Shift_JIS");
+
+        /// <summary>
         /// ヘッダ部分の情報を取得します。
         /// </summary>
         public Dictionary<string, string> Headers

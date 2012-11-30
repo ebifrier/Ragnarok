@@ -14,12 +14,6 @@ namespace Ragnarok.Shogi
     public static class KifuWriter
     {
         /// <summary>
-        /// sjisが基本。
-        /// </summary>
-        private static Encoding DefaultEncoding =
-            Encoding.GetEncoding("Shift_JIS");
-
-        /// <summary>
         /// 棋譜ファイルに保存します。
         /// </summary>
         public static void SaveFile(string filepath, KifuObject kifuObj)
@@ -30,7 +24,7 @@ namespace Ragnarok.Shogi
             }
 
             using (var stream = new FileStream(filepath, FileMode.Create))
-            using (var writer = new StreamWriter(stream, DefaultEncoding))
+            using (var writer = new StreamWriter(stream, KifuObject.DefaultEncoding))
             {
                 Save(writer, kifuObj);
             }

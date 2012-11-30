@@ -14,12 +14,6 @@ namespace Ragnarok.Shogi
     public static class KifuReader
     {
         /// <summary>
-        /// sjisが基本。
-        /// </summary>
-        private static Encoding DefaultEncoding =
-            Encoding.GetEncoding("Shift_JIS");
-
-        /// <summary>
         /// 棋譜をファイルから読み込みます。
         /// </summary>
         public static KifuObject LoadFile(string filepath)
@@ -30,7 +24,7 @@ namespace Ragnarok.Shogi
             }
 
             using (var stream = new FileStream(filepath, FileMode.Open))
-            using (var reader = new StreamReader(stream, DefaultEncoding))
+            using (var reader = new StreamReader(stream, KifuObject.DefaultEncoding))
             {
                 return Load(reader);
             }

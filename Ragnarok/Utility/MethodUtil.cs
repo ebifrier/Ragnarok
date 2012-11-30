@@ -167,6 +167,9 @@ namespace Ragnarok.Utility
         /// <summary>
         /// 最適化された取得メソッドを作成します。
         /// </summary>
+        /// <remarks>
+        /// ExpressionTreeを使います。
+        /// </remarks>
         private GetterType MakeGetter()
         {
             try
@@ -182,11 +185,18 @@ namespace Ragnarok.Utility
                     return null;
                 }
 
-                var targetP = Expression.Parameter(typeof(TTarget), "target");
-                var body = Expression.Call(targetP, method);
+                // 作成するラムダ関数
+                // target => target.method()
 
+                // "target"という引数を定義。
+                var target = Expression.Parameter(typeof(TTarget), "target");
+                
+                // "target"の"method"メソッドを呼び出します。
+                var body = Expression.Call(target, method);
+
+                // bodyをラムダとして定義。
                 var e = Expression.Lambda(
-                    typeof(GetterType), body, targetP);
+                    typeof(GetterType), body, target);
 
                 return (GetterType)e.Compile();
             }
@@ -204,6 +214,9 @@ namespace Ragnarok.Utility
         /// <summary>
         /// 最適化された設定メソッドを作成します。
         /// </summary>
+        /// <remarks>
+        /// ExpressionTreeを使います。
+        /// </remarks>
         private SetterType MakeSetter()
         {
             try
@@ -219,11 +232,18 @@ namespace Ragnarok.Utility
                     return null;
                 }
 
-                var targetP = Expression.Parameter(typeof(TTarget), "target");
-                var valueP = Expression.Parameter(typeof(TValue), "value");
-                var body = Expression.Call(targetP, method, valueP);
+                // 作成するラムダ関数
+                // (target, value) => target.method(value)
 
-                var param = new[] { targetP, valueP };
+                // "target", "value"という引数を定義。
+                var target = Expression.Parameter(typeof(TTarget), "target");
+                var value = Expression.Parameter(typeof(TValue), "value");
+
+                // "value"を引数として、"target"の"method"メソッドを呼び出します。
+                var body = Expression.Call(target, method, value);
+
+                // メソッド呼び出しをラムダとして定義。
+                var param = new[] { target, value };
                 var e = Expression.Lambda(
                     typeof(SetterType), body, param);
 
