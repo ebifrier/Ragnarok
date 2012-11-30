@@ -51,8 +51,26 @@ namespace Ragnarok.Net.ProtoBuf
         /// <summary>
         /// 各種リクエストなどのハンドラです。
         /// </summary>
-        internal class HandlerInfo
+        private sealed class HandlerInfo
         {
+            /// <summary>
+            /// 処理するメッセージの型を取得または設定します。
+            /// </summary>
+            public Type Type
+            {
+                get;
+                set;
+            }
+
+            /// <summary>
+            /// もしリクエストなら、そのレスポンスの型を取得または設定します。
+            /// </summary>
+            public Type ResponseType
+            {
+                get;
+                set;
+            }
+
             /// <summary>
             /// リクエストを処理するためのハンドラかどうかを取得します。
             /// </summary>
@@ -62,19 +80,22 @@ namespace Ragnarok.Net.ProtoBuf
             }
 
             /// <summary>
-            /// 処理するメッセージの型です。
+            /// 実際の処理を行うハンドラを取得または設定します。
             /// </summary>
-            public Type Type;
+            public Func<object, IPbResponse> Handler
+            {
+                get;
+                set;
+            }
 
             /// <summary>
-            /// もしリクエストなら、そのレスポンスの型です。
+            /// ログ出力を行うかどうかを取得または設定します。
             /// </summary>
-            public Type ResponseType;
-
-            /// <summary>
-            /// 実際の処理を行うハンドラです。
-            /// </summary>
-            public Func<object, IPbResponse> Handler;
+            public bool IsOutLog
+            {
+                get;
+                set;
+            }
         }
 
         private static readonly Dictionary<string, Type> typeCache =
@@ -114,7 +135,8 @@ namespace Ragnarok.Net.ProtoBuf
         /// <summary>
         /// T型のメッセージを処理するハンドラを追加します。
         /// </summary>
-        public void AddCommandHandler<TCmd>(PbCommandHandler<TCmd> handler)
+        public void AddCommandHandler<TCmd>(PbCommandHandler<TCmd> handler,
+                                            bool isOutLog = true)
         {
             if (handler == null)
             {
@@ -127,8 +149,9 @@ namespace Ragnarok.Net.ProtoBuf
                 {
                     Type = typeof(TCmd),
                     ResponseType = null,
-                    Handler = (commandObj) =>
-                        HandleCommandInternal(handler, commandObj),
+                    Handler = (_ =>
+                        HandleCommandInternal(handler, _)),
+                    IsOutLog = isOutLog,
                 };
 
                 this.handlerDic.Add(typeof(TCmd), handlerInfo);
@@ -138,9 +161,9 @@ namespace Ragnarok.Net.ProtoBuf
         /// <summary>
         /// コマンドを型付けするためのメソッドです。
         /// </summary>
-        private IPbResponse HandleCommandInternal<TCmd>(
-            PbCommandHandler<TCmd> handler,
-            object commandObj)
+        private IPbResponse HandleCommandInternal<TCmd>(PbCommandHandler<TCmd>
+                                                        handler,
+                                                        object commandObj)
         {
             var e = new PbCommandEventArgs<TCmd>((TCmd)commandObj);
             handler(this, e);
@@ -151,8 +174,9 @@ namespace Ragnarok.Net.ProtoBuf
         /// <summary>
         /// T型のリクエストを処理するハンドラを追加します。
         /// </summary>
-        public void AddRequestHandler<TReq, TRes>(
-            PbRequestHandler<TReq, TRes> handler)
+        public void AddRequestHandler<TReq, TRes>(PbRequestHandler<TReq, TRes>
+                                                  handler,
+                                                  bool isOutLog = true)
             where TRes: class
         {
             if (handler == null)
@@ -168,6 +192,7 @@ namespace Ragnarok.Net.ProtoBuf
                     ResponseType = typeof(TRes),
                     Handler = (requestObj) =>
                         HandleRequestInternal(handler, requestObj),
+                    IsOutLog = isOutLog,
                 };
                 
                 this.handlerDic.Add(typeof(TReq), handlerInfo);
@@ -213,33 +238,33 @@ namespace Ragnarok.Net.ProtoBuf
                 throw new ArgumentNullException("version");
             }
 
-            // 待機用イベントです。
-            var ev = new ManualResetEvent(false);
-            var result = PbVersionCheckResult.Unknown;
+            // 待機用イベントを使い、非同期で確認を行います。
+            using (var ev = new ManualResetEvent(false))
+            {
+                var request = new PbCheckProtocolVersionRequest(ProtocolVersion);
+                var result = PbVersionCheckResult.Unknown;
 
-            // リクエストを送ります。
-            var request = new PbCheckProtocolVersionRequest(ProtocolVersion);
+                // 型を指定しないといくつかのコンパイラではコンパイルに失敗します。
+                SendRequest<PbCheckProtocolVersionRequest,
+                            PbCheckProtocolVersionResponse>(
+                    request,
+                    timeout,
+                    (object sender,
+                     PbResponseEventArgs<PbCheckProtocolVersionResponse> e) =>
+                    {
+                        // プロトコルのバージョンチェックの結果を受け取ります。
+                        result = (e.Response == null ?
+                            (e.ErrorCode == PbErrorCode.Timeout ?
+                             PbVersionCheckResult.Timeout :
+                             PbVersionCheckResult.Unknown) :
+                            e.Response.Result);
 
-            // 型を指定しないといくつかのコンパイラではコンパイルに失敗します。
-            SendRequest<PbCheckProtocolVersionRequest,
-                        PbCheckProtocolVersionResponse>(
-                request,
-                timeout,
-                (object sender,
-                 PbResponseEventArgs<PbCheckProtocolVersionResponse> e) =>
-                {
-                    // プロトコルのバージョンチェックの結果を受け取ります。
-                    result = (e.Response == null ?
-                        (e.ErrorCode == PbErrorCode.Timeout ?
-                         PbVersionCheckResult.Timeout :
-                         PbVersionCheckResult.Unknown ) :
-                        e.Response.Result);
+                        ev.Set();
+                    });
 
-                    ev.Set();
-                });
-
-            ev.WaitOne();
-            return result;
+                ev.WaitOne();
+                return result;
+            }
         }
 
         /// <summary>
@@ -526,9 +551,6 @@ namespace Ragnarok.Net.ProtoBuf
                     return;
                 }
 
-                Log.Debug(this,
-                    "{0}を受信しました。", message.GetType());
-
                 // 対応するハンドラを呼びます。
                 if (!header.IsResponse)
                 {
@@ -651,6 +673,13 @@ namespace Ragnarok.Net.ProtoBuf
                 }
             }
 
+            // ログを出力したくない場合もあります。
+            if (handlerInfo.IsOutLog)
+            {
+                Log.Debug(this,
+                    "{0}を受信しました。", message.GetType());
+            }
+
             if (handlerInfo.Handler != null)
             {
                 try
@@ -708,6 +737,9 @@ namespace Ragnarok.Net.ProtoBuf
                 this.requestDataDic.Remove(id);
             }
 
+            Log.Debug(this,
+                 "{0}を受信しました。", message.GetType());
+
             // レスポンス処理用のハンドラを呼びます。
             if (reqData != null)
             {
@@ -732,10 +764,11 @@ namespace Ragnarok.Net.ProtoBuf
         /// リクエストを出します。
         /// </summary>
         public void SendRequest<TReq, TRes>(TReq request,
-                                            PbResponseHandler<TRes> handler)
+                                            PbResponseHandler<TRes> handler,
+                                            bool isOutLog = true)
             where TReq : class
         {
-            SendRequest(request, DefaultRequestTimeout, handler);
+            SendRequest(request, DefaultRequestTimeout, handler, isOutLog);
         }
 
         /// <summary>
@@ -743,7 +776,8 @@ namespace Ragnarok.Net.ProtoBuf
         /// </summary>
         public void SendRequest<TReq, TRes>(TReq request,
                                             TimeSpan timeout,
-                                            PbResponseHandler<TRes> handler)
+                                            PbResponseHandler<TRes> handler,
+                                            bool isOutLog = true)
             where TReq: class
         {
             if (request == null)
@@ -769,13 +803,13 @@ namespace Ragnarok.Net.ProtoBuf
             }
 
             // データを送信します。
-            SendData(id, false, request);
+            SendDataInternal(id, false, request, isOutLog);
         }
 
         /// <summary>
         /// コマンドを送ります。
         /// </summary>
-        public void SendCommand<TCmd>(TCmd command)
+        public void SendCommand<TCmd>(TCmd command, bool isOutLog = true)
             where TCmd : class
         {
             if (command == null)
@@ -786,26 +820,28 @@ namespace Ragnarok.Net.ProtoBuf
             // コマンドを送信します。
             var id = GetNextSendId();
 
-            SendData(id, false, command);
+            SendDataInternal(id, false, command, isOutLog);
         }
 
         /// <summary>
         /// レスポンスを送ります。
         /// </summary>
-        private void SendResponse(int id, IPbResponse response)
+        private void SendResponse(int id, IPbResponse response,
+                                  bool isOutLog = true)
         {
             if (response == null)
             {
                 throw new ArgumentNullException("response");
             }
 
-            SendData(id, true, response);
+            SendDataInternal(id, true, response, isOutLog);
         }
 
         /// <summary>
         /// データを送信します。
         /// </summary>
-        private void SendData(int id, bool isResponse, object sendData)
+        private void SendDataInternal(int id, bool isResponse,
+                                      object sendData, bool isOutLog)
         {
             if (sendData == null)
             {
@@ -829,6 +865,7 @@ namespace Ragnarok.Net.ProtoBuf
                 };
                 var headerData = header.GetEncodedPacket();
 
+                // 送信データは複数バッファのまま送信します。
                 var internalSendData = new SendData()
                 {
                     Socket = this.Socket,
@@ -840,10 +877,13 @@ namespace Ragnarok.Net.ProtoBuf
                 // データを送信します。
                 base.SendData(internalSendData);
 
-                Log.Debug(this,
-                    "{0}を送信しました。(content={1}bytes)",
-                    typename,
-                    (payload != null ? payload.Length : -1));
+                if (isOutLog)
+                {
+                    Log.Debug(this,
+                        "{0}を送信しました。(content={1}bytes)",
+                        typename,
+                        (payload != null ? payload.Length : -1));
+                }
             }
             catch (Exception ex)
             {
