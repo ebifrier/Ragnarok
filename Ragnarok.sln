@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ragnarok", "Ragnarok\Ragnarok.csproj", "{A348968A-DD91-47B4-9420-C7D370A2BE92}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RagnarokTest", "RagnarokTest\RagnarokTest.csproj", "{D5BA25CE-F28E-4348-9286-709B93A4CAA4}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ragnarok.NicoNico.Test", "Ragnarok.NicoNico.Test\Ragnarok.NicoNico.Test.csproj", "{5C9B5536-DC6D-4353-8BF2-9C2667C70A6B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ragnarok.Presentation", "Ragnarok.Presentation\Ragnarok.Presentation.csproj", "{2E5515A8-7B34-44A2-9C50-F423C5F87798}"
@@ -12,6 +10,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ragnarok.Extra", "Ragnarok.Extra\Ragnarok.Extra.csproj", "{8EBDC79A-607B-4B56-A298-1471CD6753DB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ragnarok.Shogi", "Ragnarok.Shogi\Ragnarok.Shogi.csproj", "{38ABBDA5-B22F-41B7-A415-2A909D0A6A35}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ragnarok.Test", "Ragnarok.Test\Ragnarok.Test.csproj", "{D5BA25CE-F28E-4348-9286-709B93A4CAA4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,16 +33,6 @@ Global
 		{A348968A-DD91-47B4-9420-C7D370A2BE92}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{A348968A-DD91-47B4-9420-C7D370A2BE92}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{A348968A-DD91-47B4-9420-C7D370A2BE92}.Release|x86.ActiveCfg = Release|Any CPU
-		{D5BA25CE-F28E-4348-9286-709B93A4CAA4}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{D5BA25CE-F28E-4348-9286-709B93A4CAA4}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
-		{D5BA25CE-F28E-4348-9286-709B93A4CAA4}.Debug|Mixed Platforms.Build.0 = Debug|x86
-		{D5BA25CE-F28E-4348-9286-709B93A4CAA4}.Debug|x86.ActiveCfg = Debug|x86
-		{D5BA25CE-F28E-4348-9286-709B93A4CAA4}.Debug|x86.Build.0 = Debug|x86
-		{D5BA25CE-F28E-4348-9286-709B93A4CAA4}.Release|Any CPU.ActiveCfg = Release|x86
-		{D5BA25CE-F28E-4348-9286-709B93A4CAA4}.Release|Mixed Platforms.ActiveCfg = Release|x86
-		{D5BA25CE-F28E-4348-9286-709B93A4CAA4}.Release|Mixed Platforms.Build.0 = Release|x86
-		{D5BA25CE-F28E-4348-9286-709B93A4CAA4}.Release|x86.ActiveCfg = Release|x86
-		{D5BA25CE-F28E-4348-9286-709B93A4CAA4}.Release|x86.Build.0 = Release|x86
 		{5C9B5536-DC6D-4353-8BF2-9C2667C70A6B}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{5C9B5536-DC6D-4353-8BF2-9C2667C70A6B}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
 		{5C9B5536-DC6D-4353-8BF2-9C2667C70A6B}.Debug|Mixed Platforms.Build.0 = Debug|x86
@@ -83,6 +73,16 @@ Global
 		{38ABBDA5-B22F-41B7-A415-2A909D0A6A35}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{38ABBDA5-B22F-41B7-A415-2A909D0A6A35}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{38ABBDA5-B22F-41B7-A415-2A909D0A6A35}.Release|x86.ActiveCfg = Release|Any CPU
+		{D5BA25CE-F28E-4348-9286-709B93A4CAA4}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{D5BA25CE-F28E-4348-9286-709B93A4CAA4}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{D5BA25CE-F28E-4348-9286-709B93A4CAA4}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{D5BA25CE-F28E-4348-9286-709B93A4CAA4}.Debug|x86.ActiveCfg = Debug|x86
+		{D5BA25CE-F28E-4348-9286-709B93A4CAA4}.Debug|x86.Build.0 = Debug|x86
+		{D5BA25CE-F28E-4348-9286-709B93A4CAA4}.Release|Any CPU.ActiveCfg = Release|x86
+		{D5BA25CE-F28E-4348-9286-709B93A4CAA4}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{D5BA25CE-F28E-4348-9286-709B93A4CAA4}.Release|Mixed Platforms.Build.0 = Release|x86
+		{D5BA25CE-F28E-4348-9286-709B93A4CAA4}.Release|x86.ActiveCfg = Release|x86
+		{D5BA25CE-F28E-4348-9286-709B93A4CAA4}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

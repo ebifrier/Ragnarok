@@ -8,7 +8,7 @@ using Codehaus.Parsec;
 
 namespace Ragnarok.Utility
 {
-    using Scanner = Parser<_>;
+    using Scanner = Parser<D_>;
     using Lexer = Parser<Tok>;
     using Lexeme = Parser<Tok[]>;
     using Binary = Map<double, double, double>;

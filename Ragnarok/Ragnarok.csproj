@@ -21,7 +21,7 @@
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE;CLR_V4</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <WarningLevel>3</WarningLevel>
     <DocumentationFile>Ragnarok.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -30,7 +30,7 @@
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE;CLR_V4</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <WarningLevel>3</WarningLevel>
     <DocumentationFile>Ragnarok.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
@@ -48,9 +48,6 @@
     <Reference Include="NLog, Version=1.0.0.505, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\externals\net\NLog.dll</HintPath>
-    </Reference>
-    <Reference Include="NParsec">
-      <HintPath>..\externals\net\NParsec.dll</HintPath>
     </Reference>
     <Reference Include="protobuf-net, Version=1.0.0.280, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -73,6 +70,31 @@
     <Compile Include="DebugLock.cs" />
     <Compile Include="EnumEx.cs" />
     <Compile Include="Extension.cs" />
+    <Compile Include="Externals\NParsec\CharPredicates.cs" />
+    <Compile Include="Externals\NParsec\DefaultPositionMap.cs" />
+    <Compile Include="Externals\NParsec\DefaultShowError.cs" />
+    <Compile Include="Externals\NParsec\Expressions.cs" />
+    <Compile Include="Externals\NParsec\Functors.cs" />
+    <Compile Include="Externals\NParsec\Keywords.cs" />
+    <Compile Include="Externals\NParsec\Lexers.cs" />
+    <Compile Include="Externals\NParsec\Operators.cs" />
+    <Compile Include="Externals\NParsec\OperatorTable.cs" />
+    <Compile Include="Externals\NParsec\ParsecError.cs" />
+    <Compile Include="Externals\NParsec\ParseContext.cs" />
+    <Compile Include="Externals\NParsec\Parser.cs" />
+    <Compile Include="Externals\NParsec\ParserException.cs" />
+    <Compile Include="Externals\NParsec\Parsers.cs" />
+    <Compile Include="Externals\NParsec\ParsingFrame.cs" />
+    <Compile Include="Externals\NParsec\Pattern.cs" />
+    <Compile Include="Externals\NParsec\Patterns.cs" />
+    <Compile Include="Externals\NParsec\Position.cs" />
+    <Compile Include="Externals\NParsec\Scanners.cs" />
+    <Compile Include="Externals\NParsec\Terms.cs" />
+    <Compile Include="Externals\NParsec\Token.cs" />
+    <Compile Include="Externals\NParsec\Tokenizers.cs" />
+    <Compile Include="Externals\NParsec\UserException.cs" />
+    <Compile Include="Externals\NParsec\Utils.cs" />
+    <Compile Include="Externals\NParsec\Words.cs" />
     <Compile Include="ILogObject.cs" />
     <Compile Include="Initializer.cs" />
     <Compile Include="Log.cs" />
