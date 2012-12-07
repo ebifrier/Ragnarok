@@ -727,6 +727,24 @@ namespace Codehaus.Parsec
             };
             return operand.Bind(binder);
         }
+        /// <summary>
+        /// To compile on MONO.
+        /// </summary>
+        private static T InfixrInternal<T>(T v0, Pair<Map<T, T, T>, T>[] rhs)
+        {
+            if (rhs.Length == 0)
+                return v0;
+
+            T o2 = rhs[rhs.Length - 1].V2;
+            for (int i = rhs.Length - 1; i > 0; i--)
+            {
+                Map<T, T, T> m2 = rhs[i].V1;
+                T o1 = rhs[i - 1].V2;
+                o2 = m2(o1, o2);
+            }
+
+            return rhs[0].V1(v0, o2);
+        }
         /// <summary> Right associative infix operator.
         /// Runs Parser p and then run Parser op and Parser p for 0 or more times greedily.
         /// The Map object returned from op are applied from right to left to the return values of p. <br />
@@ -743,42 +761,47 @@ namespace Codehaus.Parsec
         public static Parser<T> Infixr<T>(Parser<Map<T, T, T>> op, Parser<T> operand)
         {
             Parser<Pair<Map<T, T, T>, T>> op_and_operand = Pair(op, operand);
-            Map<T, Pair<Map<T, T, T>, T>[], T> eval = delegate(T v0, Pair<Map<T, T, T>, T>[] rhs)
-            {
-                if (rhs.Length == 0)
-                    return v0;
-                T o2 = rhs[rhs.Length - 1].V2;
-                for (int i = rhs.Length - 1; i > 0; i--)
-                {
-                    Map<T, T, T> m2 = rhs[i].V1;
-                    T o1 = rhs[i - 1].V2;
-                    o2 = m2(o1, o2);
-                }
-                return rhs[0].V1(v0, o2);
-            };
+            Map<T, Pair<Map<T, T, T>, T>[], T> eval = InfixrInternal;
+
             return operand.And(op_and_operand.Many(), eval);
+        }
+        /// <summary>
+        /// To compile on MONO.
+        /// </summary>
+        private static T getPrefixEvaluatorInternal<T>(Map<T, T>[] ops, T operand)
+        {
+            for (int i = ops.Length - 1; i >= 0; i--)
+            {
+                operand = ops[i](operand);
+            }
+            return operand;
         }
         private static Map<Map<T, T>[], T, T> getPrefixEvaluator<T>()
         {
-            return delegate(Map<T, T>[] ops, T operand)
+            return getPrefixEvaluatorInternal;
+        }
+        /// <summary>
+        /// To compile on MONO.
+        /// </summary>
+        private static T getPostfixEvaluatorInternal<T>(T operand, Map<T, T>[] ops)
+        {
+            foreach (Map<T, T> op in ops)
             {
-                for (int i = ops.Length - 1; i >= 0; i--)
-                {
-                    operand = ops[i](operand);
-                }
-                return operand;
-            };
+                operand = op(operand);
+            }
+            return operand;
         }
         private static Map<T, Map<T, T>[], T> getPostfixEvaluator<T>()
         {
-            return delegate(T operand, Map<T, T>[] ops)
+            /*return delegate(T operand, Map<T, T>[] ops)
             {
                 foreach (Map<T, T> op in ops)
                 {
                     operand = op(operand);
                 }
                 return operand;
-            };
+                };*/
+            return getPostfixEvaluatorInternal;
         }
         private static R runParser<R>(ParseContext ctxt, Parser<R> p, PositionMap pmap)
         {
