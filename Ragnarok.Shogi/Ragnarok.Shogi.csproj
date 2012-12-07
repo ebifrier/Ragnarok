@@ -102,9 +102,6 @@
     <Compile Include="ViewModel\ShogiGlobal.cs" />
     <Compile Include="ViewModel\Util3D.cs" />
     <Compile Include="ViewModel\MakeMeshExtension.cs" />
-    <Compile Include="View\PromoteDialog.xaml.cs">
-      <DependentUpon>PromoteDialog.xaml</DependentUpon>
-    </Compile>
     <Compile Include="View\ShogiControl.xaml.cs">
       <DependentUpon>ShogiControl.xaml</DependentUpon>
     </Compile>
@@ -124,10 +121,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="View\PromoteDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="View\ShogiControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

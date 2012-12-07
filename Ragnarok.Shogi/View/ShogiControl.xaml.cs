@@ -102,6 +102,7 @@ namespace Ragnarok.Shogi.View
         private EntityObject banEffectObjectRoot = new EntityObject();
         private EntityObject effectObjectRoot = new EntityObject();
         private PieceObject movingPiece;
+        private Window promoteDialog;
 
         /// <summary>
         /// 各フレームごとに呼ばれるイベントです。
@@ -362,6 +363,8 @@ namespace Ragnarok.Shogi.View
             {
                 var oldBoard = (Board)e.OldValue;
                 var newBoard = (Board)e.NewValue;
+
+                self.ClosePromoteDialog();
 
                 if (oldBoard != null)
                 {
@@ -695,14 +698,30 @@ namespace Ragnarok.Shogi.View
         }
 
         /// <summary>
+        /// 成り・不成り選択中に外から局面が設定されることがあります。
+        /// その場合には選択ダイアログを強制的にクローズします。
+        /// </summary>
+        private void ClosePromoteDialog()
+        {
+            if (this.promoteDialog != null)
+            {
+                this.promoteDialog.Close();
+                this.promoteDialog = null;
+            }
+        }
+
+        /// <summary>
         /// 成るか不成りかダイアログによる選択を行います。
         /// </summary>
         private bool CheckToPromote(BWType bwType, PieceType pieceType)
         {
-            var dialog = new PromoteDialog(this, pieceType)
-            {
-                Topmost = true,
-            };
+            var dialog = DialogUtil.CreateDialog(
+                null,
+                "成りますか？",
+                "成り／不成り",
+                MessageBoxButton.YesNo,
+                MessageBoxResult.Yes);
+            dialog.Topmost = true;
 
             dialog.Loaded += (sender, e) =>
             {
@@ -714,13 +733,26 @@ namespace Ragnarok.Shogi.View
                 dialog.Top = screenPos.Y + CellSize.Height / 2;
             };
 
-            dialog.ShowDialog();
-            if (dialog.DialogResult == null)
+            try
             {
-                return false;
-            }
+                ClosePromoteDialog();
 
-            return dialog.DialogResult.Value;
+                // 成り・不成り選択中に外から局面が設定されることがあります。
+                // その場合に備えてダイアログ自体を持っておきます。
+                this.promoteDialog = dialog;
+
+                dialog.ShowDialog();
+                if (dialog.DialogResult == null)
+                {
+                    return false;
+                }
+
+                return dialog.DialogResult.Value;
+            }
+            finally
+            {
+                this.promoteDialog = null;
+            }
         }
 
         /// <summary>
