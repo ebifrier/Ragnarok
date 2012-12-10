@@ -149,7 +149,7 @@ namespace Ragnarok.Net
 
                 foreach (var buffer in sendData.Buffers)
                 {
-                    Log.Trace(
+                    Log.Debug(
                         "データの送信を完了しました。({0}bytes)",
                         buffer.Count);
                 }

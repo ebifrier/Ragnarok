@@ -29,6 +29,11 @@ namespace Ragnarok.Net
         private bool disposed = false;
 
         /// <summary>
+        /// Connectのタイムアウト時間です。
+        /// </summary>
+        public static readonly TimeSpan ConnectTimeout = TimeSpan.FromSeconds(30);
+
+        /// <summary>
         /// 接続時のイベントです。
         /// </summary>
         public event EventHandler<ConnectEventArgs> Connected;
@@ -212,7 +217,7 @@ namespace Ragnarok.Net
                     },
                     null);
 
-                if (!ar.AsyncWaitHandle.WaitOne(5000))
+                if (!ar.AsyncWaitHandle.WaitOne(ConnectTimeout))
                 {
                     socket.Close();
 
