@@ -1,3 +1,12 @@
+2012-12-10  - Ver 2.5.2
+
+	* Ragnarok.Shogi/Move.cs: 成り駒を打つことや金や玉の成りを間違いと
+	判定するようにしました。
+	* Ragnarok.Shogi/ShogiParser.cs: はちにぃ銀などの指し手をを受理する
+	ようにしました。
+	* Ragnarok/NicoNico/Live/LiveStatusCode.cs: ニコ生のエラー一覧に
+	'NOTEXIST_SLOT'を追加しました。
+
 2012-12-08  - Ver 2.5.1
 
 	* Ragnarok.Shogi/View/ShogiControl.xaml.cs: 駒の成り・不成りの選択

@@ -93,6 +93,14 @@ namespace Ragnarok.NicoNico.Live
         [LabelDescription("スロットが見つかりません。")]
         NotFoundSlot,
         /// <summary>
+        /// スロットがありません。
+        /// </summary>
+        /// <remarks>
+        /// heartbeat取得時によく現れます。
+        /// </remarks>
+        [LabelDescription("スロットがありません。")]
+        NotExistSlot,
+        /// <summary>
         /// ユーザーにより削除されました。
         /// </summary>
         [LabelDescription("ユーザーにより削除されました。")]
@@ -146,6 +154,8 @@ namespace Ragnarok.NicoNico.Live
                     return LiveStatusCode.NotFoundThread;
                 case "NOTFOUND_SLOT":
                     return LiveStatusCode.NotFoundSlot;
+                case "NOTEXIST_SLOT":
+                    return LiveStatusCode.NotExistSlot;
                 case "deletedbyuser":
                     return LiveStatusCode.DeletedByUser;
                 case "deletedbyvisor":
