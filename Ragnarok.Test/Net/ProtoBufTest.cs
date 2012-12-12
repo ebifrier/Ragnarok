@@ -32,7 +32,7 @@ namespace Ragnarok.Test.Net
             {
                 var participant = new VoteParticipantInfo
                 {
-                    Id = Guid.NewGuid().ToString(),
+                    Id = Guid.Empty.ToString(),
                     ImageUrl = "http://garnet-alice.net/test/common/image.jpg",
                     Name = "ニコ生ちゃん",
                     No = -i,
