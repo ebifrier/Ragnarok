@@ -19,9 +19,12 @@ namespace Ragnarok.Net
         /// </summary>
         public const int ThreadCount = 1;
 
+        private static readonly object SyncObject = new object();
         private static readonly Thread[] threads = new Thread[ThreadCount];
-        private static readonly Queue<SendData> sendDataQueue =
-            new Queue<SendData>();
+        private static readonly List<SendData> sendDataList = new List<SendData>();
+        /*private static readonly HashSet<Socket> sendingSockets =
+            new HashSet<Socket>(new EqualityComparer());*/
+        private static int sendingCount = 0;
 
         /// <summary>
         /// データを送信データキューに追加します。
@@ -34,11 +37,11 @@ namespace Ragnarok.Net
                 return;
             }
 
-            lock (sendDataQueue)
+            lock (SyncObject)
             {
-                sendDataQueue.Enqueue(sendData);
+                sendDataList.Add(sendData);
 
-                Monitor.PulseAll(sendDataQueue);
+                Monitor.PulseAll(SyncObject);
             }
         }
 
@@ -47,14 +50,35 @@ namespace Ragnarok.Net
         /// </summary>
         internal static SendData GetNextSendDataWait()
         {
-            lock (sendDataQueue)
+            lock (SyncObject)
             {
-                while (!sendDataQueue.Any())
+                while (!sendDataList.Any() || sendingCount > 5)
                 {
-                    Monitor.Wait(sendDataQueue);
+                    Monitor.Wait(SyncObject);
                 }
 
-                return sendDataQueue.Dequeue();
+                var sendData = sendDataList[0];
+                sendDataList.RemoveAt(0);
+                return sendData;
+            }
+        }
+
+        private static void AddSendingSocket()
+        {
+            lock (SyncObject)
+            {
+                sendingCount += 1;
+            }
+        }
+
+        private static void RemoveSendingSocket()
+        {
+            lock (SyncObject)
+            {
+                sendingCount -= 1;
+                Log.Debug("Sending Count: {0}", sendingCount);
+
+                Monitor.PulseAll(SyncObject);
             }
         }
 
@@ -120,6 +144,9 @@ namespace Ragnarok.Net
                         ar => SendDataDone(sendData, ar),
                         null);
 
+                    // 送信中ソケットを追加します。
+                    AddSendingSocket();
+
                     Log.Trace(
                         "データ送信を開始しました。");
                 }
@@ -172,6 +199,9 @@ namespace Ragnarok.Net
 
                 RaiseSent(sendData, ex);
             }
+
+            // 最後にソケットリストから送信中ソケットを外します。
+            RemoveSendingSocket();
         }
 
         /// <summary>
