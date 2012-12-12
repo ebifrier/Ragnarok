@@ -24,7 +24,6 @@ namespace Ragnarok.Net
         private Socket socket;
         private volatile bool isConnecting = false;
         private volatile bool isDisconnecting = false;
-        private readonly List<byte[]> sendDataList = new List<byte[]>();
         private byte[] sendingData = null;
         private bool disposed = false;
 
@@ -158,7 +157,6 @@ namespace Ragnarok.Net
             {
                 this.socket = socket;
                 this.isDisconnecting = false;
-                this.sendDataList.Clear();
                 this.sendingData = null;
 
                 // keepaliveを設定し、不要なソケットを削除するようにします。
@@ -403,7 +401,6 @@ namespace Ragnarok.Net
                 this.socket.Close();
                 this.socket = null;
 
-                this.sendDataList.Clear();
                 this.sendingData = null;
                 this.isDisconnecting = false;
             }

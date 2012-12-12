@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Net.Sockets;
+using System.Text;
 using System.Threading;
 
 namespace Ragnarok.Net
@@ -17,7 +17,7 @@ namespace Ragnarok.Net
         /// <summary>
         /// 送信スレッドの数です。
         /// </summary>
-        private const int ThreadCount = 1;
+        public const int ThreadCount = 1;
 
         private static readonly Thread[] threads = new Thread[ThreadCount];
         private static readonly Queue<SendData> sendDataQueue =
@@ -98,7 +98,7 @@ namespace Ragnarok.Net
                 var sendData = GetNextSendDataWait();
                 if (sendData == null)
                 {
-                    return;
+                    continue;
                 }
 
                 // メッセージを送信します。
@@ -192,13 +192,12 @@ namespace Ragnarok.Net
             {
                 var th = new Thread(UpdateSendData)
                 {
-                    Priority = ThreadPriority.BelowNormal,
-                    Name = "SendThread " + i.ToString(),
+                    Priority = ThreadPriority.Normal,
+                    Name = string.Format("SendThread {0}", i),
                     IsBackground = true,
                 };
 
                 th.Start();
-
                 threads[i] = th;
             }
         }

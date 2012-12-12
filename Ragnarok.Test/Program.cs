@@ -32,6 +32,9 @@ namespace Ragnarok.Test
             var ntpTest = new Net.NtpClientTest();
             ntpTest.Test();
 
+            var pbTest = new Net.ProtoBufTest();
+            pbTest.BigDataTest();
+
             var calcTest = new Utility.CalclatorTest();
             calcTest.SimpleTest();
             calcTest.FuncTest();

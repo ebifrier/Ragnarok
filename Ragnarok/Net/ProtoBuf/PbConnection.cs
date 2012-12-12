@@ -239,7 +239,7 @@ namespace Ragnarok.Net.ProtoBuf
             }
 
             // 待機用イベントを使い、非同期で確認を行います。
-            using (var ev = new ManualResetEvent(false))
+            using (var ev = new AutoResetEvent(false))
             {
                 var request = new PbCheckProtocolVersionRequest(ProtocolVersion);
                 var result = PbVersionCheckResult.Unknown;

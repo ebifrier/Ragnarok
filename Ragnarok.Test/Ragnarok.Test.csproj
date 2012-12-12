@@ -36,11 +36,21 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="nunit.framework, Version=2.6.0.12051, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL" />
+    <Reference Include="protobuf-net, Version=2.0.0.480, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\externals\net\protobuf-net.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Runtime.Serialization" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Net\LiveData.cs" />
+    <Compile Include="Net\ProtoBufObject.cs" />
+    <Compile Include="Net\ProtoBufTest.cs" />
+    <Compile Include="Net\VoteParticipantInfo.cs" />
+    <Compile Include="Net\VoteRoomInfo.cs" />
     <Compile Include="ObjectModel\ModelBaseTest.cs" />
     <Compile Include="Net\NtpClientTest.cs" />
     <Compile Include="NicoNico\PlayerStatusTest.cs" />

@@ -218,10 +218,9 @@ namespace Ragnarok.Utility
                 if (string.Compare(func, info.Name, true) == 0)
                 {
                     var isCorrent =
-                        (!info.IsVariableLengthParameter &&
-                         args.Count() == info.ParameterCount) ||
-                        (info.IsVariableLengthParameter &&
-                         args.Count() >= info.ParameterCount);
+                        (info.IsVariableLengthParameter ?
+                         args.Count() >= info.ParameterCount :
+                         args.Count() == info.ParameterCount);
                     
                     if (isCorrent)
                     {
