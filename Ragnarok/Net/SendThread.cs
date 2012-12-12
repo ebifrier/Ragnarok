@@ -17,10 +17,11 @@ namespace Ragnarok.Net
         /// <summary>
         /// 送信スレッドの数です。
         /// </summary>
-        private const int ThreadCount = 5;
+        private const int ThreadCount = 1;
 
-        private static readonly Thread[] threads;
-        private static readonly Queue<SendData> sendDataQueue = new Queue<SendData>();
+        private static readonly Thread[] threads = new Thread[ThreadCount];
+        private static readonly Queue<SendData> sendDataQueue =
+            new Queue<SendData>();
 
         /// <summary>
         /// データを送信データキューに追加します。
@@ -91,50 +92,42 @@ namespace Ragnarok.Net
         /// </summary>
         private static void UpdateSendData()
         {
-            var retry = false;
-
-            // 送信可能なデータがあるか調べます。
-            var sendData = GetNextSendDataWait();
-            if (sendData == null)
+            while (true)
             {
-                return;
-            }
+                // 送信可能なデータがあるか調べます。
+                var sendData = GetNextSendDataWait();
+                if (sendData == null)
+                {
+                    return;
+                }
 
-            // メッセージを送信します。
-            try
-            {
+                // メッセージを送信します。
+                try
+                {
 #if MONO
-                int length = 0;
-                var mergedBuffer = MergeBuffer(sendData, out length);
+                    int length = 0;
+                    var mergedBuffer = MergeBuffer(sendData, out length);
 #endif
 
-                // コメントの投稿処理を開始します。
-                sendData.Socket.BeginSend(
+                    // コメントの投稿処理を開始します。
+                    sendData.Socket.BeginSend(
 #if MONO
-                    mergedBuffer, 0, length,
+                        mergedBuffer, 0, length,
 #else
-                    sendData.Buffers,
+                        sendData.Buffers,
 #endif
-                    SocketFlags.None,
-                    ar => SendDataDone(sendData, ar),
-                    null);
+                        SocketFlags.None,
+                        ar => SendDataDone(sendData, ar),
+                        null);
 
-                Log.Trace(
-                    "データ送信を開始しました。");
-            }
-            catch (Exception ex)
-            {
-                // 送信の失敗報告をします。
-                RaiseSent(sendData, ex);
-
-                retry = true;
-            }
-
-            // 必要なら再度送信処理を実行します。
-            // これはロックの外側で行います。
-            if (retry)
-            {
-                UpdateSendData();
+                    Log.Trace(
+                        "データ送信を開始しました。");
+                }
+                catch (Exception ex)
+                {
+                    // 送信の失敗報告をします。
+                    RaiseSent(sendData, ex);
+                }
             }
         }
 
@@ -149,12 +142,28 @@ namespace Ragnarok.Net
 
                 foreach (var buffer in sendData.Buffers)
                 {
-                    Log.Debug(
+                    Log.Trace(
                         "データの送信を完了しました。({0}bytes)",
                         buffer.Count);
                 }
 
                 RaiseSent(sendData, null);
+            }
+            catch (ObjectDisposedException ex)
+            {
+                // ログは出しません。
+                RaiseSent(sendData, ex);
+            }
+            catch (SocketException ex)
+            {
+                if (ex.SocketErrorCode != SocketError.Shutdown)
+                {
+                    Log.ErrorException(ex,
+                        "データの送信に失敗しました。");
+                }
+
+                // ログは出しません。
+                RaiseSent(sendData, ex);
             }
             catch (Exception ex)
             {
@@ -163,8 +172,6 @@ namespace Ragnarok.Net
 
                 RaiseSent(sendData, ex);
             }
-
-            UpdateSendData();
         }
 
         /// <summary>
@@ -172,7 +179,8 @@ namespace Ragnarok.Net
         /// </summary>
         private static void RaiseSent(SendData sendData, Exception ex)
         {
-            sendData.OnSent(ex);
+            Util.SafeCall(() =>
+                sendData.OnSent(ex));
         }
 
         /// <summary>
@@ -180,8 +188,6 @@ namespace Ragnarok.Net
         /// </summary>
         static SendThread()
         {
-            threads = new Thread[ThreadCount];
-
             for (var i = 0; i < threads.Count(); ++i)
             {
                 var th = new Thread(UpdateSendData)
