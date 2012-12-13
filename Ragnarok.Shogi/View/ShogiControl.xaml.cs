@@ -731,6 +731,7 @@ namespace Ragnarok.Shogi.View
                 dialog.WindowStartupLocation = WindowStartupLocation.Manual;
                 dialog.Left = screenPos.X - (dialog.ActualWidth / 2);
                 dialog.Top = screenPos.Y + CellSize.Height / 2;
+                dialog.AdjustInDisplay();
             };
 
             try

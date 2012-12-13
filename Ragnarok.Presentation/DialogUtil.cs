@@ -4,14 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
-using Drawing = System.Drawing;
 
 using Ragnarok;
 using Ragnarok.Presentation.Control;
 
 namespace Ragnarok.Presentation
 {
+    using Drawing = System.Drawing;
+    using Forms = System.Windows.Forms;
+
     /// <summary>
     /// フォントにまつわる情報をまとめて保持します。
     /// </summary>
@@ -167,6 +170,29 @@ namespace Ragnarok.Presentation
         }
 
         /// <summary>
+        /// ウィンドウが画面からはみ出している場合、画面内に収まるように調節します。
+        /// </summary>
+        public static void AdjustInDisplay(this Window window)
+        {
+            if (window == null)
+            {
+                throw new ArgumentNullException("window");
+            }
+
+            var wih = new WindowInteropHelper(window);
+            var screen = Forms.Screen.FromHandle(wih.Handle);
+            var bounds = screen.Bounds;
+
+            window.Left = Math.Max(window.Left, bounds.Left);
+            var right = window.Left + window.Width;
+            window.Left = Math.Min(right, bounds.Right) - window.Width;
+
+            window.Top = Math.Max(window.Top, bounds.Top);
+            var bottom = window.Top + window.Height;
+            window.Top = Math.Min(bottom, bounds.Bottom) - window.Height;
+        }
+
+        /// <summary>
         /// マウス位置を中心にダイアログを開きます。
         /// </summary>
         public static bool? ShowDialogCenterMouse(this Window dialog)
@@ -185,6 +211,7 @@ namespace Ragnarok.Presentation
                 dialog.WindowStartupLocation = WindowStartupLocation.Manual;
                 dialog.Left = screenPos.X - (dialog.ActualWidth / 2);
                 dialog.Top = screenPos.Y - (dialog.ActualHeight / 2);
+                dialog.AdjustInDisplay();
             };
 
             return dialog.ShowDialog();
