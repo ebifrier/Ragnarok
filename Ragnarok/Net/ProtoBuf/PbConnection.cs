@@ -568,6 +568,14 @@ namespace Ragnarok.Net.ProtoBuf
                     "(content size={0}, type={1})",
                     (payloadBuffer == null ? -1 : payloadBuffer.Length),
                     type);
+
+                /*if (type.ToString().IndexOf("VoteRoomInfo") >= 0)
+                {
+                    using (var stream = new FileStream("protobuf.dump", FileMode.Create))
+                    {
+                        stream.Write(payloadBuffer, 0, payloadBuffer.Length);
+                    }
+                }*/
             }
         }
 

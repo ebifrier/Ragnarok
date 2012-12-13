@@ -24,7 +24,6 @@ namespace Ragnarok.Net
         private static readonly List<SendData> sendDataList = new List<SendData>();
         /*private static readonly HashSet<Socket> sendingSockets =
             new HashSet<Socket>(new EqualityComparer());*/
-        private static int sendingCount = 0;
 
         /// <summary>
         /// データを送信データキューに追加します。
@@ -52,7 +51,7 @@ namespace Ragnarok.Net
         {
             lock (SyncObject)
             {
-                while (!sendDataList.Any() || sendingCount > 5)
+                while (!sendDataList.Any())
                 {
                     Monitor.Wait(SyncObject);
                 }
@@ -60,25 +59,6 @@ namespace Ragnarok.Net
                 var sendData = sendDataList[0];
                 sendDataList.RemoveAt(0);
                 return sendData;
-            }
-        }
-
-        private static void AddSendingSocket()
-        {
-            lock (SyncObject)
-            {
-                sendingCount += 1;
-            }
-        }
-
-        private static void RemoveSendingSocket()
-        {
-            lock (SyncObject)
-            {
-                sendingCount -= 1;
-                Log.Debug("Sending Count: {0}", sendingCount);
-
-                Monitor.PulseAll(SyncObject);
             }
         }
 
@@ -141,11 +121,8 @@ namespace Ragnarok.Net
                         sendData.Buffers,
 #endif
                         SocketFlags.None,
-                        ar => SendDataDone(sendData, ar),
-                        null);
-
-                    // 送信中ソケットを追加します。
-                    AddSendingSocket();
+                        SendDataDone,
+                        sendData);
 
                     Log.Trace(
                         "データ送信を開始しました。");
@@ -161,8 +138,10 @@ namespace Ragnarok.Net
         /// <summary>
         /// 非同期のメッセージ送信処理終了後に呼ばれます。
         /// </summary>
-        private static void SendDataDone(SendData sendData, IAsyncResult result)
+        private static void SendDataDone(IAsyncResult result)
         {
+            var sendData = (SendData)result.AsyncState;
+
             try
             {
                 sendData.Socket.EndSend(result);
@@ -199,9 +178,6 @@ namespace Ragnarok.Net
 
                 RaiseSent(sendData, ex);
             }
-
-            // 最後にソケットリストから送信中ソケットを外します。
-            RemoveSendingSocket();
         }
 
         /// <summary>
