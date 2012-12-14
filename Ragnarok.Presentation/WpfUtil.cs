@@ -30,6 +30,16 @@ namespace Ragnarok.Presentation
         #endregion
 
         /// <summary>
+        /// WPFを使うための初期化処理を行います。
+        /// </summary>
+        public static void InitWpf()
+        {
+            Util.SetPropertyChangedCaller(CallPropertyChanged);
+            Util.SetColletionChangedCaller(CallCollectionChanged);
+            Util.SetEventCaller(UIProcess);
+        }
+
+        /// <summary>
         /// デザインモードかどうかを取得します。
         /// (running in Blend or Visual Studio).
         /// </summary>
