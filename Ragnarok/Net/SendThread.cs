@@ -22,7 +22,8 @@ namespace Ragnarok.Net
         private static readonly object SyncObject = new object();
         private static readonly Thread[] threads = new Thread[ThreadCount];
         private static readonly List<SendData> sendDataList = new List<SendData>();
-        private static readonly HashSet<Socket> sendingSockets = new HashSet<Socket>();
+        /*private static readonly HashSet<Socket> sendingSockets =
+            new HashSet<Socket>(new EqualityComparer());*/
 
         /// <summary>
         /// データを送信データキューに追加します。
@@ -50,54 +51,14 @@ namespace Ragnarok.Net
         {
             lock (SyncObject)
             {
-                while (!sendDataList.Any() || sendingSockets.Count > 5)
+                while (!sendDataList.Any())
                 {
                     Monitor.Wait(SyncObject);
                 }
 
                 var sendData = sendDataList[0];
-                if (sendingSockets.Contains(sendData.Socket))
-                {
-                    Monitor.Wait(SyncObject);
-                    return null;
-                }
-
                 sendDataList.RemoveAt(0);
                 return sendData;
-            }
-        }
-
-        private static void AddSendingSocket(Socket socket)
-        {
-            if (socket == null)
-            {
-                return;
-            }
-
-            lock (SyncObject)
-            {
-                if (!sendingSockets.Add(socket))
-                {
-                    Log.Error("同じソケットが既に存在します。");
-                }
-            }
-        }
-
-        private static void RemoveSendingSocket(Socket socket)
-        {
-            if (socket == null)
-            {
-                return;
-            }
-
-            lock (SyncObject)
-            {
-                if (!sendingSockets.Remove(socket))
-                {
-                    Log.Error("同じソケットは存在しません。");
-                }
-
-                Monitor.PulseAll(SyncObject);
             }
         }
 
@@ -152,8 +113,6 @@ namespace Ragnarok.Net
                     var mergedBuffer = MergeBuffer(sendData, out length);
 #endif
 
-                    AddSendingSocket(sendData.Socket);
-
                     // コメントの投稿処理を開始します。
                     sendData.Socket.BeginSend(
 #if MONO
@@ -170,8 +129,6 @@ namespace Ragnarok.Net
                 }
                 catch (Exception ex)
                 {
-                    RemoveSendingSocket(sendData.Socket);
-
                     // 送信の失敗報告をします。
                     RaiseSent(sendData, ex);
                 }
@@ -220,10 +177,6 @@ namespace Ragnarok.Net
                     "データの送信に失敗しました。");
 
                 RaiseSent(sendData, ex);
-            }
-            finally
-            {
-                RemoveSendingSocket(sendData.Socket);
             }
         }
 

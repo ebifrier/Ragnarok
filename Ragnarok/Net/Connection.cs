@@ -449,7 +449,7 @@ namespace Ragnarok.Net
             // コールバックをlockされた状態で呼んでしまうと
             // 紆余曲折を経てデッドロックされてしまうことがあるため、
             // BeginReceiveはlockステートメントの外側から呼んでいます。
-            var buffer = new byte[512];
+            var buffer = new byte[2048];
 
             socket.BeginReceive(
                 buffer, 0, buffer.Length,
