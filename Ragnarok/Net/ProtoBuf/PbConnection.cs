@@ -377,12 +377,10 @@ namespace Ragnarok.Net.ProtoBuf
         private static readonly Dictionary<string, string> TypeConvertTable =
             new Dictionary<string, string>()
         {
-            {"Ragnarok.Net.ProtoBuf.PbCheckProtocolVersionRequest", "${0}"},
-            {"Ragnarok.Net.ProtoBuf.PbCheckProtocolVersionResponse", "${1}"},
-            {"Ragnarok.Net.ProtoBuf.PbResponse", "${2}"},
-            {"Ragnarok.Net.ProtoBuf.PbAck", "${3}"},
-            {"Ragnarok.Net.ProtoBuf.PbNak", "${4}"},
-            {"Ragnarok.Net.ProtoBuf", "${5}"},
+            {"Ragnarok.Net.ProtoBuf.PbResponse", "${0}"},
+            {"Ragnarok.Net.ProtoBuf.PbAck", "${1}"},
+            {"Ragnarok.Net.ProtoBuf.PbNak", "${2}"},
+            {"Ragnarok.Net.ProtoBuf", "${3}"},
         };
 
         /// <summary>
@@ -512,26 +510,46 @@ namespace Ragnarok.Net.ProtoBuf
         }
 
         /// <summary>
-        /// パケットのヘッダ部分を読み込みます。
+        /// データをストリームに書き込む必要があるか調べます。
         /// </summary>
-        private bool ReceivePacketHeader(DataSegment<byte> data)
+        private bool IsNeedWriteData(MemoryStream stream)
         {
-            // ヘッダーデータが読み込まれていない場合は、それを読み込みます。
-            var leaveCount = (int)(
-                PbPacketHeader.HeaderLength - this.headerStream.Position);
+            var leaveCount = (int)(stream.Capacity - stream.Position);
+
+            return (leaveCount != 0);
+        }
+
+        /// <summary>
+        /// バイトデータに受信データを追記します。
+        /// </summary>
+        private bool WriteReceivedData(MemoryStream stream, DataSegment<byte> data)
+        {
+            var leaveCount = (int)(stream.Capacity - stream.Position);
             if (leaveCount == 0)
             {
                 return true;
             }
 
-            // ヘッダーデータの読み込みを行います。
             var length = Math.Min(leaveCount, data.LeaveCount);
-            this.headerStream.Write(data.Array, data.Offset, length);
+            stream.Write(data.Array, data.Offset, length);
             data.Increment(length);
+
+            return (length == leaveCount);
+        }
+
+        /// <summary>
+        /// パケットのヘッダ部分を読み込みます。
+        /// </summary>
+        private bool ReceivePacketHeader(DataSegment<byte> data)
+        {
+            if (!IsNeedWriteData(this.headerStream))
+            {
+                return true;
+            }
 
             // ヘッダー読み込みが終わった後、コンテンツ用の
             // バッファを用意します。
-            if (length == leaveCount)
+            if (WriteReceivedData(this.headerStream, data))
             {
                 PacketHeaderReceived();
                 return true;
@@ -550,19 +568,7 @@ namespace Ragnarok.Net.ProtoBuf
                 return false;
             }
 
-            var leaveCount = (int)(
-                this.packetHeader.TypeNameLength - this.typenameStream.Position);
-            if (leaveCount == 0)
-            {
-                return true;
-            }
-
-            // 型名部分を読み込みます。
-            var length = Math.Min(leaveCount, data.LeaveCount);
-            this.typenameStream.Write(data.Array, data.Offset, length);
-            data.Increment(length);
-
-            return (length == leaveCount);
+            return WriteReceivedData(this.typenameStream, data);
         }
 
         /// <summary>
@@ -575,20 +581,7 @@ namespace Ragnarok.Net.ProtoBuf
                 return false;
             }
 
-            var leaveCount = (int)(
-                this.packetHeader.PayloadLength - this.payloadStream.Position);
-            if (leaveCount == 0)
-            {
-                return true;
-            }
-
-            // ペイロード部分を読み込みます。
-            var length = Math.Min(leaveCount, data.LeaveCount);
-            this.payloadStream.Write(data.Array, data.Offset, length);
-            data.Increment(length);
-
-            // データを処理したら、受信データ長を知らせ帰ります。
-            return (length == leaveCount);
+            return WriteReceivedData(this.payloadStream, data);
         }
 
         /// <summary>
@@ -800,6 +793,10 @@ namespace Ragnarok.Net.ProtoBuf
             }
 
             // コマンドの再送処理を行います。
+            Log.Info(this,
+                "{0}: データの再送処理を行います。",
+                needAckInfo.SendData.TypeName);
+
             SendDataInternal(id, isResponse, needAckInfo.SendData, false);
         }
 
@@ -970,11 +967,22 @@ namespace Ragnarok.Net.ProtoBuf
             }
 
             var sendData = new PbSendData(command);
+            SendData(sendData, isOutLog);
+        }
+
+        /// <summary>
+        /// protobufでシリアライズ後のデータを直接送ります。
+        /// </summary>
+        public void SendData(PbSendData sendData, bool isOutLog = true)
+        {
+            if (sendData == null)
+            {
+                return;
+            }
+
             sendData.Serialize();
 
-            // コマンドを送信します。
             var id = GetNextSendId();
-
             AddNeedAckData(id, false, sendData);
             SendDataInternal(id, false, sendData, isOutLog);
         }
@@ -1004,7 +1012,8 @@ namespace Ragnarok.Net.ProtoBuf
         {
             var sendData = (success ? AckData : NakData);
 
-            SendDataInternal(id, isResponse, sendData, true);
+            // NAKの場合のみログを出力します。
+            SendDataInternal(id, isResponse, sendData, !success);
         }
 
         /// <summary>
@@ -1023,11 +1032,16 @@ namespace Ragnarok.Net.ProtoBuf
 
                 try
                 {
+                    // 何らかの手違いでリクエストの再送要求が送られると
+                    // 同じIDのレスポンスが必ず2回以上送られることになります。
+                    // そのため、ここで例外が発生する可能性があります。
                     this.needAckDic.Add(dataId, needAck);
                 }
                 catch (Exception ex)
                 {
-                    Log.ErrorException(ex, "");
+                    Log.ErrorException(ex,
+                        "ID={0}({1}): コマンドIDが重複しました。",
+                        id, (isResponse ? "RES" : "!RES"));
                 }
             }
         }
@@ -1072,17 +1086,6 @@ namespace Ragnarok.Net.ProtoBuf
                 sendData.AddBuffer(headerData);
                 sendData.AddBuffer(typedata);
                 sendData.AddBuffer(payload);
-
-                /*if (payload.Length > 2000)
-                {
-                var filecore = DateTime.Now.ToString("HH:mm:ss.ffff");
-                var filename = "tmp/" + sendData.GetType() + filecore + ".dump";
-                using (var stream = new FileStream(filename, FileMode.Create))
-                {
-                    stream.Write(payload, 0, payload.Length);
-//                    PbUtil.Deserialize(payload, sendData.GetType());
-                }
-                }*/
 
                 // データを送信します。
                 base.SendData(sendData);

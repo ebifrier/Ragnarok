@@ -168,11 +168,11 @@
     <Compile Include="ObjectModel\NotifyCollection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RagnarokException.cs" />
+    <Compile Include="Update\AppCastItem.cs" />
     <Compile Include="Update\Downloader.cs" />
     <Compile Include="Update\Updater.cs" />
     <Compile Include="Utility\AssemblyUtility\IAssemblyAccessor.cs" />
     <Compile Include="Update\UpdateUtil.cs" />
-    <Compile Include="Update\AppCaseItem.cs" />
     <Compile Include="Update\AppCastItemUtil.cs" />
     <Compile Include="Utility\AssemblyUtility\AssemblyDiagnosticsAccessor.cs" />
     <Compile Include="Utility\AssemblyUtility\AssemblyReflectionAccessor.cs" />
