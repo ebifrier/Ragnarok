@@ -100,7 +100,7 @@ namespace Ragnarok.Utility.AssemblyUtility
         /// <summary>
         /// アセンブリ名を取得します。
         /// </summary>
-        public string AssemblyTitle
+        public string Title
         {
             get;
             private set;
@@ -109,7 +109,7 @@ namespace Ragnarok.Utility.AssemblyUtility
         /// <summary>
         /// アセンブリバージョンを取得します。
         /// </summary>
-        public string AssemblyVersion
+        public string Version
         {
             get;
             private set;
@@ -118,7 +118,7 @@ namespace Ragnarok.Utility.AssemblyUtility
         /// <summary>
         /// 概要を取得します。
         /// </summary>
-        public string AssemblyDescription
+        public string Description
         {
             get;
             private set;
@@ -127,7 +127,7 @@ namespace Ragnarok.Utility.AssemblyUtility
         /// <summary>
         /// プロダクト情報を取得します。
         /// </summary>
-        public string AssemblyProduct
+        public string Product
         {
             get;
             private set;
@@ -136,7 +136,7 @@ namespace Ragnarok.Utility.AssemblyUtility
         /// <summary>
         /// 会社情報を取得します。
         /// </summary>
-        public string AssemblyCompany
+        public string Company
         {
             get;
             private set;
@@ -145,7 +145,7 @@ namespace Ragnarok.Utility.AssemblyUtility
         /// <summary>
         /// 権利情報を取得します。
         /// </summary>
-        public string AssemblyCopyright
+        public string Copyright
         {
             get;
             private set;
@@ -159,22 +159,22 @@ namespace Ragnarok.Utility.AssemblyUtility
             var util = new AssemblyReflectionUtil(assemblyName);
 
             var titleAttr = util.FindAttribute<AssemblyTitleAttribute>();
-            AssemblyTitle = titleAttr.Title;
+            Title = titleAttr.Title;
 
             var nameInfo = util.Assembly.GetName();
-            AssemblyVersion = nameInfo.Version.ToString();
+            Version = nameInfo.Version.ToString();
 
             var descAttr = util.FindAttribute<AssemblyDescriptionAttribute>();
-            AssemblyDescription = descAttr.Description;
+            Description = descAttr.Description;
 
             var productAttr = util.FindAttribute<AssemblyProductAttribute>();
-            AssemblyProduct = productAttr.Product;
+            Product = productAttr.Product;
 
             var copyAttr = util.FindAttribute<AssemblyCopyrightAttribute>();
-            AssemblyCopyright = copyAttr.Copyright;
+            Copyright = copyAttr.Copyright;
 
             var companyAttr = util.FindAttribute<AssemblyCompanyAttribute>();
-            AssemblyCompany = companyAttr.Company;
+            Company = companyAttr.Company;
         }
     }
 }

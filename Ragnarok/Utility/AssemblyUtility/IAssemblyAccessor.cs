@@ -10,31 +10,31 @@ namespace Ragnarok.Utility.AssemblyUtility
         /// <summary>
         /// アセンブリ名を取得します。
         /// </summary>
-        string AssemblyTitle { get; }
+        string Title { get; }
 
         /// <summary>
         /// アセンブリバージョンを取得します。
         /// </summary>
-        string AssemblyVersion { get; }
+        string Version { get; }
 
         /// <summary>
         /// 概要を取得します。
         /// </summary>
-        string AssemblyDescription { get; }
+        string Description { get; }
 
         /// <summary>
         /// プロダクト情報を取得します。
         /// </summary>
-        string AssemblyProduct { get; }
+        string Product { get; }
 
         /// <summary>
         /// 会社情報を取得します。
         /// </summary>
-        string AssemblyCompany { get; }
+        string Company { get; }
 
         /// <summary>
         /// 権利情報を取得します。
         /// </summary>
-        string AssemblyCopyright { get; }
+        string Copyright { get; }
     }
 }

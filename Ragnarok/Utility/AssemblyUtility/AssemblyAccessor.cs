@@ -17,49 +17,49 @@ namespace Ragnarok.Utility.AssemblyUtility
         /// <summary>
         /// アセンブリ名を取得します。
         /// </summary>
-        public string AssemblyTitle
+        public string Title
         {
-            get { return this.internalAccessor.AssemblyTitle; }
+            get { return this.internalAccessor.Title; }
         }
 
         /// <summary>
         /// アセンブリバージョンを取得します。
         /// </summary>
-        public string AssemblyVersion
+        public string Version
         {
-            get { return this.internalAccessor.AssemblyVersion; }
+            get { return this.internalAccessor.Version; }
         }
 
         /// <summary>
         /// 概要を取得します。
         /// </summary>
-        public string AssemblyDescription
+        public string Description
         {
-            get { return this.internalAccessor.AssemblyDescription; }
+            get { return this.internalAccessor.Description; }
         }
 
         /// <summary>
         /// プロダクト情報を取得します。
         /// </summary>
-        public string AssemblyProduct
+        public string Product
         {
-            get { return this.internalAccessor.AssemblyProduct; }
+            get { return this.internalAccessor.Product; }
         }
 
         /// <summary>
         /// 会社情報を取得します。
         /// </summary>
-        public string AssemblyCompany
+        public string Company
         {
-            get { return this.internalAccessor.AssemblyCompany; }
+            get { return this.internalAccessor.Company; }
         }
 
         /// <summary>
         /// 権利情報を取得します。
         /// </summary>
-        public string AssemblyCopyright
+        public string Copyright
         {
-            get { return this.internalAccessor.AssemblyCopyright; }
+            get { return this.internalAccessor.Copyright; }
         }
 
         /// <summary>

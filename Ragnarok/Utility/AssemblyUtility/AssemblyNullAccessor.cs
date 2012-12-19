@@ -16,7 +16,7 @@ namespace Ragnarok.Utility.AssemblyUtility
         /// <summary>
         /// アセンブリ名を取得します。
         /// </summary>
-        public string AssemblyTitle
+        public string Title
         {
             get { return null; }
         }
@@ -24,7 +24,7 @@ namespace Ragnarok.Utility.AssemblyUtility
         /// <summary>
         /// アセンブリバージョンを取得します。
         /// </summary>
-        public string AssemblyVersion
+        public string Version
         {
             get { return null; }
         }
@@ -32,7 +32,7 @@ namespace Ragnarok.Utility.AssemblyUtility
         /// <summary>
         /// 概要を取得します。
         /// </summary>
-        public string AssemblyDescription
+        public string Description
         {
             get { return null; }
         }
@@ -40,7 +40,7 @@ namespace Ragnarok.Utility.AssemblyUtility
         /// <summary>
         /// プロダクト情報を取得します。
         /// </summary>
-        public string AssemblyProduct
+        public string Product
         {
             get { return null; }
         }
@@ -48,7 +48,7 @@ namespace Ragnarok.Utility.AssemblyUtility
         /// <summary>
         /// 会社情報を取得します。
         /// </summary>
-        public string AssemblyCompany
+        public string Company
         {
             get { return null; }
         }
@@ -56,7 +56,7 @@ namespace Ragnarok.Utility.AssemblyUtility
         /// <summary>
         /// 権利情報を取得します。
         /// </summary>
-        public string AssemblyCopyright
+        public string Copyright
         {
             get { return null; }
         }

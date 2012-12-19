@@ -28,7 +28,7 @@ namespace Ragnarok.Update
         /// </summary>
         public string ApplicationName
         {
-            get { return this.accessor.AssemblyTitle; }
+            get { return this.accessor.Title; }
         }
 
         /// <summary>
@@ -36,7 +36,7 @@ namespace Ragnarok.Update
         /// </summary>
         public string InstalledVersion
         {
-            get { return this.accessor.AssemblyVersion; }
+            get { return this.accessor.Version; }
         }
 
         public bool CheckForUpdate

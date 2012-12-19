@@ -16,7 +16,7 @@ namespace Ragnarok.Utility.AssemblyUtility
         /// <summary>
         /// アセンブリ名を取得します。
         /// </summary>
-        public string AssemblyTitle
+        public string Title
         {
             get;
             private set;
@@ -25,7 +25,7 @@ namespace Ragnarok.Utility.AssemblyUtility
         /// <summary>
         /// アセンブリバージョンを取得します。
         /// </summary>
-        public string AssemblyVersion
+        public string Version
         {
             get;
             private set;
@@ -34,7 +34,7 @@ namespace Ragnarok.Utility.AssemblyUtility
         /// <summary>
         /// 概要を取得します。
         /// </summary>
-        public string AssemblyDescription
+        public string Description
         {
             get;
             private set;
@@ -43,7 +43,7 @@ namespace Ragnarok.Utility.AssemblyUtility
         /// <summary>
         /// プロダクト情報を取得します。
         /// </summary>
-        public string AssemblyProduct
+        public string Product
         {
             get;
             private set;
@@ -52,7 +52,7 @@ namespace Ragnarok.Utility.AssemblyUtility
         /// <summary>
         /// 会社情報を取得します。
         /// </summary>
-        public string AssemblyCompany
+        public string Company
         {
             get;
             private set;
@@ -61,7 +61,7 @@ namespace Ragnarok.Utility.AssemblyUtility
         /// <summary>
         /// 権利情報を取得します。
         /// </summary>
-        public string AssemblyCopyright
+        public string Copyright
         {
             get;
             private set;
@@ -80,11 +80,11 @@ namespace Ragnarok.Utility.AssemblyUtility
             // 例外が返る可能性があります。
             var fileVersionInfo = FileVersionInfo.GetVersionInfo(assemblyName);
 
-            AssemblyTitle = fileVersionInfo.ProductName;
-            AssemblyVersion = fileVersionInfo.FileVersion;
-            AssemblyDescription = fileVersionInfo.FileDescription;
-            AssemblyCompany = fileVersionInfo.CompanyName;
-            AssemblyCopyright = fileVersionInfo.LegalCopyright;
+            Title = fileVersionInfo.ProductName;
+            Version = fileVersionInfo.FileVersion;
+            Description = fileVersionInfo.FileDescription;
+            Company = fileVersionInfo.CompanyName;
+            Copyright = fileVersionInfo.LegalCopyright;
         }
     }
 }
