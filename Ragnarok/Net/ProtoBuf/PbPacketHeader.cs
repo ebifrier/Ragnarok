@@ -12,7 +12,7 @@ namespace Ragnarok.Net.ProtoBuf
     /// <remarks>
     /// ProtoBufの送受信に使われ、固定長のデータサイズなどを持ちます。
     /// </remarks>
-    internal class PbPacketHeader
+    internal sealed class PbPacketHeader
     {
         /// <summary>
         /// データのマジックナンバーです。
@@ -45,7 +45,7 @@ namespace Ragnarok.Net.ProtoBuf
         /// <summary>
         /// 型名のバイト長を取得または設定します。
         /// </summary>
-        public int TypenameLength
+        public int TypeNameLength
         {
             get;
             set;
@@ -82,16 +82,16 @@ namespace Ragnarok.Net.ProtoBuf
             }
 
             value = BitConverter.ToInt32(header, 4);
-            this.Id = IPAddress.NetworkToHostOrder(value);
+            Id = IPAddress.NetworkToHostOrder(value);
 
             value = BitConverter.ToInt32(header, 8);
-            this.IsResponse = (IPAddress.NetworkToHostOrder(value) != 0);
+            IsResponse = (IPAddress.NetworkToHostOrder(value) != 0);
 
             value = BitConverter.ToInt32(header, 12);
-            this.TypenameLength = IPAddress.NetworkToHostOrder(value);
+            TypeNameLength = IPAddress.NetworkToHostOrder(value);
 
             value = BitConverter.ToInt32(header, 16);
-            this.PayloadLength = IPAddress.NetworkToHostOrder(value);
+            PayloadLength = IPAddress.NetworkToHostOrder(value);
         }
 
         /// <summary>
@@ -100,7 +100,7 @@ namespace Ragnarok.Net.ProtoBuf
         public byte[] GetEncodedPacket()
         {
             // 内容が無いときはサイズが０になります。
-            if (this.PayloadLength < 0)
+            if (PayloadLength < 0)
             {
                 throw new RagnarokNetException(
                     "送信用データを設定してください。");
@@ -113,19 +113,19 @@ namespace Ragnarok.Net.ProtoBuf
             var bytes = BitConverter.GetBytes(value);
             bytes.CopyTo(packet, 0);
 
-            value = IPAddress.HostToNetworkOrder(this.Id);
+            value = IPAddress.HostToNetworkOrder(Id);
             bytes = BitConverter.GetBytes(value);
             bytes.CopyTo(packet, 4);
 
-            value = IPAddress.HostToNetworkOrder(this.IsResponse ? 1 : 0);
+            value = IPAddress.HostToNetworkOrder(IsResponse ? 1 : 0);
             bytes = BitConverter.GetBytes(value);
             bytes.CopyTo(packet, 8);
 
-            value = IPAddress.HostToNetworkOrder(this.TypenameLength);
+            value = IPAddress.HostToNetworkOrder(TypeNameLength);
             bytes = BitConverter.GetBytes(value);
             bytes.CopyTo(packet, 12);
 
-            value = IPAddress.HostToNetworkOrder(this.PayloadLength);
+            value = IPAddress.HostToNetworkOrder(PayloadLength);
             bytes = BitConverter.GetBytes(value);
             bytes.CopyTo(packet, 16);
 

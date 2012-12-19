@@ -140,6 +140,19 @@ namespace Ragnarok
         }
 
         /// <summary>
+        /// 例外が致命的なものならその例外をthrowします。
+        /// </summary>
+        public static void ThrowIfFatal(Exception ex)
+        {
+            if (ex is StackOverflowException ||
+                ex is OutOfMemoryException ||
+                ex is System.Threading.ThreadAbortException)
+            {
+                throw ex;
+            }
+        }
+
+        /// <summary>
         /// <paramref name="value"/>がnullであれば<paramref name="defaultValue"/>
         /// を、そうでなければ値をそのまま返します。
         /// </summary>

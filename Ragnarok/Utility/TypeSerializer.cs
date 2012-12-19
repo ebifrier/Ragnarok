@@ -44,26 +44,19 @@ namespace Ragnarok.Utility
     /// <summary>
     /// 型名の解析時に使う字句解析機です。
     /// </summary>
-    internal class TypeLexer
+    /// <example>
+    /// System.Tuple`2[System.Int32, System.Double]
+    /// </example>
+    internal sealed class TypeLexer
     {
         /// <summary>
-        /// 型名か判断します。
+        /// 単一の型名か判断します。
         /// </summary>
         /// <example>
         /// global::TopNamespace.SubNameSpace.ContainingClass+NestedClass
         /// </example>
         private static readonly Regex TypeRegex =
             new Regex(@"\G([\w+.:]+)(`\d+)?", RegexOptions.Compiled);
-
-        /// <summary>
-        /// 型名に続くアセンブリ名などを解析します。
-        /// </summary>
-        /// <example>
-        /// [TopNamespace.SubNameSpace.ContainingClass+NestedClass, MyAssembly,
-        ///     Version=1.3.0.0, Culture=neutral, PublicKeyToken=b17a5c561934e089]
-        /// </example>
-        //private static Regex qualifiedRegex =
-        //    new Regex(@"\G[\w\s=,.]+", RegexOptions.Compiled);
 
         private readonly string text;
         private int index = 0;
@@ -111,6 +104,9 @@ namespace Ragnarok.Utility
         /// <summary>
         /// 次のトークンを取得します。
         /// </summary>
+        /// <example>
+        /// System.Tuple`2[System.Int32, System.Double]
+        /// </example>
         private LexicalToken ParseToken()
         {
             SkipWhitespace();
@@ -217,14 +213,16 @@ namespace Ragnarok.Utility
                 result.Append(type.GetGenericTypeDefinition().FullName);
                 if (!type.ContainsGenericParameters)
                 {
-                    result.Append("[");
-
                     // ジェネリック型の引数をシリアライズし[]でくくります。
                     // 再帰するのがポイント。
-                    var paramNameList = type.GetGenericArguments().Select(
-                        param => string.Format("[{0}]", Serialize(param)));
-                    result.Append(string.Join(", ", paramNameList.ToArray()));
+                    var paramNameList = type.GetGenericArguments()
+                        .Select(_ => Serialize(_))
+                        .Select(_ => string.Format("[{0}]", _))
+                        .ToArray();
+                    var paramStr = string.Join(", ", paramNameList);
 
+                    result.Append("[");
+                    result.Append(paramStr);
                     result.Append("]");
                 }
 
@@ -239,13 +237,13 @@ namespace Ragnarok.Utility
         {
             if (string.IsNullOrEmpty(serializedTypeName))
             {
-                return null;
+                throw new ArgumentNullException("serializedTypeName");
             }
             
             // レキサからトークンを取り出しながら構文解析を行います。
             var lexer = new TypeLexer(serializedTypeName);
 
-            // 次のトークンを取得します。
+            // 最初のトークンを取得します。
             lexer.NextToken();
             return ParseType(lexer);
         }

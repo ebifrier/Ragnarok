@@ -3,24 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Ragnarok.Net
+namespace Ragnarok.Net.ProtoBuf
 {
     /// <summary>
-    /// コネクションの例外です。
+    /// Ragnarok用の例外クラスです。
     /// </summary>
-    public class RagnarokNetException : RagnarokException
+    public class PbException : RagnarokException
     {
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public RagnarokNetException()
+        public PbException()
         {
         }
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public RagnarokNetException(string message)
+        public PbException(string message)
             : base(message)
         {
         }
@@ -28,8 +28,7 @@ namespace Ragnarok.Net
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public RagnarokNetException(string message,
-                               Exception innerException)
+        public PbException(string message, Exception innerException)
             : base(message, innerException)
         {
         }

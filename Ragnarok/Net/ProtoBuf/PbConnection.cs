@@ -40,9 +40,14 @@ namespace Ragnarok.Net.ProtoBuf
     /// 登録してあるコマンド(返信のない要求)やリクエスト(返信のある要求)を
     /// 処理します。
     /// 
-    /// また、プロトコルのバージョンチェックも行います。
+    /// コマンド・リクエスト・レスポンスともにアプリケーションレベルの
+    /// 応答確認を行い、もし正しく送信できていなかった場合は
+    /// ３回までの再送要求を行います。
+    /// データ送信指示順序とデータ到着順序が同じになるとは限りません。
+    /// 
+    /// また、プロトコルのバージョンチェックも行うことが可能です。
     /// 必要であればプロトコルのバージョンチェック要求を
-    /// 接続開始時に送信することができます。
+    /// 接続開始時に送信し、相手方とのバージョンミスマッチを確認します。
     /// </remarks>
     /// 
     /// <seealso cref="PbPacketHeader"/>
@@ -98,21 +103,94 @@ namespace Ragnarok.Net.ProtoBuf
             }
         }
 
+        /// <summary>
+        /// データIDとレスポンスかどうかで送受信データの一意性を保証します。
+        /// </summary>
+        private sealed class DataId : IEquatable<DataId>
+        {
+            public int Id
+            {
+                get;
+                private set;
+            }
+
+            public bool IsResponse
+            {
+                get;
+                private set;
+            }
+
+            public override bool Equals(object obj)
+            {
+                return Equals(obj as DataId);
+            }
+
+            public bool Equals(DataId other)
+            {
+                if ((object)other == null)
+                {
+                    return false;
+                }
+
+                return (Id == other.Id && IsResponse == other.IsResponse);
+            }
+
+            public override int GetHashCode()
+            {
+                return (Id.GetHashCode() ^ IsResponse.GetHashCode());
+            }
+
+            public DataId(int id, bool isResponse)
+            {
+                Id = id;
+                IsResponse = isResponse;
+            }
+        }
+
+        /// <summary>
+        /// ACKによる応答確認が必要なデータを保持します。
+        /// </summary>
+        private sealed class NeedAckInfo
+        {
+            private int tryCount = 0;
+
+            public PbSendData SendData
+            {
+                get;
+                set;
+            }
+
+            public int IncrementTryCount()
+            {
+                return Interlocked.Increment(ref this.tryCount);
+            }
+        }
+
+        private static readonly PbSendData AckData;
+        private static readonly PbSendData NakData;
         private static readonly Dictionary<string, Type> typeCache =
             new Dictionary<string, Type>();
         private readonly object receiveLock = new object();
         private int idCounter = 0;
         private PbPacketHeader packetHeader = new PbPacketHeader();
-        private readonly byte[] headerBuffer = new byte[PbPacketHeader.HeaderLength];
-        private byte[] typenameBuffer = null;
-        private byte[] payloadBuffer = null;
-        private int headerReadSize = 0;
-        private int typenameReadSize = 0;
-        private int payloadReadSize = 0;
+        private MemoryStream headerStream;
+        private MemoryStream typenameStream;
+        private MemoryStream payloadStream;
         private readonly Dictionary<int, PbRequestData> requestDataDic =
             new Dictionary<int, PbRequestData>();
+        private readonly Dictionary<DataId, NeedAckInfo> needAckDic =
+            new Dictionary<DataId, NeedAckInfo>();
         private readonly Dictionary<Type, HandlerInfo> handlerDic =
             new Dictionary<Type, HandlerInfo>();
+
+        /// <summary>
+        /// ACKを受信するまでのタイムアウト時間を取得または設定します。
+        /// </summary>
+        public TimeSpan AckTimeout
+        {
+            get;
+            set;
+        }
 
         /// <summary>
         /// レスポンス応答のデフォルトタイムアウト時間を取得または設定します。
@@ -235,7 +313,7 @@ namespace Ragnarok.Net.ProtoBuf
         {
             if (ProtocolVersion == null)
             {
-                throw new ArgumentNullException("version");
+                throw new PbException("ProtocolVersionがnullです。");
             }
 
             // 待機用イベントを使い、非同期で確認を行います。
@@ -295,7 +373,78 @@ namespace Ragnarok.Net.ProtoBuf
             e.Response = new PbCheckProtocolVersionResponse(result);
         }
 
+        #region 型名変換
+        private static readonly Dictionary<string, string> TypeConvertTable =
+            new Dictionary<string, string>()
+        {
+            {"Ragnarok.Net.ProtoBuf.PbCheckProtocolVersionRequest", "${0}"},
+            {"Ragnarok.Net.ProtoBuf.PbCheckProtocolVersionResponse", "${1}"},
+            {"Ragnarok.Net.ProtoBuf.PbResponse", "${2}"},
+            {"Ragnarok.Net.ProtoBuf.PbAck", "${3}"},
+            {"Ragnarok.Net.ProtoBuf.PbNak", "${4}"},
+            {"Ragnarok.Net.ProtoBuf", "${5}"},
+        };
+
+        /// <summary>
+        /// 短縮する型名を登録します。
+        /// </summary>
+        /// <remarks>
+        /// これは送受信双方で同じ設定をする必要があります。
+        /// </remarks>
+        public static void AddConvertType(string typename)
+        {
+            if (string.IsNullOrEmpty(typename))
+            {
+                throw new ArgumentNullException("typename");
+            }
+
+            lock (TypeConvertTable)
+            {
+                TypeConvertTable.Add(
+                    typename,
+                    string.Format("${{{0}}}", TypeConvertTable.Count));
+            }
+        }
+
+        /// <summary>
+        /// 型名を短くするためのエンコード処理を行います。
+        /// </summary>
+        public static string EncodeTypeName(string deTypeName)
+        {
+            if (string.IsNullOrEmpty(deTypeName))
+            {
+                throw new ArgumentNullException("deTypeName");
+            }
+
+            lock (TypeConvertTable)
+            {
+                return TypeConvertTable.Aggregate(
+                    deTypeName,
+                    (seed, pair) => seed.Replace(pair.Key, pair.Value));
+            }
+        }
+
+        /// <summary>
+        /// 短縮された型名を元に戻します。
+        /// </summary>
+        public static string DecodeTypeName(string enTypeName)
+        {
+            if (string.IsNullOrEmpty(enTypeName))
+            {
+                throw new ArgumentNullException("enTypeName");
+            }
+
+            lock (TypeConvertTable)
+            {
+                return TypeConvertTable.Aggregate(
+                    enTypeName,
+                    (seed, pair) => seed.Replace(pair.Value, pair.Key));
+            }
+        }
+        #endregion
+
         #region receive data
+        #region 受信データ解析
         /// <summary>
         /// データの取得後に呼ばれます。
         /// </summary>
@@ -305,32 +454,32 @@ namespace Ragnarok.Net.ProtoBuf
 
             if (e.Error == null)
             {
-                OnReceivedPacket(e.Data, e.DataLength, 0);
+                var data = new DataSegment<byte>(e.Data, 0, e.DataLength);
+
+                OnReceivedPacket(data);
             }
         }
-
+        
         /// <summary>
         /// 受信パケットの解析を行います。
         /// </summary>
-        private void OnReceivedPacket(byte[] buffer, int bufferLength,
-                                      int offset)
+        private void OnReceivedPacket(DataSegment<byte> data)
         {
             // このロックオブジェクトは受信処理を直列的に行うために
             // 使われます。受信処理中に他の受信データを扱うことはできません。
             lock (this.receiveLock)
             {
-                while (offset < bufferLength)
+                while (data.Offset < data.Count)
                 {
                     bool parsed = false;
 
                     try
                     {
-                        if (ReceivePacketHeader(buffer, bufferLength, ref offset))
+                        if (ReceivePacketHeader(data))
                         {
-                            if (ReceiveTypename(buffer, bufferLength, ref offset))
+                            if (ReceiveTypename(data))
                             {
-                                parsed = ReceivePayload(
-                                    buffer, bufferLength, ref offset);
+                                parsed = ReceivePayload(data);
                             }
                         }
                     }
@@ -344,8 +493,8 @@ namespace Ragnarok.Net.ProtoBuf
                         // 受信したパケットデータをすべてクリアします。
                         InitReceivedPacket();
 
-                        // 残りのデータはすべて破棄します。
-                        return;
+                        // 残りのデータの受信を行います。
+                        parsed = false;
                     }
 
                     // データ受信に成功したらそのデータを処理します。
@@ -353,8 +502,8 @@ namespace Ragnarok.Net.ProtoBuf
                     {
                         HandleReceivedPacket(
                             this.packetHeader,
-                            this.typenameBuffer,
-                            this.payloadBuffer);
+                            this.typenameStream.GetBuffer(),
+                            this.payloadStream.GetBuffer());
 
                         InitReceivedPacket();
                     }
@@ -365,34 +514,24 @@ namespace Ragnarok.Net.ProtoBuf
         /// <summary>
         /// パケットのヘッダ部分を読み込みます。
         /// </summary>
-        private bool ReceivePacketHeader(byte[] buffer, int bufferLength,
-                                         ref int offset)
+        private bool ReceivePacketHeader(DataSegment<byte> data)
         {
             // ヘッダーデータが読み込まれていない場合は、それを読み込みます。
-            if (this.headerReadSize == PbPacketHeader.HeaderLength)
+            var leaveCount = (int)(
+                PbPacketHeader.HeaderLength - this.headerStream.Position);
+            if (leaveCount == 0)
             {
                 return true;
             }
 
             // ヘッダーデータの読み込みを行います。
-            var length = Math.Min(
-                PbPacketHeader.HeaderLength - this.headerReadSize,
-                buffer.Length - offset);
-
-            Array.Copy(
-                buffer,
-                offset,
-                this.headerBuffer,
-                this.headerReadSize,
-                length);
-
-            // データ長の設定。
-            this.headerReadSize += length;
-            offset += length;
+            var length = Math.Min(leaveCount, data.LeaveCount);
+            this.headerStream.Write(data.Array, data.Offset, length);
+            data.Increment(length);
 
             // ヘッダー読み込みが終わった後、コンテンツ用の
             // バッファを用意します。
-            if (this.headerReadSize == PbPacketHeader.HeaderLength)
+            if (length == leaveCount)
             {
                 PacketHeaderReceived();
                 return true;
@@ -404,72 +543,52 @@ namespace Ragnarok.Net.ProtoBuf
         /// <summary>
         /// 型名データを受信します。
         /// </summary>
-        private bool ReceiveTypename(byte[] buffer, int bufferLength,
-                                     ref int offset)
+        private bool ReceiveTypename(DataSegment<byte> data)
         {
             if (this.packetHeader == null)
             {
                 return false;
             }
 
-            if (this.typenameReadSize == this.packetHeader.TypenameLength)
+            var leaveCount = (int)(
+                this.packetHeader.TypeNameLength - this.typenameStream.Position);
+            if (leaveCount == 0)
             {
                 return true;
             }
 
             // 型名部分を読み込みます。
-            var length = Math.Min(
-                this.packetHeader.TypenameLength - this.typenameReadSize,
-                buffer.Length - offset);
+            var length = Math.Min(leaveCount, data.LeaveCount);
+            this.typenameStream.Write(data.Array, data.Offset, length);
+            data.Increment(length);
 
-            Array.Copy(
-                buffer,
-                offset,
-                this.typenameBuffer,
-                this.typenameReadSize,
-                length);
-
-            // データ長の設定。
-            this.typenameReadSize += length;
-            offset += length;
-
-            return (this.typenameReadSize == this.packetHeader.TypenameLength);
+            return (length == leaveCount);
         }
 
         /// <summary>
         /// データ部分を受信します。
         /// </summary>
-        private bool ReceivePayload(byte[] buffer, int bufferLength,
-                                    ref int offset)
+        private bool ReceivePayload(DataSegment<byte> data)
         {
             if (this.packetHeader == null)
             {
                 return false;
             }
 
-            if (this.payloadReadSize == this.packetHeader.PayloadLength)
+            var leaveCount = (int)(
+                this.packetHeader.PayloadLength - this.payloadStream.Position);
+            if (leaveCount == 0)
             {
                 return true;
             }
 
             // ペイロード部分を読み込みます。
-            var length = Math.Min(
-                this.packetHeader.PayloadLength - this.payloadReadSize,
-                buffer.Length - offset);
-
-            Array.Copy(
-                buffer,
-                offset,
-                this.payloadBuffer,
-                this.payloadReadSize,
-                length);
-
-            // データ長の設定。
-            this.payloadReadSize += length;
-            offset += length;
+            var length = Math.Min(leaveCount, data.LeaveCount);
+            this.payloadStream.Write(data.Array, data.Offset, length);
+            data.Increment(length);
 
             // データを処理したら、受信データ長を知らせ帰ります。
-            return (this.payloadReadSize == this.packetHeader.PayloadLength);
+            return (length == leaveCount);
         }
 
         /// <summary>
@@ -477,14 +596,11 @@ namespace Ragnarok.Net.ProtoBuf
         /// </summary>
         private void InitReceivedPacket()
         {
-            Array.Clear(this.headerBuffer, 0, this.headerBuffer.Length);
+            this.headerStream = new MemoryStream(PbPacketHeader.HeaderLength);
 
             this.packetHeader = null;
-            this.typenameBuffer = null;
-            this.payloadBuffer = null;
-            this.headerReadSize = 0;
-            this.typenameReadSize = 0;
-            this.payloadReadSize = 0;
+            this.typenameStream = null;
+            this.payloadStream = null;
         }
 
         /// <summary>
@@ -492,26 +608,25 @@ namespace Ragnarok.Net.ProtoBuf
         /// </summary>
         private void PacketHeaderReceived()
         {
-            this.packetHeader = new PbPacketHeader();
-            this.packetHeader.SetDecodedHeader(this.headerBuffer);
+            var header = new PbPacketHeader();
+            header.SetDecodedHeader(this.headerStream.GetBuffer());
 
-            // 1MB以上のデータはエラーとします。
-            /*if (this.receivingData.ContentLength > 1 * 1024 * 1024)
+            // 10MB以上のデータはエラーとします。
+            if (header.PayloadLength > 10 * 1024 * 1024)
             {
                 Disconnect();
                 return;
-            }*/
+            }
 
-            this.typenameBuffer = new byte[this.packetHeader.TypenameLength];
-            this.typenameReadSize = 0;
-
-            this.payloadBuffer = new byte[this.packetHeader.PayloadLength];
-            this.payloadReadSize = 0;
+            this.packetHeader = header;
+            this.typenameStream = new MemoryStream(header.TypeNameLength);
+            this.payloadStream = new MemoryStream(header.PayloadLength);
 
             Log.Trace(this,
                 "Packet Header Received (payload={0}bytes)",
-                this.packetHeader.PayloadLength);
+                header.PayloadLength);
         }
+        #endregion
 
         /// <summary>
         /// 受信パケットを処理します。
@@ -524,41 +639,32 @@ namespace Ragnarok.Net.ProtoBuf
 
             try
             {
-                if (typenameBuffer == null)
-                {
-                    Log.Error(this,
-                        "型名の受信に失敗しました。");
-                    return;
-                }
-
-                if (payloadBuffer == null)
-                {
-                    Log.Error(this,
-                        "コンテンツの受信に失敗しました。");
-                    return;
-                }
-
                 // 型名とメッセージをデシリアライズします。
                 type = DeserializeType(typenameBuffer);
-                if (type == null)
-                {
-                    return;
-                }
-
                 var message = DeserializeMessage(payloadBuffer, type);
-                if (message == null)
-                {
-                    return;
-                }
 
                 // 対応するハンドラを呼びます。
-                if (!header.IsResponse)
+                if (message is PbAck)
                 {
-                    HandleRequestOrCommand(header.Id, message);
+                    HandleAck(header.Id, header.IsResponse, true);
+                }
+                else if (message is PbNak)
+                {
+                    HandleAck(header.Id, header.IsResponse, false);
                 }
                 else
                 {
-                    HandleResponse(header.Id, message);
+                    // すぐに受信完了を送ります。
+                    SendAck(header.Id, header.IsResponse, true);
+
+                    if (!header.IsResponse)
+                    {
+                        HandleRequestOrCommand(header.Id, message);
+                    }
+                    else
+                    {
+                        HandleResponse(header.Id, message);
+                    }
                 }
             }
             catch (Exception ex)
@@ -569,13 +675,7 @@ namespace Ragnarok.Net.ProtoBuf
                     (payloadBuffer == null ? -1 : payloadBuffer.Length),
                     type);
 
-                /*if (type.ToString().IndexOf("VoteRoomInfo") >= 0)
-                {
-                    using (var stream = new FileStream("protobuf.dump", FileMode.Create))
-                    {
-                        stream.Write(payloadBuffer, 0, payloadBuffer.Length);
-                    }
-                }*/
+                SendAck(header.Id, header.IsResponse, false);
             }
         }
 
@@ -624,19 +724,21 @@ namespace Ragnarok.Net.ProtoBuf
             var typename = Encoding.UTF8.GetString(typenameBuffer);
             if (string.IsNullOrEmpty(typename))
             {
-                Log.Error(this,
+                throw new PbException(
                     "受信した型名が正しくありません。");
-                return null;
             }
+
+            // 短縮された型名を元に戻します。
+            typename = DecodeTypeName(typename);
 
             // デシリアライズする型のオブジェクトを取得します。
             var type = GetTypeFrom(typename);
             if (type == null)
             {
-                Log.Error(this,
-                    "{0}: 適切な型が見つかりませんでした。",
-                    typename);
-                return null;
+                throw new PbException(
+                    string.Format(
+                        "{0}: 適切な型が見つかりませんでした。",
+                        typename));
             }
 
             return type;
@@ -651,14 +753,54 @@ namespace Ragnarok.Net.ProtoBuf
             var message = PbUtil.Deserialize(payloadBuffer, type);
             if (message == null)
             {
-                Log.Error(this,
-                    "データのデシリアライズに失敗しました。" +
-                    "(content size={0}, type={1})",
-                    payloadBuffer.Length, type);
-                return null;
+                throw new PbException(
+                    string.Format(
+                        "データのデシリアライズに失敗しました。" +
+                        "(content size={0}, type={1})",
+                        payloadBuffer.Length, type));
             }
 
             return message;
+        }
+
+        /// <summary>
+        /// コマンドの応答確認を処理します。
+        /// </summary>
+        private void HandleAck(int id, bool isResponse, bool success)
+        {
+            NeedAckInfo needAckInfo;
+
+            Log.Trace(this, "ACKを受信しました。");
+
+            lock (this.needAckDic)
+            {
+                var dataId = new DataId(id, isResponse); 
+                if (!this.needAckDic.TryGetValue(dataId, out needAckInfo))
+                {
+                    Log.Error(this,
+                        "{0}: ACKに対応する送信データがありません。", id);
+                    return;
+                }
+
+                if (success)
+                {
+                    // データ送信成功
+                    this.needAckDic.Remove(dataId);
+                    return;
+                }
+                else if (needAckInfo.IncrementTryCount() >= 3)
+                {
+                    // 既定回数以上のデータ送信失敗
+                    Log.Error(this,
+                        "{0}: 既定回数以上の再送に失敗しました。", id);
+
+                    this.needAckDic.Remove(dataId);
+                    return;
+                }
+            }
+
+            // コマンドの再送処理を行います。
+            SendDataInternal(id, isResponse, needAckInfo.SendData, false);
         }
 
         /// <summary>
@@ -793,25 +935,27 @@ namespace Ragnarok.Net.ProtoBuf
                 return;
             }
 
+            var sendData = new PbSendData(request);
+            sendData.Serialize();
+
             var id = GetNextSendId();
+            var reqData = new PbRequestData<TReq, TRes>()
+            {
+                Id = id,
+                Connection = this,
+                ResponseReceived = handler,
+            };
+            reqData.SetTimeout(timeout);
 
             // 未処理のリクエストとして、リストに追加します。
             lock (this.requestDataDic)
             {
-                var reqData = new PbRequestData<TReq, TRes>()
-                {
-                    Id = id,
-                    Connection = this,
-                    ResponseReceived = handler,
-                };
-                reqData.SetTimeout(timeout);
-
-                // リクエストに追加します。
                 this.requestDataDic.Add(id, reqData);
             }
 
             // データを送信します。
-            SendDataInternal(id, false, request, isOutLog);
+            AddNeedAckData(id, false, sendData);
+            SendDataInternal(id, false, sendData, isOutLog);
         }
 
         /// <summary>
@@ -825,10 +969,14 @@ namespace Ragnarok.Net.ProtoBuf
                 return;
             }
 
+            var sendData = new PbSendData(command);
+            sendData.Serialize();
+
             // コマンドを送信します。
             var id = GetNextSendId();
 
-            SendDataInternal(id, false, command, isOutLog);
+            AddNeedAckData(id, false, sendData);
+            SendDataInternal(id, false, sendData, isOutLog);
         }
 
         /// <summary>
@@ -839,57 +987,100 @@ namespace Ragnarok.Net.ProtoBuf
         {
             if (response == null)
             {
-                throw new ArgumentNullException("response");
+                return;
             }
 
-            SendDataInternal(id, true, response, isOutLog);
+            var sendData = new PbSendData(response);
+            sendData.Serialize();
+
+            AddNeedAckData(id, true, sendData);
+            SendDataInternal(id, true, sendData, isOutLog);
+        }
+
+        /// <summary>
+        /// コマンドなどの応答確認を送ります。
+        /// </summary>
+        private void SendAck(int id, bool isResponse, bool success)
+        {
+            var sendData = (success ? AckData : NakData);
+
+            SendDataInternal(id, isResponse, sendData, true);
+        }
+
+        /// <summary>
+        /// ACKの受信が必要なデータを登録します。
+        /// </summary>
+        private void AddNeedAckData(int id, bool isResponse,
+                                    PbSendData sendData)
+        {
+            lock (this.needAckDic)
+            {
+                var needAck = new NeedAckInfo
+                {
+                    SendData = sendData,
+                };
+                var dataId = new DataId(id, isResponse);
+
+                try
+                {
+                    this.needAckDic.Add(dataId, needAck);
+                }
+                catch (Exception ex)
+                {
+                    Log.ErrorException(ex, "");
+                }
+            }
         }
 
         /// <summary>
         /// データを送信します。
         /// </summary>
         private void SendDataInternal(int id, bool isResponse,
-                                      object sendData, bool isOutLog)
+                                      PbSendData pbSendData, bool isOutLog)
         {
-            if (sendData == null)
+            if (pbSendData == null)
             {
-                throw new ArgumentNullException("sendData");
+                throw new ArgumentNullException("pbSendData");
+            }
+
+            if (pbSendData.SerializedData == null ||
+                pbSendData.EncodedTypeName == null)
+            {
+                throw new PbException("送信データがシリアライズされていません。");
             }
 
             try
             {
-                // 送信データをシリアライズします。
-                var payload = PbUtil.Serialize(sendData, sendData.GetType());
-                var typename = TypeSerializer.Serialize(sendData.GetType());
-                var typeData = Encoding.UTF8.GetBytes(typename);
+                var typedata = pbSendData.EncodedTypeData;
+                var payload = pbSendData.SerializedData;
 
                 // パケットヘッダを用意します。
-                var header = new PbPacketHeader()
+                var header = new PbPacketHeader
                 {
                     Id = id,
                     IsResponse = isResponse,
-                    TypenameLength = typeData.Length,
+                    TypeNameLength = typedata.Length,
                     PayloadLength = payload.Length,
                 };
                 var headerData = header.GetEncodedPacket();
 
                 // 送信データは複数バッファのまま送信します。
-                var internalSendData = new SendData()
+                var sendData = new SendData()
                 {
                     Socket = this.Socket,
                 };
-                internalSendData.AddBuffer(headerData);
-                internalSendData.AddBuffer(typeData);
-                internalSendData.AddBuffer(payload);
+                sendData.AddBuffer(headerData);
+                sendData.AddBuffer(typedata);
+                sendData.AddBuffer(payload);
 
                 // データを送信します。
-                base.SendData(internalSendData);
+                base.SendData(sendData);
 
                 if (isOutLog)
                 {
                     Log.Debug(this,
                         "{0}を送信しました。(content={1}bytes)",
-                        typename,
+                        pbSendData.TypeName,
                         (payload != null ? payload.Length : -1));
                 }
             }
@@ -897,38 +1088,22 @@ namespace Ragnarok.Net.ProtoBuf
             {
                 Log.ErrorException(this, ex,
                     "{0}: 送信データのシリアライズに失敗しました。",
-                    sendData.GetType());
+                    pbSendData.TypeName);
             }
-        }
-
-        /// <summary>
-        /// データ受信時に呼ばれます。
-        /// </summary>
-        protected override void OnSent(DataEventArgs e)
-        {
-            base.OnSent(e);
-
-            /*if (ex.Error != null)
-            {
-                return;
-            }
-
-            var data = new PbData();
-            var offset = 0;
-            while (offset < ex.Data.Length)
-            {
-                if (ParseReceivedData(data, ex.Data, ref offset))
-                {
-                    if (!data.IsResponse)
-                    {
-                        Log.TraceMessage(this,
-                            "リクエスト({0})を送信しました。",
-                            data.Id);
-                    }
-                }
-            }*/
         }
         #endregion
+
+        /// <summary>
+        /// 静的コンストラクタ
+        /// </summary>
+        static PbConnection()
+        {
+            AckData = new PbSendData(new PbAck());
+            AckData.Serialize();
+
+            NakData = new PbSendData(new PbNak());
+            NakData.Serialize();
+        }
 
         /// <summary>
         /// コンストラクタ
@@ -938,6 +1113,7 @@ namespace Ragnarok.Net.ProtoBuf
             InitReceivedPacket();
 
             ProtocolVersion = new PbProtocolVersion();
+            AckTimeout = TimeSpan.FromSeconds(20);
             DefaultRequestTimeout = TimeSpan.MaxValue;
 
             AddRequestHandler<PbCheckProtocolVersionRequest,

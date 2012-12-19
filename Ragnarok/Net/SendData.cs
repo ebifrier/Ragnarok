@@ -14,27 +14,30 @@ namespace Ragnarok.Net
     /// <summary>
     /// 送信用のデータです。
     /// </summary>
-    public class SendData
+    public sealed class SendData
     {
-        /// <summary>
-        /// 送信ソケットを取得または設定します。
-        /// </summary>
-        public Socket Socket { get; set; }
-
-        /// <summary>
-        /// 送信データを取得または設定します。
-        /// </summary>
-        public List<ArraySegment<byte>> Buffers { get; private set; }
-
-        /// <summary>
-        /// 送信予定時刻を取得または設定します。
-        /// </summary>
-        public DateTime ScheduleTime { get; set; }
-
         /// <summary>
         /// 送信完了時に呼ばれるコールバックを取得または設定します。
         /// </summary>
         public event SentDataHandler Callback;
+
+        /// <summary>
+        /// 送信ソケットを取得または設定します。
+        /// </summary>
+        public Socket Socket
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 送信データを取得または設定します。
+        /// </summary>
+        public List<ArraySegment<byte>> Buffers
+        {
+            get;
+            private set;
+        }
 
         /// <summary>
         /// 送信完了時のイベントを呼び出します。

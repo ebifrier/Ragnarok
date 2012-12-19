@@ -55,7 +55,7 @@ namespace Ragnarok.Net.ProtoBuf
     /// </summary>
     [DataContract()]
     [Serializable()]
-    public class PbCheckProtocolVersionRequest
+    public sealed class PbCheckProtocolVersionRequest
     {
         /// <summary>
         /// プロトコルのバージョンを取得または設定します。
@@ -88,7 +88,7 @@ namespace Ragnarok.Net.ProtoBuf
     /// </summary>
     [DataContract()]
     [Serializable()]
-    public class PbCheckProtocolVersionResponse
+    public sealed class PbCheckProtocolVersionResponse
     {
         /// <summary>
         /// バージョンチェックの結果を取得または設定します。

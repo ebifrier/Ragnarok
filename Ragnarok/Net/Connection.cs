@@ -19,12 +19,7 @@ namespace Ragnarok.Net
     {
         private static readonly int[] idCounter = new int[] { 0 };
         private readonly object socketLock = new object();
-        private int id = -1;
-        private string name = "コネクション";
-        private Socket socket;
         private volatile bool isConnecting = false;
-        private volatile bool isDisconnecting = false;
-        private byte[] sendingData = null;
         private bool disposed = false;
 
         /// <summary>
@@ -59,7 +54,7 @@ namespace Ragnarok.Net
         {
             get
             {
-                var name = this.Name ?? "";
+                var name = Name ?? "";
 
                 return string.Format("{0}[{1,8:D8}]", name, this.Id);
             }
@@ -70,14 +65,8 @@ namespace Ragnarok.Net
         /// </summary>
         public int Id
         {
-            get
-            {
-                return this.id;
-            }
-            protected set
-            {
-                this.id = value;
-            }
+            get;
+            private set;
         }
 
         /// <summary>
@@ -85,14 +74,26 @@ namespace Ragnarok.Net
         /// </summary>
         public string Name
         {
-            get
-            {
-                return this.name;
-            }
-            set
-            {
-                this.name = value;
-            }
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 読み取り可能かどうか取得します。
+        /// </summary>
+        public bool CanRead
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// 書き込み可能かどうか取得します。
+        /// </summary>
+        public bool CanWrite
+        {
+            get;
+            set;
         }
 
         /// <summary>
@@ -100,14 +101,8 @@ namespace Ragnarok.Net
         /// </summary>
         public Socket Socket
         {
-            get
-            {
-                return this.socket;
-            }
-            private set
-            {
-                this.socket = value;
-            }
+            get;
+            private set;
         }
 
         /// <summary>
@@ -117,31 +112,9 @@ namespace Ragnarok.Net
         {
             get
             {
-                var sock = this.socket;
+                var sock = Socket;
 
                 return (sock != null && sock.Connected);
-            }
-        }
-
-        /// <summary>
-        /// ソケットが切断中かどうかを取得します。
-        /// </summary>
-        public bool IsDisconnecting
-        {
-            get
-            {
-                return this.isDisconnecting;
-            }
-        }
-
-        /// <summary>
-        /// メッセージを送信中かどうかを取得します。
-        /// </summary>
-        public bool IsSendingData
-        {
-            get
-            {
-                return (this.sendingData != null);
             }
         }
 
@@ -155,12 +128,12 @@ namespace Ragnarok.Net
 
             lock (this.socketLock)
             {
-                this.socket = socket;
-                this.isDisconnecting = false;
-                this.sendingData = null;
+                Socket = socket;
+                CanRead = true;
+                CanWrite = true;
 
                 // keepaliveを設定し、不要なソケットを削除するようにします。
-                this.socket.SetSocketOption(
+                Socket.SetSocketOption(
                     SocketOptionLevel.Socket,
                     SocketOptionName.KeepAlive,
                     true);
@@ -175,7 +148,8 @@ namespace Ragnarok.Net
             {
                 OnConnected();
 
-                // データの受信を開始します。
+                // データの受信を開始した直後にデータ受信イベントが呼ばれる
+                // 可能性があるため、この処理は一番最後に行います。
                 StartReceiveData();
             }
         }
@@ -331,20 +305,25 @@ namespace Ragnarok.Net
         /// <summary>
         /// ソケットの終了処理を行います。
         /// </summary>
-        public void Shutdown(SocketShutdown shutdown)
+        public void Shutdown(SocketShutdown shutdown = SocketShutdown.Send)
         {
             try
             {
                 lock (this.socketLock)
                 {
-                    if (this.socket == null || this.isDisconnecting)
+                    if (Socket == null)
                     {
                         return;
                     }
 
+                    // すでに読み取り不可なら、その状態は変わりません。
+                    CanRead = (CanRead &&
+                               shutdown == SocketShutdown.Send);
+                    CanWrite = (CanWrite &&
+                                shutdown == SocketShutdown.Receive);
+
                     // ソケットの切断処理を開始します。
-                    this.isDisconnecting = true;
-                    this.socket.Shutdown(shutdown);
+                    Socket.Shutdown(shutdown);
                 }
             }
             catch (Exception ex)
@@ -352,6 +331,7 @@ namespace Ragnarok.Net
                 Log.ErrorException(this, ex,
                     "ソケットのShutdownに失敗しました。");
 
+                Util.ThrowIfFatal(ex);
                 NotifyDisconnected(DisconnectReason.Error);
             }
         }
@@ -363,17 +343,14 @@ namespace Ragnarok.Net
         {
             try
             {
-                lock (this.socketLock)
+                var socket = Socket;
+                if (Socket == null)
                 {
-                    if (this.socket == null)
-                    {
-                        return;
-                    }
-
-                    // ソケットの切断処理を開始します。
-                    this.socket.Shutdown(SocketShutdown.Both);
+                    return;
                 }
 
+                // ソケットの切断処理を開始します。
+                Socket.Disconnect(false);
                 NotifyDisconnected(DisconnectReason.Disconnected);
             }
             catch (Exception ex)
@@ -381,6 +358,7 @@ namespace Ragnarok.Net
                 Log.ErrorException(this, ex,
                     "ソケットの切断に失敗しました。");
 
+                Util.ThrowIfFatal(ex);
                 NotifyDisconnected(DisconnectReason.Error);
             }
         }
@@ -392,17 +370,15 @@ namespace Ragnarok.Net
         {
             lock (this.socketLock)
             {
-                if (this.socket == null)
+                if (Socket == null)
                 {
                     return;
                 }
 
-                this.socket.Disconnect(false);
-                this.socket.Close();
-                this.socket = null;
-
-                this.sendingData = null;
-                this.isDisconnecting = false;
+                Socket.Close();
+                Socket = null;
+                CanRead = false;
+                CanWrite = false;
             }
 
             Log.Debug(this,
@@ -427,21 +403,31 @@ namespace Ragnarok.Net
 
         #region メッセージ受信処理
         /// <summary>
+        /// ソケットが読み取り可能であればオブジェクトを返します。
+        /// </summary>
+        private Socket GetReadableSocket()
+        {
+            lock (this.socketLock)
+            {
+                if (!IsConnected || !CanRead)
+                {
+                    return null;
+                }
+
+                return Socket;
+            }
+        }
+
+        /// <summary>
         /// データの受信を開始します。
         /// </summary>
         private void StartReceiveData()
         {
-            var socket = null as Socket;
-
-            lock (this.socketLock)
+            var socket = GetReadableSocket();
+            if (socket == null)
             {
-                if (!IsConnected || IsDisconnecting)
-                {
-                    return;
-                }
-
-                socket = this.socket;
-            }
+                return;
+            }            
 
             // BeginReceiveから呼ばれるコールバックは
             // このメソッドが走っているスレッドと同じになることがあります。
@@ -449,7 +435,7 @@ namespace Ragnarok.Net
             // コールバックをlockされた状態で呼んでしまうと
             // 紆余曲折を経てデッドロックされてしまうことがあるため、
             // BeginReceiveはlockステートメントの外側から呼んでいます。
-            var buffer = new byte[2048];
+            var buffer = new byte[1024];
 
             socket.BeginReceive(
                 buffer, 0, buffer.Length,
@@ -468,20 +454,14 @@ namespace Ragnarok.Net
         {
             try
             {
-                byte[] data = null;
-                int size = -1;
-
-                lock (this.socketLock)
+                var socket = Socket;
+                if (socket == null)
                 {
-                    var socket = this.socket;
-                    if (socket == null)
-                    {
-                        return;
-                    }
-
-                    data = (byte[])result.AsyncState;
-                    size = socket.EndReceive(result);
+                    return;
                 }
+
+                var data = (byte[])result.AsyncState;
+                var size = socket.EndReceive(result);
 
                 // サイズが０ならばサーバーから接続が切断されています。
                 if (size == 0)
@@ -509,6 +489,7 @@ namespace Ragnarok.Net
             }
             catch (Exception error)
             {
+                Util.ThrowIfFatal(error);
                 RaiseReceived(null, -1, error);
 
                 // エラー判定にします。
@@ -522,11 +503,13 @@ namespace Ragnarok.Net
         protected void RaiseReceived(byte[] data, int length, Exception error)
         {
             var e = new DataEventArgs(data, length, error);
-            var handler = Received;
 
+            // 継承メソッドを呼びます。
             Util.SafeCall(() =>
                 OnReceived(e));
 
+            // eventを呼びます。
+            var handler = Received;
             if (handler != null)
             {
                 Util.SafeCall(() =>
@@ -555,13 +538,13 @@ namespace Ragnarok.Net
 
             lock (this.socketLock)
             {
-                if (!IsConnected || IsDisconnecting)
+                if (!IsConnected || !CanWrite)
                 {
                     return;
                 }
 
                 // データを同期的に送信します。
-                this.socket.Send(data, SocketFlags.None);
+                Socket.Send(data, SocketFlags.None);
             }
         }
 
@@ -577,14 +560,14 @@ namespace Ragnarok.Net
 
             lock (this.socketLock)
             {
-                if (!IsConnected || IsDisconnecting)
+                if (!IsConnected || !CanWrite)
                 {
                     return;
                 }
 
                 var sendData = new SendData()
                 {
-                    Socket = this.socket,
+                    Socket = Socket,
                 };
                 sendData.Callback += RaiseSent;
                 sendData.AddBuffer(data, 0, data.Length);
@@ -612,14 +595,17 @@ namespace Ragnarok.Net
         /// </summary>
         private void RaiseSent(SendData sendData, Exception error)
         {
-            var handler = this.Sent;
+            // TODO:
             var e = new DataEventArgs(
                 null, /*(sendData != null ? sendData.Buffer : null)*/
                 error);
 
+            // 継承メソッドを呼びます。
             Util.SafeCall(() =>
                 OnSent(e));
 
+            // eventを呼びます。
+            var handler = this.Sent;
             if (handler != null)
             {
                 Util.SafeCall(() =>
@@ -658,7 +644,8 @@ namespace Ragnarok.Net
         /// </summary>
         public Connection()
         {
-            this.id = GetNextConnectionId();
+            Name = "コネクション";
+            Id = GetNextConnectionId();
         }
 
         /// <summary>
@@ -667,7 +654,7 @@ namespace Ragnarok.Net
         public Connection(string name)
             : this()
         {
-            this.Name = name;
+            Name = name;
         }
 
         /// <summary>

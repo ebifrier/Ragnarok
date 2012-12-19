@@ -1,3 +1,17 @@
+2012-12-19  - Ver 2.5.6
+
+	* Ragnarok/Net/Connection.cs: 全体にソースを修正しました。
+	* Ragnarok/Net/ProtoBuf/PbConnection.cs: データ受信時に生のバイト列
+	ではなくMemoryStreamを使うようにしました。
+	データの受信ごとにACKやNAKを送信するようにしました。
+	シリアライズ後の送信データをキャッシュし、次の送信にすぐに対応でき
+	るようにしました。
+	* Ragnarok/Net/ProtoBuf: 幾つかのファイルを追加し、不要なものを削除
+	しました。
+	* Ragnarok/Update: アプリの自動更新用のファイルを追加しました。
+	* Ragnarok/Utility/AssemblyUtility: アセンブリ情報を得るためのクラ
+	スをいくつか追加しました。
+
 2012-12-14  - Ver 2.5.5
 
 	* Ragnarok.Presentation/DialogUtil.cs: ダイアログが画面内に表示され

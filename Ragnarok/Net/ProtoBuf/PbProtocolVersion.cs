@@ -17,7 +17,7 @@ namespace Ragnarok.Net.ProtoBuf
     /// </remarks>
     [DataContract()]
     [Serializable()]
-    public class PbProtocolVersion :
+    public sealed class PbProtocolVersion :
         IComparable<PbProtocolVersion>, IEquatable<PbProtocolVersion>
     {
         /// <summary>

@@ -55,11 +55,11 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Data.SQLite, Version=1.0.65.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=x86">
+    <Reference Include="System.Data.SQLite, Version=1.0.73.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\externals\net\System.Data.SQLite.dll</HintPath>
-      <Private>True</Private>
     </Reference>
+    <Reference Include="System.Management" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xaml" />
@@ -102,18 +102,19 @@
     <Compile Include="Net\Connection.cs" />
     <Compile Include="Net\NetEventArgs.cs" />
     <Compile Include="Net\NtpClient.cs" />
+    <Compile Include="Net\ProtoBuf\PbAck.cs" />
     <Compile Include="Net\ProtoBuf\PbCheckVersion.cs" />
     <Compile Include="Net\ProtoBuf\PbConnectionExtension.cs" />
     <Compile Include="Net\ProtoBuf\PbErrorCode.cs" />
     <Compile Include="Net\ProtoBuf\PbEventArgs.cs" />
     <Compile Include="Net\ProtoBuf\PbPacketHeader.cs" />
-    <Compile Include="Net\ProtoBuf\PbPayload.cs" />
-    <Compile Include="Net\ProtoBuf\PbPropertyChanged.cs" />
     <Compile Include="Net\ProtoBuf\PbProtocolVersion.cs" />
     <Compile Include="Net\ProtoBuf\PbRequestData.cs" />
     <Compile Include="Net\ProtoBuf\PbResponse.cs" />
+    <Compile Include="Net\ProtoBuf\PbSendData.cs" />
     <Compile Include="Net\ProtoBuf\PbUtil.cs" />
     <Compile Include="Net\ProtoBuf\PbConnection.cs" />
+    <Compile Include="Net\ProtoBuf\PbException.cs" />
     <Compile Include="Net\RagnarokNetException.cs" />
     <Compile Include="Net\SendData.cs" />
     <Compile Include="Net\SendThread.cs" />
@@ -144,13 +145,13 @@
     <Compile Include="NicoNico\Live\PostComment.cs" />
     <Compile Include="NicoNico\Live\ProviderType.cs" />
     <Compile Include="NicoNico\Live\PublishStatus.cs" />
+    <Compile Include="NicoNico\Live\StrUtil.cs" />
     <Compile Include="NicoNico\Login\BrowserType.cs" />
-    <Compile Include="NicoNico\Login\LoginData.cs" />
     <Compile Include="NicoNico\Login\CookieValidator.cs" />
+    <Compile Include="NicoNico\Login\LoginData.cs" />
     <Compile Include="NicoNico\Login\Loginer.cs" />
     <Compile Include="NicoNico\NicoClient.cs" />
     <Compile Include="NicoNico\NicoException.cs" />
-    <Compile Include="NicoNico\Live\StrUtil.cs" />
     <Compile Include="NicoNico\NicoString.cs" />
     <Compile Include="NLog\RemoteSyslog.cs" />
     <Compile Include="NLog\RepeatedException.cs" />
@@ -167,6 +168,21 @@
     <Compile Include="ObjectModel\NotifyCollection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RagnarokException.cs" />
+    <Compile Include="Update\Downloader.cs" />
+    <Compile Include="Update\Updater.cs" />
+    <Compile Include="Utility\AssemblyUtility\IAssemblyAccessor.cs" />
+    <Compile Include="Update\UpdateUtil.cs" />
+    <Compile Include="Update\AppCaseItem.cs" />
+    <Compile Include="Update\AppCastItemUtil.cs" />
+    <Compile Include="Utility\AssemblyUtility\AssemblyDiagnosticsAccessor.cs" />
+    <Compile Include="Utility\AssemblyUtility\AssemblyReflectionAccessor.cs" />
+    <Compile Include="Update\Configuration.cs" />
+    <Compile Include="Utility\AssemblyUtility\AssemblyAccessor.cs" />
+    <Compile Include="Utility\AssemblyUtility\AssemblyNullAccessor.cs" />
+    <Compile Include="Utility\DataSegment.cs" />
+    <Compile Include="Utility\DeviceInventory.cs" />
+    <Compile Include="Update\MD5Verificator.cs" />
+    <Compile Include="Update\RagnarokUpdateException.cs" />
     <Compile Include="Util.cs" />
     <Compile Include="Utility\ActionOnDispose.cs" />
     <Compile Include="Utility\BinarySplitReader.cs" />

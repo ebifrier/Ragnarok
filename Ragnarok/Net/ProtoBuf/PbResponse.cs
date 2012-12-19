@@ -8,11 +8,11 @@ using ProtoBuf;
 namespace Ragnarok.Net.ProtoBuf
 {
     /// <summary>
-    /// レスポンスが無い場合に使うダミーの型です。
+    /// エラー時に使うレスポンス型です。
     /// </summary>
     [DataContract()]
     [Serializable()]
-    internal class PbDummy
+    internal sealed class PbDummy
     {
     }
 
@@ -45,7 +45,7 @@ namespace Ragnarok.Net.ProtoBuf
     /// </summary>
     [DataContract()]
     [Serializable()]
-    internal class PbResponse<TRes> : IPbResponse
+    internal sealed class PbResponse<TRes> : IPbResponse
         where TRes: class
     {
         /// <summary>
