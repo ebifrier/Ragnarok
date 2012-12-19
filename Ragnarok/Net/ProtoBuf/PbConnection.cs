@@ -1073,6 +1073,17 @@ namespace Ragnarok.Net.ProtoBuf
                 sendData.AddBuffer(typedata);
                 sendData.AddBuffer(payload);
 
+                /*if (payload.Length > 2000)
+                {
+                var filecore = DateTime.Now.ToString("HH:mm:ss.ffff");
+                var filename = "tmp/" + sendData.GetType() + filecore + ".dump";
+                using (var stream = new FileStream(filename, FileMode.Create))
+                {
+                    stream.Write(payload, 0, payload.Length);
+//                    PbUtil.Deserialize(payload, sendData.GetType());
+                }
+                }*/
+
                 // データを送信します。
                 base.SendData(sendData);
 

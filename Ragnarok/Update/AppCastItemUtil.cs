@@ -99,8 +99,9 @@ namespace Ragnarok.Update
         public static AppCastItem GetLatestVersion(string castUrl)
         {
             using (var stream = GetLatestVersionStream(castUrl))
+            using (var reader = XmlReader.Create(stream))
             {
-                var topNode = XElement.Load(stream);
+                var topNode = XElement.Load(reader);
                 var itemNodes = topNode.XPathSelectElements(TopItemNode);
 
                 AppCastItem latestVersion = null;

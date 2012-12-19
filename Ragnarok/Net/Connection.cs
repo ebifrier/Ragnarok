@@ -344,7 +344,7 @@ namespace Ragnarok.Net
             try
             {
                 var socket = Socket;
-                if (Socket == null)
+                if (socket == null)
                 {
                     return;
                 }
