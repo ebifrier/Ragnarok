@@ -967,6 +967,8 @@ namespace Ragnarok.Net.ProtoBuf
             }
 
             var sendData = new PbSendData(command);
+            sendData.Serialize();
+
             SendData(sendData, isOutLog);
         }
 
@@ -979,8 +981,6 @@ namespace Ragnarok.Net.ProtoBuf
             {
                 return;
             }
-
-            sendData.Serialize();
 
             var id = GetNextSendId();
             AddNeedAckData(id, false, sendData);
