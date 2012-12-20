@@ -933,7 +933,6 @@ namespace Ragnarok.Net.ProtoBuf
             }
 
             var sendData = new PbSendData(request);
-            sendData.Serialize();
 
             var id = GetNextSendId();
             var reqData = new PbRequestData<TReq, TRes>()
@@ -967,8 +966,6 @@ namespace Ragnarok.Net.ProtoBuf
             }
 
             var sendData = new PbSendData(command);
-            sendData.Serialize();
-
             SendData(sendData, isOutLog);
         }
 
@@ -999,7 +996,6 @@ namespace Ragnarok.Net.ProtoBuf
             }
 
             var sendData = new PbSendData(response);
-            sendData.Serialize();
 
             AddNeedAckData(id, true, sendData);
             SendDataInternal(id, true, sendData, isOutLog);
@@ -1113,10 +1109,7 @@ namespace Ragnarok.Net.ProtoBuf
         static PbConnection()
         {
             AckData = new PbSendData(new PbAck());
-            AckData.Serialize();
-
             NakData = new PbSendData(new PbNak());
-            NakData.Serialize();
         }
 
         /// <summary>

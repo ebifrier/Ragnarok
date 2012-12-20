@@ -1,3 +1,10 @@
+2012-12-20  - Ver 2.5.7
+
+	* Ragnarok/Net/ProtoBuf/PbSendData.cs: Serializeを自動で呼ぶように
+	しました。
+	* Ragnarok/Net/ProtoBuf/PbConnection.cs: データ受信周りのソースをリ
+	ファクタリングしました。
+
 2012-12-19  - Ver 2.5.6
 
 	* Ragnarok/Net/Connection.cs: 全体にソースを修正しました。

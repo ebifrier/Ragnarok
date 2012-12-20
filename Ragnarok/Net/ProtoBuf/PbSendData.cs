@@ -61,7 +61,7 @@ namespace Ragnarok.Net.ProtoBuf
         /// <summary>
         /// 準備したデータをシリアライズします。
         /// </summary>
-        public void Serialize()
+        private void Serialize()
         {
             if (Data == null)
             {
@@ -82,6 +82,8 @@ namespace Ragnarok.Net.ProtoBuf
         public PbSendData(object data)
         {
             Data = data;
+
+            Serialize();
         }
     }
 }
