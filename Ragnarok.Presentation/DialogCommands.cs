@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Input;
 
@@ -43,5 +42,49 @@ namespace Ragnarok.Presentation
             new RoutedUICommand(
                 "Noボタン", "No",
                 typeof(FrameworkElement));
+
+        /// <summary>
+        /// デフォルトのコマンドを接続します。
+        /// </summary>
+        public static void BindCommands(CommandBindingCollection bindings)
+        {
+            bindings.Add(
+                new CommandBinding(
+                    DialogCommands.OK,
+                    ExecuteYes));
+            bindings.Add(
+                new CommandBinding(
+                    DialogCommands.Cancel,
+                    ExecuteNo));
+
+            bindings.Add(
+                new CommandBinding(
+                    DialogCommands.Yes,
+                    ExecuteYes));
+            bindings.Add(
+                new CommandBinding(
+                    DialogCommands.No,
+                    ExecuteNo));
+        }
+
+        /// <summary>
+        /// OK/YES
+        /// </summary>
+        private static void ExecuteYes(object sender, ExecutedRoutedEventArgs e)
+        {
+            var window = (Window)sender;
+
+            window.DialogResult = true;
+        }
+
+        /// <summary>
+        /// Cancel/NO
+        /// </summary>
+        private static void ExecuteNo(object sender, ExecutedRoutedEventArgs e)
+        {
+            var window = (Window)sender;
+
+            window.DialogResult = false;
+        }
     }
 }

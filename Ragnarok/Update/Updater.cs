@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.IO;
 using System.Net;
@@ -9,42 +10,6 @@ using System.Threading;
 
 namespace Ragnarok.Update
 {
-    /// <summary>
-    /// Everytime when netsparkle detects an update the 
-    /// consumer can decide what should happen as next with the help 
-    /// of the UpdateDatected event
-    /// </summary>
-    public enum NextUpdateAction
-    {
-        ShowStandardUserInterface = 1,
-        PerformUpdateUnattended = 2,
-        ProhibitUpdate = 3
-    }
-
-    /// <summary>
-    /// Contains all information for the update detected event
-    /// </summary>
-    public class UpdateDetectedEventArgs : EventArgs
-    {
-        public NextUpdateAction NextAction
-        {
-            get;
-            set;
-        }
-
-        public Configuration ApplicationConfig
-        {
-            get;
-            set;
-        }
-
-        public AppCastItem LatestVersion
-        {
-            get;
-            set;
-        }
-    }
-
     /// <summary>
     /// アプリの更新処理を行います。
     /// </summary>
@@ -61,29 +26,32 @@ namespace Ragnarok.Update
     /// </remarks>
     public class Updater : IDisposable
     {
-        private readonly BackgroundWorker _worker = new BackgroundWorker();
-        private readonly Downloader downloader = new Downloader();
-
+        private readonly object SyncObject = new object();
+        private Downloader downloader;
         private string appCastUrl;
         private Configuration config;
-        private DateTime lastCheckTime = DateTime.Now;
+        private AppCastItem latestVersion;
 
+        private ManualResetEvent downloadDoneEvent = new ManualResetEvent(false);
         private string downloadFilePath;
-
-        private AutoResetEvent _exitHandle = new AutoResetEvent(false);
-        private ManualResetEvent _loopingHandle = new ManualResetEvent(false);
-        private AutoResetEvent forceUpdateCheckHandle = new AutoResetEvent(false);
-        private ManualResetEvent downloadDoneHandle = new ManualResetEvent(false);
+        private string packFilePath;
+        private string packConfigFilePath;
+        
+        private int isStartedInt;
+        private int isDownloadFailedInt;
+        private bool disposed;
 
         /// <summary>
-        /// This event can be used to override the standard user interface
-        /// process when an update is detected
+        /// 新たな更新情報が確認されたときに呼ばれます。
         /// </summary>
         public event EventHandler<UpdateDetectedEventArgs> UpdateDetected;
 
-        public bool IsInitialCheck = true;
-        public TimeSpan CheckFrequency = TimeSpan.FromDays(1);
+        /// <summary>
+        /// ダウンロードファイルがすべてそろった時に呼ばれます。
+        /// </summary>
+        public event EventHandler<DownloadDoneEventArgs> DownloadDone;
 
+#if false
         /// <summary>
         /// Hides the release notes view when an update was found. This 
         /// mode is switched on automatically when no sparkle:releaseNotesLink
@@ -100,28 +68,33 @@ namespace Ragnarok.Update
             get;
             set;
         }
-
+#endif
         /// <summary>
-        /// This property returns true when the update loop is running
-        /// and files when the loop is not running
+        /// コンフィグ情報を取得します。
         /// </summary>
-        public bool IsUpdateLoopRunning
+        public Configuration ApplicationConfig
         {
-            get { return _loopingHandle.WaitOne(0); }
-        }
-
-        public DateTime NextUpdateTime
-        {
-            get { return (this.lastCheckTime + CheckFrequency); }
-        }
-
-        public TimeSpan NextUpdateInterval
-        {
-            get { return (NextUpdateTime - DateTime.Now); }
+            get { return this.config; }
         }
 
         /// <summary>
-        /// ctor which needs the appcast url
+        /// 更新情報を取得します。
+        /// </summary>
+        public AppCastItem LatestVersion
+        {
+            get { return this.latestVersion; }
+        }
+
+        /// <summary>
+        /// ダウンロード状態などを扱うオブジェクトを取得します。
+        /// </summary>
+        public Downloader Downloader
+        {
+            get { return this.downloader; }
+        }
+
+        /// <summary>
+        /// コンストラクタ
         /// </summary>
         public Updater(string appCastUrl)
             : this(appCastUrl, null)
@@ -129,99 +102,81 @@ namespace Ragnarok.Update
         }
 
         /// <summary>
-        /// ctor which needs the appcast url and a referenceassembly
+        /// コンストラクタ
         /// </summary>        
         public Updater(string appCastUrl, string assemblyName)
         {
             this.appCastUrl = appCastUrl;
             this.config = new Configuration(assemblyName);
 
-            // adjust the delegates
-            _worker.DoWork += _worker_DoWork;
-
             // set the url
             Log.Info("Updater use the following url: {0}", appCastUrl);
         }
 
         /// <summary>
-        /// The method starts a NetSparkle background loop
-        /// If NetSparkle is configured to check for updates on startup, proceeds to perform 
-        /// the check. You should only call this function when your app is initialized and 
-        /// shows its main window.
+        /// デストラクタ
         /// </summary>
-        public void StartLoop()
+        ~Updater()
         {
-            if (IsUpdateLoopRunning)
-            {
-                return;
-            }
-
-            // first set the event handle
-            _loopingHandle.Set();
-
-            // Start the helper thread as a background worker to 
-            // get well ui interaction
-
-            // create and configure the worker
-            Log.Info("Updater starts background worker.");
-
-            // start the work
-            _worker.RunWorkerAsync();
+            Dispose(false);
         }
 
         /// <summary>
-        /// This method will stop the sparkle background loop and is called
-        /// through the disposable interface automatically
-        /// </summary>
-        public void StopLoop()
-        {
-            // ensure the work will finished
-            _exitHandle.Set();
-        }
-
-        /// <summary>
-        /// Is called in the using context and will stop all background activities
+        /// 更新処理を停止します。
         /// </summary>
         public void Dispose()
         {
-            StopLoop();
-        }
-
-        private bool IsCheckToUpdateNeeded()
-        {
-            if (DateTime.Now < NextUpdateTime)
-            {
-                Log.Info(
-                    "Update check performed within the last {0} minutes !",
-                    CheckFrequency.TotalMinutes);
-                return false;
-            }
-
-            return true;
+            GC.SuppressFinalize(this);
+            Dispose(true);
         }
 
         /// <summary>
-        /// Get the latest version information.
+        /// 更新処理を停止します。
         /// </summary>
-        private AppCastItem GetLatestVersion()
+        protected virtual void Dispose(bool disposing)
         {
-            try
+            if (!this.disposed)
             {
-                // set the last check time
-                Log.Info("Updater: Touch the last check timestamp.");
-                this.lastCheckTime = DateTime.Now;
+                if (disposing)
+                {
+                    Stop();
+                }
 
-                return AppCastItemUtil.GetLatestVersion(this.appCastUrl);
+                this.disposed = true;
             }
-            catch (Exception ex)
-            {
-                Log.ErrorException(ex,
-                    "Updater: Error during app cast download.");
-            }
-
-            return null;
         }
 
+        /// <summary>
+        /// 更新処理を開始します。
+        /// </summary>
+        public void Start()
+        {
+            if (Interlocked.CompareExchange(ref this.isStartedInt, 1, 0) == 1)
+            {
+                // 既に開始済み
+                return;
+            }
+
+            Log.Info("Updater starts download.");
+
+            // 更新情報の取得を開始します。
+            var web = new WebClient();
+            web.DownloadDataCompleted += web_DownloadDataCompleted;
+            web.DownloadDataAsync(new Uri(this.appCastUrl));
+        }
+
+        /// <summary>
+        /// 更新処理を停止します。
+        /// </summary>
+        public void Stop()
+        {
+            if (this.isStartedInt != 0)
+            {
+                this.downloader.CancelAll();
+            }
+        }
+
+        #region 更新情報の取得
         /// <summary>
         /// This method checks if an update is required. During this process the appcast
         /// will be downloaded and checked against the reference assembly. Ensure that
@@ -230,8 +185,6 @@ namespace Ragnarok.Update
         /// </summary>
         private bool IsUpdateRequired(AppCastItem latestVersion)
         {
-            Log.Info("Updater: Downloading and checking appcast");
-
             if (latestVersion == null)
             {
                 Log.Info(
@@ -270,141 +223,14 @@ namespace Ragnarok.Update
             return true;
         }
 
-        private AppCastItem GetVersionUpdated()
-        {
-            // check if it's ok the recheck to software state
-            if (!IsCheckToUpdateNeeded())
-            {
-                return null;
-            }
-
-            // check if update is required
-            var latestVersion = GetLatestVersion();
-            if (!IsUpdateRequired(latestVersion))
-            {
-                return null;
-            }
-
-            // show the update window
-            Log.Info(
-                "Update needed from version {0} to version {1}.",
-                config.InstalledVersion,
-                latestVersion.Version);
-
-            return latestVersion;
-        }
-
         /// <summary>
-        /// バージョン情報確認後に、アプリの更新処理を行います。
+        /// 新たな更新情報が確認された後の手続きを確認します。
         /// </summary>
-        private void BeginUpdate(AppCastItem latestVersion)
-        {
-            this.downloader.CancelAll();
-            this.downloadDoneHandle.Reset();
-            this.downloadFilePath = null;
-
-            this.downloader.BeginDownload(
-                new Uri(latestVersion.DownloadLink),
-                Path.GetTempFileName(),
-                DownloadLink_Downloaded);
-        }
-
-        private void DownloadLink_Downloaded(object sender, DownloadFileCompletedEventArgs e)
-        {
-            if (!e.Cancelled && e.Error == null)
-            {
-                this.downloadFilePath = e.FileName;
-
-                if (this.downloader.Count == 0)
-                {
-                    this.downloadDoneHandle.Set();
-                }
-            }
-            else
-            {
-                this.downloader.CancelAll();
-                this.downloadDoneHandle.Set();
-            }
-        }
-
-        private bool WaitDownload()
-        {
-            // build the event array
-            var handles = new WaitHandle[]
-            {
-                this._exitHandle,
-                this.downloadDoneHandle,
-            };
-
-            // wait for any
-            var i = WaitHandle.WaitAny(handles, NextUpdateInterval);
-            if (i == WaitHandle.WaitTimeout)
-            {
-                Log.Info(
-                    "Updater: {0} minutes are over",
-                    CheckFrequency.TotalMinutes);
-                return true;
-            }
-
-            // check the exit hadnle
-            if (i == 0)
-            {
-                Log.Info("Updater: Got exit signal");
-                return false;
-            }
-
-            // ダウンロードの終了判定ハンドル
-            if (i == 1)
-            {
-                Log.Info("Updater: Download was completed signal");
-                return true;
-            }
-
-            return true;
-        }
-
-        private bool WaitEvent()
-        {
-            // build the event array
-            var handles = new WaitHandle[]
-            {
-                this._exitHandle,
-                this.forceUpdateCheckHandle,
-            };
-
-            // wait for any
-            var i = WaitHandle.WaitAny(handles, NextUpdateInterval);
-            if (i == WaitHandle.WaitTimeout)
-            {
-                Log.Info(
-                    "Updater: {0} minutes are over",
-                    CheckFrequency.TotalMinutes);
-                return true;
-            }
-
-            // check the exit hadnle
-            if (i == 0)
-            {
-                Log.Info("Updater: Got exit signal");
-                return false;
-            }
-
-            // check an other check needed
-            if (i == 1)
-            {
-                Log.Info("Updater: Got force update check signal");
-                return true;
-            }
-
-            return true;
-        }
-
         private NextUpdateAction OnUpdateDetected(AppCastItem latestVersion)
         {
-            // send notification if needed
             var e = new UpdateDetectedEventArgs()
             {
-                NextAction = NextUpdateAction.ShowStandardUserInterface,
+                NextAction = NextUpdateAction.ContinueToUpdate,
                 ApplicationConfig = config,
                 LatestVersion = latestVersion,
             };
@@ -414,61 +240,233 @@ namespace Ragnarok.Update
         }
 
         /// <summary>
-        /// This method will be executed as worker thread
+        /// 更新情報のダウンロード後に呼ばれます。
         /// </summary>
-        private void _worker_DoWork(object sender, DoWorkEventArgs e)
+        void web_DownloadDataCompleted(object sender, DownloadDataCompletedEventArgs e)
         {
-            AppCastItem latestVersion;
-            var isInitialCheck = IsInitialCheck;
-
-            // start our lifecycles
-            do
+            if (e.Cancelled || e.Error != null)
             {
-                // report status
-                if (!isInitialCheck)
+                Log.ErrorException(e.Error,
+                    "更新情報の取得に失敗しました。");
+                return;
+            }
+
+            try
+            {
+                var text = Encoding.UTF8.GetString(e.Result);
+                var latestVersion = AppCastItemUtil.GetLatestVersion(text);
+                if (!IsUpdateRequired(latestVersion))
                 {
-                    Log.Info("Updater: Initial check prohibited, going to wait");
-                    isInitialCheck = true;
-                    goto WaitSection;
+                    return;
                 }
 
-                // report status
-                Log.Info("Starting update loop...");
+                this.latestVersion = latestVersion;
 
-                // check if update is required
-                latestVersion = GetVersionUpdated();
-                if (latestVersion == null)
-                {
-                    goto WaitSection;
-                }
+                // show the update window
+                Log.Info(
+                    "Update needed from version {0} to version {1}.",
+                    this.config.InstalledVersion,
+                    latestVersion.Version);
 
-                BeginUpdate(latestVersion);
-
-                // check results
                 switch (OnUpdateDetected(latestVersion))
                 {
-                    case NextUpdateAction.PerformUpdateUnattended:
-                        Log.Info("Updater: Unattended update whished from consumer");
-                        EnableSilentMode = true;
+                    case NextUpdateAction.ContinueToUpdate:
+                        Log.Info("Updater: Continue to update");
+                        BeginDownload(latestVersion);
                         break;
                     case NextUpdateAction.ProhibitUpdate:
-                        Log.Info("Updater: Update prohibited from consumer");
-                        break;
-                    case NextUpdateAction.ShowStandardUserInterface:
                     default:
-                        Log.Info("Updater: Standard UI update whished from consumer");
+                        Log.Info("Updater: Update prohibited");
                         break;
                 }
-
-            WaitSection:
-                // report wait statement
-                Log.Info(
-                    "Sleeping for an other {0} minutes, exit event or force update check event",
-                    CheckFrequency.TotalMinutes);
-            } while(WaitEvent());
-
-            // reset the islooping handle
-            this._loopingHandle.Reset();
+            }
+            catch (Exception ex)
+            {
+                Log.ErrorException(ex,
+                    "ダウンロードに失敗しました。");
+            }
         }
+        #endregion
+
+        #region ファイルのダウンロード
+        /// <summary>
+        /// 必要なファイルのダウンロードを開始します。
+        /// </summary>
+        private void BeginDownload(AppCastItem latestVersion)
+        {
+            this.downloader = new Downloader();
+            this.downloadFilePath = Path.GetTempFileName();
+            this.packFilePath = Path.GetTempFileName();
+            this.packConfigFilePath = this.packFilePath + ".config";
+
+            this.downloader.BeginDownload(
+                new Uri(latestVersion.DownloadLink),
+                (_, e) => SaveDownloadFile(this.downloadFilePath, e));
+            this.downloader.BeginDownload(
+                new Uri(latestVersion.UpdatePackLink),
+                (_, e) => SaveDownloadFile(this.packFilePath, e));
+            this.downloader.BeginDownload(
+                new Uri(latestVersion.UpdatePackLink + ".config"),
+                (_, e) => SaveDownloadFile(this.packConfigFilePath, e));
+        }
+
+        /// <summary>
+        /// ファイルを保存し、成功したかどうかを返します。
+        /// </summary>
+        /// <returns>
+        /// エラーの場合はfalseを返します。
+        /// </returns>
+        private void SaveDownloadFile(string filename, DownloadDataCompletedEventArgs e)
+        {
+            if (e.Cancelled || e.Error != null)
+            {
+                this.downloader.CancelAll();
+                HandleDownloadDone(e.Cancelled, e.Error);
+                return;
+            }
+
+            try
+            {
+                Log.Info("{0}: ファイルのダウンロードを終了しました。", filename);
+
+                using (var stream = new FileStream(filename, FileMode.Create))
+                {
+                    stream.Write(e.Result, 0, e.Result.Count());
+                }
+
+                HandleDownloadDone(false, null);
+            }
+            catch (IOException ex)
+            {
+                Log.ErrorException(ex,
+                    "ダウンロードデータの保存に失敗しました。");
+
+                this.downloader.CancelAll();
+                HandleDownloadDone(false, ex);
+            }
+        }
+
+        /// <summary>
+        /// アプリを更新するかどうかイベントを通して確認します。
+        /// </summary>
+        private bool OnDownloadDone(bool cancelled, Exception ex)
+        {
+            var e = new DownloadDoneEventArgs()
+            {
+                IsUpdate = false,
+                ApplicationConfig = this.config,
+                LatestVersion = this.latestVersion,
+                IsCancelled = cancelled,
+                Error = ex,
+            };
+
+            DownloadDone.SafeRaiseEvent(this, e);
+            return e.IsUpdate;
+        }
+
+        /// <summary>
+        /// ダウンロード終了後に呼ばれます。
+        /// </summary>
+        private void HandleDownloadDone(bool cancelled, Exception ex)
+        {
+            // エラーの場合は呼びます。
+            if (cancelled || ex != null)
+            {
+                if (Interlocked.Exchange(ref this.isDownloadFailedInt, 1) == 1)
+                {
+                    return;
+                }
+
+                OnDownloadDone(cancelled, ex);
+                return;
+            }
+
+            // すべてのダウンロードが終わった時にも呼びます。
+            if (this.downloader.Count == 0)
+            {
+                Log.Info("すべてのダウンロードを終了しました。");
+                this.downloadDoneEvent.Set();
+
+                /*if (!string.IsNullOrEmpty(this.latestVersion.MD5Signature))
+                {
+                    var md5 = MD5Verificator.ComputeMD5(this.downloadFilePath);
+                    if (!MD5Verificator.CompareMD5(md5, this.latestVersion.MD5Signature))
+                    {
+                    }
+                }*/
+
+                if (!OnDownloadDone(cancelled, ex))
+                {
+                    return;
+                }
+
+                ExecutePack();
+            }
+        }
+        #endregion
+
+        #region アプリ更新
+        /// <summary>
+        /// 更新処理が実行可能かどうか取得します。
+        /// </summary>
+        public bool CanExecutePack()
+        {
+            return this.downloadDoneEvent.WaitOne(0);
+        }
+
+        /// <summary>
+        /// 実際の更新処理を行います。
+        /// </summary>
+        public void ExecutePack()
+        {
+            if (!CanExecutePack())
+            {
+                throw new RagnarokUpdateException(
+                    "アプリの更新を実行できません。");
+            }
+
+            try
+            {
+                Log.Info("実際のアプリ更新処理を開始します。");
+
+                ExecutePackInternal();
+            }
+            catch (Exception ex)
+            {
+                Util.ThrowIfFatal(ex);
+
+                Log.ErrorException(ex,
+                    "アプリの更新処理に失敗しました。");
+            }
+        }
+
+        /// <summary>
+        /// 実際の更新処理を外部exeを呼び出すことで行います。
+        /// </summary>
+        private void ExecutePackInternal()
+        {
+            var workingDir = Environment.CurrentDirectory;
+
+            // start update helper
+            // 0. this process' id
+            // 1. zip file path
+            // 2. the top directory of this program
+            // 3. the path of the restart program
+            var startInfo = new ProcessStartInfo()
+            {
+                FileName = this.packFilePath,
+                Arguments = string.Format(
+                    @"{0} ""{1}"" ""{2}"" {3}",
+                    Process.GetCurrentProcess().Id,
+                    this.downloadFilePath,
+                    workingDir,
+                    Environment.CommandLine),
+                UseShellExecute = false,
+                CreateNoWindow = true,
+            };
+
+            Process.Start(startInfo);
+        }
+        #endregion
     }
 }

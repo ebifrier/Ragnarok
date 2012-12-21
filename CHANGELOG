@@ -1,3 +1,9 @@
+2012-12-22  - Ver 2.5.8
+
+	* Ragnarok/Update: 更新ファイルのダウンロードシステムを修正しました
+	* Ragnarok.Presentation/Update: アプリ更新時に使うウィンドウなどを
+	追加しました。
+
 2012-12-20  - Ver 2.5.7
 
 	* Ragnarok/Net/ProtoBuf/PbSendData.cs: Serializeを自動で呼ぶように

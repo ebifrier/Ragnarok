@@ -107,9 +107,15 @@ namespace Ragnarok.NicoNico.Test
             }
         }
 
+        /*private Presentation.Update.PresentationUpdater updater =
+            new Presentation.Update.PresentationUpdater(
+                @"http://garnet-alice.net/programs/votesystem/update/versioninfo.xml");*/
+
         public MainWindow()
         {
             InitializeComponent();
+
+            //updater.Start();
 
             System.Diagnostics.Trace.Listeners.Add(
                 new System.Diagnostics.ConsoleTraceListener());

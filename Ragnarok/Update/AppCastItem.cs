@@ -29,6 +29,15 @@ namespace Ragnarok.Update
         }
 
         /// <summary>
+        /// 更新処理を行う実行ファイルのリンクを取得または設定します。
+        /// </summary>
+        public string UpdatePackLink
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// リリースノートへのリンクを取得または設定します。
         /// </summary>
         public string ReleaseNotesLink

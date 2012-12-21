@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Net;
+using System.Threading;
 
 using Ragnarok.ObjectModel;
 
@@ -34,12 +35,6 @@ namespace Ragnarok.Update
     }
 
     /// <summary>
-    ///  ファイルダウンロード完了時に使われます。
-    /// </summary>
-    public delegate void DownloadFileCompletedHandler(
-        object sender, DownloadFileCompletedEventArgs e);
-
-    /// <summary>
     /// ファイルのダウンロード、その進捗管理を行います。
     /// </summary>
     public sealed class Downloader : NotifyObject
@@ -50,10 +45,9 @@ namespace Ragnarok.Update
         private sealed class DownloadItem
         {
             public WebClient Client;
-            public string FileName;
             public long TotalSize;
             public long ReceivedSize;
-            public DownloadFileCompletedHandler Callback;
+            public DownloadDataCompletedEventHandler Callback;
         }
 
         private List<DownloadItem> itemList = new List<DownloadItem>();
@@ -135,15 +129,14 @@ namespace Ragnarok.Update
             UpdateProgressPercentage();
         }
 
-        void client_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
+        void client_DownloadDataCompleted(object sender, DownloadDataCompletedEventArgs e)
         {
             var item = (DownloadItem)e.UserState;
 
             if (e.Error != null)
             {
                 Log.ErrorException(e.Error,
-                    "ファイルのダウンロードに失敗しました: {0}",
-                    item.FileName);
+                    "データのダウンロードに失敗しました。");
             }
             else
             {
@@ -162,37 +155,32 @@ namespace Ragnarok.Update
             // この中でDownloaderの他のメソッドが呼ばれる可能性があるためです。
             if (item.Callback != null)
             {
-                var e_ = new DownloadFileCompletedEventArgs(
-                    item.FileName,
-                    e.Error,
-                    e.Cancelled);
-
                 Util.SafeCall(() =>
-                    item.Callback(this, e_));
+                    item.Callback(this, e));
             }
         }
 
         /// <summary>
         /// ダウンロードを開始します。
         /// </summary>
-        public void BeginDownload(Uri address, string filename,
-                                  DownloadFileCompletedHandler callback)
+        public void BeginDownload(Uri address,
+                                  DownloadDataCompletedEventHandler callback)
         {
             var client = new WebClient();
             client.DownloadProgressChanged += client_DownloadProgressChanged;
-            client.DownloadFileCompleted += client_DownloadFileCompleted;
+            client.DownloadDataCompleted += client_DownloadDataCompleted;
 
             // ダウンロード管理用オブジェクト
             var item = new DownloadItem
             {
                 Client = client,
-                FileName = filename,
                 Callback = callback,
             };
 
             // ここで例外が返る可能性がある。
-            Log.Debug("ダウンロードを開始します: {0}", filename);
-            client.DownloadFileAsync(address, filename, item);
+            Log.Debug("ダウンロードを開始します");
+            ThreadPool.QueueUserWorkItem(_ =>
+                client.DownloadDataAsync(address, item));
 
             using (LazyLock())
             {
@@ -207,15 +195,20 @@ namespace Ragnarok.Update
         {
             List<DownloadItem> clonedList;
 
-            Log.Debug("ダウンロードはすべてキャンセルされました。");
-
             // lock中にCancelすると、そこでDownloadXxxCompletedが呼ばれるため
             // もしかするとデッドロックするかもしれません。
             using (LazyLock())
             {
+                if (!this.itemList.Any())
+                {
+                    return;
+                }
+
                 clonedList = this.itemList;
                 this.itemList = new List<DownloadItem>();
             }
+
+            Log.Debug("ダウンロードはすべてキャンセルされます。");
 
             foreach (var item in clonedList)
             {
