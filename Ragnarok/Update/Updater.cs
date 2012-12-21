@@ -26,7 +26,6 @@ namespace Ragnarok.Update
     /// </remarks>
     public class Updater : IDisposable
     {
-        private readonly object SyncObject = new object();
         private Downloader downloader;
         private string appCastUrl;
         private Configuration config;
