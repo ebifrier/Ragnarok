@@ -22,6 +22,7 @@ namespace Ragnarok.Test
             test.LazyModelTest();
 
             var t = new Utility.TypeSerializerTest();
+            t.RegexTest();
             t.SimpleTest();
             t.DeserializeTest();
 

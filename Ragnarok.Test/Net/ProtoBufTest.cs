@@ -50,15 +50,7 @@ namespace Ragnarok.Test.Net
             {
                 var data = PbUtil.Serialize(roomInfo);
 
-                /*using (var stream = new FileStream("protobuf.dump", FileMode.Create))
-                {
-                    stream.Write(data, 0, data.Length);
-                }*/
-
                 PbUtil.Deserialize(data, typeof(VoteRoomInfo));
-
-                var sdata = Util.ReadFile("protobuf-s.dump");
-                PbUtil.Deserialize(sdata, typeof(VoteRoomInfo));
             });
         }
     }

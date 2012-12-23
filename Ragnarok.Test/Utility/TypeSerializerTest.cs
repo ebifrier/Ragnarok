@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using NUnit.Framework;
 
 using Ragnarok;
@@ -14,8 +15,22 @@ namespace Ragnarok.Test.Utility
     /// </summary>
     public class TypeSerializerTest
     {
-        public class InnerClass
+        /// <summary>
+        /// テスト用クラス
+        /// </summary>
+        private class InnerClass
         {
+        }
+
+        [Test()]
+        public void RegexTest()
+        {
+            /*var re = new Regex(
+                @"\G\s*(?:(?:[\w+.:]+(?:`\d+)?)|(\])|(\[)|(,))\s*",
+                RegexOptions.Compiled);
+
+            var mc = re.Matches(@"System.Tuple`2[System.Int32]");
+            Assert.AreEqual(mc, null);*/
         }
 
         /// <summary>
@@ -36,7 +51,7 @@ namespace Ragnarok.Test.Utility
             TypeTest(typeof(Tuple<>));
             TypeTest(typeof(Tuple<int, List<Encoding>>));
             TypeTest(typeof(InnerClass));
-            TypeTest(typeof(global::NUnit.Framework.Assert));
+            TypeTest(typeof(Assert));
 
             Assert.Catch(() => TypeTest(null));
         }
@@ -47,6 +62,10 @@ namespace Ragnarok.Test.Utility
             Assert.AreEqual(typeof(int), TypeSerializer.Deserialize("System.Int32"));
             Assert.AreEqual(typeof(Tuple<>), TypeSerializer.Deserialize("System.Tuple`1"));
             Assert.AreEqual(typeof(Tuple<>), TypeSerializer.Deserialize("System.Tuple`1[]"));
+            Assert.AreEqual(
+                typeof(Tuple<Tuple<double, Assert>, int>),
+                TypeSerializer.Deserialize(
+                    "System.Tuple`2[System.Tuple`2[System.Double, NUnit.Framework.Assert], System.Int32]"));
 
             Assert.Catch(() => TypeSerializer.Deserialize("System.Int32`1"));
             Assert.Catch(() => TypeSerializer.Deserialize("int"));

@@ -55,21 +55,72 @@ namespace Ragnarok.Utility
         /// <example>
         /// global::TopNamespace.SubNameSpace.ContainingClass+NestedClass
         /// </example>
-        private static readonly Regex TypeRegex =
-            new Regex(@"\G([\w+.:]+)(`\d+)?", RegexOptions.Compiled);
+        private static readonly Regex TypeRegex = new Regex(
+                @"\G\s*(?:([\w+.:]+(`\d+)?)|(\[)|(\])|(,))\s*",
+                RegexOptions.Compiled);
 
-        private readonly string text;
-        private int index = 0;
-        private LexicalToken token = LexicalToken.Unknown;
-        private string name;
+        /// <summary>
+        /// 型名が長いため作りました。
+        /// </summary>
+        private static KeyValuePair<LexicalToken, string> MakePair(LexicalToken token,
+                                                                   string text)
+        {
+            return new KeyValuePair<LexicalToken, string>(token, text);
+        }
+
+        /// <summary>
+        /// トークンと文字列のペアに直します。
+        /// </summary>
+        private static KeyValuePair<LexicalToken, string> CreateToken(Match m)
+        {
+            if (m.Groups[1].Success)
+            {
+                var typename = m.Groups[1].Value;
+
+                if (m.Groups[2].Success)
+                {
+                    return MakePair(LexicalToken.GenericTypeName, typename);
+                }
+                else
+                {
+                    return MakePair(LexicalToken.TypeName, typename);
+                }
+            }
+            else if (m.Groups[3].Success)
+            {
+                return MakePair(LexicalToken.OpenBlanket, null);
+            }
+            else if (m.Groups[4].Success)
+            {
+                return MakePair(LexicalToken.CloseBlanket, null);
+            }
+            else if (m.Groups[5].Success)
+            {
+                return MakePair(LexicalToken.Comma, null);
+            }
+            else
+            {
+                return MakePair(LexicalToken.Unknown, null);
+            }
+        }
+
+        private readonly List<KeyValuePair<LexicalToken, string>> tokenList;
+        private int index;
 
         /// <summary>
         /// 現在のトークンを取得します。
         /// </summary>
         public LexicalToken Token
         {
-            get { return this.token; }
-            set { this.token = value; }
+            get
+            {
+                if (this.index >= this.tokenList.Count())
+                {
+                    return LexicalToken.End;
+                }
+
+                return this.tokenList[this.index].Key;
+            }
         }
 
         /// <summary>
@@ -77,18 +128,14 @@ namespace Ragnarok.Utility
         /// </summary>
         public string Name
         {
-            get { return this.name; }
-        }
-
-        /// <summary>
-        /// 空白部分をスキップします。
-        /// </summary>
-        private void SkipWhitespace()
-        {
-            while (this.index < this.text.Length &&
-                   char.IsWhiteSpace(this.text[this.index]))
+            get
             {
-                this.index += 1;
+                if (this.index >= this.tokenList.Count())
+                {
+                    return null;
+                } 
+                
+                return this.tokenList[this.index].Value;
             }
         }
 
@@ -97,65 +144,8 @@ namespace Ragnarok.Utility
         /// </summary>
         public LexicalToken NextToken()
         {
-            Token = ParseToken();
+            ++this.index;
             return Token;
-        }
-
-        /// <summary>
-        /// 次のトークンを取得します。
-        /// </summary>
-        /// <example>
-        /// System.Tuple`2[System.Int32, System.Double]
-        /// </example>
-        private LexicalToken ParseToken()
-        {
-            SkipWhitespace();
-            
-            // 文字列の終端に到達しました。
-            if (this.index >= this.text.Length)
-            {
-                return LexicalToken.End;
-            }
-            
-            if (this.text[this.index] == '[')
-            {
-                this.index += 1;
-                return LexicalToken.OpenBlanket;
-            }
-            else if (this.text[this.index] == ']')
-            {
-                this.index += 1;
-                return LexicalToken.CloseBlanket;
-            }
-            else if (this.text[this.index] == ',')
-            {
-                this.index += 1;
-                return LexicalToken.Comma;
-            }
-            else
-            {
-                // 型に括弧が付いているときは、カンマありの解析を行います。
-                var m = TypeRegex.Match(this.text, this.index);
-                if (!m.Success)
-                {
-                    return LexicalToken.Unknown;
-                }
-
-                // 名前部分を取得。
-                this.name = m.Groups[0].Value;
-                this.index += m.Length;
-
-                // "`n"の部分にマッチした場合はジェネリック型
-                if (m.Groups[2].Success)
-                {
-                    return LexicalToken.GenericTypeName;
-                }
-                else
-                {
-                    // 非ジェネリック型
-                    return LexicalToken.TypeName;
-                }
-            }
         }
 
         /// <summary>
@@ -163,8 +153,23 @@ namespace Ragnarok.Utility
         /// </summary>
         public TypeLexer(string text)
         {
-            this.text = text;
-            this.index = 0;
+            var mc = TypeRegex.Matches(text);
+            if (mc == null || mc.Count == 0)
+            {
+                throw new RagnarokException(
+                    string.Format("{0}: 型名のパースに失敗しました。", text));
+            }
+
+            var last = mc[mc.Count - 1];
+            if (last.Index + last.Length < text.Length)
+            {
+                throw new RagnarokException(
+                    string.Format("{0}: 型名のパースに失敗しました。", text));
+            }
+
+            this.tokenList = mc.OfType<Match>()
+                .Select(CreateToken)
+                .ToList();
         }
     }
 
@@ -244,7 +249,6 @@ namespace Ragnarok.Utility
             var lexer = new TypeLexer(serializedTypeName);
 
             // 最初のトークンを取得します。
-            lexer.NextToken();
             return ParseType(lexer);
         }
 
