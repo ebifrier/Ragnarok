@@ -18,6 +18,16 @@ namespace Ragnarok.Utility
         PropertyInfo PropertyInfo { get; }
 
         /// <summary>
+        /// プロパティ名を取得します。
+        /// </summary>
+        string Name { get; }
+
+        /// <summary>
+        /// プロパティの型を取得します。
+        /// </summary>
+        Type PropertyType { get; }
+
+        /// <summary>
         /// 読み込み可能かどうかを取得します。
         /// </summary>
         bool CanRead { get; }
@@ -61,6 +71,22 @@ namespace Ragnarok.Utility
         {
             get;
             private set;
+        }
+
+        /// <summary>
+        /// プロパティ名を取得します。
+        /// </summary>
+        public string Name
+        {
+            get { return PropertyInfo.Name; }
+        }
+
+        /// <summary>
+        /// プロパティの型を取得します。
+        /// </summary>
+        public Type PropertyType
+        {
+            get { return PropertyInfo.PropertyType; }
         }
 
         /// <summary>
