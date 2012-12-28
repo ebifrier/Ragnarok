@@ -16,7 +16,7 @@ namespace Ragnarok.Shogi.File
         /// ヘッダー部分の正規表現
         /// </summary>
         private static readonly Regex HeaderRegex = new Regex(
-            @"^(.+?)[：]?\s*(.*?)\s*$",
+            @"^(.+?)\s*(?:[：]\s*(.*?))\s*$",
             RegexOptions.Compiled);
 
         /// <summary>
@@ -90,7 +90,7 @@ namespace Ragnarok.Shogi.File
                 }
 
                 // 読み飛ばすべき説明行
-                if (this.currentLine == "手数----指手---------消費時間--")
+                if (this.currentLine.Contains("手数----指手---------消費時間"))
                 {
                     ReadNextLine();
                     return header;

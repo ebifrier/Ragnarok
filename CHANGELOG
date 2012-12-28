@@ -1,7 +1,15 @@
+2012-12-29  - Ver 2.6.2
+
+	* Ragnarok.Presentation/WpfUtil.cs: Ragnarok.Presentationの初期化時
+	にRagnarokの初期化も一緒に行うようにしました。
+	* Ragnarok.Shogi/File/KifReader.cs: 棋譜読み込み時に.kifファイルの
+	ヘッダ情報を正しく読み込めるようにしました。
+
 2012-12-23  - Ver 2.6.1
 
-	* Ragnarok/Utility/TypeSerializer.cs: 型名の字句解析を連続的に行う
-	ようにしました。
+	* Ragnarok/Utility/TypeSerializer.cs: 型名の字句解析を最初にまとめ
+	て行うようにしました。今までは必要になってから順次行うようにしてい
+	ました。
 
 2012-12-22  - Ver 2.6.0
 

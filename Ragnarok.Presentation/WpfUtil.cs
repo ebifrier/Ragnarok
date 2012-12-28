@@ -34,6 +34,8 @@ namespace Ragnarok.Presentation
         /// </summary>
         public static void InitWpf()
         {
+            Initializer.Initialize();
+
             Util.SetPropertyChangedCaller(CallPropertyChanged);
             Util.SetColletionChangedCaller(CallCollectionChanged);
             Util.SetEventCaller(UIProcess);
