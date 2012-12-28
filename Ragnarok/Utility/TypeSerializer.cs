@@ -168,7 +168,7 @@ namespace Ragnarok.Utility
             }
 
             this.tokenList = mc.OfType<Match>()
-                .Select(CreateToken)
+                .Select(_ => CreateToken(_))
                 .ToList();
         }
     }
