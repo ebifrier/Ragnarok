@@ -1,3 +1,11 @@
+2013-01-04  - Ver 2.6.3
+
+	* Equals(object)メソッドの実装を正確なものにしました。
+	* Ragnarok/Net/ProtoBuf/PbConnection.cs: ACKのタイムアウト処理を追
+	加しました。
+	* Ragnarok/Net/ProtoBuf/PbUtil.cs: 型ごとのメソッドをランタイム時に
+	作ることにより、シリアライズ・デシリアライズ処理を高速化しました。
+
 2012-12-29  - Ver 2.6.2
 
 	* Ragnarok.Presentation/WpfUtil.cs: Ragnarok.Presentationの初期化時

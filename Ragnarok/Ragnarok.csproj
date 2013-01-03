@@ -19,7 +19,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;CLR_V4</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;CLR_V4</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>3</WarningLevel>
     <DocumentationFile>Ragnarok.xml</DocumentationFile>
@@ -99,6 +99,25 @@
     <Compile Include="Log.cs" />
     <Compile Include="MathEx.cs" />
     <Compile Include="Net\Connection.cs" />
+    <Compile Include="Net\CookieGetter\BrowserType.cs" />
+    <Compile Include="Net\CookieGetter\CookieGetter.cs" />
+    <Compile Include="Net\CookieGetter\CookieStatus.cs" />
+    <Compile Include="Net\CookieGetter\Exceptions.cs" />
+    <Compile Include="Net\CookieGetter\FirefoxBrowserManager.cs" />
+    <Compile Include="Net\CookieGetter\FirefoxCookieGetter.cs" />
+    <Compile Include="Net\CookieGetter\FirefoxProfile.cs" />
+    <Compile Include="Net\CookieGetter\GoogleChromeBrowserManager.cs" />
+    <Compile Include="Net\CookieGetter\GoogleChromeCookieGetter.cs" />
+    <Compile Include="Net\CookieGetter\IBrowserManager.cs" />
+    <Compile Include="Net\CookieGetter\ICookieGetter.cs" />
+    <Compile Include="Net\CookieGetter\IEBrowserManager.cs" />
+    <Compile Include="Net\CookieGetter\IEComponentBrowserManager.cs" />
+    <Compile Include="Net\CookieGetter\IECookieGetter.cs" />
+    <Compile Include="Net\CookieGetter\IESafemodeBrowserManager.cs" />
+    <Compile Include="Net\CookieGetter\SafariBrowserManager.cs" />
+    <Compile Include="Net\CookieGetter\SafariCookieGetter.cs" />
+    <Compile Include="Net\CookieGetter\SQLite.cs" />
+    <Compile Include="Net\CookieGetter\CookieUtil.cs" />
     <Compile Include="Net\NetEventArgs.cs" />
     <Compile Include="Net\NtpClient.cs" />
     <Compile Include="Net\ProtoBuf\PbAck.cs" />

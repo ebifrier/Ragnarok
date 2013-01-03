@@ -108,23 +108,35 @@ namespace Ragnarok.Net.ProtoBuf
         /// </summary>
         private sealed class DataId : IEquatable<DataId>
         {
+            /// <summary>
+            /// コマンドやレスポンスのIDを取得します。
+            /// </summary>
             public int Id
             {
                 get;
                 private set;
             }
 
+            /// <summary>
+            /// レスポンスかどうかを取得します。
+            /// </summary>
             public bool IsResponse
             {
                 get;
                 private set;
             }
 
+            /// <summary>
+            /// Dictionary用
+            /// </summary>
             public override bool Equals(object obj)
             {
                 return Equals(obj as DataId);
             }
 
+            /// <summary>
+            /// Dictionary用
+            /// </summary>
             public bool Equals(DataId other)
             {
                 if ((object)other == null)
@@ -135,11 +147,17 @@ namespace Ragnarok.Net.ProtoBuf
                 return (Id == other.Id && IsResponse == other.IsResponse);
             }
 
+            /// <summary>
+            /// Dictionary用
+            /// </summary>
             public override int GetHashCode()
             {
                 return (Id.GetHashCode() ^ IsResponse.GetHashCode());
             }
 
+            /// <summary>
+            /// コンストラクタ
+            /// </summary>
             public DataId(int id, bool isResponse)
             {
                 Id = id;
@@ -150,22 +168,128 @@ namespace Ragnarok.Net.ProtoBuf
         /// <summary>
         /// ACKによる応答確認が必要なデータを保持します。
         /// </summary>
-        private sealed class NeedAckInfo
+        private sealed class NeedAckInfo : IDisposable
         {
+            private PbConnection connection;
+            private Timer timer;
             private int tryCount = 0;
+            private bool disposed;
 
+            /// <summary>
+            /// データの送信IDを取得します。
+            /// </summary>
+            public DataId DataId
+            {
+                get;
+                private set;
+            }
+
+            /// <summary>
+            /// 実際に送信するデータを取得します。
+            /// </summary>
             public PbSendData SendData
             {
                 get;
-                set;
+                private set;
             }
 
+            /// <summary>
+            /// ACKのタイムアウト時間を取得します。
+            /// </summary>
+            public TimeSpan Timeout
+            {
+                get;
+                private set;
+            }
+
+            /// <summary>
+            /// 送信を試みた回数を一つ増加します。
+            /// </summary>
+            /// <remarks>
+            /// データ送信に失敗した場合に呼ばれます。
+            /// その場合はデータを再度送信します。
+            /// </remarks>
             public int IncrementTryCount()
             {
                 return Interlocked.Increment(ref this.tryCount);
             }
+
+            /// <summary>
+            /// ACKの受信タイムアウト時に呼ばれます。
+            /// </summary>
+            private void Timer_Callback(object state)
+            {
+                Log.Trace(this.connection, "ACK受信がタイムアウトしました。");
+
+                // 再送を続ける場合は真が返ります。
+                if (this.connection.AckFailed(this))
+                {
+                    this.timer.Change(Timeout, TimeSpan.FromMilliseconds(-1));
+                }
+                else
+                {
+                    // タイマーを更新せず、Dispose処理のみを行います。
+                    Dispose();
+                }
+            }
+
+            /// <summary>
+            /// コンストラクタ
+            /// </summary>
+            public NeedAckInfo(PbConnection connection, DataId dataId,
+                               PbSendData sendData, TimeSpan timeout)
+            {
+                DataId = dataId;
+                SendData = sendData;
+                Timeout = timeout;
+
+                this.connection = connection;
+                this.timer = new Timer(
+                    Timer_Callback,
+                    null,
+                    timeout,
+                    TimeSpan.FromMilliseconds(-1));
+            }
+
+            /// <summary>
+            /// デストラクタ
+            /// </summary>
+            ~NeedAckInfo()
+            {
+                Dispose(false);
+            }
+
+            /// <summary>
+            /// オブジェクトを破棄します。
+            /// </summary>
+            public void Dispose()
+            {
+                GC.SuppressFinalize(this);
+                Dispose(true);
+            }
+
+            /// <summary>
+            /// ACK受信成功時にタイマーを無効化します。
+            /// </summary>
+            private void Dispose(bool disposing)
+            {
+                if (!this.disposed)
+                {
+                    if (disposing)
+                    {
+                        if (this.timer != null)
+                        {
+                            this.timer.Dispose();
+                            this.timer = null;
+                        }
+                    }
+
+                    this.disposed = true;
+                }
+            }
         }
 
+        private const int AckTryCountMax = 3;
         private static readonly PbSendData AckData;
         private static readonly PbSendData NakData;
         private static readonly Dictionary<string, Type> typeCache =
@@ -742,7 +866,6 @@ namespace Ragnarok.Net.ProtoBuf
         /// </summary>
         private object DeserializeMessage(byte[] payloadBuffer, Type type)
         {
-            // サーバーから送られてきたデータを処理します。
             var message = PbUtil.Deserialize(payloadBuffer, type);
             if (message == null)
             {
@@ -777,27 +900,72 @@ namespace Ragnarok.Net.ProtoBuf
 
                 if (success)
                 {
-                    // データ送信成功
                     this.needAckDic.Remove(dataId);
-                    return;
+                    needAckInfo.Dispose();
                 }
-                else if (needAckInfo.IncrementTryCount() >= 3)
+                else
                 {
-                    // 既定回数以上のデータ送信失敗
-                    Log.Error(this,
-                        "{0}: 既定回数以上の再送に失敗しました。", id);
-
-                    this.needAckDic.Remove(dataId);
-                    return;
+                    if (!AckFailed(needAckInfo))
+                    {
+                        needAckInfo.Dispose();
+                    }
                 }
             }
+        }
 
-            // コマンドの再送処理を行います。
-            Log.Info(this,
-                "{0}: データの再送処理を行います。",
-                needAckInfo.SendData.TypeName);
+        /// <summary>
+        /// NAKが返ってきたとき、ACKがタイムアウトになった時などに呼ばれ、
+        /// コマンドの再送などを行います。
+        /// </summary>
+        /// <remarks>
+        /// 再送をあきらめた場合は偽、続ける場合は真を返します。
+        /// </remarks>
+        private bool AckFailed(NeedAckInfo needAckInfo)
+        {
+            try
+            {
+                var dataId = needAckInfo.DataId;
 
-            SendDataInternal(id, isResponse, needAckInfo.SendData, false);
+                lock (this.needAckDic)
+                {
+                    if (needAckInfo.IncrementTryCount() >= AckTryCountMax)
+                    {
+                        // 既定回数以上のデータ送信失敗
+                        Log.Error(this,
+                            "ID={0}: 既定回数以上の再送に失敗しました。", dataId.Id);
+
+                        this.needAckDic.Remove(dataId);
+                        return false;
+                    }
+
+                    if (!IsConnected || !CanWrite)
+                    {
+                        Log.Error(this,
+                            "ID={0}: データの送信が許可されていません。", dataId.Id);
+
+                        this.needAckDic.Remove(dataId);
+                        return false;
+                    }
+                }
+
+                // コマンドの再送処理を行います。
+                Log.Info(this,
+                    "{0}: データの再送処理を行います。",
+                    needAckInfo.SendData.TypeName);
+
+                SendDataInternal(
+                    dataId.Id, dataId.IsResponse,
+                    needAckInfo.SendData, false);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Util.ThrowIfFatal(ex);
+
+                Log.ErrorException(this, ex,
+                    "送信ミスしたACKの処理に失敗しました。");
+                return false;
+            }
         }
 
         /// <summary>
@@ -1020,11 +1188,8 @@ namespace Ragnarok.Net.ProtoBuf
         {
             lock (this.needAckDic)
             {
-                var needAck = new NeedAckInfo
-                {
-                    SendData = sendData,
-                };
                 var dataId = new DataId(id, isResponse);
+                var needAck = new NeedAckInfo(this, dataId, sendData, AckTimeout);
 
                 try
                 {
@@ -1057,6 +1222,12 @@ namespace Ragnarok.Net.ProtoBuf
                 pbSendData.EncodedTypeName == null)
             {
                 throw new PbException("送信データがシリアライズされていません。");
+            }
+
+            if (!IsConnected || !CanWrite)
+            {
+                // これをthrowすると対処が面倒なので
+                return;
             }
 
             try

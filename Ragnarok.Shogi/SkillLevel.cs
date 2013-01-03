@@ -105,6 +105,12 @@ namespace Ragnarok.Shogi
         /// </summary>
         public override bool Equals(object other)
         {
+            var result = this.PreEquals(other);
+            if (result.HasValue)
+            {
+                return result.Value;
+            }
+
             return Equals(other as SkillLevel);
         }
 
@@ -146,7 +152,7 @@ namespace Ragnarok.Shogi
         /// </summary>
         public static bool operator ==(SkillLevel lhs, SkillLevel rhs)
         {
-            return Ragnarok.Util.GenericClassEquals(lhs, rhs);
+            return Ragnarok.Util.GenericEquals(lhs, rhs);
         }
 
         /// <summary>

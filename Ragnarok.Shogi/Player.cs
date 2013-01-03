@@ -87,6 +87,12 @@ namespace Ragnarok.Shogi
         /// </summary>
         public override bool Equals(object other)
         {
+            var result = this.PreEquals(other);
+            if (result.HasValue)
+            {
+                return result.Value;
+            }
+
             return Equals(other as ShogiPlayer);
         }
 
@@ -129,7 +135,7 @@ namespace Ragnarok.Shogi
         /// </summary>
         public static bool operator ==(ShogiPlayer lhs, ShogiPlayer rhs)
         {
-            return Ragnarok.Util.GenericClassEquals(lhs, rhs);
+            return Ragnarok.Util.GenericEquals(lhs, rhs);
         }
 
         /// <summary>

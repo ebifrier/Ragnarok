@@ -68,10 +68,10 @@ namespace Ragnarok.Net.ProtoBuf
         }
 
         /// <summary>
-        /// 型付けされたレスポンスを取得または設定します。
+        /// 型付けされたレスポンスをシリアライズ用に保持します。
         /// </summary>
         [DataMember(Order = 2, IsRequired = true)]
-        TRes TypedResponse
+        private TRes TypedResponse
         {
             get;
             set;

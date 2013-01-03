@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Reflection;
 
@@ -10,12 +11,24 @@ using ProtoBuf;
 namespace Ragnarok.Net.ProtoBuf
 {
     /// <summary>
+    /// シリアライズ用のメソッド型です。
+    /// </summary>
+    public delegate void SerializeFunc(Stream stream, object value);
+
+    /// <summary>
+    /// デシリアライズ用のメソッド型です。
+    /// </summary>
+    public delegate object DeserializeFunc(Stream stream);
+
+    /// <summary>
     /// ProtoBuf関連の共通コードを持ちます。
     /// </summary>
     public static class PbUtil
     {
-        private static MethodInfo serializeMethod;
-        private static MethodInfo deserializeMethod;
+        private static Dictionary<Type, SerializeFunc> serializeFuncDic =
+            new Dictionary<Type, SerializeFunc>();
+        private static Dictionary<Type, DeserializeFunc> deserializeFuncDic =
+            new Dictionary<Type, DeserializeFunc>();
 
         /// <summary>
         /// シリアライズ用メソッドを取得します。
@@ -24,54 +37,143 @@ namespace Ragnarok.Net.ProtoBuf
         /// ジェネリックパラメーターのオーバーロードがあるため、
         /// このような実装になっています。
         /// </remarks>
-        public static MethodInfo GetSerializeMethod()
+        private static MethodInfo GetGenericSerializeMethod()
         {
-            if (serializeMethod != null)
-            {
-                return serializeMethod;
-            }
+            // 第一引数がStream, 第二引数がGenericであるような
+            // メソッドを検索します。
+            var methods =
+                from method in typeof(Serializer).GetMethods()
+                where method.Name == "Serialize"
+                let paramInfo = method.GetParameters()
+                where paramInfo.Length == 2
+                where paramInfo[0].ParameterType == typeof(Stream)
+                where paramInfo[1].ParameterType.IsGenericParameter
+                select method;
 
-            foreach (var method in typeof(Serializer).GetMethods())
-            {
-                if (method.Name == "Serialize")
+            return methods.Single();
+        }
+
+        /// <summary>
+        /// Serializer.Serializeを行う型付けされたメソッドを作成します。
+        /// </summary>
+        private static SerializeFunc CreateSerializeMethod(Type type)
+        {
+            var genericMethod = GetGenericSerializeMethod();
+            var method = genericMethod.MakeGenericMethod(type);
+
+            // 作成するラムダ関数
+            // (stream, value) => Serializer.Serialize<T>(stream, (T)value)
+
+            // "stream", "value"という引数を定義。
+            var stream = Expression.Parameter(typeof(Stream), "stream");
+            var value = Expression.Parameter(typeof(object), "value");
+            var parameters = new[] { stream, value };
+
+            // "method"メソッドを呼び出します。
+            var body = Expression.Call(
+                method,
+                new Expression[]
                 {
-                    var paramInfo = method.GetParameters();
+                    stream,
+                    Expression.Convert(value, type),
+                });
 
-                    // 第一引数がStream, 第二引数がGenericであるような
-                    // メソッドを検索します。
-                    if (paramInfo.Length == 2 &&
-                        paramInfo[0].ParameterType == typeof(Stream) &&
-                        paramInfo[1].ParameterType.IsGenericParameter)
-                    {
-                        serializeMethod = method;
-                        return method;
-                    }
-                }
+            // bodyをラムダとして定義。
+            var e = Expression.Lambda(typeof(SerializeFunc), body, parameters);
+            return (SerializeFunc)e.Compile();
+        }
+
+        /// <summary>
+        /// Serializer.Serializeを行う型付けされたメソッドを取得します。
+        /// </summary>
+        /// <remarks>
+        /// 必要なら作成します。
+        /// </remarks>
+        public static SerializeFunc GetSerializeMethod(Type type)
+        {
+            if (type == null)
+            {
+                throw new ArgumentNullException("type");
             }
 
-            throw new InvalidOperationException(
-                "適切なSerializer.Serializeメソッドが見つかりません。");
+            lock (serializeFuncDic)
+            {
+                SerializeFunc func;
+                if (serializeFuncDic.TryGetValue(type, out func))
+                {
+                    return func;
+                }
+
+                func = CreateSerializeMethod(type);
+                serializeFuncDic.Add(type, func);
+                return func;
+            }
         }
 
         /// <summary>
         /// デシリアライズ用のメソッドを取得します。
         /// </summary>
-        public static MethodInfo GetDeserializeMethod()
+        private static MethodInfo GetGenericDeserializeMethod()
         {
-            if (deserializeMethod != null)
-            {
-                return deserializeMethod;
-            }
-
             var method = typeof(Serializer).GetMethod("Deserialize");
             if (method != null)
             {
-                deserializeMethod = method;
                 return method;
             }
 
             throw new InvalidOperationException(
                 "適切なSerializer.Deserializeメソッドが見つかりません。");
+        }
+
+        /// <summary>
+        /// Serializer.Deserializeを行う型付けされたメソッドを作成します。
+        /// </summary>
+        private static DeserializeFunc CreateDeserializeMethod(Type type)
+        {
+            var genericMethod = GetGenericDeserializeMethod();
+            var method = genericMethod.MakeGenericMethod(type);
+
+            // 作成するラムダ関数
+            // stream => Serializer.Deserialize<T>(stream)
+
+            // "stream"という引数を定義。
+            var stream = Expression.Parameter(typeof(Stream), "stream");
+
+            // "method"メソッドを呼び出します。
+            var body = Expression.Call(method, stream);
+
+            // bodyをラムダとして定義。
+            var e = Expression.Lambda(
+                typeof(DeserializeFunc), body, stream);
+
+            return (DeserializeFunc)e.Compile();
+        }
+
+        /// <summary>
+        /// Serializer.Deserializeを行う型付けされたメソッドを取得します。
+        /// </summary>
+        /// <remarks>
+        /// 必要なら作成します。
+        /// </remarks>
+        public static DeserializeFunc GetDeserializeMethod(Type type)
+        {
+            if (type == null)
+            {
+                throw new ArgumentNullException("type");
+            }
+
+            lock (deserializeFuncDic)
+            {
+                DeserializeFunc func;
+                if (deserializeFuncDic.TryGetValue(type, out func))
+                {
+                    return func;
+                }
+
+                func = CreateDeserializeMethod(type);
+                deserializeFuncDic.Add(type, func);
+                return func;
+            }
         }
 
         /// <summary>
@@ -104,17 +206,10 @@ namespace Ragnarok.Net.ProtoBuf
         /// </summary>
         public static void Serialize(Stream stream, object value, Type type)
         {
-            var method = GetSerializeMethod();
-            var methodImpl = method.MakeGenericMethod(type);
-
+            var method = GetSerializeMethod(type);
+            
             // オブジェクトをシリアライズします。
-            methodImpl.Invoke(
-                null,
-                new object[] {
-                    stream, // 出力先ストリーム
-                    value // シリアライズ対象のオブジェクト
-                });
-
+            method(stream, value);
             stream.Flush();
         }
 
@@ -136,17 +231,9 @@ namespace Ragnarok.Net.ProtoBuf
         /// </summary>
         public static object Deserialize(Stream stream, Type type)
         {
-            var method = GetDeserializeMethod();
-            var methodImpl = method.MakeGenericMethod(type);
+            var method = GetDeserializeMethod(type);
 
-            // オブジェクトをデシリアライズします。
-            var objectValue = methodImpl.Invoke(
-                null,
-                new object[] {
-                    stream // 入力元ストリーム
-                });
-
-            return objectValue;
+            return method(stream);
         }
 
         /// <summary>

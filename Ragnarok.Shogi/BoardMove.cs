@@ -145,9 +145,13 @@ namespace Ragnarok.Shogi
         /// </summary>
         public override bool Equals(object obj)
         {
-            var other = obj as BoardMove;
+            var result = this.PreEquals(obj);
+            if (result.HasValue)
+            {
+                return result.Value;
+            }
 
-            return Equals(other);
+            return Equals(obj as BoardMove);
         }
 
         /// <summary>
@@ -193,7 +197,7 @@ namespace Ragnarok.Shogi
         /// </summary>
         public static bool operator ==(BoardMove x, BoardMove y)
         {
-            return Ragnarok.Util.GenericClassEquals(x, y);
+            return Ragnarok.Util.GenericEquals(x, y);
         }
 
         /// <summary>

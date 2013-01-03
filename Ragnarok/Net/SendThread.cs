@@ -22,8 +22,6 @@ namespace Ragnarok.Net
         private static readonly object SyncObject = new object();
         private static readonly Thread[] threads = new Thread[ThreadCount];
         private static readonly List<SendData> sendDataList = new List<SendData>();
-        /*private static readonly HashSet<Socket> sendingSockets =
-            new HashSet<Socket>(new EqualityComparer());*/
 
         /// <summary>
         /// データを送信データキューに追加します。

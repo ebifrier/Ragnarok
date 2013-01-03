@@ -14,45 +14,16 @@ namespace Ragnarok.Shogi
     /// 駒台/駒箱にある各駒の情報を示します。
     /// </summary>
     [DataContract()]
-    public class CapturedPiece : ILazyModel, IEquatable<CapturedPiece>
+    public class CapturedPiece : NotifyObject, IEquatable<CapturedPiece>
     {
-        private readonly object SyncRoot = new object();
-        private readonly LazyModelObject lazyModelObject = new LazyModelObject();
-        private int count;
-
-        /// <summary>
-        /// プロパティの変更を通知します。
-        /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        /// <summary>
-        /// プロパティの変更を通知します。
-        /// </summary>
-        void IModel.NotifyPropertyChanged(PropertyChangedEventArgs e)
-        {
-            Util.CallPropertyChanged(
-                PropertyChanged, this, e);
-        }
-
-        /// <summary>
-        /// 内部で使います。
-        /// </summary>
-        LazyModelObject ILazyModel.LazyModelObject
-        {
-            get
-            {
-                return this.lazyModelObject;
-            }
-        }
-
         /// <summary>
         /// 駒情報を取得します。
         /// </summary>
         [DataMember(Order = 1, IsRequired = true)]
         public BoardPiece Piece
         {
-            get;
-            private set;
+            get { return GetValue<BoardPiece>("Piece"); }
+            private set { SetValue("Piece", value); }
         }
 
         /// <summary>
@@ -61,22 +32,8 @@ namespace Ragnarok.Shogi
         [DataMember(Order = 2, IsRequired = true)]
         public int Count
         {
-            get
-            {
-                return this.count;
-            }
-            set
-            {
-                using (new LazyModelLock(this, SyncRoot))
-                {
-                    if (this.count != value)
-                    {
-                        this.count = value;
-
-                        this.RaisePropertyChanged("Count");
-                    }
-                }
-            }
+            get { return GetValue<int>("Count"); }
+            set { SetValue("Count", value); }
         }
 
         /// <summary>
@@ -85,10 +42,7 @@ namespace Ragnarok.Shogi
         [DependOnProperty("Count")]
         public bool IsVisible
         {
-            get
-            {
-                return (Count > 0);
-            }
+            get { return (Count > 0); }
         }
 
         /// <summary>
@@ -114,9 +68,13 @@ namespace Ragnarok.Shogi
         /// </summary>
         public override bool Equals(object obj)
         {
-            var other = obj as CapturedPiece;
+            var result = this.PreEquals(obj);
+            if (result.HasValue)
+            {
+                return result.Value;
+            }
 
-            return Equals(other);
+            return Equals(obj as CapturedPiece);
         }
 
         /// <summary>
@@ -147,7 +105,7 @@ namespace Ragnarok.Shogi
         /// </summary>
         public static bool operator==(CapturedPiece x, CapturedPiece y)
         {
-            return Util.GenericClassEquals(x, y);
+            return Util.GenericEquals(x, y);
         }
 
         /// <summary>
@@ -171,8 +129,8 @@ namespace Ragnarok.Shogi
         /// </summary>
         public CapturedPiece(BoardPiece piece, int count)
         {
-            this.Piece = piece;
-            this.count = count;
+            Piece = piece;
+            Count = count;
         }
 
         /// <summary>

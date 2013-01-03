@@ -47,22 +47,9 @@ namespace Ragnarok.Shogi
         private int[] pieceCountArray = new int[PieceCount];
 
         /// <summary>
-        /// プロパティの変更を通知します。
-        /// </summary>
-        public override event PropertyChangedEventHandler PropertyChanged;
-
-        /// <summary>
         /// 持ち駒の数が変わったことを通知します。
         /// </summary>
         public event EventHandler<CountChangedEventArgs> CountChanged;
-
-        /// <summary>
-        /// プロパティの変更を通知します。
-        /// </summary>
-        public override void NotifyPropertyChanged(PropertyChangedEventArgs e)
-        {
-            Util.CallPropertyChanged(PropertyChanged, this, e);
-        }
 
         /// <summary>
         /// 持ち駒の数の変更を通知します。
@@ -83,7 +70,7 @@ namespace Ragnarok.Shogi
         /// </summary>
         public CapturedPieceBox Clone()
         {
-            using (new LazyModelLock(this, SyncRoot))
+            using (LazyLock())
             {
                 return new CapturedPieceBox(BWType)
                 {
@@ -97,7 +84,7 @@ namespace Ragnarok.Shogi
         /// </summary>
         public CapturedPiece MakeCapturedPiece(PieceType pieceType)
         {
-            using (new LazyModelLock(this, SyncRoot))
+            using (LazyLock())
             {
                 return new CapturedPiece(new BoardPiece(BWType, pieceType))
                 {
@@ -128,7 +115,7 @@ namespace Ragnarok.Shogi
             }
             set
             {
-                using (new LazyModelLock(this, SyncRoot))
+                using (LazyLock())
                 {
                     if (this.pieceCountArray != value)
                     {
@@ -150,7 +137,7 @@ namespace Ragnarok.Shogi
                 throw new ArgumentException("pieceType");
             }
 
-            using (new LazyModelLock(this, SyncRoot))
+            using (LazyLock())
             {
                 return this.pieceCountArray[(int)pieceType];
             }
@@ -166,7 +153,7 @@ namespace Ragnarok.Shogi
                 throw new ArgumentException("pieceType");
             }
 
-            using (new LazyModelLock(this, SyncRoot))
+            using (LazyLock())
             {
                 if (this.pieceCountArray[(int)pieceType] + count < 0)
                 {
@@ -200,7 +187,7 @@ namespace Ragnarok.Shogi
         /// </summary>
         public void Clear()
         {
-            using (new LazyModelLock(this, SyncRoot))
+            using (LazyLock())
             {
                 Array.Clear(
                     this.pieceCountArray, 0,
@@ -238,9 +225,13 @@ namespace Ragnarok.Shogi
         /// </summary>
         public override bool Equals(object obj)
         {
-            var other = obj as CapturedPieceBox;
+            var result = this.PreEquals(obj);
+            if (result.HasValue)
+            {
+                return result.Value;
+            }
 
-            return Equals(other);
+            return Equals(obj as CapturedPieceBox);
         }
 
         /// <summary>

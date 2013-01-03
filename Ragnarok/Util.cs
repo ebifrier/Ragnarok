@@ -12,28 +12,28 @@ namespace Ragnarok
     using Ragnarok.Utility;
 
     /// <summary>
+    /// PropertyChangedイベントを呼ぶメソッド型です。
+    /// </summary>
+    public delegate void PropertyChangedEventCaller(
+        PropertyChangedEventHandler handler,
+        object sender,
+        PropertyChangedEventArgs e);
+
+    /// <summary>
+    /// CollectionChangedイベントを呼ぶメソッド型です。
+    /// </summary>
+    public delegate void CollectionChangedEventCaller(
+        NotifyCollectionChangedEventHandler handler,
+        object sender,
+        NotifyCollectionChangedEventArgs e);
+
+    /// <summary>
     /// ユーティリティクラスです。
     /// </summary>
     public static class Util
     {
         private static readonly Encoding SJisEncoding =
             Encoding.GetEncoding("Shift_JIS");
-
-        /// <summary>
-        /// PropertyChangedイベントを呼ぶメソッド型です。
-        /// </summary>
-        public delegate void PropertyChangedEventCaller(
-            PropertyChangedEventHandler handler,
-            object sender,
-            PropertyChangedEventArgs e);
-
-        /// <summary>
-        /// CollectionChangedイベントを呼ぶメソッド型です。
-        /// </summary>
-        public delegate void CollectionChangedEventCaller(
-            NotifyCollectionChangedEventHandler handler,
-            object sender,
-            NotifyCollectionChangedEventArgs e);
 
         private static PropertyChangedEventCaller propertyChangedCaller;
         private static CollectionChangedEventCaller collectionChangedCaller;
@@ -227,10 +227,45 @@ namespace Ragnarok
         }
 
         /// <summary>
+        /// オブジェクトをobject型の状態で比較します。
+        /// </summary>
+        /// <remarks>
+        /// 主にEquals(object obj)のオーバーライドで使われます。
+        /// </remarks>
+        public static bool? PreEquals(this object lhs, object rhs)
+        {
+            // どちらもnullか、同じオブジェクトなら真を返します。
+            if (ReferenceEquals(lhs, rhs))
+            {
+                return true;
+            }
+
+            // objectとして比較します。比較の仕方を間違えると
+            // 無限ループになるので注意が必要です。
+            if (ReferenceEquals(lhs, null) || ReferenceEquals(rhs, null))
+            {
+                return false;
+            }
+
+            // Equals(object obj)の中では普通、型を合わせて比較します。
+            //   lhs.Equals(rhs as LhsType)
+            // と
+            //   rhs.Equals(lhs as RhsType)
+            // の結果を合わせるためには、as演算子の結果も合わせる必要があり、
+            // 継承があった場合には型の比較をしないと上手くいかなくなります。
+            if (lhs.GetType() != rhs.GetType())
+            {
+                return false;
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// オブジェクトをnull値などを考慮しながら比較します。
         /// </summary>
         /// <remarks>
-        /// Tが値型かオブジェクト型かを区別したくない場合に使ってください。
+        /// 主にoperator==の実装で使われます。
         /// </remarks>
         public static bool GenericEquals<T>(T lhs, T rhs)
         {
@@ -244,35 +279,10 @@ namespace Ragnarok
 
                 // objectとして比較します。比較の仕方を間違えると
                 // 無限ループになるので注意が必要です。
-                if ((object)lhs == null || (object)rhs == null)
+                if (ReferenceEquals(lhs, null) || ReferenceEquals(rhs, null))
                 {
                     return false;
                 }
-            }
-
-            return lhs.Equals(rhs);
-        }
-
-        /// <summary>
-        /// クラス型のオブジェクトをnull値などを考慮しながら比較します。
-        /// </summary>
-        /// <remarks>
-        /// 主にoperator==の実装で使われます。
-        /// </remarks>
-        public static bool GenericClassEquals<T>(T lhs, T rhs)
-            where T: class
-        {
-            // どちらもnullか、同じオブジェクトなら真を返します。
-            if (ReferenceEquals(lhs, rhs))
-            {
-                return true;
-            }
-
-            // objectとして比較します。比較の仕方を間違えると
-            // 無限ループになるので注意が必要です。
-            if ((object)lhs == null || (object)rhs == null)
-            {
-                return false;
             }
 
             return lhs.Equals(rhs);

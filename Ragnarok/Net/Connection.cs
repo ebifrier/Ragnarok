@@ -555,24 +555,18 @@ namespace Ragnarok.Net
         {
             if (data == null)
             {
-                return;
+                throw new ArgumentNullException("data");
             }
 
             lock (this.socketLock)
             {
-                if (!IsConnected || !CanWrite)
-                {
-                    return;
-                }
-
-                var sendData = new SendData()
+                var sendData = new SendData
                 {
                     Socket = Socket,
                 };
-                sendData.Callback += RaiseSent;
                 sendData.AddBuffer(data, 0, data.Length);
 
-                SendThread.AddSendData(sendData);
+                SendData(sendData);
             }
         }
 
@@ -583,11 +577,19 @@ namespace Ragnarok.Net
         {
             if (data == null)
             {
-                return;
+                throw new ArgumentNullException("data");
             }
 
-            data.Callback += RaiseSent;
-            SendThread.AddSendData(data);
+            lock (this.socketLock)
+            {
+                if (!IsConnected || !CanWrite)
+                {
+                    return;
+                }
+
+                data.Callback += RaiseSent;
+                SendThread.AddSendData(data);
+            }
         }
 
         /// <summary>

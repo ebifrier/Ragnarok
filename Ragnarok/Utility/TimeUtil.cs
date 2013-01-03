@@ -34,8 +34,17 @@ namespace Ragnarok.Utility
             /*// 失敗時は例外を投げます。
             double seconds = double.Parse(timeText);*/
 
+            return UnixTimeToDateTime(seconds);
+        }
+
+        /// <summary>
+        /// Unix時間をDateTimeに変換します。
+        /// </summary>
+        public static DateTime UnixTimeToDateTime(double seconds)
+        {
             // 基準時刻に加算し、ローカル時刻に直します。
             var utc = Epoch.AddSeconds(seconds);
+
             return utc.ToLocalTime();
         }
 

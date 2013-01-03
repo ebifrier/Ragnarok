@@ -67,15 +67,15 @@ namespace Ragnarok.NicoNico.Login
 #if !RGN_NOT_USE_COOKIEGETTERSHARP
             try
             {
-                var enumType = typeof(Hal.CookieGetterSharp.BrowserType);
-                var browserType = (Hal.CookieGetterSharp.BrowserType)browser;
+                var enumType = typeof(Ragnarok.Net.CookieGetter.BrowserType);
+                var browserType = (Ragnarok.Net.CookieGetter.BrowserType)browser;
                 if (!Enum.IsDefined(enumType, browserType))
                 {
                     throw new ArgumentException(
                         "ブラウザの種類が正しくありません。", "browser");
                 }
 
-                var cookieGetter = Hal.CookieGetterSharp
+                var cookieGetter = Ragnarok.Net.CookieGetter
                     .CookieGetter.CreateInstance(browserType);
                 if (cookieGetter == null)
                 {

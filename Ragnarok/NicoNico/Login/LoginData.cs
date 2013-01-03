@@ -93,9 +93,13 @@ namespace Ragnarok.NicoNico.Login
         /// </summary>
         public override bool Equals(object obj)
         {
-            var other = obj as LoginData;
+            var result = this.PreEquals(obj);
+            if (result.HasValue)
+            {
+                return result.Value;
+            }
             
-            return Equals(other);
+            return Equals(obj as LoginData);
         }
 
         /// <summary>
@@ -132,7 +136,7 @@ namespace Ragnarok.NicoNico.Login
         /// </summary>
         public static bool operator ==(LoginData x, LoginData y)
         {
-            return Util.GenericClassEquals(x, y);
+            return Util.GenericEquals(x, y);
         }
 
         /// <summary>
