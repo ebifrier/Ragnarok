@@ -1,5 +1,11 @@
 2013-01-04  - Ver 2.6.3
 
+	* Ragnarok/Net/CookieGetter: クッキー関連のソースを
+	CookieGetterSharpから持ってきました。
+	* externals/net/CookieGetterSharp.dll: dllを削除しました。
+
+2013-01-04  - Ver 2.6.3
+
 	* Equals(object)メソッドの実装を正確なものにしました。
 	* Ragnarok/Net/ProtoBuf/PbConnection.cs: ACKのタイムアウト処理を追
 	加しました。
