@@ -1,3 +1,7 @@
+2013-01-05  - Ver 2.6.4
+
+	* Ragnarok/Utility/Calculator.cs: 定数に対するサポートを追加。
+
 2013-01-04  - Ver 2.6.3
 
 	* Ragnarok/Net/CookieGetter: クッキー関連のソースを

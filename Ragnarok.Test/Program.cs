@@ -38,6 +38,7 @@ namespace Ragnarok.Test
 
             var calcTest = new Utility.CalclatorTest();
             calcTest.SimpleTest();
+            calcTest.ConstTest();
             calcTest.FuncTest();
 
             var shogiTest = new Shogi.ShogiParserTest();

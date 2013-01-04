@@ -24,7 +24,18 @@ namespace Ragnarok.Test.Utility
             Assert.AreEqual(Calculator.Default.Run("2.5*(4+6)**2"), 250.0);
             Assert.AreEqual(Calculator.Default.Run("10**2**1.5*4"), Math.Pow(10, Math.Pow(2, 1.5)) * 4);
 
-            //Assert.AreEqual(Calculator.Run("2.4e14"), 2.4e14);
+            //Assert.AreEqual(Calculator.Default.Run("2.4e14"), 2.4e14);
+        }
+
+        [Test()]
+        public void ConstTest()
+        {
+            Assert.AreEqual(Calculator.Default.Run("pi"), Math.PI);
+            Assert.AreEqual(Calculator.Default.Run("pi * e ** 10"), Math.PI * Math.Pow(Math.E, 10));
+
+            Assert.Throws(
+                typeof(RagnarokException),
+                () => Calculator.Default.Run("pii"));
         }
 
         [Test()]

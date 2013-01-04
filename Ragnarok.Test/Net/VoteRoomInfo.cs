@@ -296,9 +296,13 @@ namespace Ragnarok.Test.Net
         /// </summary>
         public override bool Equals(object obj)
         {
-            var other = obj as VoteRoomInfo;
+            var result = this.PreEquals(obj);
+            if (result.HasValue)
+            {
+                return result.Value;
+            }
 
-            return Equals(other);
+            return Equals(obj as VoteRoomInfo);
         }
 
         /// <summary>
@@ -319,7 +323,7 @@ namespace Ragnarok.Test.Net
         /// </summary>
         public static bool operator ==(VoteRoomInfo lhs, VoteRoomInfo rhs)
         {
-            return Util.GenericClassEquals(lhs, rhs);
+            return Util.GenericEquals(lhs, rhs);
         }
 
         /// <summary>
