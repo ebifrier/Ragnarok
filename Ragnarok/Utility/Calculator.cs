@@ -339,7 +339,7 @@ namespace Ragnarok.Utility
                 | pLParen.Seq(pRParen).Seq(Parsers.Return(new double[0]));
             var pTerm
                 = pLazyExpr.Between(pLParen, pRParen)
-                | pWord.And(pArg.Optional(), CalcFunc)
+                | pWord.And(pArg.Optional(), (Map<string, double[], double>)CalcFunc)
                 | pNumber;
 
             var pExpr = Expressions.BuildExpressionParser(pTerm, opTable);
