@@ -367,6 +367,27 @@ namespace Ragnarok
         }
 
         /// <summary>
+        /// 文字列中の空白があるインデックスを取得します。
+        /// </summary>
+        public static int IndexOfWhitespace(string text)
+        {
+            if (string.IsNullOrEmpty(text))
+            {
+                return -1;
+            }
+
+            for (var i = 0; i < text.Length; ++i)
+            {
+                if (char.IsWhiteSpace(text[i]))
+                {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
+
+        /// <summary>
         /// <paramref name="c"/>が全角文字か調べます。
         /// </summary>
         public static bool IsZenkaku(char c)
@@ -438,6 +459,32 @@ namespace Ragnarok
             using (var reader = new StreamReader(stream, encoding))
             {
                 return reader.ReadToEnd();
+            }
+        }
+
+        /// <summary>
+        /// ストリームの内容を行ごとに読み込みます。
+        /// </summary>
+        public static IEnumerable<string> ReadLines(string filepath, Encoding encoding)
+        {
+            using (var stream = new FileStream(filepath, FileMode.Open,
+                                               FileAccess.Read))
+            {
+                return ReadLines(stream, encoding);
+            }
+        }
+
+        /// <summary>
+        /// ストリームの内容を行ごとに読み込みます。
+        /// </summary>
+        public static IEnumerable<string> ReadLines(Stream stream, Encoding encoding)
+        {
+            using (var reader = new StreamReader(stream, encoding))
+            {
+                while (!reader.EndOfStream)
+                {
+                    yield return reader.ReadLine();
+                }
             }
         }
 

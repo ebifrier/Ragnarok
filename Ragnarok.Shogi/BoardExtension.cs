@@ -24,6 +24,29 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
+        /// 文字列に差し手が含まれていれば、順次切り出していきます。
+        /// </summary>
+        private static IEnumerable<Move> MakeMoveListInternal(string text)
+        {
+            while (true)
+            {
+                var parsedText = string.Empty;
+
+                // 与えられた文字列の差し手を解析します。
+                var move = ShogiParser.ParseMoveEx(
+                    text, false, true, ref parsedText);
+                if (move == null)
+                {
+                    break;
+                }
+
+                // 次の解析は解析が終わった部分からはじめます。
+                text = text.Substring(parsedText.Length);
+                yield return move;
+            }
+        }
+
+        /// <summary>
         /// 文字列から差し手オブジェクトを作成します。
         /// </summary>
         public static List<Move> MakeMoveList(string text, out string comment)
@@ -33,25 +56,39 @@ namespace Ragnarok.Shogi
                 throw new ArgumentNullException("text");
             }
 
-            // 事前に正規化しておきます。
-            text = StringNormalizer.NormalizeText(text);
-
+            // 指し手の解析前には文字列の正規化が必要ですが、
+            // 最初に全部正規化してしまうと、最後のコメントも
+            // 変わってしまうことがあります。
+            // このため、文字列を空白で区切りながら
+            // 正規化とパースを繰り返していきます。
             var result = new List<Move>();
-            while (true)
+            while (text.Length > 0)
             {
-                var parsedText = string.Empty;
+                var index = Util.IndexOfWhitespace(text);
+                var thisText = string.Empty;
+                var nextText = string.Empty;
 
-                // 与えられた文字列の差し手を解析します。
-                var move = ShogiParser.ParseMoveEx(
-                    text, false, false, ref parsedText);
-                if (move == null)
+                // 空白までの文字列を解析します。
+                if (index >= 0)
+                {
+                    thisText = text.Substring(0, index);
+                    nextText = text.Substring(index + 1);
+                }
+                else
+                {
+                    thisText = text;
+                    nextText = string.Empty;
+                }
+
+                // 指し手のパースが上手くいかなくなったら、そこで解析を終了します。
+                var oldCount = result.Count();
+                result.AddRange(MakeMoveListInternal(thisText));
+                if (result.Count() == oldCount)
                 {
                     break;
                 }
 
-                // 次の解析は解析が終わった部分からはじめます。
-                text = text.Substring(parsedText.Length);
-                result.Add(move);
+                text = nextText;
             }
 
             comment = text.Trim();

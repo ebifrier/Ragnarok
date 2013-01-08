@@ -17,11 +17,11 @@ namespace Ragnarok.Shogi
         /// </summary>
         Normal,
         /// <summary>
-        /// 手番を示す記号がない表示形式です。
+        /// ３二金 など手番がない通常の表示形式です。
         /// </summary>
         NoTeban,
         /// <summary>
-        /// 棋譜ファイル用の表示形式です。
+        /// ３二金(22) など移動前の符号が付く.kifファイル用の表示形式です。
         /// </summary>
         KifFile,
         /// <summary>
