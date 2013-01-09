@@ -1,3 +1,7 @@
+2013-01-09  - Ver 2.6.6
+
+	* MONOでコンパイルしました。
+
 2013-01-09  - Ver 2.6.5
 
 	* Ragnarok.Shogi/BoardExtension.cs: 文字列→指し手変換時にコメント

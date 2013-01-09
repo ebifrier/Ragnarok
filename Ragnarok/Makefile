@@ -12,7 +12,8 @@ CSFLAGS = -target:library -debug+ -warn:4 -define:__LINUX__ \
 
 LDFLAGS = -keyfile:Ragnarok.snk -lib:$(OUTDIR) -lib:$(PROTOBUF_PATH)
 LIBS    = -r:System.Xml.Linq.dll -r:System.Runtime.Serialization.dll \
-          -r:System.Web.dll -r:WindowsBase -r:protobuf-net.dll -r:NLog.dll
+          -r:System.Web.dll -r:WindowsBase.dll -r:System.Data.SQLite.dll \
+	  -r:protobuf-net.dll -r:NLog.dll
 
 all:
 	@if test ! -d $(OUTDIR); then \

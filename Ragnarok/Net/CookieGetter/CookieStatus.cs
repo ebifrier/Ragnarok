@@ -28,7 +28,7 @@ namespace Ragnarok.Net.CookieGetter
 	{
         private string displayName;
 
-        protected CookieStatus()
+        private CookieStatus()
         {
         }
 
