@@ -2,6 +2,7 @@
 
 	* テスト用のファイルをRagnarok.Testから各プロジェクトファイルに移動
 	しました。
+	* Ragnarok.Test: プロジェクトを削除しました。
 	* Ragnarok/ObjectModel/DynamicViewModel.NotifyObject.cs: 
 	NotifyObjectのソースをコピーしDynamicViewModelに組み込みました。
 
