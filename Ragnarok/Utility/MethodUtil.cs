@@ -51,7 +51,7 @@ namespace Ragnarok.Utility
     /// <summary>
     /// プロパティのgetterとsetterを保持します。
     /// </summary>
-    internal class PropertyObject<TTarget, TValue> : IPropertyObject
+    internal sealed class PropertyObject<TTarget, TValue> : IPropertyObject
     {
         private delegate TValue GetterType(TTarget target);
         private delegate void SetterType(TTarget target, TValue value);

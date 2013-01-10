@@ -1,15 +1,14 @@
-﻿using System;
+﻿#if TESTS
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
 
-using Ragnarok;
-using Ragnarok.Utility;
-
-namespace Ragnarok.Test.Utility
+namespace Ragnarok.Utility.Tests
 {
-    class ScannerTest
+    [TestFixture()]
+    internal class ScannerTest
     {
         [Test()]
         public void Test1()
@@ -35,3 +34,4 @@ namespace Ragnarok.Test.Utility
         }
     }
 }
+#endif

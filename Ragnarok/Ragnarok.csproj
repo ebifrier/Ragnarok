@@ -19,7 +19,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;CLR_V4</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;CLR_V4;TESTS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>3</WarningLevel>
     <DocumentationFile>Ragnarok.xml</DocumentationFile>
@@ -28,7 +28,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE;CLR_V4</DefineConstants>
+    <DefineConstants>TRACE;CLR_V4;TESTS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>3</WarningLevel>
     <DocumentationFile>Ragnarok.xml</DocumentationFile>
@@ -45,6 +45,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\externals\net\NLog.dll</HintPath>
     </Reference>
+    <Reference Include="nunit.framework, Version=2.6.0.12051, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL" />
     <Reference Include="protobuf-net, Version=1.0.0.280, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\externals\net\protobuf-net.dll</HintPath>
@@ -170,13 +171,18 @@
     <Compile Include="NLog\RemoteSyslog.cs" />
     <Compile Include="NLog\RepeatedException.cs" />
     <Compile Include="NLog\Syslog.cs" />
+    <Compile Include="ObjectModel\DynamicViewModel.Extensions.cs" />
+    <Compile Include="ObjectModel\DynamicViewModel.NotifyObject.cs" />
     <Compile Include="ObjectModel\LazyModelObject.cs" />
     <Compile Include="ObjectModel\LazyModelLock.cs" />
     <Compile Include="ObjectModel\DependOnPropertyAttribute.cs" />
     <Compile Include="ObjectModel\DynamicViewModel.cs" />
-    <Compile Include="ObjectModel\DynamicViewModel.part.cs" />
     <Compile Include="ObjectModel\IModel.cs" />
     <Compile Include="ObjectModel\ModelExtensions.cs" />
+    <Compile Include="ObjectModel\Tests\ViewModelTest.cs" />
+    <Compile Include="ObjectModel\Tests\NotifyObjectTest.cs" />
+    <Compile Include="ObjectModel\Tests\DependModelTest.cs" />
+    <Compile Include="ObjectModel\Tests\PropertyChangedCounter.cs" />
     <Compile Include="ObjectModel\TypeProperty.cs" />
     <Compile Include="ObjectModel\NotifyObject.cs" />
     <Compile Include="ObjectModel\NotifyCollection.cs" />
@@ -213,6 +219,10 @@
     <Compile Include="Utility\StackTraceUtil.cs" />
     <Compile Include="Utility\StringConverter.cs" />
     <Compile Include="Utility\StringNormalizer.cs" />
+    <Compile Include="Utility\Tests\CalclatorTest.cs" />
+    <Compile Include="Utility\Tests\ScannerTest.cs" />
+    <Compile Include="Utility\Tests\TypeSerializerTest.cs" />
+    <Compile Include="Utility\Tests\StringNormalizerTest.cs" />
     <Compile Include="Utility\TimeUtil.cs" />
     <Compile Include="Utility\TypeSerializer.cs" />
   </ItemGroup>

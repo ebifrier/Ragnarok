@@ -15,7 +15,6 @@ namespace Ragnarok.Utility
     /// </remarks>
     public class BinarySplitReader : IDisposable
     {
-        //private Stream baseStream;
         private MemoryStream outputStream;
         private byte[] buffer;
         private int readPosition = 0;
@@ -67,14 +66,6 @@ namespace Ragnarok.Utility
                      position < this.writePosition));
             }
         }
-
-        /*/// <summary>
-        /// 基本になるストリームオブジェクトを取得します。
-        /// </summary>
-        public virtual Stream BaseStream
-        {
-            get { return this.baseStream; }
-        }*/
 
         /// <summary>
         /// 現在読み取り中の文字を一文字取得します。
@@ -172,90 +163,13 @@ namespace Ragnarok.Utility
             }
         }
 
-        /*/// <summary>
-        /// 指定したバイト数分だけストリームから読み取ったバイトを
-        /// 内部バッファーに格納します。
-        /// </summary>
-        /// <remarks>
-        /// リングバッファ特有の事情などは一切考えません。
-        /// </remarks>
-        protected virtual int FillBufferInternal(int numBytes)
-        {
-            // 現在のポジションから、要求されたサイズ分データを読み取ります。
-            var readBytes = this.baseStream.Read(
-                this.buffer, this.writePosition, numBytes);
-
-            // 内部バッファに書き込んだので、その分だけ書き込み位置をずらします。
-            this.writePosition = IncreamentPosition(
-                this.writePosition, readBytes);
-
-            return readBytes;
-        }
-
-        /// <summary>
-        /// ストリームから読み取ったバイトを内部バッファーに格納します。
-        /// </summary>
-        protected virtual int FillBuffer()
-        {
-            /*if (numBytes > this.buffer.Length)
-            {
-                throw new ArgumentOutOfRangeException(
-                    "要求されたサイズは内部バッファサイズよりも大きくなっています。",
-                    "numBytes");
-            }
-
-            if (this.writePosition < this.readPosition)
-            {
-                // BUFFER: =======RP----------WP=======
-                // (= -> 読み取り中のデータ, - -> 読み込み可能範囲)
-                // 
-                // 書き込み位置の方が読み込み位置よりも前にあるので、
-                // データは読み込み位置までしか書き込むことができません。
-                // (RP ～ WP までに読み込み可能なデータがあります)
-
-                // 現在のポジションから、要求されたサイズ分データを読み取ります。
-                var readBytes = 0;
-
-                if (this.readPosition > 0)
-                {
-                    var needBytes = (this.readPosition - 1) - this.writePosition;
-                    readBytes = FillBufferInternal(needBytes);
-                }
-
-                return readBytes;
-            }
-            else
-            {
-                // BUFFER: -------WP==========RP-------
-                // (= -> 読み取り中のデータ, - -> 読み込み可能範囲)
-                // 
-                // 書き込み位置の方が読み込み位置よりも後にあるので、
-                // データはバッファの終端までと、開始位置から読み込み位置まで
-                // 書き込むことができます。
-                // (RP ～ WP までに読み込み可能なデータがあります)
-
-                // 現在のポジションから、要求されたサイズ分データを読み取ります。
-                var needBytes =  this.buffer.Length - this.writePosition
-                    - (this.readPosition == 0 ? 1 : 0);
-                var readBytes = FillBufferInternal(needBytes);
-
-                // まだ読み込み可能なデータがあれば、バッファの先頭に読み取ります。
-                if (readBytes >= needBytes && this.readPosition > 0)
-                {
-                    readBytes += FillBufferInternal(this.readPosition - 1);
-                }
-
-                return readBytes;
-            }
-        }*/
-
         /// <summary>
         /// 指定のサイズ分読み取りが完了したことを設定します。
         /// </summary>
         /// <remarks>
         /// リングバッファ特有の事情を考慮しません。
         /// </remarks>
-        protected virtual void ReadBufferDoneInternal(int numBytes)
+        protected void ReadBufferDoneInternal(int numBytes)
         {
             this.outputStream.Write(
                 this.buffer, this.readPosition, numBytes);
@@ -273,7 +187,7 @@ namespace Ragnarok.Utility
         /// 読み込みが完了した位置の次の位置(次に読み込みを開始する位置)
         /// を指定します。
         /// </param>
-        protected virtual void ReadBufferDone(int position)
+        protected void ReadBufferDone(int position)
         {
             if (this.readPosition <= position)
             {
@@ -283,8 +197,8 @@ namespace Ragnarok.Utility
             else
             {
                 var writeBytes = this.buffer.Length - this.readPosition;
-                ReadBufferDoneInternal(writeBytes);
 
+                ReadBufferDoneInternal(writeBytes);
                 ReadBufferDoneInternal(position);
             }
         }
@@ -328,12 +242,7 @@ namespace Ragnarok.Utility
             }
 
             ReadBufferDone(rp);
-            /*if (FillBuffer() == 0)
-            {
-                return null;
-            }*/
-
-            return null; // ReadUntil(separator);
+            return null;
         }
 
         /// <summary>
@@ -350,7 +259,6 @@ namespace Ragnarok.Utility
         public BinarySplitReader(int bufferSize)
         {
             this.buffer = new byte[bufferSize];
-            //this.baseStream = stream;
             this.outputStream = new MemoryStream();
         }
 
@@ -368,12 +276,6 @@ namespace Ragnarok.Utility
         /// </summary>
         public virtual void Close()
         {
-            /*if (this.baseStream != null)
-            {
-                this.baseStream.Dispose();
-                this.baseStream = null;
-            }*/
-
             if (this.outputStream != null)
             {
                 this.outputStream.Dispose();

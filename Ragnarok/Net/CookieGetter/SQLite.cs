@@ -15,24 +15,6 @@ namespace Ragnarok.Net.CookieGetter
 	{
 		private const string CONNECTIONSTRING_FORMAT = "Data Source={0}";
 
-		/*public override Cookie GetCookie(Uri url, string key)
-		{
-			CookieContainer container = GetCookies(base.CookiePath, MakeQuery(url, key));
-			CookieCollection collection = container.GetCookies(Utility.AddSrashLast(url));
-			return collection[key];
-		}
-
-		public override CookieCollection GetCookieCollection(Uri url)
-		{
-			CookieContainer container = GetCookies(base.CookiePath, MakeQuery(url));
-			return container.GetCookies(Utility.AddSrashLast(url));
-		}
-
-		public override CookieContainer GetAllCookies()
-		{
-			return GetCookies(base.CookiePath, MakeQuery());
-		}*/
-
         public static List<List<object>> GetCookies(string path, string query)
         {
             if (string.IsNullOrEmpty(path) || !File.Exists(path))
@@ -84,14 +66,6 @@ namespace Ragnarok.Net.CookieGetter
                         }
 
                         result.Add(items);
-
-                        /*Cookie cookie = DataToCookie(items.ToArray());
-                        try {
-                            Utility.AddCookieToContainer(container, cookie);
-                        } catch (Exception ex){
-                            CookieGetter.Exceptions.Enqueue(ex);
-                            Console.WriteLine(string.Format("Invalid Format! domain:{0},key:{1},value:{2}", cookie.Domain, cookie.Name, cookie.Value));
-                        }*/
                     }
 
                     sqlConnection.Close();

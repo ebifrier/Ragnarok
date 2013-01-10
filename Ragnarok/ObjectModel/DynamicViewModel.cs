@@ -24,56 +24,6 @@ namespace Ragnarok.ObjectModel
     public partial class DynamicViewModel
         : DynamicObject, IParentModel, ILazyModel
     {
-        private readonly object syncRoot = new object();
-        private readonly List<object> dependModelList = new List<object>();
-        private readonly LazyModelObject lazyModelObject = new LazyModelObject();
-
-        /// <summary>
-        /// プロパティ値の変更を通知します。
-        /// </summary>
-        [field: NonSerialized]
-        public virtual event PropertyChangedEventHandler PropertyChanged;
-
-        /// <summary>
-        /// プロパティの変更通知を出します。
-        /// </summary>
-        public virtual void NotifyPropertyChanged(PropertyChangedEventArgs e)
-        {
-            Util.CallPropertyChanged(PropertyChanged, this, e);
-        }
-
-        /// <summary>
-        /// 依存モデルのリストです。
-        /// </summary>
-        public List<object> DependModelList
-        {
-            get { return this.dependModelList; }
-        }
-
-        /// <summary>
-        /// <see cref="ILazyModel"/>用のオブジェクトを取得します。
-        /// </summary>
-        public LazyModelObject LazyModelObject
-        {
-            get { return this.lazyModelObject; }
-        }
-
-        /// <summary>
-        /// 同期用のオブジェクトを取得します。
-        /// </summary>
-        public object SyncRoot
-        {
-            get { return this.syncRoot; }
-        }
-
-        /// <summary>
-        /// 専用のロックオブジェクトを作成します。
-        /// </summary>
-        protected LazyModelLock LazyLock()
-        {
-            return new LazyModelLock(this, SyncRoot);
-        }
-
         /// <summary>
         /// 子オブジェクトから取得プロパティを検索しそれを呼びます。
         /// </summary>
@@ -84,7 +34,7 @@ namespace Ragnarok.ObjectModel
 
             using (LazyLock())
             {
-                foreach (var model in this.DependModelList)
+                foreach (var model in this.dependModelList)
                 {
                     var property = model.GetType().GetProperty(propertyName);
 

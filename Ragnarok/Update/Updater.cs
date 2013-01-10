@@ -451,7 +451,7 @@ namespace Ragnarok.Update
             // 1. zip file path
             // 2. the top directory of this program
             // 3. the path of the restart program
-            var startInfo = new ProcessStartInfo()
+            var startInfo = new ProcessStartInfo
             {
                 FileName = this.packFilePath,
                 Arguments = string.Format(

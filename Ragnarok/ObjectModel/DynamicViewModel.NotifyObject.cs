@@ -1,56 +1,25 @@
-﻿using System;
+#if CLR_V4
+#define RGN_DYNAMICVIEWMODEL
+using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Collections.Concurrent;
 using System.ComponentModel;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Text;
+using System.Dynamic;
+using System.Reflection;
 using System.Runtime.Serialization;
+
+// DynamicViewModelの一部です。
+// このファイルは自動生成されています。
 
 namespace Ragnarok.ObjectModel
 {
-    /// <summary>
-    /// プロパティごとの変更通知を保持します。
-    /// </summary>
-    internal sealed class PropertyChangedObject
+    using Ragnarok.Utility;
+
+    public partial class DynamicViewModel
     {
-        /// <summary>
-        /// プロパティ名を取得または設定します。
-        /// </summary>
-        public string Name
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// コールバックハンドラを取得または設定します。
-        /// </summary>
-        public PropertyChangedEventHandler Handler
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// 内部のコールバックハンドラを取得または設定します。
-        /// </summary>
-        public PropertyChangedEventHandler InternalHandler
-        {
-            get;
-            set;
-        }
-    }
-
-    /// <summary>
-    /// WPFで動くモデルオブジェクトの基底クラスです。
-    /// </summary>
-    /// <remarks>
-    /// 逆シリアル前には必ず<see cref="OnBeforeDeselialize"/>メソッドを
-    /// 呼ぶようにしてください。
-    /// </remarks>
-    [Serializable()]
-    [DataContract()]
-    public class NotifyObject : IParentModel, ILazyModel
-    {
-        #region copy to DynamicViewModel
         [field: NonSerialized]
         private object syncRoot = new object();
         [field: NonSerialized]
@@ -258,6 +227,6 @@ namespace Ragnarok.ObjectModel
                 PropertyChanged -= target.Handler;
             }
         }
-        #endregion copy to DynamicViewModel
     }
 }
+#endif

@@ -1,15 +1,14 @@
-﻿using System;
+﻿#if TESTS
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
 
-using Ragnarok;
-using Ragnarok.Utility;
-
-namespace Ragnarok.Test.Utility
+namespace Ragnarok.Utility.Tests
 {
-    public class CalclatorTest
+    [TestFixture()]
+    internal class CalclatorTest
     {
         [Test()]
         public void SimpleTest()
@@ -58,3 +57,4 @@ namespace Ragnarok.Test.Utility
         }
     }
 }
+#endif

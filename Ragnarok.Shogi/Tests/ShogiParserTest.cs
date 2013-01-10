@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if TESTS
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,7 +10,8 @@ using Ragnarok.Shogi;
 
 namespace Ragnarok.Test.Shogi
 {
-    public class ShogiParserTest
+    [TestFixture()]
+    internal class ShogiParserTest
     {
         [Test()]
         public void ParseMoveTest()
@@ -80,3 +82,4 @@ namespace Ragnarok.Test.Shogi
         }
     }
 }
+#endif

@@ -51,20 +51,10 @@
     <Compile Include="Net\ProtoBufTest.cs" />
     <Compile Include="Net\VoteParticipantInfo.cs" />
     <Compile Include="Net\VoteRoomInfo.cs" />
-    <Compile Include="ObjectModel\ModelBaseTest.cs" />
     <Compile Include="Net\NtpClientTest.cs" />
     <Compile Include="NicoNico\PlayerStatusTest.cs" />
-    <Compile Include="ObjectModel\AggrigateModel.cs" />
-    <Compile Include="ObjectModel\BaseModel.cs" />
-    <Compile Include="ObjectModel\SimpleViewModel.cs" />
-    <Compile Include="ObjectModel\DerivedModel.cs" />
-    <Compile Include="ObjectModel\SimpleClass.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Shogi\ShogiParserTest.cs" />
-    <Compile Include="Utility\CalclatorTest.cs" />
-    <Compile Include="Utility\ScannerTest.cs" />
-    <Compile Include="Utility\TypeSerializerTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Ragnarok.Shogi\Ragnarok.Shogi.csproj">

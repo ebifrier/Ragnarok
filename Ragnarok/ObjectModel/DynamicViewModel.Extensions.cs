@@ -3,15 +3,16 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
+using System.ComponentModel;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Dynamic;
-using System.ComponentModel;
 using System.Reflection;
+using System.Runtime.Serialization;
 
-// ViewModelBaseの一部です。
-// このファイルはModelBaseから自動生成されています。
+// DynamicViewModelの一部です。
+// このファイルは自動生成されています。
 
 namespace Ragnarok.ObjectModel
 {
@@ -258,9 +259,9 @@ namespace Ragnarok.ObjectModel
             PropertyChangedEventArgs e)
         {
             // 変更プロパティを追加し、もし可能ならそれを実際に通知します。
-            this.LazyModelObject.AddChangedProperty(e.PropertyName);
+            this.lazyModelObject.AddChangedProperty(e.PropertyName);
 
-            this.LazyModelObject.RaisePropertyChangedIfNeed(this);
+            this.lazyModelObject.RaisePropertyChangedIfNeed(this);
         }
 
         /// <summary>
@@ -439,7 +440,7 @@ namespace Ragnarok.ObjectModel
                     notify.PropertyChanged += this.DependModel_PropertyChanged;
                 }
 
-                this.DependModelList.Add(model);
+                this.dependModelList.Add(model);
 
                 // モデルが持つ全プロパティの変更通知を出します。
                 // (重複したプロパティに対して通知が出されることがあります)
@@ -463,14 +464,14 @@ namespace Ragnarok.ObjectModel
             using (new DebugLock(SyncRoot))
             {
                 // 参照比較で比較します。
-                var index = this.DependModelList.FindIndex(
+                var index = this.dependModelList.FindIndex(
                     obj => object.ReferenceEquals(obj, model));
                 if (index < 0)
                 {
                     return;
                 }
 
-                this.DependModelList.RemoveAt(index);
+                this.dependModelList.RemoveAt(index);
 
                 // 必要ならPropertyChangedを外します。
                 var notify = model as INotifyPropertyChanged;
@@ -488,7 +489,7 @@ namespace Ragnarok.ObjectModel
         {
             using (new DebugLock(SyncRoot))
             {
-                return (this.DependModelList.FindIndex(
+                return (this.dependModelList.FindIndex(
                     obj => object.ReferenceEquals(obj, model)) >= 0);
             }
         }
@@ -500,15 +501,13 @@ namespace Ragnarok.ObjectModel
         {
             using (new DebugLock(SyncRoot))
             {
-                while (this.DependModelList.Count > 0)
+                while (this.dependModelList.Count > 0)
                 {
-                    this.RemoveDependModel(this.DependModelList[0]);
+                    this.RemoveDependModel(this.dependModelList[0]);
                 }
             }
         }
         #endregion
-
     }
 }
-
 #endif

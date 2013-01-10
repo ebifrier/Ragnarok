@@ -515,6 +515,6 @@ namespace Ragnarok.ObjectModel
             }
         }
         #endregion
-        #endregion
+        #endregion copy to DynamicViewModel
     }
 }
