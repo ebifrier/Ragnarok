@@ -1,6 +1,9 @@
 2013-01-19  - Ver 2.6.8
 
+	* Ragnarok/Update/make_release.rb: 更新ファイル作成用のファイルを追
+	加しました。
 	* Ragnarok/Update/Updater.cs: 更新用のシステムを修正しました。
+	* dist/history.yaml: 更新履歴を更新しました。
 
 2013-01-10  - Ver 2.6.7
 
