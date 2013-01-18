@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows;
 
 using Ragnarok.Update;
 using Ragnarok.ObjectModel;
@@ -14,7 +15,16 @@ namespace Ragnarok.Presentation.Update
     public class PresentationUpdater : NotifyObject
     {
         private readonly Updater updater;
-        private UpdateWindow window;
+        private UpdateWindow updateWindow;
+        private DownloadProgressWindow progressWindow;
+
+        /// <summary>
+        /// ダウンロード用オブジェクトを取得します。
+        /// </summary>
+        public Downloader Downloader
+        {
+            get { return this.updater.Downloader; }
+        }
 
         /// <summary>
         /// アセンブリ名を取得します。
@@ -53,6 +63,15 @@ namespace Ragnarok.Presentation.Update
         }
 
         /// <summary>
+        /// ファイルのダウンロード中に発生したエラーを取得します。
+        /// </summary>
+        public Exception DownloadError
+        {
+            get { return GetValue<Exception>("DownloadError"); }
+            private set { SetValue("DownloadError", value); }
+        }
+
+        /// <summary>
         /// コンストラクタ
         /// </summary>
         public PresentationUpdater(string appCastUri)
@@ -75,6 +94,13 @@ namespace Ragnarok.Presentation.Update
 
         void updater_DownloadDone(object sender, DownloadDoneEventArgs e)
         {
+            DownloadError = e.Error;
+
+            if (e.IsCancelled)
+            {
+                return;
+            }
+
             if (e.Error != null)
             {
                 WpfUtil.UIProcess(() =>
@@ -82,8 +108,92 @@ namespace Ragnarok.Presentation.Update
                 return;
             }
 
-            WpfUtil.UIProcess(ConfirmUpdate);
+            WpfUtil.UIProcess(() =>
+            {
+                if (!this.updater.CanExecutePack())
+                {
+                    // 更新できません＞＜
+                    return;
+                }
+
+                if (ConfirmUpdate(true))
+                {
+                    ExecuteUpdate();
+                }
+            });
             e.IsUpdate = false;
+        }
+
+        /// <summary>
+        /// ウィンドウを使って更新するかどうか確認します。
+        /// </summary>
+        private bool ConfirmUpdate(bool downloaded)
+        {
+            if (this.updateWindow != null)
+            {
+                this.updateWindow.Activate();
+                return false;
+            }
+
+            if (this.progressWindow != null)
+            {
+                return false;
+            }
+
+            this.updateWindow = new UpdateWindow
+            {
+                IsDownloaded = downloaded,
+                Topmost = true,
+                DataContext = this,
+            };
+            this.updateWindow.Closed +=
+                (_, __) => this.updateWindow = null;
+
+            return (this.updateWindow.ShowDialog() == true);
+        }
+
+        /// <summary>
+        /// ダウンロードの進行度を表示します。
+        /// </summary>
+        private void ShowProgress()
+        {
+            if (this.progressWindow != null)
+            {
+                this.progressWindow.Activate();
+                return;
+            }
+
+            if (this.updateWindow != null)
+            {
+                return;
+            }
+
+            this.progressWindow = new DownloadProgressWindow
+            {
+                Topmost = true,
+                DataContext = this,
+            };
+            this.progressWindow.Closed +=
+                (_, __) => this.progressWindow = null;
+
+            if (this.progressWindow.ShowDialog() == true)
+            {
+                ExecuteUpdate();
+            }
+        }
+
+        /// <summary>
+        /// 実際の更新処理を行います。
+        /// </summary>
+        private void ExecuteUpdate()
+        {
+            if (!this.updater.CanExecutePack())
+            {
+                // 更新できません＞＜
+                return;
+            }
+
+            this.updater.ExecutePack();
         }
 
         /// <summary>
@@ -103,33 +213,47 @@ namespace Ragnarok.Presentation.Update
         }
 
         /// <summary>
-        /// ウィンドウを使って更新するかどうか確認します。
+        /// 更新情報の確認やダイアログの表示などを行います。
         /// </summary>
-        private void ConfirmUpdate()
+        public void CheckToUpdate(TimeSpan timeout)
         {
-            if (!this.updater.CanExecutePack())
+            if (this.updateWindow != null || this.progressWindow != null)
             {
-                // 更新できません＞＜
+                // すでに確認用のウィンドウが起動しています。
                 return;
             }
 
-            if (this.window != null)
+            if (!this.updater.LatestVersionEvent.WaitOne(timeout))
             {
-                this.window.Activate();
+                DialogUtil.ShowError(
+                    string.Format(
+                        "更新情報の確認ができません（T￢T){0}{0}" +
+                        "少し時間をおいてから、もう一度試してみて下さい。",
+                        Environment.NewLine));
                 return;
             }
 
-            this.window = new UpdateWindow
+            var latestVersion = this.updater.LatestVersion;
+            if (latestVersion == null)
             {
-                Topmost = true,
-                DataContext = this,
-            };
-            this.window.Closed += (_, __) => this.window = null;
+                DialogUtil.Show("更新はありません d(-_☆)", "確認", MessageBoxButton.OK);
+                return;
+            }
 
-            var result = this.window.ShowDialog();
-            if (result != null && result.Value)
+            // ファイルのダウンロード中なら
+            if (!this.updater.DownloadDoneEvent.WaitOne(0))
             {
-                this.updater.ExecutePack();
+                if (ConfirmUpdate(false))
+                {
+                    ShowProgress();
+                }
+            }
+            else
+            {
+                if (ConfirmUpdate(true))
+                {
+                    ExecuteUpdate();
+                }
             }
         }
     }

@@ -25,6 +25,8 @@ namespace Ragnarok.Presentation.Update
         public DownloadProgressWindow()
         {
             InitializeComponent();
+
+            DialogCommands.BindCommands(CommandBindings);
         }
     }
 }

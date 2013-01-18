@@ -6,14 +6,56 @@
         xmlns:p="http://schemas.garnet-alice.net/ragnarok/xaml/presentation"
         xmlns:w="clr-namespace:Ragnarok.Presentation"
         xmlns:u="clr-namespace:Ragnarok.Presentation.Utility"
-        mc:Ignorable="d" 
+        mc:Ignorable="d" x:Name="window"
         Title="ソフトウェア アップデート" ResizeMode="CanResize"
-        Height="387" Width="516">
+        Height="387" Width="460">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="UpdateCommon.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            
+            <Style x:Key="myTitleStyle" TargetType="TextBlock"
+                   BasedOn="{StaticResource titleStyle}">
+                <Setter Property="Text"
+                        Value="新バージョンがリリースされています！" />
+                
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding IsDownloaded, ElementName=window}"
+                                 Value="True">
+                        <Setter Property="Text"
+                                Value="新バージョンのダウンロードが完了しました！" />
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+
+            <Style x:Key="myDescriptionStyle" TargetType="TextBlock"
+                   BasedOn="{StaticResource normalStyle}">
+                <Setter Property="Text">
+                    <Setter.Value>
+                        <MultiBinding StringFormat="新しいバージョンの {0} をダウンロードしますか？ (現在のバージョン: {2})">
+                            <Binding Path="AssemblyTitle" />
+                            <Binding Path="LatestVersion" />
+                            <Binding Path="InstalledVersion" />
+                        </MultiBinding>
+                    </Setter.Value>
+                </Setter>
+
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding IsDownloaded, ElementName=window}"
+                                 Value="True">
+                        <Setter Property="Text">
+                            <Setter.Value>
+                                <MultiBinding StringFormat="新しいバージョンの {0} に更新しますか？ (現在のバージョン: {2})">
+                                    <Binding Path="AssemblyTitle" />
+                                    <Binding Path="LatestVersion" />
+                                    <Binding Path="InstalledVersion" />
+                                </MultiBinding>
+                            </Setter.Value>
+                        </Setter>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
 
             <!-- 更新履歴などをブラウザで表示します。-->
             <ControlTemplate x:Key="descriptionTemplate">
@@ -28,19 +70,10 @@
                     </Grid.RowDefinitions>
 
                     <TextBlock Grid.Row="0"
-                               Style="{StaticResource titleStyle}"
-                               Text="新バージョンがリリースされています！" />
+                               Style="{StaticResource myTitleStyle}" />
                     <TextBlock Grid.Row="2"
-                               Style="{StaticResource normalStyle}"
-                               TextWrapping="Wrap">
-                        <TextBlock.Text>
-                            <MultiBinding StringFormat="新しいバージョンの {0} をダウンロードしますか？ (現在のバージョン: {2})">
-                                <Binding Path="AssemblyTitle" />
-                                <Binding Path="LatestVersion" />
-                                <Binding Path="InstalledVersion" />
-                            </MultiBinding>
-                        </TextBlock.Text>
-                    </TextBlock>
+                               Style="{StaticResource myDescriptionStyle}"
+                               TextWrapping="Wrap" />
                     
                     <TextBlock Grid.Row="4"
                                Style="{StaticResource titleStyle}"

@@ -29,14 +29,16 @@ namespace Ragnarok.Update
         private Downloader downloader;
         private string appCastUrl;
         private Configuration config;
+
+        private ManualResetEvent latestVersionEvent = new ManualResetEvent(false); 
         private AppCastItem latestVersion;
 
         private ManualResetEvent downloadDoneEvent = new ManualResetEvent(false);
         private string downloadFilePath;
         private string packFilePath;
         private string packConfigFilePath;
-        
-        private int isStartedInt;
+
+        private ManualResetEvent startedEvent = new ManualResetEvent(false);
         private int isDownloadFailedInt;
         private bool disposed;
 
@@ -50,24 +52,6 @@ namespace Ragnarok.Update
         /// </summary>
         public event EventHandler<DownloadDoneEventArgs> DownloadDone;
 
-#if false
-        /// <summary>
-        /// Hides the release notes view when an update was found. This 
-        /// mode is switched on automatically when no sparkle:releaseNotesLink
-        /// tag was found in the app cast         
-        /// </summary>
-        public bool HideReleaseNotes = false;
-
-        /// <summary>
-        /// This property enables the silent mode, this means 
-        /// the application will be updated without user interaction
-        /// </summary>
-        public bool EnableSilentMode
-        {
-            get;
-            set;
-        }
-#endif
         /// <summary>
         /// コンフィグ情報を取得します。
         /// </summary>
@@ -77,11 +61,27 @@ namespace Ragnarok.Update
         }
 
         /// <summary>
+        /// 更新情報を取得した場合はシグナル状態になります。
+        /// </summary>
+        public ManualResetEvent LatestVersionEvent
+        {
+            get { return this.latestVersionEvent; }
+        }
+
+        /// <summary>
         /// 更新情報を取得します。
         /// </summary>
         public AppCastItem LatestVersion
         {
             get { return this.latestVersion; }
+        }
+
+        /// <summary>
+        /// ダウンロードが終了したらシグナル状態になります。
+        /// </summary>
+        public ManualResetEvent DownloadDoneEvent
+        {
+            get { return this.downloadDoneEvent; }
         }
 
         /// <summary>
@@ -150,18 +150,27 @@ namespace Ragnarok.Update
         /// </summary>
         public void Start()
         {
-            if (Interlocked.CompareExchange(ref this.isStartedInt, 1, 0) == 1)
+            if (this.startedEvent.WaitOne(0))
             {
                 // 既に開始済み
                 return;
             }
 
-            Log.Info("Updater starts download.");
+            try
+            {
+                Log.Info("Updater starts download.");
 
-            // 更新情報の取得を開始します。
-            var web = new WebClient();
-            web.DownloadDataCompleted += web_DownloadDataCompleted;
-            web.DownloadDataAsync(new Uri(this.appCastUrl));
+                // 更新情報の取得を開始します。
+                var web = new WebClient();
+                web.DownloadDataCompleted += web_DownloadDataCompleted;
+                web.DownloadDataAsync(new Uri(this.appCastUrl));
+            }
+            finally
+            {
+                this.latestVersionEvent.Set();
+            }
+
+            this.startedEvent.Set();
         }
 
         /// <summary>
@@ -169,7 +178,7 @@ namespace Ragnarok.Update
         /// </summary>
         public void Stop()
         {
-            if (this.isStartedInt != 0)
+            if (this.startedEvent.WaitOne(0))
             {
                 this.downloader.CancelAll();
             }
@@ -227,7 +236,7 @@ namespace Ragnarok.Update
         /// </summary>
         private NextUpdateAction OnUpdateDetected(AppCastItem latestVersion)
         {
-            var e = new UpdateDetectedEventArgs()
+            var e = new UpdateDetectedEventArgs
             {
                 NextAction = NextUpdateAction.ContinueToUpdate,
                 ApplicationConfig = config,
@@ -247,6 +256,8 @@ namespace Ragnarok.Update
             {
                 Log.ErrorException(e.Error,
                     "更新情報の取得に失敗しました。");
+
+                this.latestVersionEvent.Set();
                 return;
             }
 
@@ -256,10 +267,12 @@ namespace Ragnarok.Update
                 var latestVersion = AppCastItemUtil.GetLatestVersion(text);
                 if (!IsUpdateRequired(latestVersion))
                 {
+                    this.latestVersionEvent.Set();
                     return;
                 }
 
                 this.latestVersion = latestVersion;
+                this.latestVersionEvent.Set();
 
                 // show the update window
                 Log.Info(
@@ -350,7 +363,7 @@ namespace Ragnarok.Update
         /// </summary>
         private bool OnDownloadDone(bool cancelled, Exception ex)
         {
-            var e = new DownloadDoneEventArgs()
+            var e = new DownloadDoneEventArgs
             {
                 IsUpdate = false,
                 ApplicationConfig = this.config,
@@ -376,6 +389,7 @@ namespace Ragnarok.Update
                     return;
                 }
 
+                this.downloadDoneEvent.Set();
                 OnDownloadDone(cancelled, ex);
                 return;
             }
@@ -386,13 +400,17 @@ namespace Ragnarok.Update
                 Log.Info("すべてのダウンロードを終了しました。");
                 this.downloadDoneEvent.Set();
 
-                /*if (!string.IsNullOrEmpty(this.latestVersion.MD5Signature))
+                // MD5のチェックを行います。
+                var correctMD5 = this.latestVersion.MD5Signature;
+                if (!string.IsNullOrEmpty(correctMD5))
                 {
-                    var md5 = MD5Verificator.ComputeMD5(this.downloadFilePath);
-                    if (!MD5Verificator.CompareMD5(md5, this.latestVersion.MD5Signature))
+                    var targetMD5 = MD5Verificator.ComputeMD5(this.downloadFilePath);
+                    if (!MD5Verificator.CompareMD5(targetMD5, correctMD5))
                     {
+                        OnDownloadDone(false, new Exception());
+                        return;
                     }
-                }*/
+                }
 
                 if (!OnDownloadDone(cancelled, ex))
                 {

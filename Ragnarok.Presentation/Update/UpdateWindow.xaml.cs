@@ -20,6 +20,25 @@ namespace Ragnarok.Presentation.Update
     public partial class UpdateWindow : Window
     {
         /// <summary>
+        /// ファイルのダウンロードが完了しているかどうかを示す依存プロパティです。
+        /// </summary>
+        public static readonly DependencyProperty IsDownloadedProperty =
+            DependencyProperty.Register(
+                "IsDownloaded",
+                typeof(bool),
+                typeof(UpdateWindow),
+                new UIPropertyMetadata(false));
+
+        /// <summary>
+        /// ファイルのダウンロードが完了しているかどうかを取得または設定します。
+        /// </summary>
+        public bool IsDownloaded
+        {
+            get { return (bool)GetValue(IsDownloadedProperty); }
+            set { SetValue(IsDownloadedProperty, value); }
+        }
+        
+        /// <summary>
         /// コンストラクタ
         /// </summary>
         public UpdateWindow()

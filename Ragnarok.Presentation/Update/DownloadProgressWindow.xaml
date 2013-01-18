@@ -3,16 +3,56 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-        mc:Ignorable="d" 
-        d:DesignHeight="142" d:DesignWidth="370" MinWidth="370"
+        xmlns:w="clr-namespace:Ragnarok.Presentation"
+        mc:Ignorable="d"
         Title="ダウンロード"
-        ResizeMode="NoResize" SizeToContent="WidthAndHeight">
+        ResizeMode="NoResize" Width="370" SizeToContent="Height">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="UpdateCommon.xaml" />
             </ResourceDictionary.MergedDictionaries>
-            
+
+            <!-- ダウンロード中に表示される要素です。-->
+            <Style x:Key="downloadingVisibleStyle" TargetType="FrameworkElement">
+                <Setter Property="Visibility" Value="Visible" />
+
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding Downloader.ProgressRate,
+                                                   Mode=OneWay}"
+                                 Value="0.0">
+                        <Setter Property="Visibility" Value="Hidden" />
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+
+            <!-- ダウンロード後に表示される要素です。-->
+            <Style x:Key="downloadDoneVisibleStyle" TargetType="FrameworkElement">
+                <Setter Property="Visibility" Value="Hidden" />
+                
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding Downloader.ProgressRate,
+                                                   Mode=OneWay}"
+                                 Value="0.0">
+                        <Setter Property="Visibility" Value="Visible" />
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+
+            <!-- エラーが発生した場合に表示される要素です。-->
+            <Style x:Key="onErrorVisibleStyle" TargetType="TextBlock"
+                   BasedOn="{StaticResource normalStyle}">
+                <Setter Property="Visibility" Value="Visible" />
+
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding DownlaodError,
+                                                   Mode=OneWay}"
+                                 Value="{x:Null}">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+
             <!-- メインコントロール -->
             <ControlTemplate x:Key="mainTemplate">
                 <Grid Margin="5,10,10,10">
@@ -26,15 +66,23 @@
 
                     <TextBlock Grid.Row="0"
                                Style="{StaticResource titleStyle}"
-                               Text="APP をダウンロード中" />
+                               Text="{Binding AssemblyTitle,
+                                              StringFormat={}{0} をダウンロード中}" />
                     
-                    <ProgressBar Grid.Row="2" />
+                    <ProgressBar Grid.Row="2"
+                                 Style="{StaticResource downloadingVisibleStyle}"
+                                 Minimum="0" Maximum="100"
+                                 Value="{Binding Downloader.ProgressPercentage,
+                                                 Mode=OneWay}" />
+                    
                     <Button Grid.Row="2"
+                            Style="{StaticResource downloadDoneVisibleStyle}"
+                            Command="{x:Static w:DialogCommands.OK}"
                             Content="インストール ＆ アプリの再起動"
-                            HorizontalAlignment="Center"/>
+                            HorizontalAlignment="Center" />
                     
                     <TextBlock Grid.Row="4"
-                               Style="{StaticResource normalStyle}"
+                               Style="{StaticResource onErrorVisibleStyle}"
                                Text="ダウンロードファイルの確認に失敗しました。間違ったファイルをコピーするかもしれません。"
                                TextWrapping="Wrap" />
                 </Grid>
