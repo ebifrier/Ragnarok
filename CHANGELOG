@@ -1,3 +1,11 @@
+2013-01-21  - Ver 2.6.9
+
+	* Ragnarok/Tests/UtilTest.cs: Utilクラスのテストを追加しました。
+	* Ragnarok/Util.cs: ReadLinesメソッド: IEnumerableとusingを組み合わ
+	せた関係で、Enumerableのforeach節が始まる前にオブジェクトがDispose
+	されていました。
+	* externals/net/nunit.framework.dll: dllをローカルに追加しました。
+
 2013-01-19  - Ver 2.6.8
 
 	* Ragnarok/Update/make_release.rb: 更新ファイル作成用のファイルを追

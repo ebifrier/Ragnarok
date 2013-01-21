@@ -412,8 +412,7 @@ namespace Ragnarok
         /// </summary>
         public static byte[] ReadFile(string filepath)
         {
-            using (var stream = new FileStream(filepath, FileMode.Open,
-                                               FileAccess.Read))
+            using (var stream = new FileStream(filepath, FileMode.Open))
             {
                 return ReadToEnd(stream);
             }
@@ -444,8 +443,7 @@ namespace Ragnarok
         /// </summary>
         public static string ReadFile(string filepath, Encoding encoding)
         {
-            using (var stream = new FileStream(filepath, FileMode.Open,
-                                               FileAccess.Read))
+            using (var stream = new FileStream(filepath, FileMode.Open))
             {
                 return ReadToEnd(stream, encoding);
             }
@@ -467,10 +465,12 @@ namespace Ragnarok
         /// </summary>
         public static IEnumerable<string> ReadLines(string filepath, Encoding encoding)
         {
-            using (var stream = new FileStream(filepath, FileMode.Open,
-                                               FileAccess.Read))
+            using (var stream = new FileStream(filepath, FileMode.Open))
             {
-                return ReadLines(stream, encoding);
+                foreach (var line in ReadLines(stream, encoding))
+                {
+                    yield return line;
+                }
             }
         }
 
