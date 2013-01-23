@@ -81,8 +81,8 @@ namespace Ragnarok.Utility.AssemblyUtility
 
                 this.internalAccessor = (!bUseReflectionAccesor ?
                     (IAssemblyAccessor)
-                    new AssemblyReflectionAccessor(assemblyName) :
-                    new AssemblyDiagnosticsAccessor(assemblyName));
+                    new AssemblyDiagnosticsAccessor(assemblyName) :
+                    new AssemblyReflectionAccessor(assemblyName));
             }
         }
     }

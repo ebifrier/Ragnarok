@@ -1,3 +1,12 @@
+2013-01-24  - Ver 2.7.0
+
+	* Ragnarok/Update/make_release.rb: 更新用ファイルの作成スクリプトを
+	更新しました。
+	* Ragnarok.Presentation/Themes/Common.xaml: OKボタンとキャンセルボ
+	タンを並べて表示するためのコントロールを追加しました。
+	* Ragnarok.Presentation/Control/VersionWindow.xaml: 汎用的なバージ
+	ョン情報表示用ダイアログを追加しました。
+
 2013-01-21  - Ver 2.6.9
 
 	* Ragnarok/Tests/UtilTest.cs: Utilクラスのテストを追加しました。

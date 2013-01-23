@@ -7,9 +7,9 @@ require 'rubygems'
 require 'yaml'
 require 'fileutils'
 require 'image_size'
-require 'net/ftp'
 require 'digest/md5'
 require 'rexml/document'
+require 'zipruby'
 
 #$HtmlImagePath = "http://garnet-alice.net/common/images/"
 $HtmlImagePath = "E:/Dropbox/NicoNico/homepage/public_html/common/images"
@@ -141,7 +141,7 @@ end
 class AppData
   attr_accessor :html_dir, :dist_path, :title, :version, :release_list
   attr_accessor :outdir_name, :outdir_path, :zip_name, :zip_path
-  attr_accessor :versioninfo_path, :releasenote_path
+  attr_accessor :versioninfo_path, :releasenote_path, :template_path
   
   def initialize(html_dir, dist_path, assemblyinfo_path, history_path)
     @html_dir = html_dir
@@ -157,6 +157,7 @@ class AppData
     
     @versioninfo_path = File.join(dist_path, "versioninfo.xml")
     @releasenote_path = File.join(dist_path, "release_note.html")
+    @template_path = File.dirname(__FILE__)
   end
 
   #
@@ -249,32 +250,53 @@ class AppData
   #
   def make_zip()
     deleteall(@zip_path)
-    
-    current = Dir.pwd
-    Dir.chdir(@outdir_path)
-    filelist = Dir.glob("*").map do |name|
-      '"' + name + '"'
+
+    printf("begin to make zip: %s\n", @zip_path)
+
+    Zip::Archive.open(@zip_path, Zip::CREATE) do |ar|
+      Dir::chdir(@outdir_path) do
+        Dir.glob("**/*") do |file|
+          if File.directory?(file)
+            ar.add_dir(file)
+          else
+            ar.add_file(file, file)
+          end
+        end
+      end
     end
-    files_str = filelist.join(' ')
-    
-    zip_command = "zip -r -q \"#{@zip_path}\" " + files_str
-    printf("begin command: %s\n", zip_command)
-    system(zip_command)
-    
-    Dir.chdir(current)
+  end
+  
+  #
+  # zipファイルを作成します。(コマンドライン版)
+  #
+  def make_zip_()
+    deleteall(@zip_path)
+
+    Dir::chdir(@outdir_path) do
+      file_str = (Dir.glob("*").map do |name|
+        '"' + name + '"'
+      end).join(' ')
+      
+      zip_command = "zip -r -q \"#{@zip_path}\" " + files_str
+      system(zip_command)
+    end
   end
   
   #
   # versioninfo.xmlを更新します。
   #
-  def make_versioninfo(tmpl_path)
+  def make_versioninfo()
+    tmpl_path = File.join(@template_path, "versioninfo_tmpl.xml")
+
     convert_template(tmpl_path, @versioninfo_path)
   end
 
   #
   # リリース情報(html)を出力します。
   #
-  def make_release_note(tmpl_path)
+  def make_release_note()
+    tmpl_path = File.join(@template_path, "release_note_tmpl.html")
+
     # release_note.html のテンプレートファイルを読み込みます。
     fp = File.open(tmpl_path, "r")
     doc = REXML::Document.new(fp)

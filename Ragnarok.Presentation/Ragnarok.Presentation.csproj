@@ -56,6 +56,9 @@
     <Compile Include="Control\MessageStatusBar.xaml.cs">
       <DependentUpon>MessageStatusBar.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Control\VersionWindow.xaml.cs">
+      <DependentUpon>VersionWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Effect\GrayscaleEffect.cs" />
     <Compile Include="Extension\CalcExtension.cs" />
     <Compile Include="Control\ColorDialog.xaml.cs">
@@ -162,6 +165,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Control\Generic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Control\VersionWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
