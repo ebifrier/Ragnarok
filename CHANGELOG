@@ -1,3 +1,9 @@
+2013-01-26  - Ver 2.7.1
+
+	* Ragnarok.Presentation/Extension/EnumListExtension.cs: EnumWrapper
+	クラスをGenericなクラスから継承するようにしました。
+	* Ragnarok.Shogi/BWType.cs: 列挙子の各値にラベルを追加しました。
+
 2013-01-24  - Ver 2.7.0
 
 	* Ragnarok/Update/make_release.rb: 更新用ファイルの作成スクリプトを

@@ -10,62 +10,14 @@ namespace Ragnarok.Presentation.Extension
     /// <summary>
     /// Enumに付随するラベル名などを取得可能なクラスです。
     /// </summary>
-    public class EnumWrapper
+    public class EnumWrapper : Ragnarok.Utility.EnumWrapper<object>
     {
-        /// <summary>
-        /// 列挙値を取得または設定します。
-        /// </summary>
-        public object Value
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// 設定されたラベル名を取得します。
-        /// </summary>
-        public string Label
-        {
-            get { return EnumEx.GetEnumLabel(Value); }
-        }
-
-        /// <summary>
-        /// 設定された説明を取得します。
-        /// </summary>
-        public string Description
-        {
-            get { return EnumEx.GetEnumDescription(Value); }
-        }
-
-        /// <summary>
-        /// オブジェクトを比較します。
-        /// </summary>
-        public override bool Equals(object obj)
-        {
-            var wrapper = obj as EnumWrapper;
-            if ((object)wrapper != null)
-            {
-                return Value.Equals(wrapper.Value);
-            }
-
-            // 列挙値として比較
-            return Value.Equals(obj);
-        }
-
-        /// <summary>
-        /// ハッシュ値を取得します。
-        /// </summary>
-        public override int GetHashCode()
-        {
-            return Value.GetHashCode();
-        }
-
         /// <summary>
         /// コンストラクタ
         /// </summary>
         public EnumWrapper(object value)
+            : base(value)
         {
-            Value = value;
         }
     }
 

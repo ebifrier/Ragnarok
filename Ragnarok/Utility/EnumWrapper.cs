@@ -9,7 +9,6 @@ namespace Ragnarok.Utility
     /// Enumに付随するラベル名などを取得可能なクラスです。
     /// </summary>
     public class EnumWrapper<T>
-        where T: struct
     {
         /// <summary>
         /// 列挙値を取得または設定します。

@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Runtime.Serialization;
 
+using Ragnarok.Utility;
+
 namespace Ragnarok.Shogi
 {
     /// <summary>
@@ -16,18 +18,21 @@ namespace Ragnarok.Shogi
         /// 駒箱の駒などです。
         /// </summary>
         [EnumMember()]
+        [LabelDescription(Label = "手番なし")]
         None = 0,
 
         /// <summary>
         /// 先手です。
         /// </summary>
         [EnumMember()]
+        [LabelDescription(Label = "先手番")]
         Black = 1,
 
         /// <summary>
         /// 後手です。
         /// </summary>
         [EnumMember()]
+        [LabelDescription(Label = "後手番")]
         White = 2,
     }
 
