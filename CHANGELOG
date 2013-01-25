@@ -1,3 +1,8 @@
+2013-01-26  - Ver 2.7.2
+
+	* Ragnarok.Shogi/ShogiParser.cs: 「死後歩」や「碌録銀」などの指し手
+	を解釈可能としました。
+
 2013-01-26  - Ver 2.7.1
 
 	* Ragnarok.Presentation/Extension/EnumListExtension.cs: EnumWrapper

@@ -14,6 +14,25 @@ namespace Ragnarok.Test.Shogi
     internal class ShogiParserTest
     {
         [Test()]
+        public void ResignTest()
+        {
+            var resign = new Move
+            {
+                IsResigned = true,
+            };
+
+            Assert.AreEqual(
+                ShogiParser.ParseMove("まけました", true),
+                resign);
+            Assert.AreEqual(
+                ShogiParser.ParseMove("あ、まけました", true),
+                resign);
+            Assert.AreNotEqual(
+                ShogiParser.ParseMove("あ 負けました", true),
+                resign);
+        }
+
+        [Test()]
         public void ParseMoveTest()
         {
             Assert.AreEqual(
@@ -35,6 +54,15 @@ namespace Ragnarok.Test.Shogi
             Assert.AreEqual(
                 ShogiParser.ParseMove("ロッパチ銀", true),
                 gin68);
+
+            var hu46 = new Move
+            {
+                NewPosition = new Position(4, 6),
+                Piece = Piece.Hu,
+            };
+            Assert.AreEqual(
+                ShogiParser.ParseMove("４６歩", true),
+                hu46);
         }
 
         private bool EqualsPlayer(ShogiPlayer x, ShogiPlayer y)
@@ -64,6 +92,9 @@ namespace Ragnarok.Test.Shogi
                 player1));
             Assert.IsFalse(EqualsPlayer(
                 ShogiParser.ParsePlayer("  級きゅう＠てすと"),
+                player1));
+            Assert.IsTrue(EqualsPlayer(
+                ShogiParser.ParsePlayer("急急＠てすと"),
                 player1));
 
             var player2 = new ShogiPlayer()

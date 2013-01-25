@@ -35,8 +35,9 @@ namespace Ragnarok.Shogi
         {
             return string.Join(
                "|",
-               list.OrderByDescending(value => value.Length)
-                   .Select<string, string>(Regex.Escape).ToArray());
+               list.OrderByDescending(_ => _.Length)
+                   .Select(_ => Regex.Escape(_))
+                   .ToArray());
         }
 
         /// <summary>
@@ -46,9 +47,9 @@ namespace Ragnarok.Shogi
         {
             return string.Join(
                "|",
-               table.OrderByDescending(pair => pair.Key.Length)
-                    .Select(pair => Regex.Escape(pair.Key))
-                       .ToArray());
+               table.OrderByDescending(_ => _.Key.Length)
+                    .Select(_ => Regex.Escape(_.Key))
+                    .ToArray());
         }
 
         /// <summary>
@@ -58,37 +59,56 @@ namespace Ragnarok.Shogi
             new Dictionary<string, int>()
         {
             {"0", 0}, {"０", 0}, {"零", 0}, {"ぜろ", 0}, {"れい", 0},
-                {"ZERO", 0},
+            {"ZERO", 0},
+            {"例", 0}, {"礼", 0}, {"霊", 0}, {"令", 0},
+            {"玲", 0}, {"怜", 0}, {"麗", 0},
 
             {"1", 1}, {"１", 1}, {"一", 1}, {"Ⅰ", 1}, {"①", 1},
-                {"いち", 1}, {"いっ", 1}, {"いーち", 1},
-                {"初", 1}, {"しょ", 1}, {"はつ", 1},
+            {"いち", 1}, {"いっ", 1}, {"いーち", 1},
+            {"初", 1}, {"しょ", 1}, {"はつ", 1},
+            {"位置", 1}, {"市", 1}, {"壱", 1},
 
             {"2", 2}, {"２", 2}, {"二", 2}, {"Ⅱ", 2}, {"②", 2},
-                {"に", 2}, {"にー", 2}, {"にぃ", 2},
+            {"に", 2}, {"にー", 2}, {"にぃ", 2},
+            {"弐", 2}, {"似", 2}, {"煮", 2}, {"荷", 2}, {"児", 2}, 
 
             {"3", 3}, {"３", 3}, {"三", 3}, {"Ⅲ", 3}, {"③", 3},
-                {"さん", 3}, {"さーん", 3},
+            {"さん", 3}, {"さーん", 3},
+            {"参", 3}, {"酸", 3}, {"産", 3}, {"山", 3}, {"桟", 3},
+            {"算", 3}, {"賛", 3}, {"燦", 3}, {"惨", 3}, {"散", 3},
 
             {"4", 4}, {"４", 4}, {"四", 4}, {"Ⅳ", 4}, {"④", 4},
-                {"し", 4}, {"よ", 4}, {"よん", 4}, {"よーん", 4},
+            {"し", 4}, {"よ", 4}, {"よん", 4}, {"よーん", 4},
+            {"詩", 4}, {"死", 4}, {"師", 4}, {"誌", 4}, {"史", 4},
+            {"氏", 4}, {"士", 4}, {"資", 4}, {"紙", 4}, {"詞", 4},
+            {"志", 4}, {"視", 4}, {"私", 4}, {"支", 4}, {"使", 4},
 
             {"5", 5}, {"５", 5}, {"五", 5}, {"Ⅴ", 5}, {"⑤", 5},
-                {"ご", 5}, {"ごー", 5}, {"ごお", 5}, {"ごう", 5},
-                {"ごぉ", 5}, {"ごぅ", 5}, {"GO", 5},
+            {"ご", 5}, {"ごー", 5}, {"ごお", 5}, {"ごう", 5},
+            {"ごぉ", 5}, {"ごぅ", 5}, {"GO", 5},
+            {"語", 5}, {"御", 5}, {"後", 5}, {"碁", 5}, {"誤", 5},
+            {"呉", 5}, {"伍", 5}, {"娯", 5}, {"午", 5}, {"互", 5},
+            {"護", 5}, {"醐", 5}, 
 
             {"6", 6}, {"６", 6}, {"六", 6}, {"Ⅵ", 6}, {"⑥", 6},
-                {"む", 6}, {"むつ", 6}, {"ろ", 6}, {"ろっ", 6},
-                {"ろく", 6}, {"ろっく", 6}, {"ろーく", 6},
+            {"む", 6}, {"むつ", 6}, {"ろ", 6}, {"ろっ", 6},
+            {"ろく", 6}, {"ろっく", 6}, {"ろーく", 6},
+            {"禄", 6}, {"碌", 6}, {"録", 6},
 
             {"7", 7}, {"７", 7}, {"七", 7}, {"Ⅶ", 7}, {"⑦", 7},
-                {"しち", 7}, {"なな", 7}, {"なーな", 7}, {"なぁな", 7}, {"NANA", 7},
+            {"しち", 7}, {"なな", 7}, {"なーな", 7}, {"なぁな", 7}, {"NANA", 7},
+            {"奈々", 7}, {"菜々", 7}, {"奈菜", 7}, {"菜奈", 7},
+            {"奈奈", 7}, {"菜菜", 7}, {"質", 7},
 
             {"8", 8}, {"８", 8}, {"八", 8}, {"Ⅷ", 8}, {"⑧", 8},
-                {"や", 8}, {"はっ", 8}, {"はち", 8}, {"ぱち", 8}, {"はーち", 8},
+            {"や", 8}, {"はっ", 8}, {"はち", 8}, {"ぱち", 8}, {"はーち", 8},
+            {"鉢", 8}, {"蜂", 8},
 
             {"9", 9}, {"９", 9}, {"九", 9}, {"Ⅸ", 9}, {"⑨", 9},
-                {"く", 9}, {"きゅう", 9}, {"きゅん", 9},
+            {"く", 9}, {"きゅう", 9}, {"きゅん", 9},
+            {"区", 9}, {"句", 9}, {"苦", 9},
+            {"旧", 9}, {"急", 9}, {"灸", 9}, {"球", 9}, {"給", 9}, {"休", 9}, 
+            {"弓", 9}, {"究", 9}, {"求", 9}, {"吸", 9}, {"宮", 9}, {"丘", 9},
         };
 
         /// <summary>
@@ -443,6 +463,10 @@ namespace Ragnarok.Shogi
         {
             {"成らず", ActionType.Unpromote},
             {"ならず", ActionType.Unpromote},
+            {"成らる", ActionType.Unpromote},
+            {"ならる", ActionType.Unpromote},
+            {"成らるり", ActionType.Unpromote},
+            {"ならるり", ActionType.Unpromote},
             {"しげるらず", ActionType.Unpromote},
             {"しげらず", ActionType.Unpromote},
             {"NARAZU", ActionType.Unpromote},
@@ -453,6 +477,8 @@ namespace Ragnarok.Shogi
             {"なり", ActionType.Promote},
             {"成る", ActionType.Promote},
             {"なる", ActionType.Promote},
+            {"成るり", ActionType.Promote},
+            {"なるり", ActionType.Promote},
             {"成", ActionType.Promote},
             {"しげる", ActionType.Promote},
             {"NARI", ActionType.Promote},
@@ -601,9 +627,11 @@ namespace Ragnarok.Shogi
         /// </summary>
         private static Regex CreateResignRegex()
         {
-            return new Regex(
-                ConvertToRegexPattern(resignTable),
-                RegexOptions.Compiled);
+            var pattern = string.Format(
+                @"^(あ(､|、|っ))?\s*({0})",
+                ConvertToRegexPattern(resignTable));
+
+            return new Regex(pattern, RegexOptions.Compiled);
         }
 
         /// <summary>
