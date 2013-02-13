@@ -1,7 +1,16 @@
+2013-02-14  - Ver 2.7.3
+
+	* Ragnarok.Shogi/ShogiParser.cs: 'RYUU', 'ふぅ'などの書き方の指し手を受
+	け入れるようにしました。
+	* Ragnarok/Net/Connection.cs: 接続が勝手に切れることがあるため、ソケッ
+	トのkeepaliveを行わないようにしました。
+	* Ragnarok/Net/ProtoBuf/PbConnection.cs: エラーログに関する処理を追加し
+	ました。
+
 2013-01-26  - Ver 2.7.2
 
-	* Ragnarok.Shogi/ShogiParser.cs: 「死後歩」や「碌録銀」などの指し手
-	を解釈可能としました。
+	* Ragnarok.Shogi/ShogiParser.cs: 「死後歩」や「碌録銀」などの指し手を解
+	釈可能としました。
 
 2013-01-26  - Ver 2.7.1
 
@@ -11,25 +20,25 @@
 
 2013-01-24  - Ver 2.7.0
 
-	* Ragnarok/Update/make_release.rb: 更新用ファイルの作成スクリプトを
-	更新しました。
-	* Ragnarok.Presentation/Themes/Common.xaml: OKボタンとキャンセルボ
-	タンを並べて表示するためのコントロールを追加しました。
-	* Ragnarok.Presentation/Control/VersionWindow.xaml: 汎用的なバージ
-	ョン情報表示用ダイアログを追加しました。
+	* Ragnarok/Update/make_release.rb: 更新用ファイルの作成スクリプトを更新
+	しました。
+	* Ragnarok.Presentation/Themes/Common.xaml: OKボタンとキャンセルボタン
+	を並べて表示するためのコントロールを追加しました。
+	* Ragnarok.Presentation/Control/VersionWindow.xaml: 汎用的なバージョン
+	情報表示用ダイアログを追加しました。
 
 2013-01-21  - Ver 2.6.9
 
 	* Ragnarok/Tests/UtilTest.cs: Utilクラスのテストを追加しました。
-	* Ragnarok/Util.cs: ReadLinesメソッド: IEnumerableとusingを組み合わ
-	せた関係で、Enumerableのforeach節が始まる前にオブジェクトがDispose
-	されていました。
+	* Ragnarok/Util.cs: ReadLinesメソッド: IEnumerableとusingを組み合わせた
+	関係で、Enumerableのforeach節が始まる前にオブジェクトがDisposeされてい
+	ました。
 	* externals/net/nunit.framework.dll: dllをローカルに追加しました。
 
 2013-01-19  - Ver 2.6.8
 
-	* Ragnarok/Update/make_release.rb: 更新ファイル作成用のファイルを追
-	加しました。
+	* Ragnarok/Update/make_release.rb: 更新ファイル作成用のファイルを追加し
+	ました。
 	* Ragnarok/Update/Updater.cs: 更新用のシステムを修正しました。
 	* dist/history.yaml: 更新履歴を更新しました。
 
@@ -47,12 +56,12 @@
 
 2013-01-09  - Ver 2.6.5
 
-	* Ragnarok.Shogi/BoardExtension.cs: 文字列→指し手変換時にコメント
-	部分が文字列正規化するのを避けるようにしました。具体的には、渡され
-	た文字列をまず空白で区切るようにし、区切った部分に差し手が無ければ、
-	その後にはコメントが続くものとして処理するようにしました。
-	* Ragnarok/Util.cs: ファイル内容を行ごとに取り出すメソッドと、文字
-	列中の空白のある位置を求めるメソッドを追加しました。
+	* Ragnarok.Shogi/BoardExtension.cs: 文字列→指し手変換時にコメント部分
+	が文字列正規化するのを避けるようにしました。具体的には、渡された文字列
+	をまず空白で区切るようにし、区切った部分に差し手が無ければ、その後には
+	コメントが続くものとして処理するようにしました。
+	* Ragnarok/Util.cs: ファイル内容を行ごとに取り出すメソッドと、文字列中
+	の空白のある位置を求めるメソッドを追加しました。
 
 2013-01-05  - Ver 2.6.4
 
@@ -67,23 +76,22 @@
 2013-01-04  - Ver 2.6.3
 
 	* Equals(object)メソッドの実装を正確なものにしました。
-	* Ragnarok/Net/ProtoBuf/PbConnection.cs: ACKのタイムアウト処理を追
-	加しました。
-	* Ragnarok/Net/ProtoBuf/PbUtil.cs: 型ごとのメソッドをランタイム時に
-	作ることにより、シリアライズ・デシリアライズ処理を高速化しました。
+	* Ragnarok/Net/ProtoBuf/PbConnection.cs: ACKのタイムアウト処理を追加し
+	ました。
+	* Ragnarok/Net/ProtoBuf/PbUtil.cs: 型ごとのメソッドをランタイム時に作る
+	ことにより、シリアライズ・デシリアライズ処理を高速化しました。
 
 2012-12-29  - Ver 2.6.2
 
-	* Ragnarok.Presentation/WpfUtil.cs: Ragnarok.Presentationの初期化時
-	にRagnarokの初期化も一緒に行うようにしました。
-	* Ragnarok.Shogi/File/KifReader.cs: 棋譜読み込み時に.kifファイルの
-	ヘッダ情報を正しく読み込めるようにしました。
+	* Ragnarok.Presentation/WpfUtil.cs: Ragnarok.Presentationの初期化時に
+	Ragnarokの初期化も一緒に行うようにしました。
+	* Ragnarok.Shogi/File/KifReader.cs: 棋譜読み込み時に.kifファイルのヘッ
+	ダ情報を正しく読み込めるようにしました。
 
 2012-12-23  - Ver 2.6.1
 
-	* Ragnarok/Utility/TypeSerializer.cs: 型名の字句解析を最初にまとめ
-	て行うようにしました。今までは必要になってから順次行うようにしてい
-	ました。
+	* Ragnarok/Utility/TypeSerializer.cs: 型名の字句解析を最初にまとめて行
+	うようにしました。今までは必要になってから順次行うようにしていました。
 
 2012-12-22  - Ver 2.6.0
 

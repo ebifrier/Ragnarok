@@ -100,10 +100,7 @@ namespace Ragnarok.NicoNico.Live
         [DependOnProperty("IsConnected")]
         public CookieContainer CookieContainer
         {
-            get
-            {
-                return this.cookieContainer;
-            }
+            get { return this.cookieContainer; }
         }
 
         /// <summary>
@@ -112,10 +109,7 @@ namespace Ragnarok.NicoNico.Live
         [DependOnProperty("IsConnected")]
         public PlayerStatus PlayerStatus
         {
-            get
-            {
-                return this.playerStatus;
-            }
+            get{  return this.playerStatus; }
         }
 
         /// <summary>
@@ -124,10 +118,7 @@ namespace Ragnarok.NicoNico.Live
         [DependOnProperty("IsConnected")]
         public PublishStatus PublishStatus
         {
-            get
-            {
-                return this.publishStatus;
-            }
+            get { return this.publishStatus; }
         }
 
         /// <summary>
@@ -136,10 +127,7 @@ namespace Ragnarok.NicoNico.Live
         [DependOnProperty("IsConnected")]
         public LiveInfo LiveInfo
         {
-            get
-            {
-                return this.liveInfo;
-            }
+            get { return this.liveInfo; }
         }
 
         /// <summary>

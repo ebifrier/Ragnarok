@@ -18,7 +18,7 @@ namespace Ragnarok.NicoNico.Live
     /// <summary>
     /// 各放送の各部屋のコメントの送受信を行います。
     /// </summary>
-    internal class CommentRoom : ILogObject, IDisposable
+    internal sealed class CommentRoom : ILogObject, IDisposable
     {
         /// <summary>
         /// コメント投稿間隔の最小値です。
@@ -33,12 +33,12 @@ namespace Ragnarok.NicoNico.Live
         /// <summary>
         /// 追い出しコマンドを判定します。
         /// </summary>
-        protected static readonly Regex hbRegex =
+        protected static readonly Regex HbRegex =
             new Regex(@"^/hb ifseetno\s+(\d+)");
         /// <summary>
         /// NGコメントを利用して自分の184IDを調べるために使います。
         /// </summary>
-        private const string textToCheckAnonymousId =
+        private const string TextToCheckAnonymousId =
             "まんこ　ちんこ";
 
         private readonly object SyncRoot = new object();
@@ -89,10 +89,7 @@ namespace Ragnarok.NicoNico.Live
         /// </summary>
         public int Index
         {
-            get
-            {
-                return this.index;
-            }
+            get { return this.index; }
         }
 
         /// <summary>
@@ -100,10 +97,7 @@ namespace Ragnarok.NicoNico.Live
         /// </summary>
         public CommentRoomInfo RoomInfo
         {
-            get
-            {
-                return this.roomInfo;
-            }
+            get { return this.roomInfo; }
         }
 
         /// <summary>
@@ -111,10 +105,7 @@ namespace Ragnarok.NicoNico.Live
         /// </summary>
         public string Address
         {
-            get
-            {
-                return this.roomInfo.Address;
-            }
+            get { return this.roomInfo.Address; }
         }
 
         /// <summary>
@@ -122,10 +113,7 @@ namespace Ragnarok.NicoNico.Live
         /// </summary>
         public int Port
         {
-            get
-            {
-                return this.roomInfo.Port;
-            }
+            get { return this.roomInfo.Port; }
         }
 
         /// <summary>
@@ -133,10 +121,7 @@ namespace Ragnarok.NicoNico.Live
         /// </summary>
         public int ThreadId
         {
-            get
-            {
-                return this.roomInfo.Thread;
-            }
+            get { return this.roomInfo.Thread; }
         }
 
         /// <summary>
@@ -144,10 +129,7 @@ namespace Ragnarok.NicoNico.Live
         /// </summary>
         public string RoomLabel
         {
-            get
-            {
-                return this.roomInfo.RoomLabel;
-            }
+            get { return this.roomInfo.RoomLabel; }
         }
 
         /// <summary>
@@ -155,10 +137,7 @@ namespace Ragnarok.NicoNico.Live
         /// </summary>
         public int LastRes
         {
-            get
-            {
-                return this.lastRes;
-            }
+            get { return this.lastRes; }
         }
 
         /// <summary>
@@ -230,14 +209,8 @@ namespace Ragnarok.NicoNico.Live
         /// </summary>
         public string AnonymousId
         {
-            get
-            {
-                return this.anonymousId;
-            }
-            internal set
-            {
-                this.anonymousId = value;
-            }
+            get { return this.anonymousId; }
+            internal set { this.anonymousId = value; }
         }
 
         /// <summary>
@@ -259,10 +232,7 @@ namespace Ragnarok.NicoNico.Live
         /// </summary>
         public bool IsStartedReceiveMessage
         {
-            get
-            {
-                return this.startMessageEvent.WaitOne(0);
-            }
+            get { return this.startMessageEvent.WaitOne(0); }
         }
 
         /// <summary>
@@ -270,10 +240,7 @@ namespace Ragnarok.NicoNico.Live
         /// </summary>
         public bool IsDisconnecting
         {
-            get
-            {
-                return this.isDisconnecting;
-            }
+            get { return this.isDisconnecting; }
         }
 
         /// <summary>
@@ -281,10 +248,7 @@ namespace Ragnarok.NicoNico.Live
         /// </summary>
         public bool IsSendingMessage
         {
-            get
-            {
-                return (this.sendingComment != null);
-            }
+            get { return (this.sendingComment != null); }
         }
 
         /// <summary>
@@ -309,7 +273,7 @@ namespace Ragnarok.NicoNico.Live
             var result = socket.BeginConnect(
                 this.Address,
                 this.Port,
-                (result_) =>
+                result_ =>
                 {
                     try
                     {
@@ -482,7 +446,7 @@ namespace Ragnarok.NicoNico.Live
         /// </remarks>
         internal void SendCommentToCheckAnonymousId()
         {
-            SendComment(textToCheckAnonymousId, "184", DateTime.Now);
+            SendComment(TextToCheckAnonymousId, "184", DateTime.Now);
         }
 
         /// <summary>
@@ -770,7 +734,7 @@ namespace Ragnarok.NicoNico.Live
             if (this.anonymousId == null &&
                 comment.IsUserComment &&
                 comment.IsAnonymous &&
-                (comment.Text == textToCheckAnonymousId || comment.IsYourpost))
+                (comment.Text == TextToCheckAnonymousId || comment.IsYourpost))
             {
                 this.commentClient.SetAnonymousId(comment.UserId);
             }
@@ -788,7 +752,7 @@ namespace Ragnarok.NicoNico.Live
             // 追い出しコマンドの判定を行います。
             if (comment.IsManagementComment)
             {
-                var m = hbRegex.Match(comment.Text);
+                var m = HbRegex.Match(comment.Text);
                 if (m.Success)
                 {
                     var seetNo = int.Parse(m.Groups[1].Value);

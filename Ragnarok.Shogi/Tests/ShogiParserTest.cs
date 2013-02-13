@@ -55,14 +55,71 @@ namespace Ragnarok.Test.Shogi
                 ShogiParser.ParseMove("ロッパチ銀", true),
                 gin68);
 
-            var hu46 = new Move
-            {
-                NewPosition = new Position(4, 6),
-                Piece = Piece.Hu,
-            };
             Assert.AreEqual(
                 ShogiParser.ParseMove("４６歩", true),
-                hu46);
+                new Move
+                {
+                    NewPosition = new Position(4, 6),
+                    Piece = Piece.Hu,
+                });
+
+            Assert.AreEqual(
+                ShogiParser.ParseMove("56ふぅ", true),
+                new Move
+                {
+                    NewPosition = new Position(5, 6),
+                    Piece = Piece.Hu,
+                });
+            Assert.AreEqual(
+                ShogiParser.ParseMove("救急玉", true),
+                new Move
+                {
+                    NewPosition = new Position(9, 9),
+                    Piece = Piece.Gyoku,
+                });
+            Assert.AreEqual(
+                ShogiParser.ParseMove("燦燦劉", true),
+                new Move
+                {
+                    NewPosition = new Position(3, 3),
+                    Piece = Piece.Ryu,
+                });
+            Assert.AreEqual(
+                ShogiParser.ParseMove("32RYUU", true),
+                new Move
+                {
+                    NewPosition = new Position(3, 2),
+                    Piece = Piece.Ryu,
+                });
+            Assert.AreEqual(
+                ShogiParser.ParseMove("32KINN", true),
+                new Move
+                {
+                    NewPosition = new Position(3, 2),
+                    Piece = Piece.Kin,
+                });
+        }
+
+        [Test()]
+        public void ParseMoveTest2()
+        {
+            Assert.AreEqual(
+                ShogiParser.ParseMove("１３馬右", true),
+                new Move
+                {
+                    NewPosition = new Position(1, 3),
+                    Piece = Piece.Uma,
+                    RelFileType = RelFileType.Right,
+                });
+            Assert.AreEqual(
+                ShogiParser.ParseMove("１３馬右引く", true),
+                new Move
+                {
+                    NewPosition = new Position(1, 3),
+                    Piece = Piece.Uma,
+                    RankMoveType = RankMoveType.Back,
+                    RelFileType = RelFileType.Right,
+                });
         }
 
         private bool EqualsPlayer(ShogiPlayer x, ShogiPlayer y)

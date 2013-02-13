@@ -886,7 +886,14 @@ namespace Ragnarok.Net.ProtoBuf
         {
             NeedAckInfo needAckInfo;
 
-            Log.Trace(this, "ACKを受信しました。");
+            if (success)
+            {
+                Log.Trace(this, "ACKを受信しました。");
+            }
+            else
+            {
+                Log.Info(this, "NAKを受信しました。");
+            }
 
             lock (this.needAckDic)
             {
@@ -950,8 +957,9 @@ namespace Ragnarok.Net.ProtoBuf
 
                 // コマンドの再送処理を行います。
                 Log.Info(this,
-                    "{0}: データの再送処理を行います。",
-                    needAckInfo.SendData.TypeName);
+                    "{0}(ID={1}): データの再送処理を行います。",
+                    needAckInfo.SendData.TypeName,
+                    dataId.Id);
 
                 SendDataInternal(
                     dataId.Id, dataId.IsResponse,

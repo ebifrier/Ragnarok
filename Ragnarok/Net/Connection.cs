@@ -132,11 +132,11 @@ namespace Ragnarok.Net
                 CanRead = true;
                 CanWrite = true;
 
-                // keepaliveを設定し、不要なソケットを削除するようにします。
-                Socket.SetSocketOption(
+                // keepaliveを設定し、不要なソケットを削除するようにします。                
+                /*Socket.SetSocketOption(
                     SocketOptionLevel.Socket,
                     SocketOptionName.KeepAlive,
-                    true);
+                    true);*/
             }
 
             Log.Debug(this,
@@ -318,9 +318,9 @@ namespace Ragnarok.Net
 
                     // すでに読み取り不可なら、その状態は変わりません。
                     CanRead = (CanRead &&
-                               shutdown == SocketShutdown.Send);
+                               !shutdown.HasFlag(SocketShutdown.Receive));
                     CanWrite = (CanWrite &&
-                                shutdown == SocketShutdown.Receive);
+                                !shutdown.HasFlag(SocketShutdown.Send));
 
                     // ソケットの切断処理を開始します。
                     Socket.Shutdown(shutdown);
