@@ -1,3 +1,8 @@
+2013-02-16  - Ver 2.7.4
+
+	* Ragnarok/Net/ProtoBuf/PbConnection.cs: ACK受信タイムアウト時の処理を
+	追加しました。
+
 2013-02-14  - Ver 2.7.3
 
 	* Ragnarok.Shogi/ShogiParser.cs: 'RYUU', 'ふぅ'などの書き方の指し手を受

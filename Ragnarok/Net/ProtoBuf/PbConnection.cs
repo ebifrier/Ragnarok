@@ -219,7 +219,7 @@ namespace Ragnarok.Net.ProtoBuf
             /// </summary>
             private void Timer_Callback(object state)
             {
-                Log.Trace(this.connection, "ACK受信がタイムアウトしました。");
+                Log.Info(this.connection, "ACK受信がタイムアウトしました。");
 
                 // 再送を続ける場合は真が返ります。
                 if (this.connection.AckFailed(this))
