@@ -1,3 +1,8 @@
+2013-02-16  - Ver 2.7.5
+
+	* Ragnarok/EnumEx.cs: EnumExにHasFlagメソッドを追加しました。このメソッ
+	ドはEnum.HasFlagが使えない場合に使用されます。
+
 2013-02-16  - Ver 2.7.4
 
 	* Ragnarok/Net/ProtoBuf/PbConnection.cs: ACK受信タイムアウト時の処理を

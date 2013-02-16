@@ -142,11 +142,6 @@ namespace Ragnarok
             return self;
         }
 
-        public static bool HasFlag(this Enum value, Enum flag)
-        {
-            return (((int)(object)value & (int)(object)flag) != 0);
-        }
-
         /// <summary>
         /// イベントハンドラを呼び出します。
         /// </summary>

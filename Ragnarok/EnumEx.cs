@@ -13,6 +13,17 @@ namespace Ragnarok
     public static class EnumEx
     {
         /// <summary>
+        /// Enumが指定のフラグを持っているか調べます。
+        /// </summary>
+        /// <remarks>
+        /// 古い.NETだとEnum.HasFlagが使えないため。
+        /// </remarks>
+        public static bool HasFlag(this Enum value, Enum flag)
+        {
+            return (((int)(object)value & (int)(object)flag) != 0);
+        }
+
+        /// <summary>
         /// <typeparam name="T"/>型の列挙子の値をすべて取得します。
         /// </summary>
         public static IEnumerable<T> GetValues<T>()

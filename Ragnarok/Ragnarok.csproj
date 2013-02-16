@@ -192,6 +192,7 @@
     <Compile Include="ObjectModel\NotifyCollection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RagnarokException.cs" />
+    <Compile Include="Tests\EnumExTest.cs" />
     <Compile Include="Update\AppCastItem.cs" />
     <Compile Include="Update\Downloader.cs" />
     <Compile Include="Update\UpdateEventArgs.cs" />
