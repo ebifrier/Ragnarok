@@ -23,17 +23,17 @@ namespace Ragnarok.NicoNico.Live
         /// <summary>
         /// コメント投稿間隔の最小値です。
         /// </summary>
-        protected static readonly TimeSpan MinimumWaitTimeForPost =
+        public static readonly TimeSpan MinimumWaitTimeForPost =
             TimeSpan.FromSeconds(3.0);
         /// <summary>
         /// アクセス拒否になった場合の待ち時間です。
         /// </summary>
-        protected static readonly TimeSpan AccessDeniedWaitTime =
+        public static readonly TimeSpan AccessDeniedWaitTime =
             TimeSpan.FromSeconds(5 * 60);
         /// <summary>
         /// 追い出しコマンドを判定します。
         /// </summary>
-        protected static readonly Regex HbRegex =
+        public static readonly Regex HbRegex =
             new Regex(@"^/hb ifseetno\s+(\d+)");
         /// <summary>
         /// NGコメントを利用して自分の184IDを調べるために使います。
@@ -365,7 +365,7 @@ namespace Ragnarok.NicoNico.Live
         /// <summary>
         /// 何らかの理由で接続が切断されたときに呼ばれます。
         /// </summary>
-        protected void NotifyDisconnected(DisconnectReason reason)
+        private void NotifyDisconnected(DisconnectReason reason)
         {
             using (new DebugLock(SyncRoot))
             {
@@ -1252,7 +1252,7 @@ namespace Ragnarok.NicoNico.Live
             Dispose(true);
         }
 
-        protected void Dispose(bool disposing)
+        private void Dispose(bool disposing)
         {
             if (!this.disposed)
             {
