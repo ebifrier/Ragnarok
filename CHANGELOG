@@ -1,3 +1,9 @@
+2013-03-02  - Ver 2.7.6
+
+	* Ragnarok/NicoNico/Live/CommentRoom.cs: 
+	CommentClient.OnCommentSentRoomをlock中に呼ばないようにしました。これは
+	デッドロックを回避するためです。
+
 2013-02-16  - Ver 2.7.5
 
 	* Ragnarok/EnumEx.cs: EnumExにHasFlagメソッドを追加しました。このメソッ

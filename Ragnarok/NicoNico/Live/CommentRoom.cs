@@ -18,6 +18,23 @@ namespace Ragnarok.NicoNico.Live
     /// <summary>
     /// 各放送の各部屋のコメントの送受信を行います。
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// デッドロックを避けるため、このクラスのロックをしているときは
+    /// CommentClientのいくつかのメソッド（内部でロックするメソッド）
+    /// は呼ばないようにしてください。
+    /// CommentClient内部ではロック中に、CommentRoomのメソッド
+    /// （内部でロックするメソッド）を呼ぶので、
+    /// デッドロックする可能性があります。
+    /// </para>
+    /// 
+    /// <para>
+    /// CommentClientでlock → CommentRoomでlock
+    /// と今の実装ではなっているため
+    /// CommentRoomでlock → CommentClientでlock
+    /// という処理を行うと、どこかでデッドロックします。
+    /// </para>
+    /// </remarks>
     internal sealed class CommentRoom : ILogObject, IDisposable
     {
         /// <summary>
@@ -1109,19 +1126,21 @@ namespace Ragnarok.NicoNico.Live
         /// </summary>
         private void OnSendCommentSuccess()
         {
+            var tmpComment = this.sendingComment;
+
             using (new DebugLock(SyncRoot))
             {
                 // 送信したメッセージをキューから削除します。
                 RemoveMessage(this.sendingComment);
 
-                // メッセージを削除した後に、イベントを呼びます。
-                // LeaveCommentCountの数を調整するためです。
-                this.commentClient.OnCommentSentRoom(
-                    this, this.sendingComment);
-
                 this.postTryCount = 0;
                 this.sendingComment = null;
             }
+
+            // メッセージを削除した後に、イベントを呼びます。
+            // LeaveCommentCountの数を調整するためです。
+            this.commentClient.OnCommentSentRoom(
+                this, tmpComment);
         }
 
         /// <summary>

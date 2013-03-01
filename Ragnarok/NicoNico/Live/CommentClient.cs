@@ -443,13 +443,8 @@ namespace Ragnarok.NicoNico.Live
         /// </summary>
         public virtual void NotifyPropertyChanged(PropertyChangedEventArgs e)
         {
-            var handler = this.PropertyChanged;
-
-            if (handler != null)
-            {
-                Util.SafeCall(() =>
-                    handler(this, e));
-            }
+            Util.CallPropertyChanged(
+                this.PropertyChanged, this, e);
         }
 
         /// <summary>
@@ -457,13 +452,8 @@ namespace Ragnarok.NicoNico.Live
         /// </summary>
         internal void FireConnected()
         {
-            var handler = this.Connected;
-
-            if (handler != null)
-            {
-                Util.SafeCall(() =>
-                    handler(this, EventArgs.Empty));
-            }
+            this.Connected.SafeRaiseEvent(
+                this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -471,13 +461,8 @@ namespace Ragnarok.NicoNico.Live
         /// </summary>
         internal void FireDisconnected()
         {
-            var handler = this.Disconnected;
-
-            if (handler != null)
-            {
-                Util.SafeCall(() =>
-                    handler(this, EventArgs.Empty));
-            }
+            this.Disconnected.SafeRaiseEvent(
+                this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -485,13 +470,8 @@ namespace Ragnarok.NicoNico.Live
         /// </summary>
         internal void FireConnectedRoom(int roomIndex)
         {
-            var handler = this.ConnectedRoom;
-
-            if (handler != null)
-            {
-                Util.SafeCall(() =>
-                    handler(this, new CommentRoomEventArgs(roomIndex)));
-            }
+            this.ConnectedRoom.SafeRaiseEvent(
+                this, new CommentRoomEventArgs(roomIndex));
         }
 
         /// <summary>
@@ -500,13 +480,8 @@ namespace Ragnarok.NicoNico.Live
         internal void FireDisconnectedRoom(int roomIndex,
                                            DisconnectReason reason)
         {
-            var handler = this.DisconnectedRoom;
-
-            if (handler != null)
-            {
-                Util.SafeCall(() =>
-                    handler(this, new CommentRoomDisconnectedEventArgs(roomIndex, reason)));
-            }
+            this.DisconnectedRoom.SafeRaiseEvent(
+                this, new CommentRoomDisconnectedEventArgs(roomIndex, reason));
         }
 
         /// <summary>
@@ -568,14 +543,9 @@ namespace Ragnarok.NicoNico.Live
         /// </summary>
         internal void OnCommentReceivedRoom(CommentRoom sender, Comment comment)
         {
-            var handler = this.CommentReceived;
-
-            if (handler != null)
-            {
-                Util.SafeCall(() =>
-                    handler(this,
-                        new CommentRoomReceivedEventArgs(sender.Index, comment)));
-            }
+            this.CommentReceived.SafeRaiseEvent(
+                this,
+                new CommentRoomReceivedEventArgs(sender.Index, comment));
         }
 
         /// <summary>
@@ -583,14 +553,9 @@ namespace Ragnarok.NicoNico.Live
         /// </summary>
         internal void OnCommentSentRoom(CommentRoom sender, PostComment comment)
         {
-            var handler = this.CommentSent;
-
-            if (handler != null)
-            {
-                Util.SafeCall(() =>
-                    handler(this,
-                        new CommentRoomSentEventArgs(sender.Index, comment)));
-            }
+            this.CommentSent.SafeRaiseEvent(
+                this,
+                new CommentRoomSentEventArgs(sender.Index, comment));
 
             // 未送信のコメント数が変わった可能性があります。
             this.RaisePropertyChanged("LeaveCommentCount");

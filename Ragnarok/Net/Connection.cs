@@ -317,10 +317,17 @@ namespace Ragnarok.Net
                     }
 
                     // すでに読み取り不可なら、その状態は変わりません。
+                    //
+                    // また、SocketShutdownにFlags属性はありません。
+                    // 　SocketShutdown.Receive || SocketShutdown.Both
+                    // が指定されたときは、読み取り不可で
+                    // 　!(SocketShutdown.Receive || SocketShutdown.Both)
+                    // 　  => SocketShutdown.Send
+                    // の場合のみ、読み取り可能となります。
                     CanRead = (CanRead &&
-                               !shutdown.HasFlag(SocketShutdown.Receive));
+                               shutdown == SocketShutdown.Send);
                     CanWrite = (CanWrite &&
-                                !shutdown.HasFlag(SocketShutdown.Send));
+                                shutdown == SocketShutdown.Receive);
 
                     // ソケットの切断処理を開始します。
                     Socket.Shutdown(shutdown);
@@ -603,16 +610,10 @@ namespace Ragnarok.Net
                 error);
 
             // 継承メソッドを呼びます。
-            Util.SafeCall(() =>
-                OnSent(e));
+            Util.SafeCall(() => OnSent(e));
 
             // eventを呼びます。
-            var handler = this.Sent;
-            if (handler != null)
-            {
-                Util.SafeCall(() =>
-                    handler(this, e));
-            }
+            this.Sent.SafeRaiseEvent(this, e);
         }
 
         /// <summary>
