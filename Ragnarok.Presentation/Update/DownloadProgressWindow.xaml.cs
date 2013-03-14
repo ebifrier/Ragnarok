@@ -26,7 +26,7 @@ namespace Ragnarok.Presentation.Update
         {
             InitializeComponent();
 
-            DialogCommands.BindCommands(CommandBindings);
+            DialogCommands.BindCommands(this);
         }
     }
 }

@@ -107,6 +107,7 @@
     <Compile Include="DialogCommands.cs" />
     <Compile Include="DialogUtil.cs" />
     <Compile Include="NicoNico\CookieData.cs" />
+    <Compile Include="NicoNico\NicoNicoCommands.cs" />
     <Compile Include="NicoNico\LoginModel.cs" />
     <Compile Include="NicoNico\LoginWindow.xaml.cs">
       <DependentUpon>LoginWindow.xaml</DependentUpon>
@@ -125,6 +126,9 @@
     <Compile Include="Utility\ImageUtil.cs" />
     <Compile Include="Extension\EnumListExtension.cs" />
     <Compile Include="Extension\MultiStyleExtension.cs" />
+    <Compile Include="Utility\PseudoKeyboard.cs" />
+    <Compile Include="Utility\KeyHook.cs" />
+    <Compile Include="Utility\ListBoxUtil.cs" />
     <Compile Include="Utility\WebBrowserUtil.cs" />
     <Compile Include="WpfSettingsBase.cs" />
     <Compile Include="WpfUtil.cs" />
@@ -179,6 +183,10 @@
     <Page Include="Debug\ReportDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="NicoNico\NicoNico.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="NicoNico\LoginWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

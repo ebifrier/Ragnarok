@@ -1,3 +1,14 @@
+2013-03-14  - Ver 2.7.7
+
+	* Ragnarok.Presentation/NicoNico/NicoNico.xaml: ニコ生への接続コントロ
+	ールなどを追加しました。
+	* Ragnarok.Presentation/Utility/KeyHook.cs: グローバルキーフックを実現
+	するための、クラスを追加しました。
+	* Ragnarok.Presentation/Utility/ListBoxUtil.cs: リストボックスに関する
+	添付プロパティなどを追加しました。
+	* Ragnarok.Presentation/Utility/PseudoKeyboard.cs: 疑似的なキーボードク
+	ラスを追加しました。
+
 2013-03-02  - Ver 2.7.6
 
 	* Ragnarok/NicoNico/Live/CommentRoom.cs: 

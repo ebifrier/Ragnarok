@@ -46,6 +46,14 @@ namespace Ragnarok.Presentation
         /// <summary>
         /// デフォルトのコマンドを接続します。
         /// </summary>
+        public static void BindCommands(UIElement element)
+        {
+            BindCommands(element.CommandBindings);
+        }
+
+        /// <summary>
+        /// デフォルトのコマンドを接続します。
+        /// </summary>
         public static void BindCommands(CommandBindingCollection bindings)
         {
             bindings.Add(

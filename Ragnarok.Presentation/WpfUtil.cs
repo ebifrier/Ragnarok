@@ -128,14 +128,14 @@ namespace Ragnarok.Presentation
         }
 
         /// <summary>
-        /// コントロールから指定の型の子要素を検索します。
+        /// コントロールから指定の型の子要素をすべて検索します。
         /// </summary>
-        public static TChild FindVisualChild<TChild>(this DependencyObject parent)
+        public static IEnumerable<TChild> GetChildren<TChild>(this DependencyObject parent)
             where TChild : DependencyObject
         {
             if ((object)parent == null)
             {
-                return null;
+                yield return null;
             }
 
             var count = VisualTreeHelper.GetChildrenCount(parent);
@@ -146,20 +146,26 @@ namespace Ragnarok.Presentation
 
                 if ((object)child != null)
                 {
-                    return child;
+                    yield return child;
                 }
                 else
                 {
                     // 子コントロールのさらに子コントロールを検索します。
-                    var childOfChild = FindVisualChild<TChild>(childDep);
-                    if (childOfChild != null)
+                    foreach (var c in GetChildren<TChild>(childDep))
                     {
-                        return childOfChild;
+                        yield return c;
                     }
                 }
             }
+        }
 
-            return null;
+        /// <summary>
+        /// コントロールから指定の型の子要素を検索します。
+        /// </summary>
+        public static TChild GetChild<TChild>(this DependencyObject parent)
+            where TChild : DependencyObject
+        {
+            return GetChildren<TChild>(parent).FirstOrDefault();
         }
 
         /// <summary>
