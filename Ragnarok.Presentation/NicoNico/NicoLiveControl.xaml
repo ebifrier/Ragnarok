@@ -3,42 +3,54 @@
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                     xmlns:c="clr-namespace:Ragnarok.Presentation.Control"
                     xmlns:n="clr-namespace:Ragnarok.Presentation.NicoNico">
-    <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="/Ragnarok.Presentation;component/Themes/Common.xaml" />
-        <ResourceDictionary Source="/Ragnarok.Presentation;component/Control/Generic.xaml" />
-    </ResourceDictionary.MergedDictionaries>
-
     <!-- 接続/切断ボタンの切換を行うスタイルです。-->
     <Style x:Key="toggleConnectButtonStyle" TargetType="Button">
-        <Setter Property="Content" Value="切断" />
         <Setter Property="VerticalAlignment" Value="Center" />
-        <Setter Property="Command" Value="{x:Static n:NicoNicoCommands.Disconnect}" />
-        <Setter Property="CommandParameter" Value="{Binding}" />
+        <Setter Property="Content" Value="切断" />
+        <Setter Property="Command" Value="{x:Static n:NicoLiveControl.Disconnect}" />
 
         <Style.Triggers>
             <DataTrigger Binding="{Binding CommentClient.IsConnected}" Value="False">
                 <Setter Property="Content" Value="接続" />
-                <Setter Property="Command" Value="{x:Static n:NicoNicoCommands.Connect}" />
+                <Setter Property="Command" Value="{x:Static n:NicoLiveControl.Connect}" />
             </DataTrigger>
         </Style.Triggers>
     </Style>
 
     <!-- 放送URL -->
-    <ControlTemplate x:Key="NicoLiveUrl">
+    <ControlTemplate x:Key="nicoLiveTemplate">
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" MaxWidth="80" />
+                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="40" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-        
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <Label Grid.Column="0"
+                   Content="ログイン名:" />
+            <Label Grid.Column="1"
+                   Content=" " />
+            <Button Grid.Column="2"
+                    Content="ログイン"
+                    Command="{x:Static n:NicoLiveControl.Login}" />
+
             <Label Grid.Column="0"
                    Content="URL:" />
-            <c:BindOnEnterTextBox Grid.Column="1"
+            <c:BindOnEnterTextBox Grid.Column="1" Grid.ColumnSpan="3"
                                   AcceptsReturn="False"
-                                  Text="{Binding LiveUrl}" />
-            <Button Grid.Column="2"
+                                  Text="{Binding LiveUrl, RelativeSource={RelativeSource TemplatedParent}}" />
+            <Button Grid.Column="4"
                     Style="{StaticResource toggleConnectButtonStyle}" />
         </Grid>
     </ControlTemplate>
+
+    <Style TargetType="n:NicoLiveControl">
+        <Setter Property="Template" Value="{StaticResource nicoLiveTemplate}" />
+    </Style>
 </ResourceDictionary>

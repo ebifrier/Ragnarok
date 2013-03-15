@@ -1,30 +1,68 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Windows;
 using System.Windows.Input;
 
+using Ragnarok.NicoNico;
+using Ragnarok.NicoNico.Login;
+using Ragnarok.NicoNico.Live;
+
 namespace Ragnarok.Presentation.NicoNico
 {
+    public class NicoLiveCommandData
+    {
+        public string LiveUrl
+        {
+            get;
+            set;
+        }
+
+        public NicoClient NicoClient
+        {
+            get;
+            set;
+        }
+
+        public CommentClient CommentClient
+        {
+            get;
+            private set;
+        }
+
+        public NicoLiveCommandData()
+        {
+            NicoClient = new NicoClient();
+            CommentClient = new CommentClient();
+        }
+    }
+
     /// <summary>
     /// ニコニコ関連のコマンドです。
     /// </summary>
     public static class NicoNicoCommands
     {
         /// <summary>
-        /// コマンド。
+        /// ログインを行います。
+        /// </summary>
+        public static readonly ICommand Login =
+            new RoutedUICommand(
+                "ログインを行います。", "Login",
+                typeof(FrameworkElement));
+        /// <summary>
+        /// 生放送への接続コマンド。
         /// </summary>
         public static readonly ICommand Connect =
             new RoutedUICommand(
-                "OKボタン", "Connect",
+                "生放送に接続。", "Connect",
                 typeof(FrameworkElement));
-
         /// <summary>
-        /// キャンセルボタンコマンド。
+        /// 生放送からの切断コマンド。
         /// </summary>
         public static readonly ICommand Disconnect =
             new RoutedUICommand(
-                "キャンセルボタン", "Disconnect",
+                "生放送から切断。", "Disconnect",
                 typeof(FrameworkElement));
 
         /// <summary>
@@ -34,32 +72,78 @@ namespace Ragnarok.Presentation.NicoNico
         {
             element.CommandBindings.Add(
                 new CommandBinding(
+                    NicoNicoCommands.Login,
+                    ExecuteLogin));
+            element.CommandBindings.Add(
+                new CommandBinding(
                     NicoNicoCommands.Connect,
-                    ExecuteYes));
+                    ExecuteConnect));
             element.CommandBindings.Add(
                 new CommandBinding(
                     NicoNicoCommands.Disconnect,
-                    ExecuteNo));
+                    ExecuteDisconnect));
         }
 
         /// <summary>
-        /// OK/YES
+        /// ログイン処理を行います。
         /// </summary>
-        private static void ExecuteYes(object sender, ExecutedRoutedEventArgs e)
+        private static void ExecuteLogin(object sender, ExecutedRoutedEventArgs e)
         {
-            var window = (Window)sender;
+            try
+            {
+                var data = (NicoLiveCommandData)e.Parameter;
+                var window = new LoginWindow(data.NicoClient);
 
-            window.DialogResult = true;
+                window.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                Util.ThrowIfFatal(ex);
+
+                Log.ErrorException(ex,
+                    "ログインに失敗しました。");
+            }
         }
 
         /// <summary>
-        /// Cancel/NO
+        /// 生放送に接続します。
         /// </summary>
-        private static void ExecuteNo(object sender, ExecutedRoutedEventArgs e)
+        private static void ExecuteConnect(object sender, ExecutedRoutedEventArgs e)
         {
-            var window = (Window)sender;
+            try
+            {
+                var data = (NicoLiveCommandData)e.Parameter;
 
-            window.DialogResult = false;
+                data.CommentClient.Connect(
+                    data.LiveUrl,
+                    data.NicoClient.CookieContainer);
+
+                data.CommentClient.StartReceiveMessage(-1);
+            }
+            catch (Exception ex)
+            {
+                Util.ThrowIfFatal(ex);
+
+                DialogUtil.ShowError(ex,
+                    "生放送への接続に失敗しました。");
+            }
+        }
+
+        /// <summary>
+        /// 生放送から切断します。
+        /// </summary>
+        private static void ExecuteDisconnect(object sender, ExecutedRoutedEventArgs e)
+        {
+            try
+            {
+                var data = (NicoLiveCommandData)e.Parameter;
+
+                data.CommentClient.Disconnect();
+            }
+            catch (Exception ex)
+            {
+                Util.ThrowIfFatal(ex);
+            }
         }
     }
 }
