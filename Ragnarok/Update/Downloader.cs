@@ -47,13 +47,14 @@ namespace Ragnarok.Update
             public WebClient Client;
             public long TotalSize;
             public long ReceivedSize;
+            public bool IsCompleted;
             public DownloadDataCompletedEventHandler Callback;
         }
 
         private List<DownloadItem> itemList = new List<DownloadItem>();
 
         /// <summary>
-        /// ダウンロード中のアイテムがあるか取得します。
+        /// ダウンロードアイテムの数を取得します。
         /// </summary>
         public int Count
         {
@@ -62,6 +63,23 @@ namespace Ragnarok.Update
                 using (LazyLock())
                 {
                     return this.itemList.Count();
+                }
+            }
+        }
+
+        /// <summary>
+        /// ダウンロード中のアイテム数を取得します。
+        /// </summary>
+        [DependOnProperty("Count")]
+        public int LeaveCount
+        {
+            get
+            {
+                using (LazyLock())
+                {
+                    return this.itemList
+                        .Where(_ => !_.IsCompleted)
+                        .Count();
                 }
             }
         }
@@ -146,9 +164,11 @@ namespace Ragnarok.Update
             // itemをリストから削除して、ダウンロードの完了とします。
             using (LazyLock())
             {
-                this.itemList.Remove(item);
+                //this.itemList.Remove(item);
+                item.IsCompleted = true;
 
                 UpdateProgressPercentage();
+                this.RaisePropertyChanged("LeaveCount");
             }
 
             // コールバックは最後に呼びます。
@@ -185,6 +205,8 @@ namespace Ragnarok.Update
             using (LazyLock())
             {
                 this.itemList.Add(item);
+
+                this.RaisePropertyChanged("Count");
             }
         }
 

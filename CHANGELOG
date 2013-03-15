@@ -1,3 +1,10 @@
+2013-03-16  - Ver 2.7.8
+
+	* Ragnarok/Update/Downloader.cs: ダウンロードしたファイルの情報をクラス
+	に残るようにし、現在の進捗度をより分かりやすくしました。
+	* Ragnarok.Presentation/Update/PresentationUpdater.cs: ダウンロードフロ
+	ーを分かりやすく修正しました。
+
 2013-03-14  - Ver 2.7.7
 
 	* Ragnarok.Presentation/NicoNico/NicoNico.xaml: ニコ生への接続コントロ

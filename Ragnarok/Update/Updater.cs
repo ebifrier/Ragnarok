@@ -395,7 +395,7 @@ namespace Ragnarok.Update
             }
 
             // すべてのダウンロードが終わった時にも呼びます。
-            if (this.downloader.Count == 0)
+            if (this.downloader.LeaveCount == 0)
             {
                 Log.Info("すべてのダウンロードを終了しました。");
                 this.downloadDoneEvent.Set();

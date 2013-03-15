@@ -116,6 +116,12 @@ namespace Ragnarok.Presentation.Update
                     return;
                 }
 
+                if (this.progressWindow != null)
+                {
+                    this.progressWindow.Close();
+                    this.progressWindow = null;
+                }
+
                 if (ConfirmUpdate(true))
                 {
                     ExecuteUpdate();
@@ -132,11 +138,6 @@ namespace Ragnarok.Presentation.Update
             if (this.updateWindow != null)
             {
                 this.updateWindow.Activate();
-                return false;
-            }
-
-            if (this.progressWindow != null)
-            {
                 return false;
             }
 
@@ -176,10 +177,7 @@ namespace Ragnarok.Presentation.Update
             this.progressWindow.Closed +=
                 (_, __) => this.progressWindow = null;
 
-            if (this.progressWindow.ShowDialog() == true)
-            {
-                ExecuteUpdate();
-            }
+            this.progressWindow.ShowDialog();
         }
 
         /// <summary>
@@ -243,10 +241,7 @@ namespace Ragnarok.Presentation.Update
             // ファイルのダウンロード中なら
             if (!this.updater.DownloadDoneEvent.WaitOne(0))
             {
-                if (ConfirmUpdate(false))
-                {
-                    ShowProgress();
-                }
+                ShowProgress();
             }
             else
             {
