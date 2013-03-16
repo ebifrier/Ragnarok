@@ -12,7 +12,7 @@ require 'rexml/document'
 require 'zipruby'
 
 #$HtmlImagePath = "http://garnet-alice.net/common/images/"
-$HtmlImagePath = "E:/Dropbox/NicoNico/homepage/public_html/common/images"
+$HtmlImagePath = "E:/Dropbox/NicoNico/homepage/garnet-alice.net/common/images"
 
 #
 # ファイル又はディレクトリを削除するメソッドを作成
