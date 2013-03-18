@@ -1,3 +1,15 @@
+2013-03-19  - Ver 2.7.10
+
+	* Ragnarok.Presentation/Extension/FontFamilyListExtension.cs: フォント
+	ファミリの一覧を取得するxaml拡張構文を追加しました。
+	* Ragnarok.Presentation/Converter/FontFamilyConverter.cs: フォント名か
+	らフォントファミリを作成するコンバータを追加しました。
+	* Ragnarok.Presentation/Converter/ValueCompareToBooleanConverter.cs: 値
+	を比較し、真や偽なら指定のオブジェクトを返すようなコンバータを追加しま
+	した。
+	* Ragnarok/ObjectModel/DynamicDictionary.cs: アクセスした名前をすべてプ
+	ロパティとして扱うようなオブジェクトを追加しました。
+
 2013-03-19  - Ver 2.7.9
 
 	* Ragnarok/Net/ProtoBuf/PbConnection.cs: アプリケーションレベルのACKシ

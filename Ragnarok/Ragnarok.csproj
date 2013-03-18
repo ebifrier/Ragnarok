@@ -190,6 +190,7 @@
     <Compile Include="ObjectModel\TypeProperty.cs" />
     <Compile Include="ObjectModel\NotifyObject.cs" />
     <Compile Include="ObjectModel\NotifyCollection.cs" />
+    <Compile Include="ObjectModel\DynamicDictionary.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RagnarokException.cs" />
     <Compile Include="Tests\EnumExTest.cs" />

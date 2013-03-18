@@ -59,6 +59,8 @@
     <Compile Include="Control\VersionWindow.xaml.cs">
       <DependentUpon>VersionWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converter\ValueCompareToBooleanConverter.cs" />
+    <Compile Include="Converter\FontFamilyConverter.cs" />
     <Compile Include="Effect\GrayscaleEffect.cs" />
     <Compile Include="Extension\CalcExtension.cs" />
     <Compile Include="Control\ColorDialog.xaml.cs">
@@ -106,6 +108,7 @@
     </Compile>
     <Compile Include="DialogCommands.cs" />
     <Compile Include="DialogUtil.cs" />
+    <Compile Include="Extension\FontFamilyListExtension.cs" />
     <Compile Include="NicoNico\CookieData.cs" />
     <Compile Include="NicoNico\NicoNicoCommands.cs" />
     <Compile Include="NicoNico\LoginModel.cs" />

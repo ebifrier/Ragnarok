@@ -173,7 +173,7 @@ namespace Ragnarok.ObjectModel
         private static void RaisePropertyChangedInternal(
             this IModel self, object sender, PropertyChangedEventArgs e)
         {
-#if DEBUG
+#if DEBUG && false
             self.VerifyProperty(sender, e);
 #endif
 
@@ -199,7 +199,7 @@ namespace Ragnarok.ObjectModel
                                                         object sender,
                                                         PropertyChangedEventArgs e)
         {
-#if DEBUG
+#if DEBUG && false
             self.VerifyProperty(sender, e);
 #endif
 
