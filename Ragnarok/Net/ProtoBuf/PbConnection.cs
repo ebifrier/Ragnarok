@@ -165,6 +165,7 @@ namespace Ragnarok.Net.ProtoBuf
             }
         }
 
+#if false
         /// <summary>
         /// ACKによる応答確認が必要なデータを保持します。
         /// </summary>
@@ -288,10 +289,8 @@ namespace Ragnarok.Net.ProtoBuf
                 }
             }
         }
+#endif
 
-        private const int AckTryCountMax = 3;
-        private static readonly PbSendData AckData;
-        private static readonly PbSendData NakData;
         private static readonly Dictionary<string, Type> typeCache =
             new Dictionary<string, Type>();
         private readonly object receiveLock = new object();
@@ -302,19 +301,8 @@ namespace Ragnarok.Net.ProtoBuf
         private MemoryStream payloadStream;
         private readonly Dictionary<int, PbRequestData> requestDataDic =
             new Dictionary<int, PbRequestData>();
-        private readonly Dictionary<DataId, NeedAckInfo> needAckDic =
-            new Dictionary<DataId, NeedAckInfo>();
         private readonly Dictionary<Type, HandlerInfo> handlerDic =
             new Dictionary<Type, HandlerInfo>();
-
-        /// <summary>
-        /// ACKを受信するまでのタイムアウト時間を取得または設定します。
-        /// </summary>
-        public TimeSpan AckTimeout
-        {
-            get;
-            set;
-        }
 
         /// <summary>
         /// レスポンス応答のデフォルトタイムアウト時間を取得または設定します。
@@ -761,27 +749,13 @@ namespace Ragnarok.Net.ProtoBuf
                 var message = DeserializeMessage(payloadBuffer, type);
 
                 // 対応するハンドラを呼びます。
-                if (message is PbAck)
+                if (!header.IsResponse)
                 {
-                    HandleAck(header.Id, header.IsResponse, true);
-                }
-                else if (message is PbNak)
-                {
-                    HandleAck(header.Id, header.IsResponse, false);
+                    HandleRequestOrCommand(header.Id, message);
                 }
                 else
                 {
-                    // すぐに受信完了を送ります。
-                    SendAck(header.Id, header.IsResponse, true);
-
-                    if (!header.IsResponse)
-                    {
-                        HandleRequestOrCommand(header.Id, message);
-                    }
-                    else
-                    {
-                        HandleResponse(header.Id, message);
-                    }
+                    HandleResponse(header.Id, message);
                 }
             }
             catch (Exception ex)
@@ -791,8 +765,6 @@ namespace Ragnarok.Net.ProtoBuf
                     "(content size={0}, type={1})",
                     (payloadBuffer == null ? -1 : payloadBuffer.Length),
                     type);
-
-                SendAck(header.Id, header.IsResponse, false);
             }
         }
 
@@ -877,103 +849,6 @@ namespace Ragnarok.Net.ProtoBuf
             }
 
             return message;
-        }
-
-        /// <summary>
-        /// コマンドの応答確認を処理します。
-        /// </summary>
-        private void HandleAck(int id, bool isResponse, bool success)
-        {
-            NeedAckInfo needAckInfo;
-
-            if (success)
-            {
-                Log.Trace(this, "ACKを受信しました。");
-            }
-            else
-            {
-                Log.Info(this, "NAKを受信しました。");
-            }
-
-            lock (this.needAckDic)
-            {
-                var dataId = new DataId(id, isResponse); 
-                if (!this.needAckDic.TryGetValue(dataId, out needAckInfo))
-                {
-                    Log.Error(this,
-                        "{0}: ACKに対応する送信データがありません。", id);
-                    return;
-                }
-
-                if (success)
-                {
-                    this.needAckDic.Remove(dataId);
-                    needAckInfo.Dispose();
-                }
-                else
-                {
-                    if (!AckFailed(needAckInfo))
-                    {
-                        needAckInfo.Dispose();
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// NAKが返ってきたとき、ACKがタイムアウトになった時などに呼ばれ、
-        /// コマンドの再送などを行います。
-        /// </summary>
-        /// <remarks>
-        /// 再送をあきらめた場合は偽、続ける場合は真を返します。
-        /// </remarks>
-        private bool AckFailed(NeedAckInfo needAckInfo)
-        {
-            try
-            {
-                var dataId = needAckInfo.DataId;
-
-                lock (this.needAckDic)
-                {
-                    if (needAckInfo.IncrementTryCount() >= AckTryCountMax)
-                    {
-                        // 既定回数以上のデータ送信失敗
-                        Log.Error(this,
-                            "ID={0}: 既定回数以上の再送に失敗しました。", dataId.Id);
-
-                        this.needAckDic.Remove(dataId);
-                        return false;
-                    }
-
-                    if (!IsConnected || !CanWrite)
-                    {
-                        Log.Error(this,
-                            "ID={0}: データの送信が許可されていません。", dataId.Id);
-
-                        this.needAckDic.Remove(dataId);
-                        return false;
-                    }
-                }
-
-                // コマンドの再送処理を行います。
-                Log.Info(this,
-                    "{0}(ID={1}): データの再送処理を行います。",
-                    needAckInfo.SendData.TypeName,
-                    dataId.Id);
-
-                SendDataInternal(
-                    dataId.Id, dataId.IsResponse,
-                    needAckInfo.SendData, false);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Util.ThrowIfFatal(ex);
-
-                Log.ErrorException(this, ex,
-                    "送信ミスしたACKの処理に失敗しました。");
-                return false;
-            }
         }
 
         /// <summary>
@@ -1126,7 +1001,6 @@ namespace Ragnarok.Net.ProtoBuf
             }
 
             // データを送信します。
-            AddNeedAckData(id, false, sendData);
             SendDataInternal(id, false, sendData, isOutLog);
         }
 
@@ -1156,7 +1030,6 @@ namespace Ragnarok.Net.ProtoBuf
             }
 
             var id = GetNextSendId();
-            AddNeedAckData(id, false, sendData);
             SendDataInternal(id, false, sendData, isOutLog);
         }
 
@@ -1172,47 +1045,7 @@ namespace Ragnarok.Net.ProtoBuf
             }
 
             var sendData = new PbSendData(response);
-
-            AddNeedAckData(id, true, sendData);
             SendDataInternal(id, true, sendData, isOutLog);
-        }
-
-        /// <summary>
-        /// コマンドなどの応答確認を送ります。
-        /// </summary>
-        private void SendAck(int id, bool isResponse, bool success)
-        {
-            var sendData = (success ? AckData : NakData);
-
-            // NAKの場合のみログを出力します。
-            SendDataInternal(id, isResponse, sendData, !success);
-        }
-
-        /// <summary>
-        /// ACKの受信が必要なデータを登録します。
-        /// </summary>
-        private void AddNeedAckData(int id, bool isResponse,
-                                    PbSendData sendData)
-        {
-            lock (this.needAckDic)
-            {
-                var dataId = new DataId(id, isResponse);
-                var needAck = new NeedAckInfo(this, dataId, sendData, AckTimeout);
-
-                try
-                {
-                    // 何らかの手違いでリクエストの再送要求が送られると
-                    // 同じIDのレスポンスが必ず2回以上送られることになります。
-                    // そのため、ここで例外が発生する可能性があります。
-                    this.needAckDic.Add(dataId, needAck);
-                }
-                catch (Exception ex)
-                {
-                    Log.ErrorException(ex,
-                        "ID={0}({1}): コマンドIDが重複しました。",
-                        id, (isResponse ? "RES" : "!RES"));
-                }
-            }
         }
 
         /// <summary>
@@ -1283,15 +1116,6 @@ namespace Ragnarok.Net.ProtoBuf
         #endregion
 
         /// <summary>
-        /// 静的コンストラクタ
-        /// </summary>
-        static PbConnection()
-        {
-            AckData = new PbSendData(new PbAck());
-            NakData = new PbSendData(new PbNak());
-        }
-
-        /// <summary>
         /// コンストラクタ
         /// </summary>
         public PbConnection()
@@ -1299,7 +1123,6 @@ namespace Ragnarok.Net.ProtoBuf
             InitReceivedPacket();
 
             ProtocolVersion = new PbProtocolVersion();
-            AckTimeout = TimeSpan.FromSeconds(20);
             DefaultRequestTimeout = TimeSpan.MaxValue;
 
             AddRequestHandler<PbCheckProtocolVersionRequest,

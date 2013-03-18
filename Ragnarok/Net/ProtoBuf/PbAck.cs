@@ -5,6 +5,7 @@ using System.Runtime.Serialization;
 
 namespace Ragnarok.Net.ProtoBuf
 {
+#if false
     /// <summary>
     /// 応答確認に使います。
     /// </summary>
@@ -22,4 +23,5 @@ namespace Ragnarok.Net.ProtoBuf
     internal sealed class PbNak
     {
     }
+#endif
 }

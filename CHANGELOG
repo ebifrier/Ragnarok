@@ -1,3 +1,8 @@
+2013-03-19  - Ver 2.7.9
+
+	* Ragnarok/Net/ProtoBuf/PbConnection.cs: アプリケーションレベルのACKシ
+	ステムを破棄しました。問題が多かったためです。
+
 2013-03-16  - Ver 2.7.8
 
 	* Ragnarok/Update/Downloader.cs: ダウンロードしたファイルの情報をクラス
