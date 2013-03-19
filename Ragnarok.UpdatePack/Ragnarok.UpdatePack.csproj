@@ -91,7 +91,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>set OUTDIR="E:\Dropbox\NicoNico\homepage\public_html\programs\update"
+    <PostBuildEvent>set OUTDIR="E:\Dropbox\NicoNico\homepage\garnet-alice.net\programs\update"
 
 copy "$(TargetPath)" %25OUTDIR%25\
 copy "$(TargetPath).config" %25OUTDIR%25\</PostBuildEvent>

@@ -42,8 +42,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\externals\net\nunit.framework.dll</HintPath>
     </Reference>
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
     <Reference Include="protobuf-net, Version=1.0.0.280, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\externals\net\protobuf-net.dll</HintPath>
@@ -51,9 +49,6 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.Xaml" />
-    <Reference Include="System.XML" />
-    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Board.cs" />
@@ -89,56 +84,16 @@
     <Compile Include="SkillLevel.cs" />
     <Compile Include="Stringizer.cs" />
     <Compile Include="Tests\ShogiParserTest.cs" />
-    <Compile Include="ViewModel\Behaviors\Behavior.cs" />
-    <Compile Include="ViewModel\Behaviors\ScenarioBehavior.cs" />
-    <Compile Include="ViewModel\BindingExtension.cs" />
-    <Compile Include="ViewModel\CellMeshConverter.cs" />
-    <Compile Include="ViewModel\EnterFrameEventArgs.cs" />
-    <Compile Include="ViewModel\EntityCollection.cs" />
-    <Compile Include="ViewModel\FpsCounter.cs" />
-    <Compile Include="ViewModel\IEffectManager.cs" />
-    <Compile Include="ViewModel\EntityObject.cs" />
-    <Compile Include="ViewModel\Interaction.cs" />
-    <Compile Include="ViewModel\PieceObject.cs" />
-    <Compile Include="ViewModel\Scenario.cs" />
-    <Compile Include="ViewModel\ShogiGlobal.cs" />
-    <Compile Include="ViewModel\Util3D.cs" />
-    <Compile Include="ViewModel\MakeMeshExtension.cs" />
-    <Compile Include="View\ShogiControl.xaml.cs">
-      <DependentUpon>ShogiControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="KifuWriter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Ragnarok.Shogi.snk" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Ragnarok.Presentation\Ragnarok.Presentation.csproj">
-      <Project>{2E5515A8-7B34-44A2-9C50-F423C5F87798}</Project>
-      <Name>Ragnarok.Presentation</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Ragnarok\Ragnarok.csproj">
       <Project>{A348968A-DD91-47B4-9420-C7D370A2BE92}</Project>
       <Name>Ragnarok</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Include="View\ShogiControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Image\koma.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Image\komadai.jpg" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Image\ban.jpg" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Image\select_promote_holder.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -1,3 +1,9 @@
+2013-03-19  - Ver 2.7.11
+
+	* Ragnarok全体: Ragnarok.Shogiの表示関係のファイルを
+	Ragnarok.Shogi.Presentationに移動し、かつ移動可能なファイルを
+	Ragnarok.Presentationに移動しました。
+
 2013-03-19  - Ver 2.7.10
 
 	* Ragnarok.Presentation/Extension/FontFamilyListExtension.cs: フォント

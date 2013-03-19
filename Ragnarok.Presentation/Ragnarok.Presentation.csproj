@@ -53,6 +53,8 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Behaviors\Behavior.cs" />
+    <Compile Include="Behaviors\ScenarioBehavior.cs" />
     <Compile Include="Control\MessageStatusBar.xaml.cs">
       <DependentUpon>MessageStatusBar.xaml</DependentUpon>
     </Compile>
@@ -62,6 +64,7 @@
     <Compile Include="Converter\ValueCompareToBooleanConverter.cs" />
     <Compile Include="Converter\FontFamilyConverter.cs" />
     <Compile Include="Effect\GrayscaleEffect.cs" />
+    <Compile Include="Extension\BindingExtension.cs" />
     <Compile Include="Extension\CalcExtension.cs" />
     <Compile Include="Control\ColorDialog.xaml.cs">
       <DependentUpon>ColorDialog.xaml</DependentUpon>
@@ -133,6 +136,14 @@
     <Compile Include="Utility\KeyHook.cs" />
     <Compile Include="Utility\ListBoxUtil.cs" />
     <Compile Include="Utility\WebBrowserUtil.cs" />
+    <Compile Include="VisualObject\EffectImageCache.cs" />
+    <Compile Include="VisualObject\EnterFrameEventArgs.cs" />
+    <Compile Include="VisualObject\EntityCollection.cs" />
+    <Compile Include="VisualObject\EntityObject.cs" />
+    <Compile Include="VisualObject\FpsCounter.cs" />
+    <Compile Include="VisualObject\Interaction.cs" />
+    <Compile Include="VisualObject\Scenario.cs" />
+    <Compile Include="VisualObject\Util3D.cs" />
     <Compile Include="WpfSettingsBase.cs" />
     <Compile Include="WpfUtil.cs" />
   </ItemGroup>

@@ -11,26 +11,41 @@ using Ragnarok.NicoNico.Live;
 
 namespace Ragnarok.Presentation.NicoNico
 {
+    /// <summary>
+    /// ニコ生への接続時に使うモデルクラスです。
+    /// </summary>
     public class NicoLiveCommandData
     {
+        /// <summary>
+        /// 放送URLを取得または設定します。
+        /// </summary>
         public string LiveUrl
         {
             get;
             set;
         }
 
+        /// <summary>
+        /// ログインするクライアントクラスを取得または設定します。
+        /// </summary>
         public NicoClient NicoClient
         {
             get;
             set;
         }
 
+        /// <summary>
+        /// 放送へ接続するためのオブジェクトを取得します。
+        /// </summary>
         public CommentClient CommentClient
         {
             get;
             private set;
         }
 
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
         public NicoLiveCommandData()
         {
             NicoClient = new NicoClient();
