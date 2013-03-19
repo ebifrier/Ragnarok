@@ -10,11 +10,10 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
 
-using Ragnarok;
 using Ragnarok.Utility;
 using Ragnarok.ObjectModel;
 
-namespace Ragnarok.Shogi.ViewModel
+namespace Ragnarok.Presentation.VisualObject
 {
     /// <summary>
     /// エフェクト用のオブジェクトです。

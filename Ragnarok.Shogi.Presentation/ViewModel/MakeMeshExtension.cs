@@ -48,7 +48,7 @@ namespace Ragnarok.Shogi.ViewModel
         /// </summary>
         public override object ProvideValue(IServiceProvider service)
         {
-            return Util3D.CreateDefaultMesh(Width, Height, 0, 0);
+            return Util3D_.CreateDefaultMesh(Width, Height, 0, 0);
         }
     }
 }

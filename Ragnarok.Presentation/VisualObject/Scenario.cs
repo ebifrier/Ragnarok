@@ -7,10 +7,9 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.ComponentModel;
 
-using Ragnarok;
 using Ragnarok.ObjectModel;
 
-namespace Ragnarok.Shogi.ViewModel
+namespace Ragnarok.Presentation.VisualObject
 {
     /// <summary>
     /// オブジェクトの各プロパティの変化を記述します。
@@ -42,6 +41,9 @@ namespace Ragnarok.Shogi.ViewModel
             target.SetValue(TargetProperty, value);
         }
 
+        /// <summary>
+        /// アニメーション対象へのパスを扱う依存プロパティです。
+        /// </summary>
         public static readonly DependencyProperty TargetPathProperty =
             DependencyProperty.RegisterAttached(
                 "TargetPath", typeof(string), typeof(Scenario),
@@ -63,6 +65,9 @@ namespace Ragnarok.Shogi.ViewModel
             target.SetValue(TargetPathProperty, value);
         }
 
+        /// <summary>
+        /// アニメーションの対象プロパティを扱う依存プロパティです。
+        /// </summary>
         public static readonly DependencyProperty TargetPropertyProperty =
             DependencyProperty.RegisterAttached(
                 "TargetProperty", typeof(string), typeof(Scenario),
@@ -84,6 +89,9 @@ namespace Ragnarok.Shogi.ViewModel
             target.SetValue(TargetPropertyProperty, value);
         }
 
+        /// <summary>
+        /// アニメーションリストを扱う依存プロパティです。
+        /// </summary>
         public static readonly DependencyProperty ChildrenProperty =
             DependencyProperty.Register(
                 "Children", typeof(NotifyCollection<AnimationTimeline>),

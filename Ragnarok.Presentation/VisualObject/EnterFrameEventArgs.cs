@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 
-namespace Ragnarok.Shogi.ViewModel
+namespace Ragnarok.Presentation.VisualObject
 {
     /// <summary>
     /// 各フレームで渡される引数です。

@@ -45,7 +45,7 @@ namespace Ragnarok.Shogi.ViewModel
                 positions = new[] { position };
             }
 
-            return Util3D.CreateCellMesh(positions, Widen);
+            return Util3D_.CreateCellMesh(positions, Widen);
         }
 
         /// <summary>

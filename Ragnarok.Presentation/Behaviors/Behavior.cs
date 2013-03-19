@@ -4,7 +4,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Media.Animation;
 
-namespace Ragnarok.Shogi.ViewModel.Behaviors
+namespace Ragnarok.Presentation.Behaviors
 {
     /// <summary>
     /// ビヘイビアを管理します。

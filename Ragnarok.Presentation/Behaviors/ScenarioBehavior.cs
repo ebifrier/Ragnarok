@@ -7,8 +7,13 @@ using System.Windows.Media.Animation;
 
 using Ragnarok.ObjectModel;
 
-namespace Ragnarok.Shogi.ViewModel.Behaviors
+namespace Ragnarok.Presentation.Behaviors
 {
+    using VisualObject;
+
+    /// <summary>
+    /// シナリオのXAMLからの開始・終了を行います。
+    /// </summary>
     [ContentProperty("ScenarioChildren")]
     public class ScenarioBehavior : Behavior<EntityObject>
     {
@@ -38,6 +43,9 @@ namespace Ragnarok.Shogi.ViewModel.Behaviors
             get { return Scenario.Children; }
         }
 
+        /// <summary>
+        /// アタッチ時に呼ばれます。
+        /// </summary>
         protected override void OnAttached()
         {
             base.OnAttached();
@@ -48,6 +56,9 @@ namespace Ragnarok.Shogi.ViewModel.Behaviors
             }
         }
 
+        /// <summary>
+        /// デタッチ時に呼ばれます。
+        /// </summary>
         protected override void OnDetaching()
         {
             base.OnDetaching();

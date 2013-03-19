@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 
-namespace Ragnarok.Shogi.ViewModel
+namespace Ragnarok.Presentation.VisualObject
 {
     /// <summary>
     /// FPS値をカウントします。
@@ -45,6 +45,9 @@ namespace Ragnarok.Shogi.ViewModel
         private DateTime prevTime = DateTime.Now;
         private int count;
 
+        /// <summary>
+        /// フレームごとに呼ばれます。
+        /// </summary>
         protected override void OnEnterFrame(EnterFrameEventArgs e)
         {
             base.OnEnterFrame(e);

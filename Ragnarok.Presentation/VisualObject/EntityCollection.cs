@@ -2,10 +2,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
-namespace Ragnarok.Shogi.ViewModel
+namespace Ragnarok.Presentation.VisualObject
 {
+    /// <summary>
+    /// 複数のエンティティを管理するクラスで追加・削除時に親も設定します。
+    /// </summary>
     public class EntityCollection :
         IList<EntityObject>, ICollection<EntityObject>, IEnumerable<EntityObject>,
         /*IList, ICollection,*/ IEnumerable

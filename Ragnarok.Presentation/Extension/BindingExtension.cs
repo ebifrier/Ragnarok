@@ -6,8 +6,10 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Markup;
 
-namespace Ragnarok.Shogi.ViewModel
+namespace Ragnarok.Presentation.Extension
 {
+    using VisualObject;
+
     /// <summary>
     /// <see cref="EntityObject"/>クラスから使うときに便利な
     /// バインディングオブジェクトです。

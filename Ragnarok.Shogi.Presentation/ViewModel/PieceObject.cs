@@ -10,6 +10,7 @@ using System.Windows.Media.Media3D;
 
 using Ragnarok.ObjectModel;
 using Ragnarok.Presentation.Control;
+using Ragnarok.Presentation.VisualObject;
 
 namespace Ragnarok.Shogi.ViewModel
 {
@@ -137,7 +138,7 @@ namespace Ragnarok.Shogi.ViewModel
 
             return new GeometryModel3D
             {
-                Geometry = Util3D.CreateDefaultMesh(
+                Geometry = Util3D_.CreateDefaultMesh(
                     1.0, 1.0, image.Width, image.Height),
                 Material = new DiffuseMaterial(brush),
             }.Apply(_ => _.Freeze());
@@ -177,7 +178,7 @@ namespace Ragnarok.Shogi.ViewModel
                 // 駒数の表示用オブジェクトを追加します。
                 var numberModel = new GeometryModel3D()
                 {
-                    Geometry = Util3D.CreateDefaultMesh(0.7, 0.4, 0, 0),
+                    Geometry = Util3D_.CreateDefaultMesh(0.7, 0.4, 0, 0),
                     Material = new DiffuseMaterial(new VisualBrush(this.numberText)),
                     Transform = new TranslateTransform3D(0.4, -0.4, 0.0),
                 };

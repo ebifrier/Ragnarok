@@ -4,10 +4,9 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Markup;
 
-using Ragnarok;
 using Ragnarok.ObjectModel;
 
-namespace Ragnarok.Shogi.ViewModel
+namespace Ragnarok.Presentation.VisualObject
 {
     using Behaviors;
 

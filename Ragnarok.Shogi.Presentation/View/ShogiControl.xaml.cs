@@ -16,6 +16,7 @@ using System.Windows.Shapes;
 
 using Ragnarok.ObjectModel;
 using Ragnarok.Presentation;
+using Ragnarok.Presentation.VisualObject;
 
 namespace Ragnarok.Shogi.View
 {
@@ -81,17 +82,17 @@ namespace Ragnarok.Shogi.View
 
         private static readonly ImageBrush DefaultBanBrush =
             new ImageBrush(new BitmapImage(
-                new Uri("pack://application:,,,/Ragnarok.Shogi;component/Resources/Image/ban.jpg")))
+                new Uri("pack://application:,,,/Ragnarok.Shogi.Presentation;component/Resources/Image/ban.jpg")))
                 .Apply(_ => _.Opacity = 0.9);
 
         private static readonly ImageBrush DefaultPieceBoxBrush =
             new ImageBrush(new BitmapImage(
-                new Uri("pack://application:,,,/Ragnarok.Shogi;component/Resources/Image/komadai.jpg")))
+                new Uri("pack://application:,,,/Ragnarok.Shogi.Presentation;component/Resources/Image/komadai.jpg")))
                 .Apply(_ => _.Opacity = 0.9);
 
         private static readonly BitmapImage DefaultPieceImage =
             new BitmapImage(
-                new Uri("pack://application:,,,/Ragnarok.Shogi;component/Resources/Image/koma.png"))
+                new Uri("pack://application:,,,/Ragnarok.Shogi.Presentation;component/Resources/Image/koma.png"))
                 .Apply(_ => _.Freeze());
 
         private readonly NotifyCollection<PieceObject> pieceObjectList =
@@ -628,7 +629,7 @@ namespace Ragnarok.Shogi.View
             // 駒とマウスの位置の差を求めておきます。
             var mousePos = e.GetPosition(RootViewport);
 
-            this.movingPiece.Coord = Util3D.MakeVector3D(mousePos, MovingPieceZ);
+            this.movingPiece.Coord = Util3D_.MakeVector3D(mousePos, MovingPieceZ);
         }
 
         /// <summary>
@@ -1309,8 +1310,8 @@ namespace Ragnarok.Shogi.View
                 CellSize.Width * Board.BoardSize,
                 CellSize.Height * Board.BoardSize);
 
-            capturedPieceBoxBounds[0] = Util3D.MakeRectXY(this.komadai0Geometry.Bounds);
-            capturedPieceBoxBounds[1] = Util3D.MakeRectXY(this.komadai1Geometry.Bounds);
+            capturedPieceBoxBounds[0] = Util3D_.MakeRectXY(this.komadai0Geometry.Bounds);
+            capturedPieceBoxBounds[1] = Util3D_.MakeRectXY(this.komadai1Geometry.Bounds);
 
             // エフェクトなどを初期化します。
             this.banEffectObjectRoot.Duration = TimeSpan.MaxValue;
