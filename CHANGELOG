@@ -1,5 +1,7 @@
 2013-03-19  - Ver 2.8.0
 
+	* Ragnarok.Presentation/VisualObject/Control/VisualBackground.cs: 背景
+	を表示するためのコントロールを追加しました。
 	* Ragnarok.Shogi.Presentation: ライブラリを削除しました。
 
 2013-03-19  - Ver 2.7.11

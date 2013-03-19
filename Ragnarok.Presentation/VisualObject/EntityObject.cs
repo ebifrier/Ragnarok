@@ -106,7 +106,7 @@ namespace Ragnarok.Presentation.VisualObject
                 new UIPropertyMetadata(string.Empty));
 
         /// <summary>
-        /// 名前を取得します。
+        /// 名前を取得または設定します。
         /// </summary>
         public string Name
         {

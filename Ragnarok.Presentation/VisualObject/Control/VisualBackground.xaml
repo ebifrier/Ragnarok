@@ -1,0 +1,16 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                    xmlns:l="clr-namespace:Ragnarok.Presentation.VisualObject.Control">
+    <ControlTemplate x:Key="mainControl">
+        <Grid>
+            <l:BackgroundCore x:Name="Background1" />
+            <l:BackgroundCore x:Name="Background2" />
+        </Grid>
+    </ControlTemplate>
+
+    <Style TargetType="l:VisualBackground">
+        <Setter Property="Template" Value="{StaticResource mainControl}" />
+        <Setter Property="Background" Value="Transparent" />
+    </Style>
+</ResourceDictionary>
