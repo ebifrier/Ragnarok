@@ -1,3 +1,7 @@
+2013-03-19  - Ver 2.8.0
+
+	* Ragnarok.Shogi.Presentation: ライブラリを削除しました。
+
 2013-03-19  - Ver 2.7.11
 
 	* Ragnarok全体: Ragnarok.Shogiの表示関係のファイルを

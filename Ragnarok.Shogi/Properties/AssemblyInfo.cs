@@ -3,6 +3,10 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
+#if !MONO
+using System.Windows.Markup;
+#endif
+
 // アセンブリに関する一般情報は以下の属性セットをとおして制御されます。
 // アセンブリに関連付けられている情報を変更するには、
 // これらの属性値を変更してください。
@@ -23,6 +27,10 @@ using System.Runtime.InteropServices;
 
 // 次の GUID は、このプロジェクトが COM に公開される場合の、typelib の ID です
 [assembly: Guid("9c28a541-043c-45b0-b537-c770636f0063")]
+
+#if !MONO
+[assembly: XmlnsDefinition("http://schemas.garnet-alice.net/ragnarok/xaml/presentation", "Ragnarok.Shogi")]
+#endif
 
 // アセンブリのバージョン情報は、以下の 4 つの値で構成されています:
 //
