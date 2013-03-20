@@ -1,3 +1,8 @@
+2013-03-21  - Ver 2.0.1
+
+	* Ragnarok.Presentation/VisualObject/FpsCounter.cs: 高速化のため、FPS更
+	新時のコールバックを依存プロパティの変更通知から呼ぶのをやめました。
+
 2013-03-19  - Ver 2.8.0
 
 	* Ragnarok.Presentation/VisualObject/Control/VisualBackground.cs: 背景

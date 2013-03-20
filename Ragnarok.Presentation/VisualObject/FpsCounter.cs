@@ -21,7 +21,7 @@ namespace Ragnarok.Presentation.VisualObject
         public static readonly DependencyProperty FpsProperty =
             DependencyProperty.Register(
                 "Fps", typeof(double), typeof(FpsCounter),
-                new UIPropertyMetadata(0.0, OnFpsChanged));
+                new UIPropertyMetadata(0.0));
 
         /// <summary>
         /// FPSの値を取得します。
@@ -30,16 +30,6 @@ namespace Ragnarok.Presentation.VisualObject
         {
             get { return (double)GetValue(FpsProperty); }
             private set { SetValue(FpsProperty, value); }
-        }
-
-        static void OnFpsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var self = d as FpsCounter;
-
-            if (self != null)
-            {
-                self.FpsChanged.SafeRaiseEvent(self, EventArgs.Empty);
-            }
         }
         
         private DateTime prevTime = DateTime.Now;
@@ -59,6 +49,7 @@ namespace Ragnarok.Presentation.VisualObject
             if (diff >= TimeSpan.FromSeconds(1.0))
             {
                 Fps = this.count / diff.TotalSeconds;
+                FpsChanged.SafeRaiseEvent(this, EventArgs.Empty);
 
                 this.prevTime = now;
                 this.count = 0;
