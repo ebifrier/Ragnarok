@@ -60,11 +60,11 @@
             <Button Grid.Column="1"
                     Content="OK" MinWidth="50"
                     Margin="10,10,0,10"
-                    Command="{x:Static t:DialogCommands.OK}" />
+                    Command="{x:Static t:RagnarokCommands.OK}" />
             <Button Grid.Column="2"
                     Content="キャンセル"
                     Margin="10"
-                    Command="{x:Static t:DialogCommands.Cancel}" />
+                    Command="{x:Static t:RagnarokCommands.Cancel}" />
         </Grid>
     </ControlTemplate>
 </ResourceDictionary>

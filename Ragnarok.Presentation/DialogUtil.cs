@@ -256,13 +256,24 @@ namespace Ragnarok.Presentation
         /// <summary>
         /// エラーメッセージの表示用メソッドです。
         /// </summary>
-        public static void ShowError(string message)
+        private static void ShowErrorInternal(string message)
         {
             var dialog = CreateDialog(
                 message, "エラー", MessageBoxButton.OK);
 
             dialog.Topmost = true;
             dialog.ShowDialogCenterMouse();
+        }
+
+        /// <summary>
+        /// エラーメッセージの表示用メソッドです。
+        /// </summary>
+        public static void ShowError(string message)
+        {
+            // ログにも出力します。
+            Log.Error(message);
+
+            ShowErrorInternal(message);
         }
 
         /// <summary>
@@ -275,7 +286,10 @@ namespace Ragnarok.Presentation
                 Environment.NewLine,
                 message, ex.Message);
 
-            ShowError(text);
+            // ログにも出力します。
+            Log.ErrorException(ex, message);
+
+            ShowErrorInternal(text);
         }
 
         #region フォント

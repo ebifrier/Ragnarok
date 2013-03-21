@@ -96,11 +96,11 @@
                     </Grid.ColumnDefinitions>
                     
                     <Button Grid.Column="1"
-                            Command="{x:Static w:DialogCommands.OK}"
+                            Command="{x:Static w:RagnarokCommands.OK}"
                             Margin="5"
                             Content="更新する" />
                     <Button Grid.Column="2"
-                            Command="{x:Static w:DialogCommands.Cancel}"
+                            Command="{x:Static w:RagnarokCommands.Cancel}"
                             Margin="5"
                             Content="後で通知する" />
                 </Grid>

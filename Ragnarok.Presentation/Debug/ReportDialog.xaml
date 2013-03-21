@@ -98,9 +98,9 @@
         <StackPanel Grid.Row="6"
                     Orientation="Horizontal"
                     HorizontalAlignment="Right">
-            <Button Command="{x:Static w:DialogCommands.OK}"
+            <Button Command="{x:Static w:RagnarokCommands.OK}"
                     Margin="3" MinWidth="50"  Content="送信" />
-            <Button Command="{x:Static w:DialogCommands.Cancel}"
+            <Button Command="{x:Static w:RagnarokCommands.Cancel}"
                     Margin="3" Content="キャンセル" />
         </StackPanel>
     </Grid>

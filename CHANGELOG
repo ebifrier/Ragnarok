@@ -1,3 +1,8 @@
+2013-03-22  - Ver 2.0.3
+
+	* Ragnarok.Presentation/RagnarokCommands.cs: DialogCommandsを改名し、ダ
+	イアログ以外のコマンドも追加しました。
+
 2013-03-21  - Ver 2.0.2
 
 	* Ragnarok.Presentation/WPFSettingsBase.cs: WpfSettingsBaseを

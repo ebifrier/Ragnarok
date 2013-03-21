@@ -60,6 +60,6 @@
                 HorizontalAlignment="Right"
                 MinWidth="60" Margin="6"
                 Content="OK"
-                Command="{x:Static w:DialogCommands.OK}"/>
+                Command="{x:Static w:RagnarokCommands.OK}"/>
     </Grid>
 </Window>

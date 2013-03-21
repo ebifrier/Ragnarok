@@ -43,11 +43,11 @@ namespace Ragnarok.Presentation.Control
 
             CommandBindings.Add(
                 new CommandBinding(
-                    DialogCommands.OK,
+                    RagnarokCommands.OK,
                     ExecuteOK));
             CommandBindings.Add(
                 new CommandBinding(
-                    DialogCommands.Cancel,
+                    RagnarokCommands.Cancel,
                     ExecuteCancel));
         }
 

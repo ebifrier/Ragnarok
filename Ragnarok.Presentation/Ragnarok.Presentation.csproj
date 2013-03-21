@@ -109,7 +109,7 @@
     <Compile Include="Debug\ReportDialog.xaml.cs">
       <DependentUpon>ReportDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="DialogCommands.cs" />
+    <Compile Include="RagnarokCommands.cs" />
     <Compile Include="DialogUtil.cs" />
     <Compile Include="Extension\FontFamilyListExtension.cs" />
     <Compile Include="NicoNico\CookieData.cs" />
