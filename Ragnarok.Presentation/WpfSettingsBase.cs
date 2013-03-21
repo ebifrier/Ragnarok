@@ -13,7 +13,7 @@ namespace Ragnarok.Presentation
     /// wpfのオブジェクトも扱える設定ファイル用クラスです。
     /// </summary>
     [Serializable()]
-    public class WpfSettingsBase : AppSettingsBase
+    public class WPFSettingsBase : AppSettingsBase
     {
         /// <summary>
         /// 値から文字列への変換を試みます。

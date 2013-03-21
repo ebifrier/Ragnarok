@@ -130,7 +130,7 @@ namespace Ragnarok.Presentation.VisualObject
                     var targetPath = GetTargetPath(anim);
                     if (!string.IsNullOrEmpty(targetPath))
                     {
-                        var targetProperty = Util3D.GetDependencyProperty(
+                        var targetProperty = WPFUtil.GetDependencyProperty(
                             target.GetType(),
                             targetPath);
 
@@ -145,7 +145,7 @@ namespace Ragnarok.Presentation.VisualObject
                     }
                 }
 
-                var property = Util3D.GetDependencyProperty(
+                var property = WPFUtil.GetDependencyProperty(
                     animTarget.GetType(),
                     GetTargetProperty(anim));
 

@@ -40,7 +40,7 @@ namespace Ragnarok.Presentation.Extension
 		/// </summary>
 		public override object ProvideValue(IServiceProvider service)
 		{
-            if (WpfUtil.IsInDesignMode)
+            if (WPFUtil.IsInDesignMode)
             {
                 return null;
             }

@@ -120,7 +120,7 @@ namespace Ragnarok.Presentation.Utility
         /// コンストラクタ
         /// </summary>
         public FrameTimer()
-            : this(WpfUtil.UIDispatcher)
+            : this(WPFUtil.UIDispatcher)
         {
         }
 

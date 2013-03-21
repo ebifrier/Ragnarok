@@ -145,9 +145,8 @@
     <Compile Include="VisualObject\FpsCounter.cs" />
     <Compile Include="VisualObject\Interaction.cs" />
     <Compile Include="VisualObject\Scenario.cs" />
-    <Compile Include="VisualObject\Util3D.cs" />
-    <Compile Include="WpfSettingsBase.cs" />
-    <Compile Include="WpfUtil.cs" />
+    <Compile Include="WPFSettingsBase.cs" />
+    <Compile Include="WPFUtil.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Ragnarok\Ragnarok.csproj">

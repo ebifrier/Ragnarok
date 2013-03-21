@@ -103,12 +103,12 @@ namespace Ragnarok.Presentation.Update
 
             if (e.Error != null)
             {
-                WpfUtil.UIProcess(() =>
+                WPFUtil.UIProcess(() =>
                     DialogUtil.ShowError("更新ファイルのダウンロードに失敗しました。"));
                 return;
             }
 
-            WpfUtil.UIProcess(() =>
+            WPFUtil.UIProcess(() =>
             {
                 if (!this.updater.CanExecutePack())
                 {

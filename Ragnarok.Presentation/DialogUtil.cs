@@ -205,7 +205,7 @@ namespace Ragnarok.Presentation
             // WPFではコントロールのサイズは実際にそれを開いた後に決まります。
             dialog.Loaded += (sender, e) =>
             {
-                var p = WpfUtil.GetMousePosition(dialog);
+                var p = WPFUtil.GetMousePosition(dialog);
                 var screenPos = dialog.PointToScreen(p);
 
                 dialog.WindowStartupLocation = WindowStartupLocation.Manual;

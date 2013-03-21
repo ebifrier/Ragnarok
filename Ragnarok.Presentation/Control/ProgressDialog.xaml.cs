@@ -196,7 +196,7 @@ namespace Ragnarok.Presentation.Control
         /// </summary>
         private void TaskCompleted(Task state)
         {
-            WpfUtil.UIProcess(
+            WPFUtil.UIProcess(
                 () =>
                 {
                     if (this.task.Exception != null)

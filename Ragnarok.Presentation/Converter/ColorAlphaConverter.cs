@@ -26,7 +26,7 @@ namespace Ragnarok.Presentation.Converter
                 var alpha = (int)parameter;
                 var color = (Color)value;
 
-                return WpfUtil.MakeColor((byte)alpha, color);
+                return WPFUtil.MakeColor((byte)alpha, color);
             }
             catch (InvalidCastException ex)
             {

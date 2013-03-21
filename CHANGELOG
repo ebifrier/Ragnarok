@@ -1,4 +1,12 @@
-2013-03-21  - Ver 2.0.1
+2013-03-21  - Ver 2.0.2
+
+	* Ragnarok.Presentation/WPFSettingsBase.cs: WpfSettingsBaseを
+	WPFSettingsBaseに改名しました。
+	* Ragnarok.Presentation/WPFUtil.cs: WpfUtilをWPFUtilに改名しました。
+	* Ragnarok.Presentation/VisualObject/Util3D.cs: クラスメソッドをすべて
+	WPFUtilに移動し、Util3Dは削除しました。
+
+2013-03-20  - Ver 2.0.1
 
 	* Ragnarok.Presentation/VisualObject/FpsCounter.cs: 高速化のため、FPS更
 	新時のコールバックを依存プロパティの変更通知から呼ぶのをやめました。

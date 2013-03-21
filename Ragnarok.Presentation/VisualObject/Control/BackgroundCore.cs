@@ -62,7 +62,7 @@ namespace Ragnarok.Presentation.VisualObject.Control
         /// </summary>
         private void OnEntityChanged(EntityObject effect)
         {
-            if (Ragnarok.Presentation.WpfUtil.IsInDesignMode)
+            if (Ragnarok.Presentation.WPFUtil.IsInDesignMode)
             {
                 return;
             }

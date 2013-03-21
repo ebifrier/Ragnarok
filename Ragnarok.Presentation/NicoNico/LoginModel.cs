@@ -172,7 +172,7 @@ namespace Ragnarok.Presentation.NicoNico
         {
             // ObservableCollectionを使っているため、
             // 処理はUIスレッド上で行います。
-            WpfUtil.UIProcess(() =>
+            WPFUtil.UIProcess(() =>
             {
                 AvailableCookieData = null;
                 this.availableCookieList.Clear();
@@ -237,7 +237,7 @@ namespace Ragnarok.Presentation.NicoNico
                 return;
             }
 
-            WpfUtil.UIProcess(() =>
+            WPFUtil.UIProcess(() =>
                 this.availableCookieList.Add(cookieData));
         }
 
