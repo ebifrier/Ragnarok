@@ -1,13 +1,17 @@
-﻿<StatusBar x:Class="Ragnarok.Presentation.Control.MessageStatusBar"
-           xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-           xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-           xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-           xmlns:l="clr-namespace:Ragnarok.Presentation.Control"
-           mc:Ignorable="d" Background="{x:Static Brushes.Transparent}"
-           d:DesignHeight="300" d:DesignWidth="300">
-    
-    <!-- メッセージ表示から一定時間後にメッセージを消すようにします。-->
-    <StatusBarItem Name="childItem"
-                   HorizontalContentAlignment="Right" />
-</StatusBar>
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                    xmlns:l="clr-namespace:Ragnarok.Presentation.Control">
+    <ControlTemplate x:Key="mainControl">
+        <StatusBar>
+            <!-- メッセージ表示から一定時間後にメッセージを消すようにします。-->
+            <StatusBarItem Name="ChildItemPart"
+                           HorizontalContentAlignment="Right" />
+        </StatusBar>
+    </ControlTemplate>
+
+    <Style TargetType="l:MessageStatusBar">
+        <Setter Property="Template" Value="{StaticResource mainControl}" />
+        <Setter Property="Background" Value="Transparent" />
+    </Style>
+</ResourceDictionary>

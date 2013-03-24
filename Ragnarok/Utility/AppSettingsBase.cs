@@ -271,24 +271,12 @@ namespace Ragnarok.Utility
         }
 
         /// <summary>
-        /// default(type)を取得します。
-        /// </summary>
-        private static object GetDefault(Type type)
-        {
-            if (type.IsValueType)
-            {
-                return Activator.CreateInstance(type);
-            }
-
-            return null;
-        }
-
-        /// <summary>
         /// デフォルト値を指定のプロパティに設定します。
         /// </summary>
         private void SetDefaultValue(IPropertyObject propertyObj)
         {
-            var dvalue = GetDefault(propertyObj.PropertyInfo.PropertyType);
+            var type = propertyObj.PropertyInfo.PropertyType;
+            var dvalue = Util.GetDefaultValue(type);
 
             propertyObj.SetValue(this, dvalue);
         }

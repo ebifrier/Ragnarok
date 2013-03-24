@@ -17,7 +17,7 @@ namespace Ragnarok.Presentation.VisualObject.Control
     /// BackgroundCore.xaml の相互作用ロジック
     /// </summary>
     [TemplatePart(Type = typeof(Model3DGroup), Name = "EffectGroup")]
-    public class BackgroundCore : System.Windows.Controls.Control
+    internal class BackgroundCore : System.Windows.Controls.Control
     {
         /// <summary>
         /// エフェクト用のコンテナ名。

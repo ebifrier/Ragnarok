@@ -19,15 +19,15 @@ namespace Ragnarok.Presentation.Control
     /// <summary>
     /// MessageStatusBar.xaml の相互作用ロジック
     /// </summary>
-    //[TemplatePart(Type = typeof(TextBox), Name = "ChildItemPart")]
-    public partial class MessageStatusBar : StatusBar
+    [TemplatePart(Type = typeof(StatusBarItem), Name = "ChildItemPart")]
+    public partial class MessageStatusBar : UserControl
     {
-        /*/// <summary>
+        /// <summary>
         /// 子要素のコントロール名。
         /// </summary>
         private const string ChildItemName = "ChildItemPart";
 
-        private TextBox textBox;*/
+        private StatusBarItem childItem;
 
         /// <summary>
         /// ステータスメッセージ用の依存プロパティです。
@@ -56,7 +56,10 @@ namespace Ragnarok.Presentation.Control
         {
             var self = (MessageStatusBar)d;
 
-            self.childItem.Content = args.NewValue;
+            if (self.childItem != null)
+            {
+                self.childItem.Content = args.NewValue;
+            }
         }
 
         /// <summary>
@@ -136,6 +139,21 @@ namespace Ragnarok.Presentation.Control
         }
 
         /// <summary>
+        /// テンプレートの適用時に呼ばれます。
+        /// </summary>
+        public override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+
+            this.childItem = GetTemplateChild(ChildItemName) as StatusBarItem;
+
+            if (this.childItem != null)
+            {
+                this.childItem.Content = StatusMessage;
+            }
+        }
+
+        /// <summary>
         /// メッセージのフェードアウト処理を行います。
         /// </summary>
         private void StartAnimation()
@@ -149,8 +167,8 @@ namespace Ragnarok.Presentation.Control
             anim.KeyFrames.Add(new LinearDoubleKeyFrame(1.0, TimeSpan.Zero));
             anim.KeyFrames.Add(new LinearDoubleKeyFrame(1.0, MessageDuration));
             anim.KeyFrames.Add(new LinearDoubleKeyFrame(0.0, endTime));
-
-            BeginAnimation(UIElement.OpacityProperty, anim);
+            
+            BeginAnimation(OpacityProperty, anim);
         }
 
         /// <summary>
@@ -189,7 +207,10 @@ namespace Ragnarok.Presentation.Control
         /// </summary>
         static MessageStatusBar()
         {
-            UIElement.OpacityProperty.OverrideMetadata(
+            DefaultStyleKeyProperty.OverrideMetadata(
+                typeof(MessageStatusBar),
+                new FrameworkPropertyMetadata(typeof(MessageStatusBar)));
+            OpacityProperty.OverrideMetadata(
                 typeof(MessageStatusBar),
                 new FrameworkPropertyMetadata(0.0));
         }
@@ -199,8 +220,6 @@ namespace Ragnarok.Presentation.Control
         /// </summary>
         public MessageStatusBar()
         {
-            InitializeComponent();
-
             // コントロールの高さを設定します。
             StatusMessage = " ";
         }

@@ -10,6 +10,68 @@ using System.Runtime.Serialization;
 namespace Ragnarok.ObjectModel
 {
     /// <summary>
+    /// <see cref="DynamicDictionary"/>のプロパティ情報を保持します。
+    /// </summary>
+    public sealed class DynamicPropertyInfo
+    {
+        /// <summary>
+        /// プロパティの名前を取得します。
+        /// </summary>
+        public string Name
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// プロパティの型を取得します。
+        /// </summary>
+        public Type PropertyType
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// デフォルト値を持つかどうかを取得します。
+        /// </summary>
+        public bool HasDefaultValue
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// デフォルト値を取得します。
+        /// </summary>
+        public object DefaultValue
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public DynamicPropertyInfo(string name, Type propertyType)
+        {
+            Name = name;
+            PropertyType = propertyType;
+        }
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public DynamicPropertyInfo(string name, Type propertyType,
+                                   object defaultValue)
+            : this(name, propertyType)
+        {
+            HasDefaultValue = true;
+            DefaultValue = defaultValue;
+        }
+    }
+
+    /// <summary>
     /// dynamicでアクセスしたすべてのプロパティをプロパティとして扱います。
     /// </summary>
     public class DynamicDictionary : DynamicObject, ILazyModel
@@ -18,9 +80,36 @@ namespace Ragnarok.ObjectModel
         private object syncRoot = new object();
         [field: NonSerialized]
         private LazyModelObject lazyModelObject = new LazyModelObject();
-        [field: NonSerialized]
+        private Dictionary<string, DynamicPropertyInfo> propInfoDic =
+            new Dictionary<string, DynamicPropertyInfo>();
         private Dictionary<string, object> propDic =
             new Dictionary<string, object>();
+        private bool isExtendable = true;
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public DynamicDictionary()
+            : this(null, false)
+        {
+        }
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public DynamicDictionary(IEnumerable<DynamicPropertyInfo> propInfoDic,
+                                 bool isExtendable)
+        {
+            this.propInfoDic = (propInfoDic != null ?
+                propInfoDic.ToDictionary(_ => _.Name) :
+                new Dictionary<string, DynamicPropertyInfo>());
+            this.isExtendable = isExtendable;
+
+            // デフォルト値を設定します。
+            this.propInfoDic
+                .Where(_ => _.Value.HasDefaultValue)
+                .ForEach(_ => this[_.Key] = _.Value.DefaultValue);
+        }
 
         /// <summary>
         /// 逆シリアル前に呼ばれます。
@@ -34,7 +123,9 @@ namespace Ragnarok.ObjectModel
         {
             this.syncRoot = new object();
             this.lazyModelObject = new LazyModelObject();
+            this.propInfoDic = new Dictionary<string, DynamicPropertyInfo>();
             this.propDic = new Dictionary<string, object>();
+            this.isExtendable = true;
         }
 
         /// <summary>
@@ -68,6 +159,58 @@ namespace Ragnarok.ObjectModel
         }
 
         /// <summary>
+        /// プロパティを拡張可能かどうかを取得します。
+        /// </summary>
+        public bool IsExtendable
+        {
+            get { return this.isExtendable; }
+        }
+
+        /// <summary>
+        /// プロパティ名の一覧を取得します。
+        /// </summary>
+        public string[] PropertyNames
+        {
+            get
+            {
+                using (LazyLock())
+                {
+                    return this.propDic.Keys.ToArray();
+                }
+            }
+        }
+
+        /// <summary>
+        /// 指定の名前のプロパティ値を取得または設定します。
+        /// </summary>
+        public object this[string key]
+        {
+            get
+            {
+                object value;
+                if (!TryGetValue(key, out value))
+                {
+                    throw new KeyNotFoundException(
+                        string.Format(
+                            "{0}: 指定のプロパティは存在しません。",
+                            key));
+                }
+
+                return value;
+            }
+            set
+            {
+                if (!TrySetValue(key, value))
+                {
+                    throw new KeyNotFoundException(
+                        string.Format(
+                            "{0}: 指定のプロパティには書き込みできません。",
+                            key));
+                }
+            }
+        }
+
+        /// <summary>
         /// プロパティの変更通知を出します。
         /// </summary>
         public virtual void NotifyPropertyChanged(PropertyChangedEventArgs e)
@@ -84,68 +227,22 @@ namespace Ragnarok.ObjectModel
         }
 
         /// <summary>
-        /// 内部辞書に保持されたプロパティ値を取得します。
-        /// </summary>
-        public T GetValue<T>(string name)
-        {
-            using (LazyLock())
-            {
-                object current;
-
-                if (!this.propDic.TryGetValue(name, out current))
-                {
-                    return default(T);
-                }
-
-                return (T)current;
-            }
-        }
-
-        /// <summary>
-        /// 内部辞書に保持されたプロパティ値を設定します。
-        /// </summary>
-        public void SetValue<T>(string name, T value)
-        {
-            using (LazyLock())
-            {
-                object current;
-
-                if (!this.propDic.TryGetValue(name, out current) ||
-                    !Util.GenericEquals(current, value))
-                {
-                    this.propDic[name] = value;
-
-                    this.RaisePropertyChanged(name);
-                }
-            }
-        }
-
-        /// <summary>
-        /// プロパティに値を設定し、必要ならプロパティ変更通知を出します。
-        /// </summary>
-        public void SetValue<T>(string name, T value, ref T property)
-        {
-            using (LazyLock())
-            {
-                if (!Util.GenericEquals(property, value))
-                {
-                    property = value;
-
-                    this.RaisePropertyChanged(name);
-                }
-            }
-        }
-
-        /// <summary>
         /// プロパティ値を取得します。
         /// </summary>
-        public override bool TryGetMember(GetMemberBinder binder,
-                                          out object result)
+        public bool TryGetValue(string name, out object result)
         {
             using (LazyLock())
             {
-                if (this.propDic.TryGetValue(binder.Name, out result))
+                if (this.propDic.TryGetValue(name, out result))
                 {
+                    return true;
+                }
+
+                DynamicPropertyInfo propInfo;
+                if (this.propInfoDic.TryGetValue(name, out propInfo))
+                {
+                    // デフォルト値を返します。
+                    result = Util.GetDefaultValue(propInfo.PropertyType);
                     return true;
                 }
             }
@@ -157,10 +254,54 @@ namespace Ragnarok.ObjectModel
         /// <summary>
         /// プロパティ値を設定します。
         /// </summary>
+        public bool TrySetValue(string name, object value)
+        {
+            using (LazyLock())
+            {
+                DynamicPropertyInfo propInfo;
+                this.propInfoDic.TryGetValue(name, out propInfo);
+
+                // 拡張可能で無ければ、可能なプロパティ名は決まっています。
+                if (!this.isExtendable && propInfo == null)
+                {
+                    return false;
+                }
+
+                // valueを所望の方にキャストし直します。
+                // 正確に型を合わせるために必要です。
+                if (propInfo != null && value is IConvertible)
+                {
+                    value = Convert.ChangeType(value, propInfo.PropertyType);
+                }
+
+                object current;
+                if (!this.propDic.TryGetValue(name, out current) ||
+                    !Util.GenericEquals(current, value))
+                {
+                    this.propDic[name] = value;
+
+                    this.RaisePropertyChanged(name);
+                }
+
+                return true;
+            }
+        }
+
+        /// <summary>
+        /// プロパティ値を取得します。
+        /// </summary>
+        public override bool TryGetMember(GetMemberBinder binder,
+                                          out object result)
+        {
+            return TryGetValue(binder.Name, out result);
+        }
+
+        /// <summary>
+        /// プロパティ値を設定します。
+        /// </summary>
         public override bool TrySetMember(SetMemberBinder binder, object value)
         {
-            SetValue(binder.Name, value);
-            return true;
+            return TrySetValue(binder.Name, value);
         }
     }
 }

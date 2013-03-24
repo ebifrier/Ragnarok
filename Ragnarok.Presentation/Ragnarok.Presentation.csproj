@@ -55,9 +55,7 @@
   <ItemGroup>
     <Compile Include="Behaviors\Behavior.cs" />
     <Compile Include="Behaviors\ScenarioBehavior.cs" />
-    <Compile Include="Control\MessageStatusBar.xaml.cs">
-      <DependentUpon>MessageStatusBar.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="Control\MessageStatusBar.cs" />
     <Compile Include="Control\VersionWindow.xaml.cs">
       <DependentUpon>VersionWindow.xaml</DependentUpon>
     </Compile>

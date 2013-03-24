@@ -153,6 +153,19 @@ namespace Ragnarok
         }
 
         /// <summary>
+        /// default(type)を取得します。
+        /// </summary>
+        public static object GetDefaultValue(Type type)
+        {
+            if (type.IsValueType)
+            {
+                return Activator.CreateInstance(type);
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// <paramref name="value"/>がnullであれば<paramref name="defaultValue"/>
         /// を、そうでなければ値をそのまま返します。
         /// </summary>

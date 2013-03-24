@@ -175,6 +175,7 @@
     <Compile Include="NLog\RemoteSyslog.cs" />
     <Compile Include="NLog\RepeatedException.cs" />
     <Compile Include="NLog\Syslog.cs" />
+    <Compile Include="ObjectModel\CloneObject.cs" />
     <Compile Include="ObjectModel\DynamicViewModel.Extensions.cs" />
     <Compile Include="ObjectModel\DynamicViewModel.NotifyObject.cs" />
     <Compile Include="ObjectModel\LazyModelObject.cs" />
