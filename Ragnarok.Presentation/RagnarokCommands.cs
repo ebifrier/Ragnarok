@@ -70,23 +70,6 @@ namespace Ragnarok.Presentation
                 typeof(FrameworkElement));
 
         /// <summary>
-        /// 設定ダイアログを開くコマンドです。
-        /// </summary>
-        public static readonly ICommand OpenSettingDialog =
-            new RoutedUICommand(
-                "設定ダイアログを開きます。",
-                "OpenSettingDialog",
-                typeof(FrameworkElement));
-        /// <summary>
-        /// 新バージョンの確認を行います。
-        /// </summary>
-        public readonly static ICommand CheckToUpdate =
-            new RoutedUICommand(
-                "新バージョンの確認を行います。",
-                "CheckToUpdate",
-                typeof(FrameworkElement));
-
-        /// <summary>
         /// デフォルトのコマンドを接続します。
         /// </summary>
         public static void Bind(UIElement element)

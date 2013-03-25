@@ -106,9 +106,9 @@ namespace Ragnarok.ObjectModel
             this.isExtendable = isExtendable;
 
             // デフォルト値を設定します。
-            this.propInfoDic
+            /*this.propInfoDic
                 .Where(_ => _.Value.HasDefaultValue)
-                .ForEach(_ => this[_.Key] = _.Value.DefaultValue);
+                .ForEach(_ => this[_.Key] = _.Value.DefaultValue);*/
         }
 
         /// <summary>
@@ -175,6 +175,23 @@ namespace Ragnarok.ObjectModel
             {
                 using (LazyLock())
                 {
+                    return this.propInfoDic.Keys
+                        .Concat(this.propDic.Keys)
+                        .Distinct()
+                        .ToArray();
+                }
+            }
+        }
+
+        /// <summary>
+        /// 変更されたプロパティ名の一覧を取得します。
+        /// </summary>
+        public string[] ChangedPropertyNames
+        {
+            get
+            {
+                using (LazyLock())
+                {
                     return this.propDic.Keys.ToArray();
                 }
             }
@@ -229,6 +246,23 @@ namespace Ragnarok.ObjectModel
         /// <summary>
         /// プロパティ値を取得します。
         /// </summary>
+        public override bool TryGetMember(GetMemberBinder binder,
+                                          out object result)
+        {
+            return TryGetValue(binder.Name, out result);
+        }
+
+        /// <summary>
+        /// プロパティ値を設定します。
+        /// </summary>
+        public override bool TrySetMember(SetMemberBinder binder, object value)
+        {
+            return TrySetValue(binder.Name, value);
+        }
+
+        /// <summary>
+        /// プロパティ値を取得します。
+        /// </summary>
         public bool TryGetValue(string name, out object result)
         {
             using (LazyLock())
@@ -242,7 +276,10 @@ namespace Ragnarok.ObjectModel
                 if (this.propInfoDic.TryGetValue(name, out propInfo))
                 {
                     // デフォルト値を返します。
-                    result = Util.GetDefaultValue(propInfo.PropertyType);
+                    result = (propInfo.HasDefaultValue ?
+                        propInfo.DefaultValue :
+                        Util.GetDefaultValue(propInfo.PropertyType));
+
                     return true;
                 }
             }
@@ -285,23 +322,6 @@ namespace Ragnarok.ObjectModel
 
                 return true;
             }
-        }
-
-        /// <summary>
-        /// プロパティ値を取得します。
-        /// </summary>
-        public override bool TryGetMember(GetMemberBinder binder,
-                                          out object result)
-        {
-            return TryGetValue(binder.Name, out result);
-        }
-
-        /// <summary>
-        /// プロパティ値を設定します。
-        /// </summary>
-        public override bool TrySetMember(SetMemberBinder binder, object value)
-        {
-            return TrySetValue(binder.Name, value);
         }
     }
 }

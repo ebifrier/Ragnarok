@@ -15,6 +15,30 @@ namespace Ragnarok.Presentation.Converter
     public class EnumToBooleanConverter : IValueConverter
     {
         /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public EnumToBooleanConverter()
+        {
+        }
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public EnumToBooleanConverter(Type enumType)
+        {
+            EnumType = enumType;
+        }
+
+        /// <summary>
+        /// 対象となる列挙型を取得または設定します。
+        /// </summary>
+        public Type EnumType
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// 列挙子の値と<paramref name="parameter"/>で与えられた
         /// 値を比較し、同一なら真を返します。
         /// </summary>
@@ -74,7 +98,7 @@ namespace Ragnarok.Presentation.Converter
                     return DependencyProperty.UnsetValue;
                 }
 
-                return Enum.Parse(targetType, tmpString);
+                return Enum.Parse(EnumType ?? targetType, tmpString);
             }
 
             try

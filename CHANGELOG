@@ -1,3 +1,14 @@
+2013-03-26  - Ver 2.0.4
+
+	* Ragnarok.Presentation/Converter/EnumToBooleanConverter.cs: EnumTypeと
+	して列挙型を指定できるようにしました。
+	* Ragnarok.Presentation/RagnarokCommands.cs: 不要なコマンド定義を削除し
+	ました。
+	* Ragnarok/ObjectModel/DynamicDictionary.cs: 変更されたプロパティ値だけ
+	を変更済み値として管理するようにしました。
+	* Ragnarok.Presentation/Converter/ValueToDecimalConverter.cs: decimal型
+	へ変換するようなコンバータを追加しました。
+
 2013-03-22  - Ver 2.0.3
 
 	* Ragnarok.Presentation/RagnarokCommands.cs: DialogCommandsを改名し、ダ

@@ -31,7 +31,7 @@
             <RowDefinition Height="5" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="5" />
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
             <RowDefinition Height="5" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
@@ -82,17 +82,22 @@
                   Header="エラーログ表示"
                   MaxWidth="{Binding ActualWidth, ElementName=widthBase}"
                   IsEnabled="{Binding IsUseErrorLog}">
-            <DockPanel>
-                <TextBlock DockPanel.Dock="Top"
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0"
                            Foreground="{x:Static Brushes.DarkGray}"
                            Text="ログは以下の内容を送信します。&#xd;&#xa;編集出来ますので、必要な場所は削除してください。" />
 
-                <TextBox DockPanel.Dock="Bottom"
+                <TextBox Grid.Row="1"
                          Style="{StaticResource commonTextBox}"
                          Text="{Binding ErrorLogText}"
-                         MaxHeight="100"
+                         MaxHeight="200"
                          TextWrapping="NoWrap" />
-            </DockPanel>
+            </Grid>
         </Expander>
         
         <StackPanel Grid.Row="6"

@@ -59,7 +59,7 @@ namespace Ragnarok.ObjectModel
                     "型に整合性がありません。");
             }*/
 
-            PropertyNames.ForEach(_ =>
+            ChangedPropertyNames.ForEach(_ =>
                 MethodUtil.SetPropertyValue(target, _, this[_]));
         }
 

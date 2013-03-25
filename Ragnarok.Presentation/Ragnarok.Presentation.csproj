@@ -61,6 +61,7 @@
     </Compile>
     <Compile Include="Converter\ValueCompareToBooleanConverter.cs" />
     <Compile Include="Converter\FontFamilyConverter.cs" />
+    <Compile Include="Converter\ValueToDecimalConverter.cs" />
     <Compile Include="Effect\GrayscaleEffect.cs" />
     <Compile Include="Extension\BindingExtension.cs" />
     <Compile Include="Extension\CalcExtension.cs" />
