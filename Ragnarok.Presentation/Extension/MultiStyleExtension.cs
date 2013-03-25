@@ -31,7 +31,8 @@ namespace Ragnarok.Presentation.Extension
 
 			if (this.resourceKeys.Length == 0)
 			{
-				throw new ArgumentException("No input resource keys specified.");
+				throw new ArgumentException(
+                    "No input resource keys specified.");
 			}
 		}
 
@@ -54,7 +55,10 @@ namespace Ragnarok.Presentation.Extension
 
 				if (currentStyle == null)
 				{
-					throw new InvalidOperationException("Could not find style with resource key " + currentResourceKey + ".");
+					throw new InvalidOperationException(
+                        string.Format(
+                            "Could not find style with resource key {0}.",
+                            currentResourceKey));
 				}
 
                 Merge(resultStyle, currentStyle);

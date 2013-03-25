@@ -51,7 +51,7 @@ namespace Ragnarok.Presentation.Control
         /// </summary>
         public static readonly RoutedEvent ValueChangedEvent =
             EventManager.RegisterRoutedEvent(
-                "OnValueChanged", RoutingStrategy.Bubble,
+                "ValueChanged", RoutingStrategy.Bubble,
                 typeof(RoutedPropertyChangedEventHandler<decimal>),
                 typeof(NumericUpDown));
 

@@ -63,13 +63,11 @@ namespace Ragnarok.Presentation.Extension
                     "列挙子の型が設定されていません。");
             }
 
-            var result = new List<EnumWrapper>();
-            foreach (var value in Enum.GetValues(EnumType))
-            {
-                result.Add(new EnumWrapper(value));
-            }
-
-            return result;
+            // OfTypeはLinqを使うために必要です。
+            return Enum.GetValues(EnumType)
+                .OfType<object>()
+                .Select(_ => new EnumWrapper(_))
+                .ToList();
         }
     }
 }
