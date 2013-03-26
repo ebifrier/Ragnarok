@@ -313,6 +313,9 @@ namespace Ragnarok.Utility
         /// <summary>
         /// このクラスと継承クラスのリストを取得します。
         /// </summary>
+        /// <remarks>
+        /// <paramref name="targetType"/>に近いクラスから順次返されます。
+        /// </remarks>
         public static IEnumerable<Type> GetThisAndInheritClasses(
             Type targetType)
         {

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Data;
 
@@ -59,7 +58,7 @@ namespace Ragnarok.Presentation.Utility
         /// <summary>
         /// <paramref ref="target"/>に対して、各プロパティ値を設定します。
         /// </summary>
-        public void SetValuesToTarget(object target)
+        public void SetValuesToTarget(DependencyObject target)
         {
             if (target == null)
             {
