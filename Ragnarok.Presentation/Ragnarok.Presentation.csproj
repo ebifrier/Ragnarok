@@ -55,6 +55,7 @@
   <ItemGroup>
     <Compile Include="Behaviors\Behavior.cs" />
     <Compile Include="Behaviors\ScenarioBehavior.cs" />
+    <Compile Include="Utility\CloneModel.cs" />
     <Compile Include="Control\MessageStatusBar.cs" />
     <Compile Include="Control\VersionWindow.xaml.cs">
       <DependentUpon>VersionWindow.xaml</DependentUpon>
@@ -77,7 +78,7 @@
     <Compile Include="Command\RelayCommand.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Control\ControlUtil.cs" />
+    <Compile Include="Utility\ControlUtil.cs" />
     <Compile Include="Control\DecoratedText.cs" />
     <Compile Include="Control\NumericUpDown.cs" />
     <Compile Include="Control\ProgressDialog.xaml.cs">

@@ -7,7 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Interop;
 using System.Runtime.InteropServices;
 
-namespace Ragnarok.Presentation.Control
+namespace Ragnarok.Presentation.Utility
 {
     /// <summary>
     /// WPFコントロール用の便利クラス

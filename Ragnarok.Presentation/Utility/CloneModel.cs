@@ -2,30 +2,25 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows;
+using System.Windows.Data;
 
 using Ragnarok.Utility;
+using Ragnarok.ObjectModel;
 
-namespace Ragnarok.ObjectModel
+namespace Ragnarok.Presentation.Utility
 {
     /// <summary>
     /// あるオブジェクトが持つプロパティとその値をすべて
     /// コピーするオブジェクトクラスです。
     /// </summary>
-    public class CloneObject : DynamicDictionary
+    public class CloneModel : DynamicDictionary
     {
-        /// <summary>
-        /// コピー元のオブジェクト型を取得します。
-        /// </summary>
-        public Type SourceType
-        {
-            get;
-            private set;
-        }
-
         /// <summary>
         /// <paramref ref="target"/>のプロパティ一覧を作成します。
         /// </summary>
-        public static IEnumerable<DynamicPropertyInfo> CreatePropertyList(object target)
+        public static IEnumerable<DynamicPropertyInfo> CreatePropertyList(
+            DependencyObject target)
         {
             if (target == null)
             {
@@ -41,6 +36,24 @@ namespace Ragnarok.ObjectModel
                         _.Key,
                         _.Value.PropertyType,
                         _.Value.GetValue(target)));
+        }
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public CloneModel(DependencyObject target)
+            : base(CreatePropertyList(target), false)
+        {
+            SourceType = target.GetType();
+        }
+
+        /// <summary>
+        /// コピー元のオブジェクト型を取得します。
+        /// </summary>
+        public Type SourceType
+        {
+            get;
+            private set;
         }
 
         /// <summary>
@@ -61,15 +74,6 @@ namespace Ragnarok.ObjectModel
 
             ChangedPropertyNames.ForEach(_ =>
                 MethodUtil.SetPropertyValue(target, _, this[_]));
-        }
-
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        public CloneObject(object target)
-            : base(CreatePropertyList(target), false)
-        {
-            SourceType = target.GetType();
         }
     }
 }

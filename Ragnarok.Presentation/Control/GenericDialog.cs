@@ -219,7 +219,7 @@ namespace Ragnarok.Presentation.Control
         {
             base.OnSourceInitialized(e);
 
-            ControlUtil.RemoveIcon(this);
+            Utility.ControlUtil.RemoveIcon(this);
         }
 
         /// <summary>
