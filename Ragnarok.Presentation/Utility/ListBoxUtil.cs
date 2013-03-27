@@ -11,7 +11,7 @@ namespace Ragnarok.Presentation.Utility
     /// <summary>
     /// This class contains a few useful extenders for the ListBox
     /// </summary>
-    public sealed class ListBoxUtil : DependencyObject
+    public static class ListBoxUtil
     {
         /// <summary>
         /// リストを自動で終端までスクロールさせるための添付プロパティです。

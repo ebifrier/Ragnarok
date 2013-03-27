@@ -1,3 +1,14 @@
+2013-03-28  - Ver 2.0.6
+
+	* Ragnarok.Presentation/Control/ColorButton.cs: 色表示のためのボタンク
+	ラスを追加しました。
+	* Ragnarok.Presentation/Control/CustomAdorner.cs: コントロールサイズに
+	フィットするようなAdornerクラスを追加しました。
+	* Ragnarok.Presentation/Utility/TextBoxUtil.cs: TextBoxのテキスト表示が
+	常に右端になるようなオプションを追加しました。
+	* Ragnarok.Presentation/Utility/FrameTimer.cs: フレーム時間ではなくFPS
+	で間隔を設定するようにしました。
+
 2013-03-26  - Ver 2.0.5
 
 	* Ragnarok.Presentation/Utility/CloneModel.cs: 

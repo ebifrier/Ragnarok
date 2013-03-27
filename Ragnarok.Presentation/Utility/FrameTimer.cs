@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Threading;
@@ -47,12 +48,20 @@ namespace Ragnarok.Presentation.Utility
         public event EventHandler<FrameEventArgs> EnterFrame;
 
         /// <summary>
+        /// 所望するFPSを取得または設定します。
+        /// </summary>
+        public double TargetFPS
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// フレーム時間を取得または設定します。
         /// </summary>
         public TimeSpan FrameTime
         {
-            get;
-            set;
+            get { return TimeSpan.FromSeconds(1.0 / TargetFPS); }
         }
 
         /// <summary>
@@ -83,13 +92,13 @@ namespace Ragnarok.Presentation.Utility
             var sleepTime = waitTime - TimeSpan.FromMilliseconds(3);
             if (sleepTime > TimeSpan.Zero)
             {
-                System.Threading.Thread.Sleep(sleepTime);
+                Thread.Sleep(sleepTime);
             }
 
             var nextTime = FrameTime - TimeSpan.FromMilliseconds(1);
             while (DateTime.Now - this.prevTime < nextTime)
             {
-                System.Threading.Thread.Sleep(0);
+                Thread.Sleep(0);
             }
 
             // ぴったりに終わったと仮定します。
@@ -103,13 +112,15 @@ namespace Ragnarok.Presentation.Utility
         /// </summary>
         private void UpdateFrame(object sender, EventArgs e)
         {
+            // フレーム時間が長すぎると、バグるエフェクトがあるため、
+            // 時間を適度な短さに調整しています。
             var MaxFrameTime = TimeSpan.FromMilliseconds(1000.0 / 20);
 
             // アイドル時間を強制的に発生させます。
             using (new ActionOnDispose(PrepareToNextRender))
             {
                 var diff = WaitNextFrame();
-                diff = (diff < MaxFrameTime ? diff : MaxFrameTime);
+                diff = MathEx.Min(diff, MaxFrameTime);
 
                 // 各フレームの処理を行います。
                 EnterFrame.SafeRaiseEvent(this, new FrameEventArgs(diff));
@@ -130,8 +141,7 @@ namespace Ragnarok.Presentation.Utility
         public FrameTimer(Dispatcher dispatcher)
         {
             this.dispatcher = dispatcher;
-
-            FrameTime = TimeSpan.FromSeconds(1.0 / 60);
+            TargetFPS = 60;
 
             ComponentDispatcher.ThreadIdle += UpdateFrame;
         }

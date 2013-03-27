@@ -55,6 +55,8 @@
   <ItemGroup>
     <Compile Include="Behaviors\Behavior.cs" />
     <Compile Include="Behaviors\ScenarioBehavior.cs" />
+    <Compile Include="Control\ColorButton.cs" />
+    <Compile Include="Control\CustomAdorner.cs" />
     <Compile Include="Utility\CloneModel.cs" />
     <Compile Include="Control\MessageStatusBar.cs" />
     <Compile Include="Control\VersionWindow.xaml.cs">
@@ -136,6 +138,7 @@
     <Compile Include="Utility\KeyHook.cs" />
     <Compile Include="Utility\ListBoxUtil.cs" />
     <Compile Include="Utility\WebBrowserUtil.cs" />
+    <Compile Include="Utility\TextBoxUtil.cs" />
     <Compile Include="VisualObject\Control\BackgroundCore.cs" />
     <Compile Include="VisualObject\Control\VisualBackground.cs" />
     <Compile Include="VisualObject\EffectImageCache.cs" />
@@ -155,6 +158,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Control\ColorButton.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Control\ColorDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
