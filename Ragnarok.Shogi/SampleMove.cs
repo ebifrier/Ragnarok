@@ -15,7 +15,7 @@ namespace Ragnarok.Shogi
         /// 先手：久米可六
         /// 後手：天野宗歩
         /// </summary>
-        public static string RecliningSilver =
+        public static readonly string RecliningSilver =
             "▲７六歩 △８四歩 ▲２六歩 △８五歩 ▲２五歩 △３二金" +
             "▲７七角 △３四歩 ▲８八銀 △７七角成 ▲同　銀 △２二銀" +
             "▲４八銀 △３三銀 ▲６八玉 △６二銀 ▲７八玉 △４二玉" +
@@ -37,7 +37,7 @@ namespace Ragnarok.Shogi
         /// 先手：天野留次郎
         /// 後手：吉田多三郎
         /// </summary>
-        public static string MyTerritoryBishop =
+        public static readonly string MyTerritoryBishop =
             "▲２六歩 △８四歩 ▲２五歩 △８五歩 ▲７六歩 △３二金" +
             "▲７八金 △６二銀 ▲７七角 △５四歩 ▲２四歩 △同　歩" +
             "▲同　飛 △３四歩 ▲６八銀 △５三銀 ▲２八飛 △２三歩" +
@@ -58,7 +58,7 @@ namespace Ragnarok.Shogi
         /// 先手：藤森　保（東京）
         /// 後手：菱田正泰（三重）
         /// </summary>
-        public static string Normal3 =
+        public static readonly string Normal3 =
             "▲７六歩 △８四歩 ▲７八飛 △８五歩 ▲７七角 △３四歩" +
             "▲６六歩 △６二銀 ▲６八銀 △４二玉 ▲４八玉 △３二玉" +
             "▲３八玉 △５四歩 ▲２八玉 △１四歩 ▲１六歩 △５三銀" +
@@ -83,7 +83,7 @@ namespace Ragnarok.Shogi
         /// 先手：土居市太郎七段
         /// 後手：阪田三吉八段
         /// </summary>
-        public static string Sample1 =
+        public static readonly string Sample1 =
             "▲７六歩△３四歩▲２六歩△３二金▲２五歩△８八角成" +
             "▲同　銀△２二銀▲７七銀△４二玉▲４八銀△３三銀" +
             "▲７八金△６二銀▲６八玉△９四歩▲９六歩△６四歩" +
@@ -106,7 +106,7 @@ namespace Ragnarok.Shogi
         /// 先手：co-danaka-kun
         /// 後手：bonanza6.0 core i7 980x@4GHz
         /// </summary>
-        public static string IriTama =
+        public static readonly string IriTama =
             "▲７六歩 △８四歩 ▲６八銀 △３四歩 ▲６六歩 △６二銀 ▲５六歩 △５四歩" +
             "▲４八銀 △４二銀 ▲５八金右 △３二金 ▲７八金 △４一玉 ▲６九玉 △５二金" +
             "▲７七銀 △３三銀 ▲７九角 △３一角 ▲３六歩 △４四歩 ▲６七金右 △７四歩" +
@@ -135,7 +135,7 @@ namespace Ragnarok.Shogi
         /// 先手：あなた
         /// 後手：Bonanza
         /// </summary>
-        public static string YoneTama =
+        public static readonly string YoneTama =
             "▲４八玉△３二飛▲６八銀△３四歩▲３八銀△６二玉" +
             "▲４六歩△７二玉▲５六歩△３五歩▲４七銀△４二銀" +
             "▲５七銀△８二玉▲２六歩△９二香▲３八金△９一玉" +
@@ -171,7 +171,7 @@ namespace Ragnarok.Shogi
         /// 先手：あなた
         /// 後手：Bonanza
         /// </summary>
-        public static string BonaTest =
+        public static readonly string BonaTest =
             "▲７六歩△３四歩▲２六歩△８四歩▲６六歩△８五歩" +
             "▲７七角△６二銀▲２五歩△３三角▲７八金△３二金" +
             "▲５八金△４一玉▲６七金右△２二銀▲４八銀△３一玉" +
@@ -203,13 +203,43 @@ namespace Ragnarok.Shogi
             "▲８一龍";
 
         /// <summary>
+        /// 開始日時：2011/07/25 14:43:58
+        /// 先手：あなた
+        /// 後手：Bonanza
+        /// </summary>
+        public static readonly string Tsume =
+            "▲７六歩△３四歩▲２六歩△４四歩▲４八銀△４二銀" +
+            "▲５六歩△５二飛▲６八玉△６二玉▲７八玉△７二玉" +
+            "▲５八金右△４三銀▲９六歩△９四歩▲８六歩△８二玉" +
+            "▲８七玉△３五歩▲２五歩△３三角▲７八銀△３二飛" +
+            "▲５七銀△４二角▲４六銀△５二金左  ▲７九角△３四銀" +
+            "▲１六歩△５四歩▲２六飛△４五歩▲５七銀△７二銀" +
+            "▲８八角△３三桂▲２四歩△２二飛▲２三歩成  △同　飛" +
+            "▲同飛成△同　銀▲２一飛△２七飛▲１七桂△２九飛成" +
+            "▲３六歩△８四歩▲７七角△１九龍▲２三飛成  △１七龍" +
+            "▲３三角成  △同　角▲同　龍△８五歩▲同　歩△８六歩" +
+            "▲同　玉△８八角▲６六桂△９九角成  ▲８四歩△１六龍" +
+            "▲３一龍△５一香▲４四角△６二桂▲１一角成  △８三歩" +
+            "▲９七玉△９五歩▲７四桂△同　桂▲９九馬△９六歩" +
+            "▲８八玉△９七歩成  ▲同　桂△８六香▲７九玉△９七香成" +
+            "▲６八玉△８四歩▲４四馬△８八香成  ▲８九香△７八成香" +
+            "▲同　金△１九龍▲５九香△９八銀▲８八香△９六桂" +
+            "▲９四銀△８八成香  ▲同　金△同桂成▲同　馬△６五桂" +
+            "▲８三歩△同　銀▲同銀成△同　玉▲７五桂△７二玉" +
+            "▲９四角△６二玉▲４四馬△５三金打  ▲同　馬△同　玉" +
+            "▲３三龍△４三角▲４四銀△６二玉▲５三金△７一玉" +
+            "▲６一角成  △同　玉▲６二金打  △同　金▲同　金△同　玉" +
+            "▲４二龍△５二金▲５三銀成△７一玉▲５一龍△同　金" +
+            "▲７二香△同　玉▲６三成銀△７一玉▲７二金";
+
+        /// <summary>
         /// 長手数のサンプル。
         /// 
         /// 開始日時：1969/02/03
         /// 先手：芹沢博文
         /// 後手：原田泰夫
         /// </summary>
-        public static string LongSample =
+        public static readonly string LongSample =
             "▲７六歩△８四歩▲６八銀△３四歩▲７七銀△３五歩" +
             "▲５六歩△３二飛▲５八飛△６二玉▲４八金△７二銀" +
             "▲４九玉△７一玉▲５五歩△５二金左▲６六銀△４二銀" +

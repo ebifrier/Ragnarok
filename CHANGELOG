@@ -1,3 +1,10 @@
+2013-04-04  - Ver 2.0.7
+
+	* Ragnarok.Presentation/Control/ColorDialog.xaml: データバインディング
+	の方法を少し変更しました。
+	* Ragnarok.Presentation/RagnarokCommands.cs: バージョン確認コマンドを追
+	加しました。
+
 2013-03-28  - Ver 2.0.6
 
 	* Ragnarok.Presentation/Control/ColorButton.cs: 色表示のためのボタンク
