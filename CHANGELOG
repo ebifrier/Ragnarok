@@ -1,3 +1,8 @@
+2013-04-07  - Ver 2.0.9
+
+	* Ragnarok.Shogi/Csa: CsaディレクトリとCSAプロトコルに関するファイルを
+	いくつか追加しました。
+
 2013-04-07  - Ver 2.0.8
 
 	* Ragnarok/EnumEx.cs: GetEnumAttributeをGetAttributeに改名し、任意の型
