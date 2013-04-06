@@ -46,8 +46,6 @@ namespace Ragnarok.Presentation.Control
         {
             InitializeComponent();
 
-            RagnarokCommands.Bind(this);
-
             AssemblyAccessor = new AssemblyAccessor(assemblyName, true);
         }
     }

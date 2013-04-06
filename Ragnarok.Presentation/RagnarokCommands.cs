@@ -78,41 +78,31 @@ namespace Ragnarok.Presentation
                 typeof(FrameworkElement));
 
         /// <summary>
-        /// デフォルトのコマンドを接続します。
-        /// </summary>
-        public static void Bind(UIElement element)
-        {
-            Bind(element.CommandBindings);
-        }
-
-        /// <summary>
-        /// デフォルトのコマンドを接続します。
-        /// </summary>
-        public static void Bind(CommandBindingCollection bindings)
-        {
-            bindings.Add(
-                new CommandBinding(
-                    RagnarokCommands.OK,
-                    ExecuteYes));
-            bindings.Add(
-                new CommandBinding(
-                    RagnarokCommands.Cancel,
-                    ExecuteNo));
-            bindings.Add(
-                new CommandBinding(
-                    RagnarokCommands.Yes,
-                    ExecuteYes));
-            bindings.Add(
-                new CommandBinding(
-                    RagnarokCommands.No,
-                    ExecuteNo));
-        }
-
-        /// <summary>
         /// デフォルトコマンドをバインディングします。
         /// </summary>
         static RagnarokCommands()
         {
+            CommandManager.RegisterClassCommandBinding(
+                typeof(Window),
+                new CommandBinding(
+                    RagnarokCommands.OK,
+                    ExecuteYes));
+            CommandManager.RegisterClassCommandBinding(
+                typeof(Window),
+                new CommandBinding(
+                    RagnarokCommands.Cancel,
+                    ExecuteNo));
+            CommandManager.RegisterClassCommandBinding(
+                typeof(Window),
+                new CommandBinding(
+                    RagnarokCommands.Yes,
+                    ExecuteYes));
+            CommandManager.RegisterClassCommandBinding(
+                typeof(Window),
+                new CommandBinding(
+                    RagnarokCommands.No,
+                    ExecuteNo));
+
             CommandManager.RegisterClassCommandBinding(
                 typeof(Window),
                 new CommandBinding(

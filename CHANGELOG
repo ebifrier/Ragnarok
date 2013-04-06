@@ -1,5 +1,7 @@
 2013-04-07  - Ver 2.0.9
 
+	* Ragnarok.Presentation/RagnarokCommands.cs: Bindメソッドを削除し、クラ
+	スごとに登録されたコマンドのみを扱うようにしました。
 	* Ragnarok.Shogi/Csa: CsaディレクトリとCSAプロトコルに関するファイルを
 	いくつか追加しました。
 

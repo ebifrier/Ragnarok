@@ -50,7 +50,6 @@ namespace Ragnarok.Presentation.Control
         public ColorDialog(Color? color = null)
         {
             InitializeComponent();
-            RagnarokCommands.Bind(this);
 
             if (color != null)
             {
