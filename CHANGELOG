@@ -1,3 +1,10 @@
+2013-04-07  - Ver 2.0.8
+
+	* Ragnarok/EnumEx.cs: GetEnumAttributeをGetAttributeに改名し、任意の型
+	の列挙子属性を取得できるようにしました。
+	* Ragnarok.Presentation/RagnarokCommands.cs: 一部のコマンドをクラス付属
+	のコマンドとし、CommandBindingsへの接続を不要にしました。
+
 2013-04-04  - Ver 2.0.7
 
 	* Ragnarok.Presentation/Control/ColorDialog.xaml: データバインディング

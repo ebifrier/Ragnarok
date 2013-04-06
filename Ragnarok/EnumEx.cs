@@ -61,9 +61,10 @@ namespace Ragnarok
         }
 
         /// <summary>
-        /// 列挙値の<see ref="LabelDescriptionAttribute"/>属性を取得します。
+        /// 列挙値の<see ref="TAttribute"/>属性を取得します。
         /// </summary>
-        public static LabelDescriptionAttribute GetEnumAttribute(object value)
+        public static TAttribute GetAttribute<TAttribute>(object value)
+            where TAttribute : Attribute
         {
             if (value == null)
             {
@@ -82,22 +83,22 @@ namespace Ragnarok
             // 説明文を取得します。
             var enumInfo = enumType.GetField(enumName);
             var attributes = enumInfo.GetCustomAttributes(
-                typeof(LabelDescriptionAttribute),
+                typeof(TAttribute),
                 false);
             if (attributes.Length == 0)
             {
                 return null;
             }
 
-            return (LabelDescriptionAttribute)attributes[0];
+            return (TAttribute)attributes[0];
         }
 
         /// <summary>
         /// 列挙値の説明文を取得します。
         /// </summary>
-        public static string GetEnumDescription(object value)
+        public static string GetDescription(object value)
         {
-            var attribute = GetEnumAttribute(value);
+            var attribute = GetAttribute<LabelDescriptionAttribute>(value);
             if (attribute == null)
             {
                 return null;
@@ -109,9 +110,9 @@ namespace Ragnarok
         /// <summary>
         /// 列挙値のラベルを取得します。
         /// </summary>
-        public static string GetEnumLabel(object value)
+        public static string GetLabel(object value)
         {
-            var attribute = GetEnumAttribute(value);
+            var attribute = GetAttribute<LabelDescriptionAttribute>(value);
             if (attribute == null)
             {
                 return null;

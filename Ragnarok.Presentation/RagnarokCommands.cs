@@ -106,20 +106,30 @@ namespace Ragnarok.Presentation
                 new CommandBinding(
                     RagnarokCommands.No,
                     ExecuteNo));
+        }
 
-            bindings.Add(
+        /// <summary>
+        /// デフォルトコマンドをバインディングします。
+        /// </summary>
+        static RagnarokCommands()
+        {
+            CommandManager.RegisterClassCommandBinding(
+                typeof(Window),
                 new CommandBinding(
                     RagnarokCommands.NavigateUrl,
                     ExecuteNavigateUrl));
-            bindings.Add(
+            CommandManager.RegisterClassCommandBinding(
+                typeof(Window),
                 new CommandBinding(
                     RagnarokCommands.SendErrorLog,
                     ExecuteSendErrorLog));
-            bindings.Add(
+            CommandManager.RegisterClassCommandBinding(
+                typeof(Window),
                 new CommandBinding(
                     RagnarokCommands.CheckToUpdate,
                     ExecuteCheckToUpdate));
-            bindings.Add(
+            CommandManager.RegisterClassCommandBinding(
+                typeof(Window),
                 new CommandBinding(
                     RagnarokCommands.ShowVersion,
                     ExecuteShowVersion));

@@ -24,7 +24,7 @@ namespace Ragnarok.Utility
         /// </summary>
         public string Label
         {
-            get { return EnumEx.GetEnumLabel(Value); }
+            get { return EnumEx.GetLabel(Value); }
         }
 
         /// <summary>
@@ -32,7 +32,7 @@ namespace Ragnarok.Utility
         /// </summary>
         public string Description
         {
-            get { return EnumEx.GetEnumDescription(Value); }
+            get { return EnumEx.GetDescription(Value); }
         }
 
         /// <summary>

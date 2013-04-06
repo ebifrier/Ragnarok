@@ -30,6 +30,8 @@ using System.Windows.Markup;
 
 #if !MONO
 [assembly: XmlnsDefinition("http://schemas.garnet-alice.net/ragnarok/xaml/presentation", "Ragnarok.Shogi")]
+[assembly: XmlnsDefinition("http://schemas.garnet-alice.net/ragnarok/xaml/presentation", "Ragnarok.Shogi.Csa")]
+[assembly: XmlnsDefinition("http://schemas.garnet-alice.net/ragnarok/xaml/presentation", "Ragnarok.Shogi.File")]
 #endif
 
 // アセンブリのバージョン情報は、以下の 4 つの値で構成されています:

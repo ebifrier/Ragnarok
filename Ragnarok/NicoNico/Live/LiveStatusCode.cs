@@ -178,7 +178,7 @@ namespace Ragnarok.NicoNico.Live
         /// </summary>
         public static string GetDescription(LiveStatusCode code)
         {
-            var description = EnumEx.GetEnumDescription(code);
+            var description = EnumEx.GetDescription(code);
             if (string.IsNullOrEmpty(description))
             {
                 return string.Format(
