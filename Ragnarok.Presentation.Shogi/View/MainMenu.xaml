@@ -14,31 +14,31 @@
         <Button Style="{StaticResource ToolBarButtonStyle}"
                 Content="pack://application:,,,/Ragnarok.Presentation.Shogi;component/Resources/Image/move_goto_first.png"
                 ToolTip="開始局面へ"
-                Command="{x:Static svm:Commands.GotoFirstState}" />
+                Command="{x:Static svm:ShogiCommands.GotoFirstState}" />
         <Button Style="{StaticResource ToolBarButtonStyle}"
                 Content="pack://application:,,,/Ragnarok.Presentation.Shogi;component/Resources/Image/move_undo_continue.png"
                 ToolTip="連続して戻す"
-                Command="{x:Static svm:Commands.MoveUndoContinue}" />
+                Command="{x:Static svm:ShogiCommands.MoveUndoContinue}" />
         <Button Style="{StaticResource ToolBarButtonStyle}"
                 Content="pack://application:,,,/Ragnarok.Presentation.Shogi;component/Resources/Image/move_undo.png"
                 ToolTip="１手戻す"
-                Command="{x:Static svm:Commands.MoveUndo}" />
+                Command="{x:Static svm:ShogiCommands.MoveUndo}" />
         <Button Style="{StaticResource ToolBarButtonStyle}"
                 Content="pack://application:,,,/Ragnarok.Presentation.Shogi;component/Resources/Image/move_pause.png"
                 ToolTip="再現停止"
-                Command="{x:Static svm:Commands.MoveStop}" />
+                Command="{x:Static svm:ShogiCommands.MoveStop}" />
         <Button Style="{StaticResource ToolBarButtonStyle}"
                 Content="pack://application:,,,/Ragnarok.Presentation.Shogi;component/Resources/Image/move_redo.png"
                 ToolTip="１手進める"
-                Command="{x:Static svm:Commands.MoveRedo}" />
+                Command="{x:Static svm:ShogiCommands.MoveRedo}" />
         <Button Style="{StaticResource ToolBarButtonStyle}"
                 Content="pack://application:,,,/Ragnarok.Presentation.Shogi;component/Resources/Image/move_redo_continue.png"
                 ToolTip="連続して進める"
-                Command="{x:Static svm:Commands.MoveRedoContinue}" />
+                Command="{x:Static svm:ShogiCommands.MoveRedoContinue}" />
         <Button Style="{StaticResource ToolBarButtonStyle}"
                 Content="pack://application:,,,/Ragnarok.Presentation.Shogi;component/Resources/Image/move_goto_last.png"
                 ToolTip="最終局面へ"
-                Command="{x:Static svm:Commands.GotoLastState}" />
+                Command="{x:Static svm:ShogiCommands.GotoLastState}" />
     </ToolBar>
 
     <!-- 手数を表示するツールバーです。-->

@@ -1,3 +1,10 @@
+2013-04-10  - Ver 2.0.11
+
+	* Ragnarok.Presentation.Shogi/AutoPlay.cs: 自動再生用のオブジェクトを修
+	正しました。
+	* Ragnarok.Presentation.Shogi/EnumTypes.cs: 列挙子定義をShogiControl.cs
+	から移動し、名前空間を変更しました。
+
 2013-04-09  - Ver 2.0.10
 
 	* Ragnarok.Extra/FlintSharp: ２Ｄ用のパーティクルシステムを

@@ -38,19 +38,25 @@ namespace Ragnarok.Presentation.Shogi
     /// <summary>
     /// 指し手の自動再生時に使われます。再生用の変化を保存します。
     /// </summary>
-    public sealed class AutoPlay
+    public class AutoPlay
     {
         private List<BoardMove> moveList;
-        private IEnumerator<bool> enumerator;
         private int moveIndex;
         private int maxMoveCount;
-        private TimeSpan basePosition;
-        private TimeSpan elapsed;
 
         /// <summary>
         /// 再生完了時や途中停止時に呼ばれるイベントです。
         /// </summary>
         public event EventHandler Stopped;
+
+        /// <summary>
+        /// 自動更新に使われる列挙子を取得または設定します。
+        /// </summary>
+        public IEnumerator<bool> UpdateEnumerator
+        {
+            get;
+            set;
+        }
 
         /// <summary>
         /// 背景を取得します。
@@ -124,31 +130,20 @@ namespace Ragnarok.Presentation.Shogi
         }
 
         /// <summary>
-        /// 基準時間からの経過時刻を取得します。
+        /// 現在の再生基準位置を取得します。
         /// </summary>
-        private TimeSpan PositionFromBase
+        protected TimeSpan BasePosition
         {
-            get { return (Position - this.basePosition); }
+            get;
+            set;
         }
 
         /// <summary>
-        /// 自動再生の次の手を取得します。
+        /// 基準時間からの経過時刻を取得します。
         /// </summary>
-        private BoardMove NextMove()
+        protected TimeSpan PositionFromBase
         {
-            if (!HasMove)
-            {
-                return null;
-            }
-
-            // アンドゥやリドゥの場合は、指し手がありません。
-            if (AutoPlayType != AutoPlayType.Normal)
-            {
-                this.moveIndex++;
-                return null;
-            }
-
-            return this.moveList[this.moveIndex++];
+            get { return (Position - BasePosition); }
         }
 
         /// <summary>
@@ -156,7 +151,7 @@ namespace Ragnarok.Presentation.Shogi
         /// </summary>
         private void DoMove()
         {
-            if (Board == null)
+            if (!HasMove || Board == null)
             {
                 return;
             }
@@ -164,16 +159,18 @@ namespace Ragnarok.Presentation.Shogi
             switch (AutoPlayType)
             {
                 case AutoPlayType.Normal:
-                    var move = NextMove();
+                    var move = this.moveList[this.moveIndex++];
                     if (move != null)
                     {
                         Board.DoMove(move);
                     }
                     break;
                 case AutoPlayType.Undo:
+                    this.moveIndex += 1;
                     Board.Undo();
                     break;
                 case AutoPlayType.Redo:
+                    this.moveIndex += 1;
                     Board.Redo();
                     break;
             }
@@ -200,18 +197,18 @@ namespace Ragnarok.Presentation.Shogi
         /// <summary>
         /// コルーチン用のオブジェクトを返します。
         /// </summary>
-        private IEnumerable<bool> GetUpdateEnumerator()
+        protected IEnumerable<bool> GetUpdateEnumerator()
         {
             // 最初に背景色のみを更新します。
             if (IsChangeBackground && Background != null)
             {
                 while (true)
                 {
-                    Position += this.elapsed;
                     var opacity = GetBackgroundOpacity(PositionFromBase, false);
                     if (opacity >= 1.0)
                     {
-                        this.basePosition += BackgroundFadeInterval;
+                        BasePosition += BackgroundFadeInterval;
+                        Background.Opacity = opacity;
                         break;
                     }
 
@@ -220,32 +217,38 @@ namespace Ragnarok.Presentation.Shogi
                 }
             }
 
-            // 最後の指し手を動かした後に一手分だけ待ちます。
-            // エフェクトを表示するためです。
-            var didLastInterval = false;
-            while (HasMove || !didLastInterval)
+            // 最初の指し手はすぐに表示します。
+            DoMove();
+
+            while (HasMove)
             {
-                Position += this.elapsed;
                 if (PositionFromBase > Interval)
                 {
-                    this.basePosition += Interval;
-                    didLastInterval = !HasMove; // DoMoveの前に呼ぶ
-
+                    BasePosition += Interval;
                     DoMove();
                 }
 
                 yield return true;
             }
 
+            // 最後の指し手を動かした後に一手分だけ待ちます。
+            // エフェクトを表示するためです。
+            while (PositionFromBase < Interval)
+            {
+                yield return true;
+            }
+            BasePosition += Interval;
+
             // 背景色をもとに戻します。
             if (IsChangeBackground && Background != null)
             {
                 while (true)
                 {
-                    Position += this.elapsed;
                     var opacity = GetBackgroundOpacity(PositionFromBase, true);
                     if (opacity <= 0.0)
                     {
+                        BasePosition += BackgroundFadeInterval;
+                        Background.Opacity = opacity;
                         break;
                     }
 
@@ -260,22 +263,22 @@ namespace Ragnarok.Presentation.Shogi
         /// </summary>
         public bool Update(TimeSpan elapsed)
         {
-            if (this.enumerator == null)
+            if (UpdateEnumerator == null)
             {
                 return false;
             }
 
             // コルーチンを進めます。
-            if (!this.enumerator.MoveNext())
+            if (!UpdateEnumerator.MoveNext())
             {
                 RaiseStopped();
 
-                this.enumerator = null;
+                UpdateEnumerator = null;
                 return false;
             }
-            
-            this.elapsed = elapsed;
-            return this.enumerator.Current;
+
+            Position += elapsed;
+            return UpdateEnumerator.Current;
         }
 
         /// <summary>
@@ -290,6 +293,8 @@ namespace Ragnarok.Presentation.Shogi
                 Util.SafeCall(() =>
                     handler(this, EventArgs.Empty));
             }
+
+            WPFUtil.InvalidateCommand();
         }
 
         /// <summary>
@@ -333,14 +338,12 @@ namespace Ragnarok.Presentation.Shogi
         /// </summary>
         private AutoPlay(Board board)
         {
+            UpdateEnumerator = GetUpdateEnumerator().GetEnumerator();
             Board = board;
             Interval = TimeSpan.FromSeconds(1.0);
             BackgroundFadeInterval = TimeSpan.FromSeconds(0.5);
             Position = TimeSpan.Zero;
-
-            this.basePosition = TimeSpan.Zero;
-            this.elapsed = TimeSpan.Zero;
-            this.enumerator = GetUpdateEnumerator().GetEnumerator();
+            BasePosition = TimeSpan.Zero;
         }
 
         /// <summary>

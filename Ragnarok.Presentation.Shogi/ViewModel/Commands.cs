@@ -16,7 +16,7 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
     /// <summary>
     /// コマンドを保持します。
     /// </summary>
-    public static class Commands
+    public static class ShogiCommands
     {
         /// <summary>
         /// 棋譜ファイルを読み込みます。
@@ -218,8 +218,8 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
 
             if (board == null || !board.Validate())
             {
-                DialogUtil.ShowError(
-                    "局面が正しくありません (ー_ー)");
+                //DialogUtil.ShowError(
+                //    "局面が正しくありません (ー_ー)");
                 return null;
             }
 
