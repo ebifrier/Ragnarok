@@ -38,7 +38,6 @@ namespace Ragnarok.Presentation.Utility
     /// </summary>
     public sealed class FrameTimer : IDisposable
     {
-        private Dispatcher dispatcher;
         private DateTime prevTime;
         private bool disposed;
 
@@ -50,6 +49,15 @@ namespace Ragnarok.Presentation.Utility
         /// <summary>
         /// 所望するFPSを取得または設定します。
         /// </summary>
+        public Dispatcher Dispatcher
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 所望するFPSを取得または設定します。
+        /// </summary>
         public double TargetFPS
         {
             get;
@@ -57,7 +65,7 @@ namespace Ragnarok.Presentation.Utility
         }
 
         /// <summary>
-        /// フレーム時間を取得または設定します。
+        /// フレーム時間を取得します。
         /// </summary>
         public TimeSpan FrameTime
         {
@@ -69,7 +77,7 @@ namespace Ragnarok.Presentation.Utility
         /// </summary>
         private void PrepareToNextRender()
         {
-            this.dispatcher.BeginInvoke(
+            Dispatcher.BeginInvoke(
                 new Action(() => { }),
                 DispatcherPriority.SystemIdle);
         }
@@ -112,15 +120,10 @@ namespace Ragnarok.Presentation.Utility
         /// </summary>
         private void UpdateFrame(object sender, EventArgs e)
         {
-            // フレーム時間が長すぎると、バグるエフェクトがあるため、
-            // 時間を適度な短さに調整しています。
-            var MaxFrameTime = TimeSpan.FromMilliseconds(1000.0 / 20);
-
             // アイドル時間を強制的に発生させます。
             using (new ActionOnDispose(PrepareToNextRender))
             {
                 var diff = WaitNextFrame();
-                diff = MathEx.Min(diff, MaxFrameTime);
 
                 // 各フレームの処理を行います。
                 EnterFrame.SafeRaiseEvent(this, new FrameEventArgs(diff));
@@ -128,22 +131,42 @@ namespace Ragnarok.Presentation.Utility
         }
 
         /// <summary>
+        /// タイマー処理を開始します。
+        /// </summary>
+        public void Start()
+        {
+            ComponentDispatcher.ThreadIdle += UpdateFrame;
+        }
+
+        /// <summary>
+        /// タイマー処理を停止します。
+        /// </summary>
+        public void Stop()
+        {
+            ComponentDispatcher.ThreadIdle -= UpdateFrame;
+        }
+
+        /// <summary>
         /// コンストラクタ
         /// </summary>
         public FrameTimer()
-            : this(WPFUtil.UIDispatcher)
+            : this(30, null, WPFUtil.UIDispatcher)
         {
         }
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public FrameTimer(Dispatcher dispatcher)
+        public FrameTimer(double fps, EventHandler<FrameEventArgs> handler,
+                          Dispatcher dispatcher)
         {
-            this.dispatcher = dispatcher;
-            TargetFPS = 60;
+            TargetFPS = fps;
+            Dispatcher = dispatcher;
 
-            ComponentDispatcher.ThreadIdle += UpdateFrame;
+            if (handler != null)
+            {
+                EnterFrame += handler;
+            }
         }
 
         /// <summary>
@@ -172,8 +195,8 @@ namespace Ragnarok.Presentation.Utility
             {
                 if (disposing)
                 {
+                    Stop();
                     EnterFrame = null;
-                    ComponentDispatcher.ThreadIdle -= UpdateFrame;
                 }
 
                 this.disposed = true;

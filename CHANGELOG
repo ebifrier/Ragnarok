@@ -1,3 +1,10 @@
+2013-04-09  - Ver 2.0.10
+
+	* Ragnarok.Extra/FlintSharp: ２Ｄ用のパーティクルシステムを
+	Ragnarok.Extraに統合しました。
+	* Ragnarok.Presentation/Utility/FrameTimer.cs: コンストラクタに与える引
+	数を少し変更しました。
+
 2013-04-07  - Ver 2.0.9
 
 	* Ragnarok.Presentation/RagnarokCommands.cs: Bindメソッドを削除し、クラ
