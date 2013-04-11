@@ -20,7 +20,7 @@ all:
 		mkdir $(OUTDIR); \
 	fi
 	cp ../Ragnarok/$(OUTDIR)/*.dll $(OUTDIR)
-	@gmcs *.cs Properties/*.cs File/*.cs $(CSFLAGS) -out:$(TARGET) $(LDFLAGS) $(LIBS) $^
+	@gmcs -recurse:*.cs $(CSFLAGS) -out:$(TARGET) $(LDFLAGS) $(LIBS) $^
 	chmod a-x $(TARGET)
 
 clean:
