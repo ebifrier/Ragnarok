@@ -20,51 +20,41 @@ namespace Ragnarok.Presentation.Control
     public partial class ColorDialog : Window
     {
         /// <summary>
+        /// 選択された色を扱う依存プロパティです。
+        /// </summary>
+        public static readonly DependencyProperty SelectedColorProperty =
+            DependencyProperty.Register(
+                "SelectedColor", typeof(Color), typeof(ColorDialog),
+                new FrameworkPropertyMetadata(Colors.Black,
+                    FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+
+        /// <summary>
         /// 選択された色を取得または設定します。
         /// </summary>
         public Color SelectedColor
         {
-            get
-            {
-                return this.colorPicker.SelectedColor;
-            }
-            set
-            {
-                this.colorPicker.SelectedColor = value;
-            }
+            get { return (Color)GetValue(SelectedColorProperty); }
+            set { SetValue(SelectedColorProperty, value); }
+        }
+
+        static ColorDialog()
+        {
+            TopmostProperty.OverrideMetadata(
+                typeof(ColorDialog),
+                new FrameworkPropertyMetadata(true));
         }
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public ColorDialog()
+        public ColorDialog(Color? color = null)
         {
             InitializeComponent();
 
-            CommandBindings.Add(
-                new CommandBinding(
-                    RagnarokCommands.OK,
-                    ExecuteOK));
-            CommandBindings.Add(
-                new CommandBinding(
-                    RagnarokCommands.Cancel,
-                    ExecuteCancel));
-        }
-
-        /// <summary>
-        /// OKボタン
-        /// </summary>
-        private void ExecuteOK(object sender, ExecutedRoutedEventArgs e)
-        {
-            DialogResult = true;
-        }
-
-        /// <summary>
-        /// キャンセルボタン
-        /// </summary>
-        private void ExecuteCancel(object sender, ExecutedRoutedEventArgs e)
-        {
-            DialogResult = false;
+            if (color != null)
+            {
+                SelectedColor = color.Value;
+            }
         }
     }
 }

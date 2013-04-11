@@ -3,9 +3,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:cp="clr-namespace:Ragnarok.Presentation.Control.ColorPicker"
         xmlns:w="clr-namespace:Ragnarok.Presentation"
-        mc:Ignorable="d" 
+        xmlns:cp="clr-namespace:Ragnarok.Presentation.Control.ColorPicker"
+        mc:Ignorable="d" Name="dialog"
         SizeToContent="WidthAndHeight" ResizeMode="NoResize"
         Title="色選択ダイアログ"
         d:DesignHeight="213" d:DesignWidth="384">
@@ -17,7 +17,9 @@
         
         <GroupBox Header="色設定">
             <Viewbox Width="350">
-                <cp:ColorPicker x:Name="colorPicker" />
+                <cp:ColorPicker SelectedColor="{Binding SelectedColor,
+                                                        Mode=TwoWay,
+                                                        ElementName=dialog}" />
             </Viewbox>
         </GroupBox>
 

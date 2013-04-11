@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 using Ragnarok;
 using Ragnarok.Utility;
@@ -46,6 +47,10 @@ namespace Ragnarok.Shogi
             }
         }
 
+        private static readonly Regex SepRegex = new Regex(
+            @"([^同])\s+",
+            RegexOptions.IgnoreCase);
+
         /// <summary>
         /// 文字列から差し手オブジェクトを作成します。
         /// </summary>
@@ -64,15 +69,16 @@ namespace Ragnarok.Shogi
             var result = new List<Move>();
             while (text.Length > 0)
             {
-                var index = Util.IndexOfWhitespace(text);
+                var m = SepRegex.Match(text);
+                //var index = Util.IndexOfWhitespace(text);
                 var thisText = string.Empty;
                 var nextText = string.Empty;
 
                 // 空白までの文字列を解析します。
-                if (index >= 0)
+                if (m.Success)
                 {
-                    thisText = text.Substring(0, index);
-                    nextText = text.Substring(index + 1);
+                    thisText = text.Substring(0, m.Index + m.Groups[1].Length);
+                    nextText = text.Substring(m.Index + m.Length);
                 }
                 else
                 {

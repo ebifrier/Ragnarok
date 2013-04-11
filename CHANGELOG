@@ -1,3 +1,49 @@
+2013-04-10  - Ver 2.0.11
+
+	* Ragnarok.Presentation.Shogi/AutoPlay.cs: 自動再生用のオブジェクトを修
+	正しました。
+	* Ragnarok.Presentation.Shogi/EnumTypes.cs: 列挙子定義をShogiControl.cs
+	から移動し、名前空間を変更しました。
+
+2013-04-09  - Ver 2.0.10
+
+	* Ragnarok.Extra/FlintSharp: ２Ｄ用のパーティクルシステムを
+	Ragnarok.Extraに統合しました。
+	* Ragnarok.Presentation/Utility/FrameTimer.cs: コンストラクタに与える引
+	数を少し変更しました。
+
+2013-04-07  - Ver 2.0.9
+
+	* Ragnarok.Presentation/RagnarokCommands.cs: Bindメソッドを削除し、クラ
+	スごとに登録されたコマンドのみを扱うようにしました。
+	* Ragnarok.Shogi/Csa: CsaディレクトリとCSAプロトコルに関するファイルを
+	いくつか追加しました。
+
+2013-04-07  - Ver 2.0.8
+
+	* Ragnarok/EnumEx.cs: GetEnumAttributeをGetAttributeに改名し、任意の型
+	の列挙子属性を取得できるようにしました。
+	* Ragnarok.Presentation/RagnarokCommands.cs: 一部のコマンドをクラス付属
+	のコマンドとし、CommandBindingsへの接続を不要にしました。
+
+2013-04-04  - Ver 2.0.7
+
+	* Ragnarok.Presentation/Control/ColorDialog.xaml: データバインディング
+	の方法を少し変更しました。
+	* Ragnarok.Presentation/RagnarokCommands.cs: バージョン確認コマンドを追
+	加しました。
+
+2013-03-28  - Ver 2.0.6
+
+	* Ragnarok.Presentation/Control/ColorButton.cs: 色表示のためのボタンク
+	ラスを追加しました。
+	* Ragnarok.Presentation/Control/CustomAdorner.cs: コントロールサイズに
+	フィットするようなAdornerクラスを追加しました。
+	* Ragnarok.Presentation/Utility/TextBoxUtil.cs: TextBoxのテキスト表示が
+	常に右端になるようなオプションを追加しました。
+	* Ragnarok.Presentation/Utility/FrameTimer.cs: フレーム時間ではなくFPS
+	で間隔を設定するようにしました。
+
 2013-03-26  - Ver 2.0.5
 
 	* Ragnarok.Presentation/Utility/CloneModel.cs: 

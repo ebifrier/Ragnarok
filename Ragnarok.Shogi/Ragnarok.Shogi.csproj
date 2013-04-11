@@ -63,6 +63,13 @@
     <Compile Include="CapturedPieceBox.cs" />
     <Compile Include="CastleInfo.cs" />
     <Compile Include="CastleInfoTable.cs" />
+    <Compile Include="Csa\CsaClient.cs" />
+    <Compile Include="Csa\CsaCommandAttribute.cs" />
+    <Compile Include="Csa\CsaGame.cs" />
+    <Compile Include="Csa\CsaGameCommand.cs" />
+    <Compile Include="Csa\CsaMove.cs" />
+    <Compile Include="Csa\Tests\CsaMoveTest.cs" />
+    <Compile Include="Csa\Tests\CsaGameTest.cs" />
     <Compile Include="File\IKifuReader.cs" />
     <Compile Include="File\IKifuWriter.cs" />
     <Compile Include="KifuReader.cs" />
@@ -97,6 +104,7 @@
       <Name>Ragnarok</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

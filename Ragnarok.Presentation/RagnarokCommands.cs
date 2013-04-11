@@ -61,6 +61,14 @@ namespace Ragnarok.Presentation
                 "SendErrorLog",
                 typeof(FrameworkElement));
         /// <summary>
+        /// 新バージョンの確認を行います。
+        /// </summary>
+        public readonly static ICommand CheckToUpdate =
+            new RoutedUICommand(
+                "新バージョンの確認を行います。",
+                "CheckToUpdate",
+                typeof(FrameworkElement));
+        /// <summary>
         /// バージョンを表示します。
         /// </summary>
         public readonly static ICommand ShowVersion =
@@ -70,44 +78,48 @@ namespace Ragnarok.Presentation
                 typeof(FrameworkElement));
 
         /// <summary>
-        /// デフォルトのコマンドを接続します。
+        /// デフォルトコマンドをバインディングします。
         /// </summary>
-        public static void Bind(UIElement element)
+        static RagnarokCommands()
         {
-            Bind(element.CommandBindings);
-        }
-
-        /// <summary>
-        /// デフォルトのコマンドを接続します。
-        /// </summary>
-        public static void Bind(CommandBindingCollection bindings)
-        {
-            bindings.Add(
+            CommandManager.RegisterClassCommandBinding(
+                typeof(Window),
                 new CommandBinding(
                     RagnarokCommands.OK,
                     ExecuteYes));
-            bindings.Add(
+            CommandManager.RegisterClassCommandBinding(
+                typeof(Window),
                 new CommandBinding(
                     RagnarokCommands.Cancel,
                     ExecuteNo));
-            bindings.Add(
+            CommandManager.RegisterClassCommandBinding(
+                typeof(Window),
                 new CommandBinding(
                     RagnarokCommands.Yes,
                     ExecuteYes));
-            bindings.Add(
+            CommandManager.RegisterClassCommandBinding(
+                typeof(Window),
                 new CommandBinding(
                     RagnarokCommands.No,
                     ExecuteNo));
 
-            bindings.Add(
+            CommandManager.RegisterClassCommandBinding(
+                typeof(Window),
                 new CommandBinding(
                     RagnarokCommands.NavigateUrl,
                     ExecuteNavigateUrl));
-            bindings.Add(
+            CommandManager.RegisterClassCommandBinding(
+                typeof(Window),
                 new CommandBinding(
                     RagnarokCommands.SendErrorLog,
                     ExecuteSendErrorLog));
-            bindings.Add(
+            CommandManager.RegisterClassCommandBinding(
+                typeof(Window),
+                new CommandBinding(
+                    RagnarokCommands.CheckToUpdate,
+                    ExecuteCheckToUpdate));
+            CommandManager.RegisterClassCommandBinding(
+                typeof(Window),
                 new CommandBinding(
                     RagnarokCommands.ShowVersion,
                     ExecuteShowVersion));
@@ -197,6 +209,30 @@ namespace Ragnarok.Presentation
             {
                 DialogUtil.ShowError(ex,
                     "ダイアログの表示に失敗しました(ToT)");
+            }
+        }
+
+        /// <summary>
+        /// 新バージョンの確認を行います。
+        /// </summary>
+        /// <remarks>
+        /// ParameterにPresentationUpdaterのオブジェクトを
+        /// 指定してください。
+        /// </remarks>
+        private static void ExecuteCheckToUpdate(object sender,
+                                                 ExecutedRoutedEventArgs e)
+        {
+            try
+            {
+                var updater = (Update.PresentationUpdater)e.Parameter;
+                var timeout = TimeSpan.FromSeconds(20);
+
+                updater.CheckToUpdate(timeout);
+            }
+            catch (Exception ex)
+            {
+                Log.ErrorException(ex,
+                    "新バージョンの確認に失敗しました。");
             }
         }
 

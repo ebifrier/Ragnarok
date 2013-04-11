@@ -5,13 +5,10 @@ using System.Linq;
 using System.Text;
 using NUnit.Framework;
 
-using Ragnarok;
-using Ragnarok.Shogi;
-
-namespace Ragnarok.Test.Shogi
+namespace Ragnarok.Shogi.Tests
 {
     [TestFixture()]
-    internal class ShogiParserTest
+    internal sealed class ShogiParserTest
     {
         [Test()]
         public void ResignTest()
@@ -97,6 +94,32 @@ namespace Ragnarok.Test.Shogi
                 {
                     NewPosition = new Position(3, 2),
                     Piece = Piece.Kin,
+                });
+        }
+
+        [Test()]
+        public void ParseSameAsTest()
+        {
+            Assert.AreEqual(
+                ShogiParser.ParseMove("同歩", true),
+                new Move
+                {
+                    SameAsOld = true,
+                    Piece = Piece.Hu,
+                });
+            Assert.AreEqual(
+                ShogiParser.ParseMove("同　流", true),
+                new Move
+                {
+                    SameAsOld = true,
+                    Piece = Piece.Ryu,
+                });
+            Assert.AreEqual(
+                ShogiParser.ParseMove("DOU　馬", true),
+                new Move
+                {
+                    SameAsOld = true,
+                    Piece = Piece.Uma,
                 });
         }
 

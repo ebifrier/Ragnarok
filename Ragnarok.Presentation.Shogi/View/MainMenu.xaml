@@ -1,0 +1,53 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                    xmlns:r="http://schemas.garnet-alice.net/ragnarok/xaml/presentation"
+                    xmlns:sv="clr-namespace:Ragnarok.Presentation.Shogi.View"
+                    xmlns:svm="clr-namespace:Ragnarok.Presentation.Shogi.ViewModel">
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/Ragnarok.Presentation;component/Themes/Common.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
+    <!-- ツールバーです。-->
+    <ToolBar x:Key="toolBar" Band="1">
+        <Button Style="{StaticResource ToolBarButtonStyle}"
+                Content="pack://application:,,,/Ragnarok.Presentation.Shogi;component/Resources/Image/move_goto_first.png"
+                ToolTip="開始局面へ"
+                Command="{x:Static svm:ShogiCommands.GotoFirstState}" />
+        <Button Style="{StaticResource ToolBarButtonStyle}"
+                Content="pack://application:,,,/Ragnarok.Presentation.Shogi;component/Resources/Image/move_undo_continue.png"
+                ToolTip="連続して戻す"
+                Command="{x:Static svm:ShogiCommands.MoveUndoContinue}" />
+        <Button Style="{StaticResource ToolBarButtonStyle}"
+                Content="pack://application:,,,/Ragnarok.Presentation.Shogi;component/Resources/Image/move_undo.png"
+                ToolTip="１手戻す"
+                Command="{x:Static svm:ShogiCommands.MoveUndo}" />
+        <Button Style="{StaticResource ToolBarButtonStyle}"
+                Content="pack://application:,,,/Ragnarok.Presentation.Shogi;component/Resources/Image/move_pause.png"
+                ToolTip="再現停止"
+                Command="{x:Static svm:ShogiCommands.MoveStop}" />
+        <Button Style="{StaticResource ToolBarButtonStyle}"
+                Content="pack://application:,,,/Ragnarok.Presentation.Shogi;component/Resources/Image/move_redo.png"
+                ToolTip="１手進める"
+                Command="{x:Static svm:ShogiCommands.MoveRedo}" />
+        <Button Style="{StaticResource ToolBarButtonStyle}"
+                Content="pack://application:,,,/Ragnarok.Presentation.Shogi;component/Resources/Image/move_redo_continue.png"
+                ToolTip="連続して進める"
+                Command="{x:Static svm:ShogiCommands.MoveRedoContinue}" />
+        <Button Style="{StaticResource ToolBarButtonStyle}"
+                Content="pack://application:,,,/Ragnarok.Presentation.Shogi;component/Resources/Image/move_goto_last.png"
+                ToolTip="最終局面へ"
+                Command="{x:Static svm:ShogiCommands.GotoLastState}" />
+    </ToolBar>
+
+    <!-- 手数を表示するツールバーです。-->
+    <ToolBar x:Key="numberToolBar" Band="1">
+        <TextBlock Text="手数："
+                   VerticalAlignment="Center" />
+        <TextBox IsReadOnly="True" MinWidth="30"
+                 HorizontalContentAlignment="Right"
+                 BorderBrush="{x:Static Brushes.Gray}"
+                 Text="{Binding Board.MoveCount, Mode=OneWay}" />
+    </ToolBar>
+</ResourceDictionary>

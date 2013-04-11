@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Threading;
@@ -37,7 +38,6 @@ namespace Ragnarok.Presentation.Utility
     /// </summary>
     public sealed class FrameTimer : IDisposable
     {
-        private Dispatcher dispatcher;
         private DateTime prevTime;
         private bool disposed;
 
@@ -47,12 +47,29 @@ namespace Ragnarok.Presentation.Utility
         public event EventHandler<FrameEventArgs> EnterFrame;
 
         /// <summary>
-        /// フレーム時間を取得または設定します。
+        /// 所望するFPSを取得または設定します。
         /// </summary>
-        public TimeSpan FrameTime
+        public Dispatcher Dispatcher
         {
             get;
             set;
+        }
+
+        /// <summary>
+        /// 所望するFPSを取得または設定します。
+        /// </summary>
+        public double TargetFPS
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// フレーム時間を取得します。
+        /// </summary>
+        public TimeSpan FrameTime
+        {
+            get { return TimeSpan.FromSeconds(1.0 / TargetFPS); }
         }
 
         /// <summary>
@@ -60,7 +77,7 @@ namespace Ragnarok.Presentation.Utility
         /// </summary>
         private void PrepareToNextRender()
         {
-            this.dispatcher.BeginInvoke(
+            Dispatcher.BeginInvoke(
                 new Action(() => { }),
                 DispatcherPriority.SystemIdle);
         }
@@ -83,13 +100,13 @@ namespace Ragnarok.Presentation.Utility
             var sleepTime = waitTime - TimeSpan.FromMilliseconds(3);
             if (sleepTime > TimeSpan.Zero)
             {
-                System.Threading.Thread.Sleep(sleepTime);
+                Thread.Sleep(sleepTime);
             }
 
             var nextTime = FrameTime - TimeSpan.FromMilliseconds(1);
             while (DateTime.Now - this.prevTime < nextTime)
             {
-                System.Threading.Thread.Sleep(0);
+                Thread.Sleep(0);
             }
 
             // ぴったりに終わったと仮定します。
@@ -103,13 +120,10 @@ namespace Ragnarok.Presentation.Utility
         /// </summary>
         private void UpdateFrame(object sender, EventArgs e)
         {
-            var MaxFrameTime = TimeSpan.FromMilliseconds(1000.0 / 20);
-
             // アイドル時間を強制的に発生させます。
             using (new ActionOnDispose(PrepareToNextRender))
             {
                 var diff = WaitNextFrame();
-                diff = (diff < MaxFrameTime ? diff : MaxFrameTime);
 
                 // 各フレームの処理を行います。
                 EnterFrame.SafeRaiseEvent(this, new FrameEventArgs(diff));
@@ -117,23 +131,42 @@ namespace Ragnarok.Presentation.Utility
         }
 
         /// <summary>
+        /// タイマー処理を開始します。
+        /// </summary>
+        public void Start()
+        {
+            ComponentDispatcher.ThreadIdle += UpdateFrame;
+        }
+
+        /// <summary>
+        /// タイマー処理を停止します。
+        /// </summary>
+        public void Stop()
+        {
+            ComponentDispatcher.ThreadIdle -= UpdateFrame;
+        }
+
+        /// <summary>
         /// コンストラクタ
         /// </summary>
         public FrameTimer()
-            : this(WPFUtil.UIDispatcher)
+            : this(30, null, WPFUtil.UIDispatcher)
         {
         }
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public FrameTimer(Dispatcher dispatcher)
+        public FrameTimer(double fps, EventHandler<FrameEventArgs> handler,
+                          Dispatcher dispatcher)
         {
-            this.dispatcher = dispatcher;
+            TargetFPS = fps;
+            Dispatcher = dispatcher;
 
-            FrameTime = TimeSpan.FromSeconds(1.0 / 60);
-
-            ComponentDispatcher.ThreadIdle += UpdateFrame;
+            if (handler != null)
+            {
+                EnterFrame += handler;
+            }
         }
 
         /// <summary>
@@ -162,8 +195,8 @@ namespace Ragnarok.Presentation.Utility
             {
                 if (disposing)
                 {
+                    Stop();
                     EnterFrame = null;
-                    ComponentDispatcher.ThreadIdle -= UpdateFrame;
                 }
 
                 this.disposed = true;

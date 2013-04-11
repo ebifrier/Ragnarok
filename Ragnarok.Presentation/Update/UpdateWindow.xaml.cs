@@ -44,8 +44,6 @@ namespace Ragnarok.Presentation.Update
         public UpdateWindow()
         {
             InitializeComponent();
-
-            RagnarokCommands.Bind(this);
         }
     }
 }
