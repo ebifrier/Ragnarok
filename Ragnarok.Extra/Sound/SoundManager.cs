@@ -197,7 +197,7 @@ namespace Ragnarok.Extra.Sound
                 }
 
                 var fullpath = GetSoundFilePath(filename);
-                if (checkTime && !CanPlaySE(filename))
+                if (checkTime && !CanPlaySE(fullpath))
                 {
                     return;
                 }

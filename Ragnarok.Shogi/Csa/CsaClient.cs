@@ -27,7 +27,7 @@ namespace Ragnarok.Shogi.Csa
 
     public class CsaClient
     {
-        private readonly object SyncRoot = new object();
+        //private readonly object SyncRoot = new object();
         private TcpClient tcp = new TcpClient();
         private NetworkStream stream;
         private BinarySplitReader receivedData = new BinarySplitReader(2048);
