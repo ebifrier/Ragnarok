@@ -49,9 +49,13 @@ namespace Ragnarok.Presentation.Utility
                     // キャレット位置を最後にします。
                     textBox.CaretIndex = int.MaxValue;
 
-                    // 表示をスクロールさせます。
+                    // GetRectFromCharacterIndexは表示中の文字位置を
+                    // 取得しますが、ScrollToHorizontalOffsetは
+                    // 文字位置０基準とした座標系で値を設定します。
+                    // このため、基準位置をずらして値を設定しています。
                     var rect = textBox.GetRectFromCharacterIndex(textBox.CaretIndex);
-                    textBox.ScrollToHorizontalOffset(rect.Right);
+                    var position = textBox.HorizontalOffset + rect.Right;
+                    textBox.ScrollToHorizontalOffset(Math.Max(0.0, position));
                 });
 
             if ((bool)e.NewValue)

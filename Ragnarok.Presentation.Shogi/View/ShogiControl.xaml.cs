@@ -146,7 +146,8 @@ namespace Ragnarok.Presentation.Shogi.View
             DependencyProperty.Register(
                 "Board", typeof(Board), typeof(ShogiControl),
                 new FrameworkPropertyMetadata(
-                    default(Board),
+                    new Board(),
+                    FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
                     OnBoardChanged, OnCoerceBoard));
 
         /// <summary>
@@ -210,7 +211,9 @@ namespace Ragnarok.Presentation.Shogi.View
         public static readonly DependencyProperty ViewSideProperty =
             DependencyProperty.Register(
                 "ViewSide", typeof(BWType), typeof(ShogiControl),
-                new FrameworkPropertyMetadata(BWType.Black, OnViewSideChanged));
+                new FrameworkPropertyMetadata(BWType.Black,
+                    FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
+                    OnViewSideChanged));
 
         /// <summary>
         /// 番の手前側の先後を取得または設定します。
@@ -242,6 +245,7 @@ namespace Ragnarok.Presentation.Shogi.View
             DependencyProperty.Register(
                 "EditMode", typeof(EditMode), typeof(ShogiControl),
                 new FrameworkPropertyMetadata(EditMode.Normal,
+                    FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
                     (_, __) => WPFUtil.InvalidateCommand()));
 
         /// <summary>
@@ -259,7 +263,8 @@ namespace Ragnarok.Presentation.Shogi.View
         public static readonly DependencyProperty AutoPlayStateProperty =
             DependencyProperty.Register(
                 "AutoPlayState", typeof(AutoPlayState), typeof(ShogiControl),
-                new FrameworkPropertyMetadata(AutoPlayState.None));
+                new FrameworkPropertyMetadata(AutoPlayState.None,
+                    FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
         /// <summary>
         /// 将棋盤の状態を取得または設定します。
@@ -364,8 +369,9 @@ namespace Ragnarok.Presentation.Shogi.View
         public static readonly DependencyProperty EffectManagerProperty =
             DependencyProperty.Register(
                 "EffectManager", typeof(IEffectManager), typeof(ShogiControl),
-                new FrameworkPropertyMetadata(default(IEffectManager),
-                                              OnEffectManagerChanged));
+                new FrameworkPropertyMetadata(
+                    default(IEffectManager),
+                    OnEffectManagerChanged));
 
         /// <summary>
         /// エフェクト管理オブジェクトを取得または設定します。
@@ -425,7 +431,9 @@ namespace Ragnarok.Presentation.Shogi.View
         public static readonly DependencyProperty CellSizeProperty =
             DependencyProperty.Register(
                 "CellSize", typeof(Size), typeof(ShogiControl),
-                new FrameworkPropertyMetadata(default(Size)));
+                new FrameworkPropertyMetadata(
+                    default(Size),
+                    FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
         /// <summary>
         /// 各マスのサイズを取得または設定します。

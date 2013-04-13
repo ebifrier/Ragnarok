@@ -231,6 +231,8 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
         /// </summary>
         private static void CanExecute(ShogiControl control, CanExecuteRoutedEventArgs e)
         {
+            var canEdit = (control.EditMode == EditMode.Normal);
+
             var board = GetBoard(control);
             if (board == null)
             {
@@ -239,29 +241,30 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
 
             if (e.Command == GotoFirstState)
             {
-                e.CanExecute = board.CanUndo;
+                e.CanExecute = board.CanUndo && canEdit;
             }
             else if (e.Command == GotoLastState)
             {
-                e.CanExecute = board.CanRedo;
+                e.CanExecute = board.CanRedo && canEdit;
             }
 
             else if (e.Command == MoveUndo)
             {
-                e.CanExecute = board.CanUndo;
+                e.CanExecute = board.CanUndo && canEdit;
             }
             else if (e.Command == MoveRedo)
             {
-                e.CanExecute = board.CanRedo;
+                e.CanExecute = board.CanRedo && canEdit;
             }
             else if (e.Command == MoveUndoContinue)
             {
-                e.CanExecute = board.CanUndo;
+                e.CanExecute = board.CanUndo && canEdit;
             }
             else if (e.Command == MoveRedoContinue)
             {
-                e.CanExecute = board.CanRedo;
+                e.CanExecute = board.CanRedo && canEdit;
             }
+
             else if (e.Command == MoveStop)
             {
                 e.CanExecute = (control.AutoPlayState == AutoPlayState.Playing);
@@ -449,6 +452,11 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
         /// </summary>
         private static void ExecuteGotoFirstState(ShogiControl control)
         {
+            if (control.EditMode != EditMode.Normal)
+            {
+                return;
+            }
+
             // 局面をUndoします。
             var cloned = control.Board.Clone();
             cloned.UndoAll();
@@ -460,6 +468,11 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
         /// </summary>
         private static void ExecuteGotoLastState(ShogiControl control)
         {
+            if (control.EditMode != EditMode.Normal)
+            {
+                return;
+            }
+
             // 局面をRedoします。
             var cloned = control.Board.Clone();
             cloned.RedoAll();
@@ -471,6 +484,11 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
         /// </summary>
         private static void ExecuteMoveUndo(ShogiControl control)
         {
+            if (control.EditMode != EditMode.Normal)
+            {
+                return;
+            }
+
             var board = GetBoard(control);
             if (board == null)
             {
@@ -485,6 +503,11 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
         /// </summary>
         private static void ExecuteMoveRedo(ShogiControl control)
         {
+            if (control.EditMode != EditMode.Normal)
+            {
+                return;
+            }
+
             var board = GetBoard(control);
             if (board == null)
             {
@@ -499,6 +522,11 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
         /// </summary>
         private static void ExecuteMoveUndoContinue(ShogiControl control)
         {
+            if (control.EditMode != EditMode.Normal)
+            {
+                return;
+            }
+
             var board = GetBoard(control);
             if (board == null)
             {
@@ -518,6 +546,11 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
         /// </summary>
         private static void ExecuteMoveRedoContinue(ShogiControl control)
         {
+            if (control.EditMode != EditMode.Normal)
+            {
+                return;
+            }
+
             var board = GetBoard(control);
             if (board == null)
             {

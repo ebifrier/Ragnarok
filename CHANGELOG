@@ -1,3 +1,13 @@
+2013-04-13  - Ver 2.0.13
+
+	* Ragnarok.Presentation.Shogi/View/ShogiControl.xaml.cs: 依存プロパティ
+	のデフォルトバインディングをTwoWayに変更しました。
+	* Ragnarok.Presentation.Shogi/ViewModel/ShogiCommands.cs: 局面の編集禁
+	止中は戻るや進むの操作ができないようにしました。
+	* Ragnarok.Presentation/Utility/TextBoxUtil.cs: テキストボックスのテキ
+	スト変更時に、右端を正しく示せるようにしました。今までは設定の仕方を間
+	違っていました。
+
 2013-04-13  - Ver 2.0.12
 
 	* Ragnarok.Extra/Sound/SoundManager.cs: パスに関するちょっとしたバグを
