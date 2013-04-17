@@ -220,6 +220,7 @@
     <Compile Include="Utility\MethodUtil.cs" />
     <Compile Include="Utility\MultiMap.cs" />
     <Compile Include="Utility\PassingTmpFile.cs" />
+    <Compile Include="Utility\ReentrantLock.cs" />
     <Compile Include="Utility\Scanner.cs" />
     <Compile Include="Utility\AppSettingsBase.cs" />
     <Compile Include="Utility\StackTraceUtil.cs" />

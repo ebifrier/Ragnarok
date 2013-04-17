@@ -47,6 +47,14 @@ namespace Ragnarok.Presentation.VisualObject
 
         #region 基本プロパティ
         /// <summary>
+        /// ３Ｄのモデルオブジェクトのルートグループを扱う依存プロパティです。
+        /// </summary>
+        public static readonly DependencyProperty ModelGroupProperty =
+            DependencyProperty.Register(
+                "ModelGroup", typeof(Model3DGroup), typeof(EntityObject),
+                new UIPropertyMetadata(null));
+
+        /// <summary>
         /// ３Ｄのモデルオブジェクトのルートグループを取得します。
         /// </summary>
         /// <remarks>
@@ -54,27 +62,51 @@ namespace Ragnarok.Presentation.VisualObject
         /// </remarks>
         public Model3DGroup ModelGroup
         {
-            get;
-            private set;
+            get { return (Model3DGroup)GetValue(ModelGroupProperty); }
+            private set { SetValue(ModelGroupProperty, value); }
         }
+
+        /// <summary>
+        /// 自分を親から外すかどうかを扱う依存プロパティです。
+        /// </summary>
+        public static readonly DependencyProperty RemoveMeProperty =
+            DependencyProperty.Register(
+                "RemoveMe", typeof(bool), typeof(EntityObject),
+                new UIPropertyMetadata(false));
 
         /// <summary>
         /// 自分を親から外すかどうかを取得または設定します。
         /// </summary>
         public bool RemoveMe
         {
-            get;
-            private set;
+            get { return (bool)GetValue(RemoveMeProperty); }
+            private set { SetValue(RemoveMeProperty, value); }
         }
+
+        /// <summary>
+        /// 子があっても期間で自動的に削除するかどうかを扱う依存プロパティです。
+        /// </summary>
+        public static readonly DependencyProperty AutoRemoveProperty =
+            DependencyProperty.Register(
+                "AutoRemove", typeof(bool), typeof(EntityObject),
+                new UIPropertyMetadata(false));
 
         /// <summary>
         /// 子があっても期間で自動的に削除するかどうかを取得または設定します。
         /// </summary>
         public bool AutoRemove
         {
-            get;
-            set;
+            get { return (bool)GetValue(AutoRemoveProperty); }
+            set { SetValue(AutoRemoveProperty, value); }
         }
+
+        /// <summary>
+        /// オブジェクトを表示させる時間間隔を扱う依存プロパティです。
+        /// </summary>
+        public static readonly DependencyProperty DurationProperty =
+            DependencyProperty.Register(
+                "Duration", typeof(Duration), typeof(EntityObject),
+                new UIPropertyMetadata(Duration.Forever));
 
         /// <summary>
         /// オブジェクトを表示させる時間間隔を取得または設定します。
@@ -84,17 +116,25 @@ namespace Ragnarok.Presentation.VisualObject
         /// </remarks>
         public Duration Duration
         {
-            get;
-            set;
+            get { return (Duration)GetValue(DurationProperty); }
+            set { SetValue(DurationProperty, value); }
         }
+
+        /// <summary>
+        /// 初期化から開始までの時間を扱う依存プロパティです。
+        /// </summary>
+        public static readonly DependencyProperty WaitTimeProperty =
+            DependencyProperty.Register(
+                "WaitTime", typeof(Duration), typeof(EntityObject),
+                new UIPropertyMetadata(new Duration(TimeSpan.Zero)));
 
         /// <summary>
         /// 初期化から開始までの時間を取得または設定します。
         /// </summary>
         public Duration WaitTime
         {
-            get;
-            set;
+            get { return (Duration)GetValue(WaitTimeProperty); }
+            set { SetValue(WaitTimeProperty, value); }
         }
 
         /// <summary>
@@ -154,7 +194,8 @@ namespace Ragnarok.Presentation.VisualObject
         public static readonly DependencyProperty DataContextProperty =
             DependencyProperty.Register(
                 "DataContext", typeof(object), typeof(EntityObject),
-                new UIPropertyMetadata(null, (_, __) => OnDataContextChanged(_, false)));
+                new UIPropertyMetadata(null,
+                    (_, __) => OnDataContextChanged(_, false)));
 
         /// <summary>
         /// XAMLにデータを渡すためのオブジェクトを取得または設定します。
@@ -209,6 +250,28 @@ namespace Ragnarok.Presentation.VisualObject
                     DataContext = (p != null ? p.DataContext : null);
                 }
             }
+        }
+
+        /// <summary>
+        /// Initializeを開始フレームと同じフレームで実行するか扱う依存プロパティです。
+        /// </summary>
+        public static readonly DependencyProperty IsFastInitializeProperty =
+            DependencyProperty.Register(
+                "IsFastInitialize", typeof(bool), typeof(EntityObject),
+                new UIPropertyMetadata(false));
+
+        /// <summary>
+        /// Initializeを開始フレームと同じフレームで実行するかを取得または設定します。
+        /// </summary>
+        /// <remarks>
+        /// Initializeには時間がかかることがあるため、
+        /// 通常は最初のフレームでInitializeを呼び、
+        /// 次のフレームから開始処理を行います。
+        /// </remarks>
+        public bool IsFastInitialize
+        {
+            get { return (bool)GetValue(IsFastInitializeProperty); }
+            set { SetValue(IsFastInitializeProperty, value); }
         }
         #endregion
 
@@ -611,7 +674,13 @@ namespace Ragnarok.Presentation.VisualObject
             if (!this.initialized)
             {
                 Initialize();
-                return;
+
+                // 初期化フレームと開始フレームを分ける場合のみ
+                // ここで処理を終了します。
+                if (!IsFastInitialize)
+                {
+                    return;
+                }
             }
 
             if (!this.started)
@@ -702,15 +771,9 @@ namespace Ragnarok.Presentation.VisualObject
             Children = new EntityCollection(this);
             ModelGroup = new Model3DGroup();
 
-            RemoveMe = false;
-            AutoRemove = false;
-            Duration = Duration.Forever;
-            WaitTime = new Duration(TimeSpan.Zero);
-
             // アニメーション用の行列はここで新たに指定しないと
             // 勝手にFreezeされてしまうようです。
             RotateZTransform = new RotateTransform3D();
-            RotateZ = 0;
 
             lock (instanceList)
             {

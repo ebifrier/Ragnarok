@@ -16,6 +16,7 @@ using System.Windows.Shapes;
 
 using Ragnarok;
 using Ragnarok.Shogi;
+using Ragnarok.Utility;
 using Ragnarok.ObjectModel;
 using Ragnarok.Presentation.VisualObject;
 
@@ -55,18 +56,16 @@ namespace Ragnarok.Presentation.Shogi.View
 
         private static readonly ImageBrush DefaultBanBrush =
             new ImageBrush(new BitmapImage(
-                new Uri("pack://application:,,,/Ragnarok.Presentation.Shogi;component/Resources/Image/ban/ban.jpg")))
-                .Apply(_ => _.Opacity = 0.9);
+                ImageUtil.GetImageUri(BanImageType.Default)))
+                    .Apply(_ => _.Opacity = 0.9);
 
         private static readonly ImageBrush DefaultPieceBoxBrush =
             new ImageBrush(new BitmapImage(
-                new Uri("pack://application:,,,/Ragnarok.Presentation.Shogi;component/Resources/Image/komadai/komadai1.jpg")))
-                .Apply(_ => _.Opacity = 0.9);
+                ImageUtil.GetImageUri(KomadaiImageType.Komadai1)))
+                    .Apply(_ => _.Opacity = 0.9);
 
         private static readonly BitmapImage DefaultPieceImage =
-            new BitmapImage(
-                new Uri("pack://application:,,,/Ragnarok.Presentation.Shogi;component/Resources/Image/koma/koma_kinki.png"))
-                .Apply(_ => _.Freeze());
+            new BitmapImage(ImageUtil.GetImageUri(KomaImageType.Kinki));
 
         private readonly NotifyCollection<PieceObject> pieceObjectList =
             new NotifyCollection<PieceObject>();
@@ -78,6 +77,7 @@ namespace Ragnarok.Presentation.Shogi.View
         private PieceObject movingPiece;
         private AutoPlay autoPlay;
         private Window promoteDialog;
+        private ReentrancyLock renderLock = new ReentrancyLock();
 
         #region イベント
         /// <summary>
@@ -1116,7 +1116,7 @@ namespace Ragnarok.Presentation.Shogi.View
             }
 
             // 駒などをとりあえず表示させます。
-            //Render(TimeSpan.FromMilliseconds(1));
+            Render(TimeSpan.FromMilliseconds(1));
         }
 
         /// <summary>
@@ -1306,9 +1306,14 @@ namespace Ragnarok.Presentation.Shogi.View
                 return;
             }
 
-            this.autoPlay.Stop();
+            var autoPlay = this.autoPlay;
             this.autoPlay = null;
             AutoPlayState = AutoPlayState.None;
+
+            // Boardが変更されるとAutoPlayはすべてクリアされます。
+            // Stop中にBoardが変更されると少し面倒なことになるため、
+            // Stopメソッドはすべての状態が落ち着いた後に呼びます。
+            autoPlay.Stop();
         }
         #endregion
 
@@ -1317,41 +1322,46 @@ namespace Ragnarok.Presentation.Shogi.View
         /// </summary>
         public void Render(TimeSpan elapsedTime)
         {
-            var e = new RoutedEventArgs(EnterFrameEvent);
-            RaiseEvent(e);
-
-            if (this.banEffectObjectRoot != null)
+            using (var locker = renderLock.Lock())
             {
-                this.banEffectObjectRoot.DoEnterFrame(elapsedTime);
-            }
+                if (locker == null) return;
 
-            if (this.effectObjectRoot != null)
-            {
-                this.effectObjectRoot.DoEnterFrame(elapsedTime);
-            }
+                var e = new RoutedEventArgs(EnterFrameEvent);
+                RaiseEvent(e);
 
-            if (this.pieceObjectList != null)
-            {
-                // フレーム更新中にオブジェクトが変更されることがあります。
-                this.pieceObjectList.ToArray()
-                    .ForEach(_ => _.DoEnterFrame(elapsedTime));
-            }
-
-            // 先手・後手盤の駒台上の駒を更新します。
-            foreach (var capturedPieceList in this.capturedPieceObjectList)
-            {
-                if (capturedPieceList != null)
+                if (this.banEffectObjectRoot != null)
                 {
-                    capturedPieceList.ToArray()
+                    this.banEffectObjectRoot.DoEnterFrame(elapsedTime);
+                }
+
+                if (this.effectObjectRoot != null)
+                {
+                    this.effectObjectRoot.DoEnterFrame(elapsedTime);
+                }
+
+                if (this.pieceObjectList != null)
+                {
+                    // フレーム更新中にオブジェクトが変更されることがあります。
+                    this.pieceObjectList.ToArray()
                         .ForEach(_ => _.DoEnterFrame(elapsedTime));
                 }
-            }
 
-            if (this.autoPlay != null)
-            {
-                if (!this.autoPlay.Update(elapsedTime))
+                // 先手・後手盤の駒台上の駒を更新します。
+                foreach (var capturedPieceList in this.capturedPieceObjectList)
                 {
-                    StopAutoPlay();
+                    if (capturedPieceList != null)
+                    {
+                        capturedPieceList.ToArray()
+                            .ForEach(_ => _.DoEnterFrame(elapsedTime));
+                    }
+                }
+
+                if (this.autoPlay != null)
+                {
+                    if (!this.autoPlay.Update(elapsedTime))
+                    {
+                        StopAutoPlay();
+                    }
                 }
             }
         }
@@ -1425,7 +1435,13 @@ namespace Ragnarok.Presentation.Shogi.View
 
             // Boardには駒が変化したときのハンドラを設定しているため
             // 最後に必ずそのハンドラを削除する必要があります。
-            Board = null;
+            // しかしながら、ここで値をnullに設定してしまうと、
+            // Board依存プロパティに設定されたデータの方もnullクリア
+            // されてしまうため、ただ単にイベントを外すだけにします。
+            if (Board != null)
+            {
+                Board.BoardChanged -= OnBoardPieceChanged;
+            }
 
             if (this.banEffectObjectRoot != null)
             {

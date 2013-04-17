@@ -1,3 +1,16 @@
+2013-04-18  - Ver 2.0.14
+
+	* Ragnarok.Presentation.Shogi/Effects/Effect.cs: エフェクトを事前にまと
+	めて読み込むためのメソッドを追加しました。(XAMLの高速化のため)
+	* Ragnarok.Presentation.Shogi/Effects/PieceObject.cs: 今までは駒の表示
+	を２フレームに分けていましたが、１フレームで行うようにしました。
+	* Ragnarok.Presentation.Shogi/View/ShogiControl.xaml.cs: 盤が変わった時、
+	表示用の駒がちらつかずにすぐに表示されるようにしました。具体的には盤交
+	換後、フレームを分けずにすぐに表示用メソッドを呼ぶようにしました。
+	* Ragnarok.Presentation/VisualObject/EntityObject.cs: 通常のプロパティ
+	を依存プロパティに変更しました。遅くなりますが、Freezableを継承するクラ
+	スはこうするのが正しいやりかたのようなので、こうしました。
+
 2013-04-13  - Ver 2.0.13
 
 	* Ragnarok.Presentation.Shogi/View/ShogiControl.xaml.cs: 依存プロパティ

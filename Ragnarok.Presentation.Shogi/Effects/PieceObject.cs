@@ -239,6 +239,7 @@ namespace Ragnarok.Presentation.Shogi.Effects
         {
             this.shogi = shogi;
 
+            IsFastInitialize = true;
             Piece = piece;
             Position = position;
 

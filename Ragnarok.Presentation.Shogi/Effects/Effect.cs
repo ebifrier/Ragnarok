@@ -267,9 +267,41 @@ namespace Ragnarok.Presentation.Shogi.Effects
         {
             return Load(BackgroundBaseDir, null);
         }
+
+        /// <summary>
+        /// XAMLの事前読み込みを行います。
+        /// </summary>
+        /// <remarks>
+        /// XAML読み込みは初回の読み込みに多大な時間がかかります。
+        /// 例）
+        /// １回目:100ms、２回目:1ms
+        /// 
+        /// そのため、全エフェクトを一度事前に読み込みます。
+        /// </remarks>
+        public static void InitializeEffect(Type effectTableType)
+        {
+            if (effectTableType == null)
+            {
+                throw new ArgumentNullException("effectTableType");
+            }
+
+            try
+            {
+                effectTableType.GetFields()
+                    .Where(_ => _.FieldType == typeof(EffectInfo))
+                    .Select(_ => (EffectInfo)_.GetValue(null))
+                    .Where(_ => _ != null)
+                    .ForEach(_ => _.PreLoad());
+            }
+            catch (Exception ex)
+            {
+                Log.ErrorException(ex,
+                    "エフェクトの初期化に失敗しました。");
+            }
+        }
     }
 
-    /// <summary>
+    /*/// <summary>
     /// 読み込み可能なエフェクトのリストです。
     /// </summary>
     public static class EffectTable
@@ -396,5 +428,5 @@ namespace Ragnarok.Presentation.Shogi.Effects
         public readonly static EffectInfo Vote = new EffectInfo(
             "VoteEffect", "Other");
         #endregion
-    }
+    }*/
 }

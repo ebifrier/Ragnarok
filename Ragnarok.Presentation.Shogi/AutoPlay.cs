@@ -43,6 +43,7 @@ namespace Ragnarok.Presentation.Shogi
         private List<BoardMove> moveList;
         private int moveIndex;
         private int maxMoveCount;
+        private DateTime prevTime = DateTime.Now;
 
         /// <summary>
         /// 再生完了時や途中停止時に呼ばれるイベントです。
@@ -64,7 +65,7 @@ namespace Ragnarok.Presentation.Shogi
         public Brush Background
         {
             get;
-            internal set;
+            set;
         }
 
         /// <summary>
@@ -315,7 +316,7 @@ namespace Ragnarok.Presentation.Shogi
         /// </summary>
         public bool Validate()
         {
-            if (Board == null)
+            if (Board == null || !Board.Validate())
             {
                 return false;
             }

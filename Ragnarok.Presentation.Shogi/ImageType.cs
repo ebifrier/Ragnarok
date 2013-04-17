@@ -89,9 +89,16 @@ namespace Ragnarok.Presentation.Shogi
     public static class ImageUtil
     {
         /// <summary>
+        /// 画像用の基本パスです。
+        /// </summary>
+        public static readonly Uri BaseUri =
+            new Uri("pack://application:,,,/Ragnarok.Presentation.Shogi;component/Resources/Image/xxx");
+
+        /// <summary>
         /// 選択された画像のURIを取得します。
         /// </summary>
         public static Uri GetImageUri<T>(T value)
+            where T : struct
         {
             var leaf = EnumEx.GetDescription(value);
             if (string.IsNullOrEmpty(leaf))
@@ -102,9 +109,7 @@ namespace Ragnarok.Presentation.Shogi
                         value));
             }
 
-            return new Uri(string.Format(
-                "pack://application:,,,/Ragnarok.Presentation.Shogi;component/Resources/Image/{0}",
-                leaf));
+            return new Uri(BaseUri, leaf);
         }
     }
 }
