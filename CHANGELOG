@@ -10,6 +10,8 @@
 	* Ragnarok.Presentation/VisualObject/EntityObject.cs: 通常のプロパティ
 	を依存プロパティに変更しました。遅くなりますが、Freezableを継承するクラ
 	スはこうするのが正しいやりかたのようなので、こうしました。
+	* Ragnarok/Utility/ReentrantLock.cs: 同一スレッド内で、同じコードブロッ
+	クへの再入を防ぐためのクラスを追加しました。
 
 2013-04-13  - Ver 2.0.13
 
