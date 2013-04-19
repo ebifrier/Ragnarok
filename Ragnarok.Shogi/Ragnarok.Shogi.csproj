@@ -65,7 +65,7 @@
     <Compile Include="CastleInfoTable.cs" />
     <Compile Include="Csa\CsaClient.cs" />
     <Compile Include="Csa\CsaCommandAttribute.cs" />
-    <Compile Include="Csa\CsaGame.cs" />
+    <Compile Include="Csa\CsaGameInfo.cs" />
     <Compile Include="Csa\CsaGameCommand.cs" />
     <Compile Include="Csa\CsaMove.cs" />
     <Compile Include="Csa\Tests\CsaMoveTest.cs" />

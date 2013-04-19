@@ -238,7 +238,7 @@
     <None Include="NLog.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="NLog\NLog.config" />
+    <Resource Include="NLog\NLog.config" />
     <None Include="Ragnarok.snk" />
   </ItemGroup>
   <ItemGroup>

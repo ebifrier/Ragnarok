@@ -75,8 +75,8 @@ namespace Ragnarok
                         continue;
                     }
 
-                    var config = new XmlLoggingConfiguration(filename);
-                    LogManager.Configuration = config;
+                    LogManager.Configuration =
+                        new XmlLoggingConfiguration(filename);
                     break;
                 }
 

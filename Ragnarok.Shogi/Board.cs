@@ -204,6 +204,20 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
+        /// 今までの指し手をすべて取得します。
+        /// </summary>
+        public ReadOnlyCollection<BoardMove> MoveList
+        {
+            get
+            {
+                using (LazyLock())
+                {
+                    return new ReadOnlyCollection<BoardMove>(this.moveList);
+                }
+            }
+        }
+
+        /// <summary>
         /// 手を戻すことができるか取得します。
         /// </summary>
         public bool CanUndo
