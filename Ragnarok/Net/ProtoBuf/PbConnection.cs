@@ -642,7 +642,7 @@ namespace Ragnarok.Net.ProtoBuf
                 return true;
             }
 
-            var length = Math.Min(leaveCount, data.LeaveCount);
+            var length = Math.Min(leaveCount, data.Count);
             stream.Write(data.Array, data.Offset, length);
             data.Increment(length);
 

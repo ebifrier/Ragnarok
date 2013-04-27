@@ -36,8 +36,15 @@ namespace Ragnarok.Utility
         /// </summary>
         public static bool IsX64
         {
-            get;
-            private set;
+            get { return (Marshal.SizeOf(typeof(IntPtr)) == 8); }
+        }
+
+        /// <summary>
+        /// CPUの論理個数を取得します。(HTは考えていません)
+        /// </summary>
+        public static int CPUCount
+        {
+            get { return Environment.ProcessorCount; }
         }
 
         /// <summary>
@@ -58,15 +65,6 @@ namespace Ragnarok.Utility
             private set;
         }
 
-        /// <summary>
-        /// CPUの論理個数を取得します。
-        /// </summary>
-        public static int CPUCount
-        {
-            get;
-            private set;
-        }
-        
         /*
         public string BuildRequestUrl(string baseRequestUrl)
         {
@@ -115,33 +113,11 @@ namespace Ragnarok.Utility
         /// </summary>
         static DeviceInventory()
         {
-            // x64
-            CollectProcessorBit();
-
-            // cpu count
-            CollectCPUCount();
-
             // ram size
             CollectRamSize();
 
             // os
             OSVersion = GetOSVersion();
-        }
-
-        /// <summary>
-        /// CPUがx86かx64か調べます。
-        /// </summary>
-        private static void CollectProcessorBit()
-        {
-            IsX64 = (Marshal.SizeOf(typeof(IntPtr)) == 8);
-        }
-
-        /// <summary>
-        /// CPUの論理個数を取得します。
-        /// </summary>
-        private static void CollectCPUCount()
-        {
-            CPUCount = Environment.ProcessorCount;
         }
 
         /// <summary>

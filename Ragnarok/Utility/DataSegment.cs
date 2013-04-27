@@ -5,10 +5,13 @@ using System.Text;
 
 namespace Ragnarok.Utility
 {
+    /// <summary>
+    /// バッファとそのサイズなどを保持します。
+    /// </summary>
     public class DataSegment<T>
     {
         /// <summary>
-        /// 
+        /// バッファオブジェクトを取得します。
         /// </summary>
         public T[] Array
         {
@@ -16,26 +19,34 @@ namespace Ragnarok.Utility
             private set;
         }
 
+        /// <summary>
+        /// バッファサイズを取得します。
+        /// </summary>
         public int Count
         {
             get;
             private set;
         }
 
+        /// <summary>
+        /// バッファの先頭インデックスを取得します。
+        /// </summary>
         public int Offset
         {
             get;
             private set;
         }
 
-        public int LeaveCount
+        /// <summary>
+        /// バッファの先頭オフセットを進めます。
+        /// </summary>
+        public void Increment(int inc)
         {
-            get { return (Count - Offset); }
-        }
+            inc = MathEx.Between(-Offset, Count, inc);
 
-        public void Increment(int offset)
-        {
-            Offset = Math.Min(Offset + offset, Count);
+            // 先頭オフセットを移動し、バッファサイズは減らします。
+            Offset += inc;
+            Count -= inc;
         }
 
         /// <summary>
@@ -58,26 +69,39 @@ namespace Ragnarok.Utility
             Offset = offset;
         }
 
+        /// <summary>
+        /// 比較オペレータ
+        /// </summary>
         public static bool operator ==(DataSegment<T> a, DataSegment<T> b)
         {
             return a.Equals(b);
         }
 
+        /// <summary>
+        /// 比較オペレータ
+        /// </summary>
         public static bool operator !=(DataSegment<T> a, DataSegment<T> b)
         {
             return !(a == b);
         }
 
+        /// <summary>
+        /// オブジェクトを比較します。
+        /// </summary>
         public override bool Equals(object obj)
         {
-            if (!(obj is ArraySegment<T>))
+            var result = this.PreEquals(obj);
+            if (result != null)
             {
-                return false;
+                return result.Value;
             }
 
             return Equals((ArraySegment<T>)obj);
         }
 
+        /// <summary>
+        /// オブジェクトを比較します。
+        /// </summary>
         public bool Equals(ArraySegment<T> obj)
         {
             return (
@@ -86,12 +110,9 @@ namespace Ragnarok.Utility
                 Offset == obj.Offset);
         }
 
-        //
-        // 概要:
-        //     現在のインスタンスのハッシュ コードを返します。
-        //
-        // 戻り値:
-        //     32 ビット符号付き整数ハッシュ コード。
+        /// <summary>
+        /// 現在のインスタンスのハッシュ コードを返します。
+        /// </summary>
         public override int GetHashCode()
         {
             return (

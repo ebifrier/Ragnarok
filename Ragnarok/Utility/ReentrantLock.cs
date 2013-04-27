@@ -7,10 +7,13 @@ using System.Threading;
 namespace Ragnarok.Utility
 {
     /// <summary>
-    /// 同一スレッドの再入を防ぐためのオブジェクトです。
+    /// 同一スレッドから同じコードブロックへの再入を防ぐために使います。
     /// </summary>
     /// <example>
-    /// using (var result = (new ReentrancyLock()).Lock())
+    /// var locker = new ReentrancyLock();
+    /// ...
+    /// 
+    /// using (var result = locker.Lock())
     /// {
     ///     // 再入できない場合はnullを返します。
     ///     if (result == null) return;
@@ -33,11 +36,11 @@ namespace Ragnarok.Utility
         /// <summary>
         /// 再入を禁止するためのロックを取得します。
         /// </summary>
-        public ReentrancyObject Lock()
+        public ReentrancyResult Lock()
         {
             var flag = Interlocked.Exchange(ref this.entering, 1);
 
-            return (flag == 0 ? new ReentrancyObject(this) : null);
+            return (flag == 0 ? new ReentrancyResult(this) : null);
         }
 
         /// <summary>
@@ -52,14 +55,14 @@ namespace Ragnarok.Utility
     /// <summary>
     /// <see cref="ReentrancyLock"/>のロック状態を示す一時オブジェクトです。
     /// </summary>
-    public sealed class ReentrancyObject : IDisposable
+    public sealed class ReentrancyResult : IDisposable
     {
         private ReentrancyLock locker;
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        internal ReentrancyObject(ReentrancyLock locker)
+        internal ReentrancyResult(ReentrancyLock locker)
         {
             this.locker = locker;
         }

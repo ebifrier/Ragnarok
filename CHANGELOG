@@ -1,3 +1,12 @@
+2013-04-25  - Ver 2.0.15
+
+	* Ragnarok/Utility/DataSegment.cs: コメントを追加し、データの先頭オフセ
+	ットは移動可能にしました。
+	* Ragnarok/Utility/ReentrantLock.cs: クラス名をReentrantObjectから
+	ReentrantResultに変更しました。
+	* Ragnarok.Shogi/Bonanza/Bonanza.cs: ボナンザを動かすためのクラスを追加
+	しました。
+
 2013-04-18  - Ver 2.0.14
 
 	* Ragnarok.Presentation.Shogi/Effects/Effect.cs: エフェクトを事前にまと
