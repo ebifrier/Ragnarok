@@ -1,0 +1,157 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:t="clr-namespace:Ragnarok.Presentation"
+                    xmlns:u="clr-namespace:Ragnarok.Presentation.Utility">
+
+    <!-- DataContextがnullであれば、非表示にします。-->
+    <Style x:Key="visibilityStyle" TargetType="FrameworkElement">
+        <Setter Property="Visibility" Value="Visible" />
+
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding}" Value="{x:Null}">
+                <Setter Property="Visibility" Value="Collapsed" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="headerTextStyle" TargetType="TextBlock"
+           BasedOn="{StaticResource visibilityStyle}">
+        <Setter Property="HorizontalAlignment" Value="Right" />
+        <Setter Property="Margin" Value="0,2,4,2" />
+    </Style>
+
+    <Style x:Key="valueTextStyle" TargetType="TextBlock"
+           BasedOn="{StaticResource visibilityStyle}">
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="Margin" Value="0,2,4,0" />
+    </Style>
+
+    <!-- 画像セットの作者様の情報を表示します。-->
+    <DataTemplate x:Key="infoViewTemplate" DataType="u:InfoBase">
+        <Grid x:Name="self">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="90" />
+                <ColumnDefinition Width="5" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Row="0" Grid.Column="0"
+                       Style="{StaticResource headerTextStyle}"
+                       DataContext="{Binding AuthorName}"
+                       Text="作者名:" />
+            <TextBlock Grid.Row="0" Grid.Column="2"
+                       Style="{StaticResource valueTextStyle}"
+                       DataContext="{Binding AuthorName}"
+                       Text="{Binding StringFormat={}{0}様}" />
+
+            <TextBlock Grid.Row="1" Grid.Column="0"
+                       Style="{StaticResource headerTextStyle}"
+                       DataContext="{Binding NicoCommunityUrl}"
+                       Text="コミュニティ:" />
+            <TextBlock Grid.Row="1" Grid.Column="2"
+                       Style="{StaticResource valueTextStyle}"
+                       DataContext="{Binding NicoCommunityUrl}"
+                       ToolTip="{Binding NicoCommunityUrl}">
+                <Hyperlink NavigateUri="{Binding NicoCommunityUrl}"
+                           Command="{x:Static t:RagnarokCommands.NavigateUrl}"
+                           CommandParameter="{Binding NicoCommunityUrl}"
+                           DataContext="{Binding DataContext, ElementName=self}">
+                    <TextBlock Text="{Binding NicoCommunity}" />
+                </Hyperlink>
+            </TextBlock>
+
+            <TextBlock Grid.Row="2" Grid.Column="0"
+                       Style="{StaticResource headerTextStyle}"
+                       DataContext="{Binding TwitterUrl}"
+                       Text="twitter:" />
+            <TextBlock Grid.Row="2" Grid.Column="2"
+                       Style="{StaticResource valueTextStyle}"
+                       DataContext="{Binding TwitterUrl}"
+                       ToolTip="{Binding TwitterUrl}">
+                <Hyperlink NavigateUri="{Binding TwitterUrl}"
+                           Command="{x:Static t:RagnarokCommands.NavigateUrl}"
+                           CommandParameter="{Binding TwitterUrl}"
+                           DataContext="{Binding DataContext, ElementName=self}">
+                    <TextBlock Text="{Binding TwitterId}" />
+                </Hyperlink>
+            </TextBlock>
+
+            <TextBlock Grid.Row="3" Grid.Column="0"
+                       Style="{StaticResource headerTextStyle}"
+                       DataContext="{Binding PixivUrl}"
+                       Text="pixiv:" />
+            <TextBlock Grid.Row="3" Grid.Column="2"
+                       Style="{StaticResource valueTextStyle}"
+                       DataContext="{Binding PixivUrl}"
+                       ToolTip="{Binding PixivUrl}">
+                <Hyperlink NavigateUri="{Binding PixivUrl}"
+                           Command="{x:Static t:RagnarokCommands.NavigateUrl}"
+                           CommandParameter="{Binding PixivUrl}"
+                           DataContext="{Binding DataContext, ElementName=self}">
+                    <TextBlock Text="{Binding PixivId}" />
+                </Hyperlink>
+            </TextBlock>
+
+            <TextBlock Grid.Row="4" Grid.Column="0"
+                       Style="{StaticResource headerTextStyle}"
+                       DataContext="{Binding BlogUrl}"
+                       Text="blog:" />
+            <TextBlock Grid.Row="4" Grid.Column="2"
+                       Style="{StaticResource valueTextStyle}"
+                       DataContext="{Binding BlogUrl}">
+                <Hyperlink NavigateUri="{Binding}"
+                           Command="{x:Static t:RagnarokCommands.NavigateUrl}"
+                           CommandParameter="{Binding}">
+                    <TextBlock Text="{Binding}" />
+                </Hyperlink>
+            </TextBlock>
+
+            <TextBlock Grid.Row="5" Grid.Column="0"
+                       Style="{StaticResource headerTextStyle}"
+                       DataContext="{Binding MailAddress}"
+                       Text="mail:" />
+            <TextBlock Grid.Row="5" Grid.Column="2"
+                       Style="{StaticResource valueTextStyle}"
+                       DataContext="{Binding MailAddress}">
+                <Hyperlink NavigateUri="{Binding}"
+                           Command="{x:Static t:RagnarokCommands.NavigateUrl}"
+                           CommandParameter="{Binding}">
+                    <TextBlock Text="{Binding}" />
+                </Hyperlink>
+            </TextBlock>
+
+            <TextBlock Grid.Row="6" Grid.Column="0"
+                       Style="{StaticResource headerTextStyle}"
+                       DataContext="{Binding HomepageUrl}"
+                       Text="homepage:" />
+            <TextBlock Grid.Row="6" Grid.Column="2"
+                       Style="{StaticResource valueTextStyle}"
+                       DataContext="{Binding HomepageUrl}">
+                <Hyperlink NavigateUri="{Binding}"
+                           Command="{x:Static t:RagnarokCommands.NavigateUrl}"
+                           CommandParameter="{Binding}">
+                    <TextBlock Text="{Binding}" />
+                </Hyperlink>
+            </TextBlock>
+
+            <TextBlock Grid.Row="7" Grid.Column="0"
+                       Style="{StaticResource headerTextStyle}"
+                       DataContext="{Binding Comment}"
+                       Text="comment:" />
+            <TextBlock Grid.Row="7" Grid.Column="2"
+                       Style="{StaticResource valueTextStyle}"
+                       DataContext="{Binding Comment}"
+                       Text="{Binding}" />
+        </Grid>
+    </DataTemplate>
+</ResourceDictionary>

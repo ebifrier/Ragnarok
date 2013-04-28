@@ -57,6 +57,11 @@
     <Compile Include="Behaviors\ScenarioBehavior.cs" />
     <Compile Include="Control\ColorButton.cs" />
     <Compile Include="Control\CustomAdorner.cs" />
+    <Compile Include="Control\EvaluationControl.cs" />
+    <Compile Include="Control\EvaluationSettingDialog.xaml.cs">
+      <DependentUpon>EvaluationSettingDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Extension\ImageSetListExtension.cs" />
     <Compile Include="Utility\CloneModel.cs" />
     <Compile Include="Control\MessageStatusBar.cs" />
     <Compile Include="Control\VersionWindow.xaml.cs">
@@ -131,9 +136,11 @@
     </Compile>
     <Compile Include="Utility\FrameTimer.cs" />
     <Compile Include="Utility\HolderObject.cs" />
+    <Compile Include="Utility\ImageSetInfo.cs" />
     <Compile Include="Utility\ImageUtil.cs" />
     <Compile Include="Extension\EnumListExtension.cs" />
     <Compile Include="Extension\MultiStyleExtension.cs" />
+    <Compile Include="Utility\InfoBase.cs" />
     <Compile Include="Utility\PseudoKeyboard.cs" />
     <Compile Include="Utility\KeyHook.cs" />
     <Compile Include="Utility\ListBoxUtil.cs" />
@@ -171,6 +178,18 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Control\DecoratedText.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Control\EvaluationControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Control\EvaluationSettingDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Control\InfoView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
