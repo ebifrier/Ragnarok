@@ -1,3 +1,26 @@
+2013-05-01  - Ver 2.0.16
+
+	* Ragnarok.Presentation.Shogi/View/ShogiControl.xaml: 対局者名と残り時
+	間の表示に対応しました。
+	* Ragnarok.Presentation.Shogi/Xaml/LeaveTimeConverter.cs: 残り時間を表
+	示用文字列に変換するためのコンバータを追加しました。
+	* Ragnarok.Presentation.Shogi/Xaml/ViewSideSwitchConverter.cs: 盤面反転
+	に対応した対局者名を返すコンバータを追加しました。
+	* Ragnarok.Presentation/Control/DecoratedText.cs: 内部Contentの水平表示
+	位置をCenterにしました。このようにするとViewbox上にUniformでテキストを
+	載せると、中心を原点にして拡大縮小するようになります。ただし、他に影響
+	があるかもしれません。
+	* Ragnarok.Presentation/Utility/ListBoxUtil.cs: ListBoxの自動スクロール
+	にUIAutomationを使うようにしました。その前はScrollIntoViewを用いてスク
+	ロールしていたため、リスト内に同じアイテムがあると正しく最後までスクロ
+	ールされませんでした。
+	* Ragnarok/Ragnarok.Shogi/Board.cs: MovePriority → Turn にプロパティ名
+	を変更しました。
+	* Ragnarok.Shogi/BoardExtension.cs: Csa形式の指し手の変換メソッドを追加
+	しました。
+	* Ragnarok.Shogi/Bonanza/Bonanza.cs: ボナンザのメモリ使用量を最大で1GB
+	に制限するようにしました。あまり大きいとVirtualAllocに失敗するためです。
+
 2013-04-25  - Ver 2.0.15
 
 	* Ragnarok/Utility/DataSegment.cs: コメントを追加し、データの先頭オフセ

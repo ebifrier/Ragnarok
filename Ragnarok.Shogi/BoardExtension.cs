@@ -9,6 +9,8 @@ using Ragnarok.Utility;
 
 namespace Ragnarok.Shogi
 {
+    using Csa;
+
     /// <summary>
     /// 指し手から盤上の駒を動かすためのクラスです。
     /// </summary>
@@ -284,7 +286,7 @@ namespace Ragnarok.Shogi
         /// </summary>
         public static BoardMove ConvertMove(this Board board, Move move)
         {
-            return board.ConvertMove(move, board.MovePriority);
+            return board.ConvertMove(move, board.Turn);
         }
 
         /// <summary>
@@ -694,6 +696,100 @@ namespace Ragnarok.Shogi
             }
 
             return moveList;
+        }
+
+        /// <summary>
+        /// <see cref="CsaMove"/>を<see cref="BoardMove"/>に変換します。
+        /// </summary>
+        public static BoardMove ConvertCsaMove(this Board board, CsaMove csaMove)
+        {
+            if (csaMove == null)
+            {
+                return null;
+            }
+
+            var newPiece = board[csaMove.NewPosition];
+            if (csaMove.IsDrop)
+            {
+                if (newPiece != null)
+                {
+                    return null;
+                }
+
+                return new BoardMove
+                {
+                    BWType = board.Turn,
+                    NewPosition = csaMove.NewPosition,
+                    ActionType = ActionType.Drop,
+                    DropPieceType = csaMove.Piece.PieceType,
+                };
+            }
+            else
+            {
+                var oldPiece = board[csaMove.OldPosition];
+                if (oldPiece == null)
+                {
+                    return null;
+                }
+
+                return new BoardMove
+                {
+                    BWType = board.Turn,
+                    NewPosition = csaMove.NewPosition,
+                    OldPosition = csaMove.OldPosition,
+                    TookPiece = newPiece,
+                    ActionType = (
+                        !oldPiece.IsPromoted && csaMove.Piece.IsPromoted ?
+                        ActionType.Promote :
+                        ActionType.None),
+                };
+            }
+        }
+
+        /// <summary>
+        /// <see cref="BoardMove"/>を<see cref="CsaMove"/>に変換します。
+        /// </summary>
+        public static CsaMove ConvertBoardMove(this Board board, BoardMove bmove)
+        {
+            if (bmove == null || !bmove.Validate())
+            {
+                return null;
+            }
+
+            var newPiece = board[bmove.NewPosition];
+            if (bmove.ActionType == ActionType.Drop)
+            {
+                if (newPiece != null)
+                {
+                    return null;
+                }
+
+                return new CsaMove
+                {
+                    Side = board.Turn,
+                    NewPosition = bmove.NewPosition,
+                    Piece = new Piece(bmove.DropPieceType, false),
+                };
+            }
+            else
+            {
+                var oldPiece = board[bmove.OldPosition];
+                if (oldPiece == null)
+                {
+                    return null;
+                }
+
+                return new CsaMove
+                {
+                    Side = board.Turn,
+                    NewPosition = bmove.NewPosition,
+                    OldPosition = bmove.OldPosition,
+                    Piece = new Piece(
+                        oldPiece.PieceType,
+                        oldPiece.IsPromoted ||
+                        bmove.ActionType == ActionType.Promote),
+                };
+            }
         }
     }
 }

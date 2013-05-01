@@ -54,18 +54,24 @@ namespace Ragnarok.Presentation.Shogi.View
         /// </summary>
         public const double PostEffectZ = -15.0;
 
-        private static readonly ImageBrush DefaultBanBrush =
+        private static readonly Brush DefaultBanBrush =
             new ImageBrush(new BitmapImage(
                 ImageUtil.GetImageUri(BanImageType.Default)))
                     .Apply(_ => _.Opacity = 0.9);
 
-        private static readonly ImageBrush DefaultPieceBoxBrush =
+        private static readonly Brush DefaultPieceBoxBrush =
             new ImageBrush(new BitmapImage(
                 ImageUtil.GetImageUri(KomadaiImageType.Komadai1)))
                     .Apply(_ => _.Opacity = 0.9);
 
         private static readonly BitmapImage DefaultPieceImage =
             new BitmapImage(ImageUtil.GetImageUri(KomaImageType.Kinki));
+
+        private static readonly Brush DefaultAutoPlayBrush =
+            new SolidColorBrush(Color.FromArgb(96, 0, 24, 86))
+            {
+                Opacity = 0.0
+            };
 
         private readonly NotifyCollection<PieceObject> pieceObjectList =
             new NotifyCollection<PieceObject>();
@@ -258,6 +264,40 @@ namespace Ragnarok.Presentation.Shogi.View
         }
 
         /// <summary>
+        /// 先手の残り時間を扱う依存プロパティです。
+        /// </summary>
+        public static readonly DependencyProperty BlackLeaveTimeProperty =
+            DependencyProperty.Register(
+                "BlackLeaveTime", typeof(TimeSpan), typeof(ShogiControl),
+                new FrameworkPropertyMetadata(TimeSpan.Zero));
+
+        /// <summary>
+        /// 先手の残り時間を取得または設定します。
+        /// </summary>
+        public TimeSpan BlackLeaveTime
+        {
+            get { return (TimeSpan)GetValue(BlackLeaveTimeProperty); }
+            set { SetValue(BlackLeaveTimeProperty, value); }
+        }
+
+        /// <summary>
+        /// 後手の残り時間を扱う依存プロパティです。
+        /// </summary>
+        public static readonly DependencyProperty WhiteLeaveTimeProperty =
+            DependencyProperty.Register(
+                "WhiteLeaveTime", typeof(TimeSpan), typeof(ShogiControl),
+                new FrameworkPropertyMetadata(TimeSpan.Zero));
+
+        /// <summary>
+        /// 後手の残り時間を取得または設定します。
+        /// </summary>
+        public TimeSpan WhiteLeaveTime
+        {
+            get { return (TimeSpan)GetValue(WhiteLeaveTimeProperty); }
+            set { SetValue(WhiteLeaveTimeProperty, value); }
+        }
+
+        /// <summary>
         /// 将棋盤の状態を扱う依存プロパティです。
         /// </summary>
         public static readonly DependencyProperty AutoPlayStateProperty =
@@ -274,6 +314,40 @@ namespace Ragnarok.Presentation.Shogi.View
             get { return (AutoPlayState)GetValue(AutoPlayStateProperty); }
             private set { SetValue(AutoPlayStateProperty, value); }
         }
+
+        /// <summary>
+        /// 先手側の対局者名を扱う依存プロパティです。
+        /// </summary>
+        public static readonly DependencyProperty BlackPlayerNameProperty =
+            DependencyProperty.Register(
+                "BlackPlayerName", typeof(string), typeof(ShogiControl),
+                new FrameworkPropertyMetadata("先手"));
+
+        /// <summary>
+        /// 先手側の対局者名を取得または設定します。
+        /// </summary>
+        public string BlackPlayerName
+        {
+            get { return (string)GetValue(BlackPlayerNameProperty); }
+            set { SetValue(BlackPlayerNameProperty, value); }
+        }
+
+        /// <summary>
+        /// 後手側の対局者名を扱う依存プロパティです。
+        /// </summary>
+        public static readonly DependencyProperty WhitePlayerNameProperty =
+            DependencyProperty.Register(
+                "WhitePlayerName", typeof(string), typeof(ShogiControl),
+                new FrameworkPropertyMetadata("後手"));
+
+        /// <summary>
+        /// 後手側の対局者名を取得または設定します。
+        /// </summary>
+        public string WhitePlayerName
+        {
+            get { return (string)GetValue(WhitePlayerNameProperty); }
+            set { SetValue(WhitePlayerNameProperty, value); }
+        }
         #endregion
 
         #region 見た目のプロパティ
@@ -283,7 +357,7 @@ namespace Ragnarok.Presentation.Shogi.View
         public static readonly DependencyProperty BanBrushProperty =
             DependencyProperty.Register(
                 "BanBrush", typeof(Brush), typeof(ShogiControl),
-                new FrameworkPropertyMetadata(null));
+                new FrameworkPropertyMetadata(DefaultBanBrush));
 
         /// <summary>
         /// 盤画像を取得または設定します。
@@ -300,7 +374,7 @@ namespace Ragnarok.Presentation.Shogi.View
         public static readonly DependencyProperty PieceBoxBrushProperty =
             DependencyProperty.Register(
                 "PieceBoxBrush", typeof(Brush), typeof(ShogiControl),
-                new FrameworkPropertyMetadata(null));
+                new FrameworkPropertyMetadata(DefaultPieceBoxBrush));
 
         /// <summary>
         /// 駒台画像を取得または設定します。
@@ -317,7 +391,8 @@ namespace Ragnarok.Presentation.Shogi.View
         public static readonly DependencyProperty PieceImageProperty =
             DependencyProperty.Register(
                 "PieceImage", typeof(BitmapSource), typeof(ShogiControl),
-                new FrameworkPropertyMetadata(null, OnPieceImageChanged));
+                new FrameworkPropertyMetadata(DefaultPieceImage,
+                    OnPieceImageChanged));
 
         /// <summary>
         /// 駒画像を取得または設定します。
@@ -347,10 +422,7 @@ namespace Ragnarok.Presentation.Shogi.View
         public static readonly DependencyProperty AutoPlayBrushProperty =
             DependencyProperty.Register(
                 "AutoPlayBrush", typeof(Brush), typeof(ShogiControl),
-                new FrameworkPropertyMetadata(
-                    new SolidColorBrush(Color.FromArgb(96, 0, 24, 86)) {
-                        Opacity = 0.0
-                    }));
+                new FrameworkPropertyMetadata(DefaultAutoPlayBrush));
         
         /// <summary>
         /// 自動再生時のブラシを取得または設定します。
@@ -565,7 +637,7 @@ namespace Ragnarok.Presentation.Shogi.View
                 return false;
             }
 
-            var teban = (Board != null ? Board.MovePriority : BWType.None);
+            var teban = (Board != null ? Board.Turn : BWType.None);
             if (EditMode == EditMode.NoEdit ||
                 (EditMode == EditMode.Normal && teban != pieceSide))
             {
@@ -662,13 +734,13 @@ namespace Ragnarok.Presentation.Shogi.View
                 {
                     OldPosition = position,
                     NewPosition = newPosition,
-                    BWType = Board.MovePriority,
+                    BWType = Board.Turn,
                     ActionType = ActionType.None,
                 } :
                 new BoardMove()
                 {
                     NewPosition = newPosition,
-                    BWType = Board.MovePriority,
+                    BWType = Board.Turn,
                     ActionType = ActionType.Drop,
                     DropPieceType = piece.PieceType,
                 });
@@ -1110,7 +1182,7 @@ namespace Ragnarok.Presentation.Shogi.View
             if (initEffect && EffectManager != null)
             {
                 var board = Board;
-                var bwType = (board != null ? board.MovePriority : BWType.Black);
+                var bwType = (board != null ? board.Turn : BWType.Black);
 
                 EffectManager.InitEffect(bwType);
             }

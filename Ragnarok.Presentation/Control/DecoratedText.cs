@@ -80,14 +80,6 @@ namespace Ragnarok.Presentation.Control
                 "IsUpdateVisual", typeof(bool), typeof(DecoratedText),
                 new FrameworkPropertyMetadata(true, OnPropertyChanged));
 
-        /*/// <summary>
-        /// 内部で使うFormattedTextを示す依存プロパティです。
-        /// </summary>
-        public static readonly DependencyProperty FormattedTextProperty =
-            DependencyProperty.Register(
-                "FormattedText", typeof(FormattedText), typeof(DecoratedText),
-                new FrameworkPropertyMetadata(null));*/
-
         /// <summary>
         /// 表示文字列用の依存プロパティです。
         /// </summary>
@@ -261,9 +253,7 @@ namespace Ragnarok.Presentation.Control
         private static object OnCoerceTextCallback(DependencyObject d,
                                                    object baseValue)
         {
-            var oldValue = baseValue as string;
-
-            return (oldValue ?? "");
+            return (baseValue as string ?? "");
         }
 
         /// <summary>
@@ -340,6 +330,7 @@ namespace Ragnarok.Presentation.Control
                     StrokeThickness = StrokeThickness,
                     Stretch = Stretch.None,
                     Data = FormattedText.BuildGeometry(new Point(0, 0)),
+                    HorizontalAlignment = HorizontalAlignment.Center,
                 },
             };
         }

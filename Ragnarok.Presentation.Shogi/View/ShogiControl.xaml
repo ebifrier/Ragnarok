@@ -10,7 +10,13 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <r:StringReverseConverter x:Key="reverseConverter" />
-            
+            <sv:LeaveTimeConverter x:Key="leaveTimeConverter" />
+
+            <sv:ViewSideSwitchConverter x:Key="viewSideSwitcherBlack"
+                                        IsBlack="True" />
+            <sv:ViewSideSwitchConverter x:Key="viewSideSwitcherWhite"
+                                        IsBlack="False" />
+
             <!-- 段や列の各数字を表示します。-->
             <DataTemplate x:Key="titleTemplate">
                 <Viewbox>
@@ -145,44 +151,98 @@
             </Transform3DGroup>
 
             <!-- 右下の駒台表示 -->
-            <Style x:Key="label0MaterialStyle" TargetType="r:DecoratedText">
-                <Setter Property="Text" Value="先手" />
-                <Style.Triggers>
-                    <DataTrigger Binding="{Binding ViewSide, ElementName=shogi}"
-                                 Value="White">
-                        <Setter Property="Text" Value="後手" />
-                    </DataTrigger>
-                </Style.Triggers>
-            </Style>
-            
+            <Viewbox x:Key="label0Text"
+                     Stretch="Uniform">
+                <!-- サイズを指定すると縦横比を保ったまま拡大縮小できます。
+                     理由は不明orz -->
+                <r:DecoratedText Width="80" Height="16">
+                    <r:DecoratedText.Text>
+                        <MultiBinding Converter="{StaticResource viewSideSwitcherBlack}">
+                            <Binding Path="ViewSide" ElementName="shogi" />
+                            <Binding Path="BlackPlayerName" ElementName="shogi"  />
+                            <Binding Path="WhitePlayerName" ElementName="shogi" />
+                        </MultiBinding>
+                    </r:DecoratedText.Text>
+                </r:DecoratedText>
+            </Viewbox>
+
             <DiffuseMaterial x:Key="label0Material">
                 <DiffuseMaterial.Brush>
-                    <VisualBrush>
-                        <VisualBrush.Visual>
-                            <r:DecoratedText Style="{StaticResource label0MaterialStyle}" />
-                        </VisualBrush.Visual>
-                    </VisualBrush>
+                    <VisualBrush Visual="{StaticResource label0Text}" />
                 </DiffuseMaterial.Brush>
             </DiffuseMaterial>
 
             <!-- 左上の駒台表示 -->
-            <Style x:Key="label1MaterialStyle" TargetType="r:DecoratedText">
-                <Setter Property="Text" Value="後手" />
-                <Style.Triggers>
-                    <DataTrigger Binding="{Binding ViewSide, ElementName=shogi}"
-                                 Value="White">
-                        <Setter Property="Text" Value="先手" />
-                    </DataTrigger>
-                </Style.Triggers>
-            </Style>
+            <Viewbox x:Key="label1Text"
+                     Stretch="Uniform">
+                <!-- サイズを指定すると縦横比を保ったまま拡大縮小できます。
+                     理由は不明orz -->
+                <r:DecoratedText Width="80" Height="16">
+                    <r:DecoratedText.Text>
+                        <MultiBinding Converter="{StaticResource viewSideSwitcherWhite}">
+                            <Binding Path="ViewSide" ElementName="shogi" />
+                            <Binding Path="BlackPlayerName" ElementName="shogi"  />
+                            <Binding Path="WhitePlayerName" ElementName="shogi" />
+                        </MultiBinding>
+                    </r:DecoratedText.Text>
+                </r:DecoratedText>
+            </Viewbox>
 
             <DiffuseMaterial x:Key="label1Material">
                 <DiffuseMaterial.Brush>
-                    <VisualBrush>
-                        <VisualBrush.Visual>
-                            <r:DecoratedText Style="{StaticResource label1MaterialStyle}" />
-                        </VisualBrush.Visual>
-                    </VisualBrush>
+                    <VisualBrush Visual="{StaticResource label1Text}" />
+                </DiffuseMaterial.Brush>
+            </DiffuseMaterial>
+            
+            <Style x:Key="leaveTimeTextStyle" TargetType="r:DecoratedText">
+                <Setter Property="Foreground" Value="White" />
+                <Setter Property="FontWeight" Value="Bold" />
+                <Setter Property="Margin" Value="6,-2,6,0" />
+            </Style>
+
+            <!-- 右下の残り時間表示 -->
+            <Grid x:Key="leaveTime0Visual"
+                  Background="#60000000">
+                <r:DecoratedText Grid.Column="1"
+                                 Style="{StaticResource leaveTimeTextStyle}">
+                    <r:DecoratedText.Text>
+                        <MultiBinding Converter="{StaticResource viewSideSwitcherBlack}">
+                            <Binding Path="ViewSide" ElementName="shogi" />
+                            <Binding Path="BlackLeaveTime" ElementName="shogi"
+                                     Converter="{StaticResource leaveTimeConverter}" />
+                            <Binding Path="WhiteLeaveTime" ElementName="shogi"
+                                     Converter="{StaticResource leaveTimeConverter}" />
+                        </MultiBinding>
+                    </r:DecoratedText.Text>
+                </r:DecoratedText>
+            </Grid>
+            
+            <DiffuseMaterial x:Key="leaveTime0Material">
+                <DiffuseMaterial.Brush>
+                    <VisualBrush Visual="{StaticResource leaveTime0Visual}" />
+                </DiffuseMaterial.Brush>
+            </DiffuseMaterial>
+
+            <!-- 左上の残り時間表示 -->
+            <Grid x:Key="leaveTime1Visual"
+                  Background="#60000000">
+                <r:DecoratedText Grid.Column="1"
+                                 Style="{StaticResource leaveTimeTextStyle}">
+                    <r:DecoratedText.Text>
+                        <MultiBinding Converter="{StaticResource viewSideSwitcherWhite}">
+                            <Binding Path="ViewSide" ElementName="shogi" />
+                            <Binding Path="BlackLeaveTime" ElementName="shogi"
+                                     Converter="{StaticResource leaveTimeConverter}" />
+                            <Binding Path="WhiteLeaveTime" ElementName="shogi"
+                                     Converter="{StaticResource leaveTimeConverter}" />
+                        </MultiBinding>
+                    </r:DecoratedText.Text>
+                </r:DecoratedText>
+            </Grid>
+
+            <DiffuseMaterial x:Key="leaveTime1Material">
+                <DiffuseMaterial.Brush>
+                    <VisualBrush Visual="{StaticResource leaveTime1Visual}" />
                 </DiffuseMaterial.Brush>
             </DiffuseMaterial>
         </ResourceDictionary>
@@ -225,12 +285,25 @@
                                       Transform="{StaticResource komadai0Transform}">
                             <GeometryModel3D Geometry="{StaticResource squareMesh}"
                                              Material="{StaticResource komadaiMaterial}" />
-                            
+
+                            <!-- 手番表示ラベル -->
                             <GeometryModel3D Geometry="{StaticResource squareMesh}"
                                              Material="{StaticResource label0Material}">
                                 <GeometryModel3D.Transform>
                                     <ScaleTransform3D CenterY="-0.50" ScaleY="0.09"
-                                                      ScaleX="0.25" />
+                                                      ScaleX="0.8" />
+                                </GeometryModel3D.Transform>
+                            </GeometryModel3D>
+
+                            <!-- 残り時間表示 -->
+                            <GeometryModel3D Geometry="{StaticResource squareMesh}"
+                                             Material="{StaticResource leaveTime0Material}">
+                                <GeometryModel3D.Transform>
+                                    <Transform3DGroup>
+                                        <TranslateTransform3D OffsetY="-1.0" />
+                                        <ScaleTransform3D CenterY="-0.50" ScaleY="0.11"
+                                                          ScaleX="0.9" />
+                                    </Transform3DGroup>
                                 </GeometryModel3D.Transform>
                             </GeometryModel3D>
                         </Model3DGroup>
@@ -241,11 +314,24 @@
                             <GeometryModel3D Geometry="{StaticResource squareMesh}"
                                              Material="{StaticResource komadaiMaterial}" />
 
+                            <!-- 手番表示ラベル -->
                             <GeometryModel3D Geometry="{StaticResource squareMesh}"
                                              Material="{StaticResource label1Material}">
                                 <GeometryModel3D.Transform>
                                     <ScaleTransform3D CenterY="0.50" ScaleY="0.09"
-                                                      ScaleX="0.25" />
+                                                      ScaleX="0.8" />
+                                </GeometryModel3D.Transform>
+                            </GeometryModel3D>
+
+                            <!-- 残り時間表示 -->
+                            <GeometryModel3D Geometry="{StaticResource squareMesh}"
+                                             Material="{StaticResource leaveTime1Material}">
+                                <GeometryModel3D.Transform>
+                                    <Transform3DGroup>
+                                        <TranslateTransform3D OffsetY="1.0" />
+                                        <ScaleTransform3D CenterY="0.50" ScaleY="0.11"
+                                                          ScaleX="0.9" />
+                                    </Transform3DGroup>
                                 </GeometryModel3D.Transform>
                             </GeometryModel3D>
                         </Model3DGroup>
@@ -262,11 +348,13 @@
             </ModelUIElement3D>
 
             <!-- 持ち駒の表示 -->
-            <ContainerUIElement3D x:Name="CapturedPieceContainer">
+            <ContainerUIElement3D x:Name="CapturedPieceContainer"
+                                  AllowDrop="True">
             </ContainerUIElement3D>
 
             <!-- 盤上の駒の表示 -->
-            <ContainerUIElement3D x:Name="PieceContainer">
+            <ContainerUIElement3D x:Name="PieceContainer"
+                                  AllowDrop="True">
             </ContainerUIElement3D>
 
             <!-- エフェクト表示 -->

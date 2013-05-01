@@ -151,14 +151,19 @@ namespace Ragnarok.Shogi.Bonanza
         /// 物理メモリの何割をボナンザが使用可能とするか指定します。(0.0～1.0)
         /// </param>
         /// <return>
-        /// ボナンザのハッシュ値指定に使う値と実際の使用メモリの
+        /// ボナンザのハッシュ値指定に使う値と実際の使用メモリ[MB]の
         /// ペアを返します。
         /// </return>
         public static IEnumerable<Tuple<int, int>> MemorySizeList(double rate)
         {
             var hashSize = 19;
             var mem = Bonanza.HashSizeMinimum;
-            var memMax = (long)(DeviceInventory.MemorySize / 1024 / 1024 * rate);
+
+            // メモリ最大値は1GBとします。
+            // あまり大きいとメモリ確保に失敗します。
+            var memMax = Math.Min(
+                (long)(DeviceInventory.MemorySize / 1024 / 1024 * rate),
+                1024 + Bonanza.MemUsedBase);
 
             do
             {

@@ -5,6 +5,9 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Automation;
+using System.Windows.Automation.Peers;
+using System.Windows.Automation.Provider;
 
 namespace Ragnarok.Presentation.Utility
 {
@@ -39,32 +42,44 @@ namespace Ragnarok.Presentation.Utility
         }
 
         /// <summary>
-        /// This method will be called when the AutoScrollToEnd
-        /// property was changed
+        /// ListBoxを一番下までスクロールさせます。
         /// </summary>
-        public static void OnAutoScrollToEndChanged(DependencyObject s, DependencyPropertyChangedEventArgs e)
+        private static void OnAutoScrollToEndChanged(DependencyObject s, DependencyPropertyChangedEventArgs e)
         {
             var listBox = s as ListBox;
-            var listBoxItems = listBox.Items;
-            var data = listBoxItems.SourceCollection as INotifyCollectionChanged;
+            var data = listBox.Items.SourceCollection as INotifyCollectionChanged;
 
-            var scrollToEndHandler = new NotifyCollectionChangedEventHandler(
+            var peer = ItemsControlAutomationPeer.CreatePeerForElement(listBox);
+            if (peer == null)
+            {
+                Log.Error(
+                    "ListBoxのItemsControlAutomationPeerが取得できません。");
+                return;
+            }
+
+            var handler = new NotifyCollectionChangedEventHandler(
                 (s1, e1) =>
                 {
-                    if (listBox.Items.Count > 0)
+                    var provider = peer.GetPattern(PatternInterface.Scroll)
+                        as IScrollProvider;
+                    if (provider == null || !provider.VerticallyScrollable)
                     {
-                        var lastItem = listBox.Items[listBox.Items.Count - 1];
-                        listBox.ScrollIntoView(lastItem);
+                        // スクロールバーがない可能性。
+                        return;
                     }
+
+                    provider.SetScrollPercent(
+                        ScrollPatternIdentifiers.NoScroll,
+                        100);
                 });
 
             if ((bool)e.NewValue)
             {
-                data.CollectionChanged += scrollToEndHandler;
+                data.CollectionChanged += handler;
             }
             else
             {
-                data.CollectionChanged -= scrollToEndHandler;
+                data.CollectionChanged -= handler;
             }
         }
     }

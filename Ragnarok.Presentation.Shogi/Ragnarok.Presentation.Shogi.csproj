@@ -67,6 +67,8 @@
     <Compile Include="Xaml\CellMeshConverter.cs" />
     <Compile Include="Xaml\MakeMeshExtension.cs" />
     <Compile Include="Xaml\TebanMeshConverter.cs" />
+    <Compile Include="Xaml\LeaveTimeConverter.cs" />
+    <Compile Include="Xaml\ViewSideSwitchConverter.cs" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="View\MainMenu.xaml">

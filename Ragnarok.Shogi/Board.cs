@@ -67,7 +67,7 @@ namespace Ragnarok.Shogi
         [DataMember(Order = 3, IsRequired = true)]
         private BWType viewSide = BWType.Black;
         [DataMember(Order = 4, IsRequired = true)]
-        private BWType movePriority = BWType.Black;
+        private BWType turn = BWType.Black;
         [DataMember(Order = 5, IsRequired = true)]
         private Position prevMovedPosition = null;
         //[DataMember(Order = 6, IsRequired = true)]
@@ -164,7 +164,7 @@ namespace Ragnarok.Shogi
                     blackCapturedPieceBox = this.blackCapturedPieceBox.Clone(),
                     whiteCapturedPieceBox = this.whiteCapturedPieceBox.Clone(),
                     viewSide = this.viewSide,
-                    movePriority = this.movePriority,
+                    turn = this.turn,
                     prevMovedPosition = (
                         this.prevMovedPosition != null ?
                         this.prevMovedPosition.Clone() :
@@ -338,10 +338,10 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 手番を取得または設定します。
         /// </summary>
-        public BWType MovePriority
+        public BWType Turn
         {
-            get { return this.movePriority; }
-            set { SetValue("MovePriority", value, ref this.movePriority); }
+            get { return this.turn; }
+            set { SetValue("Turn", value, ref this.turn); }
         }
 
         /// <summary>
@@ -506,7 +506,7 @@ namespace Ragnarok.Shogi
                 this[move.OldPosition] = movedPiece;
             }
 
-            MovePriority = MovePriority.Toggle();
+            Turn = Turn.Toggle();
             PrevMovedPosition = (
                 this.moveList.Any() ?
                 this.moveList.Last().NewPosition :
@@ -605,8 +605,8 @@ namespace Ragnarok.Shogi
             using (LazyLock())
             {
                 // 手番があわなければ失敗とします。
-                if (this.movePriority == BWType.None ||
-                    this.movePriority != move.BWType)
+                if (this.turn == BWType.None ||
+                    this.turn != move.BWType)
                 {
                     return false;
                 }
@@ -650,7 +650,7 @@ namespace Ragnarok.Shogi
         {
             NotifyBoardChanging(move, false);
 
-            MovePriority = MovePriority.Toggle();
+            Turn = Turn.Toggle();
             PrevMovedPosition = move.NewPosition;
 
             this.moveList.Add(move);
@@ -1402,8 +1402,8 @@ namespace Ragnarok.Shogi
                     return false;
                 }
 
-                if (!Enum.IsDefined(typeof(BWType), this.movePriority) ||
-                    this.movePriority == BWType.None)
+                if (!Enum.IsDefined(typeof(BWType), this.turn) ||
+                    this.turn == BWType.None)
                 {
                     return false;
                 }
@@ -1470,7 +1470,7 @@ namespace Ragnarok.Shogi
                     return false;
                 }
 
-                if (this.movePriority != other.movePriority)
+                if (this.turn != other.turn)
                 {
                     return false;
                 }
@@ -1511,7 +1511,7 @@ namespace Ragnarok.Shogi
                 return (hash ^
                     this.blackCapturedPieceBox.GetHashCode() ^
                     this.whiteCapturedPieceBox.GetHashCode() ^
-                    this.movePriority.GetHashCode() ^
+                    this.turn.GetHashCode() ^
                     (this.prevMovedPosition != null ?
                         this.prevMovedPosition.GetHashCode() : 0));
             }

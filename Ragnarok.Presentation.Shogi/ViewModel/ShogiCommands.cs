@@ -25,7 +25,7 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
             new RoutedUICommand(
                 "棋譜ファイルを読み込みます。",
                 "LoadKifFile",
-                typeof(Window));
+                typeof(ShogiControl));
         /// <summary>
         /// 棋譜ファイルを保存します。
         /// </summary>
@@ -33,7 +33,7 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
             new RoutedUICommand(
                 "棋譜ファイルを保存します。",
                 "SaveKifFile",
-                typeof(Window));
+                typeof(ShogiControl));
         /// <summary>
         /// 棋譜ファイルの貼り付けを行います。
         /// </summary>
@@ -41,7 +41,7 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
             new RoutedUICommand(
                 "棋譜ファイルの貼り付けを行います。",
                 "PasteKifFile",
-                typeof(Window));
+                typeof(ShogiControl));
         /// <summary>
         /// 棋譜ファイルのコピーを行います。
         /// </summary>
@@ -49,7 +49,7 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
             new RoutedUICommand(
                 "棋譜ファイルのコピーを行います。",
                 "CopyKifFile",
-                typeof(Window));
+                typeof(ShogiControl));
         /// <summary>
         /// 盤面を反転します。
         /// </summary>
@@ -57,7 +57,7 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
             new RoutedUICommand(
                 "盤面を反転します。",
                 "SetReverseBoard",
-                typeof(Window));
+                typeof(ShogiControl));
 
         /// <summary>
         /// 開始局面へ。
@@ -66,7 +66,7 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
             new RoutedUICommand(
                 "開始局面へ。",
                 "GotoFirstState",
-                typeof(Window));
+                typeof(ShogiControl));
         /// <summary>
         /// 最終局面へ。
         /// </summary>
@@ -74,7 +74,7 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
             new RoutedUICommand(
                 "最終局面へ。",
                 "GotoLastState",
-                typeof(Window));
+                typeof(ShogiControl));
         /// <summary>
         /// 手を一つ戻します。
         /// </summary>
@@ -82,7 +82,7 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
             new RoutedUICommand(
                 "手を一つ戻します。",
                 "MoveUndo",
-                typeof(Window));
+                typeof(ShogiControl));
         /// <summary>
         /// 手を一つ進めます。
         /// </summary>
@@ -90,7 +90,7 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
             new RoutedUICommand(
                 "手を一つ進めます。",
                 "MoveRedo",
-                typeof(Window));
+                typeof(ShogiControl));
         /// <summary>
         /// 連続して手を戻します。
         /// </summary>
@@ -98,7 +98,7 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
             new RoutedUICommand(
                 "連続して手を戻します。",
                 "MoveUndoContinue",
-                typeof(Window));
+                typeof(ShogiControl));
         /// <summary>
         /// 連続して手を進めます。
         /// </summary>
@@ -106,7 +106,7 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
             new RoutedUICommand(
                 "連続して手を進めます。",
                 "MoveRedoContinue",
-                typeof(Window));
+                typeof(ShogiControl));
         /// <summary>
         /// 再生中の手を停止します。
         /// </summary>
@@ -114,7 +114,7 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
             new RoutedUICommand(
                 "再生中の手を停止します。",
                 "MoveStop",
-                typeof(Window));
+                typeof(ShogiControl));
 
         /// <summary>
         /// コマンドをバインディングします。
