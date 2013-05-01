@@ -1,3 +1,8 @@
+2013-05-02  - Ver 2.0.17
+
+	* Ragnarok.Presentation.Shogi/AutoPlay.cs: 指し手の更新や背景のフェード
+	イン・アウトなどをIEnumerableごとに分けました。
+
 2013-05-01  - Ver 2.0.16
 
 	* Ragnarok.Presentation.Shogi/View/ShogiControl.xaml: 対局者名と残り時

@@ -121,6 +121,24 @@ namespace Ragnarok.Presentation.Shogi
             get;
             set;
         }
+
+        /// <summary>
+        /// 開始までの時間を取得または設定します。
+        /// </summary>
+        public TimeSpan BeginningInterval
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 終了までの時間を取得または設定します。
+        /// </summary>
+        public TimeSpan EndingInterval
+        {
+            get;
+            set;
+        }
         
         /// <summary>
         /// まだ指し手が残っているか取得します。
@@ -145,6 +163,94 @@ namespace Ragnarok.Presentation.Shogi
         protected TimeSpan PositionFromBase
         {
             get { return (Position - BasePosition); }
+        }
+
+        /// <summary>
+        /// 指定時間だけ待ちます。
+        /// </summary>
+        protected IEnumerable<bool> WaitExecutor(TimeSpan waitTime)
+        {
+            while (true)
+            {
+                if (PositionFromBase >= waitTime)
+                {
+                    break;
+                }
+
+                yield return true;
+            }
+
+            BasePosition += waitTime;
+        }
+
+        /// <summary>
+        /// 背景色変更中の情報を取得します。
+        /// </summary>
+        private double GetBackgroundOpacity(TimeSpan progress, bool isReverse)
+        {
+            if (progress >= BackgroundFadeInterval)
+            {
+                return (isReverse ? 0.0 : 1.0);
+            }
+
+            // 背景の不透明度を更新します。
+            var progressSeconds = progress.TotalSeconds;
+            var totalSeconds = BackgroundFadeInterval.TotalSeconds;
+            var rate = (progressSeconds / totalSeconds);
+
+            return MathEx.Between(0.0, 1.0, isReverse ? 1.0 - rate : rate);
+        }
+
+        /// <summary>
+        /// 背景をフェードインします。
+        /// </summary>
+        protected IEnumerable<bool> BackgroundFadeInExecutor()
+        {
+            if (!IsChangeBackground || Background == null)
+            {
+                yield break;
+            }
+
+            while (true)
+            {
+                var opacity = GetBackgroundOpacity(PositionFromBase, false);
+                if (opacity >= 1.0)
+                {
+                    break;
+                }
+
+                Background.Opacity = opacity;
+                yield return true;
+            }
+
+            BasePosition += BackgroundFadeInterval;
+            Background.Opacity = 1.0;
+        }
+
+        /// <summary>
+        /// 背景をフェードアウトします。
+        /// </summary>
+        protected IEnumerable<bool> BackgroundFadeOutExecutor()
+        {
+            if (!IsChangeBackground || Background == null)
+            {
+                yield break;
+            }
+
+            while (true)
+            {
+                var opacity = GetBackgroundOpacity(PositionFromBase, true);
+                if (opacity <= 0.0)
+                {
+                    break;
+                }
+
+                Background.Opacity = opacity;
+                yield return true;
+            }
+
+            BasePosition += BackgroundFadeInterval;
+            Background.Opacity = 0.0;
         }
 
         /// <summary>
@@ -178,46 +284,10 @@ namespace Ragnarok.Presentation.Shogi
         }
 
         /// <summary>
-        /// 背景色変更中の情報を取得します。
+        /// 指し手を進めます。
         /// </summary>
-        private double GetBackgroundOpacity(TimeSpan progress, bool isReverse)
+        protected IEnumerable<bool> DoMoveExecutor()
         {
-            if (progress >= BackgroundFadeInterval)
-            {
-                return (isReverse ? 0.0 : 1.0);
-            }
-
-            // 背景の不透明度を更新します。
-            var progressSeconds = progress.TotalSeconds;
-            var totalSeconds = BackgroundFadeInterval.TotalSeconds;
-            var rate = (progressSeconds / totalSeconds);
-
-            return MathEx.Between(0.0, 1.0, isReverse ? 1.0 - rate : rate);
-        }
-
-        /// <summary>
-        /// コルーチン用のオブジェクトを返します。
-        /// </summary>
-        protected IEnumerable<bool> GetUpdateEnumerator()
-        {
-            // 最初に背景色のみを更新します。
-            if (IsChangeBackground && Background != null)
-            {
-                while (true)
-                {
-                    var opacity = GetBackgroundOpacity(PositionFromBase, false);
-                    if (opacity >= 1.0)
-                    {
-                        BasePosition += BackgroundFadeInterval;
-                        Background.Opacity = opacity;
-                        break;
-                    }
-
-                    Background.Opacity = opacity;
-                    yield return true;
-                }
-            }
-
             // 最初の指し手はすぐに表示します。
             DoMove();
 
@@ -239,23 +309,39 @@ namespace Ragnarok.Presentation.Shogi
                 yield return true;
             }
             BasePosition += Interval;
+        }
+
+        /// <summary>
+        /// コルーチン用のオブジェクトを返します。
+        /// </summary>
+        protected IEnumerable<bool> GetUpdateEnumerator()
+        {
+            foreach (var result in WaitExecutor(BeginningInterval))
+            {
+                yield return result;
+            }
+
+            // 最初に背景色のみを更新します。
+            foreach (var result in BackgroundFadeInExecutor())
+            {
+                yield return result;
+            }
+
+            // 指し手を進めます。
+            foreach (var result in DoMoveExecutor())
+            {
+                yield return result;
+            }
 
             // 背景色をもとに戻します。
-            if (IsChangeBackground && Background != null)
+            foreach (var result in BackgroundFadeOutExecutor())
             {
-                while (true)
-                {
-                    var opacity = GetBackgroundOpacity(PositionFromBase, true);
-                    if (opacity <= 0.0)
-                    {
-                        BasePosition += BackgroundFadeInterval;
-                        Background.Opacity = opacity;
-                        break;
-                    }
+                yield return result;
+            }
 
-                    Background.Opacity = opacity;
-                    yield return true;
-                }
+            foreach (var result in WaitExecutor(EndingInterval))
+            {
+                yield return result;
             }
         }
 
@@ -278,6 +364,7 @@ namespace Ragnarok.Presentation.Shogi
                 return false;
             }
 
+            // 時間はここで進めます。
             Position += elapsed;
             return UpdateEnumerator.Current;
         }
@@ -342,6 +429,8 @@ namespace Ragnarok.Presentation.Shogi
             UpdateEnumerator = GetUpdateEnumerator().GetEnumerator();
             Board = board;
             Interval = TimeSpan.FromSeconds(1.0);
+            BeginningInterval = TimeSpan.Zero;
+            EndingInterval = TimeSpan.Zero;
             BackgroundFadeInterval = TimeSpan.FromSeconds(0.5);
             Position = TimeSpan.Zero;
             BasePosition = TimeSpan.Zero;
