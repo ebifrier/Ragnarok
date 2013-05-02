@@ -18,6 +18,10 @@ namespace Ragnarok.Shogi.Bonanza
         /// エラーにより停止しました。
         /// </summary>
         Error,
+        /// <summary>
+        /// 致命的なエラーにより停止しました。
+        /// </summary>
+        FatalError,
     }
 
     /// <summary>

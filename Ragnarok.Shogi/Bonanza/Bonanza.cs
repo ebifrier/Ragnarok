@@ -337,29 +337,17 @@ namespace Ragnarok.Shogi.Bonanza
 
             if (error.StartsWith("ERROR: "))
             {
-                /*WpfUtil.UIProcess(() =>
-                    DialogUtil.ShowError(
-                        string.Format(
-                            "ボナンザにエラーが発生しました。{0}{0}" +
-                            "理由：{1}",
-                            Environment.NewLine,
-                            error.Substring(7))));*/
-
-                Abort(AbortReason.Error);
+                if (error == "ERROR: Can't open a file, fv.bin")
+                {
+                    Abort(AbortReason.FatalError);
+                }
+                else
+                {
+                    Abort(AbortReason.Error);
+                }
             }
             else if (error.StartsWith("WARNING: "))
             {
-                /*var message = error.Substring(9);
-
-                if (message == "shut down connection")
-                {
-                    WpfUtil.UIProcess(() =>
-                        DialogUtil.ShowError(
-                            string.Format(
-                                "ボナ子がサーバーから切断されました。{0}{0}" +
-                                "ボナ子を再起動してください。",
-                                Environment.NewLine)));
-                }*/
                 Abort(AbortReason.Error);
             }
         }
