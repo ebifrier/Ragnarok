@@ -370,7 +370,8 @@ namespace Ragnarok.Shogi.Bonanza
         /// 並列化サーバーに接続します。
         /// </summary>
         public void Connect(string serverAddress, int serverPort, int dfpnPort,
-                            string name, int threadNum, int hashSize)
+                            string name, int threadNum, int hashSize, int depth,
+                            bool sendPV)
         {
             using (LazyLock())
             {
@@ -410,11 +411,10 @@ namespace Ragnarok.Shogi.Bonanza
 
                 // 並列化サーバーへの接続コマンドを発行します。
                 command = string.Format(
-                    "mnj {0} {1} {2} {3}",
-                    serverAddress,
-                    serverPort,
-                    name,
-                    threadNum);
+                    "mnj {0} {1} {2} {3} {4} {5}",
+                    serverAddress, serverPort,
+                    name, threadNum, depth,
+                    sendPV ? 1 : 0);
                 WriteCommand(command);
 
                 IsConnected = true;
