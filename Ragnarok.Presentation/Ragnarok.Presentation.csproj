@@ -63,6 +63,7 @@
     <Compile Include="Control\EvaluationSettingDialog.xaml.cs">
       <DependentUpon>EvaluationSettingDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Control\TimeControl.cs" />
     <Compile Include="Extension\ImageSetListExtension.cs" />
     <Compile Include="Utility\CloneModel.cs" />
     <Compile Include="Control\MessageStatusBar.cs" />
@@ -146,6 +147,7 @@
     <Compile Include="Utility\PseudoKeyboard.cs" />
     <Compile Include="Utility\KeyHook.cs" />
     <Compile Include="Utility\ListBoxUtil.cs" />
+    <Compile Include="Utility\SimpleTimeSpan.cs" />
     <Compile Include="Utility\WebBrowserUtil.cs" />
     <Compile Include="Utility\TextBoxUtil.cs" />
     <Compile Include="Utility\ContextMenuUtil.cs" />
@@ -213,6 +215,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Control\Generic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Control\SimpleTimeSpanView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Control\TimeControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

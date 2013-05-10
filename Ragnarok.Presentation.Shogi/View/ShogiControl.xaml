@@ -9,6 +9,8 @@
              Background="Transparent" d:DesignHeight="480" d:DesignWidth="640">
     <UserControl.Resources>
         <ResourceDictionary>
+            <r:BooleanToVisibilityConverter x:Key="visibilityConverter"
+                                            DefaultHiddenValue="Collapsed" />
             <r:StringReverseConverter x:Key="reverseConverter" />
             <sv:LeaveTimeConverter x:Key="leaveTimeConverter" />
 
@@ -150,9 +152,8 @@
                 <TranslateTransform3D OffsetX="66" OffsetY="120" />
             </Transform3DGroup>
 
-            <!-- 右下の駒台表示 -->
-            <Viewbox x:Key="label0Text"
-                     Stretch="Uniform">
+            <!-- 右下の名前表示 -->
+            <Viewbox x:Key="label0Text" Stretch="Uniform">
                 <!-- サイズを指定すると縦横比を保ったまま拡大縮小できます。
                      理由は不明orz -->
                 <r:DecoratedText Width="80" Height="20" MaxWidth="80">
@@ -172,9 +173,8 @@
                 </DiffuseMaterial.Brush>
             </DiffuseMaterial>
 
-            <!-- 左上の駒台表示 -->
-            <Viewbox x:Key="label1Text"
-                     Stretch="Uniform">
+            <!-- 左上の名前表示 -->
+            <Viewbox x:Key="label1Text" Stretch="Uniform">
                 <!-- サイズを指定すると縦横比を保ったまま拡大縮小できます。
                      理由は不明orz -->
                 <r:DecoratedText Width="80" Height="20" MaxWidth="80">
@@ -201,8 +201,9 @@
             </Style>
 
             <!-- 右下の残り時間表示 -->
-            <Grid x:Key="leaveTime0Visual"
-                  Background="#60000000">
+            <Grid x:Key="leaveTime0Visual" Background="#60000000"
+                  Visibility="{Binding IsLeaveTimeVisible, ElementName=shogi,
+                                       Converter={StaticResource visibilityConverter}}">
                 <r:DecoratedText Grid.Column="1"
                                  Style="{StaticResource leaveTimeTextStyle}">
                     <r:DecoratedText.Text>
@@ -224,8 +225,9 @@
             </DiffuseMaterial>
 
             <!-- 左上の残り時間表示 -->
-            <Grid x:Key="leaveTime1Visual"
-                  Background="#60000000">
+            <Grid x:Key="leaveTime1Visual" Background="#60000000"
+                  Visibility="{Binding IsLeaveTimeVisible, ElementName=shogi,
+                                       Converter={StaticResource visibilityConverter}}">
                 <r:DecoratedText Grid.Column="1"
                                  Style="{StaticResource leaveTimeTextStyle}">
                     <r:DecoratedText.Text>

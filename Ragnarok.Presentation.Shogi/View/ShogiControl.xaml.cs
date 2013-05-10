@@ -264,40 +264,6 @@ namespace Ragnarok.Presentation.Shogi.View
         }
 
         /// <summary>
-        /// 先手の残り時間を扱う依存プロパティです。
-        /// </summary>
-        public static readonly DependencyProperty BlackLeaveTimeProperty =
-            DependencyProperty.Register(
-                "BlackLeaveTime", typeof(TimeSpan), typeof(ShogiControl),
-                new FrameworkPropertyMetadata(TimeSpan.Zero));
-
-        /// <summary>
-        /// 先手の残り時間を取得または設定します。
-        /// </summary>
-        public TimeSpan BlackLeaveTime
-        {
-            get { return (TimeSpan)GetValue(BlackLeaveTimeProperty); }
-            set { SetValue(BlackLeaveTimeProperty, value); }
-        }
-
-        /// <summary>
-        /// 後手の残り時間を扱う依存プロパティです。
-        /// </summary>
-        public static readonly DependencyProperty WhiteLeaveTimeProperty =
-            DependencyProperty.Register(
-                "WhiteLeaveTime", typeof(TimeSpan), typeof(ShogiControl),
-                new FrameworkPropertyMetadata(TimeSpan.Zero));
-
-        /// <summary>
-        /// 後手の残り時間を取得または設定します。
-        /// </summary>
-        public TimeSpan WhiteLeaveTime
-        {
-            get { return (TimeSpan)GetValue(WhiteLeaveTimeProperty); }
-            set { SetValue(WhiteLeaveTimeProperty, value); }
-        }
-
-        /// <summary>
         /// 将棋盤の状態を扱う依存プロパティです。
         /// </summary>
         public static readonly DependencyProperty AutoPlayStateProperty =
@@ -431,6 +397,59 @@ namespace Ragnarok.Presentation.Shogi.View
         {
             get { return (Brush)GetValue(AutoPlayBrushProperty); }
             set { SetValue(AutoPlayBrushProperty, value); }
+        }
+        #endregion
+
+        #region 時間系プロパティ
+        /// <summary>
+        /// 残り時間の表示を行うかどうかを扱う依存プロパティです。
+        /// </summary>
+        public static readonly DependencyProperty IsLeaveTimeVisibleProperty =
+            DependencyProperty.Register(
+                "IsLeaveTimeVisible", typeof(bool), typeof(ShogiControl),
+                new FrameworkPropertyMetadata(true));
+
+        /// <summary>
+        /// 残り時間の表示を行うかどうかを取得または設定します。
+        /// </summary>
+        public bool IsLeaveTimeVisible
+        {
+            get { return (bool)GetValue(IsLeaveTimeVisibleProperty); }
+            set { SetValue(IsLeaveTimeVisibleProperty, value); }
+        }
+
+        /// <summary>
+        /// 先手の残り時間を扱う依存プロパティです。
+        /// </summary>
+        public static readonly DependencyProperty BlackLeaveTimeProperty =
+            DependencyProperty.Register(
+                "BlackLeaveTime", typeof(TimeSpan), typeof(ShogiControl),
+                new FrameworkPropertyMetadata(TimeSpan.Zero));
+
+        /// <summary>
+        /// 先手の残り時間を取得または設定します。
+        /// </summary>
+        public TimeSpan BlackLeaveTime
+        {
+            get { return (TimeSpan)GetValue(BlackLeaveTimeProperty); }
+            set { SetValue(BlackLeaveTimeProperty, value); }
+        }
+
+        /// <summary>
+        /// 後手の残り時間を扱う依存プロパティです。
+        /// </summary>
+        public static readonly DependencyProperty WhiteLeaveTimeProperty =
+            DependencyProperty.Register(
+                "WhiteLeaveTime", typeof(TimeSpan), typeof(ShogiControl),
+                new FrameworkPropertyMetadata(TimeSpan.Zero));
+
+        /// <summary>
+        /// 後手の残り時間を取得または設定します。
+        /// </summary>
+        public TimeSpan WhiteLeaveTime
+        {
+            get { return (TimeSpan)GetValue(WhiteLeaveTimeProperty); }
+            set { SetValue(WhiteLeaveTimeProperty, value); }
         }
         #endregion
 
