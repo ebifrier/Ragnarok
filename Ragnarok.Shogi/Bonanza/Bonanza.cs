@@ -15,23 +15,35 @@ using Ragnarok.Utility;
 namespace Ragnarok.Shogi.Bonanza
 {
     /// <summary>
-    /// ボナンザ用の例外クラスです。
+    /// Bonanzaの使用メモリとそれを使うためのハッシュ値を保持します。
     /// </summary>
-    public class BonanzaException : Exception
+    public sealed class BonanzaHashMem
     {
         /// <summary>
-        /// コンストラクタ
+        /// 使用メモリ量[MB]を取得します。
         /// </summary>
-        public BonanzaException()
+        public int MemSize
         {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// ハッシュ値の指定に使う値を取得します。
+        /// </summary>
+        public int HashValue
+        {
+            get;
+            private set;
         }
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public BonanzaException(string message)
-            : base(message)
+        public BonanzaHashMem(int memSize, int hashValue)
         {
+            MemSize = memSize;
+            HashValue = hashValue;
         }
     }
 
@@ -154,7 +166,7 @@ namespace Ragnarok.Shogi.Bonanza
         /// ボナンザのハッシュ値指定に使う値と実際の使用メモリ[MB]の
         /// ペアを返します。
         /// </return>
-        public static IEnumerable<Tuple<int, int>> MemorySizeList(double rate)
+        public static IEnumerable<BonanzaHashMem> MemorySizeList(double rate)
         {
             var hashSize = 19;
             var mem = Bonanza.HashSizeMinimum;
@@ -167,7 +179,7 @@ namespace Ragnarok.Shogi.Bonanza
 
             do
             {
-                yield return Tuple.Create(hashSize, mem + Bonanza.MemUsedBase);
+                yield return new BonanzaHashMem(mem + Bonanza.MemUsedBase, hashSize);
 
                 mem *= 2;
                 hashSize += 1;

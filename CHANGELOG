@@ -1,3 +1,8 @@
+2013-05-11  - Ver 2.0.19
+
+	* Ragnarok.Shogi/Bonanza/Bonanza.cs: MONOでコンパイルするため、Tuple型
+	の使用をやめました。
+
 2013-05-10  - Ver 2.0.18
 
 	* Ragnarok.Presentation.Shogi/View/ShogiControl.xaml: 残り時間の表示・

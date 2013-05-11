@@ -60,6 +60,7 @@
     <Compile Include="BoardPiece.cs" />
     <Compile Include="Bonanza\Bonanza.cs" />
     <Compile Include="Bonanza\BonanzaEventArgs.cs" />
+    <Compile Include="Bonanza\BonanzaException.cs" />
     <Compile Include="BWType.cs" />
     <Compile Include="CapturedPiece.cs" />
     <Compile Include="CapturedPieceBox.cs" />
