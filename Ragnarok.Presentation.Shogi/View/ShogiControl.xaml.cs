@@ -287,7 +287,8 @@ namespace Ragnarok.Presentation.Shogi.View
         public static readonly DependencyProperty BlackPlayerNameProperty =
             DependencyProperty.Register(
                 "BlackPlayerName", typeof(string), typeof(ShogiControl),
-                new FrameworkPropertyMetadata("先手"));
+                new FrameworkPropertyMetadata("▲先手",
+                    OnPlayerNameChanged, CoerceBlackPlayerName));
 
         /// <summary>
         /// 先手側の対局者名を取得または設定します。
@@ -298,13 +299,30 @@ namespace Ragnarok.Presentation.Shogi.View
             set { SetValue(BlackPlayerNameProperty, value); }
         }
 
+        static void OnPlayerNameChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+        }
+
+        static object CoerceBlackPlayerName(DependencyObject d, object oldValue)
+        {
+            var name = (oldValue ?? string.Empty).ToString();
+
+            if (name.StartsWith("▲"))
+            {
+                return name;
+            }
+
+            return ("▲" + name);
+        }
+
         /// <summary>
         /// 後手側の対局者名を扱う依存プロパティです。
         /// </summary>
         public static readonly DependencyProperty WhitePlayerNameProperty =
             DependencyProperty.Register(
                 "WhitePlayerName", typeof(string), typeof(ShogiControl),
-                new FrameworkPropertyMetadata("後手"));
+                new FrameworkPropertyMetadata("△後手",
+                    OnPlayerNameChanged, CoerceWhitePlayerName));
 
         /// <summary>
         /// 後手側の対局者名を取得または設定します。
@@ -313,6 +331,18 @@ namespace Ragnarok.Presentation.Shogi.View
         {
             get { return (string)GetValue(WhitePlayerNameProperty); }
             set { SetValue(WhitePlayerNameProperty, value); }
+        }
+
+        static object CoerceWhitePlayerName(DependencyObject d, object oldValue)
+        {
+            var name = (oldValue ?? string.Empty).ToString();
+
+            if (name.StartsWith("△"))
+            {
+                return name;
+            }
+
+            return ("△" + name);
         }
         #endregion
 

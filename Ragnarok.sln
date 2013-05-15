@@ -13,8 +13,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ragnarok.Shogi", "Ragnarok.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ragnarok.UpdatePack", "Ragnarok.UpdatePack\Ragnarok.UpdatePack.csproj", "{10F2112B-1B6C-45B2-9620-6BBDA671D475}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ragnarok.Shogi.Csa.Test", "Ragnarok.Shogi.Csa.Test\Ragnarok.Shogi.Csa.Test.csproj", "{09399685-44AD-4B39-8808-52F3A2B8C2C4}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ragnarok.Presentation.Shogi", "Ragnarok.Presentation.Shogi\Ragnarok.Presentation.Shogi.csproj", "{DDF48C77-8221-4469-8A4C-8865096AAB06}"
 EndProject
 Global

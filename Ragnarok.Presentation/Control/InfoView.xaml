@@ -40,25 +40,26 @@
                 <RowDefinition />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="90" />
+                <ColumnDefinition Width="5" />
+                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="5" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <TextBlock Grid.Row="0" Grid.Column="0"
+            <TextBlock Grid.Row="0" Grid.Column="1"
                        Style="{StaticResource headerTextStyle}"
                        DataContext="{Binding AuthorName}"
                        Text="作者名:" />
-            <TextBlock Grid.Row="0" Grid.Column="2"
+            <TextBlock Grid.Row="0" Grid.Column="3"
                        Style="{StaticResource valueTextStyle}"
                        DataContext="{Binding AuthorName}"
                        Text="{Binding StringFormat={}{0}様}" />
 
-            <TextBlock Grid.Row="1" Grid.Column="0"
+            <TextBlock Grid.Row="1" Grid.Column="1"
                        Style="{StaticResource headerTextStyle}"
                        DataContext="{Binding NicoCommunityUrl}"
                        Text="コミュニティ:" />
-            <TextBlock Grid.Row="1" Grid.Column="2"
+            <TextBlock Grid.Row="1" Grid.Column="3"
                        Style="{StaticResource valueTextStyle}"
                        DataContext="{Binding NicoCommunityUrl}"
                        ToolTip="{Binding NicoCommunityUrl}">
@@ -70,11 +71,11 @@
                 </Hyperlink>
             </TextBlock>
 
-            <TextBlock Grid.Row="2" Grid.Column="0"
+            <TextBlock Grid.Row="2" Grid.Column="1"
                        Style="{StaticResource headerTextStyle}"
                        DataContext="{Binding TwitterUrl}"
                        Text="twitter:" />
-            <TextBlock Grid.Row="2" Grid.Column="2"
+            <TextBlock Grid.Row="2" Grid.Column="3"
                        Style="{StaticResource valueTextStyle}"
                        DataContext="{Binding TwitterUrl}"
                        ToolTip="{Binding TwitterUrl}">
@@ -86,11 +87,11 @@
                 </Hyperlink>
             </TextBlock>
 
-            <TextBlock Grid.Row="3" Grid.Column="0"
+            <TextBlock Grid.Row="3" Grid.Column="1"
                        Style="{StaticResource headerTextStyle}"
                        DataContext="{Binding PixivUrl}"
                        Text="pixiv:" />
-            <TextBlock Grid.Row="3" Grid.Column="2"
+            <TextBlock Grid.Row="3" Grid.Column="3"
                        Style="{StaticResource valueTextStyle}"
                        DataContext="{Binding PixivUrl}"
                        ToolTip="{Binding PixivUrl}">
@@ -102,11 +103,11 @@
                 </Hyperlink>
             </TextBlock>
 
-            <TextBlock Grid.Row="4" Grid.Column="0"
+            <TextBlock Grid.Row="4" Grid.Column="1"
                        Style="{StaticResource headerTextStyle}"
                        DataContext="{Binding BlogUrl}"
-                       Text="blog:" />
-            <TextBlock Grid.Row="4" Grid.Column="2"
+                       Text="ブログ:" />
+            <TextBlock Grid.Row="4" Grid.Column="3"
                        Style="{StaticResource valueTextStyle}"
                        DataContext="{Binding BlogUrl}">
                 <Hyperlink NavigateUri="{Binding}"
@@ -116,11 +117,11 @@
                 </Hyperlink>
             </TextBlock>
 
-            <TextBlock Grid.Row="5" Grid.Column="0"
+            <TextBlock Grid.Row="5" Grid.Column="1"
                        Style="{StaticResource headerTextStyle}"
                        DataContext="{Binding MailAddress}"
-                       Text="mail:" />
-            <TextBlock Grid.Row="5" Grid.Column="2"
+                       Text="メール:" />
+            <TextBlock Grid.Row="5" Grid.Column="3"
                        Style="{StaticResource valueTextStyle}"
                        DataContext="{Binding MailAddress}">
                 <Hyperlink NavigateUri="{Binding}"
@@ -130,11 +131,11 @@
                 </Hyperlink>
             </TextBlock>
 
-            <TextBlock Grid.Row="6" Grid.Column="0"
+            <TextBlock Grid.Row="6" Grid.Column="1"
                        Style="{StaticResource headerTextStyle}"
                        DataContext="{Binding HomepageUrl}"
-                       Text="homepage:" />
-            <TextBlock Grid.Row="6" Grid.Column="2"
+                       Text="ＨＰ:" />
+            <TextBlock Grid.Row="6" Grid.Column="3"
                        Style="{StaticResource valueTextStyle}"
                        DataContext="{Binding HomepageUrl}">
                 <Hyperlink NavigateUri="{Binding}"
@@ -144,11 +145,11 @@
                 </Hyperlink>
             </TextBlock>
 
-            <TextBlock Grid.Row="7" Grid.Column="0"
+            <TextBlock Grid.Row="7" Grid.Column="1"
                        Style="{StaticResource headerTextStyle}"
                        DataContext="{Binding Comment}"
-                       Text="comment:" />
-            <TextBlock Grid.Row="7" Grid.Column="2"
+                       Text="コメント:" />
+            <TextBlock Grid.Row="7" Grid.Column="3"
                        Style="{StaticResource valueTextStyle}"
                        DataContext="{Binding Comment}"
                        Text="{Binding}" />

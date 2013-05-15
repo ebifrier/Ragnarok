@@ -1,3 +1,20 @@
+2013-05-13  - Ver 2.0.20
+
+	* Ragnarok.Extra/FlintSharp/Behaviours/MissileTowardsTarget.cs: ターゲ
+	ットへ向かせるための角度調整方法を変更しました。今までは揺らぎを持たせ
+	るため変更角度をフレーム時間に比例した固定値にしていましたが、フレーム
+	時間が伸びると正しく更新されませんでした。
+	* Ragnarok.Shogi.Csa.Test: 不要なプロジェクトを削除しました。
+	* Ragnarok.Presentation/Control/InfoView.xaml: 表示を少し修正しました。
+	* Ragnarok.Presentation/Control/DecoratedTextBase.cs: DecoratedTextクラ
+	スが持つ各プロパティのみを保持したクラスを追加しました。
+	* Ragnarok.Presentation/Control/TimeSpanEditControl.cs: TimeSpan編集用
+	のコントロールです。SimpleTimeSpanView.csから改名しました。
+	* Ragnarok.Presentation/Control/TimeSpanView.cs: TimeSpanの表示用コント
+	ロールを追加しました。内部にDecoratedTextを使っている関係で文字によって
+	文字サイズが多少異なっています。単純に文字列化すると数字によって表示位
+	置がずれるため、表示専用のクラスを作りました。
+
 2013-05-11  - Ver 2.0.19
 
 	* Ragnarok.Shogi/Bonanza/Bonanza.cs: MONOでコンパイルするため、Tuple型

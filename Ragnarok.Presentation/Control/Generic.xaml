@@ -8,8 +8,8 @@
         <ResourceDictionary Source="/Ragnarok.Presentation;component/Control/GenericDialog.xaml" />
         <ResourceDictionary Source="/Ragnarok.Presentation;component/Control/MessageStatusBar.xaml" />
         <ResourceDictionary Source="/Ragnarok.Presentation;component/Control/NumericUpDown.xaml" />
-        <ResourceDictionary Source="/Ragnarok.Presentation;component/Control/SimpleTimeSpanView.xaml" />
-        <ResourceDictionary Source="/Ragnarok.Presentation;component/Control/TimeControl.xaml" />
+        <ResourceDictionary Source="/Ragnarok.Presentation;component/Control/TimeSpanEditControl.xaml" />
+        <ResourceDictionary Source="/Ragnarok.Presentation;component/Control/TimeSpanView.xaml" />
         <ResourceDictionary Source="/Ragnarok.Presentation;component/Control/WatermarkTextBox.xaml" />        
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

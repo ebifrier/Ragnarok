@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -13,7 +14,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using System.ComponentModel;
 
 namespace Ragnarok.Presentation.Control
 {
@@ -207,7 +207,7 @@ namespace Ragnarok.Presentation.Control
         /// <summary>
         /// テキストと値の同期を取ります。
         /// </summary>
-        private void SyncValueAndText(bool changeValue, decimal value)
+        private void SyncValueAndText(decimal value)
         {
             if (this.isSyncingTextAndValue)
             {
@@ -216,16 +216,13 @@ namespace Ragnarok.Presentation.Control
 
             this.isSyncingTextAndValue = true;
 
-            if (changeValue)
-            {
-                Value = value;
-            }
-            else
-            {
-                Text = (!string.IsNullOrEmpty(TextFormat)
-                    ? string.Format(TextFormat, value)
-                    : value.ToString());
-            }
+            value = Math.Min(Maximum, Math.Max(value, Minimum));
+
+            // valueが変わっている可能性があるため、両方を再設定します。
+            Value = value;
+            Text = (!string.IsNullOrEmpty(TextFormat)
+                ? string.Format(TextFormat, value)
+                : value.ToString());
 
             this.isSyncingTextAndValue = false;
         }
@@ -239,7 +236,7 @@ namespace Ragnarok.Presentation.Control
             var self = (NumericUpDown)d;
             var text = (string)e.NewValue;
 
-            self.SyncValueAndText(true, decimal.Parse(text));
+            self.SyncValueAndText(decimal.Parse(text));
         }
 
         /// <summary>
@@ -250,7 +247,7 @@ namespace Ragnarok.Presentation.Control
         {
             var self = (NumericUpDown)d;
 
-            self.SyncValueAndText(true, self.Value);
+            self.SyncValueAndText(self.Value);
         }
 
         /// <summary>
@@ -289,7 +286,7 @@ namespace Ragnarok.Presentation.Control
         {
             var self = (NumericUpDown)d;
 
-            self.SyncValueAndText(false, self.Value);
+            self.SyncValueAndText(self.Value);
 
             // 値変更イベントを発生させます。
             var args = new RoutedPropertyChangedEventArgs<decimal>(

@@ -579,7 +579,7 @@ namespace Ragnarok.Net.ProtoBuf
             // 使われます。受信処理中に他の受信データを扱うことはできません。
             lock (this.receiveLock)
             {
-                while (data.Offset < data.Count)
+                while (data.Count > 0)
                 {
                     bool parsed = false;
 

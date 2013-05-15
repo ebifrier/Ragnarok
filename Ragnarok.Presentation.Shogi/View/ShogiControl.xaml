@@ -292,8 +292,8 @@
                             <GeometryModel3D Geometry="{StaticResource squareMesh}"
                                              Material="{StaticResource label0Material}">
                                 <GeometryModel3D.Transform>
-                                    <ScaleTransform3D CenterY="-0.50" ScaleY="0.1"
-                                                      ScaleX="0.95" />
+                                    <ScaleTransform3D CenterY="-0.50" ScaleY="0.11"
+                                                      ScaleX="0.90" />
                                 </GeometryModel3D.Transform>
                             </GeometryModel3D>
 
@@ -320,8 +320,8 @@
                             <GeometryModel3D Geometry="{StaticResource squareMesh}"
                                              Material="{StaticResource label1Material}">
                                 <GeometryModel3D.Transform>
-                                    <ScaleTransform3D CenterY="0.50" ScaleY="0.1"
-                                                      ScaleX="0.95" />
+                                    <ScaleTransform3D CenterY="0.50" ScaleY="0.11"
+                                                      ScaleX="0.90" />
                                 </GeometryModel3D.Transform>
                             </GeometryModel3D>
 

@@ -79,7 +79,7 @@ namespace FlintSharp.Behaviours
         }
 
         /// <summary>
-        /// The strength of theturn action. Higher values produce a sharper turn.
+        /// The strength of the turn action. Higher values produce a sharper turn.
         /// </summary>
         public double Power
         {
@@ -137,7 +137,9 @@ namespace FlintSharp.Behaviours
             }
             //c * t / d + b;
             double diffAngle = targetAngle - currentAngle;
-            double velAngle = (diffAngle < 0 ? -m_power : m_power) * elapsedTime;
+            double velAngle =
+                Math.Min(Math.Abs(diffAngle), m_power * elapsedTime) *
+                Math.Sign(diffAngle);
 
             double rate = Math.Max(0.0, m_torelantAngle - Math.Abs(diffAngle));
             double length = Easing.Linear.EaseNone(rate, m_minSpeed, m_maxSpeed - m_minSpeed, m_torelantAngle);

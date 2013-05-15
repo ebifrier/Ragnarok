@@ -1,0 +1,70 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:l="clr-namespace:Ragnarok.Presentation.Control"
+                    xmlns:c="clr-namespace:Ragnarok.Presentation.Converter">
+    
+    <ControlTemplate x:Key="mainControl">
+        <ControlTemplate.Resources>
+            <Style x:Key="baseTextStyle" TargetType="l:DecoratedText">
+                <Setter Property="FontFamily"
+                        Value="{Binding FontFamily, RelativeSource={RelativeSource AncestorType=l:TimeSpanView}}" />
+                <Setter Property="FontStyle"
+                        Value="{Binding FontStyle, RelativeSource={RelativeSource AncestorType=l:TimeSpanView}}" />
+                <Setter Property="FontStretch"
+                        Value="{Binding FontStretch, RelativeSource={RelativeSource AncestorType=l:TimeSpanView}}" />
+                <Setter Property="FontWeight"
+                        Value="{Binding FontWeight, RelativeSource={RelativeSource AncestorType=l:TimeSpanView}}" />
+                <Setter Property="Background"
+                        Value="{Binding Background, RelativeSource={RelativeSource AncestorType=l:TimeSpanView}}" />
+                <Setter Property="Foreground"
+                        Value="{Binding Foreground, RelativeSource={RelativeSource AncestorType=l:TimeSpanView}}" />
+                <Setter Property="Stroke"
+                        Value="{Binding Stroke, RelativeSource={RelativeSource AncestorType=l:TimeSpanView}}" />
+                <Setter Property="StrokeThickness"
+                        Value="{Binding StrokeThickness, RelativeSource={RelativeSource AncestorType=l:TimeSpanView}}" />
+            </Style>
+
+            <Style x:Key="textStyle"
+                   TargetType="l:DecoratedText"
+                   BasedOn="{StaticResource baseTextStyle}">
+                <Setter Property="Width" Value="7" />
+            </Style>
+        </ControlTemplate.Resources>
+        
+        <Grid>
+            <!-- 通常表示に使います -->
+            <UniformGrid Columns="8" Rows="1"
+                         x:Name="Part_NormalContainer">
+                <l:DecoratedText Style="{StaticResource textStyle}"
+                                 x:Name="Part_ValueText5" />
+                <l:DecoratedText Style="{StaticResource textStyle}"
+                                 x:Name="Part_ValueText4" />
+                <l:DecoratedText Style="{StaticResource textStyle}"
+                                 x:Name="Part_ColonText0"
+                                 Text=":" />
+                <l:DecoratedText Style="{StaticResource textStyle}"
+                                 x:Name="Part_ValueText3" />
+                <l:DecoratedText Style="{StaticResource textStyle}"
+                                 x:Name="Part_ValueText2" />
+                <l:DecoratedText Style="{StaticResource textStyle}"
+                                 x:Name="Part_ColonText1"
+                                 Text=":" />
+                <l:DecoratedText Style="{StaticResource textStyle}"
+                                 x:Name="Part_ValueText1" />
+                <l:DecoratedText Style="{StaticResource textStyle}"
+                                 x:Name="Part_ValueText0" />
+            </UniformGrid>
+            
+            <!-- TimeSpanの値がMinValue, MaxValueの時に使います。-->
+            <Grid x:Name="Part_SpecialContainer">
+                <l:DecoratedText Style="{StaticResource baseTextStyle}"
+                                 HorizontalAlignment="Right"
+                                 x:Name="Part_StringText" />
+            </Grid>
+        </Grid>
+    </ControlTemplate>
+
+    <Style TargetType="l:TimeSpanView">
+        <Setter Property="Template" Value="{StaticResource mainControl}" />
+    </Style>
+</ResourceDictionary>

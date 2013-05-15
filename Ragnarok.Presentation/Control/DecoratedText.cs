@@ -25,7 +25,7 @@ namespace Ragnarok.Presentation.Control
     /// 代わりに<see cref="Text"/>を使ってください。
     /// </remarks>
     [TemplatePart(Type = typeof(ContentControl), Name = "ChildPart")]
-    public partial class DecoratedText : System.Windows.Controls.Control
+    public partial class DecoratedText : DecoratedTextBase
     {
         /// <summary>
         /// 子コントロール名。
@@ -46,6 +46,8 @@ namespace Ragnarok.Presentation.Control
                 FontWeightProperty,
                 FontStretchProperty,
                 FontSizeProperty,
+                StrokeProperty,
+                StrokeThicknessProperty,
 
                 FlowDirectionProperty,
                 ForegroundProperty,
@@ -98,22 +100,6 @@ namespace Ragnarok.Presentation.Control
                 new FrameworkPropertyMetadata("", OnPropertyChanged));
 
         /// <summary>
-        /// 文字の縁取りを示す依存プロパティです。
-        /// </summary>
-        public static readonly DependencyProperty StrokeProperty =
-            DependencyProperty.Register(
-                "Stroke", typeof(Brush), typeof(DecoratedText),
-                new FrameworkPropertyMetadata(Brushes.Transparent, OnPropertyChanged));
-
-        /// <summary>
-        /// 文字の縁取り幅を示す依存プロパティです。
-        /// </summary>
-        public static readonly DependencyProperty StrokeThicknessProperty =
-            DependencyProperty.Register(
-                "StrokeThickness", typeof(double), typeof(DecoratedText),
-                new FrameworkPropertyMetadata(1.0, OnPropertyChanged));
-
-        /// <summary>
         /// １行の最大文字数を示す依存プロパティです。
         /// </summary>
         public static readonly DependencyProperty MaxCharCountProperty =
@@ -154,24 +140,6 @@ namespace Ragnarok.Presentation.Control
         {
             get { return (string)GetValue(TextFormatProperty); }
             set { SetValue(TextFormatProperty, value); }
-        }
-
-        /// <summary>
-        /// 文字の縁を塗るブラシを取得または設定します。
-        /// </summary>
-        public Brush Stroke
-        {
-            get { return (Brush)GetValue(StrokeProperty); }
-            set { SetValue(StrokeProperty, value); }
-        }
-
-        /// <summary>
-        /// 文字の縁の太さを取得または設定します。
-        /// </summary>
-        public double StrokeThickness
-        {
-            get { return (double)GetValue(StrokeThicknessProperty); }
-            set { SetValue(StrokeThicknessProperty, value); }
         }
 
         /// <summary>
