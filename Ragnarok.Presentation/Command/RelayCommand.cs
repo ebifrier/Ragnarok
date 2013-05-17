@@ -28,7 +28,14 @@ namespace Ragnarok.Presentation.Command
         /// </summary>
         public void Execute()
         {
-            this.execute();
+            try
+            {
+                this.execute();
+            }
+            finally
+            {
+                WPFUtil.InvalidateCommand();
+            }
         }
 
         void ICommand.Execute(object parameter)
@@ -95,7 +102,14 @@ namespace Ragnarok.Presentation.Command
         /// </summary>
         public void Execute(object parameter)
         {
-            this.execute((T)parameter);
+            try
+            {
+                this.execute((T)parameter);
+            }
+            finally
+            {
+                WPFUtil.InvalidateCommand();
+            }
         }
 
         /// <summary>

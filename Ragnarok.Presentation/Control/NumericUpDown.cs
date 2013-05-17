@@ -471,7 +471,7 @@ namespace Ragnarok.Presentation.Control
         /// </summary>
         private void OnIncrement()
         {
-            Value += Step;
+            Value = Math.Min(Maximum, Math.Max(Value + Step, Minimum));
         }
 
         /// <summary>
@@ -479,7 +479,7 @@ namespace Ragnarok.Presentation.Control
         /// </summary>
         private void OnDecrement()
         {
-            Value -= Step;
+            Value = Math.Min(Maximum, Math.Max(Value - Step, Minimum));
         }
         #endregion
 

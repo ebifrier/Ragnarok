@@ -1,3 +1,10 @@
+2013-05-17  - Ver 2.0.21
+
+	* Ragnarok.Presentation/Command/RelayCommand.cs: コマンド実行後、必ずコ
+	マンド状態を更新するようにしました。
+	* Ragnarok.Presentation/Control/NumericUpDown.cs: ボタンによる値の上下
+	を行うと、最小値や最大値が考慮されないバグを修正しました。
+
 2013-05-13  - Ver 2.0.20
 
 	* Ragnarok.Extra/FlintSharp/Behaviours/MissileTowardsTarget.cs: ターゲ
