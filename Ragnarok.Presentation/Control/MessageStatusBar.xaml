@@ -3,15 +3,20 @@
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                     xmlns:l="clr-namespace:Ragnarok.Presentation.Control">
     <ControlTemplate x:Key="mainControl">
-        <StatusBar>
+        <StatusBar Background="{TemplateBinding Background}">
             <!-- メッセージ表示から一定時間後にメッセージを消すようにします。-->
             <StatusBarItem Name="ChildItemPart"
-                           HorizontalContentAlignment="Right" />
+                           Foreground="{TemplateBinding Foreground}"
+                           HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                           FontFamily="{TemplateBinding FontFamily}"
+                           FontSize="{TemplateBinding FontSize}"
+                           FontWeight="{TemplateBinding FontWeight}"
+                           FontStyle="{TemplateBinding FontStyle}"
+                           FontStretch="{TemplateBinding FontStretch}" />
         </StatusBar>
     </ControlTemplate>
 
     <Style TargetType="l:MessageStatusBar">
         <Setter Property="Template" Value="{StaticResource mainControl}" />
-        <Setter Property="Background" Value="Transparent" />
     </Style>
 </ResourceDictionary>

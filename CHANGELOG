@@ -1,3 +1,16 @@
+2013-05-24  - Ver 2.0.22
+
+	* Ragnarok.Presentation.Shogi/View/ShogiControl.xaml: 名前の表示サイズ
+	や縦横比などを修正しました。
+	* Ragnarok.Presentation.Shogi/View/ShogiControl.xaml.cs: 対局者名が設定
+	されていないときは△or▲の記号も表示しないようにしました。また、駒台の
+	駒の表示位置をより対局者名が見やすい位置に変更しました。その他、駒台の
+	駒に関するバグを修理しました。
+	* Ragnarok.Presentation/Control/MessageStatusBar.xaml: 文字色や背景色の
+	変更をコントロールに反映するようにしました。
+	* Ragnarok/NicoNico/NicoClient.cs: NotifyObjectから継承するようにしまし
+	た。
+
 2013-05-17  - Ver 2.0.21
 
 	* Ragnarok.Presentation/Command/RelayCommand.cs: コマンド実行後、必ずコ

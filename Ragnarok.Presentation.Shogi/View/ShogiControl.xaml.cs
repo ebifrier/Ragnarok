@@ -307,7 +307,7 @@ namespace Ragnarok.Presentation.Shogi.View
         {
             var name = (oldValue ?? string.Empty).ToString();
 
-            if (name.StartsWith("▲"))
+            if (string.IsNullOrEmpty(name) || name.StartsWith("▲"))
             {
                 return name;
             }
@@ -337,7 +337,7 @@ namespace Ragnarok.Presentation.Shogi.View
         {
             var name = (oldValue ?? string.Empty).ToString();
 
-            if (name.StartsWith("△"))
+            if (string.IsNullOrEmpty(name) || name.StartsWith("△"))
             {
                 return name;
             }
@@ -979,17 +979,17 @@ namespace Ragnarok.Presentation.Shogi.View
             var bounds = this.capturedPieceBoxBounds[index];
 
             // ○ 駒位置の計算方法
-            // 駒台には横に駒を２つ並べます。また、両端と駒と駒の間には駒の幅/2を
-            // スペースとして挿入します。
-            // そのため、横位置の計算では
+            // 駒台には駒を横に２つ並べます。また、両端と駒と駒の間には
+            // 駒の幅/2をスペースとして挿入します。
+            // このため、駒の幅/2 を基本区間とし、
             //   2(両端) + 1(駒間) + 4(駒数*2) = 7
-            // を基本区間数として、計算します。
+            // を区間数として、駒の位置を計算します。
             //
             // また、縦の計算では先手・後手などの文字列を表示するため、
             // 手前側は上部、向かい側は下部に余計な空間を作ります。
-            //   3(上下端+α) + 3(駒間) + 8(駒数*4) = 14
+            //   4(上下端+α) + 3(駒間) + 8(駒数*4) = 15
             var hw = bounds.Width / 7;
-            var hh = bounds.Height / 14;
+            var hh = bounds.Height / 15;
             var x = ((int)pieceType - 2) % 2;
             var y = ((int)pieceType - 2) / 2;
 
@@ -999,11 +999,12 @@ namespace Ragnarok.Presentation.Shogi.View
                 y = 3 - y;
             }
 
-            // 駒の中心位置を返すので、左端の駒の位置は基本区間*2となります。
-            // また駒の数を右肩に表示するため、少し左にずらしています。
+            // 駒の中心位置
+            // 駒の数を右肩に表示するため、少し左にずらしています。
+            // また、対局者名などを表示するため上下にずらしています。
             return new Vector3D(
                 bounds.Left + hw * (x * 3 + 2 - 0.2),
-                bounds.Top + hh * (y * 3 + 2 + (1 - index)),
+                bounds.Top + hh * (y * 3 + 2 + (1 - index) * 2),
                 PieceZ);
         }
 
@@ -1103,7 +1104,10 @@ namespace Ragnarok.Presentation.Shogi.View
             var index = (bwType == BWType.Black ? 0 : 1);
             var capturedPieceList = this.capturedPieceObjectList[index];
 
-            return capturedPieceList[(int)pieceType];
+            return (
+                (int)pieceType < capturedPieceList.Count ?
+                capturedPieceList[(int)pieceType] :
+                null);
         }
 
         /// <summary>

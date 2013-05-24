@@ -13,7 +13,7 @@ namespace Ragnarok.NicoNico
     using Login;
 
     /// <summary>
-    /// ログイン状態です。
+    /// ログイン状態を示します。
     /// </summary>
     public enum LoginState
     {
@@ -34,38 +34,12 @@ namespace Ragnarok.NicoNico
     /// <summary>
     /// ニコニコのログイン情報を管理します。
     /// </summary>
-    public class NicoClient : MarshalByRefObject, ILazyModel
+    public class NicoClient : NotifyObject
     {
-        private readonly object SyncRoot = new object();
-        private readonly LazyModelObject lazyModelObject = new LazyModelObject();
-        private LoginState loginState = LoginState.Waiting;
-        private LoginData loginData = new LoginData();
-        private CookieContainer cookieContainer = null;
-        private AccountInfo accountInfo = null;
-
-        /// <summary>
-        /// プロパティ値の変更イベントです。
-        /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
-
         /// <summary>
         /// このデータを使ったログイン成功時のイベントです。
         /// </summary>
         public event EventHandler LoginSucceeded;
-
-        /// <summary>
-        /// プロパティ値が変更されたときに呼ばれます。
-        /// </summary>
-        public virtual void NotifyPropertyChanged(PropertyChangedEventArgs e)
-        {
-            var handler = this.PropertyChanged;
-
-            if (handler != null)
-            {
-                Util.SafeCall(() =>
-                    handler(this, e));
-            }
-        }
 
         /// <summary>
         /// ログイン成功を通知します。
@@ -82,34 +56,12 @@ namespace Ragnarok.NicoNico
         }
 
         /// <summary>
-        /// プロパティ変更通知を遅延するためのオブジェクトを取得します。
-        /// </summary>
-        LazyModelObject ILazyModel.LazyModelObject
-        {
-            get
-            {
-                return this.lazyModelObject;
-            }
-        }
-
-        /// <summary>
         /// ログイン用のデータを取得します。
         /// </summary>
         public LoginData LoginData
         {
-            get
-            {
-                return this.loginData;
-            }
-            private set
-            {
-                using (new LazyModelLock(this, SyncRoot))
-                {
-                    this.loginData = value;
-
-                    this.RaisePropertyChanged("LoginData");
-                }
-            }
+            get { return GetValue<LoginData>("LoginData"); }
+            private set { SetValue("LoginData", value); }
         }
 
         /// <summary>
@@ -117,22 +69,8 @@ namespace Ragnarok.NicoNico
         /// </summary>
         public LoginState LoginState
         {
-            get
-            {
-                return this.loginState;
-            }
-            private set
-            {
-                using (new LazyModelLock(this, SyncRoot))
-                {
-                    if (this.loginState != value)
-                    {
-                        this.loginState = value;
-
-                        this.RaisePropertyChanged("LoginState");
-                    }
-                }
-            }
+            get { return GetValue<LoginState>("LoginState"); }
+            private set { SetValue("LoginState", value); }
         }
 
         /// <summary>
@@ -140,22 +78,8 @@ namespace Ragnarok.NicoNico
         /// </summary>
         public CookieContainer CookieContainer
         {
-            get
-            {
-                return this.cookieContainer;
-            }
-            protected set
-            {
-                using (new LazyModelLock(this, SyncRoot))
-                {
-                    if (this.cookieContainer != value)
-                    {
-                        this.cookieContainer = value;
-
-                        this.RaisePropertyChanged("CookieContainer");
-                    }
-                }
-            }
+            get { return GetValue<CookieContainer>("CookieContainer"); }
+            private set { SetValue("CookieContainer", value); }
         }
 
         /// <summary>
@@ -166,9 +90,9 @@ namespace Ragnarok.NicoNico
         {
             get
             {
-                using (new LazyModelLock(this, SyncRoot))
+                using (LazyLock())
                 {
-                    return (this.cookieContainer != null);
+                    return (CookieContainer != null);
                 }
             }
         } 
@@ -178,22 +102,8 @@ namespace Ragnarok.NicoNico
         /// </summary>
         public AccountInfo AccountInfo
         {
-            get
-            {
-                return this.accountInfo;
-            }
-            protected set
-            {
-                using (new LazyModelLock(this, SyncRoot))
-                {
-                    if (this.accountInfo != value)
-                    {
-                        this.accountInfo = value;
-
-                        this.RaisePropertyChanged("AccountInfo");
-                    }
-                }
-            }
+            get { return GetValue<AccountInfo>("AccountInfo"); }
+            private set { SetValue("AccountInfo", value); }
         }
 
         /// <summary>
@@ -204,14 +114,14 @@ namespace Ragnarok.NicoNico
         {
             get
             {
-                using (new LazyModelLock(this, SyncRoot))
+                using (LazyLock())
                 {
-                    if (this.accountInfo == null)
+                    if (AccountInfo == null)
                     {
                         return -1;
                     }
 
-                    return this.accountInfo.Id;
+                    return AccountInfo.Id;
                 }
             }
         }
@@ -224,14 +134,14 @@ namespace Ragnarok.NicoNico
         {
             get
             {
-                using (new LazyModelLock(this, SyncRoot))
+                using (LazyLock())
                 {
-                    if (this.accountInfo == null)
+                    if (AccountInfo == null)
                     {
                         return null;
                     }
 
-                    return this.accountInfo.NickName;
+                    return AccountInfo.NickName;
                 }
             }
         }
@@ -306,12 +216,12 @@ namespace Ragnarok.NicoNico
             {
                 try
                 {
-                    if (this.LoginState == LoginState.Logining)
+                    if (LoginState == LoginState.Logining)
                     {
                         return;
                     }
 
-                    this.LoginState = LoginState.Logining;
+                    LoginState = LoginState.Logining;
 
                     // ログインの非同期処理を開始します。
                     ThreadPool.QueueUserWorkItem(
@@ -320,7 +230,7 @@ namespace Ragnarok.NicoNico
                 }
                 catch (Exception)
                 {
-                    this.LoginState =
+                    LoginState =
                         (IsLogin ? LoginState.Logined : LoginState.Waiting);
                 }
             }
@@ -344,8 +254,17 @@ namespace Ragnarok.NicoNico
             }
 
             // ログイン処理終了を通知します。
-            this.LoginState =
+            LoginState =
                  (IsLogin ? LoginState.Logined : LoginState.Waiting);
+        }
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public NicoClient()
+        {
+            LoginState = LoginState.Waiting;
+            LoginData = new LoginData();
         }
     }
 }

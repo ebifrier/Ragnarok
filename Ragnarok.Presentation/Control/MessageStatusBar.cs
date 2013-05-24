@@ -213,6 +213,9 @@ namespace Ragnarok.Presentation.Control
             OpacityProperty.OverrideMetadata(
                 typeof(MessageStatusBar),
                 new FrameworkPropertyMetadata(0.0));
+            HorizontalContentAlignmentProperty.OverrideMetadata(
+                typeof(MessageStatusBar),
+                new FrameworkPropertyMetadata(HorizontalAlignment.Right));
         }
 
         /// <summary>
