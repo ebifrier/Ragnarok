@@ -196,7 +196,7 @@ namespace Ragnarok.NicoNico.Live
             lock (SyncRoot)
             {
                 // アラート情報の受信を開始するためのメッセージです。
-                var message = NicoString.ThreadStart(
+                var message = NicoString.MakeThreadStart(
                     this.alertInfo.MS.ThreadId, 1);
 
                 var buffer = Encoding.UTF8.GetBytes(message);

@@ -1,3 +1,11 @@
+2013-05-28  - Ver 2.0.23
+
+	* Ragnarok/Net/CookieGetter: ソースをリファクタリングしました。
+	* Ragnarok/NicoNico/AccountInfo.cs: アカウント情報には「お住いの国」か
+	「お住いの地域」と出てくることが分かり、それに対応しました。
+	* Ragnarok/Net/CookieGetter/OperaBrowserManager.cs: Operaからのクッキー
+	取得に対応しました。
+
 2013-05-24  - Ver 2.0.22
 
 	* Ragnarok.Presentation.Shogi/View/ShogiControl.xaml: 名前の表示サイズ

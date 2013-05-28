@@ -180,7 +180,7 @@ namespace Ragnarok.NicoNico.Live
         {
             // ページを取得します。
             var responseData = WebUtil.RequestHttp(
-                NicoString.CommunityInfoUrl(id),
+                NicoString.GetCommunityUrl(id),
                 null, cc);
 
             // 失敗;; コミュニティエラー時はレスポンスが空になります。
@@ -210,8 +210,7 @@ namespace Ragnarok.NicoNico.Live
             }
 
             var m = Regex.Match(pageStr,
-                //"href=\"/video/co([0-9]+)\\?rss=2.0\">");
-                @"<img src=""http://icon\.nimg\.jp/community/co([0-9]+)\.jpg\?[0-9]+""");
+                @"<img src=""http://icon\.nimg\.jp/community/\d+/co([0-9]+)\.jpg\?[0-9]+""");
             if (!m.Success)
             {
                 throw new NicoLiveException(
@@ -253,7 +252,7 @@ namespace Ragnarok.NicoNico.Live
             //   <td> 
             //      <strong>13</strong>
             m = Regex.Match(pageStr,
-                "<td nowrap>レベル：</td>\\s*<td>\\s*<strong>([0-9]+)</strong>");
+                @"<td nowrap>レベル：</td>\s*<td>\s*<strong>([0-9]+)</strong>");
             if (!m.Success)
             {
                 throw new NicoLiveException(
@@ -262,11 +261,11 @@ namespace Ragnarok.NicoNico.Live
             }
             community.Level = int.Parse(m.Groups[1].Value);
 
-            // td nowrap>参加メンバー：</td> 
+            // <td nowrap>メンバー：</td> 
             //   <td> 
             //      <strong>87</strong>
             m = Regex.Match(pageStr,
-                "<td nowrap>参加メンバー：</td>\\s*<td>\\s*<strong>([0-9]+)</strong>");
+                @"<td nowrap>メンバー：</td>\s*<td>\s*<strong>([0-9]+)</strong>");
             if (!m.Success)
             {
                 throw new NicoLiveException(
@@ -276,9 +275,9 @@ namespace Ragnarok.NicoNico.Live
             community.NumberOfMembers = int.Parse(m.Groups[1].Value);
 
             m = Regex.Match(pageStr,
-                "オーナー：<a href=\"http://www\\.nicovideo\\.jp/user/([0-9]+)\" " +
-                "style=\"color:#FFF;\" target=\"_blank\">" +
-                "\\s*<strong>([^<]+)</strong>");
+                @"オーナー：<a href=""http://www\.nicovideo\.jp/user/([0-9]+)"" " +
+                @"style=""color:#FFF;"" target=""_blank"">\s*" +
+                @"<strong>([^<]+)</strong></a>");
             if (!m.Success)
             {
                 throw new NicoLiveException(
@@ -289,7 +288,7 @@ namespace Ragnarok.NicoNico.Live
             community.OwnerName = WebUtil.DecodeHtmlText(m.Groups[2].Value);
 
             m = Regex.Match(pageStr,
-                "開設日：<strong>([0-9]+)年([0-9]+)月([0-9]+)日</strong>");
+                @"開設日：<strong>(\d+)年(\d+)月(\d+)日</strong>");
             if (!m.Success)
             {
                 throw new NicoLiveException(

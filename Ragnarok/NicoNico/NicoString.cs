@@ -20,7 +20,7 @@ namespace Ragnarok.NicoNico
         /// <summary>
         /// ニコニコ生放送のトップページのＵＲＬを取得します。
         /// </summary>
-        public static string LiveTopUrl()
+        public static string GetLiveTopUrl()
         {
             return "http://live.nicovideo.jp/";
         }
@@ -28,7 +28,7 @@ namespace Ragnarok.NicoNico
         /// <summary>
         /// ログインURLを取得します。
         /// </summary>
-        public static string LoginUrl()
+        public static string GetLoginUrl()
         {
             return "https://secure.nicovideo.jp/secure/login?site=niconico";
         }
@@ -82,10 +82,10 @@ namespace Ragnarok.NicoNico
         /// <summary>
         /// メッセージ受信を開始するためのメッセージを作成します。
         /// </summary>
-        public static string ThreadStart(int threadId)
+        public static string MakeThreadStart(int threadId)
         {
             return string.Format(
-                "<thread thread=\"{0}\" version=\"20061206\" res_from=\"-999999999\" />\0",
+                "<thread thread=\"{0}\" version=\"20061206\" res_from=\"-99999999\" />\0",
                 threadId);
         }
 
@@ -98,7 +98,7 @@ namespace Ragnarok.NicoNico
         /// <param name="resFrom">
         /// 今投稿されているコメントから何コメント前のコメントから受信するかです。
         /// </param>
-        public static string ThreadStart(int threadId, int resFrom)
+        public static string MakeThreadStart(int threadId, int resFrom)
         {
             return string.Format(
                 "<thread thread=\"{0}\" version=\"20061206\" res_from=\"{1}\" />\0",
@@ -109,7 +109,7 @@ namespace Ragnarok.NicoNico
         /// <summary>
         /// マイページがあるURLを取得します。
         /// </summary>
-        public static string MyPageUrl()
+        public static string GetMyPageUrl()
         {
             return string.Format(
                 "http://www.nicovideo.jp/my");
@@ -118,7 +118,7 @@ namespace Ragnarok.NicoNico
         /// <summary>
         /// ユーザー情報があるURLを取得します。
         /// </summary>
-        public static string UserInfoUrl(int userId)
+        public static string GetUserInfoUrl(int userId)
         {
             return string.Format(
                 "http://www.nicovideo.jp/user/{0}",
@@ -128,7 +128,7 @@ namespace Ragnarok.NicoNico
         /// <summary>
         /// コミュニティ情報があるURLを取得します。
         /// </summary>
-        public static string CommunityInfoUrl(int communityId)
+        public static string GetCommunityUrl(int communityId)
         {
             return string.Format(
                 "http://com.nicovideo.jp/community/co{0}",
@@ -138,7 +138,7 @@ namespace Ragnarok.NicoNico
         /// <summary>
         /// コミュニティ情報があるURLを取得します。
         /// </summary>
-        public static string CommunityInfoUrl(string communityIdString)
+        public static string GetCommunityUrl(string communityIdString)
         {
             return string.Format(
                 "http://com.nicovideo.jp/community/{0}",
@@ -148,7 +148,7 @@ namespace Ragnarok.NicoNico
         /// <summary>
         /// チャンネル情報があるURLを取得します。
         /// </summary>
-        public static string ChannelInfoUrl(int channelId)
+        public static string GetChannelUrl(int channelId)
         {
             return string.Format(
                 "http://ch.nicovideo.jp/channel/ch{0}",
@@ -158,7 +158,7 @@ namespace Ragnarok.NicoNico
         /// <summary>
         /// ニコ生の放送URLを取得します。
         /// </summary>
-        public static string LiveUrl(long liveId)
+        public static string GetLiveUrl(long liveId)
         {
             return string.Format(
                 "http://live.nicovideo.jp/watch/lv{0}",
@@ -168,7 +168,7 @@ namespace Ragnarok.NicoNico
         /// <summary>
         /// ニコ生の放送URLを取得します。
         /// </summary>
-        public static string LiveUrl(string liveIdString)
+        public static string GetLiveUrl(string liveIdString)
         {
             return string.Format(
                 "http://live.nicovideo.jp/watch/{0}",

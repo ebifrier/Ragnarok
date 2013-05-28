@@ -20,6 +20,7 @@ namespace Ragnarok.Net.CookieGetter
 			new FirefoxBrowserManager(),
 			new GoogleChromeBrowserManager(),
 			new SafariBrowserManager(),
+            new OperaBrowserManager(),
         };
         public static Queue<Exception> Exceptions = new Queue<Exception>();
 

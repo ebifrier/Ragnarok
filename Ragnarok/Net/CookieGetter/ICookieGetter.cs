@@ -32,8 +32,5 @@ namespace Ragnarok.Net.CookieGetter
 		/// </summary>
 		/// <exception cref="CookieGetterException"></exception>
 		CookieContainer GetAllCookies();
-
-		
-
 	}
 }

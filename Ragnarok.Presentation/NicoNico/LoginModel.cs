@@ -12,6 +12,7 @@ using System.ComponentModel;
 using Ragnarok;
 using Ragnarok.ObjectModel;
 using Ragnarok.NicoNico;
+using Ragnarok.Net.CookieGetter;
 
 namespace Ragnarok.Presentation.NicoNico
 {
@@ -31,7 +32,6 @@ namespace Ragnarok.Presentation.NicoNico
                 {BrowserType.GoogleChrome, "Google Chrome"},
                 {BrowserType.Opera, "Opera"},
                 {BrowserType.Safari, "Safari"},
-                {BrowserType.Chromium, "Chromium"},
             };
 
         private LoginData loginData;
@@ -187,7 +187,7 @@ namespace Ragnarok.Presentation.NicoNico
             ClearAvailableCookieList();
 
             ThreadPool.QueueUserWorkItem(
-                state => EnumerateAllCookies());
+                _ => EnumerateAllCookies());
         }
 
         /// <summary>

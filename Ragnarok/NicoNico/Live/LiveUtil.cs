@@ -220,6 +220,47 @@ namespace Ragnarok.NicoNico.Live
         }
 
         /// <summary>
+        /// 放送中URLが出る
+        /// </summary>
+        private static readonly Regex CurrentLiveRegex = new Regex(
+            @"<div class=""now_item cfix"">\s*" +
+            @"<h2><a href=""http://live.nicovideo.jp/watch/lv(\d+)\?ref=community""\s*" +
+            @"class=""community"">");
+
+        /// <summary>
+        /// コミュニティで放送中であれば、そのURLを取得します。
+        /// </summary>
+        public static string GetCurrentLiveUrl(int communityId,
+                                               CookieContainer cc)
+        {
+            if (communityId <= 0)
+            {
+                throw new ArgumentException(
+                    "コミュニティＩＤが正しくありません。",
+                    "communityId");
+            }
+
+            var responseText = WebUtil.RequestHttpText(
+                NicoString.GetCommunityUrl(communityId),
+                null,
+                cc,
+                Encoding.UTF8);
+            if (string.IsNullOrEmpty(responseText))
+            {
+                return null;
+            }
+
+            var m = CurrentLiveRegex.Match(responseText);
+            if (!m.Success)
+            {
+                return null;
+            }
+
+            var liveId = long.Parse(m.Groups[1].Value);
+            return NicoString.GetLiveUrl(liveId);
+        }
+
+        /// <summary>
         /// 放送情報などを保持します。
         /// </summary>
         private class InternalData
@@ -236,16 +277,17 @@ namespace Ragnarok.NicoNico.Live
                                                            CookieContainer cc)
         {
             var playerStatus = PlayerStatus.Create(liveUrl, cc);
+            var id = playerStatus.Stream.Id;
 
             // publishstatusは放送主しか取得することが出来ません。
             PublishStatus publishStatus = null;
             if (playerStatus.Stream.IsOwner)
             {
-                publishStatus = PublishStatus.Create(playerStatus.Stream.Id, cc);
+                publishStatus = PublishStatus.Create(id, cc);
             }
 
             // 放送情報を取得します。
-            var liveInfo = LiveInfo.Create(playerStatus.Stream.Id, cc);
+            var liveInfo = LiveInfo.Create(id, cc);
 
             return new LiveStreamInfo()
             {
@@ -322,7 +364,7 @@ namespace Ragnarok.NicoNico.Live
                 eventList[2]);
 
             // タイムアウト時間を取得します。
-            // (デフォルトで１０秒)
+            // (デフォルトで３０秒)
             var timeout = WebUtil.DefaultTimeout;
             if (timeout < 0)
             {
@@ -416,7 +458,7 @@ namespace Ragnarok.NicoNico.Live
                                              AutoResetEvent ev)
         {
             WebUtil.RequestHttpTextAsync(
-                NicoString.LiveUrl(liveId),
+                NicoString.GetLiveUrl(liveId),
                 null,
                 internalData.Cookie,
                 Encoding.UTF8,

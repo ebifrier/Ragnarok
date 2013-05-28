@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.ComponentModel;
 
+using Ragnarok.Net.CookieGetter;
 using Ragnarok.ObjectModel;
 
 namespace Ragnarok.NicoNico.Login

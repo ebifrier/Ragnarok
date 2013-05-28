@@ -115,7 +115,7 @@ namespace Ragnarok.NicoNico.Live
         {
             // urlを取得します。
             var responseData = WebUtil.RequestHttp(
-                NicoString.LiveUrl(liveId),
+                NicoString.GetLiveUrl(liveId),
                 null,
                 cc);
 

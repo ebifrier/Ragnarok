@@ -84,7 +84,7 @@ namespace Ragnarok.NicoNico
             }
 
             var cookieCollection = cc.GetCookies(
-                new Uri(NicoString.LiveTopUrl()));
+                new Uri(NicoString.GetLiveTopUrl()));
             if (cookieCollection == null)
             {
                 return -1;
@@ -130,7 +130,7 @@ namespace Ragnarok.NicoNico
         /// </summary>
         public static AccountInfo Create(int id, CookieContainer cc)
         {
-            var url = NicoString.UserInfoUrl(id);
+            var url = NicoString.GetUserInfoUrl(id);
             var text = WebUtil.RequestHttpText(url, null, cc, Encoding.UTF8);
 
             if (string.IsNullOrEmpty(text))
@@ -315,11 +315,11 @@ namespace Ragnarok.NicoNico
             // 住んでいる地域を調べます。
             m = Regex.Match(
                 userPage,
-                "<dt>お住いの地域…</dt><dd class=\"last\">([^\n]+)</dd>");
+                "<dt>お住いの(地域|国)…</dt><dd class=\"last\">([^\n]+)</dd>");
             if (!m.Success)
             {
                 throw new NicoException(
-                    "住んでいる地域の取得に失敗しました。");
+                    "住んでいる国の取得に失敗しました。");
             }
 
             result.Place =

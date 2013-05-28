@@ -114,6 +114,8 @@
     <Compile Include="Net\CookieGetter\IEComponentBrowserManager.cs" />
     <Compile Include="Net\CookieGetter\IECookieGetter.cs" />
     <Compile Include="Net\CookieGetter\IESafemodeBrowserManager.cs" />
+    <Compile Include="Net\CookieGetter\OperaBrowserManager.cs" />
+    <Compile Include="Net\CookieGetter\OperaCookieGetter.cs" />
     <Compile Include="Net\CookieGetter\SafariBrowserManager.cs" />
     <Compile Include="Net\CookieGetter\SafariCookieGetter.cs" />
     <Compile Include="Net\CookieGetter\SQLite.cs" />
@@ -165,7 +167,6 @@
     <Compile Include="NicoNico\Live\ProviderType.cs" />
     <Compile Include="NicoNico\Live\PublishStatus.cs" />
     <Compile Include="NicoNico\Live\StrUtil.cs" />
-    <Compile Include="NicoNico\Login\BrowserType.cs" />
     <Compile Include="NicoNico\Login\CookieValidator.cs" />
     <Compile Include="NicoNico\Login\LoginData.cs" />
     <Compile Include="NicoNico\Login\Loginer.cs" />
@@ -242,6 +243,7 @@
     <None Include="Ragnarok.snk" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="NicoNico\Live\Tests\" />
     <Folder Include="NicoNico\Video\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

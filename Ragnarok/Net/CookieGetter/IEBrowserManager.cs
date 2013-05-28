@@ -1,17 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace Ragnarok.Net.CookieGetter
 {
-
 	/// <summary>
 	/// IE系のすべてのクッキーを取得する
 	/// </summary>
-	class IEBrowserManager : IBrowserManager
+	internal class IEBrowserManager : IBrowserManager
 	{
-		#region IBrowserManager メンバ
-
 		public BrowserType BrowserType
 		{
 			get { return BrowserType.IE; }
@@ -19,38 +17,41 @@ namespace Ragnarok.Net.CookieGetter
 
 		public ICookieGetter CreateDefaultCookieGetter()
 		{
-			string cookieFolder = Environment.GetFolderPath(Environment.SpecialFolder.Cookies);
-			CookieStatus status = new CookieStatus(this.BrowserType.ToString(), cookieFolder, this.BrowserType, PathType.Directory);
+			string cookieFolder = Environment.GetFolderPath(
+                Environment.SpecialFolder.Cookies);
+
+			CookieStatus status = new CookieStatus(
+                this.BrowserType.ToString(),
+                cookieFolder,
+                this.BrowserType,
+                PathType.Directory);
+
 			return new IECookieGetter(status, true);
 		}
 
-		public ICookieGetter[] CreateCookieGetters()
-		{
-			string cookieFolder = Environment.GetFolderPath(Environment.SpecialFolder.Cookies);
-			
-			string lowFolder = System.IO.Path.Combine(cookieFolder, "low");
-			if (System.IO.Directory.Exists(lowFolder)) {
-				IEComponentBrowserManager iec = new IEComponentBrowserManager();
-				IESafemodeBrowserManager ies = new IESafemodeBrowserManager();
-				return new ICookieGetter[] { iec.CreateDefaultCookieGetter(), ies.CreateDefaultCookieGetter() };
-			}
-			else {
-				return new ICookieGetter[] { CreateDefaultCookieGetter() };
-			}
-			/*
-			string lowFolder = System.IO.Path.Combine(cookieFolder, "low");
-			if (System.IO.Directory.Exists(lowFolder)) {
-				IEComponentBrowserManager iec = new IEComponentBrowserManager();
-				IESafemodeBrowserManager ies = new IESafemodeBrowserManager();
-				IE9SafemodeBrowserManager ie9s = new IE9SafemodeBrowserManager();
-				return new ICookieGetter[] { iec.CreateDefaultCookieGetter(), ies.CreateDefaultCookieGetter(), ie9s.CreateDefaultCookieGetter()};
-			}
-			else {
-				return new ICookieGetter[] { CreateDefaultCookieGetter() };
-			}
-			*/
-		}
+        public ICookieGetter[] CreateCookieGetters()
+        {
+            string cookieFolder = Environment.GetFolderPath(
+                Environment.SpecialFolder.Cookies);
+            string lowFolder = Path.Combine(cookieFolder, "low");
 
-		#endregion
+            if (Directory.Exists(lowFolder))
+            {
+                IEComponentBrowserManager iec = new IEComponentBrowserManager();
+                IESafemodeBrowserManager ies = new IESafemodeBrowserManager();
+                return new ICookieGetter[]
+                {
+                    iec.CreateDefaultCookieGetter(),
+                    ies.CreateDefaultCookieGetter(),
+                };
+            }
+            else
+            {
+                return new ICookieGetter[]
+                {
+                    CreateDefaultCookieGetter()
+                };
+            }
+        }
 	}
 }

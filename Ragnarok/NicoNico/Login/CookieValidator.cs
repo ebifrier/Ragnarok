@@ -142,7 +142,7 @@ namespace Ragnarok.NicoNico.Login
                 try
                 {
                     /*var text = WebUtil.RequestHttpText(
-                        NicoString.LiveTopUrl(),
+                        NicoString.GetLiveTopUrl(),
                         null,
                         cookieContainer,
                         Encoding.UTF8);
@@ -180,7 +180,7 @@ namespace Ragnarok.NicoNico.Login
                 try
                 {
                     /*var text = WebUtil.RequestHttpText(
-                        NicoString.LiveTopUrl(),
+                        NicoString.GetLiveTopUrl(),
                         null,
                         cookieContainer,
                         Encoding.UTF8);

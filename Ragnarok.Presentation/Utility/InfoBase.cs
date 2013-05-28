@@ -74,7 +74,7 @@ namespace Ragnarok.Presentation.Utility
                     return null;
                 }
 
-                return Ragnarok.NicoNico.NicoString.CommunityInfoUrl(
+                return Ragnarok.NicoNico.NicoString.GetCommunityUrl(
                     NicoCommunity);
             }
         }

@@ -5,6 +5,7 @@ using System.Net;
 using System.Text;
 
 using Ragnarok.Net;
+using Ragnarok.Net.CookieGetter;
 using Ragnarok.NicoNico;
 
 namespace Ragnarok.NicoNico.Login
@@ -35,7 +36,7 @@ namespace Ragnarok.NicoNico.Login
 
                 // ニコニコにログインします。
                 var text = WebUtil.RequestHttpText(
-                    NicoString.LoginUrl(),
+                    NicoString.GetLoginUrl(),
                     NicoString.MakeLoginData(mail, password),
                     cc,
                     Encoding.UTF8);
@@ -86,7 +87,7 @@ namespace Ragnarok.NicoNico.Login
 
                 // 与えられたブラウザのログインクッキーを取得します。
                 var cookie = cookieGetter.GetCookie(
-                    new Uri(NicoString.LiveTopUrl()),
+                    new Uri(NicoString.GetLiveTopUrl()),
                     "user_session");
                 if (cookie == null)
                 {

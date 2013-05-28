@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 
+using Ragnarok.Net.CookieGetter;
 using Ragnarok.NicoNico;
 using Ragnarok.NicoNico.Login;
 

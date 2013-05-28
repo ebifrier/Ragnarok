@@ -185,17 +185,6 @@ namespace Ragnarok.NicoNico.Live
             }
         }
 
-        /*/// <summary>
-        /// コメントが投稿可能かどうかを取得します。
-        /// </summary>
-        public bool CanPostComment
-        {
-            get
-            {
-                return !string.IsNullOrEmpty(GetPostKey());
-            }
-        }*/
-
         /// <summary>
         /// 今すぐコメントが投稿可能かどうかを取得します。
         /// </summary>
@@ -430,7 +419,7 @@ namespace Ragnarok.NicoNico.Live
                 StartReceiveMessageProcess();
 
                 // サーバー側のメッセージの送信を開始させます。
-                var message = NicoString.ThreadStart(
+                var message = NicoString.MakeThreadStart(
                     this.ThreadId, resFrom);
                 SendMessageSync(message);
             }
