@@ -9,44 +9,45 @@
 
     <ControlTemplate x:Key="mainControl">
         <Grid Background="{TemplateBinding Background}">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="2*" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="2*" />
-            </Grid.ColumnDefinitions>
-
             <!-- 画像表示 -->
-            <Image Grid.RowSpan="2" Grid.ColumnSpan="2"
-                   Stretch="Fill"
+            <Image x:Name="image"
+                   Stretch="None"
                    Source="{Binding SelectedImagePath,
                                     Converter={StaticResource imageConverter},
                                     RelativeSource={RelativeSource TemplatedParent}}" />
+            
+            <Grid MaxWidth="{Binding ActualWidth, ElementName=image}"
+                  MaxHeight="{Binding ActualHeight, ElementName=image}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="2*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="2*" />
+                </Grid.ColumnDefinitions>
 
-            <!-- 評価値 -->
-            <Viewbox Grid.Row="1" Grid.Column="1"
-                     Stretch="Uniform"
-                     HorizontalAlignment="Right"
-                     VerticalAlignment="Bottom">
-                <l:DecoratedText Visibility="{Binding IsShowEvaluationPoint,
-                                                      Converter={StaticResource visibilityConverter},
-                                                      RelativeSource={RelativeSource TemplatedParent}}"
-                                 Text="{Binding EvaluationPoint,
-                                                StringFormat={}{0:0},
-                                                RelativeSource={RelativeSource TemplatedParent}}"
-                                 FontSize="50"
-                                 Foreground="White"
-                                 Stroke="Black"
-                                 StrokeThickness="1.5" />
-            </Viewbox>
+                <!-- 評価値 -->
+                <Viewbox Grid.Row="1" Grid.Column="1"
+                         Stretch="Uniform"
+                         HorizontalAlignment="Right"
+                         VerticalAlignment="Bottom">
+                    <l:DecoratedText Visibility="{Binding IsShowEvaluationPoint,
+                                                          Converter={StaticResource visibilityConverter},
+                                                          RelativeSource={RelativeSource TemplatedParent}}"
+                                     Text="{Binding EvaluationPoint,
+                                                    StringFormat={}{0:0},
+                                                    RelativeSource={RelativeSource TemplatedParent}}"
+                                     FontSize="50"
+                                     Foreground="White"
+                                     Stroke="Black"
+                                     StrokeThickness="1.5" />
+                </Viewbox>
+            </Grid>
         </Grid>
     </ControlTemplate>
     
     <Style TargetType="l:EvaluationControl">
         <Setter Property="Template" Value="{StaticResource mainControl}" />
-        <Setter Property="Width" Value="300" />
-        <Setter Property="Height" Value="300" />
     </Style>
 </ResourceDictionary>

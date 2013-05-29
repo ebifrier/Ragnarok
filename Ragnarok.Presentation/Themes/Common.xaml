@@ -50,7 +50,7 @@
     
     <!-- OKとキャンセルボタンが並んだコントロールです。-->
     <ControlTemplate x:Key="ButtonsTemplate">
-        <Grid>
+        <Grid Focusable="False">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" SharedSizeGroup="a" />

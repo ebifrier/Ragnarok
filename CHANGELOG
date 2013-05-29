@@ -1,3 +1,13 @@
+2013-05-29  - Ver 2.0.24
+
+	* Ragnarok.Presentation/Control/EvaluationControl.xaml: 画像と評価値の
+	サイズ比を調整しました。
+	* Ragnarok.Presentation/Control/EvaluationSettingDialog.xaml: 評価値の
+	設定ダイアログの説明文を分かりやすくしました。
+	* Ragnarok/NicoNico/Live/LiveUtil.cs: 現在放送中の放送をコミュニティか
+	らではなく、'http://live.nicovideo.jp/watch/coXXXXXX'の放送URLから取得
+	するようにしました。これはクローズコミュニティに対応するためです。
+
 2013-05-28  - Ver 2.0.23
 
 	* Ragnarok/Net/CookieGetter: ソースをリファクタリングしました。

@@ -55,12 +55,12 @@
                 <RadioButton IsChecked="{Binding PointType,
                                                  Converter={StaticResource enumToBooleanConverter},
                                                  ConverterParameter=User}"
-                             Content="ユーザー" />
+                             Content="ユーザー評価値" />
                 
                 <RadioButton IsChecked="{Binding PointType,
                                                  Converter={StaticResource enumToBooleanConverter},
                                                  ConverterParameter=ModeCustom}"
-                             Content="評価値" />
+                             Content="ソフト評価値（大合神クジラちゃんとの対局時のみ）" />
 
                 <RadioButton Name="useInputRadioButton"
                              IsChecked="{Binding PointType,
@@ -77,6 +77,7 @@
             </StackPanel>
         </GroupBox>
         
-        <Control Template="{StaticResource ButtonsTemplate}" />
+        <Control Template="{StaticResource ButtonsTemplate}"
+                 Focusable="False" />
     </StackPanel>
 </Window>

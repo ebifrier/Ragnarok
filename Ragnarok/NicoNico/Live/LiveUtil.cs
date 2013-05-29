@@ -223,9 +223,18 @@ namespace Ragnarok.NicoNico.Live
         /// 放送中URLが出る
         /// </summary>
         private static readonly Regex CurrentLiveRegex = new Regex(
-            @"<div class=""now_item cfix"">\s*" +
+            /*@"<div class=""now_item cfix"">\s*" +
             @"<h2><a href=""http://live.nicovideo.jp/watch/lv(\d+)\?ref=community""\s*" +
-            @"class=""community"">");
+            @"class=""community"">");*/
+            @"<script type=""text/javascript""><!--" +
+            @"\s*var Video = [{]" +
+            @"\s*v:\s*'lv(\d+)',");
+        private static readonly Regex HarajukuNowOnAirRegex = new Regex(
+            @"<span class=""icon iconOnAir liveStatus"">" +
+            @"<span class=""dmy"">NOW ON AIR</span></span>");
+        private static readonly Regex QwatchNowOnAirRegex = new Regex(
+            @"<div id=""flvplayer_container"">\s*" +
+            @"<div class=""dummy_box""></div>");
 
         /// <summary>
         /// コミュニティで放送中であれば、そのURLを取得します。
@@ -241,7 +250,7 @@ namespace Ragnarok.NicoNico.Live
             }
 
             var responseText = WebUtil.RequestHttpText(
-                NicoString.GetCommunityUrl(communityId),
+                NicoString.GetLiveUrl("co" + communityId),
                 null,
                 cc,
                 Encoding.UTF8);
@@ -250,9 +259,17 @@ namespace Ragnarok.NicoNico.Live
                 return null;
             }
 
+            if (!HarajukuNowOnAirRegex.IsMatch(responseText) &&
+                !QwatchNowOnAirRegex.IsMatch(responseText))
+            {
+                // 放送中ではありません。
+                return null;
+            }
+
             var m = CurrentLiveRegex.Match(responseText);
             if (!m.Success)
             {
+                // 放送IDが見つかりません。
                 return null;
             }
 

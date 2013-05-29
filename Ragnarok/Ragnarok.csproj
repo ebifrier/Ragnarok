@@ -243,7 +243,6 @@
     <None Include="Ragnarok.snk" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="NicoNico\Live\Tests\" />
     <Folder Include="NicoNico\Video\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

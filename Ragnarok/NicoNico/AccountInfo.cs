@@ -231,7 +231,7 @@ namespace Ragnarok.NicoNico
             // 住んでいる地域を調べます。
             m = Regex.Match(
                 userPage,
-                "<p>お住まいの地域:<span>([^\n]*)</span></p>");
+                "<p>お住まいの(地域|国):<span>([^\n]*)</span></p>");
             if (!m.Success)
             {
                 throw new NicoException(
