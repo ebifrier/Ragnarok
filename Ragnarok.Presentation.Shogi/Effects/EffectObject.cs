@@ -366,6 +366,28 @@ namespace Ragnarok.Presentation.Shogi.Effects
         }
 
         /// <summary>
+        /// 指定の係数を各オブジェクトの音量にかけて調整します。
+        /// </summary>
+        /// <remarks>
+        /// 子オブジェクトの音量も調整します。
+        /// </remarks>
+        public void MultiplyStartVolume(double rate)
+        {
+            StartSoundVolume *= rate;
+
+            foreach (var child in Children)
+            {
+                var effect = child as EffectObject;
+                if (effect == null)
+                {
+                    continue;
+                }
+
+                effect.MultiplyStartVolume(rate);
+            }
+        }
+
+        /// <summary>
         /// オブジェクトを初期化し、viewportに追加します。
         /// </summary>
         protected override GeometryModel3D OnLoadModel()

@@ -26,7 +26,7 @@
                                FontWeight="Bold"
                                HorizontalAlignment="Center"
                                VerticalAlignment="Center"
-                               Margin="3,0,3,0"/>
+                               Margin="2,-1,2,-1"/>
                 </Viewbox>
             </DataTemplate>
 

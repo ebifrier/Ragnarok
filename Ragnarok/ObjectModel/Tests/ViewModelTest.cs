@@ -31,7 +31,7 @@ namespace Ragnarok.ObjectModel.Tests
         /// <summary>
         /// 各プロパティの変更通知が何回呼ばれたか取得します。
         /// </summary>
-        public int this[string key]
+        public new int this[string key]
         {
             get
             {

@@ -62,6 +62,28 @@ namespace Ragnarok.Presentation.Control
             DefaultStyleKeyProperty.OverrideMetadata(
                 typeof(TimeSpanView),
                 new FrameworkPropertyMetadata(typeof(TimeSpanView)));
+            FontSizeProperty.OverrideMetadata(
+                typeof(TimeSpanView),
+                new FrameworkPropertyMetadata(OnFontSizeChanged));
+        }
+
+        private static void OnFontSizeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var self = (TimeSpanView)d;
+
+            self.NumberWidth =
+                self.FontSize / 2.0 +
+                Math.Max(1.0, self.FontSize / 10);
+        }
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public TimeSpanView()
+        {
+            OnFontSizeChanged(this,
+                new DependencyPropertyChangedEventArgs(
+                    FontSizeProperty, FontSize, FontSize));
         }
 
         /// <summary>
@@ -79,6 +101,23 @@ namespace Ragnarok.Presentation.Control
         {
             get { return (TimeSpan)GetValue(ValueProperty); }
             set { SetValue(ValueProperty, value); }
+        }
+
+        /// <summary>
+        /// 各数字の表示幅を扱う依存プロパティです。
+        /// </summary>
+        public static readonly DependencyProperty NumberWidthProperty =
+            DependencyProperty.Register(
+                "NumberWidth", typeof(double), typeof(TimeSpanView),
+                new FrameworkPropertyMetadata(7.0));
+
+        /// <summary>
+        /// 各数字の表示幅を取得または設定します。
+        /// </summary>
+        public double NumberWidth
+        {
+            get { return (double)GetValue(NumberWidthProperty); }
+            set { SetValue(NumberWidthProperty, value); }
         }
 
         /// <summary>

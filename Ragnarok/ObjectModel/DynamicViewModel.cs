@@ -1,10 +1,11 @@
 #if CLR_V4
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Dynamic;
 using System.Linq;
 using System.Text;
-using System.Dynamic;
-using System.ComponentModel;
+using System.Reflection;
 using System.Runtime.Serialization;
 
 namespace Ragnarok.ObjectModel
@@ -25,33 +26,87 @@ namespace Ragnarok.ObjectModel
         : DynamicObject, IParentModel, ILazyModel
     {
         /// <summary>
+        /// 指定の名前のプロパティ値を取得または設定します。
+        /// </summary>
+        public object this[string key]
+        {
+            get
+            {
+                object value;
+                if (!TryGetValue(key, out value))
+                {
+                    throw new KeyNotFoundException(
+                        string.Format(
+                            "{0}: 指定のプロパティは存在しません。",
+                            key));
+                }
+
+                return value;
+            }
+            set
+            {
+                if (!TrySetValue(key, value))
+                {
+                    throw new KeyNotFoundException(
+                        string.Format(
+                            "{0}: 指定のプロパティには書き込みできません。",
+                            key));
+                }
+            }
+        }
+
+        /// <summary>
         /// 子オブジェクトから取得プロパティを検索しそれを呼びます。
         /// </summary>
         public override bool TryGetMember(GetMemberBinder binder,
                                           out object result)
         {
-            var propertyName = binder.Name;
+            return TryGetValue(binder.Name, out result);
+        }
 
+        /// <summary>
+        /// 子オブジェクトから取得プロパティを検索しそれを呼びます。
+        /// </summary>
+        public override bool TryGetIndex(GetIndexBinder binder,
+                                         object[] indexes,
+                                         out object result)
+        {
+            var name = indexes[0] as string;
+
+            return TryGetValue(name, out result);
+        }
+
+        /// <summary>
+        /// 子オブジェクトから取得プロパティを検索しそれを呼びます。
+        /// </summary>
+        public bool TryGetValue(string propertyName,
+                                out object result)
+        {
             using (LazyLock())
             {
-                foreach (var model in this.dependModelList)
-                {
-                    var property = model.GetType().GetProperty(propertyName);
-
-                    // プロパティの妥当性を検証します。
-                    if (property == null || !property.CanRead)
+                // 自クラスのプロパティも検索します。
+                var pair = new[] { this }
+                    .Concat(this.dependModelList)
+                    .Select(_ => new
                     {
-                        continue;
-                    }
+                        Model = _,
+                        Property = _.GetType().GetProperty(propertyName),
+                    })
+                    .Where(_ => _.Property != null)
+                    .Where(_ => _.Property.CanRead)
+                    .FirstOrDefault();
 
-                    // プロパティ値を取得します。
-                    result = property.GetValue(model, null);
+                if (pair != null)
+                {
+                    result = pair.Property.GetValue(pair.Model, null);
                     return true;
                 }
+                else
+                {
+                    result = null;
+                    return false;
+                }
             }
-
-            result = null;
-            return false;
         }
 
         /// <summary>
@@ -59,38 +114,59 @@ namespace Ragnarok.ObjectModel
         /// </summary>
         public override bool TrySetMember(SetMemberBinder binder, object value)
         {
-            var propertyName = binder.Name;
+            return TrySetValue(binder.Name, value);
+        }
 
+        /// <summary>
+        /// 子オブジェクトから設定プロパティを検索しそれを呼びます。
+        /// </summary>
+        public override bool TrySetIndex(SetIndexBinder binder,
+                                         object[] indexes, object value)
+        {
+            var name = indexes[0] as string;
+
+            return TrySetValue(name, value);
+        }
+
+        /// <summary>
+        /// 子オブジェクトから設定プロパティを検索しそれを呼びます。
+        /// </summary>
+        public bool TrySetValue(string propertyName, object value)
+        {
             using (LazyLock())
             {
-                foreach (var model in this.dependModelList)
+                // 自クラスのプロパティも検索します。
+                var pair = new[] { this }
+                    .Concat(this.dependModelList)
+                    .Select(_ => new
+                    {
+                        Model = _,
+                        Property = _.GetType().GetProperty(propertyName),
+                    })
+                    .Where(_ => _.Property != null)
+                    .Where(_ => _.Property.CanWrite)
+                    .FirstOrDefault();
+
+                if (pair == null)
                 {
-                    var property = model.GetType().GetProperty(propertyName);
-
-                    // プロパティの妥当性を検証します。
-                    if (property == null || !property.CanWrite)
-                    {
-                        continue;
-                    }
-
-                    // プロパティ値を設定します。
-                    property.SetValue(model, value, null);
-
-                    // INotifyPropertyChangedを継承していれば各モデルの
-                    // PropertyChangedイベントが呼ばれるはずなので、
-                    // そこでプロパティの変更通知を改めて出します。
-                    if (!(model is INotifyPropertyChanged))
-                    {
-                        DependModel_PropertyChanged(
-                            model,
-                            new PropertyChangedEventArgs(property.Name));
-                    }
-
-                    return true;
+                    return false;
                 }
-            }
 
-            return false;
+                // プロパティ値を設定します。
+                pair.Property.SetValue(pair.Model, value, null);
+
+                // INotifyPropertyChangedを継承していれば各モデルの
+                // PropertyChangedイベントが呼ばれるはずなので、
+                // そこでプロパティの変更通知を改めて出します。
+                if (!(pair.Model is INotifyPropertyChanged))
+                {
+                    DependModel_PropertyChanged(
+                        pair.Model,
+                        new PropertyChangedEventArgs(pair.Property.Name));
+                }
+
+                return true;
+            }
         }
 
         /// <summary>

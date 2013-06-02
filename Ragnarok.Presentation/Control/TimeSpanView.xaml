@@ -6,7 +6,7 @@
     <ControlTemplate x:Key="mainControl">
         <ControlTemplate.Resources>
             <Style x:Key="baseTextStyle" TargetType="l:DecoratedText">
-                <Setter Property="FontFamily"
+                <!--<Setter Property="FontFamily"
                         Value="{Binding FontFamily, RelativeSource={RelativeSource AncestorType=l:TimeSpanView}}" />
                 <Setter Property="FontStyle"
                         Value="{Binding FontStyle, RelativeSource={RelativeSource AncestorType=l:TimeSpanView}}" />
@@ -17,7 +17,7 @@
                 <Setter Property="Background"
                         Value="{Binding Background, RelativeSource={RelativeSource AncestorType=l:TimeSpanView}}" />
                 <Setter Property="Foreground"
-                        Value="{Binding Foreground, RelativeSource={RelativeSource AncestorType=l:TimeSpanView}}" />
+                        Value="{Binding Foreground, RelativeSource={RelativeSource AncestorType=l:TimeSpanView}}" />-->
                 <Setter Property="Stroke"
                         Value="{Binding Stroke, RelativeSource={RelativeSource AncestorType=l:TimeSpanView}}" />
                 <Setter Property="StrokeThickness"
@@ -27,7 +27,8 @@
             <Style x:Key="textStyle"
                    TargetType="l:DecoratedText"
                    BasedOn="{StaticResource baseTextStyle}">
-                <Setter Property="Width" Value="7" />
+                <Setter Property="Width"
+                        Value="{Binding NumberWidth, RelativeSource={RelativeSource AncestorType=l:TimeSpanView}}" />
             </Style>
         </ControlTemplate.Resources>
         

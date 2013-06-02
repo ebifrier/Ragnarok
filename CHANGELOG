@@ -1,3 +1,12 @@
+2013-06-03  - Ver 2.0.25
+
+	* Ragnarok.Presentation.Shogi/Effects/EffectObject.cs: 子オブジェクトも
+	含めた音量調整用のメソッドを追加しました。
+	* Ragnarok.Presentation/Control/TimeSpanView.cs: FontSizeにあわせて各数
+	字の表示位置が変更されるようにしました。
+	* Ragnarok/ObjectModel/DynamicViewModel.cs: 文字列変数からプロパティ値
+	の取得と設定が行えるようにしました。
+
 2013-05-29  - Ver 2.0.24
 
 	* Ragnarok.Presentation/Control/EvaluationControl.xaml: 画像と評価値の

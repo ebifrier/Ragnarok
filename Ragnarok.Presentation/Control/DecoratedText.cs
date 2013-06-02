@@ -51,6 +51,8 @@ namespace Ragnarok.Presentation.Control
 
                 FlowDirectionProperty,
                 ForegroundProperty,
+                HorizontalContentAlignmentProperty,
+                VerticalContentAlignmentProperty,
 
                 MaxWidthProperty,
                 MaxHeightProperty,                
@@ -298,7 +300,8 @@ namespace Ragnarok.Presentation.Control
                     StrokeThickness = StrokeThickness,
                     Stretch = Stretch.None,
                     Data = FormattedText.BuildGeometry(new Point(0, 0)),
-                    HorizontalAlignment = HorizontalAlignment.Center,
+                    HorizontalAlignment = HorizontalContentAlignment,
+                    VerticalAlignment = VerticalContentAlignment,
                 },
             };
         }
