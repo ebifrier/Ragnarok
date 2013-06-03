@@ -410,12 +410,16 @@ namespace Ragnarok.Shogi
             {"左", RelFileType.Left},
             {"ひだり", RelFileType.Left},
             {"←", RelFileType.Left},
+            {"⇐", RelFileType.Left},
+            {"⇚", RelFileType.Left},
             {"㊧", RelFileType.Left},
             {"HIDARI", RelFileType.Left},
 
             {"右", RelFileType.Right},
             {"みぎ", RelFileType.Right},
             {"→", RelFileType.Right},
+            {"⇒", RelFileType.Left},
+            {"⇛", RelFileType.Left},
             {"㊨", RelFileType.Right},
             {"MIGI", RelFileType.Left},
 

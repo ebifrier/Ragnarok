@@ -1,5 +1,7 @@
 2013-06-03  - Ver 2.0.25
 
+	* Ragnarok.Shogi/ShogiParser.cs: 指し手の左と右で⇒や?を許可するように
+	しました。
 	* Ragnarok.Presentation.Shogi/Effects/EffectObject.cs: 子オブジェクトも
 	含めた音量調整用のメソッドを追加しました。
 	* Ragnarok.Presentation/Control/TimeSpanView.cs: FontSizeにあわせて各数
