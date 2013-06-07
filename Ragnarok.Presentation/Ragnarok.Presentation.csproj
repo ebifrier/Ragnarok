@@ -66,6 +66,9 @@
     <Compile Include="Control\TimeSpanView.cs" />
     <Compile Include="Control\TimeSpanEditControl.cs" />
     <Compile Include="Control\DecoratedTextBase.cs" />
+    <Compile Include="Control\TimeSpanWindow.xaml.cs">
+      <DependentUpon>TimeSpanWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Extension\ImageSetListExtension.cs" />
     <Compile Include="Utility\CloneModel.cs" />
     <Compile Include="Control\MessageStatusBar.cs" />
@@ -220,6 +223,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Control\TimeSpanView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Control\TimeSpanWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

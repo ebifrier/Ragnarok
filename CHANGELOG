@@ -1,3 +1,10 @@
+2013-06-08  - Ver 2.0.26
+
+	* Ragnarok.Presentation.Shogi/View/ShogiControl.xaml: 対局者名の表示位
+	置を修正しました。
+	* Ragnarok.Presentation/Control/TimeSpanWindow.xaml: 時間を入力するため
+	のダイアログを追加しました。
+
 2013-06-03  - Ver 2.0.25
 
 	* Ragnarok.Shogi/ShogiParser.cs: 指し手の左と右で⇒や?を許可するように
