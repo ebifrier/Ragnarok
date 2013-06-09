@@ -1,3 +1,11 @@
+2013-06-10  - Ver 2.0.27
+
+	* Ragnarok/NicoNico/Live/LiveUtil.cs: 現在放送中の放送を得るとき、まず
+	コミュニティページを調べてからwatch/coXXXXのページを取得するようにしま
+	した。これはコミュニティページの方が早く次枠情報が出るためです。
+	* Ragnarok/Net/CookieGetter/ChromiumBrowserManager.cs: Chromiumブラウザ
+	へのクッキー対応を追加しました。
+
 2013-06-08  - Ver 2.0.26
 
 	* Ragnarok.Presentation.Shogi/View/ShogiControl.xaml: 対局者名の表示位
