@@ -36,7 +36,7 @@ namespace Ragnarok.Net.CookieGetter
 		/// </summary>
 		Firefox,
 
-		/// <summary>
+		/*/// <summary>
 		/// PaleMoon
 		/// </summary>
 		PaleMoon,
@@ -49,14 +49,14 @@ namespace Ragnarok.Net.CookieGetter
 		/// <summary>
 		/// SeaMonkey
 		/// </summary>
-		SeaMonkey,
+		SeaMonkey,*/
 
         /// <summary>
 		/// Google Chrome
 		/// </summary>
 		GoogleChrome,
 
-		/// <summary>
+		/*/// <summary>
 		/// Comodo Dragon
 		/// </summary>
 		ComodoDragon,
@@ -64,7 +64,7 @@ namespace Ragnarok.Net.CookieGetter
         /// <summary>
         /// Chrome Plus
         /// </summary>
-        ChromePlus,
+        ChromePlus,*/
         
         /// <summary>
 		/// Opera
@@ -76,7 +76,7 @@ namespace Ragnarok.Net.CookieGetter
 		/// </summary>
 		Safari,
 
-		/// <summary>
+		/*/// <summary>
 		/// Lunascape6 Geckoエンジン
 		/// </summary>
 		LunascapeGecko,
@@ -94,7 +94,7 @@ namespace Ragnarok.Net.CookieGetter
 		/// <summary>
 		/// Maxthon
 		/// </summary>
-		Maxthon,
+		Maxthon,*/
 
 		/// <summary>
 		/// Chromium

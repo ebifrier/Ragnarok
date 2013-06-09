@@ -85,7 +85,7 @@ namespace Ragnarok.NicoNico.Live
         private readonly BinarySplitReader reader;
         private readonly LinkedList<long> historyBuffer = new LinkedList<long>();
         private bool useHistoryBuffer = true;
-        private int historyBufferMaxSize = 2048;
+        private int historyBufferMaxSize = 256;
 
         /// <summary>
         /// 生放送の開始を通知するイベントです。
@@ -328,11 +328,7 @@ namespace Ragnarok.NicoNico.Live
             var userId = StrUtil.ToInt(values[2], -1);
 
             // もしすでに受信した放送IDならば無視します。
-            if (IsContainsLiveId(liveId))
-            {
-                return;
-            }
-            else
+            if (!IsContainsLiveId(liveId))
             {
                 var e = new LiveAlertedEventArgs(
                     liveId, providerData, userId);

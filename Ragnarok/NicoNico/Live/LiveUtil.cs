@@ -220,23 +220,6 @@ namespace Ragnarok.NicoNico.Live
         }
 
         /// <summary>
-        /// 放送中URLが出る
-        /// </summary>
-        private static readonly Regex CurrentLiveRegex = new Regex(
-            /*@"<div class=""now_item cfix"">\s*" +
-            @"<h2><a href=""http://live.nicovideo.jp/watch/lv(\d+)\?ref=community""\s*" +
-            @"class=""community"">");*/
-            @"<script type=""text/javascript""><!--" +
-            @"\s*var Video = [{]" +
-            @"\s*v:\s*'lv(\d+)',");
-        private static readonly Regex HarajukuNowOnAirRegex = new Regex(
-            @"<span class=""icon iconOnAir liveStatus"">" +
-            @"<span class=""dmy"">NOW ON AIR</span></span>");
-        private static readonly Regex QwatchNowOnAirRegex = new Regex(
-            @"<div id=""flvplayer_container"">\s*" +
-            @"<div class=""dummy_box""></div>");
-
-        /// <summary>
         /// コミュニティで放送中であれば、そのURLを取得します。
         /// </summary>
         public static string GetCurrentLiveUrl(int communityId,
@@ -249,32 +232,123 @@ namespace Ragnarok.NicoNico.Live
                     "communityId");
             }
 
-            var responseText = WebUtil.RequestHttpText(
-                NicoString.GetLiveUrl("co" + communityId),
-                null,
-                cc,
-                Encoding.UTF8);
-            if (string.IsNullOrEmpty(responseText))
+            // コミュニティページの方が放送中アドレスの更新が早いため、
+            // まずはこちらから検索します。
+            // ただし、クローズコミュの場合は失敗します。
+            var liveUrl = GetCurrentLiveUrlFromCommunity(
+                communityId, cc);
+            if (!string.IsNullOrEmpty(liveUrl))
             {
-                return null;
+                return liveUrl;
             }
 
-            if (!HarajukuNowOnAirRegex.IsMatch(responseText) &&
-                !QwatchNowOnAirRegex.IsMatch(responseText))
+            return GetCurrentLiveUrlFromLive(communityId, cc);
+        }
+
+        private static readonly Regex CurrentLiveCommunityPageRegex = new Regex(
+            @"<div class=""now_item cfix"">\s*" +
+            @"<h2><a href=""http://live.nicovideo.jp/watch/lv(\d+)\?ref=community""\s*" +
+            @"class=""community"">");
+
+        /// <summary>
+        /// 現在放送中の放送アドレスをコミュニティから取得します。
+        /// </summary>
+        private static string GetCurrentLiveUrlFromCommunity(int communityId,
+                                                             CookieContainer cc)
+        {
+            try
             {
-                // 放送中ではありません。
-                return null;
+                var responseText = WebUtil.RequestHttpText(
+                    NicoString.GetCommunityUrl(communityId),
+                    null,
+                    cc,
+                    Encoding.UTF8);
+                if (string.IsNullOrEmpty(responseText))
+                {
+                    return null;
+                }
+
+                var m = CurrentLiveCommunityPageRegex.Match(responseText);
+                if (!m.Success)
+                {
+                    return null;
+                }
+
+                var liveId = long.Parse(m.Groups[1].Value);
+                return NicoString.GetLiveUrl(liveId);
+            }
+            catch (WebException)
+            {
+                // クローズコミュニティの場合はこの例外が発生します。
+            }
+            catch (Exception ex)
+            {
+                Util.ThrowIfFatal(ex);
+
+                Log.ErrorException(ex,
+                    "co{0}: コミュニティページの取得に失敗しました。",
+                    communityId);
             }
 
-            var m = CurrentLiveRegex.Match(responseText);
-            if (!m.Success)
+            return null;
+        }
+
+        private static readonly Regex CurrentLiveRegexLivePage = new Regex(
+            @"<script type=""text/javascript""><!--" +
+            @"\s*var Video = [{]" +
+            @"\s*v:\s*'lv(\d+)',");
+        private static readonly Regex HarajukuNowOnAirRegex = new Regex(
+            @"<span class=""icon iconOnAir liveStatus"">" +
+            @"<span class=""dmy"">NOW ON AIR</span></span>");
+        private static readonly Regex QwatchNowOnAirRegex = new Regex(
+            @"<div id=""flvplayer_container"">\s*" +
+            @"<div class=""dummy_box""></div>");
+
+        /// <summary>
+        /// 現在放送中の放送アドレスを放送ページから取得します。
+        /// </summary>
+        private static string GetCurrentLiveUrlFromLive(int communityId,
+                                                        CookieContainer cc)
+        {
+            try
             {
-                // 放送IDが見つかりません。
-                return null;
+                var responseText = WebUtil.RequestHttpText(
+                    NicoString.GetLiveUrl("co" + communityId),
+                    null,
+                    cc,
+                    Encoding.UTF8);
+                if (string.IsNullOrEmpty(responseText))
+                {
+                    return null;
+                }
+
+                if (!HarajukuNowOnAirRegex.IsMatch(responseText) &&
+                    !QwatchNowOnAirRegex.IsMatch(responseText))
+                {
+                    // 放送中ではありません。
+                    return null;
+                }
+
+                var m = CurrentLiveRegexLivePage.Match(responseText);
+                if (!m.Success)
+                {
+                    // 放送IDが見つかりません。
+                    return null;
+                }
+
+                var liveId = long.Parse(m.Groups[1].Value);
+                return NicoString.GetLiveUrl(liveId);
+            }
+            catch (Exception ex)
+            {
+                Util.ThrowIfFatal(ex);
+
+                Log.ErrorException(ex,
+                    "co{0}: 放送ページの取得に失敗しました。",
+                    communityId);
             }
 
-            var liveId = long.Parse(m.Groups[1].Value);
-            return NicoString.GetLiveUrl(liveId);
+            return null;
         }
 
         /// <summary>

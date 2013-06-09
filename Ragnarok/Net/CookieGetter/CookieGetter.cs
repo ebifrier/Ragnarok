@@ -19,6 +19,7 @@ namespace Ragnarok.Net.CookieGetter
 		//	new IE9SafemodeBrowserManager(),
 			new FirefoxBrowserManager(),
 			new GoogleChromeBrowserManager(),
+            new ChromiumBrowserManager(),
 			new SafariBrowserManager(),
             new OperaBrowserManager(),
         };

@@ -30,6 +30,7 @@ namespace Ragnarok.Presentation.NicoNico
                 {BrowserType.IESafemode, "IESafemode (Windows Vista以降のIE)"},
                 {BrowserType.Firefox, "Firefox"},
                 {BrowserType.GoogleChrome, "Google Chrome"},
+                {BrowserType.Chromium, "Chromiumとその派生ブラウザ"},
                 {BrowserType.Opera, "Opera"},
                 {BrowserType.Safari, "Safari"},
             };

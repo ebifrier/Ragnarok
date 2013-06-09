@@ -100,6 +100,7 @@
     <Compile Include="MathEx.cs" />
     <Compile Include="Net\Connection.cs" />
     <Compile Include="Net\CookieGetter\BrowserType.cs" />
+    <Compile Include="Net\CookieGetter\ChromiumBrowserManager.cs" />
     <Compile Include="Net\CookieGetter\CookieGetter.cs" />
     <Compile Include="Net\CookieGetter\CookieStatus.cs" />
     <Compile Include="Net\CookieGetter\Exceptions.cs" />
