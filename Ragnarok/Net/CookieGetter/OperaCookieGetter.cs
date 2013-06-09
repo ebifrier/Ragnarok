@@ -101,7 +101,7 @@ namespace Ragnarok.Net.CookieGetter
                         string domain;
                         using (MemoryStream ms = new MemoryStream(recordData.bytepayload))
                         {
-                            domain = getDomainRecode(ms, headerData);
+                            domain = getDomainRecord(ms, headerData);
                         }
                         if (domain != null)
                         {
@@ -112,7 +112,7 @@ namespace Ragnarok.Net.CookieGetter
                         string page;
                         using (MemoryStream ms = new MemoryStream(recordData.bytepayload))
                         {
-                            page = getPageRecode(ms, headerData);
+                            page = getPageRecord(ms, headerData);
                         }
 
                         if (page != null)
@@ -121,13 +121,10 @@ namespace Ragnarok.Net.CookieGetter
                         }
                         break;
                     case 0x03:  // クッキー
-                        string chost = string.Join(".", domainStack.ToArray());
-                        string cpath = '/' + string.Join("/", pathStack.ToArray());
-
                         Cookie cookie;
                         using (MemoryStream ms = new MemoryStream(recordData.bytepayload))
                         {
-                            cookie = getCookieRecode(ms, headerData);
+                            cookie = getCookieRecord(ms, headerData);
                         }
                         cookie.Domain = '.' + string.Join(".", domainStack.ToArray());
                         cookie.Path = '/' + string.Join("/", pathStack.ToArray());
@@ -150,7 +147,7 @@ namespace Ragnarok.Net.CookieGetter
             }
         }
 
-        private string getDomainRecode(Stream stream, Header headerData)
+        private string getDomainRecord(Stream stream, Header headerData)
         {
             Record recordData;
 
@@ -168,7 +165,7 @@ namespace Ragnarok.Net.CookieGetter
             return null;
         }
 
-        private string getPageRecode(Stream stream, Header headerData)
+        private string getPageRecord(Stream stream, Header headerData)
         {
             Record recordData;
 
@@ -186,7 +183,7 @@ namespace Ragnarok.Net.CookieGetter
             return null;
         }
 
-        private Cookie getCookieRecode(Stream stream, Header headerData)
+        private Cookie getCookieRecord(Stream stream, Header headerData)
         {
             Record recordData;
             Cookie cookie = new Cookie();
