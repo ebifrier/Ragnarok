@@ -111,9 +111,6 @@
     <Resource Include="Resources\Image\ban\ban_kaya2.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Image\ban\ban_paper.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\Image\koma\koma_1moji.png" />
   </ItemGroup>
   <ItemGroup>
@@ -154,6 +151,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Ragnarok.Presentation.Shogi.snk" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Image\ban\ban_paper.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

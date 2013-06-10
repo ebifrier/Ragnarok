@@ -23,13 +23,13 @@ namespace Ragnarok.Presentation.Shogi.Xaml
         public object Convert(object value, Type targetType,
                               object parameter, CultureInfo culture)
         {
-            // マスの数９×マスのサイズ(1.0)＋左右の幅(0.25 * 2) = 9.5
+            // マスの数９×マスのサイズ(1.0)＋左右の幅(0.5 * 2) = 10.0
             var points = new Point3DCollection();
             var indices = new Int32Collection();
             var bwType = (BWType)value;
-            var w = 0.25 / 9.0;
+            var w = 0.5 / 9.0;
             var h = 9.0 / 9.0;
-            var t0 = h * 0.25;
+            var t0 = h * 0.5;
             var t1 = h * 0.8;
 
             var rectList = new List<Rect>

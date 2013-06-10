@@ -57,7 +57,7 @@ namespace Ragnarok.Presentation.Shogi
         /// <summary>
         /// 紙
         /// </summary>
-        [LabelDescription(Label = "紙", Description = "ban/ban_paper.png")]
+        [LabelDescription(Label = "紙", Description = "ban/ban_paper.jpg")]
         Paper,
     }
 

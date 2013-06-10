@@ -303,15 +303,8 @@ namespace Ragnarok.Net.ProtoBuf
             new Dictionary<int, PbRequestData>();
         private readonly Dictionary<Type, HandlerInfo> handlerDic =
             new Dictionary<Type, HandlerInfo>();
-
-        /// <summary>
-        /// レスポンス応答のデフォルトタイムアウト時間を取得または設定します。
-        /// </summary>
-        public TimeSpan DefaultRequestTimeout
-        {
-            get;
-            set;
-        }
+        private readonly Timer keepAliveTimer;
+        private TimeSpan keepAliveInterval;
 
         /// <summary>
         /// プロトコルのバージョンを取得または設定します。
@@ -320,6 +313,43 @@ namespace Ragnarok.Net.ProtoBuf
         {
             get;
             set;
+        }
+
+        /// <summary>
+        /// レスポンス応答のデフォルトタイムアウト時間を取得または設定します。
+        /// </summary>
+        /// <remarks>
+        /// デフォルト値はタイムアウト時間が無制限に設定されます。
+        /// </remarks>
+        public TimeSpan DefaultRequestTimeout
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 通信相手の存在確認を行う時間間隔を取得または設定します。
+        /// </summary>
+        /// <remarks>
+        /// デフォルト値は１０分間隔に設定されます。
+        /// </remarks>
+        public TimeSpan KeepAliveInterval
+        {
+            get { return this.keepAliveInterval; }
+            set
+            {
+                // 値が小さすぎる場合は無視します。
+                if (value == TimeSpan.MinValue || value <= TimeSpan.Zero)
+                {
+                    return;
+                }
+
+                this.keepAliveInterval = value;
+
+                // keepaliveの時間間隔を再設定します。
+                this.keepAliveTimer.Change(
+                    TimeSpan.FromSeconds(1), value);
+            }
         }
 
         /// <summary>
@@ -483,6 +513,45 @@ namespace Ragnarok.Net.ProtoBuf
 
             // バージョンチェックの結果を返します。
             e.Response = new PbCheckProtocolVersionResponse(result);
+        }
+
+        /// <summary>
+        /// 存在確認リクエストを送信します。
+        /// </summary>
+        private void SendKeepAlive()
+        {
+            try
+            {
+                // 型を指定しないといくつかのコンパイラではコンパイルに失敗します。
+                SendRequest<PbKeepAliveRequest, PbKeepAliveResponse>(
+                    new PbKeepAliveRequest(),
+                    TimeSpan.FromSeconds(60 * 2),
+                    (object sender,
+                     PbResponseEventArgs<PbKeepAliveResponse> e) =>
+                    {
+                        if (e.ErrorCode != 0)
+                        {
+                            // 異常検知
+                            Disconnect();
+                        }
+                    },
+                    false);
+            }
+            catch (Exception ex)
+            {
+                Log.ErrorException(ex,
+                    "KeepAliveの送信に失敗しました。");
+            }
+        }
+
+        /// <summary>
+        /// 存在確認リクエストを処理します。
+        /// </summary>
+        private void HandleKeepAliveRequest(
+            object sender,
+            PbRequestEventArgs<PbKeepAliveRequest, PbKeepAliveResponse> e)
+        {
+            e.Response = new PbKeepAliveResponse();
         }
 
         #region 型名変換
@@ -1115,19 +1184,30 @@ namespace Ragnarok.Net.ProtoBuf
         }
         #endregion
 
+        private void OnKeepAliveCallback(object state)
+        {
+            SendKeepAlive();
+        }
+
         /// <summary>
         /// コンストラクタ
         /// </summary>
         public PbConnection()
         {
-            InitReceivedPacket();
+            // KeepAliveIntervalプロパティを設定する前にnewします。
+            this.keepAliveTimer = new Timer(OnKeepAliveCallback);
 
+            InitReceivedPacket();
             ProtocolVersion = new PbProtocolVersion();
             DefaultRequestTimeout = TimeSpan.MaxValue;
+            KeepAliveInterval = TimeSpan.FromMinutes(10);
 
             AddRequestHandler<PbCheckProtocolVersionRequest,
                               PbCheckProtocolVersionResponse>(
                 HandleCheckProtocolVersionRequest);
+            AddRequestHandler<PbKeepAliveRequest,
+                              PbKeepAliveResponse>(
+                HandleKeepAliveRequest);
         }
     }
 }

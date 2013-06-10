@@ -1526,12 +1526,13 @@ namespace Ragnarok.Presentation.Shogi.View
             // 各マスのサイズを設定します。
             var bounds = this.banGeometry.Bounds;
 
+            // 駒の表示サイズなどを計算します。
             CellSize = new Size(
-                bounds.SizeX / (Board.BoardSize + 0.5),
-                bounds.SizeY / (Board.BoardSize + 0.5));
+                bounds.SizeX / (Board.BoardSize + 1),
+                bounds.SizeY / (Board.BoardSize + 1));
             BanBounds = new Rect(
-                bounds.X + CellSize.Width / 4.0,
-                bounds.Y + CellSize.Height / 4.0,
+                bounds.X + CellSize.Width / 2.0,
+                bounds.Y + CellSize.Height / 2.0,
                 CellSize.Width * Board.BoardSize,
                 CellSize.Height * Board.BoardSize);
 

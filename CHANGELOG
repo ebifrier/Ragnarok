@@ -1,3 +1,14 @@
+2013-06-10  - Ver 2.0.28
+
+	* Ragnarok.Presentation.Shogi/Resources/Image/ban: 盤画像を更新し、上下
+	左右の隙間を大きくしました。これは符号を大きく表示するためです。
+	* Ragnarok.Presentation.Shogi/View/ShogiControl.xaml, 
+	  Ragnarok.Presentation.Shogi/Xaml/TebanMeshConverter.cs: 符号を大きく
+	表示するように盤の配置を変更しました。
+	* Ragnarok/Net/ProtoBuf/PbConnection.cs: アプリケーションレベルでの
+	KeepAlive機能を追加しました。これでいつの間にか接続が切れていて、その状
+	態が放置されるということがなくなります。
+
 2013-06-10  - Ver 2.0.27
 
 	* Ragnarok/NicoNico/Live/LiveUtil.cs: 現在放送中の放送を得るとき、まず

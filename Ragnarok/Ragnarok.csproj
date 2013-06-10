@@ -137,6 +137,7 @@
     <Compile Include="Net\ProtoBuf\PbConnection.cs" />
     <Compile Include="Net\ProtoBuf\PbException.cs" />
     <Compile Include="Net\ProtoBuf\Tests\PbAckTest.cs" />
+    <Compile Include="Net\ProtoBuf\PbKeepAlive.cs" />
     <Compile Include="Net\RagnarokNetException.cs" />
     <Compile Include="Net\SendData.cs" />
     <Compile Include="Net\SendThread.cs" />
