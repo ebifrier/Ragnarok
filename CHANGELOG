@@ -1,3 +1,12 @@
+2013-06-11  - Ver 2.0.29
+
+	* Ragnarok.Presentation.Shogi/Resources/Image/ban: 盤上下左右の余白を狭
+	くし、符号の文字サイズを小さくしました。
+	* Ragnarok.Presentation.Shogi/View/ShogiControl.xaml: 符号の文字サイズ
+	を小さくしました。
+	* Ragnarok.Presentation/DialogUtil.cs: TimeSpanを取得するためのダイアロ
+	グのサポートを追加しました。
+
 2013-06-10  - Ver 2.0.28
 
 	* Ragnarok.Presentation.Shogi/Resources/Image/ban: 盤画像を更新し、上下

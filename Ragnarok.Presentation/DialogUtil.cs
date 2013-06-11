@@ -292,6 +292,32 @@ namespace Ragnarok.Presentation
             ShowErrorInternal(text);
         }
 
+        #region TimeSpan
+        /// <summary>
+        /// ダイアログから時間間隔を取得します。
+        /// </summary>
+        public static TimeSpan? ShowTimeSpanDialog(TimeSpan defaultValue)
+        {
+            // 時間間隔をウィンドウから取得します。
+            var window = new TimeSpanWindow(defaultValue);
+            var result = window.ShowDialogCenterMouse();
+            if (result == null || !result.Value)
+            {
+                return null;
+            }
+
+            return window.Value;
+        }
+
+        /// <summary>
+        /// ダイアログから時間間隔を取得します。
+        /// </summary>
+        public static TimeSpan? ShowTimeSpanDialog()
+        {
+            return ShowTimeSpanDialog(TimeSpan.Zero);
+        }
+        #endregion
+
         #region フォント
         /// <summary>
         /// Drawing.FontからFontInfoに変換します。

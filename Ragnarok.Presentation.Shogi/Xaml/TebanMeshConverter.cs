@@ -23,11 +23,11 @@ namespace Ragnarok.Presentation.Shogi.Xaml
         public object Convert(object value, Type targetType,
                               object parameter, CultureInfo culture)
         {
-            // マスの数９×マスのサイズ(1.0)＋左右の幅(0.5 * 2) = 10.0
+            // マスの数９×マスのサイズ(1.0)＋左右の幅(0.4 * 2) = 9.8
             var points = new Point3DCollection();
             var indices = new Int32Collection();
             var bwType = (BWType)value;
-            var w = 0.5 / 9.0;
+            var w = 0.4 / 9.0;
             var h = 9.0 / 9.0;
             var t0 = h * 0.5;
             var t1 = h * 0.8;
@@ -40,9 +40,6 @@ namespace Ragnarok.Presentation.Shogi.Xaml
                 new Rect(1.0, t0, w, t1 - t0),
                 new Rect(1.0, t1, w, h - t1 + w),
 
-                /*new Rect(h / 5, 1.0, h * 3 / 5, w),
-                new Rect(0,     1.0, h / 5, w),
-                new Rect(h * 4 / 5, 1.0, h / 5, w),*/
                 new Rect(0, 1.0, h, w),
             };
 
@@ -61,10 +58,6 @@ namespace Ragnarok.Presentation.Shogi.Xaml
 
                 new Point(1, 0.0), new Point(1, 0.0),
                 new Point(1, 0.5), new Point(1, 0.5),
-                /*new Point(1, 0.0), new Point(1, 0.0),
-                new Point(1, 0.5), new Point(1, 0.5),
-                new Point(1, 0.0), new Point(1, 0.0),
-                new Point(1, 0.5), new Point(1, 0.5),*/
             };
 
             foreach (var rect in rectList)

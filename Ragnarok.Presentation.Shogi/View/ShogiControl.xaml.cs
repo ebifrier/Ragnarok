@@ -1523,16 +1523,19 @@ namespace Ragnarok.Presentation.Shogi.View
         /// </summary>
         private void Control_Loaded(object sender, RoutedEventArgs e)
         {
+            // 各マスに対する上下左右の余白の比です。
+            var BanBorderRate = 0.4;
+
             // 各マスのサイズを設定します。
             var bounds = this.banGeometry.Bounds;
 
             // 駒の表示サイズなどを計算します。
             CellSize = new Size(
-                bounds.SizeX / (Board.BoardSize + 1),
-                bounds.SizeY / (Board.BoardSize + 1));
+                bounds.SizeX / (Board.BoardSize + BanBorderRate * 2),
+                bounds.SizeY / (Board.BoardSize + BanBorderRate * 2));
             BanBounds = new Rect(
-                bounds.X + CellSize.Width / 2.0,
-                bounds.Y + CellSize.Height / 2.0,
+                bounds.X + CellSize.Width * BanBorderRate,
+                bounds.Y + CellSize.Height * BanBorderRate,
                 CellSize.Width * Board.BoardSize,
                 CellSize.Height * Board.BoardSize);
 
