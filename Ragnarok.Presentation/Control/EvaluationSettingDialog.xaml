@@ -76,8 +76,7 @@
                 </DockPanel>
             </StackPanel>
         </GroupBox>
-        
-        <Control Template="{StaticResource ButtonsTemplate}"
-                 Focusable="False" />
+
+        <Control Style="{StaticResource ButtonsStyle}" />
     </StackPanel>
 </Window>

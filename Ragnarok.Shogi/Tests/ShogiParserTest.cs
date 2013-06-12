@@ -98,6 +98,37 @@ namespace Ragnarok.Shogi.Tests
         }
 
         [Test()]
+        public void ParseMoveTest2()
+        {
+            Assert.AreEqual(
+                ShogiParser.ParseMove("１３馬右", true),
+                new Move
+                {
+                    NewPosition = new Position(1, 3),
+                    Piece = Piece.Uma,
+                    RelFileType = RelFileType.Right,
+                });
+            Assert.AreEqual(
+                ShogiParser.ParseMove("１３馬右引く", true),
+                new Move
+                {
+                    NewPosition = new Position(1, 3),
+                    Piece = Piece.Uma,
+                    RankMoveType = RankMoveType.Back,
+                    RelFileType = RelFileType.Right,
+                });
+
+            Assert.AreEqual(
+                ShogiParser.ParseMove("１３不不成り", true),
+                new Move
+                {
+                    NewPosition = new Position(1, 3),
+                    Piece = Piece.Hu,
+                    ActionType = ActionType.Unpromote,
+                });
+        }
+
+        [Test()]
         public void ParseSameAsTest()
         {
             Assert.AreEqual(
@@ -120,28 +151,6 @@ namespace Ragnarok.Shogi.Tests
                 {
                     SameAsOld = true,
                     Piece = Piece.Uma,
-                });
-        }
-
-        [Test()]
-        public void ParseMoveTest2()
-        {
-            Assert.AreEqual(
-                ShogiParser.ParseMove("１３馬右", true),
-                new Move
-                {
-                    NewPosition = new Position(1, 3),
-                    Piece = Piece.Uma,
-                    RelFileType = RelFileType.Right,
-                });
-            Assert.AreEqual(
-                ShogiParser.ParseMove("１３馬右引く", true),
-                new Move
-                {
-                    NewPosition = new Position(1, 3),
-                    Piece = Piece.Uma,
-                    RankMoveType = RankMoveType.Back,
-                    RelFileType = RelFileType.Right,
                 });
         }
 

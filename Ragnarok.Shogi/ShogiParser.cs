@@ -340,6 +340,7 @@ namespace Ragnarok.Shogi
             {"負", Piece.Hu},
             {"富", Piece.Hu},
             {"婦", Piece.Hu},
+            {"不", Piece.Hu},
             {"腐", Piece.Hu},
             {"府", Piece.Hu},
             {"符", Piece.Hu},

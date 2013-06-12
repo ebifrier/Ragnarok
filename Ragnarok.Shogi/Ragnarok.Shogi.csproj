@@ -64,8 +64,6 @@
     <Compile Include="BWType.cs" />
     <Compile Include="CapturedPiece.cs" />
     <Compile Include="CapturedPieceBox.cs" />
-    <Compile Include="CastleInfo.cs" />
-    <Compile Include="CastleInfoTable.cs" />
     <Compile Include="Csa\CsaClient.cs" />
     <Compile Include="Csa\CsaCommandAttribute.cs" />
     <Compile Include="Csa\CsaGameInfo.cs" />

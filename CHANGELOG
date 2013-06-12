@@ -1,3 +1,15 @@
+2013-06-12  - Ver 2.0.30
+
+	* Ragnarok.Shogi/CastleInfo.cs: 囲いに関するクラスをアプリケーション側
+	に移動しました。固有の情報が必要になったためです。
+	* Ragnarok.Presentation.Shogi/Effects/Effect.cs: デザインモードでのエラ
+	ー対策を行いました。
+	* Ragnarok.Presentation/Themes/Common.xaml: OKとキャンセルが並ぶボタン
+	テンプレートを修正しました。
+	* Ragnarok.Shogi/ShogiParser.cs: 「不」でも「歩」として指し手の受理を行
+	うようにしました。以前は不不成りなどの場合にパースに失敗したため、対応
+	を見送っていました。
+
 2013-06-11  - Ver 2.0.29
 
 	* Ragnarok.Presentation.Shogi/Resources/Image/ban: 盤上下左右の余白を狭

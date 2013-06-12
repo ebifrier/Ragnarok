@@ -6,7 +6,7 @@
         xmlns:l="clr-namespace:Ragnarok.Presentation.Control"
         mc:Ignorable="d" x:Name="window"
         Title="時間設定" SizeToContent="WidthAndHeight" Topmost="True"
-        d:DesignHeight="127" d:DesignWidth="282" ResizeMode="NoResize">
+        d:DesignHeight="141" d:DesignWidth="293" ResizeMode="NoResize">
 
     <Window.Resources>
         <ResourceDictionary>
@@ -16,18 +16,18 @@
         </ResourceDictionary>
     </Window.Resources>
 
-    <Grid Margin="5,5,5,5">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         
-        <l:TimeSpanEditControl Value="{Binding Value, ElementName=window}" />
+        <l:TimeSpanEditControl Value="{Binding Value, ElementName=window}"
+                               Margin="10" />
 
         <Control Grid.Row="1"
                  x:Name="buttons"
-                 Template="{StaticResource ButtonsTemplate}"
-                 Focusable="False"
-                 HorizontalAlignment="Right" />
+                 Style="{StaticResource ButtonsStyle}"
+                 Margin="0,5,0,0" />
     </Grid>
 </Window>
