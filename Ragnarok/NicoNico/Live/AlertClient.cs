@@ -297,9 +297,7 @@ namespace Ragnarok.NicoNico.Live
                 return;
             }
 
-            Log.Debug(
-                "Alert {0}",
-                node.InnerText);
+            Log.Trace("Alert {0}", node.InnerText);
 
             // 内部テキストは
             //   [放送ID],[チャンネル/コミュニティＩＤ/official],[ユーザーＩＤ]

@@ -1,3 +1,8 @@
+2013-06-13  - Ver 2.0.31
+
+	* Ragnarok/NicoNico/Live/AlertClient.cs: ログが多くなるため、デバッグ出
+	力を止めました。
+
 2013-06-12  - Ver 2.0.30
 
 	* Ragnarok.Shogi/CastleInfo.cs: 囲いに関するクラスをアプリケーション側
