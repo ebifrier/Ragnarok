@@ -186,6 +186,11 @@ namespace Ragnarok.Update
         public void BeginDownload(Uri address,
                                   DownloadDataCompletedEventHandler callback)
         {
+            if (address == null)
+            {
+                throw new ArgumentNullException("address");
+            }
+
             var client = new WebClient();
             client.DownloadProgressChanged += client_DownloadProgressChanged;
             client.DownloadDataCompleted += client_DownloadDataCompleted;
@@ -198,7 +203,7 @@ namespace Ragnarok.Update
             };
 
             // ここで例外が返る可能性がある。
-            Log.Debug("ダウンロードを開始します");
+            Log.Debug("{0}: ダウンロードを開始します", address);
             ThreadPool.QueueUserWorkItem(_ =>
                 client.DownloadDataAsync(address, item));
 
