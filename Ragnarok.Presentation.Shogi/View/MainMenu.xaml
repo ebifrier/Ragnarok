@@ -10,7 +10,7 @@
     </ResourceDictionary.MergedDictionaries>
 
     <!-- ツールバーです。-->
-    <ToolBar x:Key="toolBar" Band="1">
+    <ToolBar x:Key="ShogiToolBar">
         <Button Style="{StaticResource ToolBarButtonStyle}"
                 Content="pack://application:,,,/Ragnarok.Presentation.Shogi;component/Resources/Image/move_goto_first.png"
                 ToolTip="開始局面へ"
@@ -42,7 +42,7 @@
     </ToolBar>
 
     <!-- 手数を表示するツールバーです。-->
-    <ToolBar x:Key="numberToolBar" Band="1">
+    <ToolBar x:Key="NumberToolBar" Band="1">
         <TextBlock Text="手数："
                    VerticalAlignment="Center" />
         <TextBox IsReadOnly="True" MinWidth="30"

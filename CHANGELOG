@@ -1,3 +1,8 @@
+2013-06-13  - Ver 2.0.33
+
+	* Ragnarok.Presentation/Themes/Common.xaml: ツールバー用のボタンスタイ
+	ルのさらに基本的な部分のみのスタイルを作成しました。
+
 2013-06-13  - Ver 2.0.32
 
 	* Ragnarok/Net/ProtoBuf/PbConnection.cs: KeepAlive処理を行うタイマーコ

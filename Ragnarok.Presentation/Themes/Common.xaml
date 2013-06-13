@@ -33,10 +33,15 @@
     </DataTemplate>
 
     <!-- ツールバーのボタンの共通スタイルです。-->
-    <Style x:Key="ToolBarButtonStyle" TargetType="Button">
+    <Style x:Key="ToolBarButtonBaseStyle" TargetType="FrameworkElement">
         <Setter Property="Margin" Value="2,0,2,0" />
         <Setter Property="Width" Value="24" />
         <Setter Property="Height" Value="24" />
+    </Style>
+
+    <!-- ツールバーのボタンの共通スタイルです。-->
+    <Style x:Key="ToolBarButtonStyle" TargetType="ContentControl"
+           BasedOn="{StaticResource ToolBarButtonBaseStyle}">
         <Setter Property="ContentTemplate"
                 Value="{StaticResource DisableImageTemplate}" />
 
