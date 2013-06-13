@@ -1,3 +1,10 @@
+2013-06-13  - Ver 2.0.32
+
+	* Ragnarok/Net/ProtoBuf/PbConnection.cs: KeepAlive処理を行うタイマーコ
+	ールバックに再入禁止処理を追加しました。
+	* Ragnarok/NicoNico/Live/CommentClient.cs: タイマー関係の処理をリファク
+	タリングしました。
+
 2013-06-13  - Ver 2.0.31
 
 	* Ragnarok/NicoNico/Live/AlertClient.cs: ログが多くなるため、デバッグ出
