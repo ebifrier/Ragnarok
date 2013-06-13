@@ -303,6 +303,7 @@ namespace Ragnarok.Net.ProtoBuf
             new Dictionary<int, PbRequestData>();
         private readonly Dictionary<Type, HandlerInfo> handlerDic =
             new Dictionary<Type, HandlerInfo>();
+        private readonly ReentrancyLock keepAliveTimerLock = new ReentrancyLock();
         private readonly Timer keepAliveTimer;
         private TimeSpan keepAliveInterval;
 
@@ -1186,7 +1187,14 @@ namespace Ragnarok.Net.ProtoBuf
 
         private void OnKeepAliveCallback(object state)
         {
-            SendKeepAlive();
+            // Timerオブジェクトはコールバックを同時に呼ぶことがあるため、
+            // その対策を行っています。
+            using (var result = this.keepAliveTimerLock.Lock())
+            {
+                if (result == null) return;
+
+                SendKeepAlive();
+            }
         }
 
         /// <summary>

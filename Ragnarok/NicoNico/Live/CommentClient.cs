@@ -32,7 +32,7 @@ namespace Ragnarok.NicoNico.Live
 
         private readonly object SyncRoot = new object();
         private readonly object ConnectLock = new object();
-        private readonly object TimerLock = new object();
+        private readonly ReentrancyLock sendCommentLock = new ReentrancyLock();
         private List<CommentRoom> roomList = new List<CommentRoom>();
         private int currentRoomIndex = -1;
         private int connectedRoomCount = 0;
@@ -43,7 +43,6 @@ namespace Ragnarok.NicoNico.Live
         private List<PostComment> ownerCommentList = new List<PostComment>();
         private Timer sendTimer;
         private bool isSupressLog = false;
-        private volatile bool isUpdating = false;
 
         /// <summary>
         /// プロパティ値変更イベントです。
@@ -1193,20 +1192,16 @@ namespace Ragnarok.NicoNico.Live
         /// </summary>
         public void UpdateSendComment()
         {
-            // タイマークラスは処理が終わっていなくても
-            // 等間隔でメソッドを呼び続けます。
-            if (this.isUpdating)
+            using (var result = this.sendCommentLock.Lock())
             {
-                return;
-            }
-
-            using (new ActionOnDispose(() => this.isUpdating = false))
-            {
-                this.isUpdating = true;
-                var tmpRoomList = ClonedCommentRoomList;
+                // タイマークラスは処理が終わっていなくても
+                // 等間隔でメソッドを呼び続けます。
+                // そのための対策です。
+                // http://msdn.microsoft.com/ja-jp/library/system.threading.timer(v=vs.80).aspx
+                if (result == null) return;
 
                 // 通常コメントの更新を行います。
-                foreach (var room in tmpRoomList)
+                foreach (var room in ClonedCommentRoomList)
                 {
                     if (room == null)
                     {
@@ -1234,23 +1229,17 @@ namespace Ragnarok.NicoNico.Live
         /// </remarks>
         public void SetSendTimer(bool on)
         {
-            lock (TimerLock)
+            if (on)
             {
-                if (this.sendTimer != null)
-                {
-                    this.sendTimer.Dispose();
-                    this.sendTimer = null;
-                }
-
-                // 必要ならタイマーを開始します。
-                if (on)
-                {
-                    this.sendTimer = new Timer(
-                        _ => UpdateSendComment(),
-                        null,
-                        TimeSpan.Zero,
-                        TimeSpan.FromMilliseconds(200));
-                }
+                this.sendTimer.Change(
+                    TimeSpan.FromMilliseconds(200),
+                    TimeSpan.FromMilliseconds(200));
+            }
+            else
+            {
+                this.sendTimer.Change(
+                    Timeout.Infinite,
+                    Timeout.Infinite);
             }
         }
 
@@ -1259,6 +1248,9 @@ namespace Ragnarok.NicoNico.Live
         /// </summary>
         public CommentClient()
         {
+            this.sendTimer = new Timer(
+                _ => UpdateSendComment());
+
             SetSendTimer(true);
         }
     }

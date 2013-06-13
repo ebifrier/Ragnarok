@@ -23,7 +23,6 @@ namespace Ragnarok.Net
         /// </summary>
         private static readonly TimeSpan SyncInterval = TimeSpan.FromDays(1);
 
-        private static readonly object SyncRoot = new object();
         private static readonly Timer timer;
         private static TimeSpan offsetSpan = TimeSpan.Zero;
 
@@ -90,7 +89,7 @@ namespace Ragnarok.Net
         static NtpClient()
         {
             // 何もしないと、コンパイラによってはtimerが未使用であるという
-            // 警告が出ることがあるので、こうすることで警告を抑えています。
+            // 警告が出るので、こうすることでそれを抑制しています。
             // 特に意味はないです。
             if (timer != null)
             {
@@ -111,15 +110,12 @@ namespace Ragnarok.Net
         /// </summary>
         public static DateTime GetTime()
         {
-            lock (SyncRoot)
-            {
-                var now = DateTime.Now;
+            var now = DateTime.Now;
 
-                // ネットワークで時刻を取得すると時間がかかることがあります。
-                // 実用性を考えて、時刻が正しく同期されていなくても
-                // 気にせずに時間を返します。
-                return (now + offsetSpan);
-            }
+            // ネットワークで時刻を取得すると時間がかかることがあります。
+            // 実用性を考えて、時刻が正しく同期されていなくても
+            // 気にせずに時間を返します。
+            return (now + offsetSpan);
         }
 
         /// <summary>
@@ -132,11 +128,7 @@ namespace Ragnarok.Net
                 // NTPサーバーから時刻を取得します。
                 var clockInfo = GetNetworkClockInfo();
 
-                lock (SyncRoot)
-                {
-                    // 必要なデータを設定します。
-                    offsetSpan = clockInfo.GetOffset();
-                }
+                offsetSpan = clockInfo.GetOffset();
             }
             catch (Exception ex)
             {
