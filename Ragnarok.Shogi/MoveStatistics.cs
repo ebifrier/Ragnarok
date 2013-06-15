@@ -12,7 +12,7 @@ namespace Ragnarok.Shogi
     /// <summary>
     /// 投票が行われた指し手を時刻と共に保持します。
     /// </summary>
-    public class RegistereredMove
+    public sealed class RegistereredMove
     {
         /// <summary>
         /// 投票された指し手を取得します。
@@ -82,11 +82,13 @@ namespace Ragnarok.Shogi
                          group pair by move into g
 
                          let total = g.Sum(_ => GetSkillPoint(_.Key.SkillLevel))
-                         orderby -total
+                         let timestamp = g.Max(_ => _.Value.Timestamp)
+                         orderby total descending, timestamp descending
                          select new MovePointPair()
                          {
                              Move = g.Key,
                              Point = total,
+                             Timestamp = timestamp,
                          }).ToArray();
                 }
             }
@@ -148,15 +150,12 @@ namespace Ragnarok.Shogi
             using (LazyLock())
             {
                 int point;
-
-                if (this.skillPointTable.TryGetValue(skillLevel, out point))
-                {
-                    return point;
-                }
-                else
+                if (!this.skillPointTable.TryGetValue(skillLevel, out point))
                 {
                     return this.defaultSkillPoint;
                 }
+
+                return point;
             }
         }
 
@@ -201,12 +200,13 @@ namespace Ragnarok.Shogi
 
             using (LazyLock())
             {
-                if (!this.moveDatas.ContainsKey(player))
+                RegistereredMove move;
+                if (!this.moveDatas.TryGetValue(player, out move))
                 {
                     return null;
                 }
 
-                return this.moveDatas[player];
+                return move;
             }
         }
 

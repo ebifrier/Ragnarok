@@ -95,6 +95,7 @@
     <Compile Include="Stringizer.cs" />
     <Compile Include="Tests\ShogiParserTest.cs" />
     <Compile Include="KifuWriter.cs" />
+    <Compile Include="Tests\MoveStatisticsTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Ragnarok.Shogi.snk" />

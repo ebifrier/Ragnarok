@@ -1,3 +1,10 @@
+2013-06-16  - Ver 2.0.35
+
+	* Ragnarok.Shogi/MoveStatistics.cs: 同票の場合は最後に投票された指し手
+	が一番上に来るようにしました。
+	* Ragnarok.Shogi/Tests/MoveStatisticsTest.cs: テストを追加しました（不
+	完全です）
+
 2013-06-15  - Ver 2.0.34
 
 	* Ragnarok/NicoNico/Live/CommentRoom.cs: データ受信時のエラー処理を追加

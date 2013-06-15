@@ -29,5 +29,15 @@ namespace Ragnarok.Shogi
             get;
             set;
         }
+
+        /// <summary>
+        /// 投票した時刻を取得または設定します。
+        /// </summary>
+        [DataMember(Order = 3, IsRequired = true)]
+        public DateTime Timestamp
+        {
+            get;
+            set;
+        }
     }
 }
