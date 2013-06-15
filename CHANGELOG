@@ -1,3 +1,8 @@
+2013-06-15  - Ver 2.0.34
+
+	* Ragnarok/NicoNico/Live/CommentRoom.cs: データ受信時のエラー処理を追加
+	したため、未処理の例外が発生しなくなりました。
+
 2013-06-13  - Ver 2.0.33
 
 	* Ragnarok.Presentation/Themes/Common.xaml: ツールバー用のボタンスタイ

@@ -490,6 +490,7 @@ namespace Ragnarok.NicoNico.Live
             }
             catch (Exception ex)
             {
+                Util.ThrowIfFatal(ex);
                 Log.ErrorException(ex,
                     "メッセージの開始処理に失敗しました。");
             }
@@ -527,6 +528,15 @@ namespace Ragnarok.NicoNico.Live
             {
                 Log.ErrorException(this, e,
                     "メッセージ受信時にエラーが発生しました。");
+
+                NotifyDisconnected(DisconnectReason.Error);
+                return;
+            }
+            catch (Exception e)
+            {
+                Util.ThrowIfFatal(e);
+                Log.ErrorException(this, e,
+                    "意図しないエラーが発生しました。");
 
                 NotifyDisconnected(DisconnectReason.Error);
                 return;
