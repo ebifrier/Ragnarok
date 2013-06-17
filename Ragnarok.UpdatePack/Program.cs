@@ -65,6 +65,9 @@ namespace Ragnarok.UpdatePack
             }
             Trace.TraceInformation("End WaitToStopProcess");
 
+            // 念のため、１秒待ちます。
+            System.Threading.Thread.Sleep(1000);
+
             Trace.TraceInformation("Start CopyFiles");
             if (CopyFiles(unzipDir, topDir) != 0)
             {
@@ -215,8 +218,8 @@ namespace Ragnarok.UpdatePack
                 Trace.TraceInformation("Kill process");
                 process.Kill();
 
-                // 最大、10秒待ちます。
-                if (!process.WaitForExit(10 * 1000))
+                // 最大、20秒待ちます。
+                if (!process.WaitForExit(20 * 1000))
                 {
                     Utility.TraceError(
                         "プロセス(ID={0})の停止に失敗しました。",

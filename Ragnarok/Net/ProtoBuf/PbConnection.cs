@@ -1135,14 +1135,14 @@ namespace Ragnarok.Net.ProtoBuf
                 throw new PbException("送信データがシリアライズされていません。");
             }
 
-            if (!IsConnected || !CanWrite)
-            {
-                // これをthrowすると対処が面倒なので
-                return;
-            }
-
             try
             {
+                if (!IsConnected || !CanWrite)
+                {
+                    // これをthrowすると対処が面倒なので
+                    return;
+                }
+
                 var typedata = pbSendData.EncodedTypeData;
                 var payload = pbSendData.SerializedData;
 

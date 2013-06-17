@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+using Ragnarok.Net.CookieGetter;
 using Ragnarok.NicoNico;
 using Ragnarok.ObjectModel;
 
