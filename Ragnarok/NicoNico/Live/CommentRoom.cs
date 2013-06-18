@@ -203,7 +203,7 @@ namespace Ragnarok.NicoNico.Live
         {
             get
             {
-                lock (this.postCommentList)
+                using (new DebugLock(SyncRoot))
                 {
                     return this.postCommentList.Count;
                 }
@@ -806,7 +806,7 @@ namespace Ragnarok.NicoNico.Live
                 return;
             }
 
-            lock (this.postCommentList)
+            using (new DebugLock(SyncRoot))
             {
                 this.postCommentList.Add(comment);
 
@@ -823,7 +823,7 @@ namespace Ragnarok.NicoNico.Live
         /// </summary>
         private void RemoveMessage(PostComment comment)
         {
-            lock (this.postCommentList)
+            using (new DebugLock(SyncRoot))
             {
                 if (!this.postCommentList.Any())
                 {
@@ -839,7 +839,7 @@ namespace Ragnarok.NicoNico.Live
         /// </summary>
         private void ClearMessage()
         {
-            lock (this.postCommentList)
+            using (new DebugLock(SyncRoot))
             {
                 this.postCommentList.Clear();
             }
@@ -850,7 +850,7 @@ namespace Ragnarok.NicoNico.Live
         /// </summary>
         private PostComment GetMessage()
         {
-            lock (this.postCommentList)
+            using (new DebugLock(SyncRoot))
             {
                 if (!this.postCommentList.Any())
                 {
@@ -996,7 +996,7 @@ namespace Ragnarok.NicoNico.Live
                 return;
             }
 
-            lock (SyncRoot)
+            using (new DebugLock(SyncRoot))
             {
                 if (!IsConnected || IsDisconnecting)
                 {
@@ -1038,7 +1038,7 @@ namespace Ragnarok.NicoNico.Live
         /// </summary>
         public void UpdateSendComment()
         {
-            lock (SyncRoot)
+            using (new DebugLock(SyncRoot))
             {
                 if (!IsConnected || IsDisconnecting)
                 {
