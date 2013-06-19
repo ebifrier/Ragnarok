@@ -1038,38 +1038,41 @@ namespace Ragnarok.NicoNico.Live
         /// </summary>
         public void UpdateSendComment()
         {
-            using (new DebugLock(SyncRoot))
+            try
             {
-                if (!IsConnected || IsDisconnecting)
-                {
-                    //Log.ErrorMessage(this,
-                    //    "コネクションは切断されています。");
-                    return;
-                }
+                XElement elem;
+                byte[] sendData;
 
-                // 投稿用コメントを取得します。
-                var comment = GetMessage();
-                if (comment == null || !CanSendComment(comment))
+                using (new DebugLock(SyncRoot))
                 {
-                    return;
-                }
-            
-                // コメント送信中でかつ、対応するchat_resultが返って来ていない場合、
-                // そのコメントは無視します。
-                if (this.sendingComment != null)
-                {
-                    Log.Error(this,
-                        "対応するchar_resultが返って来ませんでした(Text = {0})",
-                        this.sendingComment.Text);
+                    if (!IsConnected || IsDisconnecting)
+                    {
+                        //Log.ErrorMessage(this,
+                        //    "コネクションは切断されています。");
+                        return;
+                    }
 
-                    // 次のメッセージを送ってしまいます。
-                    this.sendingComment = null;
-                }
+                    // 投稿用コメントを取得します。
+                    var comment = GetMessage();
+                    if (comment == null || !CanSendComment(comment))
+                    {
+                        return;
+                    }
 
-                try
-                {
-                    var elem = BuildCommentString(comment);
-                    var sendData = Encoding.UTF8.GetBytes(elem.ToString() + "\0");
+                    // コメント送信中でかつ、対応するchat_resultが返って来ていない場合、
+                    // そのコメントは無視します。
+                    if (this.sendingComment != null)
+                    {
+                        Log.Error(this,
+                            "対応するchar_resultが返って来ませんでした(Text = {0})",
+                            this.sendingComment.Text);
+
+                        // 次のメッセージを送ってしまいます。
+                        this.sendingComment = null;
+                    }
+
+                    elem = BuildCommentString(comment);
+                    sendData = Encoding.UTF8.GetBytes(elem.ToString() + "\0");
 
                     // コメントの投稿時刻などを設定します。
                     // エラー処理に必要になります。
@@ -1077,23 +1080,26 @@ namespace Ragnarok.NicoNico.Live
                     this.sendingComment = comment;
 
                     SetPostMessageWait(DateTime.Now, MinimumWaitTimeForPost);
-
-                    // コメントの投稿処理を開始します。
-                    this.socket.BeginSend(
-                        sendData, 0, sendData.Length,
-                        SocketFlags.None,
-                        SendCommentDone,
-                        null);
-
-                    Log.Trace(this,
-                        "メッセージの送信処理を開始しました。(Text = {0})",
-                        elem.Value);
                 }
-                catch (Exception ex)
-                {
-                    Log.ErrorException(this, ex,
-                        "メッセージの非同期送信に失敗しました。");
 
+                // コメントの投稿処理を開始します。
+                this.socket.BeginSend(
+                    sendData, 0, sendData.Length,
+                    SocketFlags.None,
+                    SendCommentDone,
+                    null);
+
+                Log.Trace(this,
+                    "メッセージの送信処理を開始しました。(Text = {0})",
+                    elem.Value);
+            }
+            catch (Exception ex)
+            {
+                Log.ErrorException(this, ex,
+                    "メッセージの非同期送信に失敗しました。");
+
+                using (new DebugLock(SyncRoot))
+                {
                     this.sendingComment = null;
                 }
             }
