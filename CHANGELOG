@@ -1,3 +1,8 @@
+2013-06-19  - Ver 2.1.1
+
+	* Ragnarok/NicoNico/Live/LiveStatusCode.cs: エラーコードを大文字で処理
+	するようにしました。
+
 2013-06-19  - Ver 2.1.0
 
 	* Ragnarok/NicoNico/Live/CommentRoom.cs: ニコ生のコメント用処理用クラス

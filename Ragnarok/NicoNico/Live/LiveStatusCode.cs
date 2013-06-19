@@ -132,23 +132,28 @@ namespace Ragnarok.NicoNico.Live
         /// </summary>
         public static LiveStatusCode GetCode(string code)
         {
-            switch (code)
+            if (string.IsNullOrEmpty(code))
             {
-                case "notlogin":
+                return LiveStatusCode.UnknownError;
+            }
+
+            switch (code.ToUpper())
+            {
+                case "NOTLOGIN":
                     return LiveStatusCode.NotLogin;
-                case "notfound":
+                case "NOTFOUND":
                     return LiveStatusCode.NotFound;
-                case "closed":
+                case "CLOSED":
                     return LiveStatusCode.AlreadyClosed;
-                case "noauth":
+                case "NOAUTH":
                     return LiveStatusCode.NoAuthentification;
-                case "permission_denied":
+                case "PERMISSION_DENIED":
                     return LiveStatusCode.PermissionDenied;
-                case "comingsoon":
+                case "COMINGSOON":
                     return LiveStatusCode.ComingSoon;
-                case "full":
+                case "FULL":
                     return LiveStatusCode.Full;
-                case "require_community_member":
+                case "REQUIRE_COMMUNITY_MEMBER":
                     return LiveStatusCode.RequireCommunityMember;
                 case "NOTFOUND_THREAD":
                     return LiveStatusCode.NotFoundThread;
@@ -156,16 +161,16 @@ namespace Ragnarok.NicoNico.Live
                     return LiveStatusCode.NotFoundSlot;
                 case "NOTEXIST_SLOT":
                     return LiveStatusCode.NotExistSlot;
-                case "deletedbyuser":
+                case "DELETEDBYUSER":
                     return LiveStatusCode.DeletedByUser;
-                case "deletedbyvisor":
+                case "DELETEDBYVISOR":
                     return LiveStatusCode.DeletedByVisor;
-                case "premium_only":
+                case "PREMIUM_ONLY":
                     return LiveStatusCode.PremiumOnly;
-                case "violated":
+                case "VIOLATED":
                     return LiveStatusCode.Violated;
-                case "unknown":
-                case "unknown_error":
+                case "UNKNOWN":
+                case "UNKNOWN_ERROR":
                     return LiveStatusCode.UnknownError;
                 default:
                     Log.Error("Unknown error code: {0}", code);
