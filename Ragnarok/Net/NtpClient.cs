@@ -112,7 +112,7 @@ namespace Ragnarok.Net
         {
             var now = DateTime.Now;
 
-            // ネットワークで時刻を取得すると時間がかかることがあります。
+            // ネットワークでの時刻同期には時間がかかることがあります。
             // 実用性を考えて、時刻が正しく同期されていなくても
             // 気にせずに時間を返します。
             return (now + offsetSpan);
