@@ -502,6 +502,57 @@ namespace Ragnarok
         }
 
         /// <summary>
+        /// 空の一時ファイルを作成し、そのファイル名を返します。
+        /// </summary>
+        public static string GetTempFileName()
+        {
+            return GetTempFileName(".tmp");
+        }
+
+        /// <summary>
+        /// 空の一時ファイルを作成し、そのファイル名を返します。
+        /// </summary>
+        /// <remarks>
+        /// Path.GetTempFileNameは一時ファイルの数が65535個を超えると
+        /// 例外を発生させます。
+        /// また、指定の拡張子でファイルを作ることもできないため、
+        /// 新たにメソッドを作成しました。
+        /// </remarks>
+        public static string GetTempFileName(string extension)
+        {
+            List<Exception> exList = null;
+
+            for (var attempt = 0; attempt < 10; ++attempt)
+            {
+                var filename = Path.GetRandomFileName();
+                filename = Path.ChangeExtension(filename, extension);
+                filename = Path.Combine(Path.GetTempPath(), filename);
+
+                try
+                {
+                    using (new FileStream(filename, FileMode.CreateNew))
+                    {
+                    }
+
+                    return filename;
+                }
+                catch (IOException ex)
+                {
+                    if (exList == null)
+                    {
+                        exList = new List<Exception>();
+                    }
+
+                    exList.Add(ex);
+                }
+            }
+
+            throw new IOException(
+                "一時ファイルの作成に失敗しました。",
+                new AggregateException(exList));
+        }
+
+        /// <summary>
         /// 安全にDisposeを行います。
         /// </summary>
         public static void SafeDispose<T>(ref T resource)

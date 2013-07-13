@@ -358,7 +358,7 @@ namespace Ragnarok.Presentation.Shogi
             // コルーチンを進めます。
             if (!UpdateEnumerator.MoveNext())
             {
-                RaiseStopped();
+                //RaiseStopped();
 
                 UpdateEnumerator = null;
                 return false;

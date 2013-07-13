@@ -28,14 +28,14 @@ namespace Ragnarok.Net.CookieGetter
             try
             {
                 // 一時ファイルの取得ができない環境に対応
-                temp = Path.GetTempFileName();
+                temp = Util.GetTempFileName();
                 File.Copy(path, temp, true);
 
                 // SQLite3.7.x
                 string pathshm = path + "-shm";
                 string pathwal = path + "-wal";
-                tempshm = Path.GetTempFileName();
-                tempwal = Path.GetTempFileName();
+                tempshm = Util.GetTempFileName();
+                tempwal = Util.GetTempFileName();
                 if (File.Exists(pathshm))
                 {
                     File.Copy(pathshm, tempshm, true);

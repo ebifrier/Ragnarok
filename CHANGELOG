@@ -1,3 +1,11 @@
+2013-07-14  - Ver 2.1.4
+
+	* Ragnarok.Presentation/Control/EvaluationControl.xaml: 評価値画像を高
+	品質で描画するようにしました。
+	* Ragnarok.Shogi/ShogiParser.cs: うまごんを受理するようにしました。
+	* Ragnarok/Util.cs: 一時ファイル名を作成するメソッドを新規に追加しまし
+	た。.NETバージョンは例外を返す可能性があるためです。
+
 2013-06-29  - Ver 2.1.3
 
 	* Ragnarok.Shogi/GenFiles: 激指による解析後の棋譜ファイルから評価値のみ

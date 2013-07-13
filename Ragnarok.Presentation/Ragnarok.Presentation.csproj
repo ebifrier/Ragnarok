@@ -69,6 +69,7 @@
     <Compile Include="Control\TimeSpanWindow.xaml.cs">
       <DependentUpon>TimeSpanWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converter\SignEmphasizeConverter.cs" />
     <Compile Include="Extension\ImageSetListExtension.cs" />
     <Compile Include="Utility\CloneModel.cs" />
     <Compile Include="Control\MessageStatusBar.cs" />

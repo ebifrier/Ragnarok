@@ -14,12 +14,13 @@
                    Stretch="None"
                    Source="{Binding SelectedImagePath,
                                     Converter={StaticResource imageConverter},
-                                    RelativeSource={RelativeSource TemplatedParent}}" />
+                                    RelativeSource={RelativeSource TemplatedParent}}"
+                   RenderOptions.BitmapScalingMode="HighQuality" />
             
             <Grid MaxWidth="{Binding ActualWidth, ElementName=image}"
                   MaxHeight="{Binding ActualHeight, ElementName=image}">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="3*" />
+                    <RowDefinition Height="2*" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
@@ -38,6 +39,7 @@
                                      Text="{Binding EvaluationPoint,
                                                     StringFormat={}{0:0},
                                                     RelativeSource={RelativeSource TemplatedParent}}"
+                                     FontFamily="MS PGothic"
                                      FontSize="50"
                                      Foreground="White"
                                      Stroke="Black"

@@ -307,8 +307,8 @@ namespace Ragnarok.Update
         private void BeginDownload(AppCastItem latestVersion)
         {
             this.downloader = new Downloader();
-            this.downloadFilePath = Path.GetTempFileName();
-            this.packFilePath = Path.GetTempFileName();
+            this.downloadFilePath = Util.GetTempFileName();
+            this.packFilePath = Util.GetTempFileName();
             this.packConfigFilePath = this.packFilePath + ".config";
 
             this.downloader.BeginDownload(

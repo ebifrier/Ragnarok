@@ -345,11 +345,15 @@ namespace Ragnarok.Shogi
             {"府", Piece.Hu},
             {"符", Piece.Hu},
             {"ふ", Piece.Hu},
+            {"ぷ", Piece.Hu},
             {"ほ", Piece.Hu},
+            {"ぽ", Piece.Hu},
             {"ふう", Piece.Hu},
             {"ふぅ", Piece.Hu},
             {"FU", Piece.Hu},
             {"HU", Piece.Hu},
+            {"PO", Piece.Hu},
+            {"PU", Piece.Hu},
 
             /* 以下、成り駒 */
             {"龍", Piece.Ryu},
@@ -737,7 +741,7 @@ namespace Ragnarok.Shogi
             var piecePostfixList = new string[]
             {
                 "ちゃん", "くん", "さん", "さま","様",
-                "厨","ちゅう","きち","吉",
+                "厨","ちゅう","きち","吉", "ごん",
             };
 
             // 指し手の前に空白があってもおｋとします。

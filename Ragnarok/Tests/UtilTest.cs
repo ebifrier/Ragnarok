@@ -30,7 +30,7 @@ namespace Ragnarok.Tests
         [Test()]
         public void ReadLineTest()
         {
-            var filepath = Path.GetTempFileName();
+            var filepath = Util.GetTempFileName();
             MakeFile(filepath);
 
             try

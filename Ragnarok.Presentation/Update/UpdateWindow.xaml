@@ -97,11 +97,11 @@
                     
                     <Button Grid.Column="1"
                             Command="{x:Static w:RagnarokCommands.OK}"
-                            Margin="5"
+                            Margin="10,10,0,10"
                             Content="更新する" />
                     <Button Grid.Column="2"
                             Command="{x:Static w:RagnarokCommands.Cancel}"
-                            Margin="5"
+                            Margin="10"
                             Content="後で通知する" />
                 </Grid>
             </ControlTemplate>
@@ -125,9 +125,11 @@
         <StaticResource ResourceKey="thumbImage" />
 
         <ContentControl Grid.Column="1"
-                        Template="{StaticResource descriptionTemplate}" />
+                        Template="{StaticResource descriptionTemplate}"
+                        Focusable="False" />
         
         <ContentControl Grid.Row="1" Grid.Column="1"
-                        Template="{StaticResource buttonTemplate}" />
+                        Template="{StaticResource buttonTemplate}"
+                        Focusable="False" />
     </Grid>
 </Window>

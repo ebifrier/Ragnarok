@@ -126,6 +126,29 @@ namespace Ragnarok.Shogi.Tests
                     Piece = Piece.Hu,
                     ActionType = ActionType.Unpromote,
                 });
+
+            Assert.AreEqual(
+                ShogiParser.ParseMove("５５うまごん", true),
+                new Move
+                {
+                    NewPosition = new Position(5, 5),
+                    Piece = Piece.Uma,
+                });
+
+            Assert.AreEqual(
+                ShogiParser.ParseMove("３９ときんちゃん", true),
+                new Move
+                {
+                    NewPosition = new Position(3, 9),
+                    Piece = Piece.To,
+                });
+            Assert.AreEqual(
+                ShogiParser.ParseMove("ごよんぽ", true),
+                new Move
+                {
+                    NewPosition = new Position(5, 4),
+                    Piece = Piece.Hu,
+                });
         }
 
         [Test()]
