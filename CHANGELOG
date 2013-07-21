@@ -1,3 +1,8 @@
+2013-07-21  - Ver 2.1.5
+
+	* Ragnarok/Utility/WeakEventHandler.cs: 対象オブジェクトが自動的にガベ
+	コレされるような(弱い参照による)イベントハンドラシステムを追加しました。 
+
 2013-07-14  - Ver 2.1.4
 
 	* Ragnarok.Presentation/Control/EvaluationControl.xaml: 評価値画像を高

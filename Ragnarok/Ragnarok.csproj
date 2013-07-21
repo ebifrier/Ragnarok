@@ -236,6 +236,8 @@
     <Compile Include="Tests\UtilTest.cs" />
     <Compile Include="Utility\TimeUtil.cs" />
     <Compile Include="Utility\TypeSerializer.cs" />
+    <Compile Include="Utility\WeakEventHandler.basic.cs" />
+    <Compile Include="Utility\WeakEventHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="NLog.config">
