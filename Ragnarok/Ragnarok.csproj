@@ -226,6 +226,7 @@
     <Compile Include="Utility\ReentrantLock.cs" />
     <Compile Include="Utility\Scanner.cs" />
     <Compile Include="Utility\AppSettingsBase.cs" />
+    <Compile Include="Utility\Signal.cs" />
     <Compile Include="Utility\StackTraceUtil.cs" />
     <Compile Include="Utility\StringConverter.cs" />
     <Compile Include="Utility\StringNormalizer.cs" />
