@@ -1,3 +1,9 @@
+2013-08-30  - Ver 2.1.6
+
+	* *.csproj: プロジェクトのプラットフォームをx86に変更しました。
+	* Ragnarok.Shogi/SampleMove.cs: 指し手サンプルに局面の評価値を含められ
+	るようにしました。
+
 2013-07-21  - Ver 2.1.5
 
 	* Ragnarok/Utility/WeakEventHandler.cs: 対象オブジェクトが自動的にガベ
