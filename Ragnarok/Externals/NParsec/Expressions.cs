@@ -39,7 +39,7 @@ namespace Codehaus.Parsec
                 else
                 {
                     end = i;
-                    Parser p = slice(kind, ops, begin, end);
+                    Parser p = slice<T>(kind, ops, begin, end);
                     ret = build(p, kind, ret);
                     begin = i;
                     prec = ops[i].Precedence;
@@ -50,7 +50,7 @@ namespace Codehaus.Parsec
             {
                 end = ops.Length;
                 kind = ops[begin].Kind;
-                Parser p = slice(kind, ops, begin, end);
+                Parser p = slice<T>(kind, ops, begin, end);
                 ret = build(p, kind, ret);
             }
             return ret;
