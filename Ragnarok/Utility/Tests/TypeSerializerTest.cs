@@ -12,7 +12,7 @@ namespace Ragnarok.Utility.Tests
     /// 
     /// </summary>
     [TestFixture()]
-    internal class TypeSerializerTest
+    public class TypeSerializerTest
     {
         /// <summary>
         /// テスト用クラス
@@ -47,8 +47,8 @@ namespace Ragnarok.Utility.Tests
         {
             TypeTest(typeof(int));
             TypeTest(typeof(Encoding));
-            TypeTest(typeof(Tuple<>));
-            TypeTest(typeof(Tuple<int, List<Encoding>>));
+            TypeTest(typeof(Action<>));
+            TypeTest(typeof(Action<int, List<Encoding>>));
             TypeTest(typeof(InnerClass));
             TypeTest(typeof(Assert));
 
@@ -59,17 +59,17 @@ namespace Ragnarok.Utility.Tests
         public void DeserializeTest()
         {
             Assert.AreEqual(typeof(int), TypeSerializer.Deserialize("System.Int32"));
-            Assert.AreEqual(typeof(Tuple<>), TypeSerializer.Deserialize("System.Tuple`1"));
-            Assert.AreEqual(typeof(Tuple<>), TypeSerializer.Deserialize("System.Tuple`1[]"));
+            Assert.AreEqual(typeof(Action<>), TypeSerializer.Deserialize("System.Action`1"));
+            Assert.AreEqual(typeof(Action<>), TypeSerializer.Deserialize("System.Action`1[]"));
             Assert.AreEqual(
-                typeof(Tuple<Tuple<double, Assert>, int>),
+                typeof(Action<Action<double, Assert>, int>),
                 TypeSerializer.Deserialize(
-                    "System.Tuple`2[System.Tuple`2[System.Double, NUnit.Framework.Assert], System.Int32]"));
+                    "System.Action`2[System.Action`2[System.Double, NUnit.Framework.Assert], System.Int32]"));
 
             Assert.Catch(() => TypeSerializer.Deserialize("System.Int32`1"));
             Assert.Catch(() => TypeSerializer.Deserialize("int"));
-            Assert.Catch(() => TypeSerializer.Deserialize("System.Tuple`2[System.Int32]"));
-            Assert.Catch(() => TypeSerializer.Deserialize("System.Tuple`1[[]]"));
+            Assert.Catch(() => TypeSerializer.Deserialize("System.Action`2[System.Int32]"));
+            Assert.Catch(() => TypeSerializer.Deserialize("System.Action`1[[]]"));
         }
     }
 }

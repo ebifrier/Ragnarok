@@ -1,9 +1,9 @@
-﻿#if TESTS
+﻿#if TESTS && CLR_V4
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
-using System.ComponentModel;
 using NUnit.Framework;
 
 namespace Ragnarok.ObjectModel.Tests
@@ -86,7 +86,7 @@ namespace Ragnarok.ObjectModel.Tests
     }
 
     [TestFixture()]
-    internal class ViewModelTest
+    public class ViewModelTest
     {
         [Test()]
         public void BasicTest()

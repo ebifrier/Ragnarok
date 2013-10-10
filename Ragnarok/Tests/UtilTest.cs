@@ -9,7 +9,7 @@ using NUnit.Framework;
 namespace Ragnarok.Tests
 {
     [TestFixture()]
-    internal class UtilTest
+    public sealed class UtilTest
     {
         private readonly string[] FileContents = new string[]
         {
@@ -40,10 +40,10 @@ namespace Ragnarok.Tests
 
                 foreach (var expected in FileContents)
                 {
-                    Assert.True(en.MoveNext());
+                    Assert.IsTrue(en.MoveNext());
                     Assert.AreEqual(expected, en.Current);
                 }
-                Assert.False(en.MoveNext());
+                Assert.IsFalse(en.MoveNext());
             }
             finally
             {

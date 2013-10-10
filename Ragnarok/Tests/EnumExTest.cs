@@ -9,7 +9,7 @@ using NUnit.Framework;
 namespace Ragnarok.Tests
 {
     [TestFixture()]
-    internal class EnumExTest
+    public sealed class EnumExTest
     {
         [Test()]
         public void HasFlagTest()
@@ -17,10 +17,10 @@ namespace Ragnarok.Tests
             var flag1 = FileAccess.Read | FileAccess.Write;
             var flag2 = FileAccess.Read;
 
-            Assert.True(EnumEx.HasFlag(flag1, FileAccess.Read));
-            Assert.True(EnumEx.HasFlag(flag1, FileAccess.Write));
-            Assert.True(EnumEx.HasFlag(flag2, FileAccess.Read));
-            Assert.False(EnumEx.HasFlag(flag2, FileAccess.Write));
+            Assert.IsTrue(EnumEx.HasFlag(flag1, FileAccess.Read));
+            Assert.IsTrue(EnumEx.HasFlag(flag1, FileAccess.Write));
+            Assert.IsTrue(EnumEx.HasFlag(flag2, FileAccess.Read));
+            Assert.IsFalse(EnumEx.HasFlag(flag2, FileAccess.Write));
         }
     }
 }

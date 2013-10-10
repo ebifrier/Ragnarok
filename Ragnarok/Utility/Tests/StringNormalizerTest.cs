@@ -8,7 +8,7 @@ using NUnit.Framework;
 namespace Ragnarok.Utility.Tests
 {
     [TestFixture()]
-    internal class StringNormalizerTest
+    public class StringNormalizerTest
     {
         [Test()]
         public void NumberTest()

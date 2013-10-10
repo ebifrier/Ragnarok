@@ -8,7 +8,7 @@ using NUnit.Framework;
 namespace Ragnarok.Utility.Tests
 {
     [TestFixture()]
-    internal class CalclatorTest
+    public class CalclatorTest
     {
         [Test()]
         public void SimpleTest()

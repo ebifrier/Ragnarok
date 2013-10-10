@@ -520,7 +520,7 @@ namespace Ragnarok
         /// </remarks>
         public static string GetTempFileName(string extension)
         {
-            List<Exception> exList = null;
+            Exception exception = null;
 
             for (var attempt = 0; attempt < 10; ++attempt)
             {
@@ -538,18 +538,13 @@ namespace Ragnarok
                 }
                 catch (IOException ex)
                 {
-                    if (exList == null)
-                    {
-                        exList = new List<Exception>();
-                    }
-
-                    exList.Add(ex);
+                    exception = ex;
                 }
             }
 
             throw new IOException(
                 "一時ファイルの作成に失敗しました。",
-                new AggregateException(exList));
+                exception);
         }
 
         /// <summary>

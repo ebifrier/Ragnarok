@@ -288,8 +288,7 @@ namespace Ragnarok.Shogi.Csa
         /// <summary>
         /// 手番オプションを与える行を解釈します。
         /// </summary>
-        private static BWType? ParseTurn(Regex re, string line,
-                                         BWType defaultValue = BWType.None)
+        private static BWType? ParseTurn(Regex re, string line)
         {
             var m = re.Match(line);
             if (!m.Success)
@@ -299,7 +298,7 @@ namespace Ragnarok.Shogi.Csa
 
             if (!m.Groups[1].Success)
             {
-                return defaultValue;
+                return BWType.None;
             }
 
             var c = m.Groups[1].Value;

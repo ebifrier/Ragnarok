@@ -12,9 +12,9 @@ namespace Ragnarok.Net.ProtoBuf.Tests
     /// <summary>
     /// テスト用のサーバークラス。
     /// </summary>
-    internal sealed class PbAckServer
+    public sealed class PbAckServer
     {
-        private PbConnection connection;
+        //private PbConnection connection;
 
         private PbConnection Accept()
         {
@@ -38,7 +38,7 @@ namespace Ragnarok.Net.ProtoBuf.Tests
 
         public void Start()
         {
-            this.connection = Accept();
+            Accept();
         }
     }
 
