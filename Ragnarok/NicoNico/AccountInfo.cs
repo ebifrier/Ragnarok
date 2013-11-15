@@ -98,7 +98,7 @@ namespace Ragnarok.NicoNico
 
             var m = Regex.Match(
                 cookie.Value,
-                "^user_session_([0-9]+)_([0-9]+)$");
+                "^user_session_([0-9]+)_");
             if (!m.Success)
             {
                 return -1;

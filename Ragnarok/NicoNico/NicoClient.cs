@@ -166,7 +166,7 @@ namespace Ragnarok.NicoNico
 
             // アカウント情報を取得します。
             // 取得できなければ、このクッキーはログインされていません。
-            var accountInfo = NicoNico.Login.CookieValidator.Validate(
+            var accountInfo = CookieValidator.Validate(
                 cookieContainer);
             if (accountInfo == null)
             {

@@ -76,8 +76,7 @@ namespace Ragnarok.NicoNico.Login
                         "ブラウザの種類が正しくありません。", "browser");
                 }
 
-                var cookieGetter = Ragnarok.Net.CookieGetter
-                    .CookieGetter.CreateInstance(browserType);
+                var cookieGetter = CookieGetter.CreateInstance(browserType);
                 if (cookieGetter == null)
                 {
                     Log.Error(
