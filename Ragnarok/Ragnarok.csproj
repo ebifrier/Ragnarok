@@ -257,6 +257,7 @@
     <Compile Include="Update\Configuration.cs" />
     <Compile Include="Utility\AssemblyUtility\AssemblyAccessor.cs" />
     <Compile Include="Utility\AssemblyUtility\AssemblyNullAccessor.cs" />
+    <Compile Include="Utility\ComObject.cs" />
     <Compile Include="Utility\DataSegment.cs" />
     <Compile Include="Utility\DeviceInventory.cs" />
     <Compile Include="Update\MD5Verificator.cs" />

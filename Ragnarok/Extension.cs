@@ -143,6 +143,75 @@ namespace Ragnarok
         }
 
         /// <summary>
+        /// <paramref name="source"/>中の要素を<paramref name="count"/>
+        /// 個ごとにまとめ直します。
+        /// 最後の要素数が足りない場合は足りないまま返します。
+        /// </summary>
+        public static IEnumerable<IEnumerable<TSource>>
+            TakeBy<TSource>(this IEnumerable<TSource> source, int count)
+        {
+            if (source == null)
+            {
+                throw new ArgumentNullException("source");
+            }
+
+            if (count < 1)
+            {
+                throw new ArgumentOutOfRangeException("count");
+            }
+
+            while (source.Any())
+            {
+                yield return source.Take(count);
+
+                source = source.Skip(count);
+            }
+        }
+
+        /// <summary>
+        /// <paramref name="source"/>中の要素を<paramref name="count"/>
+        /// 個ごとにまとめ直します。
+        /// 最後の要素数が足りない場合はdefault値で補います。
+        /// </summary>
+        public static IEnumerable<IEnumerable<TSource>> TakeOrDefaultBy<TSource>(
+            this IEnumerable<TSource> source, int count)
+        {
+            if (source == null)
+            {
+                throw new ArgumentNullException("source");
+            }
+
+            if (count < 1)
+            {
+                throw new ArgumentOutOfRangeException("count");
+            }
+
+            using (var enumerator = source.GetEnumerator())
+            {
+                var values = new TSource[count];
+                while (enumerator.MoveNext())
+                {
+                    values[0] = enumerator.Current;
+
+                    var index = 1;
+                    for (; index < count; ++index)
+                    {
+                        if (!enumerator.MoveNext()) break;
+
+                        values[index] = enumerator.Current;
+                    }
+
+                    for (; index < count; ++index)
+                    {
+                        values[index] = default(TSource);
+                    }
+
+                    yield return values;
+                }
+            }
+        }
+
+        /// <summary>
         /// イベントハンドラを呼び出します。
         /// </summary>
         public static void RaiseEvent(this EventHandler handler, object sender,

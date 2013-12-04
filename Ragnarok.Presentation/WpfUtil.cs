@@ -104,6 +104,34 @@ namespace Ragnarok.Presentation
         }
 
         /// <summary>
+        /// <paramref name="type"/>が持つ全コマンドをバインディングします。
+        /// </summary>
+        public static void BindCommands(Type type, CommandBindingCollection commands)
+        {
+            var fieldFlags =
+                BindingFlags.Static |
+                BindingFlags.GetField |
+                BindingFlags.Public;
+            var fieldCommands = type
+                .GetFields(fieldFlags)
+                .Select(_ => _.GetValue(null));
+
+            var propertyFlags =
+                BindingFlags.Static |
+                BindingFlags.GetProperty |
+                BindingFlags.Public;
+            var propertyCommands = type
+                .GetProperties(propertyFlags)
+                .Select(_ => _.GetValue(null, null));
+
+            fieldCommands.Concat(propertyCommands)
+                .OfType<ICommand>()
+                .Where(_ => _ != null)
+                .Select(_ => new CommandBinding(_))
+                .ForEach(_ => commands.Add(_));
+        }
+
+        /// <summary>
         /// Mouse.GetPositionにはバグがあるので、P/Invokeでマウス座標を取ります。
         /// </summary>
         /// <remarks>

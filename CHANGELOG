@@ -1,3 +1,10 @@
+2013-12-04  - Ver 2.2.0
+
+	* Ragnarok/Utility/ComObject.cs: ComObjectを自動で開放するようなラッパ
+	ークラスを追加しました。
+	* Ragnarok/Extension.cs: リストからオブジェクトをN個ずつ取り出すような
+	拡張メソッドを追加しました。
+
 2013-11-15  - Ver 2.1.8
 
 	* Ragnarok/NicoNico/AccountInfo.cs: クッキーのセッション保存方法が変更
