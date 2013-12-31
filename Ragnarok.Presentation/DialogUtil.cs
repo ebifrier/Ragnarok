@@ -254,6 +254,14 @@ namespace Ragnarok.Presentation
         }
 
         /// <summary>
+        /// 一般的なダイアログ表示用メソッドです。
+        /// </summary>
+        public static MessageBoxResult Show(string message)
+        {
+            return Show(message, "メッセージ", MessageBoxButton.OK);
+        }
+
+        /// <summary>
         /// エラーメッセージの表示用メソッドです。
         /// </summary>
         private static void ShowErrorInternal(string message)

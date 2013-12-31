@@ -165,6 +165,7 @@
     <Compile Include="Update\UpdateWindow.xaml.cs">
       <DependentUpon>UpdateWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Utility\DataGridUtil.cs" />
     <Compile Include="Utility\FrameTimer.cs" />
     <Compile Include="Utility\HolderObject.cs" />
     <Compile Include="Utility\ImageSetInfo.cs" />

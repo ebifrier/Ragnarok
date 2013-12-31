@@ -1,3 +1,8 @@
+2013-12-31  - Ver 2.2.9
+
+	* Ragnarok.Presentation/Utility/DataGridUtil.cs: DataGridのためのユーテ
+	ィリティークラスを追加しました。
+
 2013-12-04  - Ver 2.2.0
 
 	* Ragnarok/Utility/ComObject.cs: ComObjectを自動で開放するようなラッパ
