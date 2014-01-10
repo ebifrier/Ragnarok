@@ -1,3 +1,8 @@
+2014-01-11  - Ver 2.3.0
+
+	* Ragnarok.Shogi/ShogiParser.cs: 22ドラゴンや同ほーすなどの指し手を解析
+	できるようにしました。
+
 2013-12-31  - Ver 2.2.9
 
 	* Ragnarok.Presentation/Utility/DataGridUtil.cs: DataGridのためのユーテ

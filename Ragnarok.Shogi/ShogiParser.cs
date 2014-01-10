@@ -223,6 +223,7 @@ namespace Ragnarok.Shogi
             new Dictionary<string, Piece>()
         {
             {"飛車", Piece.Hisya},
+            {"飛者", Piece.Hisya},
             {"飛", Piece.Hisya},
             {"非", Piece.Hisya},
             {"日", Piece.Hisya},
@@ -238,6 +239,7 @@ namespace Ragnarok.Shogi
             {"ひ", Piece.Hisya},
             {"とび", Piece.Hisya},
             {"とぶ", Piece.Hisya},
+            {"るーく", Piece.Hisya},
             {"HISYA", Piece.Hisya},
             {"HISHA", Piece.Hisya},
             {"HI", Piece.Hisya},
@@ -258,6 +260,7 @@ namespace Ragnarok.Shogi
             {"かく", Piece.Kaku},
             {"かど", Piece.Kaku},
             {"つの", Piece.Kaku},
+            {"びしょっぷ", Piece.Kaku},
             {"KAKU", Piece.Kaku},
 
             {"玉", Piece.Gyoku},
@@ -267,6 +270,7 @@ namespace Ragnarok.Shogi
             {"ぎょく", Piece.Gyoku},
             {"たま", Piece.Gyoku},
             {"おう", Piece.Gyoku},
+            {"きんぐ", Piece.Gyoku},
             {"神", Piece.Gyoku},
             {"かみ", Piece.Gyoku},
             {"多摩", Piece.Gyoku},
@@ -284,12 +288,14 @@ namespace Ragnarok.Shogi
             {"禽", Piece.Kin},
             {"きん", Piece.Kin},
             {"かね", Piece.Kin},
+            {"ごーるど", Piece.Kin},
             {"KIN", Piece.Kin},
             {"KINN", Piece.Kin},
 
             {"銀", Piece.Gin},
             {"吟", Piece.Gin},
             {"ぎん", Piece.Gin},
+            {"しるばー", Piece.Gin},
             {"GIN", Piece.Gin},
             {"GINN", Piece.Gin},
 
@@ -306,6 +312,7 @@ namespace Ragnarok.Shogi
             {"けー", Piece.Kei},
             {"ぴょん", Piece.Kei},
             {"かつら", Piece.Kei},
+            {"ないと", Piece.Kei},
             {"KEIMA", Piece.Kei},
             {"KEI", Piece.Kei},
             {"K", Piece.Kei},
@@ -350,6 +357,7 @@ namespace Ragnarok.Shogi
             {"ぽ", Piece.Hu},
             {"ふう", Piece.Hu},
             {"ふぅ", Piece.Hu},
+            {"ぽーん", Piece.Hu},
             {"FU", Piece.Hu},
             {"HU", Piece.Hu},
             {"PO", Piece.Hu},
@@ -365,6 +373,7 @@ namespace Ragnarok.Shogi
             {"留", Piece.Ryu},
             {"琉", Piece.Ryu},
             {"瘤", Piece.Ryu},
+            {"どらごん", Piece.Ryu},
             {"りゅう", Piece.Ryu},
             {"りゅ", Piece.Ryu},
             {"RYU", Piece.Ryu},
@@ -373,6 +382,7 @@ namespace Ragnarok.Shogi
             {"馬", Piece.Uma},
             {"午", Piece.Uma},
             {"旨", Piece.Uma},
+            {"ほーす", Piece.Uma},
             {"うま", Piece.Uma},
             {"UMA", Piece.Uma},
 
