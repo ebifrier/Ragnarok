@@ -302,6 +302,37 @@ namespace Ragnarok
         }
 
         /// <summary>
+        /// TimeSpanのミリ秒部分を０にします。
+        /// </summary>
+        public static TimeSpan MillisecondsToZero(this TimeSpan self)
+        {
+            if (self == TimeSpan.MinValue || self == TimeSpan.MaxValue)
+            {
+                return self;
+            }
+
+            return TimeSpan.FromSeconds(Math.Floor(self.TotalSeconds));
+        }
+
+        /// <summary>
+        /// IDictionaryから指定のキーを持つ要素を探し、
+        /// もしなければデフォルト値を返します。
+        /// </summary>
+        public static TValue GetValue<TKey, TValue>(this IDictionary<TKey, TValue> dic,
+                                                    TKey key)
+        {
+            TValue value;
+            if (dic.TryGetValue(key, out value))
+            {
+                return value;
+            }
+            else
+            {
+                return default(TValue);
+            }
+        }
+
+        /// <summary>
         /// 全角文字を２文字分として文字数をカウントします。
         /// </summary>
         public static int HankakuLength(this string self)

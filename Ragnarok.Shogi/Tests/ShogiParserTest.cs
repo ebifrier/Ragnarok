@@ -117,6 +117,14 @@ namespace Ragnarok.Shogi.Tests
                     RankMoveType = RankMoveType.Back,
                     RelFileType = RelFileType.Right,
                 });
+            Assert.AreEqual(
+                ShogiParser.ParseMove("43ほーす左", true),
+                new Move
+                {
+                    NewPosition = new Position(4, 3),
+                    Piece = Piece.Uma,
+                    RelFileType = RelFileType.Left,
+                });
 
             Assert.AreEqual(
                 ShogiParser.ParseMove("１３不不成り", true),
@@ -174,6 +182,15 @@ namespace Ragnarok.Shogi.Tests
                 {
                     SameAsOld = true,
                     Piece = Piece.Uma,
+                });
+
+            Assert.AreEqual(
+                ShogiParser.ParseMove("同衾右", true),
+                new Move
+                {
+                    SameAsOld = true,
+                    Piece = Piece.Kin,
+                    RelFileType = RelFileType.Right,
                 });
         }
 
