@@ -138,9 +138,6 @@ namespace Ragnarok.NicoNico.Test
             {
                 LoginMethod = Login.LoginMethod.WithBrowser,
                 BrowserType = BrowserType.GoogleChrome,
-                
-                Mail = "agent004@centos.garnet-alice.net",
-                Password = "freedom01",
             };
             this.nicoClient.LoginAsync(loginData);
 
@@ -194,7 +191,8 @@ namespace Ragnarok.NicoNico.Test
                     LiveUrl,
                     this.nicoClient.CookieContainer);
 
-                this.commentClient.StartReceiveMessage(1000000);
+                //this.commentClient.StartReceiveMessage(1000000);
+                this.commentClient.StartReceiveMessage(1);
             }
             catch (Exception)
             {

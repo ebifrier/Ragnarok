@@ -262,6 +262,11 @@ namespace Ragnarok.NicoNico
         public string Text { get; set; }
 
         /// <summary>
+        /// NGスコアを取得または設定します。
+        /// </summary>
+        public int NGScore { get; set; }
+
+        /// <summary>
         /// ユーザーによって投稿されたコメントかどうかを取得します。
         /// </summary>
         public bool IsUserComment
@@ -359,6 +364,26 @@ namespace Ragnarok.NicoNico
             return value;
         }
 
+        private static CommentType ParseCommentType(XmlAttribute attr)
+        {
+            if (attr == null)
+            {
+                return CommentType.Normal;
+            }
+
+            // コメントタイプを取得します。
+            var attrValue = int.Parse(attr.Value);
+            foreach (var enumValue in EnumEx.GetValues<CommentType>())
+            {
+                if (attrValue == (int)enumValue)
+                {
+                    return enumValue;
+                }
+            }
+
+            return CommentType.Normal;
+        }
+
         /// <summary>
         /// コンストラクタ
         /// </summary>
@@ -384,36 +409,18 @@ namespace Ragnarok.NicoNico
             UserId = attr.Value;
 
             attr = node.Attributes["mail"];
-            if (attr != null)
-            {
-                Mail = attr.Value;
-            }
+            Mail = (attr == null ? null : attr.Value);
 
             // 自分で投稿したコメントなら'1'、そうでないなら'0'か
             // もしくは属性自体が存在しない。
             attr = node.Attributes["yourpost"];
-            if (attr != null)
-            {
-                IsYourpost = (IntTryParse(attr, 0) > 0);
-            }
+            IsYourpost = (IntTryParse(attr, 0) > 0);
 
             attr = node.Attributes["premium"];
-            if (attr == null)
-            {
-                CommentType = CommentType.Normal;
-            }
-            else
-            {
-                // コメントタイプを取得します。
-                var attrValue = int.Parse(attr.Value);
-                foreach (var enumValue in EnumEx.GetValues<CommentType>())
-                {
-                    if (attrValue == (int)enumValue)
-                    {
-                        CommentType = enumValue;
-                    }
-                }
-            }
+            CommentType = ParseCommentType(attr);
+
+            attr = node.Attributes["score"];
+            NGScore = IntTryParse(attr, 0);
 
             // 意味あるのか？
             Text = node.InnerText ?? "";

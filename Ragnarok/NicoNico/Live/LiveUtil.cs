@@ -99,19 +99,19 @@ namespace Ragnarok.NicoNico.Live
             }
 
             // 提供者を取得します。
-            if (providerStr.StartsWith("co"))
+            if (providerStr.StartsWith("co", StringComparison.InvariantCultureIgnoreCase))
             {
                 return new ProviderData(
                     ProviderType.Community,
                     StrUtil.ToInt(providerStr.Substring(2), -1));
             }
-            else if (providerStr.StartsWith("ch"))
+            else if (providerStr.StartsWith("ch", StringComparison.InvariantCultureIgnoreCase))
             {
                 return new ProviderData(
                     ProviderType.Channel,
                     StrUtil.ToInt(providerStr.Substring(2), -1));
             }
-            else if (providerStr == "official")
+            else if (providerStr.Equals("official", StringComparison.InvariantCultureIgnoreCase))
             {
                 return new ProviderData(
                     ProviderType.Official, -1);
@@ -459,7 +459,7 @@ namespace Ragnarok.NicoNico.Live
             var timeout = WebUtil.DefaultTimeout;
             if (timeout < 0)
             {
-                timeout = 10 * 1000;
+                timeout = 30 * 1000;
             }
 
             // 各イベントが終了するのを待ちます。

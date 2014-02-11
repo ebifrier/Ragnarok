@@ -72,10 +72,20 @@ namespace Ragnarok.NicoNico
         /// <summary>
         /// アドレス番号からメッセージサーバーのアドレスを取得します。
         /// </summary>
-        public static string GetMessageServerAddress(int number)
+        public static string GetCommunityMessageServerAddress(int number)
         {
             return string.Format(
                 "msg{0}.live.nicovideo.jp",
+                number);
+        }
+
+        /// <summary>
+        /// アドレス番号からメッセージサーバーのアドレスを取得します。
+        /// </summary>
+        public static string GetOfficialMessageServerAddress(int number)
+        {
+            return string.Format(
+                "omsg{0}.live.nicovideo.jp",
                 number);
         }
 

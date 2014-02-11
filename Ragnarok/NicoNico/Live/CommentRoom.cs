@@ -696,7 +696,7 @@ namespace Ragnarok.NicoNico.Live
                 if (rc != 0)
                 {
                     Log.Error(this,
-                        "threadメッセージにresultcodeがありません。");
+                        "threadメッセージの受信開始に失敗しました。");
                     return;
                 }
 
@@ -1257,6 +1257,9 @@ namespace Ragnarok.NicoNico.Live
         }
         #endregion
 
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
         public CommentRoom(CommentClient client, CommentRoomInfo roomInfo,
                            int index)
         {

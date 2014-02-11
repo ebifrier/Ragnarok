@@ -60,7 +60,7 @@ namespace Ragnarok.NicoNico.Live
         /// <summary>
         /// 総来場者数を取得します。
         /// </summary>
-        public int CommunityTotalVisitors
+        public int TotalVisitors
         {
             get;
             private set;
@@ -77,7 +77,7 @@ namespace Ragnarok.NicoNico.Live
 
         private LiveInfo()
         {
-            CommunityTotalVisitors = -1;
+            TotalVisitors = -1;
             CommunityLevel = -1;
         }
 
@@ -148,6 +148,12 @@ namespace Ragnarok.NicoNico.Live
             @"description:\s+'((.|\')*)',",
             RegexOptions.IgnoreCase);
 
+        private static readonly Regex ProviderInfoRegex = new Regex(
+            @"<script type=""text/javascript"">\s*<!--" +
+            @"\s*Nicolive_JS_Conf.Watch = {" +
+            @"[\s\S]+?,""provider_type"":""(\w+)"",[\s\S]+?" +
+            @"\s*--></script>");
+
         /// <summary>
         /// html形式の生放送ページから生放送情報を作成します。
         /// </summary>
@@ -162,7 +168,16 @@ namespace Ragnarok.NicoNico.Live
                     idString);
             }
 
-            var m = VideoInfoRegex.Match(pageStr);
+            var m = ProviderInfoRegex.Match(pageStr);
+            if (!m.Success)
+            {
+                throw new NicoLiveException(
+                    "放送の提供元情報を取得できませんでした。",
+                    idString);
+            }
+            var provider = LiveUtil.ParseProvider(m.Groups[1].Value);
+
+            m = VideoInfoRegex.Match(pageStr);
             if (!m.Success)
             {
                 throw new NicoLiveException(
@@ -202,121 +217,49 @@ namespace Ragnarok.NicoNico.Live
                 .Replace("\\'", "'")
                 .Replace("\\r\\n", "\n");
 
-            if (SetCommunityInfoHarajuku(live, pageStr))
+            switch (provider.ProviderType)
             {
-                return live;
-            }
-            else if (SetCommunityInfoQ(live, pageStr))
-            {
-                return live;
+                case ProviderType.Community:
+                    SetCommunityInfo(live, pageStr);
+                    break;
+                case ProviderType.Official:
+                    SetOfficialInfo(live, pageStr);
+                    break;
+                default:
+                    throw new NotImplementedException(
+                        "実装されていない放送提供元です。");
             }
 
-            return null;
+            return live;
         }
 
-        private static readonly Regex HaraCommunityRegex = new Regex(
-            @"<td colspan=""2"" class=""counter"">\s+" +
-            @"((.|\n)+?)\s*</td>",
-            RegexOptions.IgnoreCase);
-        private static readonly Regex HaraCommunityVisitorRegex = new Regex(
-            @"累計来場者数：<strong [^>]+>([0-9,]+)</strong>",
-            RegexOptions.IgnoreCase);
-        private static readonly Regex HaraCommunityLevelRegex = new Regex(
-            @"/レベル：<strong [^>]+>([0-9,]+)</strong>",
-            RegexOptions.IgnoreCase);
-
-        /// <summary>
-        /// 原宿バージョンのコミュニティ情報(累計来場者数など)を取得します。
-        /// </summary>
-        private static bool SetCommunityInfoHarajuku(LiveInfo live, string pageStr)
-        {
-            // コミュニティであれば、コミュニティ情報を取得します。
-            string communityStr;
-
-            var m = HaraCommunityRegex.Match(pageStr);
-            if (m.Success)
-            {
-                communityStr = m.Groups[1].Value;
-            }
-            else
-            {
-                m = Regex.Match(pageStr,
-                    @"<h3 title=""COMMUNITY INFO"">COMMUNITY INFO</h3>");
-                if (!m.Success)
-                {
-                    return false;
-                }
-
-                communityStr = pageStr.Substring(m.Index);
-            }
-
-            // 累計来場者数：<strong style="font-size: 14px;">104,497</strong>
-            m = HaraCommunityVisitorRegex.Match(communityStr);
-            if (!m.Success)
-            {
-                throw new NicoLiveException(
-                    "累計来場者数の取得に失敗しました。",
-                    live.IdString);
-            }
-            live.CommunityTotalVisitors = int.Parse(
-                m.Groups[1].Value,
-                NumberStyles.AllowThousands);
-
-#if false
-            // /参加人数：<strong style="font-size: 14px;">1581</strong>
-            m = haraCommunityMemberRegex.Match(communityStr);
-            if (!m.Success)
-            {
-                throw new NicoLiveException(
-                    "コミュニティ参加人数の取得に失敗しました。",
-                    live.IdString);
-            }
-            live.CommunityMembers = int.Parse(
-                m.Groups[1].Value,
-                NumberStyles.AllowThousands);
-#endif
-
-            // /レベル：<strong style="font-size: 14px;">40</strong>
-            m = HaraCommunityLevelRegex.Match(communityStr);
-            if (!m.Success)
-            {
-                throw new NicoLiveException(
-                    "コミュニティレベルの取得に失敗しました。",
-                    live.IdString);
-            }
-            live.CommunityLevel = int.Parse(
-                m.Groups[1].Value,
-                NumberStyles.AllowThousands);
-
-            return true;
-        }
-
-        private static readonly Regex QCommunityLevelRegex = new Regex(
+        #region ユーザー生放送
+        private static readonly Regex CommunityLevelRegex = new Regex(
             @"<span class=""commu_lv"">レベル：([0-9,]+)</span>",
             RegexOptions.IgnoreCase);
-        private static readonly Regex QCommunityVisitorsRegex = new Regex(
+        private static readonly Regex CommunityVisitorsRegex = new Regex(
             @"<span class=""visitor_score"">累計来場者数：([0-9,]+)</span>",
             RegexOptions.IgnoreCase);
 
         /// <summary>
-        /// Qバージョンのコミュニティ情報(累計来場者数など)を取得します。
+        /// コミュニティ情報(累計来場者数など)を取得します。
         /// </summary>
-        private static bool SetCommunityInfoQ(LiveInfo live, string pageStr)
+        private static void SetCommunityInfo(LiveInfo live, string pageStr)
         {
             // 累計来場者数
-            var m = QCommunityVisitorsRegex.Match(pageStr);
+            var m = CommunityVisitorsRegex.Match(pageStr);
             if (!m.Success)
             {
                 throw new NicoLiveException(
                     "累計来場者数の取得に失敗しました。",
                     live.IdString);
             }
-            live.CommunityTotalVisitors = int.Parse(
+            live.TotalVisitors = int.Parse(
                 m.Groups[1].Value,
                 NumberStyles.AllowThousands);
 
             // /レベル
-            m = QCommunityLevelRegex.Match(pageStr);
+            m = CommunityLevelRegex.Match(pageStr);
             if (!m.Success)
             {
                 throw new NicoLiveException(
@@ -326,8 +269,29 @@ namespace Ragnarok.NicoNico.Live
             live.CommunityLevel = int.Parse(
                 m.Groups[1].Value,
                 NumberStyles.AllowThousands);
-
-            return true;
         }
+        #endregion
+
+        #region 公式生放送
+        private static readonly Regex OfficialVisitorsRegex = new Regex(
+            @"<span class=""total_score"">累計来場者数：([0-9,]+)</span>",
+            RegexOptions.IgnoreCase);
+
+        private static void SetOfficialInfo(LiveInfo live, string pageStr)
+        {
+            // 累計来場者数
+            var m = OfficialVisitorsRegex.Match(pageStr);
+            if (!m.Success)
+            {
+                live.TotalVisitors = 0;
+            }
+            else
+            {
+                live.TotalVisitors = int.Parse(
+                    m.Groups[1].Value,
+                    NumberStyles.AllowThousands);
+            }
+        }
+        #endregion
     }
 }

@@ -207,9 +207,12 @@
     <Compile Include="NicoNico\Live\CommunityInfo.cs" />
     <Compile Include="NicoNico\Live\CommunityLevelInfo.cs" />
     <Compile Include="NicoNico\Live\CommunityLevelTable.cs" />
+    <Compile Include="NicoNico\Live\Detail\LiveInfoCreator.cs" />
+    <Compile Include="NicoNico\Live\Detail\OfficialLiveInfoCreator.cs" />
     <Compile Include="NicoNico\Live\Heartbeat.cs" />
     <Compile Include="NicoNico\Live\LiveInfo.cs" />
     <Compile Include="NicoNico\Live\LiveInfomationBase.cs" />
+    <Compile Include="NicoNico\Live\Detail\UserLiveCreator.cs" />
     <Compile Include="NicoNico\Live\LiveStatusCode.cs" />
     <Compile Include="NicoNico\Live\LiveUtil.cs" />
     <Compile Include="NicoNico\Live\NicoLiveException.cs" />

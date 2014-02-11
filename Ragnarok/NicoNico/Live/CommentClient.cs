@@ -28,7 +28,7 @@ namespace Ragnarok.NicoNico.Live
         /// <summary>
         /// デフォルトの接続タイムアウトです。
         /// </summary>
-        public static TimeSpan DefaultTimeout = TimeSpan.FromSeconds(10);
+        public static TimeSpan DefaultTimeout = TimeSpan.FromSeconds(30);
 
         private readonly object SyncRoot = new object();
         private readonly object ConnectLock = new object();
@@ -400,24 +400,6 @@ namespace Ragnarok.NicoNico.Live
             }
         }
 
-        /*/// <summary>
-        /// 各部屋のコメント投稿待ち時間の最大値を取得します。
-        /// </summary>
-        public TimeSpan GetWaitTimeForPost()
-        {
-            lock (SyncRoot)
-            {
-                var availableRoomList = AvailableRoomList;
-                if (!availableRoomList.Any())
-                {
-                    return TimeSpan.MaxValue;
-                }
-
-                return availableRoomList.Max(
-                    (room => room.WaitTime));
-            }
-        }*/
-
         /// <summary>
         /// コメントが今すぐ投稿可能か取得します。
         /// </summary>
@@ -669,152 +651,23 @@ namespace Ragnarok.NicoNico.Live
         }
 
         /// <summary>
+        /// 全コメントルームのポート情報などを取得します。
+        /// </summary>
+        private CommentRoomInfo[] GetAllRoomInfo(PlayerStatus playerStatus,
+                                                 int communityLevel)
+        {
+            var creator = Detail.LiveInfoCreatorUtil.CreateCreator(
+                playerStatus.Stream.ProviderType);
+
+            return creator.GetAllRoomInfo(playerStatus, communityLevel);
+        }
+
+        /// <summary>
         /// 指定のポートを持つコメント部屋のインデックスを取得します。
         /// </summary>
         private int FindRoomIndex(int port, CommentRoomInfo[] roomList)
         {
             return Array.FindIndex(roomList, room => (room.Port == port));
-        }
-
-        /// <summary>
-        /// ニコ生のコメントサーバーはアドレス番号が101-104をループする。
-        /// </summary>
-        public static string CommentServerAddress(int number)
-        {
-            while (number < 101)
-            {
-                number += 4;
-            }
-
-            while (number > 104)
-            {
-                number -= 4;
-            }
-
-            return NicoString.GetMessageServerAddress(number);
-        }
-
-        /// <summary>
-        /// ニコ生のコメントサーバーはポート番号が2805-2814をループする。
-        /// </summary>
-        public static int CommentServerPort(int port, out int carry)
-        {
-            carry = 0;
-            while (port < 2805)
-            {
-                carry = -1;
-                port += 10;
-            }
-
-            while (port > 2814)
-            {
-                carry = +1;
-                port -= 10;
-            }
-
-            return port;
-        }
-
-        /// <summary>
-        /// アリーナのコメントサーバー情報を取得します。
-        /// </summary>
-        public static CommentRoomInfo GetArenaInfo(PlayerStatus playerStatus)
-        {
-            var arenaName = playerStatus.Stream.DefaultCommunity;
-            var roomLabel = playerStatus.User.RoomLabel;
-            var ms = playerStatus.MS;
-            var offset = 0;
-
-            // 提供元がユーザーコミュニティでなければ、
-            // (チャンネル放送や公式放送などの場合)
-            // 現在のコメントルームをアリーナとします。
-            if (playerStatus.Stream.ProviderType != ProviderType.Community)
-            {
-                return new CommentRoomInfo(
-                    roomLabel,
-                    ms.Address,
-                    ms.Port,
-                    ms.Thread);
-            }
-
-            // メッセージサーバーのURLから番号を取得します。
-            var msNumber = NicoString.GetMessageServerNumber(ms.Address);
-            if (msNumber < 0)
-            {
-                return new CommentRoomInfo(
-                    roomLabel,
-                    ms.Address,
-                    ms.Port,
-                    ms.Thread);
-            }
-            
-            // アリーナ席へのオフセットを取得します。
-            if (roomLabel.IndexOf("A") >= 0)
-            {
-                offset = -1;
-            }
-            else if (roomLabel.IndexOf("B") >= 0)
-            {
-                offset = -2;
-            }
-            else if (roomLabel.IndexOf("C") >= 0)
-            {
-                offset = -3;
-            }
-            else
-            {
-                offset = 0;
-            }
-
-            var carry = 0;
-            var msPort = CommentServerPort(ms.Port + offset, out carry);
-
-            // サーバーアドレス番号はポート番号のオーバーフローによって
-            // 上下します。
-            // - ポート番号が2805以下なら、アドレス番号は１下がる
-            // - ポート番号が2814以上なら、アドレス番号は１上がる
-            return new CommentRoomInfo(
-                arenaName,
-                CommentServerAddress(msNumber + carry),
-                msPort,
-                ms.Thread + offset);
-        }
-
-        /// <summary>
-        /// 全コメントルームのポート情報などを取得します。
-        /// </summary>
-        public static CommentRoomInfo[] GetAllRoomInfo(PlayerStatus playerStatus,
-                                                       int communityLevel)
-        {
-            var result = new List<CommentRoomInfo>();
-            var arenaInfo = GetArenaInfo(playerStatus);
-
-            // ルーム数を取得します。
-            var roomCount = (
-                communityLevel > 0 ?
-                CommunityLevelTable.GetNumberOfSeet(communityLevel) / 500 :
-                1);
-
-            result.Add(arenaInfo);
-
-            var msNumber = NicoString.GetMessageServerNumber(
-                arenaInfo.Address);
-            for (var i = 1; i < roomCount; ++i)
-            {
-                var carry = 0;
-                var msPort = CommentServerPort(arenaInfo.Port + i, out carry);
-
-                // 各立ち見席の情報を設定します。
-                var roomInfo = new CommentRoomInfo(
-                    "立ち見" + (char)((int)'A' + (i - 1)) + "列",
-                    CommentServerAddress(msNumber + carry),
-                    msPort,
-                    arenaInfo.Thread + i);
-
-                result.Add(roomInfo);
-            }
-
-            return result.ToArray();
         }
 
         /// <summary>

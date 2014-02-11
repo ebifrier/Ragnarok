@@ -1,3 +1,10 @@
+2014-02-11  - Ver 2.3.1
+
+	* Ragnarok/NicoNico/Live/LiveInfo.cs: 公式生放送からのコメント取得を行
+	えるようにしました。
+	* Ragnarok/NicoNico/Live/Detail: ユーザー生放送や公式生放送など、放送形
+	態ごとの処理を行うクラスを追加しました。
+
 2014-01-11  - Ver 2.3.0
 
 	* Ragnarok.Shogi/ShogiParser.cs: 22ドラゴンや同ほーすなどの指し手を解析
