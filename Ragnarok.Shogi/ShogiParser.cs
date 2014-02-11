@@ -45,17 +45,13 @@ namespace Ragnarok.Shogi
         /// </summary>
         private static string ConvertToRegexPattern<T>(IEnumerable<KeyValuePair<string, T>> table)
         {
-            return string.Join(
-               "|",
-               table.OrderByDescending(_ => _.Key.Length)
-                    .Select(_ => Regex.Escape(_.Key))
-                    .ToArray());
+            return ConvertToRegexPattern(table.Select(_ => _.Key));
         }
 
         /// <summary>
         /// 数字文字列を数字に変換するときに使います。
         /// </summary>
-        private static readonly Dictionary<string, int> numberTable =
+        private static readonly Dictionary<string, int> NumberTable =
             new Dictionary<string, int>()
         {
             {"0", 0}, {"０", 0}, {"零", 0}, {"ぜろ", 0}, {"れい", 0},
@@ -114,7 +110,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 級や段などを変換するときに使います。
         /// </summary>
-        private static readonly Dictionary<string, SkillKind> skillKindTable =
+        private static readonly Dictionary<string, SkillKind> SkillKindTable =
             new Dictionary<string, SkillKind>()
         {
             {"級", SkillKind.Kyu},
@@ -202,7 +198,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 投了の判定を行うためのテーブルです。
         /// </summary>
-        private static readonly List<string> resignTable = new List<string>
+        private static readonly List<string> ResignTable = new List<string>
         {
             "投了", "頭領", "等量", "棟梁",
             "とうりょう", "とーりょー", "とーりょ",
@@ -219,7 +215,7 @@ namespace Ragnarok.Shogi
         /// <remarks>
         /// 成銀、成香などを追加するため、readonlyにはできません。
         /// </remarks>
-        private static Dictionary<string, Piece> pieceTable =
+        private static Dictionary<string, Piece> PieceTable =
             new Dictionary<string, Piece>()
         {
             {"飛車", Piece.Hisya},
@@ -239,11 +235,11 @@ namespace Ragnarok.Shogi
             {"ひ", Piece.Hisya},
             {"とび", Piece.Hisya},
             {"とぶ", Piece.Hisya},
-            {"ひー", Piece.Hisya},
             {"るーく", Piece.Hisya},
             {"HISYA", Piece.Hisya},
             {"HISHA", Piece.Hisya},
             {"HI", Piece.Hisya},
+            {"ROOK", Piece.Hisya},
 
             {"角行", Piece.Kaku},
             {"角", Piece.Kaku},
@@ -263,6 +259,7 @@ namespace Ragnarok.Shogi
             {"つの", Piece.Kaku},
             {"びしょっぷ", Piece.Kaku},
             {"KAKU", Piece.Kaku},
+            {"BISHOP", Piece.Kaku},
 
             {"玉", Piece.Gyoku},
             {"王", Piece.Gyoku},
@@ -279,6 +276,7 @@ namespace Ragnarok.Shogi
             {"TAMA", Piece.Gyoku},
             {"OU", Piece.Gyoku},
             {"KAMI", Piece.Gyoku},
+            {"KING", Piece.Gyoku},
 
             {"金", Piece.Kin},
             {"衾", Piece.Kin},
@@ -292,14 +290,15 @@ namespace Ragnarok.Shogi
             {"ごーるど", Piece.Kin},
             {"KIN", Piece.Kin},
             {"KINN", Piece.Kin},
+            {"GOLD", Piece.Kin},
 
             {"銀", Piece.Gin},
             {"吟", Piece.Gin},
             {"ぎん", Piece.Gin},
             {"しるば", Piece.Gin},
-            {"しるばー", Piece.Gin},
             {"GIN", Piece.Gin},
             {"GINN", Piece.Gin},
+            {"SILVER", Piece.Gin},
 
             {"桂馬", Piece.Kei},
             {"桂", Piece.Kei},
@@ -311,13 +310,14 @@ namespace Ragnarok.Shogi
             {"けいま", Piece.Kei},
             {"けいば", Piece.Kei},
             {"けい", Piece.Kei},
-            {"けー", Piece.Kei},
+            {"け", Piece.Kei},
             {"ぴょん", Piece.Kei},
             {"かつら", Piece.Kei},
             {"ないと", Piece.Kei},
             {"KEIMA", Piece.Kei},
             {"KEI", Piece.Kei},
             {"K", Piece.Kei},
+            {"KNIGHT", Piece.Kei},
 
             {"香車", Piece.Kyo},
             {"香", Piece.Kyo},
@@ -336,7 +336,7 @@ namespace Ragnarok.Shogi
             {"興", Piece.Kyo},
             {"きょうしゃ", Piece.Kyo},
             {"きょう", Piece.Kyo},
-            {"きょー", Piece.Kyo},
+            {"きょ", Piece.Kyo},
             {"かおり", Piece.Kyo},
             {"やり", Piece.Kyo},
             {"KYOUSYA", Piece.Kyo},
@@ -359,13 +359,14 @@ namespace Ragnarok.Shogi
             {"ぽ", Piece.Hu},
             {"ふう", Piece.Hu},
             {"ふぅ", Piece.Hu},
-            {"ふー", Piece.Hu},
-            {"ぷー", Piece.Hu},
             {"ぽーん", Piece.Hu},
             {"FU", Piece.Hu},
             {"HU", Piece.Hu},
             {"PO", Piece.Hu},
             {"PU", Piece.Hu},
+            {"PAQN", Piece.Hu},
+            {"POON", Piece.Hu},
+            {"PON", Piece.Hu},
 
             /* 以下、成り駒 */
             {"龍", Piece.Ryu},
@@ -382,6 +383,8 @@ namespace Ragnarok.Shogi
             {"りゅ", Piece.Ryu},
             {"RYU", Piece.Ryu},
             {"RYUU", Piece.Ryu},
+            {"DRAGO", Piece.Ryu},
+            {"DRAGON", Piece.Ryu},
 
             {"馬", Piece.Uma},
             {"午", Piece.Uma},
@@ -389,6 +392,7 @@ namespace Ragnarok.Shogi
             {"ほーす", Piece.Uma},
             {"うま", Piece.Uma},
             {"UMA", Piece.Uma},
+            {"HORSE", Piece.Uma},
 
             {"と", Piece.To},
             {"TO", Piece.To},
@@ -397,7 +401,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 同銀などの判別を行うためのテーブルです。
         /// </summary>
-        private static readonly List<string> sameAsOldTable = new List<string>()
+        private static readonly List<string> SameAsOldTable = new List<string>()
         {
             "同じく", "おなじく",
             "どう", "とう", "どー",
@@ -410,7 +414,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 手番を変換するときに使います。
         /// </summary>
-        private static readonly Dictionary<string, BWType> bwTypeTable =
+        private static readonly Dictionary<string, BWType> BWTypeTable =
             new Dictionary<string, BWType>()
         {
             {"▲", BWType.Black},
@@ -421,9 +425,18 @@ namespace Ragnarok.Shogi
         };
 
         /// <summary>
+        /// 駒の後につけられるポストフィックスのリストです。
+        /// </summary>
+        private static readonly List<string> PiecePostfixTable = new List<string>
+        {
+            "ちゃん", "くん", "さん", "さま", "様",
+            "厨", "ちゅう", "きち", "吉", "ごん",
+        };
+
+        /// <summary>
         /// 駒の相対位置の判別を行うためのテーブルです。
         /// </summary>
-        private static readonly Dictionary<string, RelFileType> relFileTypeTable =
+        private static readonly Dictionary<string, RelFileType> RelFileTypeTable =
             new Dictionary<string, RelFileType>()
         {
             {"左", RelFileType.Left},
@@ -433,6 +446,7 @@ namespace Ragnarok.Shogi
             {"⇚", RelFileType.Left},
             {"㊧", RelFileType.Left},
             {"HIDARI", RelFileType.Left},
+            {"LEFT", RelFileType.Left},
 
             {"右", RelFileType.Right},
             {"みぎ", RelFileType.Right},
@@ -441,6 +455,7 @@ namespace Ragnarok.Shogi
             {"⇛", RelFileType.Left},
             {"㊨", RelFileType.Right},
             {"MIGI", RelFileType.Left},
+            {"RIGHT", RelFileType.Left},
 
             {"直ぐ", RelFileType.Straight},
             {"直", RelFileType.Straight},
@@ -455,7 +470,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 駒の動きの判別を行うためのテーブルです。
         /// </summary>
-        private static readonly Dictionary<string, RankMoveType> rankMoveTypeTable =
+        private static readonly Dictionary<string, RankMoveType> RankMoveTypeTable =
             new Dictionary<string, RankMoveType>()
         {
             {"上がる", RankMoveType.Up},
@@ -463,6 +478,7 @@ namespace Ragnarok.Shogi
             {"あがる", RankMoveType.Up},
             {"うえ", RankMoveType.Up},
             {"↑", RankMoveType.Up},
+            {"UP", RankMoveType.Up},
             {"UE", RankMoveType.Up},
             {"AGARU", RankMoveType.Up},
             {"行く", RankMoveType.Up},
@@ -485,8 +501,12 @@ namespace Ragnarok.Shogi
             {"ひく", RankMoveType.Back},
             {"引", RankMoveType.Back},
             {"↓", RankMoveType.Back},
+            {"下がる", RankMoveType.Back},
+            {"下", RankMoveType.Back},
+            {"BACK", RankMoveType.Back},
             {"HIKU", RankMoveType.Back},
             {"HIKI", RankMoveType.Back},
+            {"SAGARU", RankMoveType.Back},
 
             {"やどりき", RankMoveType.Sideways},
             {"寄る", RankMoveType.Sideways},
@@ -495,6 +515,7 @@ namespace Ragnarok.Shogi
             {"よる", RankMoveType.Sideways},
             {"より", RankMoveType.Sideways},
             {"寄", RankMoveType.Sideways},
+            {"SIDEWAY", RankMoveType.Sideways},
             {"YORU", RankMoveType.Sideways},
             {"YORI", RankMoveType.Sideways},
         };
@@ -505,7 +526,7 @@ namespace Ragnarok.Shogi
         /// <remarks>
         /// "不"成りを追加するため、readonlyにはできません。
         /// </remarks>
-        private static Dictionary<string, ActionType> actionTable =
+        private static Dictionary<string, ActionType> ActionTable =
             new Dictionary<string, ActionType>()
         {
             {"成らず", ActionType.Unpromote},
@@ -557,7 +578,7 @@ namespace Ragnarok.Shogi
         private static int? GetNumber(string text)
         {
             int result;
-            if (!numberTable.TryGetValue(text, out result))
+            if (!NumberTable.TryGetValue(text, out result))
             {
                 return null;
             }
@@ -571,7 +592,7 @@ namespace Ragnarok.Shogi
         private static SkillKind GetSkillKind(string text)
         {
             SkillKind result;
-            if (!skillKindTable.TryGetValue(text, out result))
+            if (!SkillKindTable.TryGetValue(text, out result))
             {
                 return SkillKind.Unknown;
             }
@@ -585,7 +606,7 @@ namespace Ragnarok.Shogi
         private static Piece GetPiece(string text)
         {
             Piece result;
-            if (!pieceTable.TryGetValue(text, out result))
+            if (!PieceTable.TryGetValue(text, out result))
             {
                 return null;
             }
@@ -604,7 +625,7 @@ namespace Ragnarok.Shogi
             }
 
             BWType result;
-            if (!bwTypeTable.TryGetValue(text, out result))
+            if (!BWTypeTable.TryGetValue(text, out result))
             {
                 return BWType.None;
             }
@@ -623,7 +644,7 @@ namespace Ragnarok.Shogi
             }
 
             RelFileType result;
-            if (!relFileTypeTable.TryGetValue(text, out result))
+            if (!RelFileTypeTable.TryGetValue(text, out result))
             {
                 return RelFileType.None;
             }
@@ -642,7 +663,7 @@ namespace Ragnarok.Shogi
             }
 
             RankMoveType result;
-            if (!rankMoveTypeTable.TryGetValue(text, out result))
+            if (!RankMoveTypeTable.TryGetValue(text, out result))
             {
                 return RankMoveType.None;
             }
@@ -661,7 +682,7 @@ namespace Ragnarok.Shogi
             }
 
             ActionType result;
-            if (!actionTable.TryGetValue(text, out result))
+            if (!ActionTable.TryGetValue(text, out result))
             {
                 return ActionType.None;
             }
@@ -676,7 +697,7 @@ namespace Ragnarok.Shogi
         {
             var pattern = string.Format(
                 @"^(あ(､|、|っ))?\s*({0})",
-                ConvertToRegexPattern(resignTable));
+                ConvertToRegexPattern(ResignTable));
 
             return new Regex(pattern, RegexOptions.Compiled);
         }
@@ -686,7 +707,7 @@ namespace Ragnarok.Shogi
         /// </summary>
         private static void ModifyAndSetPieceTable()
         {
-            var resultTable = pieceTable;
+            var resultTable = PieceTable;
 
             var tmpTable = new Dictionary<string, Piece>(resultTable);
             foreach (var pair in tmpTable)
@@ -699,7 +720,7 @@ namespace Ragnarok.Shogi
                 {
                     var piece = new Piece(pair.Value.PieceType, true);
                     
-                    foreach (var item in actionTable)
+                    foreach (var item in ActionTable)
                     {
                         if (item.Value == ActionType.Promote)
                         {
@@ -713,7 +734,7 @@ namespace Ragnarok.Shogi
                 }
             }
 
-            pieceTable = resultTable;
+            PieceTable = resultTable;
         }
 
         /// <summary>
@@ -721,7 +742,7 @@ namespace Ragnarok.Shogi
         /// </summary>
         private static void ModifyAndSetActionTable()
         {
-            var resultTable = actionTable;
+            var resultTable = ActionTable;
 
             var tmpTable = new SortedList<string, ActionType>(resultTable);
             foreach (var pair in tmpTable)
@@ -733,7 +754,7 @@ namespace Ragnarok.Shogi
                 }
             }
 
-            actionTable = resultTable;
+            ActionTable = resultTable;
         }
 
         /// <summary>
@@ -752,23 +773,17 @@ namespace Ragnarok.Shogi
         /// </remarks>
         private static Regex CreateMoveRegex()
         {
-            var piecePostfixList = new string[]
-            {
-                "ちゃん", "くん", "さん", "さま","様",
-                "厨","ちゅう","きち","吉", "ごん",
-            };
-
             // 指し手の前に空白があってもおｋとします。
             var moveRegexPattern = string.Format(
-                "^\\s*({0})?({1})?({1})?(?:({2})\\s*)?(?:お)?({3})(?:{4})?(?:ー|～)?({5})?({6})?({7})?([(](\\d)(\\d)[)])?",
-                ConvertToRegexPattern(bwTypeTable),
-                ConvertToRegexPattern(numberTable),
-                ConvertToRegexPattern(sameAsOldTable),
-                ConvertToRegexPattern(pieceTable),
-                ConvertToRegexPattern(piecePostfixList),
-                ConvertToRegexPattern(relFileTypeTable),
-                ConvertToRegexPattern(rankMoveTypeTable),
-                ConvertToRegexPattern(actionTable));
+                @"^\s*({0})?({1})?({1})?(?:({2})\s*)?(?:お)?({3})(?:ー|～)?(?:{4})?(?:ー|～)?({5})?({6})?({7})?([(](\d)(\d)[)])?",
+                ConvertToRegexPattern(BWTypeTable),
+                ConvertToRegexPattern(NumberTable),
+                ConvertToRegexPattern(SameAsOldTable),
+                ConvertToRegexPattern(PieceTable),
+                ConvertToRegexPattern(PiecePostfixTable),
+                ConvertToRegexPattern(RelFileTypeTable),
+                ConvertToRegexPattern(RankMoveTypeTable),
+                ConvertToRegexPattern(ActionTable));
 
             return new Regex(moveRegexPattern, RegexOptions.Compiled);
         }
@@ -916,8 +931,8 @@ namespace Ragnarok.Shogi
             // 棋力は文字列のどこにあってもかまいません。
             var regexPattern = string.Format(
                 @"({0})?({0})({1})",
-                ConvertToRegexPattern(numberTable),
-                ConvertToRegexPattern(skillKindTable));
+                ConvertToRegexPattern(NumberTable),
+                ConvertToRegexPattern(SkillKindTable));
 
             return new Regex(regexPattern, RegexOptions.Compiled);
         }

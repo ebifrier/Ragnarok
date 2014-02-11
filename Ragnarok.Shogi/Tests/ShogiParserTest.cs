@@ -163,35 +163,61 @@ namespace Ragnarok.Shogi.Tests
         public void ParseSameAsTest()
         {
             Assert.AreEqual(
-                ShogiParser.ParseMove("同歩", true),
                 new Move
                 {
                     SameAsOld = true,
                     Piece = Piece.Hu,
-                });
+                },
+                ShogiParser.ParseMove("同歩", true));
             Assert.AreEqual(
-                ShogiParser.ParseMove("同　流", true),
                 new Move
                 {
                     SameAsOld = true,
                     Piece = Piece.Ryu,
-                });
+                },
+                ShogiParser.ParseMove("同　流", true));
             Assert.AreEqual(
-                ShogiParser.ParseMove("DOU　馬", true),
                 new Move
                 {
                     SameAsOld = true,
                     Piece = Piece.Uma,
-                });
+                },
+                ShogiParser.ParseMove("DOU　馬", true));
 
             Assert.AreEqual(
-                ShogiParser.ParseMove("同衾右", true),
                 new Move
                 {
                     SameAsOld = true,
                     Piece = Piece.Kin,
                     RelFileType = RelFileType.Right,
-                });
+                },
+                ShogiParser.ParseMove("同衾右", true));
+
+            Assert.AreEqual(
+               new Move
+               {
+                   SameAsOld = true,
+                   Piece = Piece.Hu,
+               },
+               ShogiParser.ParseMove("34同じくおふーさん", true));
+            Assert.AreEqual(
+               new Move
+               {
+                   SameAsOld = true,
+                   Piece = Piece.Gin,
+                   RelFileType = RelFileType.Right,
+                   RankMoveType = RankMoveType.Up,
+               },
+               ShogiParser.ParseMove("34同 ぎん右上がる", true));
+            Assert.AreEqual(
+               new Move
+               {
+                   SameAsOld = true,
+                   Piece = Piece.Gyoku,
+                   RelFileType = RelFileType.Left,
+                   RankMoveType = RankMoveType.Back,
+               },
+               ShogiParser.ParseMove("99dou kinghidarisagaru", true));
         }
 
         private bool EqualsPlayer(ShogiPlayer x, ShogiPlayer y)
