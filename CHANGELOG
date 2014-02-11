@@ -1,3 +1,8 @@
+2014-02-11  - Ver 2.3.2
+
+	* Ragnarok.Shogi/ShogiParser.cs: 「ぷー」を「歩」と解釈するように変更し
+	ました。
+
 2014-02-11  - Ver 2.3.1
 
 	* Ragnarok/NicoNico/Live/LiveInfo.cs: 公式生放送からのコメント取得を行
