@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Xml.Linq;
+using System.Xml.XPath;
 
 namespace Ragnarok.NicoNico.Live.Detail
 {
@@ -94,19 +97,29 @@ namespace Ragnarok.NicoNico.Live.Detail
         /// <summary>
         /// コメントサーバーはアドレス番号が101-104をループする。
         /// </summary>
-        public string CommentServerAddress(int number, out int carry)
+        public static string CommentServerAddress(int number)
+        {
+            int carry;
+
+            return CommentServerAddress(number, out carry);
+        }
+
+        /// <summary>
+        /// コメントサーバーはアドレス番号が101-104をループする。
+        /// </summary>
+        public static string CommentServerAddress(int number, out int carry)
         {
             carry = 0;
 
             while (number < 101)
             {
-                carry = -1;
+                carry -= 1;
                 number += 4;
             }
 
             while (number > 104)
             {
-                carry = +1;
+                carry += 1;
                 number -= 4;
             }
 
@@ -116,7 +129,7 @@ namespace Ragnarok.NicoNico.Live.Detail
         /// <summary>
         /// コメントサーバーはポート番号が2805-2814をループする。
         /// </summary>
-        public int CommentServerPort(int port)
+        public static int CommentServerPort(int port)
         {
             while (port < 2805)
             {
@@ -208,6 +221,56 @@ namespace Ragnarok.NicoNico.Live.Detail
                     msPort,
                     arenaInfo.Thread + data.Offset);
             }).ToArray();
+        }
+
+        /// <summary>
+        /// アドレスやポート番号が記述されたXMLファイルから情報を取得します。
+        /// </summary>
+        public static CommentRoomInfo[] GetAllRoomInfoFromXml(string filepath)
+        {
+            if (string.IsNullOrEmpty(filepath))
+            {
+                throw new ArgumentNullException("filepath");
+            }
+
+            using (var stream = new FileStream(filepath, FileMode.Open))
+            {
+                var doc = XDocument.Load(stream);
+
+                var addrNode = doc.XPathSelectElement("/live/ms/addr");
+                if (addrNode == null || string.IsNullOrEmpty(addrNode.Value))
+                {
+                    throw new ArgumentException("addr要素が見つかりません。");
+                }
+                var startAddrNum = NicoString.GetMessageServerNumber(addrNode.Value);
+
+                var portNode = doc.XPathSelectElement("/live/ms/port");
+                if (portNode == null || string.IsNullOrEmpty(portNode.Value))
+                {
+                    throw new ArgumentException("addr要素が見つかりません。");
+                }
+                var startPort = int.Parse(portNode.Value);
+
+                var tidListNode = doc.XPathSelectElements("/live/tid_list");
+                if (!tidListNode.Any())
+                {
+                    throw new ArgumentException("tid_list要素が見つかりません。");
+                }
+
+                return tidListNode.Elements("tid")
+                    .Select(_ => _.Value)
+                    .Where(_ => !string.IsNullOrEmpty(_))
+                    .Select(_ => int.Parse(_))
+                    .SelectWithIndex((tid, i) =>
+                    {
+                        int carry;
+                        var addr = CommentServerAddress(startAddrNum + i, out carry);
+                        var port = CommentServerPort(startPort + carry);
+
+                        return new CommentRoomInfo(i.ToString(), addr, port, tid);
+                    })
+                    .ToArray();
+            }
         }
     }
 }

@@ -591,6 +591,17 @@ namespace Ragnarok.NicoNico.Live
         /// <remarks>
         /// 接続失敗時には例外が返されます。
         /// </remarks>
+        public void Connect(PlayerStatus playerStatus, CookieContainer cc)
+        {
+            Connect(playerStatus, cc, false, DefaultTimeout);
+        }
+
+        /// <summary>
+        /// コメントサーバーに接続します。
+        /// </summary>
+        /// <remarks>
+        /// 接続失敗時には例外が返されます。
+        /// </remarks>
         public void Connect(PlayerStatus playerStatus, CookieContainer cc,
                             bool currentRoomOnly, TimeSpan timeout)
         {
@@ -668,6 +679,65 @@ namespace Ragnarok.NicoNico.Live
         private int FindRoomIndex(int port, CommentRoomInfo[] roomList)
         {
             return Array.FindIndex(roomList, room => (room.Port == port));
+        }
+
+        /// <summary>
+        /// 公式放送のコメントサーバーに接続します。
+        /// </summary>
+        /// <remarks>
+        /// 接続失敗時には例外が返されます。
+        /// </remarks>
+        public void ConnectToOfficial(string filepath, CookieContainer cc)
+        {
+            ConnectToOfficial(filepath, cc, DefaultTimeout);
+        }
+
+        /// <summary>
+        /// 公式放送のコメントサーバーに接続します。
+        /// </summary>
+        /// <remarks>
+        /// 接続失敗時には例外が返されます。
+        /// </remarks>
+        public void ConnectToOfficial(string filepath, CookieContainer cc, TimeSpan timeout)
+        {
+            lock (ConnectLock)
+            {
+                // 各コメントルームの情報を取得します。
+                var roomInfoList = Detail.OfficialLiveInfoCreator
+                    .GetAllRoomInfoFromXml(filepath);
+                var roomList = new List<CommentRoom>();
+
+                // 各コメントルームに接続します。
+                for (var i = 0; i < roomInfoList.Count(); ++i)
+                {
+                    var room = new CommentRoom(this, roomInfoList[i], i);
+
+                    // 接続に失敗した場合、例外が返ります。
+                    room.Connect(cc, timeout);
+                    roomList.Add(room);
+                }
+
+                Disconnect();
+                lock (SyncRoot)
+                {
+                    this.connectedRoomCount = 0;
+                    this.playerStatus = null;
+                    this.publishStatus = null;
+                    this.liveInfo = null;
+                    this.roomList = roomList;
+                    this.currentRoomIndex = -1;
+                    this.cookieContainer = cc;
+                }
+
+                // フィールド値を設定した後に、OnConnectedRoomを呼びます。
+                foreach (var room in ClonedCommentRoomList)
+                {
+                    OnConnectedRoom(room);
+                }
+
+                // 接続時のイベントを発生させます。
+                FireConnected();
+            }
         }
 
         /// <summary>
