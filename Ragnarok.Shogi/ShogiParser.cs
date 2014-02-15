@@ -908,14 +908,11 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 参加者の情報を解析する正規表現オブジェクトを作成します。
         /// </summary>
-        /// <remarks>
-        /// 棋力＠名前
-        /// </remarks>
         private static Regex CreatePlayerRegex()
         {
             // 棋力文字列の中に空白を含めるのは可能とします。
             const string regexPattern =
-                @"^\s*([^@＠]+)?\s*(?:[@＠]\s*([^\s]+))?";
+                @"^\s*([^\s]+)?\s+([\s\S]+)";
 
             return new Regex(regexPattern, RegexOptions.Compiled);
         }
@@ -943,9 +940,8 @@ namespace Ragnarok.Shogi
         /// <remarks>
         /// 受け入れ可能な構文。
         /// 
-        /// * 棋力＠名前
         /// * 名前
-        /// * @名前
+        /// * 名前 メッセージ
         /// </remarks>
         public static ShogiPlayer ParsePlayer(string text)
         {
@@ -959,7 +955,7 @@ namespace Ragnarok.Shogi
 
             // 正規化すると十が10に変換されたりしますが、
             // そうなると名前が変わってしまう可能性があります。
-            // ので、参加者のパース時には正規化はしないことにしています。
+            // そのため、参加者のパース時は文字列の正規化を行いません。
             //
             //text = StringNormalizer.NormalizeText(
             //    text, NormalizeTextOption.Number);
@@ -969,32 +965,24 @@ namespace Ragnarok.Shogi
                 return null;
             }
 
-            // 棋力の解析を行います。
+            // 名前の解析します。
             if (m.Groups[1].Success)
             {
-                skillLevel = ParseSkillLevel(m.Groups[1].Value);
+                nickname = m.Groups[1].Value;
             }
 
-            // 名前の解析します。
+            // 棋力の解析を行います。
             if (m.Groups[2].Success)
             {
-                nickname = m.Groups[2].Value;
+                skillLevel = ParseSkillLevel(m.Groups[2].Value);
             }
 
             // もし棋力と名前の両方がnullない場合は
             // プレイヤーとして正しくありません。
-            if ((skillLevel == null || string.IsNullOrEmpty(skillLevel.OriginalText)) &&
+            if ((skillLevel == null || string.IsNullOrEmpty(skillLevel.OriginalText)) ||
                 string.IsNullOrEmpty(nickname))
             {
                 return null;
-            }
-
-            // 棋力があって名前がない場合は、それを名前として設定します。
-            if (skillLevel != null &&
-                string.IsNullOrEmpty(nickname))
-            {
-                nickname = skillLevel.OriginalText;
-                skillLevel = null;
             }
             
             // 棋力はnull以外の値を採用します。

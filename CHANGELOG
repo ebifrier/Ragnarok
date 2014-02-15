@@ -1,3 +1,8 @@
+2014-02-15  - Ver 2.3.5
+
+	* Ragnarok.Shogi/MoveStatistics.cs: 一人一ポイントにしました。
+	* Ragnarok.Shogi/ShogiParser.cs: 参加コメントの書き方を修正しました。
+
 2014-02-14  - Ver 2.3.4
 
 	* Ragnarok/NicoNico/Live/CommentClient.cs,

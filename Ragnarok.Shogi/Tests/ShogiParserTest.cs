@@ -220,9 +220,16 @@ namespace Ragnarok.Shogi.Tests
                ShogiParser.ParseMove("99dou kinghidarisagaru", true));
         }
 
-        private bool EqualsPlayer(ShogiPlayer x, ShogiPlayer y)
+        private void AssertPlayer(ShogiPlayer expected, ShogiPlayer actual)
         {
-            return (x.Nickname == y.Nickname && x.SkillLevel == y.SkillLevel);
+            Assert.AreEqual(expected.Nickname, actual.Nickname);
+            Assert.AreEqual(expected.SkillLevel, actual.SkillLevel);
+        }
+
+        private void AssertPlayerNot(ShogiPlayer expected, ShogiPlayer actual)
+        {
+            Assert.AreEqual(expected.Nickname, actual.Nickname);
+            Assert.AreNotEqual(expected.SkillLevel, actual.SkillLevel);
         }
 
         [Test()]
@@ -233,38 +240,38 @@ namespace Ragnarok.Shogi.Tests
                 Nickname = "てすと",
                 SkillLevel = new SkillLevel(SkillKind.Kyu, 9),
             };
-            Assert.IsTrue(EqualsPlayer(
-                ShogiParser.ParsePlayer("9級＠てすと"),
-                player1));
-            Assert.IsTrue(EqualsPlayer(
-                ShogiParser.ParsePlayer("　きゅうきゅう＠てすと"),
-                player1));
-            Assert.IsTrue(EqualsPlayer(
-                ShogiParser.ParsePlayer("  きゅう級＠てすと"),
-                player1));
-            Assert.IsTrue(EqualsPlayer(
-                ShogiParser.ParsePlayer("  ９級  @ てすと "),
-                player1));
-            Assert.IsFalse(EqualsPlayer(
-                ShogiParser.ParsePlayer("  級きゅう＠てすと"),
-                player1));
-            Assert.IsTrue(EqualsPlayer(
-                ShogiParser.ParsePlayer("急急＠てすと"),
-                player1));
+            AssertPlayer(
+                player1,
+                ShogiParser.ParsePlayer("てすと 9級"));
+            AssertPlayer(
+                player1,
+                ShogiParser.ParsePlayer("　てすと きゅうきゅう"));
+            AssertPlayer(
+                player1,
+                ShogiParser.ParsePlayer("  てすと　　きゅう級"));
+            AssertPlayer(
+                player1,
+                ShogiParser.ParsePlayer("  てすと　９級"));
+            AssertPlayerNot(
+                player1,
+                ShogiParser.ParsePlayer("  てすと 級きゅう"));
+            AssertPlayer(
+                player1,
+                ShogiParser.ParsePlayer("てすと 急急"));
 
             var player2 = new ShogiPlayer()
             {
                 Nickname = "三級",
             };
-            Assert.IsTrue(EqualsPlayer(
-                ShogiParser.ParsePlayer("三級"),
-                player2));
-            Assert.IsTrue(EqualsPlayer(
-                ShogiParser.ParsePlayer(" ＠ 三級"),
-                player2));
-            Assert.IsFalse(EqualsPlayer(
-                ShogiParser.ParsePlayer("三級＠三級"),
-                player2));
+            AssertPlayer(
+                player2,
+                ShogiParser.ParsePlayer("三級"));
+            AssertPlayer(
+                player2,
+                ShogiParser.ParsePlayer(" ＠ 三級"));
+            AssertPlayer(
+                player2,
+                ShogiParser.ParsePlayer("三級 三級"));
         }
     }
 }
