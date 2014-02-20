@@ -131,7 +131,7 @@
                              Brush="{Binding BanBrush, ElementName=shogi}" />
 
             <Transform3DGroup x:Key="banTransform">
-                <ScaleTransform3D ScaleX="380" ScaleY="470" ScaleZ="1.0" />
+                <ScaleTransform3D ScaleX="320" ScaleY="470" ScaleZ="1.0" />
                 <TranslateTransform3D OffsetX="320" OffsetY="240" />
             </Transform3DGroup>
 
@@ -141,21 +141,21 @@
 
             <!-- 右下の駒台の位置 -->
             <Transform3DGroup x:Key="komadai0Transform">
-                <ScaleTransform3D ScaleX="123" ScaleY="230" ScaleZ="1.0" />
-                <TranslateTransform3D OffsetX="574" OffsetY="360" />
+                <ScaleTransform3D ScaleX="120" ScaleY="230" ScaleZ="1.0" />
+                <TranslateTransform3D OffsetX="{r:Calc 320+230}" OffsetY="{r:Calc 240+120}" />
             </Transform3DGroup>
 
             <!-- 左上の駒台の位置 -->
             <Transform3DGroup x:Key="komadai1Transform">
-                <ScaleTransform3D ScaleX="123" ScaleY="230" ScaleZ="1.0" />
-                <TranslateTransform3D OffsetX="66" OffsetY="120" />
+                <ScaleTransform3D ScaleX="120" ScaleY="230" ScaleZ="1.0" />
+                <TranslateTransform3D OffsetX="{r:Calc 320-230}" OffsetY="{r:Calc 240-120}" />
             </Transform3DGroup>
 
             <!-- 右下の名前表示 -->
             <Viewbox x:Key="label0Text" Stretch="Uniform">
                 <!-- サイズを指定すると縦横比を保ったまま拡大縮小できます。
                      理由は不明orz -->
-                <r:DecoratedText Width="100" Height="20" MaxWidth="100"
+                <r:DecoratedText Width="100" Height="21" MaxWidth="100"
                                  HorizontalContentAlignment="Center">
                     <r:DecoratedText.Text>
                         <MultiBinding Converter="{StaticResource viewSideSwitcherBlack}">
@@ -177,7 +177,7 @@
             <Viewbox x:Key="label1Text" Stretch="Uniform">
                 <!-- サイズを指定すると縦横比を保ったまま拡大縮小できます。
                      理由は不明orz -->
-                <r:DecoratedText Width="100" Height="20" MaxWidth="100"
+                <r:DecoratedText Width="100" Height="21" MaxWidth="100"
                                  HorizontalContentAlignment="Center">
                     <r:DecoratedText.Text>
                         <MultiBinding Converter="{StaticResource viewSideSwitcherWhite}">
@@ -293,7 +293,7 @@
                             <GeometryModel3D Geometry="{StaticResource squareMesh}"
                                              Material="{StaticResource label0Material}">
                                 <GeometryModel3D.Transform>
-                                    <ScaleTransform3D CenterY="-0.50" ScaleY="0.11"
+                                    <ScaleTransform3D CenterX="-0.2" CenterY="-0.50" ScaleY="0.11"
                                                       ScaleX="0.90" />
                                 </GeometryModel3D.Transform>
                             </GeometryModel3D>
