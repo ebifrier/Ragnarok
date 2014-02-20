@@ -326,6 +326,7 @@ namespace Ragnarok.Shogi
             {"香織", Piece.Kyo},
             {"今日", Piece.Kyo},
             {"京", Piece.Kyo},
+            {"恐", Piece.Kyo},
             {"強", Piece.Kyo},
             {"教", Piece.Kyo},
             {"橋", Piece.Kyo},
@@ -343,6 +344,7 @@ namespace Ragnarok.Shogi
             {"KYOU", Piece.Kyo},
             {"KAORI", Piece.Kyo},
             {"KYO", Piece.Kyo},
+            {"LANCE", Piece.Kyo},
 
             {"歩兵", Piece.Hu},
             {"歩", Piece.Hu},
