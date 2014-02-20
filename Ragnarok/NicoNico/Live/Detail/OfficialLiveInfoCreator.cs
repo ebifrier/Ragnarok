@@ -263,9 +263,12 @@ namespace Ragnarok.NicoNico.Live.Detail
                     .Select(_ => int.Parse(_))
                     .SelectWithIndex((tid, i) =>
                     {
+                        /*var name = (i < LiveRoomDataList.Count() ?
+                            LiveRoomDataList[i].Name : "不明(" + i + ")");*/
+
                         int carry;
                         var addr = CommentServerAddress(startAddrNum + i, out carry);
-                        var port = CommentServerPort(startPort + carry);
+                        var port = CommentServerPort(startPort + carry);                        
 
                         return new CommentRoomInfo(i.ToString(), addr, port, tid);
                     })

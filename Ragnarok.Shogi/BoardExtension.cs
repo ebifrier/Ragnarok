@@ -119,7 +119,8 @@ namespace Ragnarok.Shogi
         /// 右や左の情報が無い場合など)は、最初に見つかった手を返します。
         /// </remarks>
         private static BoardMove FilterBoardMove(List<BoardMove> boardMoveList,
-                                                 Move referenceMove)
+                                                 Move referenceMove,
+                                                 bool multipleIsNull = false)
         {
             if (boardMoveList.Count() == 1)
             {
@@ -187,7 +188,7 @@ namespace Ragnarok.Shogi
             }
 
             // 適切な差し手が無い場合は、最初に見つかったものを返します。
-            return boardMoveListTmp.FirstOrDefault();
+            return (multipleIsNull ? null : boardMoveListTmp.FirstOrDefault());
         }
 
         /// <summary>
@@ -284,9 +285,10 @@ namespace Ragnarok.Shogi
         /// 文字列から得られた差し手から、移動前の情報も含むような
         /// 差し手情報を取得します。
         /// </summary>
-        public static BoardMove ConvertMove(this Board board, Move move)
+        public static BoardMove ConvertMove(this Board board, Move move,
+                                            bool multipleIsNull = false)
         {
-            return board.ConvertMove(move, board.Turn);
+            return board.ConvertMove(move, board.Turn, multipleIsNull);
         }
 
         /// <summary>
@@ -294,7 +296,8 @@ namespace Ragnarok.Shogi
         /// 差し手情報を取得します。
         /// </summary>
         public static BoardMove ConvertMove(this Board board, Move move,
-                                            BWType bwType)
+                                            BWType bwType,
+                                            bool multipleIsNull = false)
         {
             if (board == null)
             {
@@ -327,7 +330,7 @@ namespace Ragnarok.Shogi
                 .ToList();
 
             // 複数の指し手の中から適切な一つを選びます。
-            var boardMove = FilterBoardMove(boardMoveList, move);
+            var boardMove = FilterBoardMove(boardMoveList, move, multipleIsNull);
             if (boardMove == null)
             {
                 return null;
