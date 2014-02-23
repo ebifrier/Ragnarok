@@ -859,6 +859,16 @@ namespace Ragnarok.Shogi
             {
                 return false;
             }
+#if false
+            if (move.ActionType == ActionType.Promote)
+            {
+                if (!CanPromote(move, moveFromPiece)) return false;
+            }
+            else
+            {
+                if (IsPromoteForce(move, moveFromPiece)) return false;
+            }
+#endif
 
             if (!checkOnly)
             {

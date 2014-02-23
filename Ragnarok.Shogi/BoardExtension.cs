@@ -126,7 +126,7 @@ namespace Ragnarok.Shogi
             {
                 var result = boardMoveList.First();
 
-                // 差し手が"飛車打ち"などの場合、打ではない差し手を選んでしまうと、
+                // 指し手が"飛車打ち"などの場合、打ではない指し手を選んでしまうと、
                 // 意味が変わってしまいます。
                 // (指定が42飛車なら、駒を打つ可能性がありますが、
                 //  打ちの指定がある場合、駒を打たないという選択肢はありません)
@@ -447,7 +447,7 @@ namespace Ragnarok.Shogi
             if (boardMoveList.Count() == 1)
             {
                 return move;
-            }            
+            }
 
             // 駒打ち、成り、不成りなどでフィルターします。
             var tmpMoveList = boardMoveList.Where(
@@ -479,6 +479,36 @@ namespace Ragnarok.Shogi
             // 不明。
             return null;
         }
+
+#if false
+        /// <summary>
+        /// ActionTypeのチェックを行います。
+        /// </summary>
+        /// <remarks>
+        /// ・"打"つきの指し手は、打つがあってもなくてもOKとします。
+        /// </remarks>
+        private static bool CheckActionType(BoardMove bm,
+                                            BoardMove referenceMove)
+        {
+            if (referenceMove.ActionType == ActionType.None ||
+                referenceMove.ActionType == ActionType.Unpromote)
+            {
+                // 指定無しと成らずでおｋとします。
+                return (
+                    bm.ActionType == ActionType.None ||
+                    bm.ActionType == ActionType.Unpromote);
+            }
+            /*else if (referenceMove.ActionType == ActionType.Drop)
+            {
+                // "打"の指定がある場合、打つ付でもなしでもOKとします。
+                return (
+                    bm.ActionType == ActionType.None ||
+                    bm.ActionType == ActionType.Drop);
+            }*/
+
+            return (bm.ActionType == referenceMove.ActionType);
+        }
+#endif
 
         /// <summary>
         /// 段で指し手をフィルターし、Moveに適切なRankMoveTypeを設定します。
