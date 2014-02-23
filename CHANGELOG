@@ -1,3 +1,10 @@
+2014-02-24  - Ver 2.3.6
+
+	* Ragnarok.Presentation.Shogi/View/ShogiControl.xaml: 将棋盤のレイアウ
+	トを16:9に近づけました（正確には610:360で640:380と少し比が違います）。
+	これの方が放送画面向けのためです。
+	* Ragnarok.Shogi/ShogiParser.cs: 数字を英語で書けるようにしました。
+
 2014-02-15  - Ver 2.3.5
 
 	* Ragnarok.Shogi/MoveStatistics.cs: 一人一ポイントにしました。

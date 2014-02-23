@@ -993,7 +993,7 @@ namespace Ragnarok.Presentation.Shogi.View
             var x = ((int)pieceType - 2) % 2;
             var y = ((int)pieceType - 2) / 2;
 
-            if (bwType != BWType.Black)
+            if (bwType != ViewSide)
             {
                 x = 1 - x;
                 y = 3 - y;
@@ -1004,7 +1004,7 @@ namespace Ragnarok.Presentation.Shogi.View
             // また、対局者名などを表示するため上下にずらしています。
             return new Vector3D(
                 bounds.Left + hw * (x * 3 + 2 - 0.2),
-                bounds.Top + hh * (y * 3 + 2 + (1 - index) * 2),
+                bounds.Top + hh * (y * 3 + 2 + (1 - index) * 2.3 - index * 0.3),
                 PieceZ);
         }
 

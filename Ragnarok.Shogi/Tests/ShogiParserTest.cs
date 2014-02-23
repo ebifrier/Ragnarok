@@ -157,6 +157,14 @@ namespace Ragnarok.Shogi.Tests
                     NewPosition = new Position(5, 4),
                     Piece = Piece.Hu,
                 });
+
+            Assert.AreEqual(
+                ShogiParser.ParseMove("シックスナイン不", true),
+                new Move
+                {
+                    NewPosition = new Position(6, 9),
+                    Piece = Piece.Hu,
+                });
         }
 
         [Test()]
