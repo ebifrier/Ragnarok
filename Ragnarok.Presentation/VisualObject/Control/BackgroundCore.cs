@@ -16,16 +16,35 @@ namespace Ragnarok.Presentation.VisualObject.Control
     /// <summary>
     /// BackgroundCore.xaml の相互作用ロジック
     /// </summary>
-    [TemplatePart(Type = typeof(Model3DGroup), Name = "EffectGroup")]
+    /*[TemplatePart(Type = typeof(Viewport3D), Name = "PART_Viewport3D")]
+    [TemplatePart(Type = typeof(OrthographicCamera), Name = "PART_EffectGroup")]*/
+    [TemplatePart(Type = typeof(Model3DGroup), Name = "PART_EffectGroup")]
     internal class BackgroundCore : System.Windows.Controls.Control
     {
         /// <summary>
         /// エフェクト用のコンテナ名。
         /// </summary>
-        private const string EffectGroupName = "EffectGroup";
+        private const string EffectGroupName = "PART_EffectGroup";
 
         private Model3DGroup effectGroup;
         private EntityObject rootEffect;
+
+        /// <summary>
+        /// 背景のビューポートを扱う依存プロパティです。
+        /// </summary>
+        public static readonly DependencyProperty ViewportProperty =
+            DependencyProperty.Register(
+                "Viewport", typeof(Rect), typeof(BackgroundCore),
+                new UIPropertyMetadata(new Rect(0, 0, 100, 100)));
+
+        /// <summary>
+        /// 背景のビューポートを取得または設定します。
+        /// </summary>
+        public Rect Viewport
+        {
+            get { return (Rect)GetValue(ViewportProperty); }
+            set { SetValue(ViewportProperty, value); }
+        }
 
         /// <summary>
         /// 背景エフェクトを扱う依存プロパティです。

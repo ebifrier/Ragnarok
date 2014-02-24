@@ -33,6 +33,23 @@ namespace Ragnarok.Presentation.VisualObject.Control
         /// </summary>
         private const string Background2Name = "Background2";
 
+        /*/// <summary>
+        /// 背景のビューポートを扱う依存プロパティです。
+        /// </summary>
+        public static readonly DependencyProperty ViewportProperty =
+            DependencyProperty.Register(
+                "Viewport", typeof(Rect), typeof(VisualBackground),
+                new UIPropertyMetadata(new Rect(0, 0, 100, 100)));
+
+        /// <summary>
+        /// 背景のビューポートを取得または設定します。
+        /// </summary>
+        public Rect Viewport
+        {
+            get { return (Rect)GetValue(ViewportProperty); }
+            set { SetValue(ViewportProperty, value); }
+        }*/
+
         /// <summary>
         /// 背景の切り替え時に一瞬フェードアウトさせる
         /// コントロールを扱う依存プロパティです。
@@ -64,6 +81,10 @@ namespace Ragnarok.Presentation.VisualObject.Control
 
             this.currentBg = GetTemplateChild(Background1Name) as BackgroundCore;
             this.nextBg = GetTemplateChild(Background2Name) as BackgroundCore;
+
+            if (this.currentBg != null)
+            {
+            }
 
             // キャッシュしたエフェクトを使います。
             if (this.nextBg != null && this.cache != null)

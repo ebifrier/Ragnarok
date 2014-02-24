@@ -5,12 +5,14 @@
 
     <ControlTemplate x:Key="mainControl">
         <Viewbox Stretch="Fill" IsHitTestVisible="False">
-            <Viewport3D Width="640" Height="480">
+            <Viewport3D Width="620" Height="360"
+                        x:Name="PART_Viewport3D">
                 <Viewport3D.Camera>
                     <OrthographicCamera
-                        Width="640"
+                        x:Name="PART_Camera"
+                        Width="620"
                         LookDirection="0,0,1"
-                        Position="320,240,-500"
+                        Position="310,180,-500"
                         UpDirection="0.000000,-1.000000,0.000000"
                         NearPlaneDistance="1" FarPlaneDistance="1000" />
                         <!--<PerspectiveCamera
@@ -31,7 +33,7 @@
 
                 <ModelUIElement3D>
                     <ModelUIElement3D.Model>
-                        <Model3DGroup x:Name="EffectGroup">
+                        <Model3DGroup x:Name="PART_EffectGroup">
                         </Model3DGroup>
                     </ModelUIElement3D.Model>
                 </ModelUIElement3D>

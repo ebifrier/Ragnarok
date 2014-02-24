@@ -4,6 +4,9 @@
 	トを16:9に近づけました（正確には610:360で640:380と少し比が違います）。
 	これの方が放送画面向けのためです。
 	* Ragnarok.Shogi/ShogiParser.cs: 数字を英語で書けるようにしました。
+	* Ragnarok.Presentation/VisualObject/Control/VisualBackground.cs: ビュ
+	ーポートサイズを640x480から620x360に変更しました。後でこれは可変にでき
+	るようにします。
 
 2014-02-15  - Ver 2.3.5
 
