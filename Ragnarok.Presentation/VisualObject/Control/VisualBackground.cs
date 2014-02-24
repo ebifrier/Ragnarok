@@ -69,6 +69,23 @@ namespace Ragnarok.Presentation.VisualObject.Control
             set { SetValue(FadeElementProperty, value); }
         }
 
+        /// <summary>
+        /// 背景の切り替え時間を扱う依存プロパティです。
+        /// </summary>
+        public static readonly DependencyProperty FadeDurationProperty =
+            DependencyProperty.Register(
+                "FadeDuration", typeof(Duration), typeof(VisualBackground),
+                new UIPropertyMetadata(new Duration(TimeSpan.FromSeconds(4))));
+
+        /// <summary>
+        /// 背景の切り替え時間を取得または設定します。
+        /// </summary>
+        public Duration FadeDuration
+        {
+            get { return (Duration)GetValue(FadeDurationProperty); }
+            set { SetValue(FadeDurationProperty, value); }
+        }
+
         private BackgroundCore currentBg, nextBg;
         private EntityObject cache;
 
@@ -81,10 +98,6 @@ namespace Ragnarok.Presentation.VisualObject.Control
 
             this.currentBg = GetTemplateChild(Background1Name) as BackgroundCore;
             this.nextBg = GetTemplateChild(Background2Name) as BackgroundCore;
-
-            if (this.currentBg != null)
-            {
-            }
 
             // キャッシュしたエフェクトを使います。
             if (this.nextBg != null && this.cache != null)
@@ -99,10 +112,11 @@ namespace Ragnarok.Presentation.VisualObject.Control
         /// </summary>
         private void StartTransition(bool isFadeElement)
         {
-            var fadeTime0 = TimeSpan.FromSeconds(0.0);
-            var fadeTime1 = TimeSpan.FromSeconds(1.0);
-            var fadeTime2 = TimeSpan.FromSeconds(2.0);
-            var fadeTime3 = TimeSpan.FromSeconds(3.0);
+            var seconds = FadeDuration.TimeSpan.TotalSeconds;
+            var fadeTime0 = TimeSpan.FromSeconds(seconds / 4 * 1);
+            var fadeTime1 = TimeSpan.FromSeconds(seconds / 2);
+            var fadeTime2 = TimeSpan.FromSeconds(seconds / 4 * 3);
+            var fadeTime3 = TimeSpan.FromSeconds(seconds);
 
             var animFore = new DoubleAnimationUsingKeyFrames();
             animFore.KeyFrames.Add(new LinearDoubleKeyFrame(0.0, fadeTime0));

@@ -286,9 +286,9 @@ namespace Ragnarok.Presentation.Shogi.Effects
         /// <summary>
         /// バックグラウンドエフェクトをファイルから読み込みます。
         /// </summary>
-        public EffectObject LoadBackground()
+        public EffectObject LoadBackground(Dictionary<string, object> table = null)
         {
-            return Load(BackgroundBaseDir, null);
+            return Load(BackgroundBaseDir, table);
         }
 
         /// <summary>

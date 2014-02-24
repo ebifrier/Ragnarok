@@ -923,7 +923,7 @@ namespace Ragnarok.Shogi
         {
             // 棋力文字列の中に空白を含めるのは可能とします。
             const string regexPattern =
-                @"^\s*([^\s]+)?\s+([\s\S]+)";
+                @"^\s*([^\s]+)\s+([\s\S]+)\s*";
 
             return new Regex(regexPattern, RegexOptions.Compiled);
         }
@@ -951,7 +951,6 @@ namespace Ragnarok.Shogi
         /// <remarks>
         /// 受け入れ可能な構文。
         /// 
-        /// * 名前
         /// * 名前 メッセージ
         /// </remarks>
         public static ShogiPlayer ParsePlayer(string text)
@@ -988,7 +987,7 @@ namespace Ragnarok.Shogi
                 skillLevel = ParseSkillLevel(m.Groups[2].Value);
             }
 
-            // もし棋力と名前の両方がnullない場合は
+            // もし棋力か名前がnullな場合は
             // プレイヤーとして正しくありません。
             if ((skillLevel == null || string.IsNullOrEmpty(skillLevel.OriginalText)) ||
                 string.IsNullOrEmpty(nickname))
