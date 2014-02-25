@@ -25,14 +25,15 @@
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="4*" />
+                    <ColumnDefinition Width="3*" />
                 </Grid.ColumnDefinitions>
 
                 <!-- 評価値 -->
                 <Viewbox Grid.Row="1" Grid.Column="1"
                          Stretch="Uniform"
                          HorizontalAlignment="Right"
-                         VerticalAlignment="Bottom">
+                         VerticalAlignment="Bottom"
+                         Margin="0,0,5,0">
                     <l:DecoratedText Visibility="{Binding IsShowEvaluationPoint,
                                                           Converter={StaticResource visibilityConverter},
                                                           RelativeSource={RelativeSource TemplatedParent}}"
@@ -41,8 +42,8 @@
                                                     RelativeSource={RelativeSource TemplatedParent}}"
                                      FontFamily="MS PGothic"
                                      FontSize="50"
-                                     Foreground="White"
-                                     Stroke="Black"
+                                     Foreground="Black"
+                                     Stroke="#c0ffffff"
                                      StrokeThickness="1.5" />
                 </Viewbox>
             </Grid>
