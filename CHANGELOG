@@ -1,3 +1,8 @@
+2014-02-25  - Ver 2.3.8
+
+	* Ragnarok/Net/CookieGetter/GoogleChromeCookieGetter.cs: クッキー値の暗
+	号化に対応しました。DPAPIを使いデータを復号しています。: 
+
 2014-02-25  - Ver 2.3.7
 
 	* Ragnarok.Presentation.Shogi/View/ShogiControl.xaml: 表示される文字を

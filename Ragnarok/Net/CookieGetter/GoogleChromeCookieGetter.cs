@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
+using System.Security.Cryptography;
 
 using Ragnarok.Utility;
 
@@ -13,7 +14,7 @@ namespace Ragnarok.Net.CookieGetter
 	internal sealed class GoogleChromeCookieGetter : CookieGetter
 	{
 		private const string SELECT_QUERY =
-            "SELECT value, name, host_key, path, expires_utc FROM cookies";
+            "SELECT value, name, host_key, path, expires_utc, encrypted_value FROM cookies";
 
 		public GoogleChromeCookieGetter(CookieStatus status)
             : base(status)
@@ -65,15 +66,13 @@ namespace Ragnarok.Net.CookieGetter
         private Cookie MakeCookie(List<object> data)
         {
             Cookie cookie = new Cookie();
-            cookie.Value = data[0] as string;
             cookie.Name = data[1] as string;
             cookie.Domain = data[2] as string;
             cookie.Path = data[3] as string;
 
-            if (cookie.Value != null)
-            {
-                cookie.Value = Uri.EscapeDataString(cookie.Value);
-            }
+            var value = data[0] as string;
+            var encryptedValue = (data.Count > 5 ? data[5] : null);
+            cookie.Value = GetValue(value, encryptedValue as byte[]);
 
             try
             {
@@ -90,6 +89,38 @@ namespace Ragnarok.Net.CookieGetter
             }
 
             return cookie;
+        }
+
+        /// <summary>
+        /// クッキー値の複合化などを行います。
+        /// </summary>
+        private string GetValue(string value, byte[] encryptedValue)
+        {
+            if (encryptedValue != null)
+            {
+                try
+                {
+                    var newValue = ProtectedData.Unprotect(
+                        encryptedValue, null,
+                        DataProtectionScope.CurrentUser);
+                    if (newValue != null)
+                    {
+                        value = Encoding.UTF8.GetString(newValue);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.ErrorException(ex,
+                        "クッキー値の復号化に失敗しました。");
+                }
+            }
+
+            if (value != null)
+            {
+                value = Uri.EscapeDataString(value);
+            }
+
+            return value;
         }
 
         /// <summary>
