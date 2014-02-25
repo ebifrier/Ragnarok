@@ -1,7 +1,7 @@
 2014-02-25  - Ver 2.3.7
 
 	* Ragnarok.Presentation.Shogi/View/ShogiControl.xaml: 表示される文字を
-	少し小さくしました。
+	少し小さくしました。また、レイアウトを少し修正しました。
 	* Ragnarok.Presentation/VisualObject/Control/VisualBackground.cs: 背景
 	の切り替え時間を設定可能にしました。
 	* Ragnarok.Shogi/ShogiParser.cs: 参加コマンドで名前とメッセージの存在を

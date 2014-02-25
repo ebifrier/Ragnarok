@@ -86,14 +86,14 @@
                   Width="100" Height="100"
                   Background="Transparent">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="3.5*" />
+                    <RowDefinition Height="4*" />
                     <RowDefinition Height="90*" />
-                    <RowDefinition Height="3.5*" />
+                    <RowDefinition Height="4*" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="3.5*" />
+                    <ColumnDefinition Width="4*" />
                     <ColumnDefinition Width="90*" />
-                    <ColumnDefinition Width="3.5*" />
+                    <ColumnDefinition Width="4*" />
                 </Grid.ColumnDefinitions>
 
                 <!-- 段と列の数字を表示します。-->
@@ -295,7 +295,7 @@
                             <GeometryModel3D Geometry="{StaticResource squareMesh}"
                                              Material="{StaticResource label0Material}">
                                 <GeometryModel3D.Transform>
-                                    <ScaleTransform3D CenterX="-0.2" CenterY="-0.49" ScaleY="0.09"
+                                    <ScaleTransform3D CenterX="-0.2" CenterY="-0.49" ScaleY="0.10"
                                                       ScaleX="0.85" />
                                 </GeometryModel3D.Transform>
                             </GeometryModel3D>
@@ -306,7 +306,7 @@
                                 <GeometryModel3D.Transform>
                                     <Transform3DGroup>
                                         <TranslateTransform3D OffsetY="-1.0" />
-                                        <ScaleTransform3D CenterY="-0.50" ScaleY="0.09"
+                                        <ScaleTransform3D CenterY="-0.50" ScaleY="0.10"
                                                           ScaleX="0.85" />
                                     </Transform3DGroup>
                                 </GeometryModel3D.Transform>
@@ -323,7 +323,7 @@
                             <GeometryModel3D Geometry="{StaticResource squareMesh}"
                                              Material="{StaticResource label1Material}">
                                 <GeometryModel3D.Transform>
-                                    <ScaleTransform3D CenterY="0.48" ScaleY="0.09"
+                                    <ScaleTransform3D CenterY="0.48" ScaleY="0.10"
                                                       ScaleX="0.85" />
                                 </GeometryModel3D.Transform>
                             </GeometryModel3D>
@@ -334,7 +334,7 @@
                                 <GeometryModel3D.Transform>
                                     <Transform3DGroup>
                                         <TranslateTransform3D OffsetY="1.0" />
-                                        <ScaleTransform3D CenterY="0.50" ScaleY="0.09"
+                                        <ScaleTransform3D CenterY="0.50" ScaleY="0.10"
                                                           ScaleX="0.85" />
                                     </Transform3DGroup>
                                 </GeometryModel3D.Transform>
