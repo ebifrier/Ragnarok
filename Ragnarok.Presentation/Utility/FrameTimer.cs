@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Threading;
 
+using Ragnarok.ObjectModel;
 using Ragnarok.Utility;
 
 namespace Ragnarok.Presentation.Utility
@@ -36,7 +37,7 @@ namespace Ragnarok.Presentation.Utility
     /// <summary>
     /// 各フレームの時間を固定します。
     /// </summary>
-    public sealed class FrameTimer : IDisposable
+    public sealed class FrameTimer : NotifyObject, IDisposable
     {
         private DateTime prevTime;
         private bool disposed;
@@ -51,8 +52,8 @@ namespace Ragnarok.Presentation.Utility
         /// </summary>
         public Dispatcher Dispatcher
         {
-            get;
-            set;
+            get { return GetValue<Dispatcher>("Dispatcher"); }
+            set { SetValue("Dispatcher", value); }
         }
 
         /// <summary>
@@ -60,13 +61,14 @@ namespace Ragnarok.Presentation.Utility
         /// </summary>
         public double TargetFPS
         {
-            get;
-            set;
+            get { return GetValue<double>("TargetFPS"); }
+            set { SetValue("TargetFPS", value); }
         }
 
         /// <summary>
         /// フレーム時間を取得します。
         /// </summary>
+        [DependOnProperty("TargetFPS")]
         public TimeSpan FrameTime
         {
             get { return TimeSpan.FromSeconds(1.0 / TargetFPS); }

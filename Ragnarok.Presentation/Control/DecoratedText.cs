@@ -118,6 +118,14 @@ namespace Ragnarok.Presentation.Control
                 new FrameworkPropertyMetadata(1, OnPropertyChanged));
 
         /// <summary>
+        /// 内部で使うFormattedTextオブジェクトを示す依存プロパティです。
+        /// </summary>
+        public static readonly DependencyProperty FormattedTextProperty =
+            DependencyProperty.Register(
+                "FormattedText", typeof(FormattedText), typeof(DecoratedText),
+                new FrameworkPropertyMetadata(null));
+
+        /// <summary>
         /// Visualオブジェクトの更新をするかどうかを取得または設定します。
         /// </summary>
         public bool IsUpdateVisual
@@ -167,8 +175,8 @@ namespace Ragnarok.Presentation.Control
         /// </summary>
         public FormattedText FormattedText
         {
-            get;
-            private set;
+            get { return (FormattedText)GetValue(FormattedTextProperty); }
+            private set { SetValue(FormattedTextProperty, value); }
         }
 
         /// <summary>

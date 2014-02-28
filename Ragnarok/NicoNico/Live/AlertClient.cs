@@ -325,7 +325,8 @@ namespace Ragnarok.NicoNico.Live
             // ユーザー情報を取得します。
             var userId = StrUtil.ToInt(values[2], -1);
 
-            // もしすでに受信した放送IDならば無視します。
+            // IDが重複して送られてくることがあるので、
+            // すでに受信した放送IDならば無視します。
             if (!IsContainsLiveId(liveId))
             {
                 var e = new LiveAlertedEventArgs(

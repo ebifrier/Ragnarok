@@ -51,8 +51,8 @@ namespace Ragnarok
                 WriteStackTrace();
             }
 
-#if !DEBUG
-            if (!Monitor.TryEnter(locker, TimeSpan.FromSeconds(20)))
+#if true //DEBUG
+            if (!Monitor.TryEnter(locker, TimeSpan.FromSeconds(30)))
             {
                 Log.Error("DeadLock!!!");
 

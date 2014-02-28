@@ -1,3 +1,8 @@
+2014-03-01  - Ver 2.3.9
+
+	* Ragnarok/DebugLock.cs: デッドロックを検出する時間が短く誤検出が行われ
+	たため、時間を20秒から30秒に伸ばしました。
+
 2014-02-25  - Ver 2.3.8
 
 	* Ragnarok/Net/CookieGetter/GoogleChromeCookieGetter.cs: クッキー値の暗
