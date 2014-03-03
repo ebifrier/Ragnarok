@@ -514,10 +514,13 @@ namespace Ragnarok.Shogi
             {"↓", RankMoveType.Back},
             {"下がる", RankMoveType.Back},
             {"下", RankMoveType.Back},
+            {"さがる", RankMoveType.Back},
+            {"した", RankMoveType.Back},
             {"BACK", RankMoveType.Back},
             {"HIKU", RankMoveType.Back},
             {"HIKI", RankMoveType.Back},
             {"SAGARU", RankMoveType.Back},
+            {"SITA", RankMoveType.Back},
 
             {"やどりき", RankMoveType.Sideways},
             {"寄る", RankMoveType.Sideways},

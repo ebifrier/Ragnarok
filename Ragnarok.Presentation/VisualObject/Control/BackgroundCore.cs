@@ -16,16 +16,20 @@ namespace Ragnarok.Presentation.VisualObject.Control
     /// <summary>
     /// BackgroundCore.xaml の相互作用ロジック
     /// </summary>
-    /*[TemplatePart(Type = typeof(Viewport3D), Name = "PART_Viewport3D")]
-    [TemplatePart(Type = typeof(OrthographicCamera), Name = "PART_EffectGroup")]*/
+    [TemplatePart(Type = typeof(Viewport3D), Name = "PART_Viewport3D")]
+    [TemplatePart(Type = typeof(OrthographicCamera), Name = "PART_Camera")]
     [TemplatePart(Type = typeof(Model3DGroup), Name = "PART_EffectGroup")]
     internal class BackgroundCore : System.Windows.Controls.Control
     {
         /// <summary>
         /// エフェクト用のコンテナ名。
         /// </summary>
+        private const string Viewport3DName = "PART_Viewport3D";
+        private const string CameraName = "PART_Camera";
         private const string EffectGroupName = "PART_EffectGroup";
 
+        private Viewport3D viewport3D;
+        private OrthographicCamera camera;
         private Model3DGroup effectGroup;
         private EntityObject rootEffect;
 
@@ -35,7 +39,7 @@ namespace Ragnarok.Presentation.VisualObject.Control
         public static readonly DependencyProperty ViewportProperty =
             DependencyProperty.Register(
                 "Viewport", typeof(Rect), typeof(BackgroundCore),
-                new UIPropertyMetadata(new Rect(0, 0, 100, 100)));
+                new FrameworkPropertyMetadata(new Rect(0, 0, 100, 100), OnViewportChanged));
 
         /// <summary>
         /// 背景のビューポートを取得または設定します。
@@ -44,6 +48,16 @@ namespace Ragnarok.Presentation.VisualObject.Control
         {
             get { return (Rect)GetValue(ViewportProperty); }
             set { SetValue(ViewportProperty, value); }
+        }
+
+        private static void OnViewportChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var self = d as BackgroundCore;
+
+            if (self != null)
+            {
+                self.UpdateViewport((Rect)e.NewValue);
+            }
         }
 
         /// <summary>
@@ -119,12 +133,37 @@ namespace Ragnarok.Presentation.VisualObject.Control
                 this.effectGroup.Children.Clear();
             }
 
+            this.viewport3D = GetTemplateChild(Viewport3DName) as Viewport3D;
+            this.camera = GetTemplateChild(CameraName) as OrthographicCamera;
             this.effectGroup = GetTemplateChild(EffectGroupName) as Model3DGroup;
 
             if (this.effectGroup != null && this.rootEffect != null)
             {
                 this.effectGroup.Children.Clear();
                 this.effectGroup.Children.Add(this.rootEffect.ModelGroup);
+            }
+
+            UpdateViewport(Viewport);
+        }
+
+        /// <summary>
+        /// ビューポートを更新します。
+        /// </summary>
+        private void UpdateViewport(Rect viewport)
+        {
+            if (this.viewport3D != null)
+            {
+                this.viewport3D.Width = viewport.Width;
+                this.viewport3D.Height = viewport.Height;
+            }
+
+            if (this.camera != null)
+            {
+                this.camera.Width = viewport.Width;
+                this.camera.Position = new Point3D(
+                    (viewport.Left + viewport.Right) / 2.0,
+                    (viewport.Top + viewport.Bottom) / 2.0,
+                    -500.0);
             }
         }
 

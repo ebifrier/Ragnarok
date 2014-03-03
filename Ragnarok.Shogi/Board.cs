@@ -853,13 +853,14 @@ namespace Ragnarok.Shogi
                 return false;
             }
 
+#if false
             // 成ることができなければ帰ります。
             if (move.ActionType == ActionType.Promote &&
                 !CanPromote(move, moveFromPiece))
             {
                 return false;
             }
-#if false
+#else
             if (move.ActionType == ActionType.Promote)
             {
                 if (!CanPromote(move, moveFromPiece)) return false;
@@ -886,8 +887,8 @@ namespace Ragnarok.Shogi
                 // 移動後の駒の成り/不成りを決定します。
                 var promoted = (
                     moveFromPiece.IsPromoted ||
-                    move.ActionType == ActionType.Promote ||
-                    IsPromoteForce(move, moveFromPiece));
+                    move.ActionType == ActionType.Promote /*||
+                    IsPromoteForce(move, moveFromPiece)*/);
 
                 this[move.NewPosition] = new BoardPiece()
                 {

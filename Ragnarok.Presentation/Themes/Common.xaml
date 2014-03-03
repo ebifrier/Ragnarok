@@ -68,8 +68,9 @@
                         Margin="10,10,0,10"
                         Command="{x:Static t:RagnarokCommands.OK}" />
                 <Button Grid.Column="2"
-                        Content="キャンセル"
+                        Content="キャンセル" MinWidth="50"
                         Margin="10"
+                        Padding="4,0,4,0"
                         Command="{x:Static t:RagnarokCommands.Cancel}" />
             </Grid>
         </Border>

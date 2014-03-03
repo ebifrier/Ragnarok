@@ -122,7 +122,7 @@ namespace Ragnarok.Shogi
                                                  Move referenceMove,
                                                  bool multipleIsNull = false)
         {
-            if (boardMoveList.Count() == 1)
+            /*if (boardMoveList.Count() == 1)
             {
                 var result = boardMoveList.First();
 
@@ -137,7 +137,7 @@ namespace Ragnarok.Shogi
                 }
 
                 return result;
-            }
+            }*/
 
             // 作業用
             var boardMoveListTmp = boardMoveList;
@@ -444,10 +444,10 @@ namespace Ragnarok.Shogi
                 return move;
             }
 
-            if (boardMoveList.Count() == 1)
+            /*if (boardMoveList.Count() == 1)
             {
                 return move;
-            }
+            }*/
 
             // 駒打ち、成り、不成りなどでフィルターします。
             var tmpMoveList = boardMoveList.Where(
@@ -479,36 +479,6 @@ namespace Ragnarok.Shogi
             // 不明。
             return null;
         }
-
-#if false
-        /// <summary>
-        /// ActionTypeのチェックを行います。
-        /// </summary>
-        /// <remarks>
-        /// ・"打"つきの指し手は、打つがあってもなくてもOKとします。
-        /// </remarks>
-        private static bool CheckActionType(BoardMove bm,
-                                            BoardMove referenceMove)
-        {
-            if (referenceMove.ActionType == ActionType.None ||
-                referenceMove.ActionType == ActionType.Unpromote)
-            {
-                // 指定無しと成らずでおｋとします。
-                return (
-                    bm.ActionType == ActionType.None ||
-                    bm.ActionType == ActionType.Unpromote);
-            }
-            /*else if (referenceMove.ActionType == ActionType.Drop)
-            {
-                // "打"の指定がある場合、打つ付でもなしでもOKとします。
-                return (
-                    bm.ActionType == ActionType.None ||
-                    bm.ActionType == ActionType.Drop);
-            }*/
-
-            return (bm.ActionType == referenceMove.ActionType);
-        }
-#endif
 
         /// <summary>
         /// 段で指し手をフィルターし、Moveに適切なRankMoveTypeを設定します。

@@ -6,7 +6,7 @@
              xmlns:r="http://schemas.garnet-alice.net/ragnarok/xaml/presentation"
              xmlns:sv="clr-namespace:Ragnarok.Presentation.Shogi.Xaml"
              mc:Ignorable="d" x:Name="shogi"
-             Background="Transparent" d:DesignHeight="360" d:DesignWidth="620">
+             Background="Transparent" d:DesignHeight="360" d:DesignWidth="600">
     <UserControl.Resources>
         <ResourceDictionary>
             <r:BooleanToVisibilityConverter x:Key="visibilityConverter"
@@ -87,12 +87,12 @@
                   Background="Transparent">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="4*" />
-                    <RowDefinition Height="90*" />
+                    <RowDefinition Height="92*" />
                     <RowDefinition Height="4*" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="4*" />
-                    <ColumnDefinition Width="90*" />
+                    <ColumnDefinition Width="92*" />
                     <ColumnDefinition Width="4*" />
                 </Grid.ColumnDefinitions>
 
@@ -132,7 +132,7 @@
 
             <Transform3DGroup x:Key="banTransform">
                 <ScaleTransform3D ScaleX="340" ScaleY="350" ScaleZ="1.0" />
-                <TranslateTransform3D OffsetX="310" OffsetY="180" />
+                <TranslateTransform3D OffsetX="300" OffsetY="180" />
             </Transform3DGroup>
 
             <!-- 駒台を表示するオブジェクトなど -->
@@ -142,13 +142,13 @@
             <!-- 右下の駒台の位置 -->
             <Transform3DGroup x:Key="komadai0Transform">
                 <ScaleTransform3D ScaleX="120" ScaleY="170" ScaleZ="1.0" />
-                <TranslateTransform3D OffsetX="{r:Calc 310+235}" OffsetY="{r:Calc 360-(10/2+170/2)}" />
+                <TranslateTransform3D OffsetX="{r:Calc 300+235}" OffsetY="{r:Calc 360-(10/2+170/2)}" />
             </Transform3DGroup>
 
             <!-- 左上の駒台の位置 -->
             <Transform3DGroup x:Key="komadai1Transform">
                 <ScaleTransform3D ScaleX="120" ScaleY="170" ScaleZ="1.0" />
-                <TranslateTransform3D OffsetX="{r:Calc 310-235}" OffsetY="{r:Calc 10/2+170/2}" />
+                <TranslateTransform3D OffsetX="{r:Calc 300-235}" OffsetY="{r:Calc 10/2+170/2}" />
             </Transform3DGroup>
 
             <!-- 右下の名前表示 -->
@@ -254,19 +254,19 @@
     </UserControl.Resources>
 
     <Viewbox Stretch="Fill">
-        <Viewport3D Width="620" Height="360"
+        <Viewport3D Width="600" Height="360"
                     x:Name="RootViewport">
             <Viewport3D.Camera>
                 <OrthographicCamera
-                    Width="620"
+                    Width="600"
                     LookDirection="0,0,1"
-                    Position="310,180,-500"
+                    Position="300,180,-500"
                     UpDirection="0.000000,-1.000000,0.000000"
                     NearPlaneDistance="1" FarPlaneDistance="1000" />
                 <!--<PerspectiveCamera
                     FieldOfView="60"
                     LookDirection="0,-0.3,1"
-                    Position="310,350,-540"
+                    Position="300,180,-540"
                     UpDirection="0.000000,-1.000000,0.000000"
                     NearPlaneDistance="1" FarPlaneDistance="1000" />-->
             </Viewport3D.Camera>
@@ -306,7 +306,7 @@
                                 <GeometryModel3D.Transform>
                                     <Transform3DGroup>
                                         <TranslateTransform3D OffsetY="-1.0" />
-                                        <ScaleTransform3D CenterY="-0.50" ScaleY="0.10"
+                                        <ScaleTransform3D CenterY="-0.49" ScaleY="0.10"
                                                           ScaleX="0.85" />
                                     </Transform3DGroup>
                                 </GeometryModel3D.Transform>
@@ -334,7 +334,7 @@
                                 <GeometryModel3D.Transform>
                                     <Transform3DGroup>
                                         <TranslateTransform3D OffsetY="1.0" />
-                                        <ScaleTransform3D CenterY="0.50" ScaleY="0.10"
+                                        <ScaleTransform3D CenterY="0.48" ScaleY="0.10"
                                                           ScaleX="0.85" />
                                     </Transform3DGroup>
                                 </GeometryModel3D.Transform>
@@ -376,8 +376,8 @@
                     <GeometryModel3D Geometry="{StaticResource squareMesh}">
                         <GeometryModel3D.Transform>
                             <Transform3DGroup>
-                                <ScaleTransform3D ScaleX="620" ScaleY="360" ScaleZ="1.0" />
-                                <TranslateTransform3D OffsetX="310" OffsetY="180" OffsetZ="-30.0" />
+                                <ScaleTransform3D ScaleX="600" ScaleY="360" ScaleZ="1.0" />
+                                <TranslateTransform3D OffsetX="300" OffsetY="180" OffsetZ="-30.0" />
                             </Transform3DGroup>
                         </GeometryModel3D.Transform>
                         <GeometryModel3D.Material>

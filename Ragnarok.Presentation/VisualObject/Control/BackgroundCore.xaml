@@ -5,14 +5,14 @@
 
     <ControlTemplate x:Key="mainControl">
         <Viewbox Stretch="Fill" IsHitTestVisible="False">
-            <Viewport3D Width="620" Height="360"
+            <Viewport3D Width="640" Height="360"
                         x:Name="PART_Viewport3D">
                 <Viewport3D.Camera>
                     <OrthographicCamera
                         x:Name="PART_Camera"
-                        Width="620"
+                        Width="640"
                         LookDirection="0,0,1"
-                        Position="310,180,-500"
+                        Position="320,180,-500"
                         UpDirection="0.000000,-1.000000,0.000000"
                         NearPlaneDistance="1" FarPlaneDistance="1000" />
                         <!--<PerspectiveCamera

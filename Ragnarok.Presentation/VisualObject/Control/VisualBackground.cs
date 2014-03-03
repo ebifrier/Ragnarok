@@ -33,13 +33,13 @@ namespace Ragnarok.Presentation.VisualObject.Control
         /// </summary>
         private const string Background2Name = "Background2";
 
-        /*/// <summary>
+        /// <summary>
         /// 背景のビューポートを扱う依存プロパティです。
         /// </summary>
         public static readonly DependencyProperty ViewportProperty =
             DependencyProperty.Register(
                 "Viewport", typeof(Rect), typeof(VisualBackground),
-                new UIPropertyMetadata(new Rect(0, 0, 100, 100)));
+                new FrameworkPropertyMetadata(new Rect(0, 0, 100, 100), OnViewportChanged));
 
         /// <summary>
         /// 背景のビューポートを取得または設定します。
@@ -48,7 +48,16 @@ namespace Ragnarok.Presentation.VisualObject.Control
         {
             get { return (Rect)GetValue(ViewportProperty); }
             set { SetValue(ViewportProperty, value); }
-        }*/
+        }
+
+        private static void OnViewportChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var self = d as VisualBackground;
+            if (self != null)
+            {
+                self.UpdateViewport((Rect)e.NewValue);
+            }
+        }
 
         /// <summary>
         /// 背景の切り替え時に一瞬フェードアウトさせる
@@ -57,7 +66,7 @@ namespace Ragnarok.Presentation.VisualObject.Control
         public static readonly DependencyProperty FadeElementProperty =
             DependencyProperty.Register(
                 "FadeElement", typeof(UIElement), typeof(VisualBackground),
-                new UIPropertyMetadata(null));
+                new FrameworkPropertyMetadata(null));
 
         /// <summary>
         /// 背景の切り替え時に一瞬フェードアウトさせる
@@ -75,7 +84,7 @@ namespace Ragnarok.Presentation.VisualObject.Control
         public static readonly DependencyProperty FadeDurationProperty =
             DependencyProperty.Register(
                 "FadeDuration", typeof(Duration), typeof(VisualBackground),
-                new UIPropertyMetadata(new Duration(TimeSpan.FromSeconds(4))));
+                new FrameworkPropertyMetadata(new Duration(TimeSpan.FromSeconds(4))));
 
         /// <summary>
         /// 背景の切り替え時間を取得または設定します。
@@ -104,6 +113,24 @@ namespace Ragnarok.Presentation.VisualObject.Control
             {
                 AddEntity(this.cache);
                 this.cache = null;
+            }
+
+            UpdateViewport(Viewport);
+        }
+
+        /// <summary>
+        /// ビューポートの更新を行います。
+        /// </summary>
+        private void UpdateViewport(Rect viewport)
+        {
+            if (this.currentBg != null)
+            {
+                this.currentBg.Viewport = viewport;
+            }
+
+            if (this.nextBg != null)
+            {
+                this.nextBg.Viewport = viewport;
             }
         }
 

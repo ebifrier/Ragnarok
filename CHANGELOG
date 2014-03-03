@@ -1,3 +1,18 @@
+2014-03-04  - Ver 2.4.0
+
+	* Ragnarok.Presentation.Shogi/View/ShogiControl.xaml: 将棋盤の画面比を
+	31:18から5:3に変更しました。
+	* Ragnarok.Presentation/VisualObject/Control/BackgroundCore.cs,
+	  Ragnarok.Presentation/VisualObject/Control/VisualBackground.cs:
+	  Viewportプロパティを追加し、画面に表示される範囲を設定できるようにし
+	ました。
+	* Ragnarok/Ragnarok.Shogi/Board.cs: 成りが必要な局面で成らずの手が指さ
+	れた場合、その手を拒否するようにしました。
+	* Ragnarok.Shogi/BoardExtension.cs: Move-BoardMove変換時に正しい指し手
+	かをより厳密にチェックするようにしました。
+	* Ragnarok.Shogi/ShogiParser.cs: 「さがる」で「引」と解釈されるようにし
+	ました。
+
 2014-03-01  - Ver 2.3.9
 
 	* Ragnarok/DebugLock.cs: デッドロックを検出する時間が短く誤検出が行われ
