@@ -1,3 +1,7 @@
+2014-03-06  - Ver 2.4.1
+
+	* Ragnarok/MathEx.cs: TimeSpan用のAbsメソッドを追加しました。
+
 2014-03-04  - Ver 2.4.0
 
 	* Ragnarok.Presentation.Shogi/View/ShogiControl.xaml: 将棋盤の画面比を

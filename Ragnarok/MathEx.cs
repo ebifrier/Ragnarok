@@ -103,7 +103,23 @@ namespace Ragnarok
         /// <summary>
         /// 値の大きい方を返します。
         /// </summary>
+        public static TimeSpan Abs(TimeSpan x)
+        {
+            return (x > TimeSpan.Zero ? x : -x);
+        }
+
+        /// <summary>
+        /// 値の大きい方を返します。
+        /// </summary>
         public static DateTime Max(DateTime x, DateTime y)
+        {
+            return (x > y ? x : y);
+        }
+
+        /// <summary>
+        /// 値の大きい方を返します。
+        /// </summary>
+        public static TimeSpan Max(TimeSpan x, TimeSpan y)
         {
             return (x > y ? x : y);
         }
@@ -114,14 +130,6 @@ namespace Ragnarok
         public static DateTime Min(DateTime x, DateTime y)
         {
             return (x < y ? x : y);
-        }
-
-        /// <summary>
-        /// 値の大きい方を返します。
-        /// </summary>
-        public static TimeSpan Max(TimeSpan x, TimeSpan y)
-        {
-            return (x > y ? x : y);
         }
 
         /// <summary>
@@ -149,7 +157,7 @@ namespace Ragnarok
                 targetDirection -= 360;
             }
 
-            // 角度の差が一定値より大きければ、差分を小さくします。
+            // 角度の差を縮めるような値を返します。
             var diff = currentDirection - targetDirection;
             if (diff < -rotationSpeed)
             {
