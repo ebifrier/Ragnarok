@@ -12,6 +12,7 @@ using System.Threading;
 
 using Ragnarok;
 using Ragnarok.Net;
+using Ragnarok.Utility;
 
 namespace Ragnarok.NicoNico.Live
 {
@@ -60,7 +61,7 @@ namespace Ragnarok.NicoNico.Live
 
         private readonly object SyncRoot = new object();
         private Socket socket;
-        private bool isStartingReceiveMessage = false;
+        private ReentrancyLock startingMessageLock = new ReentrancyLock();
         private bool isDisconnecting = false;
         private readonly ManualResetEvent startMessageEvent = new ManualResetEvent(false);
         private List<PostComment> postCommentList = new List<PostComment>();
@@ -234,14 +235,6 @@ namespace Ragnarok.NicoNico.Live
         }
 
         /// <summary>
-        /// すでにメッセージ処理を開始しているかどうかを取得します。
-        /// </summary>
-        public bool IsStartedReceiveMessage
-        {
-            get { return this.startMessageEvent.WaitOne(0); }
-        }
-
-        /// <summary>
         /// コメントサーバーから切断中かどうかを取得します。
         /// </summary>
         public bool IsDisconnecting
@@ -308,10 +301,10 @@ namespace Ragnarok.NicoNico.Live
             {
                 // フィールド群を保存します。
                 this.socket = socket;
-                this.isStartingReceiveMessage = false;
-
                 this.startMessageEvent.Reset();
             }
+
+            StartReceiveMessageProcess();
 
             Log.Debug(this,
                 "コメントルームに接続しました。");
@@ -403,41 +396,50 @@ namespace Ragnarok.NicoNico.Live
         /// <remarks>
         /// これ以後、メッセージが受信されるようになります。
         /// </remarks>
-        public void StartReceiveMessage(int resFrom, int timeout)
+        public void StartReceiveMessage(int resFrom, int timeout, DateTime? when = null)
         {
-            using (new DebugLock(SyncRoot))
+            using (var result = this.startingMessageLock.Lock())
             {
-                // すでにメッセージの受信は始まっています。
-                if (IsStartedReceiveMessage || this.isStartingReceiveMessage)
+                if (result == null)
                 {
-                    return;
+                    throw new NicoLiveException(
+                        "メッセージの受信開始処理をすでに行っています。");
                 }
 
-                this.isStartingReceiveMessage = true;
+                using (new DebugLock(SyncRoot))
+                {
+                    // 送信するメッセージの組み立て
+                    var message = string.Empty;
+                    if (when == null)
+                    {
+                        // 通常のコメント取得
+                        message = NicoString.MakeThreadStart(
+                            ThreadId, resFrom);
+                    }
+                    else
+                    {
+                        // 過去ログの取得
+                        var waybackkey = LiveUtil.GetWaybackKey(
+                            ThreadId, this.commentClient.CookieContainer);
 
-                // メッセージの受信を開始します。
-                StartReceiveMessageProcess();
+                        message = NicoString.MakeThreadStart(
+                            ThreadId, resFrom, this.commentClient.UserId,
+                            waybackkey, when.Value);
+                    }
 
-                // サーバー側のメッセージの送信を開始させます。
-                var message = NicoString.MakeThreadStart(
-                    this.ThreadId, resFrom);
-                SendMessageSync(message);
-            }
+                    // メッセージの受信を開始します。
+                    this.startMessageEvent.Reset();
+                    SendMessageSync(message);
+                }
 
-            // startMessageEventがシグナル状態にならなかった場合、
-            // サーバーからのメッセージ受信に失敗しています。
-            if (!this.startMessageEvent.WaitOne(timeout))
-            {
-                this.isStartingReceiveMessage = false;
-
-                throw new NicoLiveException(
-                    "メッセージの受信開始処理に失敗しました。",
-                    this.commentClient.LiveIdString);
-            }
-
-            using (new DebugLock(SyncRoot))
-            {
-                this.isStartingReceiveMessage = false;
+                // startMessageEventがシグナル状態にならなかった場合、
+                // サーバーからのメッセージ受信に失敗しています。
+                if (!this.startMessageEvent.WaitOne(timeout))
+                {
+                    throw new NicoLiveException(
+                        "メッセージの受信開始処理に失敗しました。",
+                        this.commentClient.LiveIdString);
+                }
             }
         }
 

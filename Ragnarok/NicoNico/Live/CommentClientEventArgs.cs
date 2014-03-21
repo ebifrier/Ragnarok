@@ -22,11 +22,21 @@ namespace Ragnarok.NicoNico.Live
         }
 
         /// <summary>
+        /// 放送のルームラベルを取得します。
+        /// </summary>
+        public string RoomLabel
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
         /// コンストラクタ
         /// </summary>
-        public CommentRoomEventArgs(int roomIndex)
+        public CommentRoomEventArgs(int roomIndex, string roomLabel)
         {
             RoomIndex = roomIndex;
+            RoomLabel = roomLabel;
         }
     }
 
@@ -47,9 +57,9 @@ namespace Ragnarok.NicoNico.Live
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public CommentRoomDisconnectedEventArgs(int roomIndex,
-            DisconnectReason reason)
-            : base(roomIndex)
+        public CommentRoomDisconnectedEventArgs(int roomIndex, string roomLabel,
+                                                DisconnectReason reason)
+            : base(roomIndex, roomLabel)
         {
         }
     }
@@ -71,8 +81,9 @@ namespace Ragnarok.NicoNico.Live
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public CommentRoomReceivedEventArgs(int roomIndex, Comment comment)
-            : base(roomIndex)
+        public CommentRoomReceivedEventArgs(int roomIndex, string roomLabel,
+                                            Comment comment)
+            : base(roomIndex, roomLabel)
         {
             Comment = comment;
         }
@@ -104,8 +115,9 @@ namespace Ragnarok.NicoNico.Live
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public CommentRoomSentEventArgs(int roomIndex, bool isError)
-            : base(roomIndex)
+        public CommentRoomSentEventArgs(int roomIndex, string roomLabel,
+                                        bool isError)
+            : base(roomIndex, roomLabel)
         {
             IsError = isError;
         }
@@ -113,8 +125,9 @@ namespace Ragnarok.NicoNico.Live
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public CommentRoomSentEventArgs(int roomIndex, PostComment comment)
-            : base(roomIndex)
+        public CommentRoomSentEventArgs(int roomIndex, string roomLabel,
+                                        PostComment comment)
+            : base(roomIndex, roomLabel)
         {
             IsError = false;
             Comment = comment;

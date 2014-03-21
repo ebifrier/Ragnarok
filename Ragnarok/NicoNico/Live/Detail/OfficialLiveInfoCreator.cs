@@ -59,7 +59,7 @@ namespace Ragnarok.NicoNico.Live.Detail
         public static readonly List<OfficialLiveRoomData>
             LiveRoomDataList = new List<OfficialLiveRoomData>
         {
-            new OfficialLiveRoomData("アリーナ最前列", 0),
+            new OfficialLiveRoomData("アリーナ 最前列", 0),
             new OfficialLiveRoomData("アリーナ", 1),
             new OfficialLiveRoomData("裏アリーナ", 2),
 
@@ -73,14 +73,16 @@ namespace Ragnarok.NicoNico.Live.Detail
 
             new OfficialLiveRoomData("2F中央 最前列", 10),
             new OfficialLiveRoomData("2F中央 前方", 11),
-            new OfficialLiveRoomData("2F右 Aブロック", 12),
-            new OfficialLiveRoomData("2F右 Bブロック", 13),
-            new OfficialLiveRoomData("2F右 Cブロック", 14),
-            new OfficialLiveRoomData("2F右 Dブロック", 15),
+            /*new OfficialLiveRoomData("2F右 Aブロック", 12),*/
+            //new OfficialLiveRoomData("2F右 Bブロック", 13),
+            //new OfficialLiveRoomData("2F右 Cブロック", 14),
+            /*new OfficialLiveRoomData("2F右 Dブロック", 15),
             new OfficialLiveRoomData("2F左 Aブロック", 16),
-            new OfficialLiveRoomData("2F左 Bブロック", 17),
-            new OfficialLiveRoomData("2F左 Cブロック", 18),
-            new OfficialLiveRoomData("2F左 Dブロック", 19),
+            new OfficialLiveRoomData("2F左 Bブロック", 17),*/
+            //new OfficialLiveRoomData("2F左 Cブロック", 18),
+            //new OfficialLiveRoomData("2F左 Dブロック", 19),
+
+            //new OfficialLiveRoomData("立ち見", 20),
         };
 
         public static readonly Dictionary<string, OfficialLiveRoomData>

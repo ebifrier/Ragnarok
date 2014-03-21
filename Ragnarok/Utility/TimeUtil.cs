@@ -49,6 +49,17 @@ namespace Ragnarok.Utility
         }
 
         /// <summary>
+        /// DateTimeをUnix時間に変換します。
+        /// </summary>
+        public static double DateTimeToUnixTime(DateTime date)
+        {
+            var univ = date.ToUniversalTime();
+            var diff = univ - Epoch;
+
+            return diff.TotalSeconds;
+        }
+
+        /// <summary>
         /// 時刻をRFC3339形式に直します。
         /// </summary>
         public static string DateTimeToRFC3339(DateTime date)

@@ -115,6 +115,25 @@ namespace Ragnarok.NicoNico
                 threadId, -resFrom);
         }
 
+        /// <summary>
+        /// 過去ログ受信を開始するためのメッセージを作成します。
+        /// </summary>
+        /// <param name="threadId">
+        /// スレッドＩＤです。
+        /// </param>
+        /// <param name="resFrom">
+        /// 今投稿されているコメントから何コメント前のコメントから受信するかです。
+        /// </param>
+        public static string MakeThreadStart(int threadId, int resFrom, int userId,
+                                             string waybackkey, DateTime when)
+        {
+            return string.Format(
+                "<thread thread=\"{0}\" version=\"20061206\" res_from=\"{1}\"" +
+                " user_id=\"{2}\" waybackkey=\"{3}\" when=\"{4}\" />\0",
+                threadId, -resFrom, userId, waybackkey,
+                (int)Utility.TimeUtil.DateTimeToUnixTime(when));
+        }
+
         #region 通常ページ
         /// <summary>
         /// マイページがあるURLを取得します。
@@ -215,6 +234,16 @@ namespace Ragnarok.NicoNico
             return string.Format(
                 "http://watch.live.nicovideo.jp/api/getpostkey?thread={0}&block_no={1}",
                 threadId, blockNo);
+        }
+
+        /// <summary>
+        /// 過去コメントを取得するためのWaybackKeyの取得用URLを取得します。
+        /// </summary>
+        public static string GetWaybackKeyUrl(int threadId)
+        {
+            return string.Format(
+                "http://www.nicovideo.jp/api/getwaybackkey?thread={0}",
+                threadId);
         }
 
         /// <summary>

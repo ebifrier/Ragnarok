@@ -220,6 +220,32 @@ namespace Ragnarok.NicoNico.Live
         }
 
         /// <summary>
+        /// 過去コメントの取得に使うWaybackKeyを取得します。
+        /// </summary>
+        public static string GetWaybackKey(int threadId, CookieContainer cc)
+        {
+            var responseText = WebUtil.RequestHttpText(
+                NicoString.GetWaybackKeyUrl(threadId),
+                null,
+                cc,
+                Encoding.UTF8);
+
+            if (string.IsNullOrEmpty(responseText))
+            {
+                return null;
+            }
+
+            // waybackkeyは=の後に入っています。
+            var index = responseText.IndexOf('=');
+            if (index < 0 || index + 1 >= responseText.Length)
+            {
+                return null;
+            }
+
+            return responseText.Substring(index + 1);
+        }
+
+        /// <summary>
         /// コミュニティで放送中であれば、そのURLを取得します。
         /// </summary>
         public static string GetCurrentLiveUrl(int communityId,

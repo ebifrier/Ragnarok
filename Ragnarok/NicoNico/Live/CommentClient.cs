@@ -20,8 +20,8 @@ namespace Ragnarok.NicoNico.Live
     /// <remarks>
     /// アリーナ、立ち見などのコメントルームをまとめて扱います。
     /// 
-    /// 接続後は必ず<see cref="StartReceiveMessage(int)"/>を呼び出して、
-    /// コメントの受信を開始してください。
+    /// 接続後は必ず<see cref="StartReceiveMessage(int,DateTime?)"/>
+    /// を呼び出して、コメントの受信を開始してください。
     /// </remarks>
     public class CommentClient : ILogObject, IModel
     {
@@ -162,7 +162,7 @@ namespace Ragnarok.NicoNico.Live
                 var playerStatus = this.playerStatus;
                 if (playerStatus == null)
                 {
-                    return "";
+                    return string.Empty;
                 }
 
                 return playerStatus.Stream.IdString;
@@ -186,6 +186,27 @@ namespace Ragnarok.NicoNico.Live
                 }
 
                 return playerStatus.User.UserId;
+            }
+        }
+
+        /// <summary>
+        /// 現在配信中であるかどうかを取得します。
+        /// </summary>
+        [DependOnProperty("PlayerStatus")]
+        public bool IsBroadcasting
+        {
+            get
+            {
+                // CommentRoomから呼ばれる可能性があるため、
+                // lockできません。
+                var playerStatus = this.playerStatus;
+                if (playerStatus == null)
+                {
+                    return false;
+                }
+
+                var now = NtpClient.GetTime();
+                return (now <= playerStatus.Stream.EndTime);
             }
         }
 
@@ -431,7 +452,7 @@ namespace Ragnarok.NicoNico.Live
         /// <summary>
         /// ルームへの接続時にイベントを発生させます。
         /// </summary>
-        internal void FireConnected()
+        private void FireConnected()
         {
             this.Connected.SafeRaiseEvent(
                 this, EventArgs.Empty);
@@ -440,7 +461,7 @@ namespace Ragnarok.NicoNico.Live
         /// <summary>
         /// 全ルームからの切断時にイベントを発生させます。
         /// </summary>
-        internal void FireDisconnected()
+        private void FireDisconnected()
         {
             this.Disconnected.SafeRaiseEvent(
                 this, EventArgs.Empty);
@@ -449,20 +470,24 @@ namespace Ragnarok.NicoNico.Live
         /// <summary>
         /// ルームへの接続時にイベントを発生させます。
         /// </summary>
-        internal void FireConnectedRoom(int roomIndex)
+        private void FireConnectedRoom(int roomIndex, string roomLabel)
         {
             this.ConnectedRoom.SafeRaiseEvent(
-                this, new CommentRoomEventArgs(roomIndex));
+                this,
+                new CommentRoomEventArgs(
+                    roomIndex, roomLabel));
         }
 
         /// <summary>
         /// ルームからの切断時にイベントを発生させます。
         /// </summary>
-        internal void FireDisconnectedRoom(int roomIndex,
-                                           DisconnectReason reason)
+        private void FireDisconnectedRoom(int roomIndex, string roomLabel,
+                                          DisconnectReason reason)
         {
             this.DisconnectedRoom.SafeRaiseEvent(
-                this, new CommentRoomDisconnectedEventArgs(roomIndex, reason));
+                this,
+                new CommentRoomDisconnectedEventArgs(
+                    roomIndex, roomLabel, reason));
         }
 
         /// <summary>
@@ -484,7 +509,7 @@ namespace Ragnarok.NicoNico.Live
 
             if (sender != null)
             {
-                FireConnectedRoom(sender.Index);
+                FireConnectedRoom(sender.Index, sender.RoomLabel);
             }
         }
 
@@ -496,7 +521,7 @@ namespace Ragnarok.NicoNico.Live
             // Connectedとの関係で先に呼びます。
             if (sender != null)
             {
-                FireDisconnectedRoom(sender.Index, reason);
+                FireDisconnectedRoom(sender.Index, sender.RoomLabel, reason);
             }
 
             // 接続しているルーム数を減らします。
@@ -526,7 +551,8 @@ namespace Ragnarok.NicoNico.Live
         {
             this.CommentReceived.SafeRaiseEvent(
                 this,
-                new CommentRoomReceivedEventArgs(sender.Index, comment));
+                new CommentRoomReceivedEventArgs(
+                    sender.Index, sender.RoomLabel, comment));
         }
 
         /// <summary>
@@ -536,7 +562,8 @@ namespace Ragnarok.NicoNico.Live
         {
             this.CommentSent.SafeRaiseEvent(
                 this,
-                new CommentRoomSentEventArgs(sender.Index, comment));
+                new CommentRoomSentEventArgs(
+                    sender.Index, sender.RoomLabel, comment));
 
             // 未送信のコメント数が変わった可能性があります。
             this.RaisePropertyChanged("LeaveCommentCount");
@@ -557,9 +584,7 @@ namespace Ragnarok.NicoNico.Live
         public void Connect(string liveUrl, CookieContainer cc,
                             bool currentRoomOnly)
         {
-            var playerStatus = PlayerStatus.Create(liveUrl, cc);
-
-            Connect(playerStatus, cc, currentRoomOnly, DefaultTimeout);
+            Connect(liveUrl, cc, currentRoomOnly, DefaultTimeout);
         }
 
         /// <summary>
@@ -743,20 +768,33 @@ namespace Ragnarok.NicoNico.Live
         /// <summary>
         /// コメントの受信処理を開始します。
         /// </summary>
-        public void StartReceiveMessage(int resFrom)
+        public void StartReceiveMessage(int resFrom, DateTime? when = null)
         {
             // デフォルトでは５秒間待ちます。
-            StartReceiveMessage(resFrom, 5 * 1000);
+            StartReceiveMessage(resFrom, 5 * 1000, when);
         }
 
         /// <summary>
         /// コメントの受信処理を開始します。
         /// </summary>
-        public void StartReceiveMessage(int resFrom, int timeout)
+        public void StartReceiveMessage(int resFrom, int timeout,
+                                        DateTime? when = null)
         {
             if (!IsConnected)
             {
-                throw new NicoLiveException("放送に接続されていません。");
+                throw new NicoLiveException(
+                    "放送に接続されていません。");
+            }
+
+            if (IsBroadcasting && when != null)
+            {
+                throw new NicoLiveException(
+                    "放送中の放送から過去ログの取得はできません。");
+            }
+            else if (!IsBroadcasting && when == null)
+            {
+                throw new NicoLiveException(
+                    "放送はすでに終了しています。");
             }
 
             // this.roomListにroomListを設定してからコメントを受け付けたいため、
@@ -771,7 +809,7 @@ namespace Ragnarok.NicoNico.Live
             {
                 if (room != null)
                 {
-                    room.StartReceiveMessage(resFrom, timeout);
+                    room.StartReceiveMessage(resFrom, timeout, when);
                 }
             }
         }

@@ -13,37 +13,40 @@ namespace Ragnarok
         /// <summary>
         /// foreachのlinq版。
         /// </summary>
-        public static void ForEach<T>(this IEnumerable<T> source,
-                                      Action<T> action)
+        public static IEnumerable<T> ForEach<T>(this IEnumerable<T> source,
+                                                Action<T> action)
         {
             if (source == null)
             {
-                return;
+                return null;
             }
 
             foreach (var item in source)
             {
                 action(item);
             }
+
+            return source;
         }
 
         /// <summary>
         /// each_with_index@ruby のlinq版。
         /// </summary>
-        public static void ForEachWithIndex<T>(this IEnumerable<T> source,
-                                               Action<T, int> action)
+        public static IEnumerable<T> ForEachWithIndex<T>(this IEnumerable<T> source,
+                                                         Action<T, int> action)
         {
-            var index = 0;
-
             if (source == null)
             {
-                return;
+                return null;
             }
 
+            var index = 0;
             foreach (var item in source)
             {
                 action(item, index++);
             }
+
+            return source;
         }
 
         /// <summary>
@@ -91,19 +94,22 @@ namespace Ragnarok
         /// <remarks>
         /// 条件を満たす要素がない場合は-1を返します。
         /// </remarks>
-        public static int FindIndex<T>(this IList<T> self, Predicate<T> pred)
+        public static int FindIndex<T>(this IEnumerable<T> source, Predicate<T> pred)
         {
-            if (self == null)
+            if (source == null)
             {
                 return -1;
             }
 
-            for (var i = 0; i < self.Count; ++i)
+            var index = 0;
+            foreach (var item in source)
             {
-                if (pred(self[i]))
+                if (pred(item))
                 {
-                    return i;
+                    return index;
                 }
+
+                index += 1;
             }
 
             return -1;
@@ -112,17 +118,17 @@ namespace Ragnarok
         /// <summary>
         /// 最初に指定の条件を満たす要素を削除します。
         /// </summary>
-        public static bool RemoveIf<T>(this IList<T> self, Predicate<T> pred)
+        public static bool RemoveIf<T>(this IList<T> source, Predicate<T> pred)
         {
-            if (self == null)
+            if (source == null)
             {
                 return false;
             }
 
-            var index = self.FindIndex(pred);
+            var index = source.FindIndex(pred);
             if (index >= 0)
             {
-                self.RemoveAt(index);
+                source.RemoveAt(index);
                 return true;
             }
             else

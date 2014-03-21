@@ -208,6 +208,11 @@ namespace Ragnarok.NicoNico
     public class Comment
     {
         /// <summary>
+        /// コメントを表現したXMLを取得または設定します。
+        /// </summary>
+        public string OriginalXml { get; set; }
+
+        /// <summary>
         /// スレッド番号を取得または設定します。
         /// </summary>
         public int Thread { get; set; }
@@ -235,6 +240,11 @@ namespace Ragnarok.NicoNico
         /// コメント投稿時刻を取得または設定します。
         /// </summary>
         public DateTime Date { get; set; }
+
+        /// <summary>
+        /// コメント投稿時刻のμ秒を取得または設定します。
+        /// </summary>
+        public double DateMicroSeconds { get; set; }
 
         /// <summary>
         /// ユーザーＩＤを取得または設定します。
@@ -265,6 +275,11 @@ namespace Ragnarok.NicoNico
         /// NGスコアを取得または設定します。
         /// </summary>
         public int NGScore { get; set; }
+
+        /// <summary>
+        /// origin属性を取得または設定します。
+        /// </summary>
+        public string Origin { get; set; }
 
         /// <summary>
         /// ユーザーによって投稿されたコメントかどうかを取得します。
@@ -337,6 +352,14 @@ namespace Ragnarok.NicoNico
         }
 
         /// <summary>
+        /// リレーコメントかどうかを取得します。
+        /// </summary>
+        public bool IsRelayComment
+        {
+            get { return (Origin == "C"); }
+        }
+
+        /// <summary>
         /// 送信用のコメントを作成します。
         /// </summary>
         public Comment(string text, string mail)
@@ -389,6 +412,8 @@ namespace Ragnarok.NicoNico
         /// </summary>
         public Comment(XmlNode node)
         {
+            OriginalXml = node.OuterXml;
+
             XmlAttribute attr = node.Attributes["thread"];
             Thread = IntTryParse(attr, -1);
 
@@ -405,11 +430,19 @@ namespace Ragnarok.NicoNico
                 DateTime.MinValue :
                 Utility.TimeUtil.UnixTimeToDateTime(attr.Value));
 
+            attr = node.Attributes["date_usec"];
+            if (attr != null)
+            {
+                var value = IntTryParse(attr, 0);
+                Date = Date.AddMilliseconds(value / 1000);
+                DateMicroSeconds = value % 1000;
+            }
+
             attr = node.Attributes["user_id"];
             UserId = attr.Value;
 
             attr = node.Attributes["mail"];
-            Mail = (attr == null ? null : attr.Value);
+            Mail = (attr == null ? string.Empty : attr.Value);
 
             // 自分で投稿したコメントなら'1'、そうでないなら'0'か
             // もしくは属性自体が存在しない。
@@ -421,6 +454,9 @@ namespace Ragnarok.NicoNico
 
             attr = node.Attributes["score"];
             NGScore = IntTryParse(attr, 0);
+
+            attr = node.Attributes["origin"];
+            Origin = (attr == null ? string.Empty : attr.Value);
 
             // 意味あるのか？
             Text = node.InnerText ?? "";

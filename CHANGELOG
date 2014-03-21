@@ -1,3 +1,18 @@
+2014-03-22  - Ver 2.4.2
+
+	* Ragnarok/NicoNico/Comment.cs: リレーコメントの判定やμ秒単位のコメン
+	ト投稿時刻を示したプロパティなどを追加しました。
+	* Ragnarok/NicoNico/Live/CommentClient.cs: 配信中であるかどうかを示すプ
+	ロパティを追加し、また過去ログの取得機能を追加しました。
+	* Ragnarok/NicoNico/Live/CommentClientEventArgs.cs: 各ルームごとのイベ
+	ント引数にルーム名を設定するようにしました。
+	* Ragnarok/NicoNico/Live/CommentRoom.cs: コメント取得処理を修正しました
+	。
+	* Ragnarok/NicoNico/Live/LiveUtil.cs: WeybackKeyの取得メソッドを追加し
+	ました。
+	* Ragnarok/Utility/TimeUtil.cs: DateTimeからUnix時刻への変換メソッドを
+	追加しました。
+
 2014-03-06  - Ver 2.4.1
 
 	* Ragnarok/MathEx.cs: TimeSpan用のAbsメソッドを追加しました。
