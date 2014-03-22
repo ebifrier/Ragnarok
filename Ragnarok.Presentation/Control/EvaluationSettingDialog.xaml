@@ -65,13 +65,13 @@
                 <RadioButton Name="useInputRadioButton"
                              IsChecked="{Binding PointType,
                                                  Converter={StaticResource enumToBooleanConverter},
-                                                 ConverterParameter=Input}"
+                                                 ConverterParameter=ManualInput}"
                              Content="手入力" />
                 <DockPanel IsEnabled="{Binding IsChecked, ElementName=useInputRadioButton}">
                     <Label DockPanel.Dock="Left" Content="値入力: " />
                     <l:NumericUpDown DockPanel.Dock="Right"
                                      Minimum="-9999" Maximum="9999"
-                                     Value="{Binding InputPoint,
+                                     Value="{Binding ManualInputPoint,
                                                      Converter={StaticResource decimalConverter}}" />
                 </DockPanel>
             </StackPanel>

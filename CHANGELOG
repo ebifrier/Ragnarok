@@ -10,6 +10,8 @@
 	まViewModelとして扱うときに便利なクラスを追加しました。
 	* Ragnarok/Net/EvaluationClient.cs: 評価値サーバーとの接続を扱うクライ
 	アントクラスを追加しました。
+	* Ragnarok.Presentation/Control/EvaluationControl.cs: 列挙子の名前を一
+	部変更しました。
 
 2014-03-22  - Ver 2.4.3
 

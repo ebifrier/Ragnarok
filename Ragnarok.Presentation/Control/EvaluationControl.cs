@@ -25,7 +25,7 @@ namespace Ragnarok.Presentation.Control
         /// <summary>
         /// 手入力値を使います。
         /// </summary>
-        Input,
+        ManualInput,
         /// <summary>
         /// ユーザーの評価値の平均値を使います。
         /// </summary>
@@ -66,9 +66,9 @@ namespace Ragnarok.Presentation.Control
         /// <summary>
         /// 手入力による評価値を扱う依存プロパティです。
         /// </summary>
-        public static readonly DependencyProperty InputPointProperty =
+        public static readonly DependencyProperty ManualInputPointProperty =
             DependencyProperty.Register(
-                "InputPoint",
+                "ManualInputPoint",
                 typeof(double),
                 typeof(EvaluationControl),
                 new FrameworkPropertyMetadata(0.0,
@@ -78,10 +78,10 @@ namespace Ragnarok.Presentation.Control
         /// <summary>
         /// 手入力による評価値を取得または設定します。
         /// </summary>
-        public double InputPoint
+        public double ManualInputPoint
         {
-            get { return (double)GetValue(InputPointProperty); }
-            set { SetValue(InputPointProperty, value); }
+            get { return (double)GetValue(ManualInputPointProperty); }
+            set { SetValue(ManualInputPointProperty, value); }
         }
 
         /// <summary>
@@ -416,8 +416,8 @@ namespace Ragnarok.Presentation.Control
         {
             switch (PointType)
             {
-                case EvaluationPointType.Input:
-                    EvaluationPoint = InputPoint;
+                case EvaluationPointType.ManualInput:
+                    EvaluationPoint = ManualInputPoint;
                     break;
                 case EvaluationPointType.User:
                     EvaluationPoint = UserPoint;
