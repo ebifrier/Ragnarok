@@ -70,7 +70,7 @@
                 <DockPanel IsEnabled="{Binding IsChecked, ElementName=useInputRadioButton}">
                     <Label DockPanel.Dock="Left" Content="値入力: " />
                     <l:NumericUpDown DockPanel.Dock="Right"
-                                     Minimum="-10000" Maximum="10000"
+                                     Minimum="-9999" Maximum="9999"
                                      Value="{Binding InputPoint,
                                                      Converter={StaticResource decimalConverter}}" />
                 </DockPanel>

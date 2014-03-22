@@ -21,7 +21,7 @@ namespace Ragnarok.Presentation.Control
     /// </summary>
     public partial class EvaluationSettingDialog : Window
     {
-        private CloneModel model;
+        private ViewModelProxy model;
         private EvaluationControl control;
 
         /// <summary>
@@ -32,24 +32,23 @@ namespace Ragnarok.Presentation.Control
             InitializeComponent();
             CommandBindings.Add(
                 new CommandBinding(
-                    RagnarokCommands.OK,
-                    ExecuteYes));
+                    RagnarokCommands.Cancel,
+                    ExecuteCancel));
 
-            this.model = new CloneModel(control);
+            this.model = new ViewModelProxy(control);
             this.control = control;
 
             DataContext = model;
         }
 
         /// <summary>
-        /// OK/YES
+        /// Cancel
         /// </summary>
-        private void ExecuteYes(object sender, ExecutedRoutedEventArgs e)
+        private void ExecuteCancel(object sender, ExecutedRoutedEventArgs e)
         {
-            // OKの場合は、プロパティ値をコントロールに設定します。
-            this.model.SetValuesToTarget(this.control);
+            this.model.RollbackViewModel();
 
-            DialogResult = true;
+            DialogResult = false;
         }
     }
 }

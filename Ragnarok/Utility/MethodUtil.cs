@@ -411,8 +411,6 @@ namespace Ragnarok.Utility
         public static Dictionary<string, IPropertyObject> GetPropertyDic(
             Type targetType)
         {
-            Dictionary<string, IPropertyObject> propertyDic;
-
             if (targetType == null)
             {
                 throw new ArgumentNullException("targetType");
@@ -420,6 +418,8 @@ namespace Ragnarok.Utility
 
             lock (TypePropertySet)
             {
+                Dictionary<string, IPropertyObject> propertyDic;
+
                 // 指定の型のプロパティリストを探し、もしなければ
                 // それを新たに作成しハッシュに追加します。
                 if (!TypePropertySet.TryGetValue(targetType, out propertyDic))
@@ -428,9 +428,9 @@ namespace Ragnarok.Utility
 
                     TypePropertySet.Add(targetType, propertyDic);
                 }
-            }
 
-            return propertyDic;
+                return propertyDic;
+            }
         }
 
         /// <summary>

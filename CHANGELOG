@@ -1,3 +1,16 @@
+2014-03-22  - Ver 2.4.4
+
+	* Ragnarok.Presentation/Control/EvaluationControl.cs: 評価値の最大値を
+	9999に制限するようにしました。
+	* Ragnarok.Presentation/Control/EvaluationSettingDialog.xaml.cs: 設定ダ
+	イアログで変更された値をすぐにコントロールに反映するようにしました。
+	* Ragnarok/ObjectModel/DynamicViewModel.NotifyObject.cs: 
+	PropertyChangingイベントを追加しました。
+	* Ragnarok.Presentation/Utility/ViewModelProxy.cs: コントロールをそのま
+	まViewModelとして扱うときに便利なクラスを追加しました。
+	* Ragnarok/Net/EvaluationClient.cs: 評価値サーバーとの接続を扱うクライ
+	アントクラスを追加しました。
+
 2014-03-22  - Ver 2.4.3
 
 	* Ragnarok.NicoNico.Test/MainWindow.xaml.cs: 不要なコードなどを削除しま

@@ -73,7 +73,7 @@ namespace Ragnarok.Presentation.Control
                 typeof(EvaluationControl),
                 new FrameworkPropertyMetadata(0.0,
                     FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
-                    OnPointChanged));
+                    OnPointChanged, CoercePoint));
 
         /// <summary>
         /// 手入力による評価値を取得または設定します。
@@ -92,7 +92,7 @@ namespace Ragnarok.Presentation.Control
                 "UserPoint",
                 typeof(double),
                 typeof(EvaluationControl),
-                new FrameworkPropertyMetadata(0.0, OnPointChanged));
+                new FrameworkPropertyMetadata(0.0, OnPointChanged, CoercePoint));
 
         /// <summary>
         /// リスナーによる評価値を取得または設定します。
@@ -111,7 +111,7 @@ namespace Ragnarok.Presentation.Control
                 "ModeCustomPoint",
                 typeof(double),
                 typeof(EvaluationControl),
-                new FrameworkPropertyMetadata(0.0, OnPointChanged));
+                new FrameworkPropertyMetadata(0.0, OnPointChanged, CoercePoint));
 
         /// <summary>
         /// 各モードに固有の評価値を取得または設定します。
@@ -146,6 +146,13 @@ namespace Ragnarok.Presentation.Control
             var self = (EvaluationControl)d;
 
             self.UpdatePoint();
+        }
+
+        static object CoercePoint(DependencyObject d, object v)
+        {
+            var value = (double)v;
+
+            return MathEx.Between(-9999.0, 9999.0, value);
         }
         #endregion
 

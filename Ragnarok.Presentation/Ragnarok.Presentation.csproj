@@ -93,7 +93,6 @@
     </Compile>
     <Compile Include="Converter\SignEmphasizeConverter.cs" />
     <Compile Include="Extension\ImageSetListExtension.cs" />
-    <Compile Include="Utility\CloneModel.cs" />
     <Compile Include="Control\MessageStatusBar.cs" />
     <Compile Include="Control\VersionWindow.xaml.cs">
       <DependentUpon>VersionWindow.xaml</DependentUpon>
@@ -179,6 +178,7 @@
     <Compile Include="Utility\WebBrowserUtil.cs" />
     <Compile Include="Utility\TextBoxUtil.cs" />
     <Compile Include="Utility\ContextMenuUtil.cs" />
+    <Compile Include="Utility\ViewModelProxy.cs" />
     <Compile Include="VisualObject\Control\BackgroundCore.cs" />
     <Compile Include="VisualObject\Control\VisualBackground.cs" />
     <Compile Include="VisualObject\EffectImageCache.cs" />

@@ -7,6 +7,8 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 
+using Ragnarok.Utility;
+
 namespace Ragnarok.Net
 {
     /// <summary>
@@ -19,7 +21,7 @@ namespace Ragnarok.Net
     {
         private static readonly int[] idCounter = new int[] { 0 };
         private readonly object socketLock = new object();
-        private volatile bool isConnecting = false;
+        private ReentrancyLock connectingLock = new ReentrancyLock();
         private bool disposed = false;
 
         /// <summary>
@@ -159,15 +161,14 @@ namespace Ragnarok.Net
         /// </summary>
         public void Connect(string address, int port)
         {
-            if (this.isConnecting)
+            using (var status = this.connectingLock.Lock())
             {
-                throw new InvalidOperationException(
-                    "すでにサーバーに接続中です。");
-            }
+                if (status == null)
+                {
+                    throw new InvalidOperationException(
+                        "すでにサーバーに接続中です。");
+                }
 
-            this.isConnecting = true;
-            try
-            {
                 var socket = new Socket(
                     AddressFamily.InterNetwork,
                     SocketType.Stream,
@@ -207,10 +208,6 @@ namespace Ragnarok.Net
                 }
 
                 SetSocket(socket);
-            }
-            finally
-            {
-                this.isConnecting = false;
             }
         }
 
