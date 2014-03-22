@@ -746,6 +746,12 @@ namespace Ragnarok.Shogi
                 return false;
             }
 
+            // 駒の移動でない場合は成れません。
+            if (move.OldPosition == null || !move.OldPosition.Validate())
+            {
+                return false;
+            }
+
             // 駒の移動元に自分の駒がなければダメ
             if (piece == null || piece.BWType != move.BWType)
             {
@@ -753,12 +759,6 @@ namespace Ragnarok.Shogi
             }
 
             if (piece.IsPromoted)
-            {
-                return false;
-            }
-
-            // 駒の移動でない場合は成れません。
-            if (move.OldPosition == null || !move.OldPosition.Validate())
             {
                 return false;
             }

@@ -793,14 +793,15 @@ namespace Ragnarok.Presentation.Shogi.View
                     ActionType = ActionType.Drop,
                     DropPieceType = piece.PieceType,
                 });
+            
+            var isPromoteForce = Board.IsPromoteForce(move, piece);
+            if (isPromoteForce)
+            {
+                move.ActionType = ActionType.Promote;
+            }
 
-            var isForcePromote =
-                Board.IsPromoteForce(move, piece);
-            var canPromote = (
-                !piece.IsPromoted &&
-                Board.CanPromote(move, piece));
-
-            // 移動中の駒を元に戻し、駒の移動を行います。
+            // 成り・不成りの選択ダイアログを出す前に
+            // 駒の移動ができるか調べておきます。
             // 失敗したら移動中だった駒は元の位置に戻されます。
             if (!Board.CanMove(move))
             {
@@ -808,12 +809,8 @@ namespace Ragnarok.Presentation.Shogi.View
                 return;
             }
 
-            // 成り駒じゃない駒が成れる可能性があるときは選択します。
-            if (isForcePromote)
-            {
-                move.ActionType = ActionType.Promote;
-            }
-            else if (canPromote)
+            // 成れる場合は選択用のダイアログを出します。
+            if (!isPromoteForce && Board.CanPromote(move, piece))
             {
                 var isPromote = CheckToPromote(piece.BWType, piece.PieceType);
 

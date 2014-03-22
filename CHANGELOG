@@ -1,3 +1,8 @@
+2014-03-23  - Ver 2.4.5
+
+	* Ragnarok.Presentation.Shogi/View/ShogiControl.xaml.cs: 駒を必ず成らな
+	ければいけない場面で、駒の移動ができないというバグを修正しました。
+
 2014-03-22  - Ver 2.4.4
 
 	* Ragnarok.Presentation/Control/EvaluationControl.cs: 評価値の最大値を
