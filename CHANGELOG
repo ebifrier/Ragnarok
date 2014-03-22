@@ -1,3 +1,9 @@
+2014-03-22  - Ver 2.4.3
+
+	* Ragnarok.NicoNico.Test/MainWindow.xaml.cs: 不要なコードなどを削除しま
+	した。
+	* CommentGetter: 過去コメント取得のテスト用アプリを追加しました。
+
 2014-03-22  - Ver 2.4.2
 
 	* Ragnarok/NicoNico/Comment.cs: リレーコメントの判定やμ秒単位のコメン

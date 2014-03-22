@@ -17,6 +17,8 @@ using System.Windows.Shapes;
 using Ragnarok.Net.CookieGetter;
 using Ragnarok.NicoNico;
 using Ragnarok.ObjectModel;
+using Ragnarok.Presentation;
+using Ragnarok.Presentation.NicoNico;
 
 namespace Ragnarok.NicoNico.Test
 {
@@ -38,7 +40,6 @@ namespace Ragnarok.NicoNico.Test
         public void NotifyPropertyChanged(PropertyChangedEventArgs e)
         {
             PropertyChanged(this, e);
-            PropertyChanged(this, new PropertyChangedEventArgs("LoginState"));
         }
 
         /// <summary>
@@ -100,39 +101,23 @@ namespace Ragnarok.NicoNico.Test
             }
         }
 
-        public string LoginState
-        {
-            get
-            {
-                return this.nicoClient.LoginState.ToString();
-            }
-        }
-
-        /*private Presentation.Update.PresentationUpdater updater =
-            new Presentation.Update.PresentationUpdater(
-                @"http://garnet-alice.net/programs/votesystem/update/versioninfo.xml");*/
-
         public MainWindow()
         {
             InitializeComponent();
 
-            //updater.Start();
-
-            System.Diagnostics.Trace.Listeners.Add(
-                new System.Diagnostics.ConsoleTraceListener());
+            /*System.Diagnostics.Trace.Listeners.Add(
+                new System.Diagnostics.ConsoleTraceListener());*/
 
             this.nicoClient.PropertyChanged +=
                 (sender, e) => NotifyPropertyChanged(e);
 
             this.commentClient.CommentReceived += (sender, e) =>
-            {
-                Console.WriteLine(e.Comment.Text);
-            };
+                Console.WriteLine(e.Comment.OriginalXml);
 
+            this.commentClient.ConnectedRoom += (sender, e) =>
+                Console.WriteLine("Connected to {0} ({1}).", e.RoomLabel, e.RoomIndex);
             this.commentClient.Disconnected += (sender, e) =>
-            {
-                Console.WriteLine("Called Disconnected");
-            };
+                Console.WriteLine("Disconnected");
 
             var loginData = new LoginData()
             {
@@ -140,26 +125,19 @@ namespace Ragnarok.NicoNico.Test
                 BrowserType = BrowserType.GoogleChrome,
             };
             this.nicoClient.LoginAsync(loginData);
-
             this.layoutBase.DataContext = this;
         }
 
+        /// <summary>
+        /// ログイン処理を行います。
+        /// </summary>
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                var window = new Presentation.NicoNico.LoginWindow(this.nicoClient);
+                var window = new LoginWindow(this.nicoClient);
 
                 window.ShowDialog();
-
-                /*var t = Net.WebUtil.RequestHttpText(
-                    "http://live.nicovideo.jp/api/getstreaminfo/lv45848708",
-                    null,
-                    this.nicoClient.CookieContainer,
-                    Encoding.UTF8);
-                MessageBox.Show(t);*/
-
-                Live.AlertInfo.Create();
             }
             catch (Exception ex)
             {
@@ -173,6 +151,9 @@ namespace Ragnarok.NicoNico.Test
             }
         }
 
+        /// <summary>
+        /// 放送に接続します。
+        /// </summary>
         private void ConnectButton_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -190,24 +171,24 @@ namespace Ragnarok.NicoNico.Test
                 this.commentClient.Connect(
                     LiveUrl,
                     this.nicoClient.CookieContainer);
-
-                //this.commentClient.StartReceiveMessage(1000000);
-                this.commentClient.StartReceiveMessage(1);
+                this.commentClient.StartReceiveMessage(1000);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                /*Wpf.DialogUtil.Show(
-                    ex, "");*/
+                DialogUtil.ShowError(ex,
+                    "放送への接続に失敗しました。");
                 return;
             }
 
-            MessageBox.Show(
-                    "接続に成功しました。",
-                    "ＯＫ",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Information);
+            DialogUtil.Show(
+                "接続に成功しました。",
+                "ＯＫ",
+                MessageBoxButton.OK);
         }
 
+        /// <summary>
+        /// コメントを投稿します。
+        /// </summary>
         private void SendButton_Click(object sender, RoutedEventArgs e)
         {
             this.commentClient.BroadcastComment(
@@ -215,7 +196,7 @@ namespace Ragnarok.NicoNico.Test
                 "184",
                 DateTime.Now);
 
-            Comment = "";
+            Comment = string.Empty;
         }
 
         private void CommentTestButton_Click(object sender, RoutedEventArgs e)
