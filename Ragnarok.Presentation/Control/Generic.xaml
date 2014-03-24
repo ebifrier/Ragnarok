@@ -4,7 +4,6 @@
         <ResourceDictionary Source="/Ragnarok.Presentation;component/Control/ColorPicker/ColorPicker.xaml" />
         <ResourceDictionary Source="/Ragnarok.Presentation;component/Control/ColorButton.xaml" />
         <ResourceDictionary Source="/Ragnarok.Presentation;component/Control/DecoratedText.xaml" />
-        <ResourceDictionary Source="/Ragnarok.Presentation;component/Control/EvaluationControl.xaml" />
         <ResourceDictionary Source="/Ragnarok.Presentation;component/Control/GenericDialog.xaml" />
         <ResourceDictionary Source="/Ragnarok.Presentation;component/Control/MessageStatusBar.xaml" />
         <ResourceDictionary Source="/Ragnarok.Presentation;component/Control/NumericUpDown.xaml" />
