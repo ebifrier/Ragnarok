@@ -354,7 +354,7 @@ namespace Ragnarok.Net
                 }
 
                 // ソケットの切断処理を開始します。
-                Socket.Disconnect(false);
+                socket.Disconnect(false);
                 NotifyDisconnected(DisconnectReason.Disconnected);
             }
             catch (Exception ex)

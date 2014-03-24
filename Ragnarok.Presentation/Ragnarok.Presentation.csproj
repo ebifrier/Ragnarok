@@ -171,7 +171,6 @@
     <Compile Include="Utility\WebBrowserUtil.cs" />
     <Compile Include="Utility\TextBoxUtil.cs" />
     <Compile Include="Utility\ContextMenuUtil.cs" />
-    <Compile Include="Utility\ViewModelProxy.cs" />
     <Compile Include="VisualObject\Control\BackgroundCore.cs" />
     <Compile Include="VisualObject\Control\VisualBackground.cs" />
     <Compile Include="VisualObject\EffectImageCache.cs" />

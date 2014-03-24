@@ -6,9 +6,8 @@ using System.Linq;
 using System.Runtime.Serialization;
 
 using Ragnarok.Utility;
-using Ragnarok.ObjectModel;
 
-namespace Ragnarok.Presentation.Utility
+namespace Ragnarok.ObjectModel
 {
     /// <summary>
     /// あるViewModelの状態を保存し、必要であれば元に戻せるような
