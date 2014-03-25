@@ -18,7 +18,7 @@ namespace Ragnarok.Presentation.Utility
             DependencyProperty.RegisterAttached(
                 "BindableSource", typeof(string),
                 typeof(WebBrowserUtil),
-                new UIPropertyMetadata(null, BindableSourceChanged));
+                new FrameworkPropertyMetadata(null, BindableSourceChanged));
 
         /// <summary>
         /// BindableSourceProperty を取得します。

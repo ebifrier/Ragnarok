@@ -1,3 +1,8 @@
+2014-03-25  - Ver 2.4.8
+
+	* Ragnarok.Presentation/Utility/PasswordBoxUtil.cs: PasswordBox用のビヘ
+	イビアを追加しました。
+
 2014-03-25  - Ver 2.4.7
 
 	* Ragnarok/ObjectModel/ViewModelProxy.cs: Ragnarok.Presentationから

@@ -69,6 +69,9 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Windows.Interactivity">
+      <HintPath>..\externals\net\System.Windows.Interactivity.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xaml" />
     <Reference Include="System.Data" />
     <Reference Include="System.XML" />
@@ -171,6 +174,7 @@
     <Compile Include="Utility\WebBrowserUtil.cs" />
     <Compile Include="Utility\TextBoxUtil.cs" />
     <Compile Include="Utility\ContextMenuUtil.cs" />
+    <Compile Include="Utility\PasswordBoxUtil.cs" />
     <Compile Include="VisualObject\Control\BackgroundCore.cs" />
     <Compile Include="VisualObject\Control\VisualBackground.cs" />
     <Compile Include="VisualObject\EffectImageCache.cs" />

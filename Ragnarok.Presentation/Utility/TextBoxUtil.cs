@@ -19,7 +19,7 @@ namespace Ragnarok.Presentation.Utility
         public static readonly DependencyProperty AutoHorizontalScrollToEndProperty =
             DependencyProperty.RegisterAttached(
                 "AutoHorizontalScrollToEnd", typeof(bool),
-                typeof(ListBoxUtil),
+                typeof(TextBoxUtil),
                 new UIPropertyMetadata(false,
                     OnAutoHorizontalScrollToEndChanged));
 
