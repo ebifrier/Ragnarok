@@ -535,7 +535,7 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
 
             var autoPlay = new AutoPlay(board, AutoPlayType.Undo)
             {
-                //Interval = ,
+                Interval = control.AutoPlayInterval,
             };
 
             control.StartAutoPlay(autoPlay);
@@ -559,7 +559,7 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
 
             var autoPlay = new AutoPlay(board, AutoPlayType.Redo)
             {
-                //Interval = ,
+                Interval = control.AutoPlayInterval,
             };
 
             control.StartAutoPlay(autoPlay);

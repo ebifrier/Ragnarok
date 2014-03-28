@@ -1,3 +1,10 @@
+2014-03-28  - Ver 2.4.9
+
+	* Ragnarok.Presentation.Shogi/View/ShogiControl.xaml.cs: 指し手連続再生
+	時の一手にかかる時間を設定できるようにしました。
+	* Ragnarok/Utility/AppSettingsBase.cs: シリアライズしないプロパティを指
+	定可能にしました。また、デフォルト値の設定ルーチンを一部変更しました。
+
 2014-03-25  - Ver 2.4.8
 
 	* Ragnarok.Presentation/Utility/PasswordBoxUtil.cs: PasswordBox用のビヘ

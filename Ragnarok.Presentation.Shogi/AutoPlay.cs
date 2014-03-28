@@ -40,6 +40,14 @@ namespace Ragnarok.Presentation.Shogi
     /// </summary>
     public class AutoPlay
     {
+        /// <summary>
+        /// 指し手のデフォルトの再生間隔です。
+        /// </summary>
+        public static readonly TimeSpan DefaultInterval =
+            TimeSpan.FromSeconds(1);
+        public static readonly TimeSpan DefaultBackgroundFadeInterval =
+            TimeSpan.FromSeconds(0.5);
+
         private List<BoardMove> moveList;
         private int moveIndex;
         private int maxMoveCount;
@@ -428,10 +436,10 @@ namespace Ragnarok.Presentation.Shogi
         {
             UpdateEnumerator = GetUpdateEnumerator().GetEnumerator();
             Board = board;
-            Interval = TimeSpan.FromSeconds(1.0);
+            Interval = DefaultInterval;
             BeginningInterval = TimeSpan.Zero;
             EndingInterval = TimeSpan.Zero;
-            BackgroundFadeInterval = TimeSpan.FromSeconds(0.5);
+            BackgroundFadeInterval = DefaultBackgroundFadeInterval;
             Position = TimeSpan.Zero;
             BasePosition = TimeSpan.Zero;
         }

@@ -28,6 +28,19 @@ namespace Ragnarok.Utility
     }
 
     /// <summary>
+    /// シリアライズしないプロパティの指定を行います。
+    /// </summary>
+    /// <remarks>
+    /// NonSerialized属性はフィールドにしか適用できないため、
+    /// 新しいクラスを作成しました。
+    /// </remarks>
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property,
+                    AllowMultiple = false)]
+    public sealed class IgnoreSerializedAttribute : Attribute
+    {
+    }
+
+    /// <summary>
     /// 設定ファイルを保存するための基底ファイルです。
     /// </summary>
     /// <remarks>
@@ -220,6 +233,14 @@ namespace Ragnarok.Utility
         {
             lock (SyncRoot)
             {
+                // 値が同じなら更新しません。
+                object oldValue;
+                if (this.propertyStorage.TryGetValue(propertyName, out oldValue) &&
+                    Util.GenericEquals(value, oldValue))
+                {
+                    return;
+                }
+
                 NotifyPropertyChanging(new PropertyChangingEventArgs(propertyName));
                 this.propertyStorage[propertyName] = value;
                 NotifyPropertyChanged(new PropertyChangedEventArgs(propertyName));
@@ -324,62 +345,75 @@ namespace Ragnarok.Utility
                 return;
             }
 
-            // DefaultSettingValueAttributeを持つプロパティに
-            // デフォルト値を設定します。
-            foreach (var propertyObj in propertyDic.Values)
+            var list =
+                from propObj in propertyDic.Values
+                let prop = propObj.PropertyInfo
+                where prop.DeclaringType != typeof(AppSettingsBase)
+                where propObj.CanWrite
+
+                // シリアライズの制御属性を調べます。
+                let attrs1 = prop.GetCustomAttributes(
+                    typeof(NonSerializedAttribute), false)
+                where !attrs1.Any()
+                let attrs2 = prop.GetCustomAttributes(
+                    typeof(IgnoreSerializedAttribute), false)
+                where !attrs2.Any()
+
+                // デフォルト値を属性から設定します。
+                let attrs3 = prop.GetCustomAttributes(
+                    typeof(DefaultValueAttribute), false)
+                let valAttr = attrs3.FirstOrDefault() as DefaultValueAttribute
+                let value = (valAttr != null ? valAttr.Value : null)
+                select new { propObj, value };
+
+            list.ForEach(_ => ResetProperty(_.propObj, _.value));
+        }
+
+        /// <summary>
+        /// DefaultSettingValueAttributeを持つプロパティに
+        /// デフォルト値を設定します。
+        /// </summary>
+        private void ResetProperty(IPropertyObject propertyObj, object value)
+        {
+            var property = propertyObj.PropertyInfo;
+            var type = property.PropertyType;
+
+            try
             {
-                var property = propertyObj.PropertyInfo;
-
-                try
+                if (value != null)
                 {
-                    if (property.DeclaringType == typeof(AppSettingsBase))
+                    // 同じ型なら値を設定。
+                    if (value.GetType() == type)
                     {
-                        continue;
-                    }
-                    if (!propertyObj.CanWrite)
-                    {
-                        continue;
+                        propertyObj.SetValue(this, value);
+                        return;
                     }
 
-                    // デフォルト値を属性から設定します。
-                    var attributes = property.GetCustomAttributes(
-                        typeof(DefaultValueAttribute),
-                        false);
-                    if (!attributes.Any())
-                    {
-                        SetDefaultValue(propertyObj);
-                        continue;
-                    }
-
-                    // デフォルト値を取得。
-                    var attr = (DefaultValueAttribute)attributes[0];
-                    var value = attr.Value;
-
-                    // 値が文字列なら値への変換を試みます。
+                    // 値が存在すれば、それをデフォルト値として設定します。
                     var valueStr = value as string;
                     if (valueStr != null)
                     {
-                        if (!TryConvertToValue(property.PropertyType, valueStr,
-                                               out value))
+                        object tmpValue;
+                        if (TryConvertToValue(type, valueStr, out tmpValue))
                         {
-                            SetDefaultValue(propertyObj);
-                            continue;
+                            propertyObj.SetValue(this, tmpValue);
+                            return;
                         }
                     }
-
-                    // 値を設定します。
-                    propertyObj.SetValue(this, value);
                 }
-                catch (Exception ex)
-                {
-                    Log.ErrorException(ex,
-                        "{0}.{1}: 値の設定に失敗しました。",
-                        GetType(),
-                        property.Name);
 
-                    // デフォルト値の設定を行います。
-                    SetDefaultValue(propertyObj);
-                }
+                // fallback
+                SetDefaultValue(propertyObj);
+            }
+            catch (Exception ex)
+            {
+                Log.ErrorException(ex,
+                    "{0}.{1}: 値の設定に失敗しました。",
+                    GetType(),
+                    property.Name);
+
+                // デフォルト値の設定を行います。
+                SetDefaultValue(propertyObj);
             }
         }
 

@@ -428,6 +428,23 @@ namespace Ragnarok.Presentation.Shogi.View
             get { return (Brush)GetValue(AutoPlayBrushProperty); }
             set { SetValue(AutoPlayBrushProperty, value); }
         }
+
+        /// <summary>
+        /// 連続して手を戻す／進める時の一手を指す時間間隔を扱う依存プロパティです。
+        /// </summary>
+        public static readonly DependencyProperty AutoPlayIntervalProperty =
+            DependencyProperty.Register(
+                "AutoPlayInterval", typeof(TimeSpan), typeof(ShogiControl),
+                new FrameworkPropertyMetadata(TimeSpan.FromSeconds(1)));
+
+        /// <summary>
+        /// 連続して手を戻す／進める時の一手を指す時間間隔を取得または設定します。
+        /// </summary>
+        public TimeSpan AutoPlayInterval
+        {
+            get { return (TimeSpan)GetValue(AutoPlayIntervalProperty); }
+            set { SetValue(AutoPlayIntervalProperty, value); }
+        }
         #endregion
 
         #region 時間系プロパティ
@@ -535,7 +552,7 @@ namespace Ragnarok.Presentation.Shogi.View
         public static readonly DependencyProperty BanBoundsProperty =
             DependencyProperty.Register(
                 "BanBounds", typeof(Rect), typeof(ShogiControl),
-                new UIPropertyMetadata(default(Rect)));
+                new FrameworkPropertyMetadata(default(Rect)));
 
         /// <summary>
         /// マスが含まれる部分の領域を取得します。
