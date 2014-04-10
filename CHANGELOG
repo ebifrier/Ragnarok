@@ -1,3 +1,7 @@
+2014-04-11  - Ver 2.4.10
+
+	* Ragnarok/Util.cs: Quoteメソッドを追加しました。
+
 2014-03-28  - Ver 2.4.9
 
 	* Ragnarok.Presentation.Shogi/View/ShogiControl.xaml.cs: 指し手連続再生

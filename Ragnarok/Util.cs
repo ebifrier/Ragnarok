@@ -400,7 +400,7 @@ namespace Ragnarok
         /// <summary>
         /// 空白文字のみで構成されているか調べます。
         /// </summary>
-        public static bool IsWhiteSpaceOnly(string self)
+        public static bool IsWhiteSpaceOnly(this string self)
         {
             if (string.IsNullOrEmpty(self))
             {
@@ -413,7 +413,7 @@ namespace Ragnarok
         /// <summary>
         /// 文字列中の空白があるインデックスを取得します。
         /// </summary>
-        public static int IndexOfWhitespace(string text)
+        public static int IndexOfWhitespace(this string text)
         {
             if (string.IsNullOrEmpty(text))
             {
@@ -434,7 +434,7 @@ namespace Ragnarok
         /// <summary>
         /// <paramref name="c"/>が全角文字か調べます。
         /// </summary>
-        public static bool IsZenkaku(char c)
+        public static bool IsZenkaku(this char c)
         {
             try
             {
@@ -449,6 +449,19 @@ namespace Ragnarok
                 // 全角文字であると仮定します。
                 return false;
             }
+        }
+
+        /// <summary>
+        /// 特定の文字で前後をくくります。
+        /// </summary>
+        public static string Quote(this string text, string c)
+        {
+            if (string.IsNullOrEmpty(c))
+            {
+                return text;
+            }
+
+            return (c + text + c);
         }
 
         /// <summary>
