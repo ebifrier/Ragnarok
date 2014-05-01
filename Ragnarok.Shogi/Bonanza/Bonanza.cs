@@ -87,11 +87,6 @@ namespace Ragnarok.Shogi.Bonanza
         public event EventHandler<BonanzaReceivedCommandEventArgs> ErrorReceived;
 
         /// <summary>
-        /// 初期化が終わった時に呼ばれます。
-        /// </summary>
-        public event EventHandler MnjInited;
-
-        /// <summary>
         /// ボナンザが終了したときに呼ばれます。
         /// </summary>
         public event EventHandler<BonanzaAbortedEventArgs> Aborted;
@@ -101,7 +96,6 @@ namespace Ragnarok.Shogi.Bonanza
         /// </summary>
         public Bonanza()
         {
-            CommandReceived += Bonanza_ReceivedCommand;
             ErrorReceived += Bonanza_ReceivedError;
         }
 
@@ -139,21 +133,21 @@ namespace Ragnarok.Shogi.Bonanza
         }
 
         /// <summary>
-        /// 並列化サーバーに接続したかどうかを取得または設定します。
+        /// 並列化サーバーに接続したかどうかを取得します。
         /// </summary>
         public bool IsConnected
         {
             get { return GetValue<bool>("IsConnected"); }
-            set { SetValue("IsConnected", value); }
+            private set { SetValue("IsConnected", value); }
         }
 
         /// <summary>
-        /// mnjinitコマンドが完了したかどうかを取得または設定します。
+        /// ボナンザが終了していたら、その理由を取得します。
         /// </summary>
-        public bool? IsMnjInited
+        public AbortReason? AbortedReason
         {
-            get { return GetValue<bool?>("IsMnjInited"); }
-            set { SetValue("IsMnjInited", value); }
+            get { return GetValue<AbortReason?>("AbortedReason"); }
+            private set { SetValue("AbortedReason", value); }
         }
 
         /// <summary>
@@ -235,6 +229,7 @@ namespace Ragnarok.Shogi.Bonanza
 
                 this.initialized = false;
                 IsConnected = false;
+                AbortedReason = reason;
             }
 
             Aborted.SafeRaiseEvent(this, new BonanzaAbortedEventArgs(reason));
@@ -288,7 +283,7 @@ namespace Ragnarok.Shogi.Bonanza
             {
                 FileName = filepath,
                 WorkingDirectory = Path.GetDirectoryName(filepath),
-                Arguments = "csa_shogi",
+                Arguments = null,
                 CreateNoWindow = true,
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
@@ -318,38 +313,14 @@ namespace Ragnarok.Shogi.Bonanza
         }
 
         #region コールバック
-        /// <summary>
-        /// mnjprepareの結果を識別する正規表現です。
-        /// </summary>
-        private static readonly Regex MnjPrepareRegex = new Regex(
-            @"^info mnjprepare\s*([\w]+)\s*$",
-            RegexOptions.IgnoreCase);
-
-        void Bonanza_ReceivedCommand(object sender, BonanzaReceivedCommandEventArgs e)
-        {
-            if (IsMnjInited == null)
-            {
-                var m = MnjPrepareRegex.Match(e.Command);
-                if (m.Success)
-                {
-                    var inited = (m.Groups[1].Value == "ok");
-
-                    IsMnjInited = inited;
-                    if (inited)
-                    {
-                        MnjInited.SafeRaiseEvent(this, EventArgs.Empty);
-                    }
-                }
-            }
-        }
-
         void Bonanza_ReceivedError(object sender, BonanzaReceivedCommandEventArgs e)
         {
             var error = e.Command;
 
             if (error.StartsWith("ERROR: "))
             {
-                if (error == "ERROR: Can't open a file, fv.bin")
+                // 再起不能なエラーの場合は、FatalErrorとします。
+                if (error.StartsWith("ERROR: Can't open a file,"))
                 {
                     Abort(AbortReason.FatalError);
                 }
@@ -360,28 +331,16 @@ namespace Ragnarok.Shogi.Bonanza
             }
             else if (error.StartsWith("WARNING: "))
             {
-                Abort(AbortReason.Error);
+                //Abort(AbortReason.Error);
             }
         }
         #endregion
 
         #region mnj
         /// <summary>
-        /// mnjprepare処理を開始します。
-        /// </summary>
-        public void BeginPrepareMnj()
-        {
-            var command = string.Format(
-                "mnjprepare 15 {0}",
-                MathEx.RandInt());
-
-            WriteCommand(command);
-        }
-
-        /// <summary>
         /// 並列化サーバーに接続します。
         /// </summary>
-        public void Connect(string serverAddress, int serverPort, int dfpnPort,
+        public void Connect(string serverAddress, int serverPort,
                             string name, int threadNum, int hashSize, int depth,
                             bool sendPV)
         {
@@ -391,12 +350,6 @@ namespace Ragnarok.Shogi.Bonanza
                 {
                     throw new InvalidOperationException(
                         "ボナンザが起動していません。");
-                }
-
-                if (IsMnjInited != true)
-                {
-                    throw new InvalidOperationException(
-                        "mnjが初期化されていません。");
                 }
 
                 if (IsConnected)
@@ -415,14 +368,8 @@ namespace Ragnarok.Shogi.Bonanza
                 WriteCommand(string.Format("tlp num {0}", threadNum));
                 WriteCommand(string.Format("hash {0}", hashSize));
 
-                var command = string.Format(
-                    "dfpn_client {0} {1}",
-                    serverAddress,
-                    dfpnPort);
-                WriteCommand(command);
-
                 // 並列化サーバーへの接続コマンドを発行します。
-                command = string.Format(
+                var command = string.Format(
                     "mnj {0} {1} {2} {3} {4} {5}",
                     serverAddress, serverPort,
                     name, threadNum, depth,

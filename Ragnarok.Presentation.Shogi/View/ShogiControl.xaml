@@ -308,8 +308,8 @@
                                 <GeometryModel3D.Transform>
                                     <Transform3DGroup>
                                         <TranslateTransform3D OffsetY="-1.0" />
-                                        <ScaleTransform3D CenterY="-0.49" ScaleY="0.10"
-                                                          ScaleX="0.85" />
+                                        <ScaleTransform3D CenterY="-0.50" ScaleY="0.10"
+                                                          ScaleX="0.70" />
                                     </Transform3DGroup>
                                 </GeometryModel3D.Transform>
                             </GeometryModel3D>
@@ -336,8 +336,8 @@
                                 <GeometryModel3D.Transform>
                                     <Transform3DGroup>
                                         <TranslateTransform3D OffsetY="1.0" />
-                                        <ScaleTransform3D CenterY="0.48" ScaleY="0.10"
-                                                          ScaleX="0.85" />
+                                        <ScaleTransform3D CenterY="0.50" ScaleY="0.10"
+                                                          ScaleX="0.70" />
                                     </Transform3DGroup>
                                 </GeometryModel3D.Transform>
                             </GeometryModel3D>
