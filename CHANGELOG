@@ -8,8 +8,6 @@
 	* Ragnarok.Shogi/BoardExtension.cs: 指し手のチェック方法や正規化方法を
 	見直し、以前バグっていた部分を修正しました。("打"がないと駒が打てないな
 	ど)
-	* PluginShogi/Effects/EffectManager.cs: 投票エフェクトが一度しか出ない
-	バグを修正しました。
 
 2014-04-11  - Ver 2.4.10
 
