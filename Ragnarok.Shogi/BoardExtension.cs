@@ -115,31 +115,13 @@ namespace Ragnarok.Shogi
         /// <paramref name="referenceMove"/>が指示するような手を
         /// 一つだけ検索します。
         /// 
-        /// 適切な手が複数見つかった場合(<paramref name="referenceMove"/>に
+        /// 該当する手が複数見つかった場合(<paramref name="referenceMove"/>に
         /// 右や左の情報が無い場合など)は、最初に見つかった手を返します。
         /// </remarks>
         private static BoardMove FilterBoardMove(List<BoardMove> boardMoveList,
                                                  Move referenceMove,
                                                  bool multipleIsNull = false)
         {
-            /*if (boardMoveList.Count() == 1)
-            {
-                var result = boardMoveList.First();
-
-                // 指し手が"飛車打ち"などの場合、打ではない指し手を選んでしまうと、
-                // 意味が変わってしまいます。
-                // (指定が42飛車なら、駒を打つ可能性がありますが、
-                //  打ちの指定がある場合、駒を打たないという選択肢はありません)
-                if (referenceMove.ActionType == ActionType.Drop &&
-                    referenceMove.ActionType != result.ActionType)
-                {
-                    return null;
-                }
-
-                return result;
-            }*/
-
-            // 作業用
             var boardMoveListTmp = boardMoveList;
 
             // 移動前の座標情報があれば、それを使います。
@@ -179,8 +161,17 @@ namespace Ragnarok.Shogi
             }
 
             // 駒打ちなどの判定を行います。
+            // 
+            // 駒打ちの場合
+            //  1) 他に移動できる駒がない場合、「打」がなくても「打」と解釈
+            //  2) 他に移動できる駒がある場合、「打」がなければ「打」と解釈されない
+            // という風に、解釈の仕方が少し複雑になっています。
+            // ここでは、canMoveというフラグを使って上記の場合分けを行っています。
+            var canMove = boardMoveListTmp.Any(
+                _ => _.ActionType != ActionType.Drop);
+            
             boardMoveListTmp = boardMoveListTmp.Where(
-                bm => CheckActionType(bm, referenceMove))
+                bm => CheckActionType(bm, referenceMove, canMove))
                 .ToList();
             if (boardMoveListTmp.Count() == 1)
             {
@@ -262,19 +253,28 @@ namespace Ragnarok.Shogi
         /// <remarks>
         /// 駒が指定の場所に移動できない場合は自動的に打つが選ばれます。
         /// (盤上に飛車がないのに、"32飛車"のときなど)
-        /// 選択できる変化が複数ある場合は、移動を選びます。
-        /// 
-        /// このメソッドでは指定無しの場合は、移動となります。
         /// </remarks>
         private static bool CheckActionType(BoardMove bm,
-                                            Move referenceMove)
+                                            Move referenceMove, bool canMove)
         {
             if (referenceMove.ActionType == ActionType.None)
             {
-                // 指定無しと成らずでおｋとします。
-                return (
-                    bm.ActionType == ActionType.None ||
-                    bm.ActionType == ActionType.Unpromote);
+                // 指し手一覧の中に移動できる駒があれば、
+                // 「打」と指定しなければ打つと判定されません。
+                if (canMove)
+                {
+                    // 指定無しと成らずでおｋとします。
+                    return (
+                        bm.ActionType == ActionType.None ||
+                        bm.ActionType == ActionType.Unpromote);
+                }
+                else
+                {
+                    return (
+                        bm.ActionType == ActionType.None ||
+                        bm.ActionType == ActionType.Unpromote ||
+                        bm.ActionType == ActionType.Drop);
+                }
             }
             
             return (bm.ActionType == referenceMove.ActionType);
@@ -431,6 +431,10 @@ namespace Ragnarok.Shogi
                     fromPiece.IsPromoted),
                 File = nextPos.File,
                 Rank = nextPos.Rank,
+                ActionType = ( // '打', '不成'は消える可能性があります。
+                    referenceMove.ActionType == ActionType.Promote ?
+                    referenceMove.ActionType :
+                    ActionType.None),
                 SameAsOld = (board.PrevMovedPosition == nextPos),
             };
 
@@ -443,11 +447,6 @@ namespace Ragnarok.Shogi
                 move.ActionType = referenceMove.ActionType;
                 return move;
             }
-
-            /*if (boardMoveList.Count() == 1)
-            {
-                return move;
-            }*/
 
             // 駒打ち、成り、不成りなどでフィルターします。
             var tmpMoveList = boardMoveList.Where(

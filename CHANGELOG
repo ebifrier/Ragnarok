@@ -5,6 +5,9 @@
 	* CLRのバージョン定義方法を変更しました。
 	* Ragnarok.Presentation/VisualObject/Control/BackgroundCore.xaml: コン
 	トロールの外側にオブジェクトを描画してしまっていたバグを修正しました。
+	* Ragnarok.Shogi/BoardExtension.cs: 指し手のチェック方法や正規化方法を
+	見直し、以前バグっていた部分を修正しました。("打"がないと駒が打てないな
+	ど)
 
 2014-04-11  - Ver 2.4.10
 
