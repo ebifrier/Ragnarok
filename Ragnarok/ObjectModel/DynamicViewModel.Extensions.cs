@@ -200,7 +200,7 @@ namespace Ragnarok.ObjectModel
 
             // DynamicViewModelにも全く同じコードを使うので、
             // そのための#ifです。
-#if CLR_V4 && RGN_DYNAMICVIEWMODEL
+#if CLR_GE_4_0 && RGN_DYNAMICVIEWMODEL
             if (this is System.Dynamic.DynamicObject)
             {
                 // このオブジェクトのプロパティとしてプロパティの
@@ -220,7 +220,7 @@ namespace Ragnarok.ObjectModel
         /// senderに指定のプロパティが存在するか調べます。
         /// </summary>
         private void VerifyProperty(object sender,
-                                           PropertyChangedEventArgs e)
+                                    PropertyChangedEventArgs e)
         {
             if (sender == null)
             {

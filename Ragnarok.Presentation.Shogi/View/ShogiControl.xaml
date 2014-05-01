@@ -256,7 +256,8 @@
     <Viewbox Stretch="Fill">
         <Viewport3D Width="600" Height="360"
                     x:Name="RootViewport"
-                    ClipToBounds="False">
+                    ClipToBounds="False"
+                    RenderOptions.EdgeMode="Unspecified">
             <Viewport3D.Camera>
                 <OrthographicCamera
                     Width="600"

@@ -3,6 +3,8 @@
 	* Ragnarok.Presentation/WpfUtil.cs: ウィンドウのソフトウェアレンダリン
 	グとハードウェアレンダリングを切り替えられるようにしました。
 	* CLRのバージョン定義方法を変更しました。
+	* Ragnarok.Presentation/VisualObject/Control/BackgroundCore.xaml: コン
+	トロールの外側にオブジェクトを描画してしまっていたバグを修正しました。
 
 2014-04-11  - Ver 2.4.10
 
