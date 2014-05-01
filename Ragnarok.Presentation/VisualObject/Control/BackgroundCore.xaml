@@ -6,7 +6,10 @@
     <ControlTemplate x:Key="mainControl">
         <Viewbox Stretch="Fill" IsHitTestVisible="False">
             <Viewport3D Width="640" Height="360"
-                        x:Name="PART_Viewport3D">
+                        x:Name="PART_Viewport3D"
+                        ClipToBounds="False"
+                        IsHitTestVisible="False"
+                        RenderOptions.EdgeMode="Unspecified">
                 <Viewport3D.Camera>
                     <OrthographicCamera
                         x:Name="PART_Camera"

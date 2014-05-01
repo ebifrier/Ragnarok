@@ -29,7 +29,7 @@ end
 #
 def output_content(copy_lines)
   str =<<EOD
-#if CLR_V4
+#if CLR_GE_4_0
 #define RGN_DYNAMICVIEWMODEL
 using System;
 using System.Collections.Generic;

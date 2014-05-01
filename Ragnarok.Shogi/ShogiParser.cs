@@ -440,8 +440,8 @@ namespace Ragnarok.Shogi
         /// </summary>
         private static readonly List<string> PiecePostfixTable = new List<string>
         {
-            "ちゃん", "くん", "さん", "さま", "様",
-            "厨", "ちゅう", "きち", "吉", "ごん",
+            "さん", "ちゃん", "くん", "君", "さま", "様",
+            "ちゅう", "厨", "きち", "吉", "ごん",
         };
 
         /// <summary>

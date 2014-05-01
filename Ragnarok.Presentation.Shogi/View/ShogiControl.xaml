@@ -255,7 +255,8 @@
 
     <Viewbox Stretch="Fill">
         <Viewport3D Width="600" Height="360"
-                    x:Name="RootViewport">
+                    x:Name="RootViewport"
+                    ClipToBounds="False">
             <Viewport3D.Camera>
                 <OrthographicCamera
                     Width="600"
@@ -353,13 +354,11 @@
             </ModelUIElement3D>
 
             <!-- 持ち駒の表示 -->
-            <ContainerUIElement3D x:Name="CapturedPieceContainer"
-                                  AllowDrop="True">
+            <ContainerUIElement3D x:Name="CapturedPieceContainer">
             </ContainerUIElement3D>
 
             <!-- 盤上の駒の表示 -->
-            <ContainerUIElement3D x:Name="PieceContainer"
-                                  AllowDrop="True">
+            <ContainerUIElement3D x:Name="PieceContainer">
             </ContainerUIElement3D>
 
             <!-- エフェクト表示 -->

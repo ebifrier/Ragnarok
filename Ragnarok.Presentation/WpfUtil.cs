@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using System.Windows.Media.Imaging;
@@ -280,6 +281,31 @@ namespace Ragnarok.Presentation
                     1, 2, 3,
                 },
             };
+        }
+
+        /// <summary>
+        /// ウィンドウごとのレンダリングモードを設定します。
+        /// </summary>
+        /// <remarks>
+        /// <paramref name="isSoftwareOnly"/>が真であればソフトウェアによる
+        /// レンダリングを強制し、そうでなければハードウェアかソフトウェアの
+        /// 可能な方が使われます。
+        /// </remarks>
+        public static void SetRenderMode(Visual visual, bool isSoftwareOnly)
+        {
+#if CLR_GE_3_5
+            var hwndSource = PresentationSource.FromVisual(visual) as HwndSource;
+            if (hwndSource == null)
+            {
+                throw new RagnarokException(
+                    "レンダリング設定対象の取得に失敗しました。");
+            }
+
+            hwndSource.CompositionTarget.RenderMode = (
+                isSoftwareOnly ?
+                RenderMode.SoftwareOnly :
+                RenderMode.Default);
+#endif
         }
 
         #region コリジョン

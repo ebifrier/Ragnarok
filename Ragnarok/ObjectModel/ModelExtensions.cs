@@ -205,7 +205,7 @@ namespace Ragnarok.ObjectModel
 
             // DynamicViewModelにも全く同じコードを使うので、
             // そのための#ifです。
-#if CLR_V4 && RGN_DYNAMICVIEWMODEL
+#if CLR_GE_4_0 && RGN_DYNAMICVIEWMODEL
             if (self is System.Dynamic.DynamicObject)
             {
                 // このオブジェクトのプロパティとしてプロパティの

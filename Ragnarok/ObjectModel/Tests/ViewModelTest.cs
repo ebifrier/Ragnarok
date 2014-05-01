@@ -1,4 +1,4 @@
-﻿#if TESTS && CLR_V4
+﻿#if TESTS && CLR_GE_4_0
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
