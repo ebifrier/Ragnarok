@@ -84,6 +84,10 @@
     <Compile Include="Behaviors\ScenarioBehavior.cs" />
     <Compile Include="Control\ColorButton.cs" />
     <Compile Include="Control\CustomAdorner.cs" />
+    <Compile Include="Control\EvaluationControl.cs" />
+    <Compile Include="Control\EvaluationSettingDialog.xaml.cs">
+      <DependentUpon>EvaluationSettingDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Control\TimeSpanView.cs" />
     <Compile Include="Control\TimeSpanEditControl.cs" />
     <Compile Include="Control\DecoratedTextBase.cs" />
@@ -113,6 +117,7 @@
     <Compile Include="Command\RelayCommand.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Extension\ImageSetListExtension.cs" />
     <Compile Include="Utility\ControlUtil.cs" />
     <Compile Include="Control\DecoratedText.cs" />
     <Compile Include="Control\NumericUpDown.cs" />
@@ -207,6 +212,18 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Control\DecoratedText.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Control\EvaluationControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Control\EvaluationSettingDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Control\InfoView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
