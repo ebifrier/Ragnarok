@@ -331,7 +331,7 @@ namespace Ragnarok.Shogi.Bonanza
             }
             else if (error.StartsWith("WARNING: "))
             {
-                //Abort(AbortReason.Error);
+                Abort(AbortReason.Error);
             }
         }
         #endregion
