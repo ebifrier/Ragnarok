@@ -64,14 +64,29 @@ namespace Ragnarok.Presentation.Shogi.Effects
     public sealed class EffectInfo
     {
         /// <summary>
-        /// エフェクトファイルがある基本パスを取得または設定します。
+        /// エフェクトファイルの基本パスを取得または設定します。
         /// </summary>
-        public readonly static Uri EffectBaseDir;
+        public static Uri BaseDir
+        {
+            get;
+            set;
+        }
 
         /// <summary>
-        /// 背景エフェクトファイルがある基本パスを取得または設定します。
+        /// エフェクトファイルがある基本パスを取得します。
         /// </summary>
-        public readonly static Uri BackgroundBaseDir;
+        public static Uri EffectBaseDir
+        {
+            get { return new Uri(BaseDir, "Effect"); }
+        }
+
+        /// <summary>
+        /// 背景エフェクトファイルがある基本パスを取得します。
+        /// </summary>
+        public static Uri BackgroundBaseDir
+        {
+            get { return new Uri(BaseDir, "Background"); }
+        }
 
         /// <summary>
         /// 静的コンストラクタ
@@ -82,21 +97,16 @@ namespace Ragnarok.Presentation.Shogi.Effects
             {
                 var assembly = Assembly.GetEntryAssembly();
 
-                EffectBaseDir = new Uri(
+                BaseDir = new Uri(
                     new Uri(assembly.CodeBase),
-                    "ShogiData/Effect");
-
-                BackgroundBaseDir = new Uri(
-                    new Uri(assembly.CodeBase),
-                    "ShogiData/Background");
+                    "ShogiData/xxx");
             }
             catch (Exception ex)
             {
                 Log.ErrorException(ex,
                     "パスの初期化に失敗しました。");
 
-                EffectBaseDir = null;
-                BackgroundBaseDir = null;
+                BaseDir = null;
             }
         }
 

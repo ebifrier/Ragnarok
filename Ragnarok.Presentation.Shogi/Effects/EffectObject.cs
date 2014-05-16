@@ -52,24 +52,6 @@ namespace Ragnarok.Presentation.Shogi.Effects
     /// </summary>
     public class EffectObject : EntityObject, IUriContext
     {
-        /// <summary>
-        /// エフェクトや画像の基本パスです。
-        /// </summary>
-        public static readonly Uri DefaultBasePath;
-
-        /// <summary>
-        /// 静敵コンストラクタ
-        /// </summary>
-        static EffectObject()
-        {
-            if (!Ragnarok.Presentation.WPFUtil.IsInDesignMode)
-            {
-                DefaultBasePath = new Uri(
-                    new Uri(Assembly.GetEntryAssembly().Location),
-                    "ShogiData/xxx");
-            }
-        }
-
         private GeometryModel3D model;
         private Brush brush;
         private Model3DRenderer renderer;
@@ -361,7 +343,7 @@ namespace Ragnarok.Presentation.Shogi.Effects
             }
             else
             {
-                return new Uri(DefaultBasePath, relativeUri);
+                return new Uri(relativeUri, UriKind.Relative);
             }
         }
 
