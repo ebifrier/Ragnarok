@@ -117,7 +117,8 @@
             <DiffuseMaterial x:Key="banTitleMaterial">
                 <DiffuseMaterial.Brush>
                     <VisualBrush TileMode="None"
-                                 Visual="{StaticResource boardTitleView}" />
+                                 Visual="{StaticResource boardTitleView}"
+                                 RenderOptions.CachingHint="Cache" />
                 </DiffuseMaterial.Brush>
             </DiffuseMaterial>
 
@@ -170,7 +171,8 @@
 
             <DiffuseMaterial x:Key="label0Material">
                 <DiffuseMaterial.Brush>
-                    <VisualBrush Visual="{StaticResource label0Text}" />
+                    <VisualBrush Visual="{StaticResource label0Text}"
+                                 RenderOptions.CachingHint="Cache" />
                 </DiffuseMaterial.Brush>
             </DiffuseMaterial>
 
@@ -193,7 +195,8 @@
 
             <DiffuseMaterial x:Key="label1Material">
                 <DiffuseMaterial.Brush>
-                    <VisualBrush Visual="{StaticResource label1Text}" />
+                    <VisualBrush Visual="{StaticResource label1Text}"
+                                 RenderOptions.CachingHint="Cache" />
                 </DiffuseMaterial.Brush>
             </DiffuseMaterial>
             

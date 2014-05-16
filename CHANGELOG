@@ -1,3 +1,9 @@
+2014-05-16  - Ver 2.5.0
+
+	* Ragnarok.Presentation.Shogi/View/ShogiControl.xaml: VisualBrushをキャ
+	ッシュすることで、少し高速化しました。
+	* Ragnarok/Utility/Calculator.cs: リファクタリングを行いました。
+
 2014-05-01  - Ver 2.4.12
 
 	* ボナ子でも同様のクラスを使うため、評価値表示用のコントロールを

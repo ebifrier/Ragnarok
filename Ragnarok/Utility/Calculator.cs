@@ -18,7 +18,7 @@ namespace Ragnarok.Utility
     /// <summary>
     /// 定数情報を登録します。
     /// </summary>
-    internal struct ConstantInfo
+    internal class ConstantInfo
     {
         private readonly string name;
         private readonly double value;
@@ -52,7 +52,7 @@ namespace Ragnarok.Utility
     /// <summary>
     /// 関数情報を登録します。
     /// </summary>
-    internal struct FunctionInfo
+    internal class FunctionInfo
     {
         private readonly Func<double[], double> func;
         private readonly string name;
@@ -166,7 +166,7 @@ namespace Ragnarok.Utility
             {
                 new FunctionInfo("log", 1, false, _ => Math.Log(_[0])),
                 new FunctionInfo("log10", 1, false, _ => Math.Log(_[0])),
-                new FunctionInfo("abs", 2, false, _ => Math.Abs(_[0])),
+                new FunctionInfo("abs", 1, false, _ => Math.Abs(_[0])),
                 new FunctionInfo("max", 2, true, _ => _.Max()),
                 new FunctionInfo("min", 2, true, _ => _.Min()),
                 new FunctionInfo("leap", 3, false, _ => (_[0] * (1.0 - _[2]) + _[1] * _[2])),
@@ -261,33 +261,28 @@ namespace Ragnarok.Utility
         {
             args = args ?? new double[0];
 
-            foreach (var info in this.constTable)
+            if (args.Count() == 0)
             {
-                if (string.Compare(name, info.Name, true) == 0)
+                // 名前が一致する定数値を探します。
+                var constInfo = this.constTable
+                    .Where(_ => string.Compare(name, _.Name, true) == 0)
+                    .FirstOrDefault();
+                if (constInfo != null)
                 {
-                    var isCorrent = (args.Count() == 0);
-
-                    if (isCorrent)
-                    {
-                        return info.Value;
-                    }
+                    return constInfo.Value;
                 }
             }
 
-            foreach (var info in this.funcTable)
+            // 一致する関数を探します。
+            var funcInfo = this.funcTable
+                .Where(_ => string.Compare(name, _.Name, true) == 0)
+                .Where(_ => _.IsVariableLengthParameter ?
+                    args.Count() >= _.ParameterCount :
+                    args.Count() == _.ParameterCount)
+                .FirstOrDefault();
+            if (funcInfo != null)
             {
-                if (string.Compare(name, info.Name, true) == 0)
-                {
-                    var isCorrent =
-                        (info.IsVariableLengthParameter ?
-                         args.Count() >= info.ParameterCount :
-                         args.Count() == info.ParameterCount);
-                    
-                    if (isCorrent)
-                    {
-                        return info.Apply(args);
-                    }
-                }
+                return funcInfo.Apply(args);
             }
 
             throw new RagnarokException(string.Format(
@@ -299,7 +294,6 @@ namespace Ragnarok.Utility
         /// </summary>
         private Grammar CreateParser(AngleMode angleMode)
         {
-            //var x = Patterns.Regex("[a-zA-Z_][0-9a-zA-Z_]*");
             var sDelim = Scanners.IsWhitespaces().Many_();
             var OPs = Terms.GetOperatorsInstance(
                 "+", "-", "**", "*", "/", "%", "(", ")", ",");
@@ -317,6 +311,7 @@ namespace Ragnarok.Utility
             var pDiv = GetOperator(OPs, "/", new Binary((a, b) => (a / b)));
             var pMod = GetOperator(OPs, "%", new Binary((a, b) => (a % b)));
             var pPow = GetOperator(OPs, "**", new Binary((a, b) => Math.Pow(a, b)));
+            var pNone = GetOperator(OPs, "+", new Unary(n => n));
             var pNeg = GetOperator(OPs, "-", new Unary(n => -n));
             var opTable = new OperatorTable<double>()
                 .Infixl(pPlus, 10)
@@ -325,6 +320,7 @@ namespace Ragnarok.Utility
                 .Infixl(pDiv, 20)
                 .Infixl(pMod, 20)
                 .Infixr(pPow, 30)
+                .Prefix(pNone, 40)
                 .Prefix(pNeg, 40);
 
             var pLParen = OPs.GetParser("(");
@@ -338,7 +334,7 @@ namespace Ragnarok.Utility
                 | pLParen.Seq(pRParen).Seq(Parsers.Return(new double[0]));
             var pTerm
                 = pLazyExpr.Between(pLParen, pRParen)
-                | pWord.And(pArg.Optional(), (Map<string, double[], double>)CalcFunc)
+                | pWord.And(pArg.Optional(), new Map<string, double[], double>(CalcFunc))
                 | pNumber;
 
             var pExpr = Expressions.BuildExpressionParser(pTerm, opTable);
