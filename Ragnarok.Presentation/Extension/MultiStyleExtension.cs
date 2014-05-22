@@ -10,62 +10,65 @@ namespace Ragnarok.Presentation.Extension
     /// <summary>
     /// 複数スタイルを適用するための拡張構文です。
     /// </summary>
-	[MarkupExtensionReturnType(typeof(Style))]
-	public class MultiStyleExtension : MarkupExtension
-	{
-		private string[] resourceKeys;
+    [MarkupExtensionReturnType(typeof(Style))]
+    public class MultiStyleExtension : MarkupExtension
+    {
+        private string[] resourceKeys;
 
-		/// <summary>
-		/// コンストラクタ
-		/// </summary>
-		public MultiStyleExtension(string inputResourceKeys)
-		{
-			if (inputResourceKeys == null)
-			{
-				throw new ArgumentNullException("inputResourceKeys");
-			}
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public MultiStyleExtension(string inputResourceKeys)
+        {
+            if (inputResourceKeys == null)
+            {
+                throw new ArgumentNullException("inputResourceKeys");
+            }
 
-			this.resourceKeys = inputResourceKeys.Split(
+            this.resourceKeys = inputResourceKeys.Split(
                 new char[] { ' ', ',' },
                 StringSplitOptions.RemoveEmptyEntries);
 
-			if (this.resourceKeys.Length == 0)
-			{
-				throw new ArgumentException(
+            if (!this.resourceKeys.Any())
+            {
+                throw new ArgumentException(
                     "No input resource keys specified.");
-			}
-		}
+            }
+        }
+        
+        private static Style GetStyle(IServiceProvider service,
+                                      StaticResourceExtension resource)
+        {
+            var style = resource.ProvideValue(service) as Style;
+            if (style == null)
+            {
+                throw new InvalidOperationException(
+                    string.Format(
+                        "Could not find style with resource key {0}.",
+                        resource.ResourceKey));
+            }
+            
+            return style;
+        }
 
-		/// <summary>
-		/// Returns a style that merges all styles with the keys specified in the constructor.
-		/// </summary>
-		public override object ProvideValue(IServiceProvider service)
-		{
+        /// <summary>
+        /// Returns a style that merges all styles with the keys specified in the constructor.
+        /// </summary>
+        public override object ProvideValue(IServiceProvider service)
+        {
             if (WPFUtil.IsInDesignMode)
             {
                 return null;
             }
 
-			var resultStyle = new Style();
+            var resultStyle = new Style();
+            resourceKeys
+                .Select(_ => new StaticResourceExtension(_))
+                .Select(_ => GetStyle(service, _))
+                .ForEach(_ => Merge(resultStyle, _));
 
-			foreach (string currentResourceKey in resourceKeys)
-			{
-				var currentStyle = new StaticResourceExtension(currentResourceKey)
-                    .ProvideValue(service) as Style;
-
-				if (currentStyle == null)
-				{
-					throw new InvalidOperationException(
-                        string.Format(
-                            "Could not find style with resource key {0}.",
-                            currentResourceKey));
-				}
-
-                Merge(resultStyle, currentStyle);
-			}
-
-			return resultStyle;
-		}
+            return resultStyle;
+        }
 
         /// <summary>
         /// 複数のスタイルをマージします。
@@ -91,15 +94,9 @@ namespace Ragnarok.Presentation.Extension
                 Merge(style1, style2.BasedOn);
             }
 
-            foreach (var currentSetter in style2.Setters)
-            {
-                style1.Setters.Add(currentSetter);
-            }
-
-            foreach (var currentTrigger in style2.Triggers)
-            {
-                style1.Triggers.Add(currentTrigger);
-            }
+            // setterとtriggerをマージします。
+            style2.Setters.ForEach(_ => style1.Setters.Add(_));
+            style2.Triggers.ForEach(_ => style1.Triggers.Add(_));
 
             // This code is only needed when using DynamicResources.
             foreach (var key in style2.Resources.Keys)
@@ -107,5 +104,5 @@ namespace Ragnarok.Presentation.Extension
                 style1.Resources[key] = style2.Resources[key];
             }
         }
-	}
+    }
 }

@@ -1,3 +1,8 @@
+2014-05-23  - Ver 2.5.2
+
+	* Ragnarok.Presentation/Extension/MultiStyleExtension.cs: リファクタリ
+	ングを行いました。
+
 2014-05-17  - Ver 2.5.1
 
 	* Ragnarok.Presentation.Shogi/Effects/Effect.cs: エフェクトデータの基本
