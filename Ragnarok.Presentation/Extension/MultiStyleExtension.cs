@@ -61,19 +61,16 @@ namespace Ragnarok.Presentation.Extension
                 return null;
             }
 
-            var resultStyle = new Style();
-            resourceKeys
+            return resourceKeys
                 .Select(_ => new StaticResourceExtension(_))
                 .Select(_ => GetStyle(service, _))
-                .ForEach(_ => Merge(resultStyle, _));
-
-            return resultStyle;
+                .Aggregate(new Style(), (result, _) => Merge(result, _));
         }
 
         /// <summary>
         /// 複数のスタイルをマージします。
         /// </summary>
-        private static void Merge(Style style1, Style style2)
+        private static Style Merge(Style style1, Style style2)
         {
             if (style1 == null)
             {
@@ -98,11 +95,12 @@ namespace Ragnarok.Presentation.Extension
             style2.Setters.ForEach(_ => style1.Setters.Add(_));
             style2.Triggers.ForEach(_ => style1.Triggers.Add(_));
 
-            // This code is only needed when using DynamicResources.
-            foreach (var key in style2.Resources.Keys)
-            {
-                style1.Resources[key] = style2.Resources[key];
-            }
+            // DynamicResourcesをマージ。
+            style2.Resources.Keys
+                .OfType<object>()
+                .ForEach(_ => style1.Resources[_] = style2.Resources[_]);
+
+            return style1;
         }
     }
 }
