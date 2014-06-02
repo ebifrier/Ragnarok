@@ -1,3 +1,14 @@
+2014-06-02  - Ver 2.6.2
+
+	* Ragnarok.Presentation.Shogi/Xaml/LeaveTimeConverter.cs,
+	  Ragnarok.Presentation.Shogi/Xaml/TebanMeshConverter.cs,
+	  Ragnarok.Presentation.Shogi/Xaml/ViewSideSwitchConverter.cs:
+	クラスにsealedを追加し、例外対応などの修正を行いました。
+	* Ragnarok.Presentation.Shogi/ViewModel/ShogiCommands.cs,
+	  Ragnarok.Presentation.Shogi/Effects/Model3DRenderer.cs,
+	  Ragnarok.Presentation.Shogi/Effects/IEffectManager.cs:
+	将棋盤コントロールをShogiControlからShogiUIElement3Dに改名しました。
+
 2014-06-02  - Ver 2.6.1
 
 	* Ragnarok.Presentation/VisualObject/Control/BackgroundUIElement3D.cs: 

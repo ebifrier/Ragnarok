@@ -66,7 +66,9 @@ namespace Ragnarok.Presentation.Shogi.Effects
             foreach (var particle in particles)
             {
                 if (particle.Brush != null)
+                {
                     particle.Brush.Opacity = (double)((particle.Color >> 24) & 0xFF) / 255.0;
+                }
 
                 if (particle.Material != null)
                 {
@@ -99,7 +101,7 @@ namespace Ragnarok.Presentation.Shogi.Effects
                     m.Rotate(new Quaternion(new Vector3D(0, 0, 1), rot));
                 }
 
-                m.Translate(new Vector3D(particle.X, particle.Y, ShogiControl.PostEffectZ));
+                m.Translate(new Vector3D(particle.X, particle.Y, ShogiUIElement3D.PostEffectZ));
 
                 particle.Model.Transform = new MatrixTransform3D(m);
             }

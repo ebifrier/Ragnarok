@@ -13,7 +13,7 @@ namespace Ragnarok.Presentation.Shogi.Xaml
     /// <summary>
     /// 盤の回転に対応した対局者名などを取得します。
     /// </summary>
-    public class ViewSideSwitchConverter : IMultiValueConverter
+    public sealed class ViewSideSwitchConverter : IMultiValueConverter
     {
         /// <summary>
         /// 初期状態の先手側に対応した値を扱うか取得または設定します。
@@ -32,6 +32,11 @@ namespace Ragnarok.Presentation.Shogi.Xaml
         {
             try
             {
+                if (value[0] == DependencyProperty.UnsetValue)
+                {
+                    return null;
+                }
+
                 var viewSide = (BWType)value[0];
                 var blackValue = value[1];
                 var whiteValue = value[2];
@@ -41,11 +46,8 @@ namespace Ragnarok.Presentation.Shogi.Xaml
 
                 return (flag1 || flag2 ? blackValue : whiteValue);
             }
-            catch (InvalidCastException ex)
+            catch (InvalidCastException)
             {
-                Log.ErrorException(ex,
-                    "キャストに失敗しました。");
-
                 return null;
             }
         }

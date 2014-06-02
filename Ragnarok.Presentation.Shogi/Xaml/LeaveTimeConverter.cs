@@ -14,7 +14,7 @@ namespace Ragnarok.Presentation.Shogi.Xaml
     /// 残り時間をTimeSpanから表示用文字列に変換します。
     /// </summary>
     [ValueConversion(typeof(TimeSpan), typeof(string))]
-    public class LeaveTimeConverter : IValueConverter
+    public sealed class LeaveTimeConverter : IValueConverter
     {
         /// <summary>
         /// 残り時間をTimeSpanから表示用文字列に変換します。

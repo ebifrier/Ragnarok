@@ -15,7 +15,7 @@ namespace Ragnarok.Presentation.Shogi.Xaml
     /// 手番表示のメッシュを作成するコンバーターです。
     /// </summary>
     [ValueConversion(typeof(BWType), typeof(MeshGeometry3D))]
-    public class TebanMeshConverter : IValueConverter
+    public sealed class TebanMeshConverter : IValueConverter
     {
         /// <summary>
         /// マスの位置からメッシュを作成します。

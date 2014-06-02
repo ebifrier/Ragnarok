@@ -13,7 +13,7 @@ namespace Ragnarok.Presentation.Shogi.Effects
         /// <summary>
         /// エフェクトを表示するオブジェクトを取得または設定します。
         /// </summary>
-        View.ShogiControl Container
+        View.ShogiUIElement3D Container
         {
             get;
             set;

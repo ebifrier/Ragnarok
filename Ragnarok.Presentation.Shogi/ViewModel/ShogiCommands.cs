@@ -25,7 +25,7 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
             new RoutedUICommand(
                 "棋譜ファイルを読み込みます。",
                 "LoadKifFile",
-                typeof(ShogiControl));
+                typeof(ShogiUIElement3D));
         /// <summary>
         /// 棋譜ファイルを保存します。
         /// </summary>
@@ -33,7 +33,7 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
             new RoutedUICommand(
                 "棋譜ファイルを保存します。",
                 "SaveKifFile",
-                typeof(ShogiControl));
+                typeof(ShogiUIElement3D));
         /// <summary>
         /// 棋譜ファイルの貼り付けを行います。
         /// </summary>
@@ -41,7 +41,7 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
             new RoutedUICommand(
                 "棋譜ファイルの貼り付けを行います。",
                 "PasteKifFile",
-                typeof(ShogiControl));
+                typeof(ShogiUIElement3D));
         /// <summary>
         /// 棋譜ファイルのコピーを行います。
         /// </summary>
@@ -49,7 +49,7 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
             new RoutedUICommand(
                 "棋譜ファイルのコピーを行います。",
                 "CopyKifFile",
-                typeof(ShogiControl));
+                typeof(ShogiUIElement3D));
         /// <summary>
         /// 盤面を反転します。
         /// </summary>
@@ -57,7 +57,7 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
             new RoutedUICommand(
                 "盤面を反転します。",
                 "SetReverseBoard",
-                typeof(ShogiControl));
+                typeof(ShogiUIElement3D));
 
         /// <summary>
         /// 開始局面へ。
@@ -66,7 +66,7 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
             new RoutedUICommand(
                 "開始局面へ。",
                 "GotoFirstState",
-                typeof(ShogiControl));
+                typeof(ShogiUIElement3D));
         /// <summary>
         /// 最終局面へ。
         /// </summary>
@@ -74,7 +74,7 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
             new RoutedUICommand(
                 "最終局面へ。",
                 "GotoLastState",
-                typeof(ShogiControl));
+                typeof(ShogiUIElement3D));
         /// <summary>
         /// 手を一つ戻します。
         /// </summary>
@@ -82,7 +82,7 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
             new RoutedUICommand(
                 "手を一つ戻します。",
                 "MoveUndo",
-                typeof(ShogiControl));
+                typeof(ShogiUIElement3D));
         /// <summary>
         /// 手を一つ進めます。
         /// </summary>
@@ -90,7 +90,7 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
             new RoutedUICommand(
                 "手を一つ進めます。",
                 "MoveRedo",
-                typeof(ShogiControl));
+                typeof(ShogiUIElement3D));
         /// <summary>
         /// 連続して手を戻します。
         /// </summary>
@@ -98,7 +98,7 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
             new RoutedUICommand(
                 "連続して手を戻します。",
                 "MoveUndoContinue",
-                typeof(ShogiControl));
+                typeof(ShogiUIElement3D));
         /// <summary>
         /// 連続して手を進めます。
         /// </summary>
@@ -106,7 +106,7 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
             new RoutedUICommand(
                 "連続して手を進めます。",
                 "MoveRedoContinue",
-                typeof(ShogiControl));
+                typeof(ShogiUIElement3D));
         /// <summary>
         /// 再生中の手を停止します。
         /// </summary>
@@ -114,12 +114,12 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
             new RoutedUICommand(
                 "再生中の手を停止します。",
                 "MoveStop",
-                typeof(ShogiControl));
+                typeof(ShogiUIElement3D));
 
         /// <summary>
         /// コマンドをバインディングします。
         /// </summary>
-        public static void Binding(ShogiControl control,
+        public static void Binding(ShogiUIElement3D control,
                                    CommandBindingCollection bindings)
         {
             bindings.Add(
@@ -212,7 +212,7 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
                     new KeyGesture(Key.C, ModifierKeys.Control)));
         }
 
-        private static Board GetBoard(ShogiControl control)
+        private static Board GetBoard(ShogiUIElement3D control)
         {
             var board = control.Board;
 
@@ -229,7 +229,7 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
         /// <summary>
         /// コマンドが実行できるか調べます。
         /// </summary>
-        private static void CanExecute(ShogiControl control, CanExecuteRoutedEventArgs e)
+        private static void CanExecute(ShogiUIElement3D control, CanExecuteRoutedEventArgs e)
         {
             var canEdit = (control.EditMode == EditMode.Normal);
 
@@ -280,7 +280,7 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
         /// <summary>
         /// 棋譜ファイルを読み込みます。
         /// </summary>
-        private static void ExecuteLoadKifFile(ShogiControl control)
+        private static void ExecuteLoadKifFile(ShogiUIElement3D control)
         {
             try
             {
@@ -315,7 +315,7 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
         /// <summary>
         /// 棋譜ファイルの貼り付けを行います。
         /// </summary>
-        private static void ExecutePasteKifFile(ShogiControl control)
+        private static void ExecutePasteKifFile(ShogiUIElement3D control)
         {
             var text = Clipboard.GetText(TextDataFormat.Text);
             using (var reader = new StringReader(text))
@@ -327,7 +327,7 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
         /// <summary>
         /// 棋譜ファイルの読み込みを行います。
         /// </summary>
-        public static void LoadKif(ShogiControl control, TextReader reader)
+        public static void LoadKif(ShogiUIElement3D control, TextReader reader)
         {
             try
             {
@@ -352,7 +352,7 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
         /// <summary>
         /// 棋譜ファイルを保存します。
         /// </summary>
-        private static void ExecuteSaveKifFile(ShogiControl control)
+        private static void ExecuteSaveKifFile(ShogiUIElement3D control)
         {
             try
             {
@@ -389,7 +389,7 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
         /// <summary>
         /// 棋譜ファイルのコピーを行います。
         /// </summary>
-        private static void ExecuteCopyKifFile(ShogiControl control)
+        private static void ExecuteCopyKifFile(ShogiUIElement3D control)
         {
             using (var writer = new StringWriter())
             {
@@ -402,7 +402,7 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
         /// <summary>
         /// 棋譜ファイルの書き込みを行います。
         /// </summary>
-        public static void SaveKif(ShogiControl control, TextWriter writer)
+        public static void SaveKif(ShogiUIElement3D control, TextWriter writer)
         {
             try
             {
@@ -431,7 +431,7 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
         /// <summary>
         /// 盤面を反転します。
         /// </summary>
-        private static void ExecuteSetReverseBoard(ShogiControl control, ExecutedRoutedEventArgs e)
+        private static void ExecuteSetReverseBoard(ShogiUIElement3D control, ExecutedRoutedEventArgs e)
         {
             try
             {
@@ -450,7 +450,7 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
         /// <summary>
         /// 開始局面へ。
         /// </summary>
-        private static void ExecuteGotoFirstState(ShogiControl control)
+        private static void ExecuteGotoFirstState(ShogiUIElement3D control)
         {
             if (control.EditMode != EditMode.Normal)
             {
@@ -466,7 +466,7 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
         /// <summary>
         /// 最終局面へ。
         /// </summary>
-        private static void ExecuteGotoLastState(ShogiControl control)
+        private static void ExecuteGotoLastState(ShogiUIElement3D control)
         {
             if (control.EditMode != EditMode.Normal)
             {
@@ -482,7 +482,7 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
         /// <summary>
         /// １手戻します。
         /// </summary>
-        private static void ExecuteMoveUndo(ShogiControl control)
+        private static void ExecuteMoveUndo(ShogiUIElement3D control)
         {
             if (control.EditMode != EditMode.Normal)
             {
@@ -501,7 +501,7 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
         /// <summary>
         /// １手進めます。
         /// </summary>
-        private static void ExecuteMoveRedo(ShogiControl control)
+        private static void ExecuteMoveRedo(ShogiUIElement3D control)
         {
             if (control.EditMode != EditMode.Normal)
             {
@@ -520,7 +520,7 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
         /// <summary>
         /// 連続して手を戻します。
         /// </summary>
-        private static void ExecuteMoveUndoContinue(ShogiControl control)
+        private static void ExecuteMoveUndoContinue(ShogiUIElement3D control)
         {
             if (control.EditMode != EditMode.Normal)
             {
@@ -544,7 +544,7 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
         /// <summary>
         /// 連続して手を進めます。
         /// </summary>
-        private static void ExecuteMoveRedoContinue(ShogiControl control)
+        private static void ExecuteMoveRedoContinue(ShogiUIElement3D control)
         {
             if (control.EditMode != EditMode.Normal)
             {
@@ -568,7 +568,7 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
         /// <summary>
         /// 再生中の手を停止します。
         /// </summary>
-        private static void ExecuteMoveStop(ShogiControl control)
+        private static void ExecuteMoveStop(ShogiUIElement3D control)
         {
             control.StopAutoPlay();
         }
