@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 
-namespace Ragnarok.Presentation.VisualObject
+namespace Ragnarok.Presentation.Extra.Entity
 {
     /// <summary>
     /// FPS値をカウントします。

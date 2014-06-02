@@ -4,7 +4,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Media.Animation;
 
-namespace Ragnarok.Presentation.Behaviors
+namespace Ragnarok.Presentation.Extra.Behaviors
 {
     /// <summary>
     /// ビヘイビアを管理します。

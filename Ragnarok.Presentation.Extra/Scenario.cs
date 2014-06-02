@@ -9,7 +9,7 @@ using System.ComponentModel;
 
 using Ragnarok.ObjectModel;
 
-namespace Ragnarok.Presentation.VisualObject
+namespace Ragnarok.Presentation.Extra
 {
     /// <summary>
     /// オブジェクトの各プロパティの変化を記述します。

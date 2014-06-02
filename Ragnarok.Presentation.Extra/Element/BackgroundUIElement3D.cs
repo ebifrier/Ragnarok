@@ -17,8 +17,10 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 
-namespace Ragnarok.Presentation.VisualObject.Control
+namespace Ragnarok.Presentation.Extra.Element
 {
+    using Entity;
+
     /// <summary>
     /// クロスフェード可能な背景オブジェクトです。
     /// </summary>

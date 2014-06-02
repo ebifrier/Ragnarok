@@ -5,7 +5,7 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace Ragnarok.Presentation.VisualObject
+namespace Ragnarok.Presentation.Extra.Effect
 {
     /// <summary>
     /// 画像オブジェクトをキャッシュします。

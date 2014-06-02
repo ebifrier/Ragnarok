@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Ragnarok.Presentation.VisualObject
+namespace Ragnarok.Presentation.Extra.Entity
 {
     /// <summary>
     /// 複数のエンティティを管理するクラスで追加・削除時に親も設定します。

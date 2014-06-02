@@ -7,9 +7,9 @@ using System.Windows.Media.Animation;
 
 using Ragnarok.ObjectModel;
 
-namespace Ragnarok.Presentation.Behaviors
+namespace Ragnarok.Presentation.Extra.Behaviors
 {
-    using VisualObject;
+    using Entity;
 
     /// <summary>
     /// シナリオのXAMLからの開始・終了を行います。

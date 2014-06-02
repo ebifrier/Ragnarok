@@ -9,11 +9,8 @@ using System.Windows;
 using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
-using System.Xml;
 
-using Ragnarok.Shogi;
-
-namespace Ragnarok.Presentation.Shogi.Effects
+namespace Ragnarok.Presentation.Extra.Effect
 {
     /// <summary>
     /// エフェクトの各引数を管理します。

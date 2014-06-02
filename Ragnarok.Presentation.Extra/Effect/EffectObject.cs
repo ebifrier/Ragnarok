@@ -11,12 +11,12 @@ using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
 
 using FlintSharp.Renderers;
-using Ragnarok;
-using Ragnarok.Presentation;
-using Ragnarok.Presentation.VisualObject;
+using Ragnarok.Extra.Sound;
 
-namespace Ragnarok.Presentation.Shogi.Effects
+namespace Ragnarok.Presentation.Extra.Effect
 {
+    using Entity;
+
     /// <summary>
     /// 描画方式の識別子です。
     /// </summary>
@@ -50,11 +50,47 @@ namespace Ragnarok.Presentation.Shogi.Effects
     /// <summary>
     /// エフェクト用のオブジェクトです。
     /// </summary>
+    /// <remarks>
+    /// <list type="bullet" | "number">
+    ///   <listheader>
+    ///     <description><see cref="EntityObject"/>との違い</description>
+    ///   </listheader>
+    ///   <item>
+    ///     <description>Xaml読み込みに対応</description>
+    ///   </item>
+    ///   <item>
+    ///     <description>DiffuseやEmissiveなどの各種Materialや不透明度に対応</description>
+    ///   </item>
+    ///   <item>
+    ///     <description>画像のアニメーション表示に対応</description>
+    ///   </item>
+    ///   <item>
+    ///     <description>サウンド再生に対応</description>
+    ///   </item>
+    /// </list>
+    /// </remarks>
     public class EffectObject : EntityObject, IUriContext
     {
         private GeometryModel3D model;
         private Brush brush;
         private Model3DRenderer renderer;
+
+        /// <summary>
+        /// サウンド再生用オブジェクトを取得または設定します。
+        /// </summary>
+        public static SoundManager SoundManager
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 静的コンストラクタ
+        /// </summary>
+        static EffectObject()
+        {
+            SoundManager = new SoundManager();
+        }
 
         #region 描画モデルなど
         /// <summary>
@@ -419,6 +455,12 @@ namespace Ragnarok.Presentation.Shogi.Effects
         /// </summary>
         public bool PlayStartSound(bool isVolumeZero = false)
         {
+            var soundManager = SoundManager;
+            if (soundManager == null)
+            {
+                return false;
+            }
+
             // 開始時のサウンドを鳴らします。
             var soundPath = StartSoundPath;
             if (string.IsNullOrEmpty(soundPath))
@@ -427,8 +469,7 @@ namespace Ragnarok.Presentation.Shogi.Effects
             }
 
             var uri = MakeContentUri(soundPath);
-
-            SoundManager.Instance.PlaySE(
+            soundManager.PlaySE(
                 uri.LocalPath,
                 (isVolumeZero ? 0.0 : StartSoundVolume),
                 false);
@@ -579,7 +620,8 @@ namespace Ragnarok.Presentation.Shogi.Effects
             // 値をForeverにすると、子要素があってもなくてもオブジェクトが
             // 終了しなくなります。
             // また０にすると最初のフレームでオブジェクトが破棄されてしまうため、
-            // 非常に小さいけれど０より大きい値を設定しています。
+            // 初期化の仕方によってはDurationの設定に失敗することがあります。
+            // そのため、ここでは非常に小さいけれど０より大きい値を設定しています。
             Duration = TimeSpan.FromSeconds(0.01);
         }
     }

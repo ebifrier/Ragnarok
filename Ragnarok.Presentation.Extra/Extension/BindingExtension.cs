@@ -6,10 +6,8 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Markup;
 
-namespace Ragnarok.Presentation.Extension
+namespace Ragnarok.Presentation.Extra.Extension
 {
-    using VisualObject;
-
     /// <summary>
     /// <see cref="EntityObject"/>クラスから使うときに便利な
     /// バインディングオブジェクトです。
@@ -105,7 +103,7 @@ namespace Ragnarok.Presentation.Extension
         /// </remarks>
         private PropertyPath CreatePath(DependencyObject target)
         {
-            if (target is EntityObject &&
+            if (target is Entity.EntityObject &&
                 Source == null && string.IsNullOrEmpty(ElementName))
             {
                 var path = (Path != null ? Path.Path : string.Empty);

@@ -8,10 +8,8 @@ using System.Windows.Media.Media3D;
 using FlintSharp.Particles;
 using FlintSharp.Renderers;
 
-namespace Ragnarok.Presentation.Shogi.Effects
+namespace Ragnarok.Presentation.Extra.Effect
 {
-    using View;
-
     /// <summary>
     /// The ParticleCreator is used by the Emitter public class to manage the creation and reuse of particles.
     /// To speed up the particle system, the ParticleCreator public class maintains a pool of dead particles 
@@ -101,7 +99,7 @@ namespace Ragnarok.Presentation.Shogi.Effects
                     m.Rotate(new Quaternion(new Vector3D(0, 0, 1), rot));
                 }
 
-                m.Translate(new Vector3D(particle.X, particle.Y, ShogiUIElement3D.PostEffectZ));
+                m.Translate(new Vector3D(particle.X, particle.Y, 0));
 
                 particle.Model.Transform = new MatrixTransform3D(m);
             }

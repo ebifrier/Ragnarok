@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 
-namespace Ragnarok.Presentation.VisualObject
+namespace Ragnarok.Presentation.Extra.Entity
 {
     /// <summary>
     /// 各フレームで渡される引数です。
@@ -61,7 +61,8 @@ namespace Ragnarok.Presentation.VisualObject
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public EnterFrameEventArgs(TimeSpan elapsedTime, TimeSpan progressSpan, Duration duration)
+        public EnterFrameEventArgs(TimeSpan elapsedTime, TimeSpan progressSpan,
+                                   Duration duration)
         {
             Duration = (duration.HasTimeSpan ? duration.TimeSpan : TimeSpan.MaxValue);
             ElapsedTime = elapsedTime;

@@ -13,7 +13,7 @@ using System.Windows.Media.Media3D;
 using Ragnarok.Utility;
 using Ragnarok.ObjectModel;
 
-namespace Ragnarok.Presentation.VisualObject
+namespace Ragnarok.Presentation.Extra.Entity
 {
     /// <summary>
     /// エフェクト用のオブジェクトです。

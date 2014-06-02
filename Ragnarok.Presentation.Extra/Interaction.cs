@@ -6,7 +6,7 @@ using System.Windows.Markup;
 
 using Ragnarok.ObjectModel;
 
-namespace Ragnarok.Presentation.VisualObject
+namespace Ragnarok.Presentation.Extra
 {
     using Behaviors;
 

@@ -1,3 +1,13 @@
+2014-06-02  - Ver 2.6.5
+
+	* Ragnarok.Presentation.Extra: Ragnarok.Presentation.VisualObjectと
+	Ragnarok.Presentation.Shogiの一部のファイルを統合し、エフェクトなどを扱
+	うためのライブラリを新規に作りました。
+	* Ragnarok.Presentation.Extra/Effect/EffectObject.cs: サウンド再生用の
+	オブジェクトを追加しました。初期化は外部に任せるようにしてあります。
+	* Ragnarok.Presentation.Extra/Effect/Model3DRenderer.cs: 追加するパーテ
+	ィクルのZ座標を0.0に設定するようにしました。
+
 2014-06-02  - Ver 2.6.4
 
 	* Ragnarok.Presentation.Shogi/View/ShogiUIElement3D.cs: 高速化のため、
