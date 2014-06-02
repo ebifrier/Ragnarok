@@ -81,8 +81,8 @@
     <Compile Include="Util3D.cs" />
     <Compile Include="AutoPlay.cs" />
     <Compile Include="ViewModel\ShogiCommands.cs" />
-    <Compile Include="View\ShogiControl.xaml.cs">
-      <DependentUpon>ShogiControl.xaml</DependentUpon>
+    <Compile Include="View\ShogiUIElement3D.cs">
+      <SubType>Code</SubType>
     </Compile>
     <Compile Include="Xaml\BoardText.cs" />
     <Compile Include="Xaml\CellMeshConverter.cs" />
@@ -96,10 +96,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="View\ShogiControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
+    <Resource Include="View\ShogiUIElement3D.xaml">
       <SubType>Designer</SubType>
-    </Page>
+      <Generator>MSBuild:Compile</Generator>
+    </Resource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Ragnarok.Extra\Ragnarok.Extra.csproj">

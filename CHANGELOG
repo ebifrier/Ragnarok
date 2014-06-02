@@ -1,4 +1,18 @@
-2014-06-02  - Ver 2.6.2
+2014-06-02  - Ver 2.6.4
+
+	* Ragnarok.Presentation.Shogi/View/ShogiUIElement3D.cs: 高速化のため、
+	将棋盤コントロールを通常のコントロールから、Viewport3Dで使うための3Dモ
+	デルクラスに修正しました。また、将棋盤クラスをContainerUIElement3Dから
+	継承することができなかったので、子オブジェクトでGUIイベントを受け取るこ
+	とが出来なくなりました。そのため、駒のマウス判定を駒オブジェクトごとの
+	イベントではなく、自前の座標計算で行うようにしました。
+	* Ragnarok.Presentation.Shogi/View/ShogiUIElement3D.xaml: 将棋盤用のリ
+	ソースファイルです。UIElement3Dクラスではリソースを自動で読み込むことが
+	難しかったため、自前で読み込むようにしました。
+	* Ragnarok.Presentation.Shogi/Effects/PieceObject.cs: 駒のマウス判定用
+	エレメントを削除しました。
+
+2014-06-02  - Ver 2.6.3
 
 	* Ragnarok/Util.cs: オブジェクト交換用のSwapメソッドを追加しました。
 	* Ragnarok.Presentation/Utility/BindingProxy.cs: 何らかの理由で

@@ -36,18 +36,9 @@ namespace Ragnarok.Presentation.Shogi.Effects
             DependencyProperty.Register(
                 "Count", typeof(int), typeof(PieceObject),
                 new UIPropertyMetadata(0, OnElementChanged));
-        
-        private readonly ShogiControl shogi;
-        private DecoratedText numberText;
 
-        /// <summary>
-        /// 描画用のヴィジュアルオブジェクトを取得します。
-        /// </summary>
-        public ModelUIElement3D Element
-        {
-            get;
-            private set;
-        }
+        private readonly ShogiUIElement3D shogi;
+        private DecoratedText numberText;
 
         /// <summary>
         /// 内部のモデルオブジェクトを取得します。
@@ -101,7 +92,7 @@ namespace Ragnarok.Presentation.Shogi.Effects
         /// <summary>
         /// 駒描画用のイメージブラシを作成します。
         /// </summary>
-        public static ImageBrush CreateBrush(ShogiControl shogi, BoardPiece piece)
+        public static ImageBrush CreateBrush(ShogiUIElement3D shogi, BoardPiece piece)
         {
             if (piece == null || piece.PieceType == PieceType.None)
             {
@@ -146,6 +137,32 @@ namespace Ragnarok.Presentation.Shogi.Effects
         }
 
         /// <summary>
+        /// モデルの中身を更新します。
+        /// </summary>
+        private void UpdateModel()
+        {
+            // 表示用の駒オブジェクトを追加します。
+            var model = CreatePieceModel();
+            if (model != null)
+            {
+                ModelGroup.Children.Add(model);
+            }
+
+            // 駒台の駒の場合
+            if (Position == null)
+            {
+                // 駒数の表示用オブジェクトを追加します。
+                var numberModel = new GeometryModel3D()
+                {
+                    Geometry = WPFUtil.CreateDefaultMesh(0.7, 0.4, 0, 0),
+                    Material = new DiffuseMaterial(new VisualBrush(this.numberText)),
+                    Transform = new TranslateTransform3D(0.4, -0.4, 0.0),
+                };
+                ModelGroup.Children.Add(numberModel);
+            }
+        }
+
+        /// <summary>
         /// 駒オブジェクトなどを初期化します。
         /// </summary>
         protected override void OnInitialize()
@@ -157,14 +174,7 @@ namespace Ragnarok.Presentation.Shogi.Effects
                 this.shogi.CellSize.Height,
                 1.0);
 
-            // 表示用の駒オブジェクトを追加します。
-            var model = CreatePieceModel();
-            if (model != null)
-            {
-                ModelGroup.Children.Add(model);
-            }
-
-            // 右肩の数字を必要なら追加します。
+            // 駒台の駒の場合
             if (Position == null)
             {
                 this.numberText = new DecoratedText()
@@ -175,17 +185,9 @@ namespace Ragnarok.Presentation.Shogi.Effects
                     Stroke = Brushes.White,
                     StrokeThickness = 0.8,
                 };
-
-                // 駒数の表示用オブジェクトを追加します。
-                var numberModel = new GeometryModel3D()
-                {
-                    Geometry = WPFUtil.CreateDefaultMesh(0.7, 0.4, 0, 0),
-                    Material = new DiffuseMaterial(new VisualBrush(this.numberText)),
-                    Transform = new TranslateTransform3D(0.4, -0.4, 0.0),
-                };
-                ModelGroup.Children.Add(numberModel);
             }
 
+            UpdateModel();
             UpdateElement();
         }
 
@@ -194,23 +196,27 @@ namespace Ragnarok.Presentation.Shogi.Effects
         /// </summary>
         private void UpdateElement()
         {
-            if (Element == null)
-            {
-                return;
-            }
-
             var isVisible = (IsAlwaysVisible || Count > 0);
-            Element.Visibility =
-                (isVisible ? Visibility.Visible : Visibility.Collapsed);
-            Element.IsHitTestVisible = isVisible;
-
-            if (this.numberText != null)
+            if (!isVisible)
             {
-                // 非表示時にCollapsedではなくHiddenを指定しないと表示時でも数字が表示
-                // されないことがあります。原因は不明。
-                this.numberText.Visibility =
-                    (Count > 1 ? Visibility.Visible : Visibility.Hidden);
-                this.numberText.Text = Count.ToString();
+                ModelGroup.Children.Clear();
+            }
+            else
+            {
+                // 必要ならモデルを追加します。
+                if (!ModelGroup.Children.Any())
+                {
+                    UpdateModel();
+                }
+
+                if (this.numberText != null)
+                {
+                    // 非表示時にCollapsedではなくHiddenを指定しないと表示時でも数字が表示
+                    // されないことがあります。原因は不明。
+                    this.numberText.Visibility =
+                        (Count > 1 ? Visibility.Visible : Visibility.Hidden);
+                    this.numberText.Text = Count.ToString();
+                }
             }
         }
 
@@ -235,26 +241,19 @@ namespace Ragnarok.Presentation.Shogi.Effects
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public PieceObject(ShogiControl shogi, BoardPiece piece, Position position)
+        public PieceObject(ShogiUIElement3D shogi, BoardPiece piece, Position position)
         {
             this.shogi = shogi;
 
             IsFastInitialize = true;
             Piece = piece;
             Position = position;
-
-            // 駒はマウスクリックを識別したいので、
-            // ModelUIElement3Dクラスを使います。
-            Element = new ModelUIElement3D()
-            {
-                Model = ModelGroup,
-            };
         }
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public PieceObject(ShogiControl shogi, BoardPiece piece)
+        public PieceObject(ShogiUIElement3D shogi, BoardPiece piece)
             : this(shogi, piece, null)
         {
         }

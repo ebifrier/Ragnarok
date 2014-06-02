@@ -2,22 +2,26 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
 using System.Windows.Navigation;
+using System.Windows.Resources;
 using System.Windows.Shapes;
 
 using Ragnarok;
 using Ragnarok.Shogi;
 using Ragnarok.Utility;
 using Ragnarok.ObjectModel;
+using Ragnarok.Presentation.Utility;
 using Ragnarok.Presentation.VisualObject;
 
 namespace Ragnarok.Presentation.Shogi.View
@@ -25,9 +29,9 @@ namespace Ragnarok.Presentation.Shogi.View
     using Effects;
 
     /// <summary>
-    /// MainWindow.xaml の相互作用ロジック
+    /// 将棋の盤面を扱う3D用のエレメントです。
     /// </summary>
-    public partial class ShogiControl : UserControl
+    public class ShogiUIElement3D : UIElement3D
     {
         /// <summary>
         /// 盤エフェクトのＺ座標です。
@@ -73,6 +77,11 @@ namespace Ragnarok.Presentation.Shogi.View
                 Opacity = 0.0
             };
 
+        private Model3DGroup capturedPieceContainer;
+        private Model3DGroup pieceContainer;
+        private Model3DGroup banEffectGroup;
+        private Model3DGroup effectGroup;
+
         private readonly NotifyCollection<PieceObject> pieceObjectList =
             new NotifyCollection<PieceObject>();
         private readonly NotifyCollection<PieceObject>[] capturedPieceObjectList =
@@ -94,7 +103,7 @@ namespace Ragnarok.Presentation.Shogi.View
                 "EnterFrameEvent",
                 RoutingStrategy.Bubble,
                 typeof(EventHandler<RoutedEventArgs>),
-                typeof(ShogiControl));
+                typeof(ShogiUIElement3D));
 
         /// <summary>
         /// 各フレームごとに呼ばれるイベントを追加または削除します。
@@ -113,7 +122,7 @@ namespace Ragnarok.Presentation.Shogi.View
                 "BoardPieceChangingEvent",
                 RoutingStrategy.Bubble,
                 typeof(EventHandler<RoutedEventArgs>),
-                typeof(ShogiControl));
+                typeof(ShogiUIElement3D));
 
         /// <summary>
         /// 指し手が進む直前に呼ばれるイベントを追加または削除します。
@@ -132,7 +141,7 @@ namespace Ragnarok.Presentation.Shogi.View
                 "BoardPieceChangedEvent",
                 RoutingStrategy.Bubble,
                 typeof(EventHandler<RoutedEventArgs>),
-                typeof(ShogiControl));        
+                typeof(ShogiUIElement3D));
 
         /// <summary>
         /// 指し手が進んだ直後に呼ばれるイベントを追加または削除します。
@@ -150,7 +159,7 @@ namespace Ragnarok.Presentation.Shogi.View
         /// </summary>
         public static readonly DependencyProperty BoardProperty =
             DependencyProperty.Register(
-                "Board", typeof(Board), typeof(ShogiControl),
+                "Board", typeof(Board), typeof(ShogiUIElement3D),
                 new FrameworkPropertyMetadata(
                     new Board(),
                     FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
@@ -170,7 +179,7 @@ namespace Ragnarok.Presentation.Shogi.View
         /// </summary>
         static object OnCoerceBoard(DependencyObject d, object baseValue)
         {
-            var self = (ShogiControl)d;
+            var self = (ShogiUIElement3D)d;
 
             if (self != null)
             {
@@ -187,7 +196,7 @@ namespace Ragnarok.Presentation.Shogi.View
         /// </summary>
         static void OnBoardChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var self = (ShogiControl)d;
+            var self = (ShogiUIElement3D)d;
 
             if (self != null)
             {
@@ -216,7 +225,7 @@ namespace Ragnarok.Presentation.Shogi.View
         /// </summary>
         public static readonly DependencyProperty ViewSideProperty =
             DependencyProperty.Register(
-                "ViewSide", typeof(BWType), typeof(ShogiControl),
+                "ViewSide", typeof(BWType), typeof(ShogiUIElement3D),
                 new FrameworkPropertyMetadata(BWType.Black,
                     FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
                     OnViewSideChanged));
@@ -235,7 +244,7 @@ namespace Ragnarok.Presentation.Shogi.View
         /// </summary>
         static void OnViewSideChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var self = (ShogiControl)d;
+            var self = (ShogiUIElement3D)d;
 
             if (self != null)
             {
@@ -249,7 +258,7 @@ namespace Ragnarok.Presentation.Shogi.View
         /// </summary>
         public static readonly DependencyProperty EditModeProperty =
             DependencyProperty.Register(
-                "EditMode", typeof(EditMode), typeof(ShogiControl),
+                "EditMode", typeof(EditMode), typeof(ShogiUIElement3D),
                 new FrameworkPropertyMetadata(EditMode.Normal,
                     FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
                     (_, __) => WPFUtil.InvalidateCommand()));
@@ -268,7 +277,7 @@ namespace Ragnarok.Presentation.Shogi.View
         /// </summary>
         public static readonly DependencyProperty AutoPlayStateProperty =
             DependencyProperty.Register(
-                "AutoPlayState", typeof(AutoPlayState), typeof(ShogiControl),
+                "AutoPlayState", typeof(AutoPlayState), typeof(ShogiUIElement3D),
                 new FrameworkPropertyMetadata(AutoPlayState.None,
                     FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
@@ -286,7 +295,7 @@ namespace Ragnarok.Presentation.Shogi.View
         /// </summary>
         public static readonly DependencyProperty BlackPlayerNameProperty =
             DependencyProperty.Register(
-                "BlackPlayerName", typeof(string), typeof(ShogiControl),
+                "BlackPlayerName", typeof(string), typeof(ShogiUIElement3D),
                 new FrameworkPropertyMetadata("▲先手",
                     OnPlayerNameChanged, CoerceBlackPlayerName));
 
@@ -320,7 +329,7 @@ namespace Ragnarok.Presentation.Shogi.View
         /// </summary>
         public static readonly DependencyProperty WhitePlayerNameProperty =
             DependencyProperty.Register(
-                "WhitePlayerName", typeof(string), typeof(ShogiControl),
+                "WhitePlayerName", typeof(string), typeof(ShogiUIElement3D),
                 new FrameworkPropertyMetadata("△後手",
                     OnPlayerNameChanged, CoerceWhitePlayerName));
 
@@ -352,7 +361,7 @@ namespace Ragnarok.Presentation.Shogi.View
         /// </summary>
         public static readonly DependencyProperty BanBrushProperty =
             DependencyProperty.Register(
-                "BanBrush", typeof(Brush), typeof(ShogiControl),
+                "BanBrush", typeof(Brush), typeof(ShogiUIElement3D),
                 new FrameworkPropertyMetadata(DefaultBanBrush));
 
         /// <summary>
@@ -369,7 +378,7 @@ namespace Ragnarok.Presentation.Shogi.View
         /// </summary>
         public static readonly DependencyProperty PieceBoxBrushProperty =
             DependencyProperty.Register(
-                "PieceBoxBrush", typeof(Brush), typeof(ShogiControl),
+                "PieceBoxBrush", typeof(Brush), typeof(ShogiUIElement3D),
                 new FrameworkPropertyMetadata(DefaultPieceBoxBrush));
 
         /// <summary>
@@ -386,7 +395,7 @@ namespace Ragnarok.Presentation.Shogi.View
         /// </summary>
         public static readonly DependencyProperty PieceImageProperty =
             DependencyProperty.Register(
-                "PieceImage", typeof(BitmapSource), typeof(ShogiControl),
+                "PieceImage", typeof(BitmapSource), typeof(ShogiUIElement3D),
                 new FrameworkPropertyMetadata(DefaultPieceImage,
                     OnPieceImageChanged));
 
@@ -404,7 +413,7 @@ namespace Ragnarok.Presentation.Shogi.View
         /// </summary>
         static void OnPieceImageChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var self = (ShogiControl)d;
+            var self = (ShogiUIElement3D)d;
 
             if (self != null)
             {
@@ -417,9 +426,9 @@ namespace Ragnarok.Presentation.Shogi.View
         /// </summary>
         public static readonly DependencyProperty AutoPlayBrushProperty =
             DependencyProperty.Register(
-                "AutoPlayBrush", typeof(Brush), typeof(ShogiControl),
+                "AutoPlayBrush", typeof(Brush), typeof(ShogiUIElement3D),
                 new FrameworkPropertyMetadata(DefaultAutoPlayBrush));
-        
+
         /// <summary>
         /// 自動再生時のブラシを取得または設定します。
         /// </summary>
@@ -434,7 +443,7 @@ namespace Ragnarok.Presentation.Shogi.View
         /// </summary>
         public static readonly DependencyProperty AutoPlayIntervalProperty =
             DependencyProperty.Register(
-                "AutoPlayInterval", typeof(TimeSpan), typeof(ShogiControl),
+                "AutoPlayInterval", typeof(TimeSpan), typeof(ShogiUIElement3D),
                 new FrameworkPropertyMetadata(TimeSpan.FromSeconds(1)));
 
         /// <summary>
@@ -453,7 +462,7 @@ namespace Ragnarok.Presentation.Shogi.View
         /// </summary>
         public static readonly DependencyProperty IsLeaveTimeVisibleProperty =
             DependencyProperty.Register(
-                "IsLeaveTimeVisible", typeof(bool), typeof(ShogiControl),
+                "IsLeaveTimeVisible", typeof(bool), typeof(ShogiUIElement3D),
                 new FrameworkPropertyMetadata(true));
 
         /// <summary>
@@ -470,7 +479,7 @@ namespace Ragnarok.Presentation.Shogi.View
         /// </summary>
         public static readonly DependencyProperty BlackLeaveTimeProperty =
             DependencyProperty.Register(
-                "BlackLeaveTime", typeof(TimeSpan), typeof(ShogiControl),
+                "BlackLeaveTime", typeof(TimeSpan), typeof(ShogiUIElement3D),
                 new FrameworkPropertyMetadata(TimeSpan.Zero));
 
         /// <summary>
@@ -487,7 +496,7 @@ namespace Ragnarok.Presentation.Shogi.View
         /// </summary>
         public static readonly DependencyProperty WhiteLeaveTimeProperty =
             DependencyProperty.Register(
-                "WhiteLeaveTime", typeof(TimeSpan), typeof(ShogiControl),
+                "WhiteLeaveTime", typeof(TimeSpan), typeof(ShogiUIElement3D),
                 new FrameworkPropertyMetadata(TimeSpan.Zero));
 
         /// <summary>
@@ -506,7 +515,7 @@ namespace Ragnarok.Presentation.Shogi.View
         /// </summary>
         public static readonly DependencyProperty EffectManagerProperty =
             DependencyProperty.Register(
-                "EffectManager", typeof(IEffectManager), typeof(ShogiControl),
+                "EffectManager", typeof(IEffectManager), typeof(ShogiUIElement3D),
                 new FrameworkPropertyMetadata(
                     default(IEffectManager),
                     OnEffectManagerChanged));
@@ -525,7 +534,7 @@ namespace Ragnarok.Presentation.Shogi.View
         /// </summary>
         static void OnEffectManagerChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var self = (ShogiControl)d;
+            var self = (ShogiUIElement3D)d;
 
             if (self != null)
             {
@@ -551,7 +560,7 @@ namespace Ragnarok.Presentation.Shogi.View
         /// </summary>
         public static readonly DependencyProperty BanBoundsProperty =
             DependencyProperty.Register(
-                "BanBounds", typeof(Rect), typeof(ShogiControl),
+                "BanBounds", typeof(Rect), typeof(ShogiUIElement3D),
                 new FrameworkPropertyMetadata(default(Rect)));
 
         /// <summary>
@@ -568,7 +577,7 @@ namespace Ragnarok.Presentation.Shogi.View
         /// </summary>
         public static readonly DependencyProperty CellSizeProperty =
             DependencyProperty.Register(
-                "CellSize", typeof(Size), typeof(ShogiControl),
+                "CellSize", typeof(Size), typeof(ShogiUIElement3D),
                 new FrameworkPropertyMetadata(
                     default(Size),
                     FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
@@ -584,30 +593,17 @@ namespace Ragnarok.Presentation.Shogi.View
         #endregion
 
         #region Overrides
-        /// <summary>
-        /// 盤上の駒の移動を開始します。
-        /// </summary>
-        void PieceObject_MouseDown(PieceObject pieceObject, MouseButtonEventArgs e)
+        private Point InvarseTranslate(Point pos)
         {
-            if (movingPiece == null)
+            var inv = Transform.Inverse;
+            if (inv == null)
             {
-                BeginMovePiece(pieceObject);
-                MovePiece(e);
-                e.Handled = true;
+                return pos;
             }
-        }
 
-        /// <summary>
-        /// 駒台の駒の移動を開始します。
-        /// </summary>
-        void CapturedPieceObject_MouseDown(PieceObject pieceObject, MouseButtonEventArgs e)
-        {
-            if (movingPiece == null)
-            {
-                BeginDropPiece(pieceObject);
-                MovePiece(e);
-                e.Handled = true;
-            }
+            var pos3d = new Point3D(pos.X, pos.Y, 0.0);
+            pos3d = inv.Transform(pos3d);
+            return new Point(pos3d.X, pos3d.Y);
         }
 
         /// <summary>
@@ -617,12 +613,41 @@ namespace Ragnarok.Presentation.Shogi.View
         {
             base.OnMouseLeftButtonDown(e);
 
-            if (movingPiece != null)
+            // マウスがどのセルにいるかです。
+            var boardPos = InvarseTranslate(e.GetPosition(this));
+
+            if (movingPiece == null)
+            {
+                // 駒検索
+                var position = GetCell(boardPos);
+                if (position != null)
+                {
+                    var pieceObject = GetPieceObject(position);
+                    if (pieceObject != null)
+                    {
+                        BeginMovePiece(pieceObject);
+                        MovePiece(e);
+                        return;
+                    }
+                }
+
+                // 駒台の駒を検索
+                var boardPiece = GetCapturedPieceType(boardPos);
+                if (boardPiece != null)
+                {
+                    var pieceObject = GetCapturedPieceObject(
+                        boardPiece.BWType, boardPiece.PieceType);
+                    if (pieceObject != null && pieceObject.Count > 0)
+                    {
+                        BeginDropPiece(pieceObject);
+                        MovePiece(e);
+                        return;
+                    }
+                }
+            }
+            else
             {
                 // 駒の移動を完了します。
-
-                // マウスがどのセルにいるか調べます。
-                var boardPos = e.GetPosition(RootViewport);
                 var position = GetCell(boardPos);
                 if (position == null)
                 {
@@ -655,40 +680,6 @@ namespace Ragnarok.Presentation.Shogi.View
 
         #region 駒の移動など
         /// <summary>
-        /// 与えられた座標のセルを取得します。
-        /// </summary>
-        private Position GetCell(Point pos)
-        {
-            // とりあえず設定します。
-            var file = (int)((pos.X - BanBounds.Left) / CellSize.Width);
-            var rank = (int)((pos.Y - BanBounds.Top) / CellSize.Height);
-
-            // 正しい位置にありましぇん。
-            var position = new Position(Board.BoardSize - file, rank + 1);
-            if (!position.Validate())
-            {
-                return null;
-            }
-
-            /*// 各セルの幅と高さを取得します。
-            var gridX = pos.X % this.model.CellWidth;
-            var gridY = pos.Y % this.model.CellHeight;
-
-            // セルの端ぎりぎりならそのセルにいると判定しません。
-            if (gridX < CellWidth * 0.1 || CellWidth * 0.9 < gridX)
-            {
-                return null;
-            }
-
-            if (gridY < CellHeight * 0.1 || CellHeight * 0.9 < gridY)
-            {
-                return null;
-            }*/
-
-            return (ViewSide == BWType.White ? position.Flip() : position);
-        }
-
-        /// <summary>
         /// 駒の移動などを開始できるかどうかを取得します。
         /// </summary>
         private bool CanBeginMove(BWType pieceSide)
@@ -704,7 +695,7 @@ namespace Ragnarok.Presentation.Shogi.View
             }
 
             var teban = (Board != null ? Board.Turn : BWType.None);
-            if (EditMode == EditMode.NoEdit ||
+            if ((EditMode == EditMode.NoEdit) ||
                 (EditMode == EditMode.Normal && teban != pieceSide))
             {
                 return false;
@@ -726,8 +717,8 @@ namespace Ragnarok.Presentation.Shogi.View
             this.movingPiece = pieceObject;
 
             // 描画順を変えます。
-            PieceContainer.Children.Remove(pieceObject.Element);
-            PieceContainer.Children.Add(pieceObject.Element);
+            this.pieceContainer.Children.Remove(pieceObject.ModelGroup);
+            this.pieceContainer.Children.Add(pieceObject.ModelGroup);
 
             if (EffectManager != null)
             {
@@ -773,7 +764,7 @@ namespace Ragnarok.Presentation.Shogi.View
             }
 
             // 駒とマウスの位置の差を求めておきます。
-            var mousePos = e.GetPosition(RootViewport);
+            var mousePos = InvarseTranslate(e.GetPosition(this));
 
             this.movingPiece.Coord = WPFUtil.MakeVector3D(mousePos, MovingPieceZ);
         }
@@ -810,7 +801,7 @@ namespace Ragnarok.Presentation.Shogi.View
                     ActionType = ActionType.Drop,
                     DropPieceType = piece.PieceType,
                 });
-            
+
             var isPromoteForce = Board.IsPromoteForce(move, piece);
             if (isPromoteForce)
             {
@@ -951,6 +942,40 @@ namespace Ragnarok.Presentation.Shogi.View
 
         #region 駒オブジェクト
         /// <summary>
+        /// 与えられた座標のセルを取得します。
+        /// </summary>
+        private Position GetCell(Point pos)
+        {
+            // とりあえず設定します。
+            var file = (int)((pos.X - BanBounds.Left) / CellSize.Width);
+            var rank = (int)((pos.Y - BanBounds.Top) / CellSize.Height);
+
+            // 正しい位置にありましぇん。
+            var position = new Position(Board.BoardSize - file, rank + 1);
+            if (!position.Validate())
+            {
+                return null;
+            }
+
+            /*// 各セルの幅と高さを取得します。
+            var gridX = pos.X % this.model.CellWidth;
+            var gridY = pos.Y % this.model.CellHeight;
+
+            // セルの端ぎりぎりならそのセルにいると判定しません。
+            if (gridX < CellWidth * 0.1 || CellWidth * 0.9 < gridX)
+            {
+                return null;
+            }
+
+            if (gridY < CellHeight * 0.1 || CellHeight * 0.9 < gridY)
+            {
+                return null;
+            }*/
+
+            return (ViewSide == BWType.White ? position.Flip() : position);
+        }
+
+        /// <summary>
         /// 画面表示上の位置を取得します。
         /// </summary>
         public Vector3D GetPiecePos(Position position)
@@ -974,6 +999,44 @@ namespace Ragnarok.Presentation.Shogi.View
                 leftTop.X + relative.X + (CellSize.Width / 2.0),
                 leftTop.Y + relative.Y + (CellSize.Height / 2.0),
                 PieceZ);
+        }
+
+        /// <summary>
+        /// 指定の座標値に駒台上の駒があればそれを取得します。
+        /// </summary>
+        public BoardPiece GetCapturedPieceType(Point pos)
+        {
+            var bwTypes = new[]
+            {
+                BWType.Black,
+                BWType.White
+            };
+
+            for (var index = 0; index < bwTypes.Count(); ++index)
+            {
+                if (!this.capturedPieceBoxBounds[index].Contains(pos))
+                {
+                    continue;
+                }
+
+                var bwType = bwTypes[index];
+                foreach (var pieceType in EnumEx.GetValues<PieceType>())
+                {
+                    var center = GetCapturedPiecePos(bwType, pieceType);
+                    var rect = new Rect(
+                        center.X - CellSize.Width / 2,
+                        center.Y - CellSize.Height / 2,
+                        CellSize.Width,
+                        CellSize.Height);
+
+                    if (rect.Contains(pos))
+                    {
+                        return new BoardPiece(bwType, pieceType);
+                    }
+                }
+            }
+
+            return null;
         }
 
         /// <summary>
@@ -1046,23 +1109,16 @@ namespace Ragnarok.Presentation.Shogi.View
                 return;
             }
 
-            var handler = new MouseButtonEventHandler(
-                (sender, e) => PieceObject_MouseDown(value, e));
-
-            value.Element.MouseDown += handler;
-            value.Terminated += (sender, e) =>
-                value.Element.MouseDown -= handler;
-
             // 駒をデフォルト位置まで移動させます。
             if (initPos)
             {
                 value.Coord =
-                    ( value.Position != null
+                    (value.Position != null
                     ? GetPiecePos(value.Position)
                     : GetCapturedPiecePos(value.Piece));
             }
 
-            PieceContainer.Children.Add(value.Element);
+            this.pieceContainer.Children.Add(value.ModelGroup);
             this.pieceObjectList.Add(value);
         }
 
@@ -1076,7 +1132,7 @@ namespace Ragnarok.Presentation.Shogi.View
                 return;
             }
 
-            PieceContainer.Children.Remove(piece.Element);
+            this.pieceContainer.Children.Remove(piece.ModelGroup);
             this.pieceObjectList.Remove(piece);
         }
 
@@ -1107,7 +1163,7 @@ namespace Ragnarok.Presentation.Shogi.View
         private void ClearPieceObjects()
         {
             this.pieceObjectList.Clear();
-            PieceContainer.Children.Clear();
+            this.pieceContainer.Children.Clear();
         }
 
         /// <summary>
@@ -1135,20 +1191,13 @@ namespace Ragnarok.Presentation.Shogi.View
                 IsAlwaysVisible = false,
             };
 
-            var handler = new MouseButtonEventHandler(
-                (sender, e) => CapturedPieceObject_MouseDown(value, e));
-
-            value.Element.MouseDown += handler;
-            value.Terminated += (sender, e) =>
-                value.Element.MouseDown -= handler;
-
             // 駒をデフォルト位置まで移動させます。
             value.Coord = GetCapturedPiecePos(bwType, pieceType);
 
             // 玉などは駒台に表示しません。
             if (pieceType != PieceType.None && pieceType != PieceType.Gyoku)
             {
-                CapturedPieceContainer.Children.Add(value.Element);
+                this.capturedPieceContainer.Children.Add(value.ModelGroup);
             }
 
             return value;
@@ -1267,7 +1316,7 @@ namespace Ragnarok.Presentation.Shogi.View
         /// </remarks>
         private void SyncCapturedPieceObject()
         {
-            if (!IsLoaded || Board == null)
+            if (Board == null)
             {
                 return;
             }
@@ -1288,7 +1337,7 @@ namespace Ragnarok.Presentation.Shogi.View
                     capturedPieceList.Clear();
                 }
             }
-            CapturedPieceContainer.Children.Clear();
+            this.capturedPieceContainer.Children.Clear();
 
             // 先手・後手用の駒台にある駒を用意します。
             bwTypes.ForEachWithIndex((bwType, index) =>
@@ -1306,7 +1355,7 @@ namespace Ragnarok.Presentation.Shogi.View
         /// </summary>
         private void SyncBoardPiece()
         {
-            if (!IsLoaded || Board == null)
+            if (Board == null)
             {
                 return;
             }
@@ -1517,51 +1566,116 @@ namespace Ragnarok.Presentation.Shogi.View
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public ShogiControl()
+        public ShogiUIElement3D()
         {
-            InitializeComponent();
+            Initialize();
 
             BanBrush = DefaultBanBrush.Clone();
             PieceBoxBrush = DefaultPieceBoxBrush.Clone();
             PieceImage = DefaultPieceImage.Clone();
 
-            Loaded += Control_Loaded;
-            Unloaded += Control_Unloaded;
-
-            RootViewport.DataContext = this;
             Board = new Board(true);
+        }
+
+        /// <summary>
+        /// リソースファイルを読み込み、クラスを初期化します。
+        /// </summary>
+        private void Initialize()
+        {
+            try
+            {
+                this.capturedPieceContainer = new Model3DGroup();
+                this.pieceContainer = new Model3DGroup();
+                this.banEffectGroup = new Model3DGroup();
+                this.effectGroup = new Model3DGroup();
+
+                var dic = LoadXaml();
+
+                // DataContext相当のものを設定
+                var proxy = (BindingProxy)dic["proxy"];
+                proxy.Data = this;
+
+                // 駒サイズなどの設定
+                var banGeometry = (Model3D)dic["banGeometry"];
+                var banTitleGeometry = (Model3D)dic["banTitleGeometry"];
+                var komadai0Geometry = (Model3D)dic["komadai0Geometry"];
+                var komadai1Geometry = (Model3D)dic["komadai1Geometry"];
+
+                // モデルの設定
+                var group = new Model3DGroup();
+                group.Children.Add(banGeometry); // 盤
+                group.Children.Add(banTitleGeometry); // 盤
+                group.Children.Add(komadai0Geometry); // 右下の駒台
+                group.Children.Add(komadai1Geometry); // 左上の駒台
+                group.Children.Add(this.banEffectGroup); // 盤のエフェクト
+                group.Children.Add(this.capturedPieceContainer); // 取った駒
+                group.Children.Add(this.pieceContainer); // 駒
+                group.Children.Add(this.effectGroup); // 駒のエフェクト
+                Visual3DModel = group;
+
+                Control_Loaded(banGeometry.Bounds,
+                    komadai0Geometry.Bounds, komadai1Geometry.Bounds);
+            }
+            catch (Exception ex)
+            {
+                // このエラーはどうにもならない。
+                DialogUtil.ShowError(ex,
+                    "将棋盤用のリソースファイルの読み込みに失敗しました。");
+
+                throw ex;
+            }
+        }
+
+        /// <summary>
+        /// リソース用のxamlファイルを読み込みます。
+        /// </summary>
+        private ResourceDictionary LoadXaml()
+        {
+            var type = GetType();
+
+            var fileUri = new Uri(
+                string.Format(
+                    "pack://application:,,,/{0};component/View/{1}.xaml",
+                    type.Assembly.GetName().Name,
+                    type.Name),
+                UriKind.Absolute);
+            var info = Application.GetResourceStream(fileUri);
+
+            var context = new ParserContext();
+            var resource = (ResourceDictionary)
+                XamlReader.Load(info.Stream, context);
+
+            return resource;
         }
 
         /// <summary>
         /// コントロールの読み込み時に呼ばれます。
         /// </summary>
-        private void Control_Loaded(object sender, RoutedEventArgs e)
+        private void Control_Loaded(Rect3D banBounds, Rect3D komadai0Bounds,
+                                    Rect3D komadai1Bounds)
         {
             // 各マスに対する上下左右の余白の比です。
             var BanBorderRate = 0.4;
 
-            // 各マスのサイズを設定します。
-            var bounds = this.banGeometry.Bounds;
-
             // 駒の表示サイズなどを計算します。
             CellSize = new Size(
-                bounds.SizeX / (Board.BoardSize + BanBorderRate * 2),
-                bounds.SizeY / (Board.BoardSize + BanBorderRate * 2));
+                banBounds.SizeX / (Board.BoardSize + BanBorderRate * 2),
+                banBounds.SizeY / (Board.BoardSize + BanBorderRate * 2));
             BanBounds = new Rect(
-                bounds.X + CellSize.Width * BanBorderRate,
-                bounds.Y + CellSize.Height * BanBorderRate,
+                banBounds.X + CellSize.Width * BanBorderRate,
+                banBounds.Y + CellSize.Height * BanBorderRate,
                 CellSize.Width * Board.BoardSize,
                 CellSize.Height * Board.BoardSize);
 
-            capturedPieceBoxBounds[0] = WPFUtil.MakeRectXY(this.komadai0Geometry.Bounds);
-            capturedPieceBoxBounds[1] = WPFUtil.MakeRectXY(this.komadai1Geometry.Bounds);
+            capturedPieceBoxBounds[0] = WPFUtil.MakeRectXY(komadai0Bounds);
+            capturedPieceBoxBounds[1] = WPFUtil.MakeRectXY(komadai1Bounds);
 
             // エフェクトなどを初期化します。
             this.banEffectObjectRoot.Duration = TimeSpan.MaxValue;
-            BanEffectGroup.Children.Add(this.banEffectObjectRoot.ModelGroup);
+            this.banEffectGroup.Children.Add(this.banEffectObjectRoot.ModelGroup);
 
             this.effectObjectRoot.Duration = TimeSpan.MaxValue;
-            EffectGroup.Children.Add(this.effectObjectRoot.ModelGroup);
+            this.effectGroup.Children.Add(this.effectObjectRoot.ModelGroup);
 
             // 今の局面と画面の表示を合わせます。
             SyncBoard(true);
@@ -1569,6 +1683,7 @@ namespace Ragnarok.Presentation.Shogi.View
 
         void Control_Unloaded(object sender, RoutedEventArgs e)
         {
+            EndMove();
             ClosePromoteDialog();
             StopAutoPlay();
 
