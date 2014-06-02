@@ -118,6 +118,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Extension\ImageSetListExtension.cs" />
+    <Compile Include="Utility\BindingProxy.cs" />
     <Compile Include="Utility\ControlUtil.cs" />
     <Compile Include="Control\DecoratedText.cs" />
     <Compile Include="Control\NumericUpDown.cs" />
@@ -180,8 +181,7 @@
     <Compile Include="Utility\TextBoxUtil.cs" />
     <Compile Include="Utility\ContextMenuUtil.cs" />
     <Compile Include="Utility\PasswordBoxUtil.cs" />
-    <Compile Include="VisualObject\Control\BackgroundCore.cs" />
-    <Compile Include="VisualObject\Control\VisualBackground.cs" />
+    <Compile Include="VisualObject\Control\BackgroundUIElement3D.cs" />
     <Compile Include="VisualObject\EffectImageCache.cs" />
     <Compile Include="VisualObject\EnterFrameEventArgs.cs" />
     <Compile Include="VisualObject\EntityCollection.cs" />
@@ -299,10 +299,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="VisualObject\Control\BackgroundCore.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="VisualObject\Generic.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -312,10 +308,6 @@
     <None Include="Effect\GrayscaleEffect.fx" />
     <Resource Include="Effect\GrayscaleEffect.ps" />
     <None Include="Ragnarok.Presentation.snk" />
-    <Page Include="VisualObject\Control\VisualBackground.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\report_dialog.jpg" />

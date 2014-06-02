@@ -140,6 +140,16 @@ namespace Ragnarok
         }
 
         /// <summary>
+        /// オブジェクトの中身を交換します。
+        /// </summary>
+        public static void Swap<T>(ref T x, ref T y)
+        {
+            T tmp = x;
+            x = y;
+            y = tmp;
+        }
+
+        /// <summary>
         /// 例外が致命的なものならその例外をthrowします。
         /// </summary>
         public static void ThrowIfFatal(Exception ex)
