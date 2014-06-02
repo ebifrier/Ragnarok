@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ragnarok.Presentation.Shogi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommentGetter", "CommentGetter\CommentGetter.csproj", "{70DF41BE-3880-4DD3-B3AC-0B1BEDC47C31}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ragnarok.Presentation.Extra", "Ragnarok.Presentation.Extra\Ragnarok.Presentation.Extra.csproj", "{1CD9A242-E0E3-453C-9E49-57FC37FF675A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -109,6 +111,16 @@ Global
 		{70DF41BE-3880-4DD3-B3AC-0B1BEDC47C31}.Release|Mixed Platforms.Build.0 = Release|x86
 		{70DF41BE-3880-4DD3-B3AC-0B1BEDC47C31}.Release|x86.ActiveCfg = Release|x86
 		{70DF41BE-3880-4DD3-B3AC-0B1BEDC47C31}.Release|x86.Build.0 = Release|x86
+		{1CD9A242-E0E3-453C-9E49-57FC37FF675A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1CD9A242-E0E3-453C-9E49-57FC37FF675A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1CD9A242-E0E3-453C-9E49-57FC37FF675A}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{1CD9A242-E0E3-453C-9E49-57FC37FF675A}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{1CD9A242-E0E3-453C-9E49-57FC37FF675A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{1CD9A242-E0E3-453C-9E49-57FC37FF675A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1CD9A242-E0E3-453C-9E49-57FC37FF675A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1CD9A242-E0E3-453C-9E49-57FC37FF675A}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{1CD9A242-E0E3-453C-9E49-57FC37FF675A}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{1CD9A242-E0E3-453C-9E49-57FC37FF675A}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

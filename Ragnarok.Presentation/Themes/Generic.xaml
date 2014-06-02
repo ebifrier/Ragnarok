@@ -5,6 +5,5 @@
         <ResourceDictionary Source="/Ragnarok.Presentation;component/Themes/Common.xaml" />
         <ResourceDictionary Source="/Ragnarok.Presentation;component/NicoNico/NicoNico.xaml" />
         <ResourceDictionary Source="/Ragnarok.Presentation;component/Control/Generic.xaml" />
-        <ResourceDictionary Source="/Ragnarok.Presentation;component/VisualObject/Generic.xaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

@@ -42,7 +42,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\x86\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;CLR4_0;CLR_GE_2_0;CLR_GE_3_0;CLR_GE_3_5;CLR_GE_4_0</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <DocumentationFile>Ragnarok.Presentation.xml</DocumentationFile>
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
@@ -69,7 +69,8 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Windows.Interactivity">
+    <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\externals\net\System.Windows.Interactivity.dll</HintPath>
     </Reference>
     <Reference Include="System.Xaml" />
@@ -80,8 +81,6 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Behaviors\Behavior.cs" />
-    <Compile Include="Behaviors\ScenarioBehavior.cs" />
     <Compile Include="Control\ColorButton.cs" />
     <Compile Include="Control\CustomAdorner.cs" />
     <Compile Include="Control\EvaluationControl.cs" />
@@ -103,7 +102,6 @@
     <Compile Include="Converter\FontFamilyConverter.cs" />
     <Compile Include="Converter\ValueToDecimalConverter.cs" />
     <Compile Include="Effect\GrayscaleEffect.cs" />
-    <Compile Include="Extension\BindingExtension.cs" />
     <Compile Include="Extension\CalcExtension.cs" />
     <Compile Include="Control\ColorDialog.xaml.cs">
       <DependentUpon>ColorDialog.xaml</DependentUpon>
@@ -181,14 +179,6 @@
     <Compile Include="Utility\TextBoxUtil.cs" />
     <Compile Include="Utility\ContextMenuUtil.cs" />
     <Compile Include="Utility\PasswordBoxUtil.cs" />
-    <Compile Include="VisualObject\Control\BackgroundUIElement3D.cs" />
-    <Compile Include="VisualObject\EffectImageCache.cs" />
-    <Compile Include="VisualObject\EnterFrameEventArgs.cs" />
-    <Compile Include="VisualObject\EntityCollection.cs" />
-    <Compile Include="VisualObject\EntityObject.cs" />
-    <Compile Include="VisualObject\FpsCounter.cs" />
-    <Compile Include="VisualObject\Interaction.cs" />
-    <Compile Include="VisualObject\Scenario.cs" />
     <Compile Include="WPFSettingsBase.cs" />
     <Compile Include="WPFUtil.cs" />
   </ItemGroup>
@@ -298,10 +288,6 @@
     <Page Include="Update\UpdateCommon.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="VisualObject\Generic.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
   <ItemGroup>

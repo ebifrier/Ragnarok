@@ -1,3 +1,11 @@
+2014-06-03  - Ver 2.6.7
+
+	* Ragnarok/Ragnarok.csproj: ビルド定数を修正しました。
+	* Ragnarok.Presentation/Ragnarok.Presentation.csproj: ファイルを
+	Ragnarok.Presentation.Extraに移動しました。
+	* Ragnarok.Presentation/Properties/AssemblyInfo.cs: 不要になったネーム
+	スペースを削除しました。
+
 2014-06-02  - Ver 2.6.6
 
 	* Ragnarok.Presentation.Shogi/IEffectManager.cs,
