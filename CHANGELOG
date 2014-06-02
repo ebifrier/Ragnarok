@@ -1,3 +1,11 @@
+2014-06-02  - Ver 2.6.1
+
+	* Ragnarok.Presentation/VisualObject/Control/BackgroundUIElement3D.cs: 
+	高速化のため、背景用のコントロールをViewport3Dで使う3Dモデルオブジェク
+	トに変更しました。
+	* Ragnarok.Presentation/VisualObject/Control: 不要なファイルを削除しま
+	した。
+
 2014-05-23  - Ver 2.5.2
 
 	* Ragnarok.Presentation/Extension/MultiStyleExtension.cs: リファクタリ
