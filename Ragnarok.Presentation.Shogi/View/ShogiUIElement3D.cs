@@ -22,11 +22,11 @@ using Ragnarok.Shogi;
 using Ragnarok.Utility;
 using Ragnarok.ObjectModel;
 using Ragnarok.Presentation.Utility;
-using Ragnarok.Presentation.VisualObject;
+using Ragnarok.Presentation.Extra.Entity;
 
 namespace Ragnarok.Presentation.Shogi.View
 {
-    using Effects;
+    using ViewModel;
 
     /// <summary>
     /// 将棋の盤面を扱う3D用のエレメントです。
