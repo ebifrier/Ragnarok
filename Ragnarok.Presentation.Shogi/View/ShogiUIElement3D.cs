@@ -61,21 +61,25 @@ namespace Ragnarok.Presentation.Shogi.View
         private static readonly Brush DefaultBanBrush =
             new ImageBrush(new BitmapImage(
                 ImageUtil.GetImageUri(BanImageType.Default)))
-                    .Apply(_ => _.Opacity = 0.9);
+                    .Apply(_ => _.Opacity = 0.9)
+                    .Apply(_ => _.Freeze());
 
         private static readonly Brush DefaultPieceBoxBrush =
             new ImageBrush(new BitmapImage(
                 ImageUtil.GetImageUri(KomadaiImageType.Komadai1)))
-                    .Apply(_ => _.Opacity = 0.9);
+                    .Apply(_ => _.Opacity = 0.9)
+                    .Apply(_ => _.Freeze());
 
         private static readonly BitmapImage DefaultPieceImage =
-            new BitmapImage(ImageUtil.GetImageUri(KomaImageType.Kinki));
+            new BitmapImage(ImageUtil.GetImageUri(KomaImageType.Kinki))
+                .Apply(_ => _.Freeze());
 
         private static readonly Brush DefaultAutoPlayBrush =
             new SolidColorBrush(Color.FromArgb(96, 0, 24, 86))
             {
                 Opacity = 0.0
-            };
+            }
+            .Apply(_ => _.Freeze());
 
         private Model3DGroup capturedPieceContainer;
         private Model3DGroup pieceContainer;
@@ -1574,7 +1578,7 @@ namespace Ragnarok.Presentation.Shogi.View
             PieceBoxBrush = DefaultPieceBoxBrush.Clone();
             PieceImage = DefaultPieceImage.Clone();
 
-            Board = new Board(true);
+            Board = new Board();
         }
 
         /// <summary>
@@ -1600,6 +1604,7 @@ namespace Ragnarok.Presentation.Shogi.View
                 var banTitleGeometry = (Model3D)dic["banTitleGeometry"];
                 var komadai0Geometry = (Model3D)dic["komadai0Geometry"];
                 var komadai1Geometry = (Model3D)dic["komadai1Geometry"];
+                var autoPlayGeometry = (Model3D)dic["autoPlayGeometry"];
 
                 // モデルの設定
                 var group = new Model3DGroup();
@@ -1611,10 +1616,23 @@ namespace Ragnarok.Presentation.Shogi.View
                 group.Children.Add(this.capturedPieceContainer); // 取った駒
                 group.Children.Add(this.pieceContainer); // 駒
                 group.Children.Add(this.effectGroup); // 駒のエフェクト
+                group.Children.Add(autoPlayGeometry);
                 Visual3DModel = group;
 
-                Control_Loaded(banGeometry.Bounds,
-                    komadai0Geometry.Bounds, komadai1Geometry.Bounds);
+                SetElementBounds(
+                    banGeometry.Bounds,
+                    komadai0Geometry.Bounds,
+                    komadai1Geometry.Bounds);
+
+                // エフェクトなどを初期化します。
+                this.banEffectObjectRoot.Duration = TimeSpan.MaxValue;
+                this.banEffectGroup.Children.Add(this.banEffectObjectRoot.ModelGroup);
+
+                this.effectObjectRoot.Duration = TimeSpan.MaxValue;
+                this.effectGroup.Children.Add(this.effectObjectRoot.ModelGroup);
+
+                // 今の局面と画面の表示を合わせます。
+                SyncBoard(true);
             }
             catch (Exception ex)
             {
@@ -1649,10 +1667,10 @@ namespace Ragnarok.Presentation.Shogi.View
         }
 
         /// <summary>
-        /// コントロールの読み込み時に呼ばれます。
+        /// 盤などのサイズを設定します。
         /// </summary>
-        private void Control_Loaded(Rect3D banBounds, Rect3D komadai0Bounds,
-                                    Rect3D komadai1Bounds)
+        private void SetElementBounds(Rect3D banBounds, Rect3D komadai0Bounds,
+                                      Rect3D komadai1Bounds)
         {
             // 各マスに対する上下左右の余白の比です。
             var BanBorderRate = 0.4;
@@ -1669,19 +1687,15 @@ namespace Ragnarok.Presentation.Shogi.View
 
             capturedPieceBoxBounds[0] = WPFUtil.MakeRectXY(komadai0Bounds);
             capturedPieceBoxBounds[1] = WPFUtil.MakeRectXY(komadai1Bounds);
-
-            // エフェクトなどを初期化します。
-            this.banEffectObjectRoot.Duration = TimeSpan.MaxValue;
-            this.banEffectGroup.Children.Add(this.banEffectObjectRoot.ModelGroup);
-
-            this.effectObjectRoot.Duration = TimeSpan.MaxValue;
-            this.effectGroup.Children.Add(this.effectObjectRoot.ModelGroup);
-
-            // 今の局面と画面の表示を合わせます。
-            SyncBoard(true);
         }
 
-        void Control_Unloaded(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// コントロールをアンロードします。
+        /// </summary>
+        /// <remarks>
+        /// Unloededイベントがないので、手動でアンロードします。
+        /// </remarks>
+        public void Unload()
         {
             EndMove();
             ClosePromoteDialog();

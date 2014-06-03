@@ -1,3 +1,11 @@
+2014-06-03  - Ver 2.6.10
+
+	* Ragnarok.Presentation.Shogi/View/ShogiUIElement3D.cs: Unloadメソッド
+	を追加し、リファクタリングも行いました。また、自動再生用のレイヤを追加
+	しました。
+	* Ragnarok.Presentation.Shogi/View/CapturedPieceBoxView.xaml: 不要なフ
+	ァイルを削除しました。
+
 2014-06-03  - Ver 2.6.9
 
 	* Ragnarok.Presentation.Extra/Element/BackgroundUIElement3D.cs: 背景の

@@ -128,7 +128,7 @@
 
     <Transform3DGroup x:Key="banTransform">
         <ScaleTransform3D ScaleX="340" ScaleY="350" ScaleZ="1.0" />
-        <TranslateTransform3D OffsetX="300" OffsetY="180" />
+        <TranslateTransform3D OffsetX="320" OffsetY="180" />
     </Transform3DGroup>
 
     <!-- 駒台を表示するオブジェクトなど -->
@@ -138,13 +138,13 @@
     <!-- 右下の駒台の位置 -->
     <Transform3DGroup x:Key="komadai0Transform">
         <ScaleTransform3D ScaleX="120" ScaleY="170" ScaleZ="1.0" />
-        <TranslateTransform3D OffsetX="{r:Calc 300+235}" OffsetY="{r:Calc 360-(10/2+170/2)}" />
+        <TranslateTransform3D OffsetX="{r:Calc 320+235}" OffsetY="{r:Calc 360-(10/2+170/2)}" />
     </Transform3DGroup>
 
     <!-- 左上の駒台の位置 -->
     <Transform3DGroup x:Key="komadai1Transform">
         <ScaleTransform3D ScaleX="120" ScaleY="170" ScaleZ="1.0" />
-        <TranslateTransform3D OffsetX="{r:Calc 300-235}" OffsetY="{r:Calc (10/2+170/2)}" />
+        <TranslateTransform3D OffsetX="{r:Calc 320-235}" OffsetY="{r:Calc (10/2+170/2)}" />
     </Transform3DGroup>
 
     <!-- 右下の名前表示 -->
@@ -318,4 +318,18 @@
                      Geometry="{StaticResource squareMesh}"
                      Material="{StaticResource banTitleMaterial}"
                      Transform="{StaticResource banTransform}" />
+
+    <GeometryModel3D x:Key="autoPlayGeometry"
+                     Geometry="{StaticResource squareMesh}">
+        <GeometryModel3D.Transform>
+            <Transform3DGroup>
+                <ScaleTransform3D ScaleX="640" ScaleY="360" ScaleZ="1.0" />
+                <TranslateTransform3D OffsetX="320" OffsetY="180" OffsetZ="-30.0" />
+            </Transform3DGroup>
+        </GeometryModel3D.Transform>
+        <GeometryModel3D.Material>
+            <DiffuseMaterial Brush="{Binding Data.AutoPlayBrush,
+                                             Source={StaticResource proxy}}" />
+        </GeometryModel3D.Material>
+    </GeometryModel3D>
 </ResourceDictionary>
