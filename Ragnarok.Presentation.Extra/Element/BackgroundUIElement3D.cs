@@ -20,31 +20,13 @@ using System.Windows.Threading;
 namespace Ragnarok.Presentation.Extra.Element
 {
     using Entity;
+    using Effect;
 
     /// <summary>
     /// クロスフェード可能な背景オブジェクトです。
     /// </summary>
     public class BackgroundUIElement3D : UIElement3D
     {
-        /// <summary>
-        /// 背景の切り替え時、一緒にフェードアウトさせる
-        /// コントロールを扱う依存プロパティです。
-        /// </summary>
-        public static readonly DependencyProperty FadeElementProperty =
-            DependencyProperty.Register(
-                "FadeElement", typeof(UIElement), typeof(BackgroundUIElement3D),
-                new FrameworkPropertyMetadata(null));
-
-        /// <summary>
-        /// 背景の切り替え時、一緒にフェードアウトさせる
-        /// コントロールを取得または設定します。
-        /// </summary>
-        public UIElement FadeElement
-        {
-            get { return (UIElement)GetValue(FadeElementProperty); }
-            set { SetValue(FadeElementProperty, value); }
-        }
-
         /// <summary>
         /// 背景の切り替え時間を扱う依存プロパティです。
         /// </summary>
@@ -63,23 +45,54 @@ namespace Ragnarok.Presentation.Extra.Element
         }
 
         private Model3DGroup modelGroup;
-        private EntityObject currentBg_, nextBg_;
+        private EffectObject prevBg, nextBg;
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
         public BackgroundUIElement3D()
         {
-            this.modelGroup = new Model3DGroup();
-            Visual3DModel = this.modelGroup;
+            this.prevBg = new EffectObject()
+            {
+                Duration = Duration.Forever,
+                Opacity = 0.0,
+            };
+            this.nextBg = new EffectObject()
+            {
+                Duration = Duration.Forever,
+                Opacity = 0.0,
+            };
 
+            this.modelGroup = new Model3DGroup();
+            this.modelGroup.Children.Add(this.prevBg.ModelGroup);
+            this.modelGroup.Children.Add(this.nextBg.ModelGroup);
+
+            Visual3DModel = this.modelGroup;
             IsHitTestVisible = false;
+        }
+
+        /// <summary>
+        /// エレメントのアンロードを行います。
+        /// </summary>
+        public void Unload()
+        {
+            if (this.prevBg != null)
+            {
+                this.prevBg.Terminate();
+                this.prevBg = null;
+            }
+
+            if (this.nextBg != null)
+            {
+                this.nextBg.Terminate();
+                this.nextBg = null;
+            }
         }
 
         /// <summary>
         /// 背景のトランジションを開始します。
         /// </summary>
-        private void StartTransition(bool isFadeElement)
+        private void StartTransition()
         {
             var seconds = FadeDuration.TimeSpan.TotalSeconds;
             var fadeTime0 = TimeSpan.FromSeconds(seconds / 4 * 1);
@@ -96,52 +109,18 @@ namespace Ragnarok.Presentation.Extra.Element
             animBack.KeyFrames.Add(new LinearDoubleKeyFrame(0.0, fadeTime3));
 
             animFore.Completed += (_, __) =>
-            {
-                if (this.nextBg_ != null)
-                {
-                    this.modelGroup.Children.Remove(this.nextBg_.ModelGroup);
-                    this.nextBg_ = null;
-                }
-            };
+                { if (this.nextBg != null) this.nextBg.Children.Clear(); };
 
             // 短い時間で背景の切り替えが起こる可能性があるため、
             // ここでnextとcurrentを入れ替えておきます。
-            Util.Swap(ref this.currentBg_, ref this.nextBg_);
-
-            // エンティティのクリア
-            this.modelGroup.Children.Clear();
+            Util.Swap(ref this.prevBg, ref this.nextBg);
 
             // nextには古いエンティティが入っています。
             // 新しいエンティティのアニメーションが終了すると、
             // nextが消えてしまうため、必ず古いエンティティから
             // アニメーションを開始します。
-            if (this.nextBg_ != null)
-            {
-                //this.modelGroup.Children.Add(this.nextBg_.ModelGroup);
-                this.nextBg_.BeginAnimation(UIElement.OpacityProperty, animBack);
-            }
-
-            if (this.currentBg_ != null)
-            {
-                this.modelGroup.Children.Add(this.currentBg_.ModelGroup);
-                this.currentBg_.BeginAnimation(UIElement.OpacityProperty, animFore);
-            }
-
-            // 他要素のフェードイン/アウトの設定
-            if (isFadeElement && FadeElement != null)
-            {
-                var opacity = FadeElement.Opacity;
-                var anim = new DoubleAnimationUsingKeyFrames()
-                {
-                    FillBehavior = FillBehavior.Stop
-                };
-                anim.KeyFrames.Add(new LinearDoubleKeyFrame(opacity, fadeTime0));
-                anim.KeyFrames.Add(new LinearDoubleKeyFrame(0.4, fadeTime1));
-                anim.KeyFrames.Add(new LinearDoubleKeyFrame(0.4, fadeTime2));
-                anim.KeyFrames.Add(new LinearDoubleKeyFrame(opacity, fadeTime3));
-
-                FadeElement.BeginAnimation(UIElement.OpacityProperty, anim);
-            }
+            this.nextBg.BeginAnimation(EffectObject.OpacityProperty, animBack);
+            this.prevBg.BeginAnimation(EffectObject.OpacityProperty, animFore);
         }
 
         /// <summary>
@@ -149,18 +128,32 @@ namespace Ragnarok.Presentation.Extra.Element
         /// </summary>
         public void AddEntity(EntityObject effect)
         {
-            // 同じエフェクトは表示しません。
-            if ((this.currentBg_ == null && effect == null) ||
-                (this.currentBg_ != null && effect != null &&
-                 this.currentBg_.Name == effect.Name))
+            if (this.prevBg == null || this.nextBg == null)
             {
                 return;
             }
 
-            this.nextBg_ = effect;
+            // 同じエフェクトは表示しません。
+            if ((!this.prevBg.Children.Any() && effect == null) ||
+                ( this.prevBg.Children.Any() && effect != null &&
+                 this.prevBg.Name == effect.Name))
+            {
+                return;
+            }
 
-            // 今も次の背景もあるなら、盤のフェードを行います。
-            StartTransition(this.currentBg_ != null && this.nextBg_ != null);
+            //this.nextBg.BeginAnimation(EffectObject.OpacityProperty, null);
+            //this.prevBg.BeginAnimation(EffectObject.OpacityProperty, null);
+
+            this.nextBg.Opacity = 0.0;
+            this.nextBg.Name = (effect != null ? effect.Name : string.Empty);
+
+            this.nextBg.Children.Clear();
+            if (effect != null)
+            {
+                this.nextBg.Children.Add(effect);
+            }
+
+            StartTransition();
         }
 
         /// <summary>
@@ -168,14 +161,14 @@ namespace Ragnarok.Presentation.Extra.Element
         /// </summary>
         public void Render(TimeSpan elapsedTime)
         {
-            if (this.currentBg_ != null)
+            if (this.prevBg != null)
             {
-                this.currentBg_.DoEnterFrame(elapsedTime);
+                this.prevBg.DoEnterFrame(elapsedTime);
             }
 
-            if (this.nextBg_ != null)
+            if (this.nextBg != null)
             {
-                this.nextBg_.DoEnterFrame(elapsedTime);
+                this.nextBg.DoEnterFrame(elapsedTime);
             }
         }
 
