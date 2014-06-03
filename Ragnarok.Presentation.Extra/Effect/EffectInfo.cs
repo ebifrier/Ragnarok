@@ -74,7 +74,12 @@ namespace Ragnarok.Presentation.Extra.Effect
         /// </summary>
         public static Uri EffectBaseDir
         {
-            get { return new Uri(BaseDir, "Effect"); }
+            get
+            {
+                return (BaseDir == null ?
+                    new Uri("Effect", UriKind.Relative) :
+                    new Uri(BaseDir, "Effect"));
+            }
         }
 
         /// <summary>
@@ -82,7 +87,12 @@ namespace Ragnarok.Presentation.Extra.Effect
         /// </summary>
         public static Uri BackgroundBaseDir
         {
-            get { return new Uri(BaseDir, "Background"); }
+            get
+            {
+                return (BaseDir == null ?
+                    new Uri("Background", UriKind.Relative) :
+                    new Uri(BaseDir, "Background"));
+            }
         }
 
         /// <summary>

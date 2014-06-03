@@ -160,7 +160,7 @@ namespace Ragnarok.Presentation.Extra.Entity
         public static readonly DependencyProperty ParentProperty =
             DependencyProperty.Register(
                 "Parent", typeof(EntityObject), typeof(EntityObject),
-                new UIPropertyMetadata(null, (_, __) => OnDataContextChanged(_, true)));
+                new UIPropertyMetadata(null, OnParentChanged));
 
         /// <summary>
         /// 親を取得します。
@@ -169,6 +169,28 @@ namespace Ragnarok.Presentation.Extra.Entity
         {
             get { return (EntityObject)GetValue(ParentProperty); }
             private set { SetValue(ParentProperty, value); }
+        }
+
+        /// <summary>
+        /// Parentプロパティが変更されたときに呼ばれます。
+        /// </summary>
+        static void OnParentChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var self = d as EntityObject;
+
+            if (self != null)
+            {
+                self.OnParentChanged();
+            }
+        }
+
+        /// <summary>
+        /// Parentプロパティが変更されたときに呼ばれます。
+        /// </summary>
+        private void OnParentChanged()
+        {
+            OnDataContextChanged(true);
+            UpdateInheritedOpacity();
         }
 
         /// <summary>
@@ -398,6 +420,69 @@ namespace Ragnarok.Presentation.Extra.Entity
         #endregion
         #endregion
 
+        #region 不透明度
+        /// <summary>
+        /// このオブジェクトの不透明度を扱う依存プロパティです。
+        /// </summary>
+        public static readonly DependencyProperty OpacityProperty =
+            DependencyProperty.Register(
+                "Opacity", typeof(double), typeof(EntityObject),
+                new UIPropertyMetadata(1.0, OnOpacityChanged));
+
+        /// <summary>
+        /// このオブジェクトの不透明度を取得または設定します。
+        /// </summary>
+        public double Opacity
+        {
+            get { return (double)GetValue(OpacityProperty); }
+            set { SetValue(OpacityProperty, value); }
+        }
+
+        static void OnOpacityChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var self = d as EntityObject;
+            if (self != null)
+            {
+                self.UpdateInheritedOpacity();
+            }
+        }
+
+        /// <summary>
+        /// 親の不透明度を考慮した不透明度を扱う依存プロパティです。
+        /// </summary>
+        public static readonly DependencyProperty InheritedOpacityProperty =
+            DependencyProperty.Register(
+                "InheritedOpacity", typeof(double), typeof(EntityObject),
+                new UIPropertyMetadata(1.0, OnInheritedOpacityChanged));
+
+        /// <summary>
+        /// このオブジェクトの不透明度を取得または設定します。
+        /// </summary>
+        public double InheritedOpacity
+        {
+            get { return (double)GetValue(InheritedOpacityProperty); }
+            private set { SetValue(InheritedOpacityProperty, value); }
+        }
+
+        static void OnInheritedOpacityChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var self = d as EntityObject;
+            if (self != null)
+            {
+                self.OnInheritedOpacityUpdated((double)e.OldValue, (double)e.NewValue);
+            }
+        }
+
+        /// <summary>
+        /// 実際の不透明度の更新時に呼ばれます。
+        /// </summary>
+        protected virtual void OnInheritedOpacityUpdated(double oldValue,
+                                                         double newValue)
+        {
+            // 何もしません。
+        }
+        #endregion
+
         #region その他プロパティ
         /// <summary>
         /// 初期化時に開始するストーリーボードを扱う依存プロパティです。
@@ -416,6 +501,30 @@ namespace Ragnarok.Presentation.Extra.Entity
             set { SetValue(ScenarioProperty, value); }
         }
         #endregion
+
+        /// <summary>
+        /// 親の不透明度を含めた実際の不透明度を更新します。
+        /// </summary>
+        private void UpdateInheritedOpacity()
+        {
+            var parentOpacity = (
+                Parent != null ?
+                Parent.InheritedOpacity :
+                1.0);
+
+            UpdateInheritedOpacity(parentOpacity);
+        }
+
+        /// <summary>
+        /// 親の不透明度を含めた実際の不透明度を更新します。
+        /// </summary>
+        private void UpdateInheritedOpacity(double parentOpacity)
+        {
+            var inheritedOpacity = parentOpacity * Opacity;
+            InheritedOpacity = inheritedOpacity;
+
+            Children.ForEach(_ => _.UpdateInheritedOpacity(inheritedOpacity));
+        }
 
         /// <summary>
         /// 変換行列更新時に呼ばれます。

@@ -11,41 +11,65 @@ using FlintSharp.Renderers;
 namespace Ragnarok.Presentation.Extra.Effect
 {
     /// <summary>
-    /// The ParticleCreator is used by the Emitter public class to manage the creation and reuse of particles.
-    /// To speed up the particle system, the ParticleCreator public class maintains a pool of dead particles 
-    /// and reuses them when a new particle is needed, rather than creating a whole new particle.
+    /// EffectObjectのパーティクルを描画するためのレンダラです。
     /// </summary>
     [CLSCompliant(false)]
-    public class Model3DRenderer : Renderer
+    public class EffectRenderer : Renderer
     {
-        private Model3DGroup m_root;
-
         /// <summary>
-        /// The constructor creates a ParticleCreator object.
+        /// コンストラクタ
         /// </summary>
-        public Model3DRenderer(Model3DGroup root)
+        public EffectRenderer(EffectObject root)
         {
-            m_root = root;
+            if (root == null)
+            {
+                throw new ArgumentNullException("root");
+            }
+
+            EffectObject = root;
         }
 
+        /// <summary>
+        /// 対象となるエフェクトオブジェクトを取得します。
+        /// </summary>
+        public EffectObject EffectObject
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// モデルのルートオブジェクトを取得します。
+        /// </summary>
+        private Model3DGroup RootModelGroup
+        {
+            get { return EffectObject.ModelGroup; }
+        }
+
+        /// <summary>
+        /// パーティクルを追加します。
+        /// </summary>
         [CLSCompliant(false)]
         public override void AddParticle(Particle particle)
         {
             base.AddParticle(particle);
 
-            m_root.Children.Add(particle.Model);
+            RootModelGroup.Children.Add(particle.Model);
         }
 
+        /// <summary>
+        /// パーティクルを削除します。
+        /// </summary>
         [CLSCompliant(false)]
         public override void RemoveParticle(Particle particle)
         {
             base.RemoveParticle(particle);
 
-            m_root.Children.Remove(particle.Model);
+            RootModelGroup.Children.Remove(particle.Model);
         }
 
         /// <summary>
-        /// Converts ARGB to the Color instance.
+        /// uint型の色形式をColorに変換します。
         /// </summary>
         [CLSCompliant(false)]
         public static Color ToColor(uint value)
@@ -57,6 +81,9 @@ namespace Ragnarok.Presentation.Extra.Effect
                 (byte)((value >> 0) & 0xFF));
         }
 
+        /// <summary>
+        /// パーティクルの描画設定をまとめて行います。
+        /// </summary>
         public override void RenderParticles(IEnumerable<Particle> particles)
         {
             base.RenderParticles(particles);
@@ -65,7 +92,9 @@ namespace Ragnarok.Presentation.Extra.Effect
             {
                 if (particle.Brush != null)
                 {
-                    particle.Brush.Opacity = (double)((particle.Color >> 24) & 0xFF) / 255.0;
+                    var opacity = (double)((particle.Color >> 24) & 0xFF) / 255.0;
+
+                    particle.Brush.Opacity = EffectObject.InheritedOpacity * opacity;
                 }
 
                 if (particle.Material != null)
@@ -99,7 +128,7 @@ namespace Ragnarok.Presentation.Extra.Effect
                     m.Rotate(new Quaternion(new Vector3D(0, 0, 1), rot));
                 }
 
-                m.Translate(new Vector3D(particle.X, particle.Y, 0));
+                m.Translate(new Vector3D(particle.X, particle.Y, 0.0));
 
                 particle.Model.Transform = new MatrixTransform3D(m);
             }

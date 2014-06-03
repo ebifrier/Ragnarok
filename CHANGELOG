@@ -1,3 +1,12 @@
+2014-06-03  - Ver 2.6.8
+
+	* Ragnarok.Presentation.Extra/Effect/EffectObject.cs,
+	  Ragnarok.Presentation.Extra/Entity/EntityObject.cs: 不透明度のプロパ
+	ティをEntityObjectに移動し、どんなオブジェクトも親の不透明度を考慮して
+	計算できるようにしました。
+	* Ragnarok.Presentation.Extra/Effect/Model3DRenderer.cs: リファクタリン
+	グを行いました。
+
 2014-06-03  - Ver 2.6.7
 
 	* Ragnarok/Ragnarok.csproj: ビルド定数を修正しました。

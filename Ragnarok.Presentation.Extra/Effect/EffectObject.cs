@@ -73,11 +73,12 @@ namespace Ragnarok.Presentation.Extra.Effect
     {
         private GeometryModel3D model;
         private Brush brush;
-        private Model3DRenderer renderer;
+        private EffectRenderer renderer;
 
         /// <summary>
         /// サウンド再生用オブジェクトを取得または設定します。
         /// </summary>
+        [CLSCompliant(false)]
         public static SoundManager SoundManager
         {
             get;
@@ -304,34 +305,6 @@ namespace Ragnarok.Presentation.Extra.Effect
         }
         #endregion
 
-        #region 不透明度
-        /// <summary>
-        /// 不透明度を扱う依存プロパティです。
-        /// </summary>
-        public static readonly DependencyProperty OpacityProperty =
-            DependencyProperty.Register(
-                "Opacity", typeof(double), typeof(EffectObject),
-                new UIPropertyMetadata(1.0, OnOpacityChanged));
-
-        /// <summary>
-        /// 不透明度を取得または設定します。
-        /// </summary>
-        public double Opacity
-        {
-            get { return (double)GetValue(OpacityProperty); }
-            set { SetValue(OpacityProperty, value); }
-        }
-
-        static void OnOpacityChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var self = d as EffectObject;
-            if (self != null)
-            {
-                self.UpdateBrushOpacity();
-            }
-        }
-        #endregion
-
         #region サウンド
         /// <summary>
         /// 開始時に鳴らすサウンドのパスを扱う依存プロパティです。
@@ -429,7 +402,7 @@ namespace Ragnarok.Presentation.Extra.Effect
             this.model = new GeometryModel3D();
 
             // ブラシ属性などを更新します。
-            UpdateBrushOpacity();
+            OnInheritedOpacityUpdated(0.0, InheritedOpacity);
             UpdateModel();
 
             return this.model;
@@ -475,6 +448,20 @@ namespace Ragnarok.Presentation.Extra.Effect
                 false);
 
             return true;
+        }
+        /// <summary>
+        /// 不透明度が変わったときに呼ばれます。
+        /// </summary>
+        protected override void OnInheritedOpacityUpdated(double oldValue, double newValue)
+        {
+            base.OnInheritedOpacityUpdated(oldValue, newValue);
+
+            if (this.brush == null)
+            {
+                return;
+            }
+
+            this.brush.Opacity = newValue;
         }
 
         /// <summary>
@@ -553,19 +540,6 @@ namespace Ragnarok.Presentation.Extra.Effect
         }
 
         /// <summary>
-        /// 不透明度が変わったときに呼ばれます。
-        /// </summary>
-        private void UpdateBrushOpacity()
-        {
-            if (this.brush == null)
-            {
-                return;
-            }
-
-            this.brush.Opacity = Opacity;
-        }
-
-        /// <summary>
         /// 追加の子要素があるかどうかを取得します。
         /// </summary>
         protected override bool HasChildren()
@@ -615,7 +589,7 @@ namespace Ragnarok.Presentation.Extra.Effect
         /// </summary>
         public EffectObject()
         {
-            this.renderer = new Model3DRenderer(ModelGroup);
+            this.renderer = new EffectRenderer(this);
 
             // 値をForeverにすると、子要素があってもなくてもオブジェクトが
             // 終了しなくなります。
