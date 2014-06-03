@@ -1,3 +1,10 @@
+2014-06-03  - Ver 2.6.11
+
+	* Ragnarok.Presentation.Extra/Ragnarok.Presentation.Extra.csproj: x86用
+	のプラットフォーム設定を追加しました。
+	* Ragnarok.Presentation/Ragnarok.Presentation.csproj: ビルドオプション
+	を修正しました。
+
 2014-06-03  - Ver 2.6.10
 
 	* Ragnarok.Presentation.Shogi/View/ShogiUIElement3D.cs: Unloadメソッド
