@@ -59,7 +59,7 @@ namespace Ragnarok.Shogi.Csa
         /// <summary>
         /// 駒の移動後の位置を取得または設定します。
         /// </summary>
-        public Position NewPosition
+        public Position DstSquare
         {
             get;
             set;
@@ -68,7 +68,7 @@ namespace Ragnarok.Shogi.Csa
         /// <summary>
         /// 駒の移動前の位置を取得または設定します。
         /// </summary>
-        public Position OldPosition
+        public Position SrcSquare
         {
             get;
             set;
@@ -79,7 +79,7 @@ namespace Ragnarok.Shogi.Csa
         /// </summary>
         public bool IsDrop
         {
-            get { return (OldPosition == null); }
+            get { return (SrcSquare == null); }
         }
 
         /// <summary>
@@ -152,10 +152,10 @@ namespace Ragnarok.Shogi.Csa
                 Side == BWType.White ? "-" :
                 "");
 
-            if (OldPosition != null)
+            if (SrcSquare != null)
             {
-                sb.Append(OldPosition.File);
-                sb.Append(OldPosition.Rank);
+                sb.Append(SrcSquare.File);
+                sb.Append(SrcSquare.Rank);
             }
             else
             {
@@ -163,10 +163,10 @@ namespace Ragnarok.Shogi.Csa
                 sb.Append("00");
             }
 
-            if (NewPosition != null)
+            if (DstSquare != null)
             {
-                sb.Append(NewPosition.File);
-                sb.Append(NewPosition.Rank);
+                sb.Append(DstSquare.File);
+                sb.Append(DstSquare.Rank);
             }
             else
             {
@@ -197,21 +197,21 @@ namespace Ragnarok.Shogi.Csa
             }
 
             if (Piece == Piece.None ||
-                NewPosition == null)
+                DstSquare == null)
             {
                 sb.Append("○○○");
                 return sb.ToString();
             }
 
-            sb.Append(NewPosition.File);
-            sb.Append(NewPosition.Rank);
+            sb.Append(DstSquare.File);
+            sb.Append(DstSquare.Rank);
             sb.Append(Stringizer.ToString(Piece));
 
-            if (OldPosition != null)
+            if (SrcSquare != null)
             {
                 sb.Append("(");
-                sb.Append(OldPosition.File);
-                sb.Append(OldPosition.Rank);
+                sb.Append(SrcSquare.File);
+                sb.Append(SrcSquare.Rank);
                 sb.Append(")");
             }
             else
@@ -255,8 +255,8 @@ namespace Ragnarok.Shogi.Csa
                 IsKachi == other.IsKachi &&
                 Side == other.Side &&
                 Util.GenericEquals(Piece, other.Piece) &&
-                Util.GenericEquals(NewPosition, other.NewPosition) &&
-                Util.GenericEquals(OldPosition, other.OldPosition));
+                Util.GenericEquals(DstSquare, other.DstSquare) &&
+                Util.GenericEquals(SrcSquare, other.SrcSquare));
         }
 
         /// <summary>
@@ -310,20 +310,20 @@ namespace Ragnarok.Shogi.Csa
                 BWType.None);
 
             // 移動前の位置
-            var oldFile = int.Parse(m.Groups[2].Value);
-            var oldRank = int.Parse(m.Groups[3].Value);
-            var oldPosition =
-                (oldFile == 0 || oldRank == 0
+            var srcFile = int.Parse(m.Groups[2].Value);
+            var srcRank = int.Parse(m.Groups[3].Value);
+            var srcSquare =
+                (srcFile == 0 || srcRank == 0
                 ? (Position)null
-                : new Position(oldFile, oldRank));
+                : new Position(srcFile, srcRank));
 
             // 移動後の位置
-            var newFile = int.Parse(m.Groups[4].Value);
-            var newRank = int.Parse(m.Groups[5].Value);
-            var newPosition =
-                (newFile == 0 || newRank == 0
+            var dstFile = int.Parse(m.Groups[4].Value);
+            var dstRank = int.Parse(m.Groups[5].Value);
+            var dstSquare =
+                (dstFile == 0 || dstRank == 0
                 ? (Position)null
-                : new Position(newFile, newRank));
+                : new Position(dstFile, dstRank));
 
             // 駒
             Piece piece;
@@ -334,8 +334,8 @@ namespace Ragnarok.Shogi.Csa
 
             return new CsaMove
             {
-                NewPosition = newPosition,
-                OldPosition = oldPosition,
+                DstSquare = dstSquare,
+                SrcSquare = srcSquare,
                 Piece = piece,
                 Side = side,
                 IsResigned = false,
