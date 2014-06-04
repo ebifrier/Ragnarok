@@ -139,11 +139,11 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 駒の到達位置を取得または設定します。
         /// </summary>
-        public Position DstSquare
+        public Square DstSquare
         {
             get
             {
-                return new Position(File, Rank);
+                return new Square(File, Rank);
             }
             set
             {
@@ -219,7 +219,7 @@ namespace Ragnarok.Shogi
         /// (もしあれば)移動前の情報を取得または設定します。
         /// </summary>
         [DataMember(Order = 11, IsRequired = false)]
-        public Position SrcSquare
+        public Square SrcSquare
         {
             get;
             set;

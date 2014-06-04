@@ -59,7 +59,7 @@ namespace Ragnarok.Shogi.Csa
         /// <summary>
         /// 駒の移動後の位置を取得または設定します。
         /// </summary>
-        public Position DstSquare
+        public Square DstSquare
         {
             get;
             set;
@@ -68,7 +68,7 @@ namespace Ragnarok.Shogi.Csa
         /// <summary>
         /// 駒の移動前の位置を取得または設定します。
         /// </summary>
-        public Position SrcSquare
+        public Square SrcSquare
         {
             get;
             set;
@@ -314,16 +314,16 @@ namespace Ragnarok.Shogi.Csa
             var srcRank = int.Parse(m.Groups[3].Value);
             var srcSquare =
                 (srcFile == 0 || srcRank == 0
-                ? (Position)null
-                : new Position(srcFile, srcRank));
+                ? (Square)null
+                : new Square(srcFile, srcRank));
 
             // 移動後の位置
             var dstFile = int.Parse(m.Groups[4].Value);
             var dstRank = int.Parse(m.Groups[5].Value);
             var dstSquare =
                 (dstFile == 0 || dstRank == 0
-                ? (Position)null
-                : new Position(dstFile, dstRank));
+                ? (Square)null
+                : new Square(dstFile, dstRank));
 
             // 駒
             Piece piece;

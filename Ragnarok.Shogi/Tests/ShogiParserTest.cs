@@ -42,7 +42,7 @@ namespace Ragnarok.Shogi.Tests
 
             var gin68 = new Move
             {
-                DstSquare = new Position(6, 8),
+                DstSquare = new Square(6, 8),
                 Piece = Piece.Gin,
             };
             Assert.AreEqual(
@@ -56,7 +56,7 @@ namespace Ragnarok.Shogi.Tests
                 ShogiParser.ParseMove("４６歩", true),
                 new Move
                 {
-                    DstSquare = new Position(4, 6),
+                    DstSquare = new Square(4, 6),
                     Piece = Piece.Hu,
                 });
 
@@ -64,35 +64,35 @@ namespace Ragnarok.Shogi.Tests
                 ShogiParser.ParseMove("56ふぅ", true),
                 new Move
                 {
-                    DstSquare = new Position(5, 6),
+                    DstSquare = new Square(5, 6),
                     Piece = Piece.Hu,
                 });
             Assert.AreEqual(
                 ShogiParser.ParseMove("救急玉", true),
                 new Move
                 {
-                    DstSquare = new Position(9, 9),
+                    DstSquare = new Square(9, 9),
                     Piece = Piece.Gyoku,
                 });
             Assert.AreEqual(
                 ShogiParser.ParseMove("燦燦劉", true),
                 new Move
                 {
-                    DstSquare = new Position(3, 3),
+                    DstSquare = new Square(3, 3),
                     Piece = Piece.Ryu,
                 });
             Assert.AreEqual(
                 ShogiParser.ParseMove("32RYUU", true),
                 new Move
                 {
-                    DstSquare = new Position(3, 2),
+                    DstSquare = new Square(3, 2),
                     Piece = Piece.Ryu,
                 });
             Assert.AreEqual(
                 ShogiParser.ParseMove("32KINN", true),
                 new Move
                 {
-                    DstSquare = new Position(3, 2),
+                    DstSquare = new Square(3, 2),
                     Piece = Piece.Kin,
                 });
         }
@@ -104,7 +104,7 @@ namespace Ragnarok.Shogi.Tests
                 ShogiParser.ParseMove("１３馬右", true),
                 new Move
                 {
-                    DstSquare = new Position(1, 3),
+                    DstSquare = new Square(1, 3),
                     Piece = Piece.Uma,
                     RelFileType = RelFileType.Right,
                 });
@@ -112,7 +112,7 @@ namespace Ragnarok.Shogi.Tests
                 ShogiParser.ParseMove("１３馬右引く", true),
                 new Move
                 {
-                    DstSquare = new Position(1, 3),
+                    DstSquare = new Square(1, 3),
                     Piece = Piece.Uma,
                     RankMoveType = RankMoveType.Back,
                     RelFileType = RelFileType.Right,
@@ -121,7 +121,7 @@ namespace Ragnarok.Shogi.Tests
                 ShogiParser.ParseMove("43ほーす左", true),
                 new Move
                 {
-                    DstSquare = new Position(4, 3),
+                    DstSquare = new Square(4, 3),
                     Piece = Piece.Uma,
                     RelFileType = RelFileType.Left,
                 });
@@ -130,7 +130,7 @@ namespace Ragnarok.Shogi.Tests
                 ShogiParser.ParseMove("１３不不成り", true),
                 new Move
                 {
-                    DstSquare = new Position(1, 3),
+                    DstSquare = new Square(1, 3),
                     Piece = Piece.Hu,
                     ActionType = ActionType.Unpromote,
                 });
@@ -139,7 +139,7 @@ namespace Ragnarok.Shogi.Tests
                 ShogiParser.ParseMove("５５うまごん", true),
                 new Move
                 {
-                    DstSquare = new Position(5, 5),
+                    DstSquare = new Square(5, 5),
                     Piece = Piece.Uma,
                 });
 
@@ -147,14 +147,14 @@ namespace Ragnarok.Shogi.Tests
                 ShogiParser.ParseMove("３９ときんちゃん", true),
                 new Move
                 {
-                    DstSquare = new Position(3, 9),
+                    DstSquare = new Square(3, 9),
                     Piece = Piece.To,
                 });
             Assert.AreEqual(
                 ShogiParser.ParseMove("ごよんぽ", true),
                 new Move
                 {
-                    DstSquare = new Position(5, 4),
+                    DstSquare = new Square(5, 4),
                     Piece = Piece.Hu,
                 });
 
@@ -162,7 +162,7 @@ namespace Ragnarok.Shogi.Tests
                 ShogiParser.ParseMove("シックスナイン不", true),
                 new Move
                 {
-                    DstSquare = new Position(6, 9),
+                    DstSquare = new Square(6, 9),
                     Piece = Piece.Hu,
                 });
         }

@@ -44,7 +44,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 駒の移動先を取得または設定します。
         /// </summary>
-        public Position DstSquare
+        public Square DstSquare
         {
             get;
             set;
@@ -56,7 +56,7 @@ namespace Ragnarok.Shogi
         /// <remarks>
         /// 駒打ちの場合はnullになります。
         /// </remarks>
-        public Position SrcSquare
+        public Square SrcSquare
         {
             get;
             set;
@@ -224,28 +224,28 @@ namespace Ragnarok.Shogi
         private uint serializeBits = 0;
 
         /// <summary>
-        /// Positionをシリアライズします。
+        /// Squareをシリアライズします。
         /// </summary>
         /// <remarks>
         /// 1*10+1 ～ 9*10+9の値にシリアライズされます。
         /// </remarks>
-        private static byte SerializePosition(Position position)
+        private static byte SerializeSquare(Square square)
         {
-            if (position == null)
+            if (square == null)
             {
                 return 0;
             }
 
             // 1*10+1 ～ 9*10+9
             return (byte)(
-                position.File * (Board.BoardSize + 1) +
-                position.Rank);
+                square.File * (Board.BoardSize + 1) +
+                square.Rank);
         }
 
         /// <summary>
-        /// Positionをデシリアライズします。
+        /// Squareをデシリアライズします。
         /// </summary>
-        private static Position DeserializePosition(uint bits)
+        private static Square DeserializeSquare(uint bits)
         {
             if (bits == 0)
             {
@@ -254,7 +254,7 @@ namespace Ragnarok.Shogi
 
             var file = (int)bits / (Board.BoardSize + 1);
             var rank = (int)bits % (Board.BoardSize + 1);
-            return new Position(file, rank);
+            return new Square(file, rank);
         }
 
         /// <summary>
@@ -274,9 +274,9 @@ namespace Ragnarok.Shogi
             // 1bit
             bits |= ((uint)(TookPiece != null ? 1 : 0) << 9);
             // 7bit
-            bits |= (uint)(SerializePosition(DstSquare) << 10);
+            bits |= (uint)(SerializeSquare(DstSquare) << 10);
             // 7bit
-            bits |= (uint)(SerializePosition(SrcSquare) << 17);
+            bits |= (uint)(SerializeSquare(SrcSquare) << 17);
 
             if (TookPiece != null)
             {
@@ -301,9 +301,9 @@ namespace Ragnarok.Shogi
             // 1bit
             var hasTookPiece = (((bits >> 9) & 0x01) != 0);
             // 7bit
-            DstSquare = DeserializePosition((bits >> 10) & 0x7f);
+            DstSquare = DeserializeSquare((bits >> 10) & 0x7f);
             // 7bit
-            SrcSquare = DeserializePosition((bits >> 17) & 0x7f);
+            SrcSquare = DeserializeSquare((bits >> 17) & 0x7f);
 
             if (hasTookPiece)
             {

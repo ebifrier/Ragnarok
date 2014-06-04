@@ -69,7 +69,7 @@ namespace Ragnarok.Shogi
         [DataMember(Order = 4, IsRequired = true)]
         private BWType turn = BWType.Black;
         [DataMember(Order = 5, IsRequired = true)]
-        private Position prevMovedPosition = null;
+        private Square prevMovedSquare = null;
         //[DataMember(Order = 6, IsRequired = true)]
         private List<BoardMove> moveList = new List<BoardMove>();
         //[DataMember(Order = 7, IsRequired = true)]
@@ -165,9 +165,9 @@ namespace Ragnarok.Shogi
                     whiteCapturedPieceBox = this.whiteCapturedPieceBox.Clone(),
                     viewSide = this.viewSide,
                     turn = this.turn,
-                    prevMovedPosition = (
-                        this.prevMovedPosition != null ?
-                        this.prevMovedPosition.Clone() :
+                    prevMovedSquare = (
+                        this.prevMovedSquare != null ?
+                        this.prevMovedSquare.Clone() :
                         null),
                     moveList = this.moveList.Select(move => move.Clone()).ToList(),
                     redoList = this.redoList.Select(move => move.Clone()).ToList(),
@@ -178,10 +178,10 @@ namespace Ragnarok.Shogi
                 {
                     for (var file = 1; file <= BoardSize; ++file)
                     {
-                        var position = new Position(file, rank);
-                        var piece = this[position];
+                        var square = new Square(file, rank);
+                        var piece = this[square];
 
-                        cloned[position] = (
+                        cloned[square] = (
                             piece != null ?
                             piece.Clone() :
                             null);
@@ -290,19 +290,19 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
-        /// <paramref name="position"/> にある駒を取得します。
+        /// <paramref name="square"/> にある駒を取得します。
         /// </summary>
-        public Piece this[Position position]
+        public Piece this[Square square]
         {
             get
             {
-                if (position == null || !position.Validate())
+                if (square == null || !square.Validate())
                 {
                     return null;
                 }
 
-                var rank = position.Rank - 1;
-                var file = BoardSize - position.File;
+                var rank = square.Rank - 1;
+                var file = BoardSize - square.File;
 
                 using (LazyLock())
                 {
@@ -311,13 +311,13 @@ namespace Ragnarok.Shogi
             }
             set
             {
-                if (position == null || !position.Validate())
+                if (square == null || !square.Validate())
                 {
-                    throw new ArgumentException("position");
+                    throw new ArgumentException("square");
                 }
 
-                var rank = position.Rank - 1;
-                var file = BoardSize - position.File;
+                var rank = square.Rank - 1;
+                var file = BoardSize - square.File;
 
                 using (LazyLock())
                 {
@@ -331,8 +331,8 @@ namespace Ragnarok.Shogi
         /// </summary>
         public Piece this[int file, int rank]
         {
-            get { return this[new Position(file, rank)]; }
-            set { this[new Position(file, rank)] = value; }
+            get { return this[new Square(file, rank)]; }
+            set { this[new Square(file, rank)] = value; }
         }
 
         /// <summary>
@@ -347,10 +347,10 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 前回動かした駒の位置を取得します。
         /// </summary>
-        public Position PrevMovedPosition
+        public Square PrevMovedSquare
         {
-            get { return this.prevMovedPosition; }
-            set { SetValue("PrevMovedPosition", value, ref this.prevMovedPosition); }
+            get { return this.prevMovedSquare; }
+            set { SetValue("PrevMovedSquare", value, ref this.prevMovedSquare); }
         }
 
         /// <summary>
@@ -458,7 +458,7 @@ namespace Ragnarok.Shogi
                 this.redoList.Add(move);
 
                 // this.moveListからmoveから取り除かれた状態じゃないと
-                // PrevMovedPositionの設定が上手くいかない。
+                // PrevMovedSquareの設定が上手くいかない。
                 DoUndo(move);
 
                 NotifyBoardChanged(move, true);
@@ -507,7 +507,7 @@ namespace Ragnarok.Shogi
             }
 
             Turn = Turn.Toggle();
-            PrevMovedPosition = (
+            PrevMovedSquare = (
                 this.moveList.Any() ?
                 this.moveList.Last().DstSquare :
                 null);
@@ -625,11 +625,11 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// ２歩のチェックを行います。
         /// </summary>
-        private bool IsDoublePawn(BWType bwType, Position position)
+        private bool IsDoublePawn(BWType bwType, Square square)
         {
             for (var i = 0; i < BoardSize; ++i)
             {
-                var piece = this[position.File, i];
+                var piece = this[square.File, i];
 
                 if (piece != null &&
                     piece.BWType == bwType &&
@@ -651,7 +651,7 @@ namespace Ragnarok.Shogi
             NotifyBoardChanging(move, false);
 
             Turn = Turn.Toggle();
-            PrevMovedPosition = move.DstSquare;
+            PrevMovedSquare = move.DstSquare;
 
             this.moveList.Add(move);
 
@@ -962,7 +962,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 香車が指定の場所に動けるか判断します。
         /// </summary>
-        private bool CanMoveKyo(BWType bwType, Position basePos, int relFile, int relRank)
+        private bool CanMoveKyo(BWType bwType, Square basePos, int relFile, int relRank)
         {
             // 香車は横には動けません。
             if (relFile != 0)
@@ -1004,7 +1004,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 飛車が指定の場所に動けるか判断します。
         /// </summary>
-        private bool CanMoveHisya(Position basePos, int relFile, int relRank)
+        private bool CanMoveHisya(Square basePos, int relFile, int relRank)
         {
             var baseFile = basePos.File;
             var baseRank = basePos.Rank;
@@ -1052,7 +1052,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 角が指定の場所に動けるかどうか判断します。
         /// </summary>
-        private bool CanMoveKaku(Position basePos, int relFile, int relRank)
+        private bool CanMoveKaku(Square basePos, int relFile, int relRank)
         {
             var baseFile = basePos.File;
             var baseRank = basePos.Rank;
@@ -1160,8 +1160,8 @@ namespace Ragnarok.Shogi
         /// 駒がそこに動かせるか調べ、動かせる場合は可能な指し手を追加します。
         /// </summary>
         private IEnumerable<BoardMove> GetMovableMove(Piece piece,
-                                                      Position dstSquare,
-                                                      Position srcSquare)
+                                                      Square dstSquare,
+                                                      Square srcSquare)
         {
             if (!srcSquare.Validate())
             {
@@ -1217,32 +1217,32 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 指定の領域で駒が動ける箇所を検索します。
         /// </summary>
-        private IEnumerable<Position> GetRange(int fileRange,
-                                               int rankRange,
-                                               Position position)
+        private IEnumerable<Square> GetRange(int fileRange,
+                                             int rankRange,
+                                             Square square)
         {
-            var minFile = Math.Max(position.File - fileRange, 1);
-            var maxFile = Math.Min(position.File + fileRange, BoardSize);
-            var minRank = Math.Max(position.Rank - rankRange, 1);
-            var maxRank = Math.Min(position.Rank + rankRange, BoardSize);
+            var minFile = Math.Max(square.File - fileRange, 1);
+            var maxFile = Math.Min(square.File + fileRange, BoardSize);
+            var minRank = Math.Max(square.Rank - rankRange, 1);
+            var maxRank = Math.Min(square.Rank + rankRange, BoardSize);
 
             for (var file = minFile; file <= maxFile; ++file)
             {
                 for (var rank = minRank; rank <= maxRank; ++rank)
                 {
-                    yield return new Position(file, rank);
+                    yield return new Square(file, rank);
                 }
             }
         }
 
         /// <summary>
-        /// 駒を<paramref name="dstSquare"/>に移動できる可能性のある
+        /// 駒を<paramref name="square"/>に移動できる可能性のある
         /// 異動元の位置をすべて列挙します。
         /// </summary>
-        private IEnumerable<Position> GetMovableFromRange_(Piece piece,
-                                                           Position dstSquare)
+        private IEnumerable<Square> GetMovableFromRange(Piece piece,
+                                                        Square square)
         {
-            if (dstSquare == null || !dstSquare.Validate())
+            if (square == null || !square.Validate())
             {
                 yield break;
             }
@@ -1252,7 +1252,7 @@ namespace Ragnarok.Shogi
                 if (piece.IsPromoted)
                 {
                     // 成り駒の場合は、とりあえず段列±１の領域を調べます。
-                    foreach (var p in GetRange(1, 1, dstSquare))
+                    foreach (var p in GetRange(1, 1, square))
                     {
                         yield return p;
                     }
@@ -1265,25 +1265,25 @@ namespace Ragnarok.Shogi
                         case PieceType.Gyoku:
                         case PieceType.Kin:
                         case PieceType.Gin:
-                            foreach (var p in GetRange(1, 1, dstSquare))
+                            foreach (var p in GetRange(1, 1, square))
                             {
                                 yield return p;
                             }
                             break;
                         case PieceType.Kei:
-                            foreach (var p in GetRange(1, 2, dstSquare))
+                            foreach (var p in GetRange(1, 2, square))
                             {
                                 yield return p;
                             }
                             break;
                         case PieceType.Kyo:
-                            foreach (var p in GetRange(0, BoardSize, dstSquare))
+                            foreach (var p in GetRange(0, BoardSize, square))
                             {
                                 yield return p;
                             }
                             break;
                         case PieceType.Hu:
-                            foreach (var p in GetRange(0, 1, dstSquare))
+                            foreach (var p in GetRange(0, 1, square))
                             {
                                 yield return p;
                             }
@@ -1298,22 +1298,22 @@ namespace Ragnarok.Shogi
                         for (var file = 1; file <= BoardSize; ++file)
                         {
                             if (piece.IsPromoted &&
-                                Math.Abs(dstSquare.File - file) <= 1)
+                                Math.Abs(square.File - file) <= 1)
                             {
                                 continue;
                             }
 
-                            yield return new Position(file, dstSquare.Rank);
+                            yield return new Square(file, square.Rank);
                         }
                         for (var rank = 1; rank <= BoardSize; ++rank)
                         {
                             if (piece.IsPromoted &&
-                                Math.Abs(dstSquare.Rank - rank) <= 1)
+                                Math.Abs(square.Rank - rank) <= 1)
                             {
                                 continue;
                             }
 
-                            yield return new Position(dstSquare.File, rank);
+                            yield return new Square(square.File, rank);
                         }
                         break;
 
@@ -1325,9 +1325,9 @@ namespace Ragnarok.Shogi
                                 continue;
                             }
 
-                            yield return new Position(
-                                dstSquare.File + index,
-                                dstSquare.Rank + index);
+                            yield return new Square(
+                                square.File + index,
+                                square.Rank + index);
                         }
                         for (var index = -BoardSize; index <= BoardSize; ++index)
                         {
@@ -1336,9 +1336,9 @@ namespace Ragnarok.Shogi
                                 continue;
                             }
 
-                            yield return new Position(
-                                dstSquare.File + index,
-                                dstSquare.Rank - index);
+                            yield return new Square(
+                                square.File + index,
+                                square.Rank - index);
                         }
                         break;
                 }
@@ -1349,7 +1349,7 @@ namespace Ragnarok.Shogi
         /// 駒の種類と新しい位置から、可能な差し手をすべて検索します。
         /// </summary>
         public IEnumerable<BoardMove> SearchMoveList(Piece piece,
-                                                     Position dstSquare)
+                                                     Square square)
         {
             using (LazyLock())
             {
@@ -1359,7 +1359,7 @@ namespace Ragnarok.Shogi
                     var move = new BoardMove()
                     {
                         BWType = piece.BWType,
-                        DstSquare = dstSquare,
+                        DstSquare = square,
                         ActionType = ActionType.Drop,
                         DropPieceType = piece.PieceType,
                     };
@@ -1369,8 +1369,8 @@ namespace Ragnarok.Shogi
                     }
                 }
 
-                var list = GetMovableFromRange_(piece, dstSquare)
-                    .SelectMany(_ => GetMovableMove(piece, dstSquare, _));
+                var list = GetMovableFromRange(piece, square)
+                    .SelectMany(_ => GetMovableMove(piece, square, _));
 
                 foreach (var m in list)
                 {
@@ -1410,8 +1410,8 @@ namespace Ragnarok.Shogi
                     return false;
                 }
 
-                if (this.prevMovedPosition != null &&
-                    !this.prevMovedPosition.Validate())
+                if (this.prevMovedSquare != null &&
+                    !this.prevMovedSquare.Validate())
                 {
                     return false;
                 }
@@ -1457,9 +1457,9 @@ namespace Ragnarok.Shogi
                 {
                     for (var file = 1; file < BoardSize; ++file)
                     {
-                        var position = new Position(file, rank);
+                        var square = new Square(file, rank);
 
-                        if (this[position] != other[position])
+                        if (this[square] != other[square])
                         {
                             return false;
                         }
@@ -1477,7 +1477,7 @@ namespace Ragnarok.Shogi
                     return false;
                 }
 
-                if (this.prevMovedPosition != other.prevMovedPosition)
+                if (this.prevMovedSquare != other.prevMovedSquare)
                 {
                     return false;
                 }
@@ -1514,8 +1514,8 @@ namespace Ragnarok.Shogi
                     this.blackCapturedPieceBox.GetHashCode() ^
                     this.whiteCapturedPieceBox.GetHashCode() ^
                     this.turn.GetHashCode() ^
-                    (this.prevMovedPosition != null ?
-                        this.prevMovedPosition.GetHashCode() : 0));
+                    (this.prevMovedSquare != null ?
+                        this.prevMovedSquare.GetHashCode() : 0));
             }
         }
 

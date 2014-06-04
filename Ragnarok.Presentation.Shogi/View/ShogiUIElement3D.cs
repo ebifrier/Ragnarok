@@ -779,7 +779,7 @@ namespace Ragnarok.Presentation.Shogi.View
         /// <remarks>
         /// 指せない指し手の場合は、駒の移動を終了します。
         /// </remarks>
-        private void DoMove(Position dstSquare)
+        private void DoMove(Square dstSquare)
         {
             if (this.movingPiece == null)
             {
@@ -948,14 +948,14 @@ namespace Ragnarok.Presentation.Shogi.View
         /// <summary>
         /// 与えられた座標のセルを取得します。
         /// </summary>
-        private Position GetCell(Point pos)
+        private Square GetCell(Point pos)
         {
             // とりあえず設定します。
             var file = (int)((pos.X - BanBounds.Left) / CellSize.Width);
             var rank = (int)((pos.Y - BanBounds.Top) / CellSize.Height);
 
             // 正しい位置にありましぇん。
-            var position = new Position(Board.BoardSize - file, rank + 1);
+            var position = new Square(Board.BoardSize - file, rank + 1);
             if (!position.Validate())
             {
                 return null;
@@ -982,7 +982,7 @@ namespace Ragnarok.Presentation.Shogi.View
         /// <summary>
         /// 画面表示上の位置を取得します。
         /// </summary>
-        public Vector3D GetPiecePos(Position position)
+        public Vector3D GetPiecePos(Square position)
         {
             if ((object)position == null)
             {
@@ -1092,7 +1092,7 @@ namespace Ragnarok.Presentation.Shogi.View
         /// <summary>
         /// 指定の位置にある駒を取得します。
         /// </summary>
-        private PieceObject GetPieceObject(Position position)
+        private PieceObject GetPieceObject(Square position)
         {
             if (position == null || !position.Validate())
             {
@@ -1143,7 +1143,7 @@ namespace Ragnarok.Presentation.Shogi.View
         /// <summary>
         /// 指定の位置にある駒を削除します。
         /// </summary>
-        private void RemovePieceObject(Position position)
+        private void RemovePieceObject(Square position)
         {
             if (position == null || !position.Validate())
             {
@@ -1371,7 +1371,7 @@ namespace Ragnarok.Presentation.Shogi.View
             {
                 for (var file = 1; file <= Board.BoardSize; ++file)
                 {
-                    var position = new Position(file, rank);
+                    var position = new Square(file, rank);
                     var model = Board[position];
 
                     if ((object)model != null)

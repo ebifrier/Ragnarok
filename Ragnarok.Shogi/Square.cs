@@ -10,7 +10,7 @@ namespace Ragnarok.Shogi
     /// 駒の位置を保存します。
     /// </summary>
     [DataContract()]
-    public class Position : IEquatable<Position>
+    public class Square : IEquatable<Square>
     {
         /// <summary>
         /// 列を取得または設定します。
@@ -35,17 +35,17 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// オブジェクトのコピーを作成します。
         /// </summary>
-        public Position Clone()
+        public Square Clone()
         {
-            return (Position)MemberwiseClone();
+            return (Square)MemberwiseClone();
         }
 
         /// <summary>
         /// 位置の先後を入れ替えたものを作成します。
         /// </summary>
-        public Position Flip()
+        public Square Flip()
         {
-            return new Position(
+            return new Square(
                 (Board.BoardSize + 1) - File,
                 (Board.BoardSize + 1) - Rank);
         }
@@ -75,13 +75,13 @@ namespace Ragnarok.Shogi
                 return result.Value;
             }
 
-            return Equals(obj as Position);
+            return Equals(obj as Square);
         }
 
         /// <summary>
         /// オブジェクトの等値性を判断します。
         /// </summary>
-        public bool Equals(Position other)
+        public bool Equals(Square other)
         {
             if ((object)other == null)
             {
@@ -110,7 +110,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// オブジェクトを比較します。
         /// </summary>
-        public static bool operator==(Position lhs, Position rhs)
+        public static bool operator==(Square lhs, Square rhs)
         {
             return Ragnarok.Util.GenericEquals(lhs, rhs);
         }
@@ -118,7 +118,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// オブジェクトを比較します。
         /// </summary>
-        public static bool operator !=(Position lhs, Position rhs)
+        public static bool operator !=(Square lhs, Square rhs)
         {
             return !(lhs == rhs);
         }
@@ -126,7 +126,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public Position(int file, int rank)
+        public Square(int file, int rank)
         {
             File = file;
             Rank = rank;
@@ -135,7 +135,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public Position()
+        public Square()
         {
         }
     }

@@ -15,7 +15,7 @@ namespace Ragnarok.Presentation.Shogi
         /// <summary>
         /// 単純な四角形のジオメトリを作成します。
         /// </summary>
-        public static MeshGeometry3D CreateCellMesh(IEnumerable<Position> positions,
+        public static MeshGeometry3D CreateCellMesh(IEnumerable<Square> positions,
                                                     double widen = 0.0)
         {
             var points = new Point3DCollection();

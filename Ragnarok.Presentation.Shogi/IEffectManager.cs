@@ -42,7 +42,7 @@ namespace Ragnarok.Presentation.Shogi
         /// <summary>
         /// 駒の移動を開始したときに呼ばれます。
         /// </summary>
-        void BeginMove(Position position, Piece piece);
+        void BeginMove(Square position, Piece piece);
 
         /// <summary>
         /// 駒の移動が終わったときに呼ばれます。

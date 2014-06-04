@@ -98,7 +98,7 @@
     <Compile Include="Piece.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="PlayerPool.cs" />
-    <Compile Include="Position.cs" />
+    <Compile Include="Square.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sfen\SfenMoveExtension.cs" />
     <Compile Include="ShogiException.cs" />

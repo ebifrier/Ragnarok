@@ -29,8 +29,8 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
 
         public static readonly DependencyProperty PositionProperty =
             DependencyProperty.Register(
-                "Position", typeof(Position), typeof(PieceObject),
-                new UIPropertyMetadata(default(Position), OnElementChanged));
+                "Position", typeof(Square), typeof(PieceObject),
+                new UIPropertyMetadata(default(Square), OnElementChanged));
 
         public static readonly DependencyProperty CountProperty =
             DependencyProperty.Register(
@@ -64,9 +64,9 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
         /// <summary>
         /// 駒のある位置を取得または設定します。
         /// </summary>
-        public Position Position
+        public Square Position
         {
-            get { return (Position)GetValue(PositionProperty); }
+            get { return (Square)GetValue(PositionProperty); }
             set { SetValue(PositionProperty, value); }
         }
 
@@ -241,7 +241,7 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public PieceObject(ShogiUIElement3D shogi, Piece piece, Position position)
+        public PieceObject(ShogiUIElement3D shogi, Piece piece, Square position)
         {
             this.shogi = shogi;
 

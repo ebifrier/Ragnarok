@@ -13,8 +13,8 @@ namespace Ragnarok.Presentation.Shogi.Xaml
     /// <summary>
     /// 各マスにフィットするようなメッシュを作成するコンバーターです。
     /// </summary>
-    [ValueConversion(typeof(Position), typeof(MeshGeometry3D))]
-    [ValueConversion(typeof(IEnumerable<Position>), typeof(MeshGeometry3D))]
+    [ValueConversion(typeof(Square), typeof(MeshGeometry3D))]
+    [ValueConversion(typeof(IEnumerable<Square>), typeof(MeshGeometry3D))]
     public class CellMeshConverter : IValueConverter
     {
         /// <summary>
@@ -35,10 +35,10 @@ namespace Ragnarok.Presentation.Shogi.Xaml
         public object Convert(object value, Type targetType,
                               object parameter, CultureInfo culture)
         {
-            var positions = value as IEnumerable<Position>;
+            var positions = value as IEnumerable<Square>;
             if (positions == null)
             {
-                var position = value as Position;
+                var position = value as Square;
                 if (position == null)
                 {
                     return null;

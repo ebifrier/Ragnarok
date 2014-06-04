@@ -2,6 +2,7 @@
 
 	* Ragnarok.Shogi.Move, Ragnarok.Shogi.BoardMove のNewPositionを
 	DstSquareに、OldPositionをSrcSquareに改名しました。
+	* Ragnarok.Shogi/Square.cs: PositionからSquareにクラス名を変更しました。
 
 2014-06-04  - Ver 2.6.12
 

@@ -309,7 +309,7 @@ namespace Ragnarok.Shogi
                 return null;
             }
 
-            if (move.SameAsOld && board.PrevMovedPosition == null)
+            if (move.SameAsOld && board.PrevMovedSquare == null)
             {
                 return null;
             }
@@ -318,8 +318,8 @@ namespace Ragnarok.Shogi
             // 同○○なら前回の位置を使います。
             var dstSquare = (
                 move.SameAsOld ?
-                board.PrevMovedPosition :
-                new Position(move.File, move.Rank));
+                board.PrevMovedSquare :
+                new Square(move.File, move.Rank));
 
             var boardMoveList = board.SearchMoveList(
                 new Piece(move.Piece, bwType),
@@ -432,7 +432,7 @@ namespace Ragnarok.Shogi
                     referenceMove.ActionType == ActionType.Promote ?
                     referenceMove.ActionType :
                     ActionType.None),
-                SameAsOld = (board.PrevMovedPosition == nextPos),
+                SameAsOld = (board.PrevMovedSquare == nextPos),
             };
 
             // 移動元情報を使う場合は、これで終わりです。
