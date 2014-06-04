@@ -898,7 +898,7 @@ namespace Ragnarok.Shogi
                 // 移動前の位置
                 if (m.Groups[9].Success)
                 {
-                    move.OldPosition = new Position(
+                    move.SrcSquare = new Position(
                         int.Parse(m.Groups[10].Value),
                         int.Parse(m.Groups[11].Value));
                 }

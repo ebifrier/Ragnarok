@@ -17,8 +17,8 @@ namespace Ragnarok.Shogi.Csa.Tests
                 new CsaMove
                 {
                     Side = BWType.None,
-                    OldPosition = new Position(1, 2),
-                    NewPosition = new Position(3, 4),
+                    SrcSquare = new Position(1, 2),
+                    DstSquare = new Position(3, 4),
                     Piece = Piece.Hu,
                 },
                 CsaMove.Parse("1234FU"));
@@ -26,7 +26,7 @@ namespace Ragnarok.Shogi.Csa.Tests
                 new CsaMove
                 {
                     Side = BWType.Black,
-                    NewPosition = new Position(1, 9),
+                    DstSquare = new Position(1, 9),
                     Piece = Piece.Ryu,
                 },
                 CsaMove.Parse("+0019RY"));
@@ -34,8 +34,8 @@ namespace Ragnarok.Shogi.Csa.Tests
                 new CsaMove
                 {
                     Side = BWType.White,
-                    OldPosition = new Position(3, 3),
-                    NewPosition = new Position(1, 9),
+                    SrcSquare = new Position(3, 3),
+                    DstSquare = new Position(1, 9),
                     Piece = Piece.Gyoku,
                 },
                 CsaMove.Parse("-3319OU"));
@@ -66,8 +66,8 @@ namespace Ragnarok.Shogi.Csa.Tests
             var move = new CsaMove
             {
                 Side = BWType.None,
-                OldPosition = new Position(1, 2),
-                NewPosition = new Position(3, 4),
+                SrcSquare = new Position(1, 2),
+                DstSquare = new Position(3, 4),
                 Piece = Piece.Hu,
             };
             Assert.AreEqual(
@@ -80,7 +80,7 @@ namespace Ragnarok.Shogi.Csa.Tests
             move = new CsaMove
             {
                 Side = BWType.Black,
-                NewPosition = new Position(1, 9),
+                DstSquare = new Position(1, 9),
                 Piece = Piece.Ryu,
             };
             Assert.AreEqual(
@@ -93,8 +93,8 @@ namespace Ragnarok.Shogi.Csa.Tests
             move = new CsaMove
             {
                 Side = BWType.White,
-                OldPosition = new Position(3, 3),
-                NewPosition = new Position(1, 9),
+                SrcSquare = new Position(3, 3),
+                DstSquare = new Position(1, 9),
                 Piece = Piece.Gyoku,
             };
             Assert.AreEqual(

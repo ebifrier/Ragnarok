@@ -125,10 +125,10 @@ namespace Ragnarok.Shogi
             var boardMoveListTmp = boardMoveList;
 
             // 移動前の座標情報があれば、それを使います。
-            if (referenceMove.OldPosition != null)
+            if (referenceMove.SrcSquare != null)
             {
                 boardMoveListTmp = boardMoveListTmp.Where(
-                    bm => referenceMove.OldPosition == bm.OldPosition)
+                    bm => referenceMove.SrcSquare == bm.SrcSquare)
                     .ToList();
                 if (boardMoveListTmp.Count() == 1)
                 {
@@ -193,8 +193,8 @@ namespace Ragnarok.Shogi
                 return false;
             }
 
-            var fileMove = bm.NewPosition.File - bm.OldPosition.File;
-            var rankMove = bm.NewPosition.Rank - bm.OldPosition.Rank;
+            var fileMove = bm.DstSquare.File - bm.SrcSquare.File;
+            var rankMove = bm.DstSquare.Rank - bm.SrcSquare.Rank;
 
             switch (referenceMove.RankMoveType)
             {
@@ -224,8 +224,8 @@ namespace Ragnarok.Shogi
                 return false;
             }
 
-            var fileMove = bm.NewPosition.File - bm.OldPosition.File;
-            var rankMove = bm.NewPosition.Rank - bm.OldPosition.Rank;
+            var fileMove = bm.DstSquare.File - bm.SrcSquare.File;
+            var rankMove = bm.DstSquare.Rank - bm.SrcSquare.Rank;
 
             switch (referenceMove.RelFileType)
             {
@@ -316,14 +316,14 @@ namespace Ragnarok.Shogi
 
             // 移動後の位置を取得します。
             // 同○○なら前回の位置を使います。
-            var newPosition = (
+            var dstSquare = (
                 move.SameAsOld ?
                 board.PrevMovedPosition :
                 new Position(move.File, move.Rank));
 
             var boardMoveList = board.SearchMoveList(
                 new Piece(move.Piece, bwType),
-                newPosition)
+                dstSquare)
                 .ToList();
 
             // 複数の指し手の中から適切な一つを選びます。
@@ -412,14 +412,14 @@ namespace Ragnarok.Shogi
                                        List<BoardMove> boardMoveList,
                                        BoardMove referenceMove,
                                        Piece fromPiece,
-                                       bool useOldPosition)
+                                       bool useSrcSquare)
         {
             if (!boardMoveList.Any())
             {
                 return null;
             }
 
-            var nextPos = referenceMove.NewPosition;
+            var nextPos = referenceMove.DstSquare;
             var move = new Move()
             {
                 BWType = referenceMove.BWType,
@@ -438,9 +438,9 @@ namespace Ragnarok.Shogi
             // 移動元情報を使う場合は、これで終わりです。
             // （.kifファイルからの読み込み時は、駒の移動の場合は移動前情報がつき、
             //　 駒打ちの場合は"打"が必ずつきます）
-            if (useOldPosition)
+            if (useSrcSquare)
             {
-                move.OldPosition = referenceMove.OldPosition;
+                move.SrcSquare = referenceMove.SrcSquare;
                 move.ActionType = referenceMove.ActionType;
                 return move;
             }
@@ -484,8 +484,8 @@ namespace Ragnarok.Shogi
                                                   List<BoardMove> boardMoveList)
         {
             // 駒の移動前情報が必要です。
-            var nextPos = referenceMove.NewPosition;
-            var prevPos = referenceMove.OldPosition;
+            var nextPos = referenceMove.DstSquare;
+            var prevPos = referenceMove.SrcSquare;
             if (prevPos == null)
             {
                 return null;
@@ -498,7 +498,7 @@ namespace Ragnarok.Shogi
             // 段の位置でフィルターします。
             var tmpMoveList = boardMoveList.Where(mv =>
             {
-                var rel = nextPos.Rank - mv.OldPosition.Rank;
+                var rel = nextPos.Rank - mv.SrcSquare.Rank;
                 if (relRank < 0)
                 {
                     return (rel < 0);
@@ -543,8 +543,8 @@ namespace Ragnarok.Shogi
                                                   List<BoardMove> boardMoveList)
         {
             // 駒の移動前情報が必要です。
-            var nextPos = referenceMove.NewPosition;
-            var prevPos = referenceMove.OldPosition;
+            var nextPos = referenceMove.DstSquare;
+            var prevPos = referenceMove.SrcSquare;
             if (prevPos == null)
             {
                 return null;
@@ -557,7 +557,7 @@ namespace Ragnarok.Shogi
             // 列の位置でフィルターします。
             var tmpMoveList = boardMoveList.Where(mv =>
             {
-                var rel = nextPos.File - mv.OldPosition.File;
+                var rel = nextPos.File - mv.SrcSquare.File;
                 if (relFile < 0)
                 {
                     return (rel < 0);
@@ -601,11 +601,11 @@ namespace Ragnarok.Shogi
         /// 指し手をXX->YYの形式から、ZZ銀上などの形に変換します。
         /// </summary>
         /// <remarks>
-        /// <paramref name="useOldPosition"/>を真にすると、差し手の後に
+        /// <paramref name="useSrcSquare"/>を真にすると、差し手の後に
         /// 古い位置の情報が付加されるようになります。(例: 32金(22))
         /// </remarks>
         public static Move ConvertMove(this Board board, BoardMove move,
-                                       bool useOldPosition)
+                                       bool useSrcSquare)
         {
             if (board == null)
             {
@@ -619,7 +619,7 @@ namespace Ragnarok.Shogi
 
             var fromPiece = (
                 move.ActionType != ActionType.Drop ?
-                board[move.OldPosition] :
+                board[move.SrcSquare] :
                 new Piece(move.DropPieceType, false, move.BWType));
             if (fromPiece == null)
             {
@@ -629,11 +629,11 @@ namespace Ragnarok.Shogi
             // 駒の種類と最終位置から、あり得る指し手をすべて検索します。
             var boardMoveList = board.SearchMoveList(
                 fromPiece,
-                move.NewPosition)
+                move.DstSquare)
                 .ToList();
 
             return FilterMove(
-                board, boardMoveList, move, fromPiece, useOldPosition);
+                board, boardMoveList, move, fromPiece, useSrcSquare);
         }
 
         /// <summary>
@@ -641,12 +641,12 @@ namespace Ragnarok.Shogi
         /// </summary>
         /// <remarks>
         /// 主に指し手を文字列化するために使います。
-        /// <paramref name="useOldPosition"/>を真にすると、差し手の後に
+        /// <paramref name="useSrcSquare"/>を真にすると、差し手の後に
         /// 古い位置の情報が付加されるようになります。(例: 32金(22))
         /// </remarks>
         public static List<Move> MakeMoveList(this Board board,
                                               int fromNumber,
-                                              bool useOldPosition)
+                                              bool useSrcSquare)
         {
             if (board == null)
             {
@@ -680,7 +680,7 @@ namespace Ragnarok.Shogi
             var moveList = new List<Move>();
             foreach (var boardMove in boardMoveList)
             {
-                var move = ConvertMove(clonedBoard, boardMove, useOldPosition);
+                var move = ConvertMove(clonedBoard, boardMove, useSrcSquare);
                 if (move == null)
                 {
                     return null;
@@ -695,100 +695,6 @@ namespace Ragnarok.Shogi
             }
 
             return moveList;
-        }
-
-        /// <summary>
-        /// <see cref="CsaMove"/>を<see cref="BoardMove"/>に変換します。
-        /// </summary>
-        public static BoardMove ConvertCsaMove(this Board board, CsaMove csaMove)
-        {
-            if (csaMove == null)
-            {
-                return null;
-            }
-
-            var newPiece = board[csaMove.NewPosition];
-            if (csaMove.IsDrop)
-            {
-                if (newPiece != null)
-                {
-                    return null;
-                }
-
-                return new BoardMove
-                {
-                    BWType = board.Turn,
-                    NewPosition = csaMove.NewPosition,
-                    ActionType = ActionType.Drop,
-                    DropPieceType = csaMove.Piece.PieceType,
-                };
-            }
-            else
-            {
-                var oldPiece = board[csaMove.OldPosition];
-                if (oldPiece == null)
-                {
-                    return null;
-                }
-
-                return new BoardMove
-                {
-                    BWType = board.Turn,
-                    NewPosition = csaMove.NewPosition,
-                    OldPosition = csaMove.OldPosition,
-                    TookPiece = newPiece,
-                    ActionType = (
-                        !oldPiece.IsPromoted && csaMove.Piece.IsPromoted ?
-                        ActionType.Promote :
-                        ActionType.None),
-                };
-            }
-        }
-
-        /// <summary>
-        /// <see cref="BoardMove"/>を<see cref="CsaMove"/>に変換します。
-        /// </summary>
-        public static CsaMove ConvertBoardMove(this Board board, BoardMove bmove)
-        {
-            if (bmove == null || !bmove.Validate())
-            {
-                return null;
-            }
-
-            var newPiece = board[bmove.NewPosition];
-            if (bmove.ActionType == ActionType.Drop)
-            {
-                if (newPiece != null)
-                {
-                    return null;
-                }
-
-                return new CsaMove
-                {
-                    Side = board.Turn,
-                    NewPosition = bmove.NewPosition,
-                    Piece = new Piece(bmove.DropPieceType, false),
-                };
-            }
-            else
-            {
-                var oldPiece = board[bmove.OldPosition];
-                if (oldPiece == null)
-                {
-                    return null;
-                }
-
-                return new CsaMove
-                {
-                    Side = board.Turn,
-                    NewPosition = bmove.NewPosition,
-                    OldPosition = bmove.OldPosition,
-                    Piece = new Piece(
-                        oldPiece.PieceType,
-                        oldPiece.IsPromoted ||
-                        bmove.ActionType == ActionType.Promote),
-                };
-            }
         }
     }
 }

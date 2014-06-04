@@ -139,7 +139,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 駒の到達位置を取得または設定します。
         /// </summary>
-        public Position NewPosition
+        public Position DstSquare
         {
             get
             {
@@ -219,7 +219,7 @@ namespace Ragnarok.Shogi
         /// (もしあれば)移動前の情報を取得または設定します。
         /// </summary>
         [DataMember(Order = 11, IsRequired = false)]
-        public Position OldPosition
+        public Position SrcSquare
         {
             get;
             set;
@@ -297,7 +297,7 @@ namespace Ragnarok.Shogi
             }
 
             // 移動前の位置は、nullでなければ内容を調べます。
-            if (OldPosition != null && !OldPosition.Validate())
+            if (SrcSquare != null && !SrcSquare.Validate())
             {
                 return false;
             }
@@ -369,7 +369,7 @@ namespace Ragnarok.Shogi
             }
 
             // 移動前の位置は判定に使うべきかどうか迷う。
-            if (OldPosition != other.OldPosition)
+            if (SrcSquare != other.SrcSquare)
             {
                 return false;
             }
@@ -397,7 +397,7 @@ namespace Ragnarok.Shogi
                     RankMoveType.GetHashCode() ^
                     ActionType.GetHashCode() ^
                     (Piece != null ? Piece.GetHashCode() : 0) ^
-                    (OldPosition != null ? OldPosition.GetHashCode() : 0);
+                    (SrcSquare != null ? SrcSquare.GetHashCode() : 0);
 
                 if (SameAsOld)
                 {

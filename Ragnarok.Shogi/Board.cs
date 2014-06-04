@@ -474,13 +474,13 @@ namespace Ragnarok.Shogi
             if (move.ActionType == ActionType.Drop)
             {
                 // 駒打ちの場合は、その駒を駒台に戻します。
-                this[move.NewPosition] = null;
+                this[move.DstSquare] = null;
 
                 IncCapturedPieceCount(move.BWType, move.DropPieceType);
             }
             else
             {
-                var movedPiece = this[move.NewPosition];
+                var movedPiece = this[move.DstSquare];
 
                 // 駒を成った場合はそれを元に戻します。
                 if (move.ActionType == ActionType.Promote)
@@ -491,7 +491,7 @@ namespace Ragnarok.Shogi
                 // 駒を取った場合は、その駒を元に戻します。
                 if (move.TookPiece != null)
                 {
-                    this[move.NewPosition] = move.TookPiece.Clone();
+                    this[move.DstSquare] = move.TookPiece.Clone();
 
                     // 駒を取ったはずなので、その分を駒台から減らします。
                     DecCapturedPieceCount(
@@ -500,16 +500,16 @@ namespace Ragnarok.Shogi
                 }
                 else
                 {
-                    this[move.NewPosition] = null;
+                    this[move.DstSquare] = null;
                 }
 
-                this[move.OldPosition] = movedPiece;
+                this[move.SrcSquare] = movedPiece;
             }
 
             Turn = Turn.Toggle();
             PrevMovedPosition = (
                 this.moveList.Any() ?
-                this.moveList.Last().NewPosition :
+                this.moveList.Last().DstSquare :
                 null);
         }
 
@@ -651,7 +651,7 @@ namespace Ragnarok.Shogi
             NotifyBoardChanging(move, false);
 
             Turn = Turn.Toggle();
-            PrevMovedPosition = move.NewPosition;
+            PrevMovedPosition = move.DstSquare;
 
             this.moveList.Add(move);
 
@@ -682,7 +682,7 @@ namespace Ragnarok.Shogi
             }
 
             // 駒を打つ場所に駒があれば、当然失敗です。
-            var piece = this[move.NewPosition];
+            var piece = this[move.DstSquare];
             if (piece != null)
             {
                 return false;
@@ -691,15 +691,15 @@ namespace Ragnarok.Shogi
             // 先手はそのまま後手なら上下を反転してから、駒が置けるか確かめます。
             var rank =
                 ( move.BWType == BWType.Black
-                ? move.NewPosition.Rank
-                : (BoardSize + 1) - move.NewPosition.Rank);
+                ? move.DstSquare.Rank
+                : (BoardSize + 1) - move.DstSquare.Rank);
             switch (move.DropPieceType)
             {
                 case PieceType.None: // これは打てない
                     return false;
                 case PieceType.Hu:
                     // 2歩のチェックを行います。
-                    if (IsDoublePawn(move.BWType, move.NewPosition))
+                    if (IsDoublePawn(move.BWType, move.DstSquare))
                     {
                         return false;
                     }
@@ -721,7 +721,7 @@ namespace Ragnarok.Shogi
             if (!checkOnly)
             {
                 // 駒を盤面に置き、持ち駒から駒を減らします。
-                this[move.NewPosition] = new Piece(
+                this[move.DstSquare] = new Piece(
                     move.DropPieceType, false, move.BWType);
 
                 DecCapturedPieceCount(move.BWType, move.DropPieceType);
@@ -737,13 +737,13 @@ namespace Ragnarok.Shogi
         /// </summary>
         public static bool CanPromote(BoardMove move, Piece piece)
         {
-            if (move.NewPosition == null || !move.NewPosition.Validate())
+            if (move.DstSquare == null || !move.DstSquare.Validate())
             {
                 return false;
             }
 
             // 駒の移動でない場合は成れません。
-            if (move.OldPosition == null || !move.OldPosition.Validate())
+            if (move.SrcSquare == null || !move.SrcSquare.Validate())
             {
                 return false;
             }
@@ -759,8 +759,8 @@ namespace Ragnarok.Shogi
                 return false;
             }
 
-            var moveFromRank = move.OldPosition.Rank;
-            var moveToRank = move.NewPosition.Rank;
+            var moveFromRank = move.SrcSquare.Rank;
+            var moveToRank = move.DstSquare.Rank;
 
             if (move.BWType == BWType.White)
             {
@@ -790,7 +790,7 @@ namespace Ragnarok.Shogi
         /// </summary>
         public static bool IsPromoteForce(BoardMove move, Piece piece)
         {
-            if (move.NewPosition == null || !move.NewPosition.Validate())
+            if (move.DstSquare == null || !move.DstSquare.Validate())
             {
                 return false;
             }
@@ -808,8 +808,8 @@ namespace Ragnarok.Shogi
 
             var normalizedRank = (
                 move.BWType == BWType.White ?
-                (BoardSize + 1) - move.NewPosition.Rank :
-                move.NewPosition.Rank);
+                (BoardSize + 1) - move.DstSquare.Rank :
+                move.DstSquare.Rank);
 
             if (piece.PieceType == PieceType.Kei)
             {
@@ -830,14 +830,14 @@ namespace Ragnarok.Shogi
         private bool CheckAndDoMoveOnly(BoardMove move, bool checkOnly)
         {
             // 駒の移動元に自分の駒がなければダメ
-            var moveFromPiece = this[move.OldPosition];
+            var moveFromPiece = this[move.SrcSquare];
             if (moveFromPiece == null || moveFromPiece.BWType != move.BWType)
             {
                 return false;
             }
 
             // 駒の移動先に自分の駒があったらダメ
-            var moveToPiece = this[move.NewPosition];
+            var moveToPiece = this[move.DstSquare];
             if (moveToPiece != null && moveToPiece.BWType == move.BWType)
             {
                 return false;
@@ -885,11 +885,11 @@ namespace Ragnarok.Shogi
                     moveFromPiece.IsPromoted ||
                     move.ActionType == ActionType.Promote);
 
-                this[move.NewPosition] = new Piece(
+                this[move.DstSquare] = new Piece(
                     pieceType, promoted, move.BWType);
 
                 // 移動前の位置からは駒をなくします。
-                this[move.OldPosition] = null;
+                this[move.SrcSquare] = null;
 
                 MoveDone(move);
             }
@@ -1094,8 +1094,8 @@ namespace Ragnarok.Shogi
         /// </summary>
         private bool CanMovePiece(BoardMove move, Piece piece)
         {
-            var relFile = move.NewPosition.File - move.OldPosition.File;
-            var relRank = move.NewPosition.Rank - move.OldPosition.Rank;
+            var relFile = move.DstSquare.File - move.SrcSquare.File;
+            var relRank = move.DstSquare.Rank - move.SrcSquare.Rank;
 
             if (piece.PieceType == PieceType.None)
             {
@@ -1114,13 +1114,13 @@ namespace Ragnarok.Shogi
                         {
                             return true;
                         }
-                        return CanMoveHisya(move.OldPosition, relFile, relRank);
+                        return CanMoveHisya(move.SrcSquare, relFile, relRank);
                     case PieceType.Kaku:
                         if (CanMovePiece(piece.BWType, relFile, relRank, MoveTableGyoku))
                         {
                             return true;
                         }
-                        return CanMoveKaku(move.OldPosition, relFile, relRank);
+                        return CanMoveKaku(move.SrcSquare, relFile, relRank);
                     case PieceType.Kin:
                     case PieceType.Gin:
                     case PieceType.Kei:
@@ -1137,9 +1137,9 @@ namespace Ragnarok.Shogi
                     case PieceType.Gyoku:
                         return CanMovePiece(piece.BWType, relFile, relRank, MoveTableGyoku);
                     case PieceType.Hisya:
-                        return CanMoveHisya(move.OldPosition, relFile, relRank);
+                        return CanMoveHisya(move.SrcSquare, relFile, relRank);
                     case PieceType.Kaku:
-                        return CanMoveKaku(move.OldPosition, relFile, relRank);
+                        return CanMoveKaku(move.SrcSquare, relFile, relRank);
                     case PieceType.Kin:
                         return CanMovePiece(piece.BWType, relFile, relRank, MoveTableKin);
                     case PieceType.Gin:
@@ -1147,7 +1147,7 @@ namespace Ragnarok.Shogi
                     case PieceType.Kei:
                         return CanMovePiece(piece.BWType, relFile, relRank, MoveTableKei);
                     case PieceType.Kyo:
-                        return CanMoveKyo(piece.BWType, move.OldPosition, relFile, relRank);
+                        return CanMoveKyo(piece.BWType, move.SrcSquare, relFile, relRank);
                     case PieceType.Hu:
                         return CanMovePiece(piece.BWType, relFile, relRank, MoveTableHu);
                 }
@@ -1160,17 +1160,17 @@ namespace Ragnarok.Shogi
         /// 駒がそこに動かせるか調べ、動かせる場合は可能な指し手を追加します。
         /// </summary>
         private IEnumerable<BoardMove> GetMovableMove(Piece piece,
-                                                      Position newPosition,
-                                                      Position oldPosition)
+                                                      Position dstSquare,
+                                                      Position srcSquare)
         {
-            if (!oldPosition.Validate())
+            if (!srcSquare.Validate())
             {
                 yield break;
             }
 
             // 移動前の駒が指定の駒と同じかどうか
             // 判定する必要があります。
-            var moveFromPiece = this[oldPosition];
+            var moveFromPiece = this[srcSquare];
             if (moveFromPiece == null ||
                 moveFromPiece.PieceType != piece.PieceType ||
                 moveFromPiece.IsPromoted != piece.IsPromoted)
@@ -1186,8 +1186,8 @@ namespace Ragnarok.Shogi
                 var movePromote = new BoardMove()
                 {
                     BWType = piece.BWType,
-                    NewPosition = newPosition,
-                    OldPosition = oldPosition,
+                    DstSquare = dstSquare,
+                    SrcSquare = srcSquare,
                     ActionType = ActionType.Promote,
                 };
                 if (CanMove(movePromote))
@@ -1202,8 +1202,8 @@ namespace Ragnarok.Shogi
             var moveUnpromote = new BoardMove()
             {
                 BWType = piece.BWType,
-                NewPosition = newPosition,
-                OldPosition = oldPosition,
+                DstSquare = dstSquare,
+                SrcSquare = srcSquare,
                 ActionType = (canUnpromote ?
                     ActionType.Unpromote :
                     ActionType.None),
@@ -1236,13 +1236,13 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
-        /// 駒を<paramref name="newPosition"/>に移動できる可能性のある
+        /// 駒を<paramref name="dstSquare"/>に移動できる可能性のある
         /// 異動元の位置をすべて列挙します。
         /// </summary>
         private IEnumerable<Position> GetMovableFromRange_(Piece piece,
-                                                           Position newPosition)
+                                                           Position dstSquare)
         {
-            if (newPosition == null || !newPosition.Validate())
+            if (dstSquare == null || !dstSquare.Validate())
             {
                 yield break;
             }
@@ -1252,7 +1252,7 @@ namespace Ragnarok.Shogi
                 if (piece.IsPromoted)
                 {
                     // 成り駒の場合は、とりあえず段列±１の領域を調べます。
-                    foreach (var p in GetRange(1, 1, newPosition))
+                    foreach (var p in GetRange(1, 1, dstSquare))
                     {
                         yield return p;
                     }
@@ -1265,25 +1265,25 @@ namespace Ragnarok.Shogi
                         case PieceType.Gyoku:
                         case PieceType.Kin:
                         case PieceType.Gin:
-                            foreach (var p in GetRange(1, 1, newPosition))
+                            foreach (var p in GetRange(1, 1, dstSquare))
                             {
                                 yield return p;
                             }
                             break;
                         case PieceType.Kei:
-                            foreach (var p in GetRange(1, 2, newPosition))
+                            foreach (var p in GetRange(1, 2, dstSquare))
                             {
                                 yield return p;
                             }
                             break;
                         case PieceType.Kyo:
-                            foreach (var p in GetRange(0, BoardSize, newPosition))
+                            foreach (var p in GetRange(0, BoardSize, dstSquare))
                             {
                                 yield return p;
                             }
                             break;
                         case PieceType.Hu:
-                            foreach (var p in GetRange(0, 1, newPosition))
+                            foreach (var p in GetRange(0, 1, dstSquare))
                             {
                                 yield return p;
                             }
@@ -1298,22 +1298,22 @@ namespace Ragnarok.Shogi
                         for (var file = 1; file <= BoardSize; ++file)
                         {
                             if (piece.IsPromoted &&
-                                Math.Abs(newPosition.File - file) <= 1)
+                                Math.Abs(dstSquare.File - file) <= 1)
                             {
                                 continue;
                             }
 
-                            yield return new Position(file, newPosition.Rank);
+                            yield return new Position(file, dstSquare.Rank);
                         }
                         for (var rank = 1; rank <= BoardSize; ++rank)
                         {
                             if (piece.IsPromoted &&
-                                Math.Abs(newPosition.Rank - rank) <= 1)
+                                Math.Abs(dstSquare.Rank - rank) <= 1)
                             {
                                 continue;
                             }
 
-                            yield return new Position(newPosition.File, rank);
+                            yield return new Position(dstSquare.File, rank);
                         }
                         break;
 
@@ -1326,8 +1326,8 @@ namespace Ragnarok.Shogi
                             }
 
                             yield return new Position(
-                                newPosition.File + index,
-                                newPosition.Rank + index);
+                                dstSquare.File + index,
+                                dstSquare.Rank + index);
                         }
                         for (var index = -BoardSize; index <= BoardSize; ++index)
                         {
@@ -1337,8 +1337,8 @@ namespace Ragnarok.Shogi
                             }
 
                             yield return new Position(
-                                newPosition.File + index,
-                                newPosition.Rank - index);
+                                dstSquare.File + index,
+                                dstSquare.Rank - index);
                         }
                         break;
                 }
@@ -1349,7 +1349,7 @@ namespace Ragnarok.Shogi
         /// 駒の種類と新しい位置から、可能な差し手をすべて検索します。
         /// </summary>
         public IEnumerable<BoardMove> SearchMoveList(Piece piece,
-                                                     Position newPosition)
+                                                     Position dstSquare)
         {
             using (LazyLock())
             {
@@ -1359,7 +1359,7 @@ namespace Ragnarok.Shogi
                     var move = new BoardMove()
                     {
                         BWType = piece.BWType,
-                        NewPosition = newPosition,
+                        DstSquare = dstSquare,
                         ActionType = ActionType.Drop,
                         DropPieceType = piece.PieceType,
                     };
@@ -1369,8 +1369,8 @@ namespace Ragnarok.Shogi
                     }
                 }
 
-                var list = GetMovableFromRange_(piece, newPosition)
-                    .SelectMany(_ => GetMovableMove(piece, newPosition, _));
+                var list = GetMovableFromRange_(piece, dstSquare)
+                    .SelectMany(_ => GetMovableMove(piece, dstSquare, _));
 
                 foreach (var m in list)
                 {

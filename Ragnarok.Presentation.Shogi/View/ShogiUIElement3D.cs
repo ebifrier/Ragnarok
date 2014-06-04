@@ -779,7 +779,7 @@ namespace Ragnarok.Presentation.Shogi.View
         /// <remarks>
         /// 指せない指し手の場合は、駒の移動を終了します。
         /// </remarks>
-        private void DoMove(Position newPosition)
+        private void DoMove(Position dstSquare)
         {
             if (this.movingPiece == null)
             {
@@ -787,20 +787,20 @@ namespace Ragnarok.Presentation.Shogi.View
             }
 
             // 駒を新しい位置に動かします。
-            var position = this.movingPiece.Position;
+            var srcSquare = this.movingPiece.Position;
             var piece = this.movingPiece.Piece;
 
-            var move = (position != null ?
+            var move = (srcSquare != null ?
                 new BoardMove()
                 {
-                    OldPosition = position,
-                    NewPosition = newPosition,
+                    SrcSquare = srcSquare,
+                    DstSquare = dstSquare,
                     BWType = Board.Turn,
                     ActionType = ActionType.None,
                 } :
                 new BoardMove()
                 {
-                    NewPosition = newPosition,
+                    DstSquare = dstSquare,
                     BWType = Board.Turn,
                     ActionType = ActionType.Drop,
                     DropPieceType = piece.PieceType,
@@ -1235,8 +1235,8 @@ namespace Ragnarok.Presentation.Shogi.View
             }
 
             // 短縮形
-            var np = move.NewPosition;
-            var op = move.OldPosition;
+            var np = move.DstSquare;
+            var op = move.SrcSquare;
 
             // 一応
             EndMove();
@@ -1277,7 +1277,7 @@ namespace Ragnarok.Presentation.Shogi.View
 
             // リドゥ時は新しい場所に、アンドゥ時は昔の場所に駒をおきます。
             // アンドゥで駒打ちの場合、追加される駒はありません。
-            var position = (e.IsUndo ? move.OldPosition : move.NewPosition);
+            var position = (e.IsUndo ? move.SrcSquare : move.DstSquare);
             if (position != null)
             {
                 AddPieceObject(new PieceObject(this, Board[position], position), true);

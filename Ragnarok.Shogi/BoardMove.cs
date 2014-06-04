@@ -44,7 +44,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 駒の移動先を取得または設定します。
         /// </summary>
-        public Position NewPosition
+        public Position DstSquare
         {
             get;
             set;
@@ -56,7 +56,7 @@ namespace Ragnarok.Shogi
         /// <remarks>
         /// 駒打ちの場合はnullになります。
         /// </remarks>
-        public Position OldPosition
+        public Position SrcSquare
         {
             get;
             set;
@@ -103,7 +103,7 @@ namespace Ragnarok.Shogi
                 return false;
             }
 
-            if (NewPosition == null || !NewPosition.Validate())
+            if (DstSquare == null || !DstSquare.Validate())
             {
                 return false;
             }
@@ -111,7 +111,7 @@ namespace Ragnarok.Shogi
             if (ActionType == ActionType.Drop)
             {
                 // 駒打ちの場合
-                if (OldPosition != null)
+                if (SrcSquare != null)
                 {
                     return false;
                 }
@@ -124,7 +124,7 @@ namespace Ragnarok.Shogi
             else
             {
                 // 駒打ちでない場合
-                if (OldPosition == null || !OldPosition.Validate())
+                if (SrcSquare == null || !SrcSquare.Validate())
                 {
                     return false;
                 }
@@ -167,12 +167,12 @@ namespace Ragnarok.Shogi
                 return false;
             }
 
-            if (NewPosition != other.NewPosition)
+            if (DstSquare != other.DstSquare)
             {
                 return false;
             }
 
-            if (OldPosition != other.OldPosition)
+            if (SrcSquare != other.SrcSquare)
             {
                 return false;
             }
@@ -213,8 +213,8 @@ namespace Ragnarok.Shogi
         {
             return (
                 BWType.GetHashCode() ^
-                (NewPosition != null ? NewPosition.GetHashCode() : 0) ^
-                (OldPosition != null ? OldPosition.GetHashCode() : 0) ^
+                (DstSquare != null ? DstSquare.GetHashCode() : 0) ^
+                (SrcSquare != null ? SrcSquare.GetHashCode() : 0) ^
                 ActionType.GetHashCode() ^
                 DropPieceType.GetHashCode());
         }
@@ -274,9 +274,9 @@ namespace Ragnarok.Shogi
             // 1bit
             bits |= ((uint)(TookPiece != null ? 1 : 0) << 9);
             // 7bit
-            bits |= (uint)(SerializePosition(NewPosition) << 10);
+            bits |= (uint)(SerializePosition(DstSquare) << 10);
             // 7bit
-            bits |= (uint)(SerializePosition(OldPosition) << 17);
+            bits |= (uint)(SerializePosition(SrcSquare) << 17);
 
             if (TookPiece != null)
             {
@@ -301,9 +301,9 @@ namespace Ragnarok.Shogi
             // 1bit
             var hasTookPiece = (((bits >> 9) & 0x01) != 0);
             // 7bit
-            NewPosition = DeserializePosition((bits >> 10) & 0x7f);
+            DstSquare = DeserializePosition((bits >> 10) & 0x7f);
             // 7bit
-            OldPosition = DeserializePosition((bits >> 17) & 0x7f);
+            SrcSquare = DeserializePosition((bits >> 17) & 0x7f);
 
             if (hasTookPiece)
             {

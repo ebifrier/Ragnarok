@@ -31,7 +31,7 @@ namespace Ragnarok.Shogi.File
         /// </summary>
         private Move ModifyMove(Move move)
         {
-            if (move.OldPosition == null)
+            if (move.SrcSquare == null)
             {
                 // kif形式では、駒を打つ時は必ず'打'と書きます。
                 move = move.Clone();
