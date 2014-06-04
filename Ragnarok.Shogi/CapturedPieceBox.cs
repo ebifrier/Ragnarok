@@ -86,7 +86,7 @@ namespace Ragnarok.Shogi
         {
             using (LazyLock())
             {
-                return new CapturedPiece(new BoardPiece(BWType, pieceType))
+                return new CapturedPiece(new Piece(pieceType, false, BWType))
                 {
                     Count = this.pieceCountArray[(int)pieceType],
                 };

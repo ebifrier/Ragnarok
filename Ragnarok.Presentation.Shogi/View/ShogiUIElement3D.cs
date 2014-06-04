@@ -1008,7 +1008,7 @@ namespace Ragnarok.Presentation.Shogi.View
         /// <summary>
         /// 指定の座標値に駒台上の駒があればそれを取得します。
         /// </summary>
-        public BoardPiece GetCapturedPieceType(Point pos)
+        public Piece GetCapturedPieceType(Point pos)
         {
             var bwTypes = new[]
             {
@@ -1035,7 +1035,7 @@ namespace Ragnarok.Presentation.Shogi.View
 
                     if (rect.Contains(pos))
                     {
-                        return new BoardPiece(bwType, pieceType);
+                        return new Piece(pieceType, false, bwType);
                     }
                 }
             }
@@ -1046,7 +1046,7 @@ namespace Ragnarok.Presentation.Shogi.View
         /// <summary>
         /// 駒台上の駒のデフォルト位置を取得します。
         /// </summary>
-        public Vector3D GetCapturedPiecePos(BoardPiece piece)
+        public Vector3D GetCapturedPiecePos(Piece piece)
         {
             return GetCapturedPiecePos(piece.BWType, piece.PieceType);
         }
@@ -1189,7 +1189,7 @@ namespace Ragnarok.Presentation.Shogi.View
         /// </summary>
         private PieceObject CreateCapturedPieceObject(BWType bwType, PieceType pieceType)
         {
-            var value = new PieceObject(this, new BoardPiece(bwType, pieceType))
+            var value = new PieceObject(this, new Piece(pieceType, false, bwType))
             {
                 Count = (Board == null ? 0 : Board.GetCapturedPieceCount(bwType, pieceType)),
                 IsAlwaysVisible = false,

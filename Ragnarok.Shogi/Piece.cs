@@ -69,68 +69,67 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 無し
         /// </summary>
-        public static Piece None = new Piece(PieceType.None, false);
+        public static readonly Piece None = new Piece(PieceType.None, false);
         /// <summary>
         /// 飛車
         /// </summary>
-        public static Piece Hisya = new Piece(PieceType.Hisya, false);
+        public static readonly Piece Hisya = new Piece(PieceType.Hisya, false);
         /// <summary>
         /// 角
         /// </summary>
-        public static Piece Kaku = new Piece(PieceType.Kaku, false);
+        public static readonly Piece Kaku = new Piece(PieceType.Kaku, false);
         /// <summary>
         /// 玉
         /// </summary>
-        public static Piece Gyoku = new Piece(PieceType.Gyoku, false);
+        public static readonly Piece Gyoku = new Piece(PieceType.Gyoku, false);
         /// <summary>
         /// 金
         /// </summary>
-        public static Piece Kin = new Piece(PieceType.Kin, false);
+        public static readonly Piece Kin = new Piece(PieceType.Kin, false);
         /// <summary>
         /// 銀
         /// </summary>
-        public static Piece Gin = new Piece(PieceType.Gin, false);
+        public static readonly Piece Gin = new Piece(PieceType.Gin, false);
         /// <summary>
         /// 桂馬
         /// </summary>
-        public static Piece Kei = new Piece(PieceType.Kei, false);
+        public static readonly Piece Kei = new Piece(PieceType.Kei, false);
         /// <summary>
         /// 香車
         /// </summary>
-        public static Piece Kyo = new Piece(PieceType.Kyo, false);
+        public static readonly Piece Kyo = new Piece(PieceType.Kyo, false);
         /// <summary>
         /// 歩
         /// </summary>
-        public static Piece Hu = new Piece(PieceType.Hu, false);
+        public static readonly Piece Hu = new Piece(PieceType.Hu, false);
         /// <summary>
         /// 龍
         /// </summary>
-        public static Piece Ryu = new Piece(PieceType.Hisya, true);
+        public static readonly Piece Ryu = new Piece(PieceType.Hisya, true);
         /// <summary>
         /// 馬
         /// </summary>
-        public static Piece Uma = new Piece(PieceType.Kaku, true);
+        public static readonly Piece Uma = new Piece(PieceType.Kaku, true);
         /// <summary>
         /// 成銀
         /// </summary>
-        public static Piece NariGin = new Piece(PieceType.Gin, true);
+        public static readonly Piece NariGin = new Piece(PieceType.Gin, true);
         /// <summary>
         /// 成桂
         /// </summary>
-        public static Piece NariKei = new Piece(PieceType.Kei, true);
+        public static readonly Piece NariKei = new Piece(PieceType.Kei, true);
         /// <summary>
         /// 成香
         /// </summary>
-        public static Piece NariKyo = new Piece(PieceType.Kyo, true);
+        public static readonly Piece NariKyo = new Piece(PieceType.Kyo, true);
         /// <summary>
         /// と金
         /// </summary>
-        public static Piece To = new Piece(PieceType.Hu, true);
+        public static readonly Piece To = new Piece(PieceType.Hu, true);
 
         /// <summary>
         /// 基本となる駒の種類を取得または設定します。
         /// </summary>
-        [DataMember(Order = 1, IsRequired = true)]
         public PieceType PieceType
         {
             get;
@@ -140,8 +139,16 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 成り駒かどうかを取得または設定します。
         /// </summary>
-        [DataMember(Order = 2, IsRequired = true)]
         public bool IsPromoted
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 先手の駒か後手の駒かを取得または設定します。
+        /// </summary>
+        public BWType BWType
         {
             get;
             set;
@@ -152,7 +159,7 @@ namespace Ragnarok.Shogi
         /// </summary>
         public Piece Clone()
         {
-            return new Piece(PieceType, IsPromoted);
+            return new Piece(PieceType, IsPromoted, BWType);
         }
 
         /// <summary>
@@ -221,6 +228,11 @@ namespace Ragnarok.Shogi
                 return false;
             }
 
+            if (BWType != other.BWType)
+            {
+                return false;
+            }
+
             return true;
         }
 
@@ -231,7 +243,8 @@ namespace Ragnarok.Shogi
         {
             return (
                 PieceType.GetHashCode() ^
-                IsPromoted.GetHashCode());
+                IsPromoted.GetHashCode() ^
+                BWType.GetHashCode());
         }
 
         /// <summary>
@@ -239,7 +252,7 @@ namespace Ragnarok.Shogi
         /// </summary>
         public static bool operator ==(Piece lhs, Piece rhs)
         {
-            return Ragnarok.Util.GenericEquals(lhs, rhs);
+            return Util.GenericEquals(lhs, rhs);
         }
 
         /// <summary>
@@ -250,20 +263,88 @@ namespace Ragnarok.Shogi
             return !(lhs == rhs);
         }
 
+        #region シリアライズ
+        [DataMember(Order = 1, IsRequired = true)]
+        private byte serializeBits = 0;
+
+        /// <summary>
+        /// シリアライズを行います。
+        /// </summary>
+        [CLSCompliant(false)]
+        public byte Serialize()
+        {
+            byte bits = 0;
+
+            // 2bits
+            bits |= (byte)BWType;
+            // 4bits
+            bits |= (byte)((uint)PieceType << 2);
+            // 1bits
+            bits |= (byte)((uint)(IsPromoted ? 1 : 0) << 6);
+
+            return bits;
+        }
+
+        /// <summary>
+        /// デシリアライズを行います。
+        /// </summary>
+        [CLSCompliant(false)]
+        public void Deserialize(uint bits)
+        {
+            BWType = (BWType)((bits >> 0) & 0x03);
+            PieceType = (PieceType)((bits >> 2) & 0x0f);
+            IsPromoted = (((bits >> 6) & 0x01) != 0);
+        }
+
+        /// <summary>
+        /// シリアライズ前に呼ばれます。
+        /// </summary>
+        [OnSerializing()]
+        private void BeforeSerialize(StreamingContext context)
+        {
+            this.serializeBits = Serialize();
+        }
+
+        /// <summary>
+        /// デシリアライズ後に呼ばれます。
+        /// </summary>
+        [OnDeserialized()]
+        private void AfterDeserialize(StreamingContext context)
+        {
+            Deserialize(this.serializeBits);
+        }
+        #endregion
+
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public Piece(PieceType piece, bool promoted)
+        public Piece(PieceType piece, bool promoted, BWType bwType)
         {
             PieceType = piece;
             IsPromoted = promoted;
+            BWType = bwType;
         }
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        [Obsolete("protobuf用のコンストラクタです。")]
-        protected Piece()
+        public Piece(Piece piece, BWType bwType)
+            : this(piece.PieceType, piece.IsPromoted, bwType)
+        {
+        }
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public Piece(PieceType piece, bool promoted)
+            : this(piece, promoted, BWType.None)
+        {
+        }
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public Piece()
         {
         }
     }

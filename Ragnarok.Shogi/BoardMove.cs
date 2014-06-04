@@ -5,8 +5,6 @@ using System.Text;
 using System.IO;
 using System.Runtime.Serialization;
 
-using ProtoBuf;
-
 namespace Ragnarok.Shogi
 {
     /// <summary>
@@ -89,7 +87,7 @@ namespace Ragnarok.Shogi
         /// 戻る操作のために必要です。
         /// </remarks>
         [DataMember(Order = 2, IsRequired = true)]
-        public BoardPiece TookPiece
+        public Piece TookPiece
         {
             get;
             set;
@@ -222,7 +220,7 @@ namespace Ragnarok.Shogi
         }
 
         #region シリアライズ/デシリアライズ
-        [ProtoMember(1, IsRequired = true, DataFormat = DataFormat.FixedSize)]
+        [DataMember(Order = 1, IsRequired = true)]
         private uint serializeBits = 0;
 
         /// <summary>
@@ -309,7 +307,7 @@ namespace Ragnarok.Shogi
 
             if (hasTookPiece)
             {
-                TookPiece = new BoardPiece();
+                TookPiece = new Piece();
 
                 TookPiece.Deserialize((bits >> 24) & 0xff);
             }

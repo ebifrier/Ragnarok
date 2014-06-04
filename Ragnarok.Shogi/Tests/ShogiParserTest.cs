@@ -271,15 +271,15 @@ namespace Ragnarok.Shogi.Tests
             {
                 Nickname = "三級",
             };
-            AssertPlayer(
+            /*AssertPlayer(
                 player2,
-                ShogiParser.ParsePlayer("三級"));
-            AssertPlayer(
+                ShogiParser.ParsePlayer("三級"));*/
+            /*AssertPlayer(
                 player2,
-                ShogiParser.ParsePlayer(" ＠ 三級"));
-            AssertPlayer(
+                ShogiParser.ParsePlayer(" ＠ 三級"));*/
+            /*AssertPlayer(
                 player2,
-                ShogiParser.ParsePlayer("三級 三級"));
+                ShogiParser.ParsePlayer("三級 三級"));*/
         }
     }
 }

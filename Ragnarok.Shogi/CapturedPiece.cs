@@ -20,9 +20,9 @@ namespace Ragnarok.Shogi
         /// 駒情報を取得します。
         /// </summary>
         [DataMember(Order = 1, IsRequired = true)]
-        public BoardPiece Piece
+        public Piece Piece
         {
-            get { return GetValue<BoardPiece>("Piece"); }
+            get { return GetValue<Piece>("Piece"); }
             private set { SetValue("Piece", value); }
         }
 
@@ -127,7 +127,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public CapturedPiece(BoardPiece piece, int count)
+        public CapturedPiece(Piece piece, int count)
         {
             Piece = piece;
             Count = count;
@@ -136,7 +136,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public CapturedPiece(BoardPiece piece)
+        public CapturedPiece(Piece piece)
             : this(piece, 0)
         {
         }

@@ -322,10 +322,7 @@ namespace Ragnarok.Shogi
                 new Position(move.File, move.Rank));
 
             var boardMoveList = board.SearchMoveList(
-                new BoardPiece(
-                    bwType,
-                    move.Piece.PieceType,
-                    move.Piece.IsPromoted),
+                new Piece(move.Piece, bwType),
                 newPosition)
                 .ToList();
 
@@ -414,7 +411,7 @@ namespace Ragnarok.Shogi
         private static Move FilterMove(this Board board,
                                        List<BoardMove> boardMoveList,
                                        BoardMove referenceMove,
-                                       BoardPiece fromPiece,
+                                       Piece fromPiece,
                                        bool useOldPosition)
         {
             if (!boardMoveList.Any())
@@ -623,7 +620,7 @@ namespace Ragnarok.Shogi
             var fromPiece = (
                 move.ActionType != ActionType.Drop ?
                 board[move.OldPosition] :
-                new BoardPiece(move.BWType, move.DropPieceType, false));
+                new Piece(move.DropPieceType, false, move.BWType));
             if (fromPiece == null)
             {
                 return null;

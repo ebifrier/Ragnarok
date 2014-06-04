@@ -58,8 +58,8 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// [0,0]が盤面の11地点を示します。
         /// </summary>
-        private List<NotifyCollection<BoardPiece>> board =
-            new List<NotifyCollection<BoardPiece>>();
+        private List<NotifyCollection<Piece>> board =
+            new List<NotifyCollection<Piece>>();
         [DataMember(Order = 1, IsRequired = true)]
         private CapturedPieceBox blackCapturedPieceBox = new CapturedPieceBox(BWType.Black);
         [DataMember(Order = 2, IsRequired = true)]
@@ -133,13 +133,13 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 盤を作成します。
         /// </summary>
-        private List<NotifyCollection<BoardPiece>> CreatePieceMatrix()
+        private List<NotifyCollection<Piece>> CreatePieceMatrix()
         {
-            var result = new List<NotifyCollection<BoardPiece>>();
+            var result = new List<NotifyCollection<Piece>>();
 
             for (var rank = 0; rank < Board.BoardSize; ++rank)
             {
-                var list = new NotifyCollection<BoardPiece>();
+                var list = new NotifyCollection<Piece>();
 
                 for (var file = 0; file < Board.BoardSize; ++file)
                 {
@@ -195,7 +195,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 駒の二次元配列を取得します。
         /// </summary>
-        public List<NotifyCollection<BoardPiece>> PieceMatrix
+        public List<NotifyCollection<Piece>> PieceMatrix
         {
             get
             {
@@ -292,7 +292,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// <paramref name="position"/> にある駒を取得します。
         /// </summary>
-        public BoardPiece this[Position position]
+        public Piece this[Position position]
         {
             get
             {
@@ -329,7 +329,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// <paramref name="file"/> <paramref name="rank"/> にある駒を取得します。
         /// </summary>
-        public BoardPiece this[int file, int rank]
+        public Piece this[int file, int rank]
         {
             get { return this[new Position(file, rank)]; }
             set { this[new Position(file, rank)] = value; }
@@ -385,7 +385,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 持ち駒の数を取得します。
         /// </summary>
-        public int GetCapturedPieceCount(BoardPiece boardPiece)
+        public int GetCapturedPieceCount(Piece boardPiece)
         {
             if (boardPiece == null)
             {
@@ -721,12 +721,8 @@ namespace Ragnarok.Shogi
             if (!checkOnly)
             {
                 // 駒を盤面に置き、持ち駒から駒を減らします。
-                this[move.NewPosition] = new BoardPiece()
-                {
-                    PieceType = move.DropPieceType,
-                    BWType = move.BWType,
-                    IsPromoted = false,
-                };
+                this[move.NewPosition] = new Piece(
+                    move.DropPieceType, false, move.BWType);
 
                 DecCapturedPieceCount(move.BWType, move.DropPieceType);
 
@@ -739,7 +735,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 駒が成れるか調べます。
         /// </summary>
-        public static bool CanPromote(BoardMove move, BoardPiece piece)
+        public static bool CanPromote(BoardMove move, Piece piece)
         {
             if (move.NewPosition == null || !move.NewPosition.Validate())
             {
@@ -792,7 +788,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 駒を強制的に成る必要があるか調べます。
         /// </summary>
-        public static bool IsPromoteForce(BoardMove move, BoardPiece piece)
+        public static bool IsPromoteForce(BoardMove move, Piece piece)
         {
             if (move.NewPosition == null || !move.NewPosition.Validate())
             {
@@ -887,15 +883,10 @@ namespace Ragnarok.Shogi
                 // 移動後の駒の成り/不成りを決定します。
                 var promoted = (
                     moveFromPiece.IsPromoted ||
-                    move.ActionType == ActionType.Promote /*||
-                    IsPromoteForce(move, moveFromPiece)*/);
+                    move.ActionType == ActionType.Promote);
 
-                this[move.NewPosition] = new BoardPiece()
-                {
-                    PieceType = pieceType,
-                    IsPromoted = promoted,
-                    BWType = move.BWType,
-                };
+                this[move.NewPosition] = new Piece(
+                    pieceType, promoted, move.BWType);
 
                 // 移動前の位置からは駒をなくします。
                 this[move.OldPosition] = null;
@@ -1101,7 +1092,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 実際に駒が動けるか確認します。
         /// </summary>
-        private bool CanMovePiece(BoardMove move, BoardPiece piece)
+        private bool CanMovePiece(BoardMove move, Piece piece)
         {
             var relFile = move.NewPosition.File - move.OldPosition.File;
             var relRank = move.NewPosition.Rank - move.OldPosition.Rank;
@@ -1168,7 +1159,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 駒がそこに動かせるか調べ、動かせる場合は可能な指し手を追加します。
         /// </summary>
-        private IEnumerable<BoardMove> GetMovableMove(BoardPiece piece,
+        private IEnumerable<BoardMove> GetMovableMove(Piece piece,
                                                       Position newPosition,
                                                       Position oldPosition)
         {
@@ -1248,7 +1239,7 @@ namespace Ragnarok.Shogi
         /// 駒を<paramref name="newPosition"/>に移動できる可能性のある
         /// 異動元の位置をすべて列挙します。
         /// </summary>
-        private IEnumerable<Position> GetMovableFromRange_(BoardPiece piece,
+        private IEnumerable<Position> GetMovableFromRange_(Piece piece,
                                                            Position newPosition)
         {
             if (newPosition == null || !newPosition.Validate())
@@ -1357,7 +1348,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 駒の種類と新しい位置から、可能な差し手をすべて検索します。
         /// </summary>
-        public IEnumerable<BoardMove> SearchMoveList(BoardPiece piece,
+        public IEnumerable<BoardMove> SearchMoveList(Piece piece,
                                                      Position newPosition)
         {
             using (LazyLock())
@@ -1585,10 +1576,10 @@ namespace Ragnarok.Shogi
                     // PieceType.Noneが0のため、
                     // 正しいピースのシリアライズデータは０以外の
                     // 数字となります。
-                    BoardPiece piece = null;
+                    Piece piece = null;
                     if (bytes[index] != 0)
                     {
-                        piece = new BoardPiece();
+                        piece = new Piece();
                         piece.Deserialize(bytes[index]);
                     }
 
@@ -1729,36 +1720,36 @@ namespace Ragnarok.Shogi
 
             if (isInitPiece)
             {
-                this[5, 9] = new BoardPiece(BWType.Black, PieceType.Gyoku);
-                this[4, 9] = new BoardPiece(BWType.Black, PieceType.Kin);
-                this[6, 9] = new BoardPiece(BWType.Black, PieceType.Kin);
-                this[3, 9] = new BoardPiece(BWType.Black, PieceType.Gin);
-                this[7, 9] = new BoardPiece(BWType.Black, PieceType.Gin);
-                this[2, 9] = new BoardPiece(BWType.Black, PieceType.Kei);
-                this[8, 9] = new BoardPiece(BWType.Black, PieceType.Kei);
-                this[1, 9] = new BoardPiece(BWType.Black, PieceType.Kyo);
-                this[9, 9] = new BoardPiece(BWType.Black, PieceType.Kyo);
-                this[8, 8] = new BoardPiece(BWType.Black, PieceType.Kaku);
-                this[2, 8] = new BoardPiece(BWType.Black, PieceType.Hisya);
+                this[1, 9] = new Piece(PieceType.Kyo, false, BWType.Black);
+                this[2, 9] = new Piece(PieceType.Kei, false, BWType.Black);
+                this[3, 9] = new Piece(PieceType.Gin, false, BWType.Black);
+                this[4, 9] = new Piece(PieceType.Kin, false, BWType.Black);
+                this[5, 9] = new Piece(PieceType.Gyoku, false, BWType.Black);
+                this[6, 9] = new Piece(PieceType.Kin, false, BWType.Black);
+                this[7, 9] = new Piece(PieceType.Gin, false, BWType.Black);
+                this[8, 9] = new Piece(PieceType.Kei, false, BWType.Black);
+                this[9, 9] = new Piece(PieceType.Kyo, false, BWType.Black);
+                this[2, 8] = new Piece(PieceType.Hisya, false, BWType.Black);
+                this[8, 8] = new Piece(PieceType.Kaku, false, BWType.Black);
                 for (var file = 1; file <= BoardSize; ++file)
                 {
-                    this[file, 7] = new BoardPiece(BWType.Black, PieceType.Hu);
+                    this[file, 7] = new Piece(PieceType.Hu, false, BWType.Black);
                 }
 
-                this[5, 1] = new BoardPiece(BWType.White, PieceType.Gyoku);
-                this[4, 1] = new BoardPiece(BWType.White, PieceType.Kin);
-                this[6, 1] = new BoardPiece(BWType.White, PieceType.Kin);
-                this[3, 1] = new BoardPiece(BWType.White, PieceType.Gin);
-                this[7, 1] = new BoardPiece(BWType.White, PieceType.Gin);
-                this[2, 1] = new BoardPiece(BWType.White, PieceType.Kei);
-                this[8, 1] = new BoardPiece(BWType.White, PieceType.Kei);
-                this[1, 1] = new BoardPiece(BWType.White, PieceType.Kyo);
-                this[9, 1] = new BoardPiece(BWType.White, PieceType.Kyo);
-                this[2, 2] = new BoardPiece(BWType.White, PieceType.Kaku);
-                this[8, 2] = new BoardPiece(BWType.White, PieceType.Hisya);
+                this[1, 1] = new Piece(PieceType.Kyo, false, BWType.White);
+                this[2, 1] = new Piece(PieceType.Kei, false, BWType.White);
+                this[3, 1] = new Piece(PieceType.Gin, false, BWType.White);
+                this[4, 1] = new Piece(PieceType.Kin, false, BWType.White);
+                this[5, 1] = new Piece(PieceType.Gyoku, false, BWType.White);
+                this[6, 1] = new Piece(PieceType.Kin, false, BWType.White);
+                this[7, 1] = new Piece(PieceType.Gin, false, BWType.White);
+                this[8, 1] = new Piece(PieceType.Kei, false, BWType.White);
+                this[9, 1] = new Piece(PieceType.Kyo, false, BWType.White);
+                this[2, 2] = new Piece(PieceType.Kaku, false, BWType.White);
+                this[8, 2] = new Piece(PieceType.Hisya, false, BWType.White);
                 for (var file = 1; file <= BoardSize; ++file)
                 {
-                    this[file, 3] = new BoardPiece(BWType.White, PieceType.Hu);
+                    this[file, 3] = new Piece(PieceType.Hu, false, BWType.White);
                 }
             }
         }

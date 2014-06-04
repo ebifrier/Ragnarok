@@ -243,7 +243,7 @@ namespace Ragnarok.Presentation.Debug
             var mail = new MailMessage(
                 "ebifrier.send@gmail.com",
                 "ebifrier@gmail.com",
-                "VoteSystem エラー報告・要望など",
+                "エラー報告・要望など",
                 body);
 
             if (IsUseErrorLog)

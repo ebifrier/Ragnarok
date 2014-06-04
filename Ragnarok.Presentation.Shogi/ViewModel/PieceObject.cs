@@ -43,7 +43,7 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
         /// <summary>
         /// 内部のモデルオブジェクトを取得します。
         /// </summary>
-        public BoardPiece Piece
+        public Piece Piece
         {
             get;
             private set;
@@ -92,7 +92,7 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
         /// <summary>
         /// 駒描画用のイメージブラシを作成します。
         /// </summary>
-        public static ImageBrush CreateBrush(ShogiUIElement3D shogi, BoardPiece piece)
+        public static ImageBrush CreateBrush(ShogiUIElement3D shogi, Piece piece)
         {
             if (piece == null || piece.PieceType == PieceType.None)
             {
@@ -241,7 +241,7 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public PieceObject(ShogiUIElement3D shogi, BoardPiece piece, Position position)
+        public PieceObject(ShogiUIElement3D shogi, Piece piece, Position position)
         {
             this.shogi = shogi;
 
@@ -253,7 +253,7 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public PieceObject(ShogiUIElement3D shogi, BoardPiece piece)
+        public PieceObject(ShogiUIElement3D shogi, Piece piece)
             : this(shogi, piece, null)
         {
         }
