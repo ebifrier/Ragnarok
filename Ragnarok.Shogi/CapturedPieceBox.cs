@@ -144,6 +144,22 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
+        /// 持ち駒の数を設定します。
+        /// </summary>
+        public void SetCount(PieceType pieceType, int count)
+        {
+            if (!Enum.IsDefined(typeof(PieceType), pieceType))
+            {
+                throw new ArgumentException("pieceType");
+            }
+
+            using (LazyLock())
+            {
+                this.pieceCountArray[(int)pieceType] = count;
+            }
+        }
+
+        /// <summary>
         /// 持ち駒の数を増やします。
         /// </summary>
         private void AddCount(PieceType pieceType, int count)

@@ -385,14 +385,14 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 持ち駒の数を取得します。
         /// </summary>
-        public int GetCapturedPieceCount(Piece boardPiece)
+        public int GetCapturedPieceCount(Piece piece)
         {
-            if (boardPiece == null)
+            if (piece == null)
             {
                 return -1;
             }
 
-            return GetCapturedPieceCount(boardPiece.BWType, boardPiece.PieceType);
+            return GetCapturedPieceCount(piece.BWType, piece.PieceType);
         }
 
         /// <summary>
@@ -405,6 +405,33 @@ namespace Ragnarok.Shogi
                 var capturedPiece = GetCapturedPieceBox(bwType);
 
                 return capturedPiece.GetCount(pieceType);
+            }
+        }
+
+        /// <summary>
+        /// 持ち駒の数を設定します。
+        /// </summary>
+        public void SetCapturedPieceCount(Piece piece, int count)
+        {
+            if (piece == null)
+            {
+                return;
+            }
+
+            SetCapturedPieceCount(piece.BWType, piece.PieceType, count);
+        }
+
+        /// <summary>
+        /// 持ち駒の数を設定します。
+        /// </summary>
+        public void SetCapturedPieceCount(BWType bwType, PieceType pieceType,
+                                          int count)
+        {
+            using (LazyLock())
+            {
+                var capturedPiece = GetCapturedPieceBox(bwType);
+
+                capturedPiece.SetCount(pieceType, count);
             }
         }
 
@@ -1443,6 +1470,20 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// オブジェクトの等値性を判定します。
         /// </summary>
+        public static bool BoardEquals(Board x, Board y)
+        {
+            var result = Util.PreEquals(x, y);
+            if (result != null)
+            {
+                return result.Value;
+            }
+
+            return x.BoardEquals(y);
+        }
+
+        /// <summary>
+        /// オブジェクトの等値性を判定します。
+        /// </summary>
         public bool BoardEquals(Board other)
         {
             if ((object)other == null)
@@ -1477,10 +1518,10 @@ namespace Ragnarok.Shogi
                     return false;
                 }
 
-                if (this.prevMovedSquare != other.prevMovedSquare)
+                /*if (this.prevMovedSquare != other.prevMovedSquare)
                 {
                     return false;
-                }
+                }*/
 
                 //private List<BoardMove> moveList = new List<BoardMove>();
                 return true;

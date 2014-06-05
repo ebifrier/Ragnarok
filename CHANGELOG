@@ -1,3 +1,8 @@
+2014-06-05  - Ver 2.6.14
+
+	* Ragnarok.Shogi/Board.cs, Ragnarok.Shogi/CapturedPieceBox.cs: 持駒の数
+	を取得するメソッドを追加しました。
+
 2014-06-04  - Ver 2.6.13
 
 	* Ragnarok.Shogi.Move, Ragnarok.Shogi.BoardMove のNewPositionを
