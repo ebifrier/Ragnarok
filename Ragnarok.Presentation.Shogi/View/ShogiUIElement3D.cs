@@ -86,10 +86,10 @@ namespace Ragnarok.Presentation.Shogi.View
         private Model3DGroup banEffectGroup;
         private Model3DGroup effectGroup;
 
-        private readonly NotifyCollection<PieceObject> pieceObjectList =
-            new NotifyCollection<PieceObject>();
-        private readonly NotifyCollection<PieceObject>[] capturedPieceObjectList =
-            new NotifyCollection<PieceObject>[2];
+        private readonly List<PieceObject> pieceObjectList =
+            new List<PieceObject>();
+        private readonly List<PieceObject>[] capturedPieceObjectList =
+            new List<PieceObject>[2];
         private readonly Rect[] capturedPieceBoxBounds = new Rect[2];
         private EntityObject banEffectObjectRoot = new EntityObject();
         private EntityObject effectObjectRoot = new EntityObject();
@@ -125,13 +125,13 @@ namespace Ragnarok.Presentation.Shogi.View
             EventManager.RegisterRoutedEvent(
                 "BoardPieceChangingEvent",
                 RoutingStrategy.Bubble,
-                typeof(EventHandler<RoutedEventArgs>),
+                typeof(EventHandler<BoardPieceRoutedEventArgs>),
                 typeof(ShogiUIElement3D));
 
         /// <summary>
         /// 指し手が進む直前に呼ばれるイベントを追加または削除します。
         /// </summary>
-        public event EventHandler<RoutedEventArgs> BoardPieceChanging
+        public event EventHandler<BoardPieceRoutedEventArgs> BoardPieceChanging
         {
             add { AddHandler(BoardPieceChangingEvent, value); }
             remove { RemoveHandler(BoardPieceChangingEvent, value); }
@@ -144,13 +144,13 @@ namespace Ragnarok.Presentation.Shogi.View
             EventManager.RegisterRoutedEvent(
                 "BoardPieceChangedEvent",
                 RoutingStrategy.Bubble,
-                typeof(EventHandler<RoutedEventArgs>),
+                typeof(EventHandler<BoardPieceRoutedEventArgs>),
                 typeof(ShogiUIElement3D));
 
         /// <summary>
         /// 指し手が進んだ直後に呼ばれるイベントを追加または削除します。
         /// </summary>
-        public event EventHandler<RoutedEventArgs> BoardPieceChanged
+        public event EventHandler<BoardPieceRoutedEventArgs> BoardPieceChanged
         {
             add { AddHandler(BoardPieceChangedEvent, value); }
             remove { RemoveHandler(BoardPieceChangedEvent, value); }
@@ -282,8 +282,7 @@ namespace Ragnarok.Presentation.Shogi.View
         public static readonly DependencyProperty AutoPlayStateProperty =
             DependencyProperty.Register(
                 "AutoPlayState", typeof(AutoPlayState), typeof(ShogiUIElement3D),
-                new FrameworkPropertyMetadata(AutoPlayState.None,
-                    FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+                new FrameworkPropertyMetadata(AutoPlayState.None));
 
         /// <summary>
         /// 将棋盤の状態を取得または設定します。
@@ -684,7 +683,7 @@ namespace Ragnarok.Presentation.Shogi.View
 
         #region 駒の移動など
         /// <summary>
-        /// 駒の移動などを開始できるかどうかを取得します。
+        /// 駒の移動などを開始できるかどうか調べます。
         /// </summary>
         private bool CanBeginMove(BWType pieceSide)
         {
@@ -693,7 +692,7 @@ namespace Ragnarok.Presentation.Shogi.View
                 return false;
             }
 
-            if (AutoPlayState != AutoPlayState.None)
+            if (this.autoPlay != null && !this.autoPlay.IsEditable)
             {
                 return false;
             }
@@ -902,9 +901,11 @@ namespace Ragnarok.Presentation.Shogi.View
                 return;
             }
 
-            this.RaiseEvent(new RoutedEventArgs(BoardPieceChangingEvent));
+            this.RaiseEvent(new BoardPieceRoutedEventArgs(
+                BoardPieceChangingEvent, Board.Clone(), move));
             Board.DoMove(move);
-            this.RaiseEvent(new RoutedEventArgs(BoardPieceChangedEvent));
+            this.RaiseEvent(new BoardPieceRoutedEventArgs(
+                BoardPieceChangedEvent, Board.Clone(), move));
         }
 
         /// <summary>
@@ -1018,7 +1019,9 @@ namespace Ragnarok.Presentation.Shogi.View
 
             for (var index = 0; index < bwTypes.Count(); ++index)
             {
-                if (!this.capturedPieceBoxBounds[index].Contains(pos))
+                // 盤の反転を考慮して駒台の領域を調べます。
+                var viewIndex = (ViewSide == BWType.Black ? index : 1 - index);
+                if (!this.capturedPieceBoxBounds[viewIndex].Contains(pos))
                 {
                     continue;
                 }
@@ -1350,7 +1353,7 @@ namespace Ragnarok.Presentation.Shogi.View
                     .Select(_ => CreateCapturedPieceObject(bwType, _));
 
                 this.capturedPieceObjectList[index] =
-                    new NotifyCollection<PieceObject>(capturedPieceList);
+                    capturedPieceList.ToList();
             });
         }
 

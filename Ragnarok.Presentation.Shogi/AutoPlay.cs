@@ -147,6 +147,15 @@ namespace Ragnarok.Presentation.Shogi
             get;
             set;
         }
+
+        /// <summary>
+        /// 自動再生中にマウスで駒を移動可能かどうか取得または設定します。
+        /// </summary>
+        public bool IsEditable
+        {
+            get;
+            set;
+        }
         
         /// <summary>
         /// まだ指し手が残っているか取得します。
@@ -442,6 +451,7 @@ namespace Ragnarok.Presentation.Shogi
             BackgroundFadeInterval = DefaultBackgroundFadeInterval;
             Position = TimeSpan.Zero;
             BasePosition = TimeSpan.Zero;
+            IsEditable = false;
         }
 
         /// <summary>

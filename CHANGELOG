@@ -1,3 +1,15 @@
+2014-06-13  - Ver 2.6.17
+
+	* Ragnarok.Presentation.Shogi/AutoPlay.cs: オートプレイ中でもマウスで指
+	し手を進められるようなオプションを追加しました。(エフェクト中に駒を進め
+	たいことがあるため)
+	* Ragnarok.Presentation.Shogi/EnumTypes.cs: ImageTypeから列挙子を移動し
+	ました。
+	* Ragnarok.Presentation.Shogi/BoardPieceRoutedEventArgs.cs: 指し手が進
+	んだときに呼ばれるイベント型を新たに追加しました。
+	* Ragnarok.Presentation.Shogi/View/ShogiUIElement3D.cs: オートプレイ中
+	の指し手の移動の扱いや、局面変化時のイベントなどを修正しました。
+
 2014-06-13  - Ver 2.6.16
 
 	* Ragnarok.Shogi/Board.cs: 各局面をNotifyCollectionで持つのをやめ、ちょ

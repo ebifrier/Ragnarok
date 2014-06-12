@@ -415,8 +415,8 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
                 //var root = manager.CreateVariationNode(control.Board);
 
                 var headers = new Dictionary<string, string>();
-                headers["先手"] = "あなた";
-                headers["後手"] = "あなた２";
+                headers["先手"] = control.BlackPlayerName;
+                headers["後手"] = control.WhitePlayerName;
 
                 //var kifu = new KifuObject(headers, null);
                 //KifuWriter.Save(writer, kifu);
