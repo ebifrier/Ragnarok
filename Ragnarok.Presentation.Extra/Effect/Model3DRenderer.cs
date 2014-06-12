@@ -128,7 +128,7 @@ namespace Ragnarok.Presentation.Extra.Effect
                     m.Rotate(new Quaternion(new Vector3D(0, 0, 1), rot));
                 }
 
-                m.Translate(new Vector3D(particle.X, particle.Y, 0.0));
+                m.Translate(new Vector3D(particle.X, particle.Y, -15.0));
 
                 particle.Model.Transform = new MatrixTransform3D(m);
             }

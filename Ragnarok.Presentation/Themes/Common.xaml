@@ -64,13 +64,16 @@
                 </Grid.ColumnDefinitions>
 
                 <Button Grid.Column="1"
-                        Content="OK" MinWidth="50"
+                        Content="OK" MinWidth="65"
+                        VerticalAlignment="Stretch"
                         Margin="10,10,0,10"
+                        Padding="0,2,0,2"
                         Command="{x:Static t:RagnarokCommands.OK}" />
                 <Button Grid.Column="2"
-                        Content="キャンセル" MinWidth="50"
+                        Content="キャンセル" MinWidth="65"
+                        VerticalAlignment="Stretch"
                         Margin="10"
-                        Padding="4,0,4,0"
+                        Padding="0,2,0,2"
                         Command="{x:Static t:RagnarokCommands.Cancel}" />
             </Grid>
         </Border>

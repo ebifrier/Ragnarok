@@ -7,12 +7,88 @@ using System.Windows.Input;
 namespace Ragnarok.Presentation.Command
 {
     /// <summary>
+    /// <seeref name="RelayCommand"/>の実行可否を調べるためのイベント引数です。
+    /// </summary>
+    public class CanExecuteRelayEventArgs : EventArgs
+    {
+        /// <summary>
+        /// コマンドを取得します。
+        /// </summary>
+        public ICommand Command
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// コマンドが実行可能かどうかを取得または設定します。
+        /// </summary>
+        public bool CanExecute
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public CanExecuteRelayEventArgs(ICommand command)
+        {
+            Command = command;
+            CanExecute = true;
+        }
+    }
+
+    /// <summary>
+    /// <seeref name="RelayCommand"/>の実行可否を調べるためのイベント引数です。
+    /// </summary>
+    public class CanExecuteRelayEventArgs<T> : EventArgs
+    {
+        /// <summary>
+        /// コマンドを取得します。
+        /// </summary>
+        public ICommand Command
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// コマンドパラメーターを取得します。
+        /// </summary>
+        public T Parameter
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// コマンドが実行可能かどうかを取得または設定します。
+        /// </summary>
+        public bool CanExecute
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public CanExecuteRelayEventArgs(ICommand command, T paramter)
+        {
+            Command = command;
+            Parameter = paramter;
+            CanExecute = true;
+        }
+    }
+
+    /// <summary>
     /// コマンドをデリゲートで実行するようなクラスです。
     /// </summary>
     public class RelayCommand : ICommand
     {
         private readonly Action execute;
-        private readonly Func<bool> canExecute;
+        private readonly EventHandler<CanExecuteRelayEventArgs> canExecute;
 
         /// <summary>
         /// コマンドの実行可能状態の変更を調べるイベントを追加または削除します。
@@ -48,8 +124,14 @@ namespace Ragnarok.Presentation.Command
         /// </summary>
         public bool CanExecute()
         {
-            return (this.canExecute == null ||
-                    this.canExecute());
+            if (this.canExecute == null)
+            {
+                return true;
+            }
+
+            var e = new CanExecuteRelayEventArgs(this);
+            this.canExecute(this, e);
+            return e.CanExecute;
         }
 
         bool ICommand.CanExecute(object parameter)
@@ -60,7 +142,8 @@ namespace Ragnarok.Presentation.Command
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public RelayCommand(Action execute, Func<bool> canExecute)
+        public RelayCommand(Action execute,
+                            EventHandler<CanExecuteRelayEventArgs> canExecute)
         {
             if (execute == null)
             {
@@ -86,7 +169,7 @@ namespace Ragnarok.Presentation.Command
     public class RelayCommand<T> : ICommand
     {
         private readonly Action<T> execute;
-        private readonly Func<T, bool> canExecute;
+        private readonly EventHandler<CanExecuteRelayEventArgs<T>> canExecute;
 
         /// <summary>
         /// コマンドの実行可能状態の変更を調べるイベントを追加または削除します。
@@ -117,14 +200,21 @@ namespace Ragnarok.Presentation.Command
         /// </summary>
         public bool CanExecute(object parameter)
         {
-            return (this.canExecute == null ||
-                    this.canExecute((T)parameter));
+            if (this.canExecute == null)
+            {
+                return true;
+            }
+
+            var e = new CanExecuteRelayEventArgs<T>(this, (T)parameter);
+            this.canExecute(this, e);
+            return e.CanExecute;
         }
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public RelayCommand(Action<T> execute, Func<T, bool> canExecute)
+        public RelayCommand(Action<T> execute,
+                            EventHandler<CanExecuteRelayEventArgs<T>> canExecute)
         {
             if (execute == null)
             {
