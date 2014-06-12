@@ -1,3 +1,8 @@
+2014-06-13  - Ver 2.6.19
+
+	* Ragnarok/Utility/Unlock.cs: objectを一時的にunlockするためのクラスを
+	追加しました。(lockステートメントの逆パターン)
+
 2014-06-13  - Ver 2.6.18
 
 	* Ragnarok.Presentation/Command/RelayCommand.cs: CanExecuteの実装をイベ

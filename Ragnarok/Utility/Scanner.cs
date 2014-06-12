@@ -44,16 +44,29 @@ namespace Ragnarok.Utility
         private string[] delimiters = { "," };
         private readonly string text;
         private int index;
+        
+        /// <summary>
+        /// 最初の文字列を取得します。
+        /// </summary>
+        public string Text
+        {
+            get { return this.text; }
+        }
+
+        /// <summary>
+        /// 未パースの文字列を取得します。
+        /// </summary>
+        public string LastText
+        {
+            get { return this.text.Substring(this.index); }
+        }
 
         /// <summary>
         /// 解析文字列が終了しているか取得します。
         /// </summary>
         public bool IsEof
         {
-            get
-            {
-                return (this.index >= this.text.Length);
-            }
+            get { return (this.index >= this.text.Length); }
         }
 
         /// <summary>
@@ -89,7 +102,7 @@ namespace Ragnarok.Utility
             var escapedDelimiters =
                 string.Join(
                     "|",
-                    this.delimiters.Select<string, string>(Regex.Escape)
+                    this.delimiters.Select(_ => Regex.Escape(_))
                     .ToArray());
 
             var newPattern = string.Format(
