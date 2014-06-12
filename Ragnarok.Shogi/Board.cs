@@ -58,8 +58,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// [0,0]が盤面の11地点を示します。
         /// </summary>
-        private List<NotifyCollection<Piece>> board =
-            new List<NotifyCollection<Piece>>();
+        private Piece[] board = new Piece[81];
         [DataMember(Order = 1, IsRequired = true)]
         private CapturedPieceBox blackCapturedPieceBox = new CapturedPieceBox(BWType.Black);
         [DataMember(Order = 2, IsRequired = true)]
@@ -133,23 +132,9 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 盤を作成します。
         /// </summary>
-        private List<NotifyCollection<Piece>> CreatePieceMatrix()
+        private Piece[] CreatePieceMatrix()
         {
-            var result = new List<NotifyCollection<Piece>>();
-
-            for (var rank = 0; rank < Board.BoardSize; ++rank)
-            {
-                var list = new NotifyCollection<Piece>();
-
-                for (var file = 0; file < Board.BoardSize; ++file)
-                {
-                    list.Add(null);
-                }
-
-                result.Add(list);
-            }
-
-            return result;
+            return new Piece[81];
         }
 
         /// <summary>
@@ -189,17 +174,6 @@ namespace Ragnarok.Shogi
                 }
 
                 return cloned;
-            }
-        }
-
-        /// <summary>
-        /// 駒の二次元配列を取得します。
-        /// </summary>
-        public List<NotifyCollection<Piece>> PieceMatrix
-        {
-            get
-            {
-                return this.board;
             }
         }
 
@@ -306,7 +280,7 @@ namespace Ragnarok.Shogi
 
                 using (LazyLock())
                 {
-                    return this.board[rank][file];
+                    return this.board[rank * 9 + file];
                 }
             }
             set
@@ -321,7 +295,7 @@ namespace Ragnarok.Shogi
 
                 using (LazyLock())
                 {
-                    this.board[rank][file] = value;
+                    this.board[rank * 9 + file] = value;
                 }
             }
         }

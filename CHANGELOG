@@ -1,3 +1,8 @@
+2014-06-13  - Ver 2.6.16
+
+	* Ragnarok.Shogi/Board.cs: 各局面をNotifyCollectionで持つのをやめ、ちょ
+	っとした高速化を行いました。
+
 2014-06-13  - Ver 2.6.15
 
 	* Ragnarok.Shogi\Sfen: SFEN形式の指し手や局面を扱うためのソースを追加し
