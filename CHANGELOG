@@ -1,3 +1,8 @@
+2014-06-13  - Ver 2.6.15
+
+	* Ragnarok.Shogi\Sfen: SFEN形式の指し手や局面を扱うためのソースを追加し
+	ました。
+
 2014-06-05  - Ver 2.6.14
 
 	* Ragnarok.Shogi/Board.cs, Ragnarok.Shogi/CapturedPieceBox.cs: 持駒の数
