@@ -35,14 +35,9 @@ namespace Ragnarok.Presentation.Shogi
         void Moved(BoardMove move, bool isUndo);
 
         /// <summary>
-        /// 投了します。
-        /// </summary>
-        void Resign();
-
-        /// <summary>
         /// 駒の移動を開始したときに呼ばれます。
         /// </summary>
-        void BeginMove(Square position, Piece piece);
+        void BeginMove(Square square, Piece piece);
 
         /// <summary>
         /// 駒の移動が終わったときに呼ばれます。

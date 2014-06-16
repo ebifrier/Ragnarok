@@ -1,3 +1,14 @@
+2014-06-16  - Ver 2.6.20
+
+	* Ragnarok.Presentation.Shogi/AutoPlay.cs: 自動再生の最終手の着手後にエ
+	フェクト表示のためのウェイト期間を入れるかどうかを設定できるようにしま
+	した。１手だけ着手する場合などに使います。
+	* Ragnarok.Presentation.Shogi/Util3D.cs: position -> square に変数名を
+	修正しました。
+	* Ragnarok.Presentation.Shogi/View/ShogiUIElement3D.cs: 駒の運用モード
+	が変わった場合に、一度駒の移動をリセットするようにしました。
+	* Ragnarok.Shogi/BoardMove.cs: 投了に対応するようにしました。
+
 2014-06-13  - Ver 2.6.19
 
 	* Ragnarok/Utility/Unlock.cs: objectを一時的にunlockするためのクラスを

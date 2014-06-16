@@ -113,6 +113,15 @@ namespace Ragnarok.Presentation.Shogi
         }
 
         /// <summary>
+        /// 最後の一手の後、エフェクト分だけ待つかどうかを取得または設定します。
+        /// </summary>
+        public bool IsWaitForLastMove
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// 背景を変化させるかどうかを取得または設定します。
         /// </summary>
         public bool IsChangeBackground
@@ -143,15 +152,6 @@ namespace Ragnarok.Presentation.Shogi
         /// 終了までの時間を取得または設定します。
         /// </summary>
         public TimeSpan EndingInterval
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// 自動再生中にマウスで駒を移動可能かどうか取得または設定します。
-        /// </summary>
-        public bool IsEditable
         {
             get;
             set;
@@ -319,13 +319,16 @@ namespace Ragnarok.Presentation.Shogi
                 yield return true;
             }
 
-            // 最後の指し手を動かした後に一手分だけ待ちます。
+            // 必要なら最後の指し手を動かした後に一手分だけ待ちます。
             // エフェクトを表示するためです。
-            while (PositionFromBase < Interval)
+            if (IsWaitForLastMove)
             {
-                yield return true;
+                while (PositionFromBase < Interval)
+                {
+                    yield return true;
+                }
+                BasePosition += Interval;
             }
-            BasePosition += Interval;
         }
 
         /// <summary>
@@ -451,7 +454,7 @@ namespace Ragnarok.Presentation.Shogi
             BackgroundFadeInterval = DefaultBackgroundFadeInterval;
             Position = TimeSpan.Zero;
             BasePosition = TimeSpan.Zero;
-            IsEditable = false;
+            IsWaitForLastMove = true;
         }
 
         /// <summary>

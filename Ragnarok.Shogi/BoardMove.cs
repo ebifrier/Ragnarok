@@ -25,6 +25,14 @@ namespace Ragnarok.Shogi
     public class BoardMove : IEquatable<BoardMove>
     {
         /// <summary>
+        /// 投了を示す指し手です。
+        /// </summary>
+        public static readonly BoardMove Resign = new BoardMove
+        {
+            IsResign = true
+        };
+
+        /// <summary>
         /// オブジェクトのコピーを作成します。
         /// </summary>
         public BoardMove Clone()
@@ -75,6 +83,15 @@ namespace Ragnarok.Shogi
         /// 駒を打つ場合の駒を取得または設定します。
         /// </summary>
         public PieceType DropPieceType
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 投了かどうかを取得または設定します。
+        /// </summary>
+        public bool IsResign
         {
             get;
             set;
@@ -187,6 +204,11 @@ namespace Ragnarok.Shogi
                 return false;
             }
 
+            if (IsResign != other.IsResign)
+            {
+                return false;
+            }
+
             return true;
         }
 
@@ -195,7 +217,7 @@ namespace Ragnarok.Shogi
         /// </summary>
         public static bool operator ==(BoardMove x, BoardMove y)
         {
-            return Ragnarok.Util.GenericEquals(x, y);
+            return Util.GenericEquals(x, y);
         }
 
         /// <summary>
@@ -216,7 +238,8 @@ namespace Ragnarok.Shogi
                 (DstSquare != null ? DstSquare.GetHashCode() : 0) ^
                 (SrcSquare != null ? SrcSquare.GetHashCode() : 0) ^
                 ActionType.GetHashCode() ^
-                DropPieceType.GetHashCode());
+                DropPieceType.GetHashCode() ^
+                IsResign.GetHashCode());
         }
 
         #region シリアライズ/デシリアライズ
@@ -269,14 +292,16 @@ namespace Ragnarok.Shogi
             bits |= (uint)BWType;
             // 3bit
             bits |= ((uint)ActionType << 2);
-            // 4bit
-            bits |= ((uint)DropPieceType << 5);
             // 1bit
-            bits |= ((uint)(TookPiece != null ? 1 : 0) << 9);
+            bits |= ((uint)(TookPiece != null ? 1 : 0) << 5);
             // 7bit
-            bits |= (uint)(SerializeSquare(DstSquare) << 10);
+            bits |= ((uint)SerializeSquare(DstSquare) << 6);
             // 7bit
-            bits |= (uint)(SerializeSquare(SrcSquare) << 17);
+            bits |= (ActionType == ActionType.Drop ?
+                ((uint)DropPieceType << 13) :
+                ((uint)SerializeSquare(SrcSquare) << 13) );
+            // 1bit
+            bits |= ((uint)(IsResign ? 1 : 0) << 20);
 
             if (TookPiece != null)
             {
@@ -296,14 +321,17 @@ namespace Ragnarok.Shogi
             BWType = (BWType)((bits >> 0) & 0x03);
             // 3bit
             ActionType = (ActionType)((bits >> 2) & 0x07);
-            // 4bit
-            DropPieceType = (PieceType)((bits >> 5) & 0x0f);
             // 1bit
-            var hasTookPiece = (((bits >> 9) & 0x01) != 0);
+            var hasTookPiece = (((bits >> 5) & 0x01) != 0);
             // 7bit
-            DstSquare = DeserializeSquare((bits >> 10) & 0x7f);
+            DstSquare = DeserializeSquare((bits >> 6) & 0x7f);
             // 7bit
-            SrcSquare = DeserializeSquare((bits >> 17) & 0x7f);
+            if (ActionType == ActionType.Drop)
+                DropPieceType = (PieceType)((bits >> 13) & 0x0f);
+            else
+                SrcSquare = DeserializeSquare((bits >> 13) & 0x7f);
+            // 1bit
+            IsResign = (((bits >> 20) & 0x01) != 0);
 
             if (hasTookPiece)
             {

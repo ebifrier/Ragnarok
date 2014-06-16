@@ -75,14 +75,9 @@
     <Compile Include="BWType.cs" />
     <Compile Include="CapturedPiece.cs" />
     <Compile Include="CapturedPieceBox.cs" />
-    <Compile Include="Csa\CsaClient.cs" />
-    <Compile Include="Csa\CsaCommandAttribute.cs" />
-    <Compile Include="Csa\CsaGameInfo.cs" />
-    <Compile Include="Csa\CsaGameCommand.cs" />
     <Compile Include="Csa\CsaMove.cs" />
     <Compile Include="Csa\CsaMoveExtension.cs" />
     <Compile Include="Csa\Tests\CsaMoveTest.cs" />
-    <Compile Include="Csa\Tests\CsaGameTest.cs" />
     <Compile Include="File\IKifuReader.cs" />
     <Compile Include="File\IKifuWriter.cs" />
     <Compile Include="KifuReader.cs" />

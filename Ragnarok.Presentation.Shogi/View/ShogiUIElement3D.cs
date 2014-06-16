@@ -265,7 +265,7 @@ namespace Ragnarok.Presentation.Shogi.View
                 "EditMode", typeof(EditMode), typeof(ShogiUIElement3D),
                 new FrameworkPropertyMetadata(EditMode.Normal,
                     FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
-                    (_, __) => WPFUtil.InvalidateCommand()));
+                    OnEditModeChanged));
 
         /// <summary>
         /// 編集モードを取得または設定します。
@@ -274,6 +274,18 @@ namespace Ragnarok.Presentation.Shogi.View
         {
             get { return (EditMode)GetValue(EditModeProperty); }
             set { SetValue(EditModeProperty, value); }
+        }
+
+        static void OnEditModeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var self = (ShogiUIElement3D)d;
+
+            if (self != null)
+            {
+                self.EndMove();
+
+                WPFUtil.InvalidateCommand();
+            }
         }
 
         /// <summary>
@@ -622,10 +634,10 @@ namespace Ragnarok.Presentation.Shogi.View
             if (movingPiece == null)
             {
                 // 駒検索
-                var position = GetCell(boardPos);
-                if (position != null)
+                var square = GetCell(boardPos);
+                if (square != null)
                 {
-                    var pieceObject = GetPieceObject(position);
+                    var pieceObject = GetPieceObject(square);
                     if (pieceObject != null)
                     {
                         BeginMovePiece(pieceObject);
@@ -651,14 +663,14 @@ namespace Ragnarok.Presentation.Shogi.View
             else
             {
                 // 駒の移動を完了します。
-                var position = GetCell(boardPos);
-                if (position == null)
+                var square = GetCell(boardPos);
+                if (square == null)
                 {
                     EndMove();
                     return;
                 }
 
-                DoMove(position);
+                DoMove(square);
             }
         }
 
@@ -692,7 +704,7 @@ namespace Ragnarok.Presentation.Shogi.View
                 return false;
             }
 
-            if (this.autoPlay != null && !this.autoPlay.IsEditable)
+            if (this.autoPlay != null)
             {
                 return false;
             }
@@ -956,8 +968,8 @@ namespace Ragnarok.Presentation.Shogi.View
             var rank = (int)((pos.Y - BanBounds.Top) / CellSize.Height);
 
             // 正しい位置にありましぇん。
-            var position = new Square(Board.BoardSize - file, rank + 1);
-            if (!position.Validate())
+            var square = new Square(Board.BoardSize - file, rank + 1);
+            if (!square.Validate())
             {
                 return null;
             }
@@ -977,15 +989,15 @@ namespace Ragnarok.Presentation.Shogi.View
                 return null;
             }*/
 
-            return (ViewSide == BWType.White ? position.Flip() : position);
+            return (ViewSide == BWType.White ? square.Flip() : square);
         }
 
         /// <summary>
         /// 画面表示上の位置を取得します。
         /// </summary>
-        public Vector3D GetPiecePos(Square position)
+        public Vector3D GetPiecePos(Square square)
         {
-            if ((object)position == null)
+            if ((object)square == null)
             {
                 return new Vector3D();
             }
@@ -993,11 +1005,11 @@ namespace Ragnarok.Presentation.Shogi.View
             var relative =
                 (ViewSide == BWType.Black
                 ? new Point(
-                    (Board.BoardSize - position.File) * CellSize.Width,
-                    (position.Rank - 1) * CellSize.Height)
+                    (Board.BoardSize - square.File) * CellSize.Width,
+                    (square.Rank - 1) * CellSize.Height)
                 : new Point(
-                    (position.File - 1) * CellSize.Width,
-                    (Board.BoardSize - position.Rank) * CellSize.Height));
+                    (square.File - 1) * CellSize.Width,
+                    (Board.BoardSize - square.Rank) * CellSize.Height));
 
             var leftTop = BanBounds.TopLeft;
             return new Vector3D(
@@ -1701,7 +1713,6 @@ namespace Ragnarok.Presentation.Shogi.View
         public void Unload()
         {
             EndMove();
-            ClosePromoteDialog();
             StopAutoPlay();
 
             // エフェクトマネージャへの参照と、マネージャが持つ

@@ -15,17 +15,17 @@ namespace Ragnarok.Presentation.Shogi
         /// <summary>
         /// 単純な四角形のジオメトリを作成します。
         /// </summary>
-        public static MeshGeometry3D CreateCellMesh(IEnumerable<Square> positions,
+        public static MeshGeometry3D CreateCellMesh(IEnumerable<Square> squares,
                                                     double widen = 0.0)
         {
             var points = new Point3DCollection();
             var indices = new Int32Collection();
             var texCoords = new PointCollection();
 
-            foreach (var position in positions)
+            foreach (var square in squares)
             {
-                var x = Board.BoardSize - position.File;
-                var y = position.Rank - 1;
+                var x = Board.BoardSize - square.File;
+                var y = square.Rank - 1;
                 var c = points.Count;
 
                 // 各マスの座標追加
