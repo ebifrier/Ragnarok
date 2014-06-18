@@ -32,38 +32,29 @@ namespace Ragnarok.Shogi.Tests
                         if (avail.Item2)
                         {
                             // 成りが必須の場合
-                            move.ActionType = ActionType.None;
+                            move.IsPromote = false;
                             Assert.False(board.CanMove(move));
 
-                            move.ActionType = ActionType.Unpromote;
-                            Assert.False(board.CanMove(move));
-
-                            move.ActionType = ActionType.Promote;
+                            move.IsPromote = true;
                             Assert.True(board.CanMove(move));
                         }
                         else
                         {
                             // 成りが必須でない場合
-                            move.ActionType = ActionType.None;
+                            move.IsPromote = false;
                             Assert.True(board.CanMove(move));
 
-                            move.ActionType = ActionType.Unpromote;
-                            Assert.True(board.CanMove(move));
-
-                            move.ActionType = ActionType.Promote;
+                            move.IsPromote = true;
                             Assert.AreEqual(Board.CanPromote(move), board.CanMove(move));
                         }
                     }
                     else
                     {
                         // そもそも移動できる場所ではない
-                        move.ActionType = ActionType.None;
+                        move.IsPromote = false;
                         Assert.False(board.CanMove(move));
 
-                        move.ActionType = ActionType.Unpromote;
-                        Assert.False(board.CanMove(move));
-
-                        move.ActionType = ActionType.Promote;
+                        move.IsPromote = true;
                         Assert.False(board.CanMove(move));
                     }
                 }
@@ -110,7 +101,7 @@ namespace Ragnarok.Shogi.Tests
                 DstSquare = new Square(8, 2),
                 SrcSquare = new Square(8, 3),
                 MovePiece = new Piece(PieceType.Kyo, false),
-                ActionType = ActionType.Promote,
+                IsPromote = true,
                 BWType = BWType.Black,
             };
             Assert.True(board.CanMove(move));
@@ -142,7 +133,7 @@ namespace Ragnarok.Shogi.Tests
                 DstSquare = new Square(9, 8),
                 SrcSquare = new Square(9, 7),
                 MovePiece = new Piece(PieceType.Hu, false),
-                ActionType = ActionType.Promote,
+                IsPromote = true,
                 BWType = BWType.White,
             };
             Assert.True(board.CanMove(move));

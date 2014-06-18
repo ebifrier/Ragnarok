@@ -834,14 +834,12 @@ namespace Ragnarok.Presentation.Shogi.View
                     DstSquare = dstSquare,
                     MovePiece = Board[srcSquare].Piece,
                     BWType = Board.Turn,
-                    ActionType = ActionType.None,
                 } :
                 new BoardMove()
                 {
                     DstSquare = dstSquare,
                     DropPieceType = piece.PieceType,
                     BWType = Board.Turn,
-                    ActionType = ActionType.Drop,
                 });
 
             // 成／不成りのダイアログを出す前に着手可能か確認します。
@@ -850,7 +848,7 @@ namespace Ragnarok.Presentation.Shogi.View
                 // 駒の移動であれば成りを確認します。
                 if (move.ActionType != ActionType.Drop)
                 {
-                    move.ActionType = ActionType.Promote;
+                    move.IsPromote = true;
                     if (!CanMove(move))
                     {
                         EndMove();
@@ -867,12 +865,9 @@ namespace Ragnarok.Presentation.Shogi.View
             // 成れる場合は選択用のダイアログを出します。
             if (move.ActionType != ActionType.Promote && Board.CanPromote(move))
             {
-                var isPromote = CheckToPromote(piece.PieceType, move.BWType);
+                var promote = CheckToPromote(piece.PieceType, move.BWType);
 
-                move.ActionType = (
-                    isPromote ?
-                    ActionType.Promote :
-                    ActionType.Unpromote);
+                move.IsPromote = promote;
             }
 
             EndMove();

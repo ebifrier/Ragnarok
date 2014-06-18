@@ -32,7 +32,6 @@ namespace Ragnarok.Shogi.Csa
                 {
                     BWType = board.Turn,
                     DstSquare = csaMove.DstSquare,
-                    ActionType = ActionType.Drop,
                     DropPieceType = csaMove.Piece.PieceType,
                 };
             }
@@ -50,11 +49,8 @@ namespace Ragnarok.Shogi.Csa
                     SrcSquare = csaMove.SrcSquare,
                     MovePiece = csaMove.Piece,
                     TookPiece = BoardPiece.GetPiece(newPiece),
+                    IsPromote = (!oldPiece.IsPromoted && csaMove.Piece.IsPromoted),
                     BWType = board.Turn,
-                    ActionType = (
-                        !oldPiece.IsPromoted && csaMove.Piece.IsPromoted ?
-                        ActionType.Promote :
-                        ActionType.None),
                 };
             }
         }

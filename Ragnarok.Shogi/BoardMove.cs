@@ -74,6 +74,15 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
+        /// 駒を成るかどうかを取得または設定します。
+        /// </summary>
+        public bool IsPromote
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// 駒を打つ場合の駒を取得または設定します。
         /// </summary>
         public PieceType DropPieceType
@@ -87,8 +96,20 @@ namespace Ragnarok.Shogi
         /// </summary>
         public ActionType ActionType
         {
-            get;
-            set;
+            get
+            {
+                if (DropPieceType != PieceType.None)
+                {
+                    return ActionType.Drop;
+                }
+                else if (SrcSquare != null && MovePiece != null)
+                {
+                    return (IsPromote ? ActionType.Promote : ActionType.None);
+                }
+
+                throw new ShogiException(
+                    "指し手が正しくありません。");
+            }
         }
 
         /// <summary>
@@ -144,7 +165,7 @@ namespace Ragnarok.Shogi
                 return false;
             }
 
-            if (ActionType == ActionType.Drop)
+            if (DropPieceType != PieceType.None)
             {
                 // 駒打ちの場合
                 if (SrcSquare != null)
@@ -157,7 +178,7 @@ namespace Ragnarok.Shogi
                     return false;
                 }
 
-                if (DropPieceType == PieceType.None)
+                if (ActionType != ActionType.Drop)
                 {
                     return false;
                 }
@@ -175,7 +196,8 @@ namespace Ragnarok.Shogi
                     return false;
                 }
 
-                if (DropPieceType != PieceType.None)
+                if (ActionType != ActionType.None &&
+                    ActionType != ActionType.Promote)
                 {
                     return false;
                 }
@@ -223,7 +245,7 @@ namespace Ragnarok.Shogi
                 return false;
             }
 
-            if (ActionType != other.ActionType)
+            if (IsPromote != other.IsPromote)
             {
                 return false;
             }
@@ -266,9 +288,9 @@ namespace Ragnarok.Shogi
                 BWType.GetHashCode() ^
                 (DstSquare != null ? DstSquare.GetHashCode() : 0) ^
                 (SrcSquare != null ? SrcSquare.GetHashCode() : 0) ^
-                ActionType.GetHashCode() ^
                 (MovePiece != null ? MovePiece.GetHashCode() : 0) ^
-                DropPieceType.GetHashCode());
+                DropPieceType.GetHashCode() ^
+                IsPromote.GetHashCode());
         }
 
         #region シリアライズ/デシリアライズ
@@ -319,25 +341,25 @@ namespace Ragnarok.Shogi
 
             // 2bit
             bits |= (uint)BWType;
-            // 2bit
-            bits |= ((uint)ActionType << 2);
+            // 1bit
+            bits |= ((uint)(IsPromote ? 1 : 0) << 2);
             // 7bit
-            bits |= ((uint)SerializeSquare(DstSquare) << 4);
+            bits |= ((uint)SerializeSquare(DstSquare) << 3);
             // 7bit
             bits |= (ActionType == ActionType.Drop ?
-                ((uint)DropPieceType << 11) :
-                ((uint)SerializeSquare(SrcSquare) << 11) );
+                ((uint)DropPieceType << 10) :
+                ((uint)SerializeSquare(SrcSquare) << 10) );
 
             // 5bit
             if (MovePiece != null)
             {
-                bits |= ((uint)MovePiece.Serialize() << 18);
+                bits |= ((uint)MovePiece.Serialize() << 17);
             }
 
             // 5bit
             if (TookPiece != null)
             {
-                bits |= ((uint)TookPiece.Serialize() << 23);
+                bits |= ((uint)TookPiece.Serialize() << 22);
             }
 
             return bits;
@@ -353,18 +375,18 @@ namespace Ragnarok.Shogi
 
             // 2bit
             BWType = (BWType)((bits >> 0) & 0x03);
-            // 2bit
-            ActionType = (ActionType)((bits >> 2) & 0x03);
+            // 1bit
+            IsPromote = (((bits >> 2) & 0x01) != 0);
             // 7bit
-            DstSquare = DeserializeSquare((bits >> 4) & 0x7f);
+            DstSquare = DeserializeSquare((bits >> 3) & 0x7f);
             // 7bit
             if (ActionType == ActionType.Drop)
-                DropPieceType = (PieceType)((bits >> 11) & 0x0f);
+                DropPieceType = (PieceType)((bits >> 10) & 0x0f);
             else
-                SrcSquare = DeserializeSquare((bits >> 11) & 0x7f);
+                SrcSquare = DeserializeSquare((bits >> 10) & 0x7f);
 
             // 5bit
-            tmp = ((bits >> 18) & 0x1f);
+            tmp = ((bits >> 17) & 0x1f);
             if (tmp != 0)
             {
                 MovePiece = new Piece();
@@ -372,7 +394,7 @@ namespace Ragnarok.Shogi
             }
 
             // 5bit
-            tmp = ((bits >> 23) & 0x1f);
+            tmp = ((bits >> 22) & 0x1f);
             if (tmp != 0)
             {
                 TookPiece = new Piece();
@@ -405,7 +427,7 @@ namespace Ragnarok.Shogi
         public BoardMove()
         {
             BWType = BWType.None;
-            ActionType = ActionType.None;
+            IsPromote = false;
             DropPieceType = PieceType.None;
         }
     }

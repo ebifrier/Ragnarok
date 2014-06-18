@@ -1,3 +1,8 @@
+2014-06-18  - Ver 2.7.3
+
+	* Ragnarok.Shogi/BoardMove.cs: ActionType‚ğİ’è‚·‚é‚Ì‚Å‚Í‚È‚­Aw‚µè‚Ì
+	ó‘Ô‚©‚ç‹î‘Å‚¿‚©ˆÚ“®‚©‚ğ”»’f‚·‚é‚æ‚¤‚É‚µ‚Ü‚µ‚½B
+
 2014-06-18  - Ver 2.7.2
 
 	* Ragnarok.Presentation.Shogi/View/ShogiUIElement3D.cs: BoardPiece‚â

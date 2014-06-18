@@ -61,9 +61,8 @@ namespace Ragnarok.Shogi
             var move = new BoardMove()
             {
                 DstSquare = square,
-                DropPieceType = pieceType,
                 BWType = piece.BWType,
-                ActionType = ActionType.Drop,
+                DropPieceType = pieceType,
             };
             if (DoMove(move))
             {
@@ -92,18 +91,19 @@ namespace Ragnarok.Shogi
                 return true;
             }
 
+            var move = new BoardMove()
+            {
+                DstSquare = dstSquare,
+                SrcSquare = srcSquare,
+                MovePiece = piece.Piece,
+                BWType = piece.BWType,
+            };
+
             // 成り駒でなければ、成る可能性があります。
             if (!piece.IsPromoted)
             {
-                var movePromote = new BoardMove()
-                {
-                    DstSquare = dstSquare,
-                    SrcSquare = srcSquare,
-                    MovePiece = piece.Piece,
-                    BWType = piece.BWType,
-                    ActionType = ActionType.Promote,
-                };
-                if (DoMove(movePromote))
+                move.IsPromote = true;
+                if (DoMove(move))
                 {
                     if (!IsChecked(Turn))
                     {
@@ -116,15 +116,8 @@ namespace Ragnarok.Shogi
                 }
             }
 
-            var moveUnpromote = new BoardMove()
-            {
-                DstSquare = dstSquare,
-                SrcSquare = srcSquare,
-                MovePiece = piece.Piece,
-                BWType = piece.BWType,
-                ActionType = ActionType.None,
-            };
-            if (DoMove(moveUnpromote))
+            move.IsPromote = false;
+            if (DoMove(move))
             {
                 if (!IsChecked(Turn))
                 {

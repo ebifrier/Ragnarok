@@ -433,46 +433,33 @@ namespace Ragnarok.Shogi
                                                         Square dstSquare)
         {
             var piece = this[srcSquare];
-            var canUnpromote = false;
-
             if (piece == null)
             {
                 yield break;
             }
 
-            // 成り駒でなければ、成る可能性があります。
-            if (!piece.IsPromoted)
-            {
-                var movePromote = new BoardMove()
-                {
-                    DstSquare = dstSquare,
-                    SrcSquare = srcSquare,
-                    MovePiece = piece.Piece,
-                    BWType = piece.BWType,
-                    ActionType = ActionType.Promote,
-                };
-                if (CanMove(movePromote))
-                {
-                    yield return movePromote;
-
-                    // 成れるということは成らずの選択が必要になります。
-                    canUnpromote = true;
-                }
-            }
-
-            var moveUnpromote = new BoardMove()
+            var move = new BoardMove()
             {
                 DstSquare = dstSquare,
                 SrcSquare = srcSquare,
                 MovePiece = piece.Piece,
                 BWType = piece.BWType,
-                ActionType = (canUnpromote ?
-                    ActionType.Unpromote :
-                    ActionType.None),
             };
-            if (CanMove(moveUnpromote))
+
+            // 成り駒でなければ、成る可能性があります。
+            if (!piece.IsPromoted)
             {
-                yield return moveUnpromote;
+                move.IsPromote = true;
+                if (CanMove(move))
+                {
+                    yield return move;
+                }
+            }
+
+            move.IsPromote = false;
+            if (CanMove(move))
+            {
+                yield return move;
             }
         }
 
@@ -494,9 +481,8 @@ namespace Ragnarok.Shogi
                     var move = new BoardMove()
                     {
                         DstSquare = dstSquare,
-                        BWType = bwType,
-                        ActionType = ActionType.Drop,
                         DropPieceType = pieceType,
+                        BWType = bwType,
                     };
 
                     // 駒打ちが可能なら、それも該当手となります。

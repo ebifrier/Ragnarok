@@ -112,8 +112,8 @@ namespace Ragnarok.Shogi.Sfen
                     SrcSquare = new Square(srcFile, srcRank),
                     MovePiece = piece.Piece,
                     TookPiece = BoardPiece.GetPiece(board[dstFile, dstRank]),
+                    IsPromote = promote,
                     BWType = board.Turn,
-                    ActionType = (promote ? ActionType.Promote : ActionType.None),
                 };
             }
             else
@@ -135,7 +135,6 @@ namespace Ragnarok.Shogi.Sfen
                     SrcSquare = null,
                     BWType = board.Turn,
                     DropPieceType = dropPieceType,
-                    ActionType = ActionType.Drop,
                 };
             }
         }
