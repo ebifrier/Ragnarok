@@ -746,25 +746,25 @@ namespace Ragnarok.Presentation.Shogi.View
         /// </summary>
         private void BeginDropPiece(PieceObject pieceObject)
         {
-            var boardPiece = pieceObject.Piece;
+            var piece = pieceObject.Piece;
 
-            if (!CanBeginMove(boardPiece.BWType))
+            if (!CanBeginMove(piece.BWType))
             {
                 return;
             }
 
-            if (Board.GetCapturedPieceCount(boardPiece) <= 0)
+            if (Board.GetCapturedPieceCount(piece.PieceType, piece.BWType) <= 0)
             {
                 return;
             }
 
             // 表示用の駒を追加します。
-            this.movingPiece = new PieceObject(this, boardPiece);
+            this.movingPiece = new PieceObject(this, piece);
             AddPieceObject(this.movingPiece, true);
 
             if (EffectManager != null)
             {
-                EffectManager.BeginMove(null, boardPiece);
+                EffectManager.BeginMove(null, piece);
             }
         }
 
@@ -782,6 +782,32 @@ namespace Ragnarok.Presentation.Shogi.View
             var mousePos = InvarseTranslate(e.GetPosition(this));
 
             this.movingPiece.Coord = WPFUtil.MakeVector3D(mousePos, MovingPieceZ);
+        }
+
+        /// <summary>
+        /// 指し手が実際に着手可能か確認します。
+        /// </summary>
+        private bool CanMove(BoardMove move)
+        {
+            var tmp = Board.Clone();
+
+            // 成り・不成りの選択ダイアログを出す前に
+            // 駒の移動ができるか調べておきます。
+            // 失敗したら移動中だった駒は元の位置に戻されます。
+            if (!tmp.DoMove(move))
+            {
+                return false;
+            }
+
+            // 通常モードの場合、今指した側の玉が王手されていたら
+            // その手は採用しません。（王手放置禁止）
+            if (EditMode == EditMode.Normal &&
+                tmp.IsChecked(tmp.Turn.Toggle()))
+            {
+                return false;
+            }
+
+            return true;
         }
 
         /// <summary>
@@ -806,36 +832,42 @@ namespace Ragnarok.Presentation.Shogi.View
                 {
                     SrcSquare = srcSquare,
                     DstSquare = dstSquare,
+                    MovePiece = Board[srcSquare].Piece,
                     BWType = Board.Turn,
                     ActionType = ActionType.None,
                 } :
                 new BoardMove()
                 {
                     DstSquare = dstSquare,
+                    DropPieceType = piece.PieceType,
                     BWType = Board.Turn,
                     ActionType = ActionType.Drop,
-                    DropPieceType = piece.PieceType,
                 });
 
-            var isPromoteForce = Board.IsPromoteForce(move, piece);
-            if (isPromoteForce)
+            // 成／不成りのダイアログを出す前に着手可能か確認します。
+            if (!CanMove(move))
             {
-                move.ActionType = ActionType.Promote;
-            }
-
-            // 成り・不成りの選択ダイアログを出す前に
-            // 駒の移動ができるか調べておきます。
-            // 失敗したら移動中だった駒は元の位置に戻されます。
-            if (!Board.CanMove(move))
-            {
-                EndMove();
-                return;
+                // 駒の移動であれば成りを確認します。
+                if (move.ActionType != ActionType.Drop)
+                {
+                    move.ActionType = ActionType.Promote;
+                    if (!CanMove(move))
+                    {
+                        EndMove();
+                        return;
+                    }
+                }
+                else
+                {
+                    EndMove();
+                    return;
+                }
             }
 
             // 成れる場合は選択用のダイアログを出します。
-            if (!isPromoteForce && Board.CanPromote(move, piece))
+            if (move.ActionType != ActionType.Promote && Board.CanPromote(move))
             {
-                var isPromote = CheckToPromote(piece.BWType, piece.PieceType);
+                var isPromote = CheckToPromote(piece.PieceType, move.BWType);
 
                 move.ActionType = (
                     isPromote ?
@@ -863,7 +895,7 @@ namespace Ragnarok.Presentation.Shogi.View
         /// <summary>
         /// 成るか不成りかダイアログによる選択を行います。
         /// </summary>
-        private bool CheckToPromote(BWType bwType, PieceType pieceType)
+        private bool CheckToPromote(PieceType pieceType, BWType bwType)
         {
             var dialog = DialogUtil.CreateDialog(
                 null,
@@ -1021,7 +1053,7 @@ namespace Ragnarok.Presentation.Shogi.View
         /// <summary>
         /// 指定の座標値に駒台上の駒があればそれを取得します。
         /// </summary>
-        public Piece GetCapturedPieceType(Point pos)
+        public BoardPiece GetCapturedPieceType(Point pos)
         {
             var bwTypes = new[]
             {
@@ -1041,7 +1073,7 @@ namespace Ragnarok.Presentation.Shogi.View
                 var bwType = bwTypes[index];
                 foreach (var pieceType in EnumEx.GetValues<PieceType>())
                 {
-                    var center = GetCapturedPiecePos(bwType, pieceType);
+                    var center = GetCapturedPiecePos(pieceType, bwType);
                     var rect = new Rect(
                         center.X - CellSize.Width / 2,
                         center.Y - CellSize.Height / 2,
@@ -1050,7 +1082,7 @@ namespace Ragnarok.Presentation.Shogi.View
 
                     if (rect.Contains(pos))
                     {
-                        return new Piece(pieceType, false, bwType);
+                        return new BoardPiece(pieceType, false, bwType);
                     }
                 }
             }
@@ -1061,15 +1093,15 @@ namespace Ragnarok.Presentation.Shogi.View
         /// <summary>
         /// 駒台上の駒のデフォルト位置を取得します。
         /// </summary>
-        public Vector3D GetCapturedPiecePos(Piece piece)
+        public Vector3D GetCapturedPiecePos(BoardPiece piece)
         {
-            return GetCapturedPiecePos(piece.BWType, piece.PieceType);
+            return GetCapturedPiecePos(piece.PieceType, piece.BWType);
         }
 
         /// <summary>
         /// 駒台上の駒のデフォルト位置を取得します。
         /// </summary>
-        public Vector3D GetCapturedPiecePos(BWType bwType, PieceType pieceType)
+        public Vector3D GetCapturedPiecePos(PieceType pieceType, BWType bwType)
         {
             var index = (bwType == ViewSide ? 0 : 1);
             var bounds = this.capturedPieceBoxBounds[index];
@@ -1204,14 +1236,14 @@ namespace Ragnarok.Presentation.Shogi.View
         /// </summary>
         private PieceObject CreateCapturedPieceObject(BWType bwType, PieceType pieceType)
         {
-            var value = new PieceObject(this, new Piece(pieceType, false, bwType))
+            var value = new PieceObject(this, new BoardPiece(pieceType, false, bwType))
             {
-                Count = (Board == null ? 0 : Board.GetCapturedPieceCount(bwType, pieceType)),
+                Count = (Board == null ? 0 : Board.GetCapturedPieceCount(pieceType, bwType)),
                 IsAlwaysVisible = false,
             };
 
             // 駒をデフォルト位置まで移動させます。
-            value.Coord = GetCapturedPiecePos(bwType, pieceType);
+            value.Coord = GetCapturedPiecePos(pieceType, bwType);
 
             // 玉などは駒台に表示しません。
             if (pieceType != PieceType.None && pieceType != PieceType.Gyoku)
@@ -1228,7 +1260,7 @@ namespace Ragnarok.Presentation.Shogi.View
         private void SyncCapturedPieceCount(BWType bwType, PieceType pieceType)
         {
             var piece = GetCapturedPieceObject(bwType, pieceType);
-            var count = Board.GetCapturedPieceCount(bwType, pieceType);
+            var count = Board.GetCapturedPieceCount(pieceType, bwType);
 
             if (piece != null)
             {

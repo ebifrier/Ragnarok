@@ -1,3 +1,9 @@
+2014-06-18  - Ver 2.7.2
+
+	* Ragnarok.Presentation.Shogi/View/ShogiUIElement3D.cs: BoardPieceや
+	BoardMoveの変更に合わせて、ソースを修正しました。また、通常時は王手放置
+	を禁止するようにしました。
+
 2014-06-18  - Ver 2.7.1
 
 	* Ragnarok.Shogi/Tests/BoardTest.cs: 局面テストのためのソースを追加しま
