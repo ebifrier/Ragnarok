@@ -1,3 +1,11 @@
+2014-06-18  - Ver 2.7.1
+
+	* Ragnarok.Shogi/Tests/BoardTest.cs: 局面テストのためのソースを追加しま
+	した。
+	* Ragnarok.Shogi/Sfen/SfenBoard.cs,
+	  Ragnarok.Shogi/Sfen/SfenExtension.cs, Ragnarok.Shogi/Sfen/SfenUtil.cs: 
+	BoardPieceやBoardMoveの変更に合わせて、ソースを修正しました。	
+
 2014-06-18  - Ver 2.7.0
 
 	* Ragnarok.Shogi/Board.cs, Ragnarok.Shogi/Board.canmove.cs,

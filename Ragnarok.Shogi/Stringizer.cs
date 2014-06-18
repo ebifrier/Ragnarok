@@ -156,7 +156,7 @@ namespace Ragnarok.Shogi
                 }
             }
 
-            return null;
+            return "不明";
         }
 
         /// <summary>

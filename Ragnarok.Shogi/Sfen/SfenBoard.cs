@@ -110,13 +110,19 @@ namespace Ragnarok.Shogi.Sfen
 
                     if (promoted)
                     {
-                        piece = new Piece(piece.PieceType, promoted, piece.BWType);
+                        piece = new BoardPiece(piece.PieceType, promoted, piece.BWType);
                     }
 
                     board[file, rank] = piece;
                     file -= 1;
                     promoted = false;
                 }
+            }
+
+            if (file != 0)
+            {
+                throw new SfenException(
+                    "SFEN形式の" + rank + "段の駒数が合いません。");
             }
         }
 
@@ -147,7 +153,8 @@ namespace Ragnarok.Shogi.Sfen
                             "SFEN形式の持ち駒'" + c + "'が正しくありません。");
                     }
 
-                    board.SetCapturedPieceCount(piece, count);
+                    board.SetCapturedPieceCount(
+                        piece.PieceType, piece.BWType, count);
                     count = 1;
                 }
             }
@@ -245,8 +252,8 @@ namespace Ragnarok.Shogi.Sfen
                 from pieceType in EnumEx.GetValues<PieceType>()
                 let obj = new
                 {
-                    Piece = new Piece(pieceType, false, turn),
-                    Count = board.GetCapturedPieceCount(turn, pieceType),
+                    Piece = new BoardPiece(pieceType, false, turn),
+                    Count = board.GetCapturedPieceCount(pieceType, turn),
                 }
                 where obj.Count > 0
                 select string.Format("{0}{1}",

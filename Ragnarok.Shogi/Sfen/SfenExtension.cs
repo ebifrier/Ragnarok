@@ -110,8 +110,9 @@ namespace Ragnarok.Shogi.Sfen
                 {
                     DstSquare = new Square(dstFile, dstRank),
                     SrcSquare = new Square(srcFile, srcRank),
-                    BWType = piece.BWType,
-                    TookPiece = board[dstFile, dstRank],
+                    MovePiece = piece.Piece,
+                    TookPiece = BoardPiece.GetPiece(board[dstFile, dstRank]),
+                    BWType = board.Turn,
                     ActionType = (promote ? ActionType.Promote : ActionType.None),
                 };
             }

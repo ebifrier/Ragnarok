@@ -44,7 +44,7 @@ namespace Ragnarok.Shogi.Sfen
         /// <summary>
         /// SFEN形式の対応する駒文字(手番/成り不成りの区別あり）を取得します。
         /// </summary>
-        public static string PieceToSfen(Piece piece)
+        public static string PieceToSfen(BoardPiece piece)
         {
             var c = SfenPieceList[(int)piece.PieceType];
 
@@ -81,22 +81,22 @@ namespace Ragnarok.Shogi.Sfen
         /// <remarks>
         /// 大文字の場合は先手、小文字の場合は後手となります。
         /// </remarks>
-        public static Piece SfenToPiece(char piece)
+        public static BoardPiece SfenToPiece(char piece)
         {
             for (var i = 0; i < SfenPieceList.Count(); ++i)
             {
                 if (piece == SfenPieceList[i])
                 {
-                    return new Piece((PieceType)i, false, BWType.Black);
+                    return new BoardPiece((PieceType)i, false, BWType.Black);
                 }
 
                 if (piece == char.ToLower(SfenPieceList[i]))
                 {
-                    return new Piece((PieceType)i, false, BWType.White);
+                    return new BoardPiece((PieceType)i, false, BWType.White);
                 }
             }
 
-            return Piece.None;
+            return null;
         }
     }
 }
