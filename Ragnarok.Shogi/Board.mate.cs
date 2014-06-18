@@ -43,7 +43,7 @@ namespace Ragnarok.Shogi
             }
 
             // 玉の位置に移動できる駒があれば王手されています。
-            return ListupMoves(bwType, gyoku).Any();
+            return ListupMoves(bwType.Flip(), gyoku).Any();
         }
 
         /// <summary>

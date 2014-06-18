@@ -1,3 +1,7 @@
+2014-06-18  - Ver 2.7.4
+
+	* Ragnarok.Shogi/BWType.cs: メソッド名をToggleからFlipに変更しました。
+
 2014-06-18  - Ver 2.7.3
 
 	* Ragnarok.Shogi/BoardMove.cs: ActionTypeを設定するのではなく、指し手の

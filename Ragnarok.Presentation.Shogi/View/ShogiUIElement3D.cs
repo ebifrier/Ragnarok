@@ -802,7 +802,7 @@ namespace Ragnarok.Presentation.Shogi.View
             // 通常モードの場合、今指した側の玉が王手されていたら
             // その手は採用しません。（王手放置禁止）
             if (EditMode == EditMode.Normal &&
-                tmp.IsChecked(tmp.Turn.Toggle()))
+                tmp.IsChecked(tmp.Turn.Flip()))
             {
                 return false;
             }

@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
@@ -12,18 +12,18 @@ using Ragnarok.ObjectModel;
 namespace Ragnarok.Shogi
 {
     /// <summary>
-    /// ”Õ–Êã‚Ì‹î‚ğ¦‚µ‚Ü‚·B
+    /// ç›¤é¢ä¸Šã®é§’ã‚’ç¤ºã—ã¾ã™ã€‚
     /// </summary>
     /// <remarks>
-    /// ”Õ–Êã‚Ì‹î‚ğ•\Œ»‚·‚é‚É‚Í‹î‚Ìî•ñ{æŒã‚ª•K—v‚Å‚·B
-    /// ‚±‚ÌƒNƒ‰ƒX‚Í<see cref="Piece"/>ƒNƒ‰ƒX‚ÉæŒã‚ÌƒvƒƒpƒeƒB‚ğ
-    /// ’Ç‰Á‚µ‚½‚¾‚¯‚Ì‚à‚Ì‚Å‚·B
+    /// ç›¤é¢ä¸Šã®é§’ã‚’è¡¨ç¾ã™ã‚‹ã«ã¯é§’ã®æƒ…å ±ï¼‹å…ˆå¾ŒãŒå¿…è¦ã§ã™ã€‚
+    /// ã“ã®ã‚¯ãƒ©ã‚¹ã¯<see cref="Piece"/>ã‚¯ãƒ©ã‚¹ã«å…ˆå¾Œã®ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã‚’
+    /// è¿½åŠ ã—ãŸã ã‘ã®ã‚‚ã®ã§ã™ã€‚
     /// </remarks>
     [DataContract()]
     public class BoardPiece : IEquatable<BoardPiece>
     {
         /// <summary>
-        /// æè‚Ì‹î‚©Œãè‚Ì‹î‚©‚ğæ“¾‚Ü‚½‚Íİ’è‚µ‚Ü‚·B
+        /// å…ˆæ‰‹ã®é§’ã‹å¾Œæ‰‹ã®é§’ã‹ã‚’å–å¾—ã¾ãŸã¯è¨­å®šã—ã¾ã™ã€‚
         /// </summary>
         public BWType BWType
         {
@@ -32,7 +32,7 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
-        /// ‹î‚Ìí—Ş‚ğæ“¾‚Ü‚½‚Íİ’è‚µ‚Ü‚·B
+        /// é§’ã®ç¨®é¡ã‚’å–å¾—ã¾ãŸã¯è¨­å®šã—ã¾ã™ã€‚
         /// </summary>
         public PieceType PieceType
         {
@@ -41,7 +41,7 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
-        /// ‹î‚ª¬‚Á‚Ä‚é‚©‚Ç‚¤‚©‚ğæ“¾‚Ü‚½‚Íİ’è‚µ‚Ü‚·B
+        /// é§’ãŒæˆã£ã¦ã‚‹ã‹ã©ã†ã‹ã‚’å–å¾—ã¾ãŸã¯è¨­å®šã—ã¾ã™ã€‚
         /// </summary>
         public bool IsPromoted
         {
@@ -50,7 +50,7 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
-        /// •„†‚È‚µ‚Ì‹îƒIƒuƒWƒFƒNƒg‚ğæ“¾‚µ‚Ü‚·B
+        /// ç¬¦å·ãªã—ã®é§’ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’å–å¾—ã—ã¾ã™ã€‚
         /// </summary>
         public Piece Piece
         {
@@ -58,7 +58,7 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
-        /// •„†‚È‚µ‚Ì‹îƒIƒuƒWƒFƒNƒg‚ğæ“¾‚µ‚Ü‚·B(null‘Î‰”Å)
+        /// ç¬¦å·ãªã—ã®é§’ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’å–å¾—ã—ã¾ã™ã€‚(nullå¯¾å¿œç‰ˆ)
         /// </summary>
         public static Piece GetPiece(BoardPiece self)
         {
@@ -68,7 +68,7 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
-        /// ƒIƒuƒWƒFƒNƒg‚ÌƒRƒs[‚ğì¬‚µ‚Ü‚·B
+        /// ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ã‚³ãƒ”ãƒ¼ã‚’ä½œæˆã—ã¾ã™ã€‚
         /// </summary>
         public BoardPiece Clone()
         {
@@ -76,7 +76,7 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
-        /// ‹î‚ğ•¶š—ñ‰»‚µ‚Ü‚·B
+        /// é§’ã‚’æ–‡å­—åˆ—åŒ–ã—ã¾ã™ã€‚
         /// </summary>
         public override string ToString()
         {
@@ -84,7 +84,7 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
-        /// ƒIƒuƒWƒFƒNƒg‚Ì‘Ã“–«‚ğŒŸØ‚µ‚Ü‚·B
+        /// ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®å¦¥å½“æ€§ã‚’æ¤œè¨¼ã—ã¾ã™ã€‚
         /// </summary>
         public bool Validate()
         {
@@ -102,7 +102,7 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
-        /// ƒIƒuƒWƒFƒNƒg‚Ì“™’l«‚ğ”»’è‚µ‚Ü‚·B
+        /// ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ç­‰å€¤æ€§ã‚’åˆ¤å®šã—ã¾ã™ã€‚
         /// </summary>
         public override bool Equals(object obj)
         {
@@ -116,7 +116,7 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
-        /// ƒIƒuƒWƒFƒNƒg‚Ì“™’l«‚ğ”»’è‚µ‚Ü‚·B
+        /// ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ç­‰å€¤æ€§ã‚’åˆ¤å®šã—ã¾ã™ã€‚
         /// </summary>
         public bool Equals(BoardPiece other)
         {
@@ -144,7 +144,7 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
-        /// ƒnƒbƒVƒ…’l‚ğ•Ô‚µ‚Ü‚·B
+        /// ãƒãƒƒã‚·ãƒ¥å€¤ã‚’è¿”ã—ã¾ã™ã€‚
         /// </summary>
         public override int GetHashCode()
         {
@@ -155,7 +155,7 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
-        /// ƒIƒuƒWƒFƒNƒg‚ğ”äŠr‚µ‚Ü‚·B
+        /// ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’æ¯”è¼ƒã—ã¾ã™ã€‚
         /// </summary>
         public static bool operator ==(BoardPiece x, BoardPiece y)
         {
@@ -163,19 +163,19 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
-        /// ƒIƒuƒWƒFƒNƒg‚ğ”äŠr‚µ‚Ü‚·B
+        /// ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’æ¯”è¼ƒã—ã¾ã™ã€‚
         /// </summary>
         public static bool operator !=(BoardPiece x, BoardPiece y)
         {
             return !(x == y);
         }
 
-        #region ƒVƒŠƒAƒ‰ƒCƒY
+        #region ã‚·ãƒªã‚¢ãƒ©ã‚¤ã‚º
         [DataMember(Order = 1, IsRequired = true)]
         private byte serializeBits = 0;
 
         /// <summary>
-        /// ƒVƒŠƒAƒ‰ƒCƒY‚ğs‚¢‚Ü‚·B
+        /// ã‚·ãƒªã‚¢ãƒ©ã‚¤ã‚ºã‚’è¡Œã„ã¾ã™ã€‚
         /// </summary>
         [CLSCompliant(false)]
         public byte Serialize()
@@ -193,7 +193,7 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
-        /// ƒfƒVƒŠƒAƒ‰ƒCƒY‚ğs‚¢‚Ü‚·B
+        /// ãƒ‡ã‚·ãƒªã‚¢ãƒ©ã‚¤ã‚ºã‚’è¡Œã„ã¾ã™ã€‚
         /// </summary>
         [CLSCompliant(false)]
         public void Deserialize(uint bits)
@@ -204,7 +204,7 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
-        /// ƒVƒŠƒAƒ‰ƒCƒY‘O‚ÉŒÄ‚Î‚ê‚Ü‚·B
+        /// ã‚·ãƒªã‚¢ãƒ©ã‚¤ã‚ºå‰ã«å‘¼ã°ã‚Œã¾ã™ã€‚
         /// </summary>
         [OnSerializing()]
         private void BeforeSerialize(StreamingContext context)
@@ -213,7 +213,7 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
-        /// ƒfƒVƒŠƒAƒ‰ƒCƒYŒã‚ÉŒÄ‚Î‚ê‚Ü‚·B
+        /// ãƒ‡ã‚·ãƒªã‚¢ãƒ©ã‚¤ã‚ºå¾Œã«å‘¼ã°ã‚Œã¾ã™ã€‚
         /// </summary>
         [OnDeserialized()]
         private void AfterDeserialize(StreamingContext context)
@@ -223,7 +223,7 @@ namespace Ragnarok.Shogi
         #endregion
 
         /// <summary>
-        /// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+        /// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
         /// </summary>
         public BoardPiece(PieceType pieceType, bool isPromoted, BWType bwType)
         {
@@ -233,7 +233,7 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
-        /// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+        /// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
         /// </summary>
         public BoardPiece(PieceType pieceType, BWType bwType)
             : this(pieceType, false, bwType)
@@ -241,7 +241,7 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
-        /// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+        /// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
         /// </summary>
         public BoardPiece(Piece piece, BWType bwType)
             : this(piece.PieceType, piece.IsPromoted, bwType)
@@ -249,7 +249,7 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
-        /// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+        /// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
         /// </summary>
         public BoardPiece()
         {

@@ -44,7 +44,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 手番の先後を入れ替えます。
         /// </summary>
-        public static BWType Toggle(this BWType self)
+        public static BWType Flip(this BWType self)
         {
             if (self != BWType.None)
             {

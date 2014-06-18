@@ -468,7 +468,7 @@ namespace Ragnarok.Shogi
                 {
                     this[move.DstSquare] = new BoardPiece(
                         move.TookPiece.Clone(),
-                        move.BWType.Toggle());
+                        move.BWType.Flip());
 
                     // 駒を取ったはずなので、その分を駒台から減らします。
                     DecCapturedPieceCount(
@@ -483,7 +483,7 @@ namespace Ragnarok.Shogi
                 this[move.SrcSquare] = movedPiece;
             }
 
-            Turn = Turn.Toggle();
+            Turn = Turn.Flip();
             PrevMovedSquare = (
                 this.moveList.Any() ?
                 this.moveList.Last().DstSquare :
@@ -606,7 +606,7 @@ namespace Ragnarok.Shogi
         {
             NotifyBoardChanging(move, false);
 
-            Turn = Turn.Toggle();
+            Turn = Turn.Flip();
             PrevMovedSquare = move.DstSquare;
 
             this.moveList.Add(move);
