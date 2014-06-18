@@ -46,10 +46,11 @@ namespace Ragnarok.Shogi.Csa
 
                 return new BoardMove
                 {
-                    BWType = board.Turn,
                     DstSquare = csaMove.DstSquare,
                     SrcSquare = csaMove.SrcSquare,
-                    TookPiece = newPiece,
+                    MovePiece = csaMove.Piece,
+                    TookPiece = BoardPiece.GetPiece(newPiece),
+                    BWType = board.Turn,
                     ActionType = (
                         !oldPiece.IsPromoted && csaMove.Piece.IsPromoted ?
                         ActionType.Promote :

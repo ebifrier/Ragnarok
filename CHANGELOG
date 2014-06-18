@@ -1,3 +1,19 @@
+2014-06-18  - Ver 2.7.0
+
+	* Ragnarok.Shogi/Board.cs, Ragnarok.Shogi/Board.canmove.cs,
+	  Ragnarok.Shogi/Board.mate.cs: 局面の各コマの表示にBoardPieceクラス(手
+	番情報有りの駒クラス)を使うようにし、またソースが長くなってしまったため
+	複数のファイルに分割しました。
+	* Ragnarok.Shogi/BoardPiece.cs: 局面の各駒を表現するためのクラス
+	(BoardPiece, 手番情報あり)と、普通の駒を表現するクラス(Piece, 手番情報
+	なし)を分けました。
+	* Ragnarok.Shogi/Piece.cs: 手番情報を削除しました。
+	* Ragnarok.Shogi/BoardMove.cs: 文字列化やCSA形式を表現するため、指し手
+	に動かす駒の情報を持たせるようにしました。
+	* Ragnarok.Shogi/BoardExtension.cs,
+	  Ragnarok.Shogi/Csa/CsaMoveExtension.cs: BoardMoveやPieceクラスの変更
+	に合わせてソースを修正しました。
+
 2014-06-16  - Ver 2.6.20
 
 	* Ragnarok.Presentation.Shogi/AutoPlay.cs: 自動再生の最終手の着手後にエ

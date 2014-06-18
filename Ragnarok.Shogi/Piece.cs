@@ -146,20 +146,11 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
-        /// 先手の駒か後手の駒かを取得または設定します。
-        /// </summary>
-        public BWType BWType
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
         /// オブジェクトのクローンを取得します。
         /// </summary>
         public Piece Clone()
         {
-            return new Piece(PieceType, IsPromoted, BWType);
+            return new Piece(PieceType, IsPromoted);
         }
 
         /// <summary>
@@ -167,6 +158,11 @@ namespace Ragnarok.Shogi
         /// </summary>
         public bool Validate()
         {
+            if (!EnumEx.IsDefined(PieceType))
+            {
+                return false;
+            }
+
             switch (PieceType)
             {
                 case PieceType.Hisya:
@@ -228,11 +224,6 @@ namespace Ragnarok.Shogi
                 return false;
             }
 
-            if (BWType != other.BWType)
-            {
-                return false;
-            }
-
             return true;
         }
 
@@ -243,8 +234,7 @@ namespace Ragnarok.Shogi
         {
             return (
                 PieceType.GetHashCode() ^
-                IsPromoted.GetHashCode() ^
-                BWType.GetHashCode());
+                IsPromoted.GetHashCode());
         }
 
         /// <summary>
@@ -275,12 +265,10 @@ namespace Ragnarok.Shogi
         {
             byte bits = 0;
 
-            // 2bits
-            bits |= (byte)BWType;
             // 4bits
-            bits |= (byte)((uint)PieceType << 2);
+            bits |= (byte)((uint)PieceType << 0);
             // 1bits
-            bits |= (byte)((uint)(IsPromoted ? 1 : 0) << 6);
+            bits |= (byte)((uint)(IsPromoted ? 1 : 0) << 4);
 
             return bits;
         }
@@ -291,9 +279,8 @@ namespace Ragnarok.Shogi
         [CLSCompliant(false)]
         public void Deserialize(uint bits)
         {
-            BWType = (BWType)((bits >> 0) & 0x03);
-            PieceType = (PieceType)((bits >> 2) & 0x0f);
-            IsPromoted = (((bits >> 6) & 0x01) != 0);
+            PieceType = (PieceType)((bits >> 0) & 0x0f);
+            IsPromoted = (((bits >> 4) & 0x01) != 0);
         }
 
         /// <summary>
@@ -318,26 +305,17 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public Piece(PieceType piece, bool promoted, BWType bwType)
+        public Piece(PieceType piece, bool promoted)
         {
             PieceType = piece;
             IsPromoted = promoted;
-            BWType = bwType;
         }
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public Piece(Piece piece, BWType bwType)
-            : this(piece.PieceType, piece.IsPromoted, bwType)
-        {
-        }
-
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        public Piece(PieceType piece, bool promoted)
-            : this(piece, promoted, BWType.None)
+        public Piece(PieceType piece)
+            : this(piece, false)
         {
         }
 

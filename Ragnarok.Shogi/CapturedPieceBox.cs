@@ -86,7 +86,7 @@ namespace Ragnarok.Shogi
         {
             using (LazyLock())
             {
-                return new CapturedPiece(new Piece(pieceType, false, BWType))
+                return new CapturedPiece(new Piece(pieceType, false))
                 {
                     Count = this.pieceCountArray[(int)pieceType],
                 };
@@ -288,9 +288,9 @@ namespace Ragnarok.Shogi
 
         /// <summary>
         /// protobuf-netの仕様(BUG?)でデシリアライズ時には
-        /// 作成されたプロパティにデシリアライズされた要素を追加する。
+        /// 作成されたプロパティにデシリアライズされた要素を追加します。
         /// このため、デシリアライズ前に既存の配列をクリアしておかないと
-        /// デシリアライズ後に配列サイズが倍になる。
+        /// デシリアライズ後に配列サイズが倍になります。
         /// </summary>
         [OnDeserializing()]
         protected new void OnBeforeDeselialize(StreamingContext context)
@@ -306,11 +306,6 @@ namespace Ragnarok.Shogi
         public CapturedPieceBox(BWType bwType)
         {
             this.BWType = bwType;
-
-            /*for (var i = 0; i < this.pieceCountArray.Length; ++i)
-            {
-                this.pieceCountArray[i] = 0;
-            }*/
         }
     }
 }

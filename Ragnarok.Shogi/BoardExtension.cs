@@ -321,9 +321,8 @@ namespace Ragnarok.Shogi
                 board.PrevMovedSquare :
                 new Square(move.File, move.Rank));
 
-            var boardMoveList = board.SearchMoveList(
-                new Piece(move.Piece, bwType),
-                dstSquare)
+            var boardMoveList = board.ListupMoves(
+                move.Piece, bwType, dstSquare)
                 .ToList();
 
             // 複数の指し手の中から適切な一つを選びます。
@@ -618,22 +617,21 @@ namespace Ragnarok.Shogi
             }
 
             var fromPiece = (
-                move.ActionType != ActionType.Drop ?
-                board[move.SrcSquare] :
-                new Piece(move.DropPieceType, false, move.BWType));
+                move.ActionType == ActionType.Drop ?
+                new BoardPiece(move.DropPieceType, false, move.BWType) :
+                board[move.SrcSquare]);
             if (fromPiece == null)
             {
                 return null;
             }
 
             // 駒の種類と最終位置から、あり得る指し手をすべて検索します。
-            var boardMoveList = board.SearchMoveList(
-                fromPiece,
-                move.DstSquare)
+            var boardMoveList = board.ListupMoves(
+                fromPiece.Piece, fromPiece.BWType, move.DstSquare)
                 .ToList();
 
             return FilterMove(
-                board, boardMoveList, move, fromPiece, useSrcSquare);
+                board, boardMoveList, move, fromPiece.Piece, useSrcSquare);
         }
 
         /// <summary>

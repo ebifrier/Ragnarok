@@ -48,7 +48,7 @@ namespace Ragnarok.Shogi
     /// 盤面を示すクラスです。
     /// </summary>
     [DataContract()]
-    public class Board : NotifyObject
+    public partial class Board : NotifyObject
     {
         /// <summary>
         /// 将棋盤のサイズです。
@@ -58,7 +58,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// [0,0]が盤面の11地点を示します。
         /// </summary>
-        private Piece[] board = new Piece[81];
+        private BoardPiece[] board = new BoardPiece[81];
         [DataMember(Order = 1, IsRequired = true)]
         private CapturedPieceBox blackCapturedPieceBox = new CapturedPieceBox(BWType.Black);
         [DataMember(Order = 2, IsRequired = true)]
@@ -132,9 +132,9 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 盤を作成します。
         /// </summary>
-        private Piece[] CreatePieceMatrix()
+        private BoardPiece[] CreatePieceMatrix()
         {
-            return new Piece[81];
+            return new BoardPiece[81];
         }
 
         /// <summary>
@@ -264,9 +264,9 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
-        /// <paramref name="square"/> にある駒を取得します。
+        /// <paramref name="dstSquare"/> にある駒を取得します。
         /// </summary>
-        public Piece this[Square square]
+        public BoardPiece this[Square square]
         {
             get
             {
@@ -287,7 +287,7 @@ namespace Ragnarok.Shogi
             {
                 if (square == null || !square.Validate())
                 {
-                    throw new ArgumentException("square");
+                    throw new ArgumentException("dstSquare");
                 }
 
                 var rank = square.Rank - 1;
@@ -303,7 +303,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// <paramref name="file"/> <paramref name="rank"/> にある駒を取得します。
         /// </summary>
-        public Piece this[int file, int rank]
+        public BoardPiece this[int file, int rank]
         {
             get { return this[new Square(file, rank)]; }
             set { this[new Square(file, rank)] = value; }
@@ -359,20 +359,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 持ち駒の数を取得します。
         /// </summary>
-        public int GetCapturedPieceCount(Piece piece)
-        {
-            if (piece == null)
-            {
-                return -1;
-            }
-
-            return GetCapturedPieceCount(piece.BWType, piece.PieceType);
-        }
-
-        /// <summary>
-        /// 持ち駒の数を取得します。
-        /// </summary>
-        public int GetCapturedPieceCount(BWType bwType, PieceType pieceType)
+        public int GetCapturedPieceCount(PieceType pieceType, BWType bwType)
         {
             using (LazyLock())
             {
@@ -385,20 +372,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 持ち駒の数を設定します。
         /// </summary>
-        public void SetCapturedPieceCount(Piece piece, int count)
-        {
-            if (piece == null)
-            {
-                return;
-            }
-
-            SetCapturedPieceCount(piece.BWType, piece.PieceType, count);
-        }
-
-        /// <summary>
-        /// 持ち駒の数を設定します。
-        /// </summary>
-        public void SetCapturedPieceCount(BWType bwType, PieceType pieceType,
+        public void SetCapturedPieceCount(PieceType pieceType, BWType bwType,
                                           int count)
         {
             using (LazyLock())
@@ -412,7 +386,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 持ち駒の数を増やします。
         /// </summary>
-        public void IncCapturedPieceCount(BWType bwType, PieceType pieceType)
+        public void IncCapturedPieceCount(PieceType pieceType, BWType bwType)
         {
             using (LazyLock())
             {
@@ -425,7 +399,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 持ち駒の数を減らします。
         /// </summary>
-        public void DecCapturedPieceCount(BWType bwType, PieceType pieceType)
+        public void DecCapturedPieceCount(PieceType pieceType, BWType bwType)
         {
             using (LazyLock())
             {
@@ -477,7 +451,7 @@ namespace Ragnarok.Shogi
                 // 駒打ちの場合は、その駒を駒台に戻します。
                 this[move.DstSquare] = null;
 
-                IncCapturedPieceCount(move.BWType, move.DropPieceType);
+                IncCapturedPieceCount(move.DropPieceType, move.BWType);
             }
             else
             {
@@ -492,12 +466,14 @@ namespace Ragnarok.Shogi
                 // 駒を取った場合は、その駒を元に戻します。
                 if (move.TookPiece != null)
                 {
-                    this[move.DstSquare] = move.TookPiece.Clone();
+                    this[move.DstSquare] = new BoardPiece(
+                        move.TookPiece.Clone(),
+                        move.BWType.Toggle());
 
                     // 駒を取ったはずなので、その分を駒台から減らします。
                     DecCapturedPieceCount(
-                        move.BWType,
-                        move.TookPiece.PieceType);
+                        move.TookPiece.PieceType,
+                        move.BWType);
                 }
                 else
                 {
@@ -624,27 +600,6 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
-        /// ２歩のチェックを行います。
-        /// </summary>
-        private bool IsDoublePawn(BWType bwType, Square square)
-        {
-            for (var i = 0; i < BoardSize; ++i)
-            {
-                var piece = this[square.File, i];
-
-                if (piece != null &&
-                    piece.BWType == bwType &&
-                    piece.PieceType == PieceType.Hu &&
-                    !piece.IsPromoted)
-                {
-                    return true;
-                }                    
-            }
-
-            return false;
-        }
-
-        /// <summary>
         /// １手指したときに呼ばれます。
         /// </summary>
         private void MoveDone(BoardMove move)
@@ -677,7 +632,7 @@ namespace Ragnarok.Shogi
         /// </summary>
         private bool CheckAndDoDrop(BoardMove move, bool checkOnly)
         {
-            if (GetCapturedPieceCount(move.BWType, move.DropPieceType) <= 0)
+            if (GetCapturedPieceCount(move.DropPieceType, move.BWType) <= 0)
             {
                 return false;
             }
@@ -722,10 +677,103 @@ namespace Ragnarok.Shogi
             if (!checkOnly)
             {
                 // 駒を盤面に置き、持ち駒から駒を減らします。
-                this[move.DstSquare] = new Piece(
+                this[move.DstSquare] = new BoardPiece(
                     move.DropPieceType, false, move.BWType);
 
-                DecCapturedPieceCount(move.BWType, move.DropPieceType);
+                DecCapturedPieceCount(move.DropPieceType, move.BWType);
+
+                MoveDone(move);
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// ２歩のチェックを行います。
+        /// </summary>
+        private bool IsDoublePawn(BWType bwType, Square square)
+        {
+            for (var i = 0; i < BoardSize; ++i)
+            {
+                var piece = this[square.File, i];
+
+                if (piece != null &&
+                    piece.BWType == bwType &&
+                    piece.PieceType == PieceType.Hu &&
+                    !piece.IsPromoted)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// 駒の移動のみの動作を調べるか実際にそれを行います。
+        /// </summary>
+        private bool CheckAndDoMoveOnly(BoardMove move, bool checkOnly)
+        {
+            // 駒の移動元に自分の駒がなければダメ
+            var srcPiece = this[move.SrcSquare];
+            if (srcPiece == null || srcPiece.BWType != move.BWType)
+            {
+                return false;
+            }
+
+            // 駒の移動先に自分の駒があったらダメ
+            var dstPiece = this[move.DstSquare];
+            if (dstPiece != null && dstPiece.BWType == move.BWType)
+            {
+                return false;
+            }
+
+            // これはエラーだけど。。。ｗ
+            if (srcPiece.Piece != move.MovePiece)
+            {
+                return false;
+            }
+
+            // 各駒が動ける位置に移動するかどうか確認します。
+            if (!CanMovePiece(move))
+            {
+                return false;
+            }
+
+            if (move.ActionType == ActionType.Promote)
+            {
+                // 成れない場合は帰ります。
+                if (!CanPromote(move)) return false;
+            }
+            else
+            {
+                // 成らないといけない場合は帰ります。
+                if (IsPromoteForce(move)) return false;
+            }
+
+            if (!checkOnly)
+            {
+                var pieceType = srcPiece.PieceType;
+
+                // 移動先に駒があれば、それを自分のものにします。
+                if (dstPiece != null)
+                {
+                    IncCapturedPieceCount(dstPiece.PieceType, move.BWType);
+
+                    // 取った駒を記憶しておきます。
+                    move.TookPiece = dstPiece.Piece;
+                }
+
+                // 移動後の駒の成り/不成りを決定します。
+                var promoted = (
+                    srcPiece.IsPromoted ||
+                    move.ActionType == ActionType.Promote);
+
+                this[move.DstSquare] = new BoardPiece(
+                    pieceType, promoted, move.BWType);
+
+                // 移動前の位置からは駒をなくします。
+                this[move.SrcSquare] = null;
 
                 MoveDone(move);
             }
@@ -736,8 +784,13 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 駒が成れるか調べます。
         /// </summary>
-        public static bool CanPromote(BoardMove move, Piece piece)
+        public static bool CanPromote(BoardMove move)
         {
+            if (move == null)
+            {
+                throw new ArgumentNullException("move");
+            }
+
             if (move.DstSquare == null || !move.DstSquare.Validate())
             {
                 return false;
@@ -749,28 +802,24 @@ namespace Ragnarok.Shogi
                 return false;
             }
 
-            // 駒の移動元に自分の駒がなければダメ
-            if (piece == null || piece.BWType != move.BWType)
+            // 既に成っている駒を再度成ることはできません。
+            var piece = move.MovePiece;
+            if (piece == null || piece.IsPromoted)
             {
                 return false;
             }
 
-            if (piece.IsPromoted)
-            {
-                return false;
-            }
-
-            var moveFromRank = move.SrcSquare.Rank;
-            var moveToRank = move.DstSquare.Rank;
+            var srcRank = move.SrcSquare.Rank;
+            var dstRank = move.DstSquare.Rank;
 
             if (move.BWType == BWType.White)
             {
-                moveFromRank = (BoardSize + 1) - moveFromRank;
-                moveToRank = (BoardSize + 1) - moveToRank;
+                srcRank = (BoardSize + 1) - srcRank;
+                dstRank = (BoardSize + 1) - dstRank;
             }
 
             // 1,2,3の段の時だけ、成ることができます。
-            if (moveFromRank > 3 && moveToRank > 3)
+            if (srcRank > 3 && dstRank > 3)
             {
                 return false;
             }
@@ -789,7 +838,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 駒を強制的に成る必要があるか調べます。
         /// </summary>
-        public static bool IsPromoteForce(BoardMove move, Piece piece)
+        public static bool IsPromoteForce(BoardMove move)
         {
             if (move.DstSquare == null || !move.DstSquare.Validate())
             {
@@ -797,12 +846,8 @@ namespace Ragnarok.Shogi
             }
 
             // 駒の移動元に自分の駒がなければダメ
-            if (piece == null || piece.BWType != move.BWType)
-            {
-                return false;
-            }
-
-            if (piece.IsPromoted)
+            var piece = move.MovePiece;
+            if (piece == null || piece.IsPromoted)
             {
                 return false;
             }
@@ -821,563 +866,8 @@ namespace Ragnarok.Shogi
             {
                 return (normalizedRank == 1);
             }
-            
-            return false;
-        }
-
-        /// <summary>
-        /// 駒の移動のみの動作を調べるか実際にそれを行います。
-        /// </summary>
-        private bool CheckAndDoMoveOnly(BoardMove move, bool checkOnly)
-        {
-            // 駒の移動元に自分の駒がなければダメ
-            var moveFromPiece = this[move.SrcSquare];
-            if (moveFromPiece == null || moveFromPiece.BWType != move.BWType)
-            {
-                return false;
-            }
-
-            // 駒の移動先に自分の駒があったらダメ
-            var moveToPiece = this[move.DstSquare];
-            if (moveToPiece != null && moveToPiece.BWType == move.BWType)
-            {
-                return false;
-            }
-
-            // 各駒が動ける位置に移動するかどうか確認します。
-            if (!CanMovePiece(move, moveFromPiece))
-            {
-                return false;
-            }
-
-#if false
-            // 成ることができなければ帰ります。
-            if (move.ActionType == ActionType.Promote &&
-                !CanPromote(move, moveFromPiece))
-            {
-                return false;
-            }
-#else
-            if (move.ActionType == ActionType.Promote)
-            {
-                if (!CanPromote(move, moveFromPiece)) return false;
-            }
-            else
-            {
-                if (IsPromoteForce(move, moveFromPiece)) return false;
-            }
-#endif
-
-            if (!checkOnly)
-            {
-                var pieceType = moveFromPiece.PieceType;
-
-                // 移動先に駒があれば、それを自分のものにします。
-                if (moveToPiece != null)
-                {
-                    IncCapturedPieceCount(move.BWType, moveToPiece.PieceType);
-
-                    // 取った駒を記憶しておきます。
-                    move.TookPiece = moveToPiece.Clone();
-                }
-
-                // 移動後の駒の成り/不成りを決定します。
-                var promoted = (
-                    moveFromPiece.IsPromoted ||
-                    move.ActionType == ActionType.Promote);
-
-                this[move.DstSquare] = new Piece(
-                    pieceType, promoted, move.BWType);
-
-                // 移動前の位置からは駒をなくします。
-                this[move.SrcSquare] = null;
-
-                MoveDone(move);
-            }
-
-            return true;
-        }
-
-        #region move table
-        private static readonly int[] MoveTableGyoku = new int[]
-        {
-            0 + BoardSize * (-1),
-            0 + BoardSize * (+1),
-            -1 + BoardSize * (0),
-            +1 + BoardSize * (0),
-            -1 + BoardSize * (-1),
-            +1 + BoardSize * (-1),
-            -1 + BoardSize * (+1),
-            +1 + BoardSize * (+1),
-        };
-        private static readonly int[] MoveTableKin = new int[]
-        {
-            0 + BoardSize * (-1),
-            0 + BoardSize * (+1),
-            -1 + BoardSize * (-1),
-            +1 + BoardSize * (-1),
-            -1 + BoardSize * (0),
-            +1 + BoardSize * (0),
-        };
-        private static readonly int[] MoveTableGin = new int[]
-        {
-            0 + BoardSize * (-1),
-            -1 + BoardSize * (-1),
-            +1 + BoardSize * (-1),
-            -1 + BoardSize * (+1),
-            +1 + BoardSize * (+1),
-        };
-        private static readonly int[] MoveTableKei = new int[]
-        {
-            -1 + BoardSize * (-2),
-            +1 + BoardSize * (-2),
-        };
-        private static readonly int[] MoveTableHu = new int[]
-        {
-            0 + BoardSize * (-1),
-        };
-
-        /// <summary>
-        /// 指定の相対位置に動けるか調べます。(先手専用)
-        /// </summary>
-        private bool CanMovePiece(BWType bwType, int relFile, int relRank, int[] table)
-        {
-            // 後手側なら上下反転します。
-            if (bwType == BWType.White)
-            {
-                relRank = -relRank;
-            }
-
-            // これをしないと右から左へジャンプする。
-            if (Math.Abs(relFile) > 2 || Math.Abs(relRank) > 2)
-            {
-                return false;
-            }
-
-            var value = relFile + BoardSize * relRank;
-
-            return (Array.IndexOf(table, value) >= 0);
-        }
-        #endregion
-
-        /// <summary>
-        /// 香車が指定の場所に動けるか判断します。
-        /// </summary>
-        private bool CanMoveKyo(BWType bwType, Square basePos, int relFile, int relRank)
-        {
-            // 香車は横には動けません。
-            if (relFile != 0)
-            {
-                return false;
-            }
-
-            // 反対方向には動けません。
-            if ((bwType == BWType.Black && relRank >= 0) ||
-                (bwType == BWType.White && relRank <= 0))
-            {
-                return false;
-            }
-
-            var destRank = basePos.Rank + relRank;
-            var addRank = (relRank >= 0 ? +1 : -1);
-
-            // 基準点には自分がいるので、とりあえず一度は
-            // 駒の位置をズラしておきます。
-            var baseFile = basePos.File;
-            var baseRank = basePos.Rank + addRank;
-
-            // 駒を動かしながら、目的地まで動かします。
-            // 動かす途中に何か駒があれば、目的地へは動けません。
-            while (baseRank != destRank)
-            {
-                // 自分の駒があっても相手の駒があってもダメです。
-                if (this[baseFile, baseRank] != null)
-                {
-                    return false;
-                }
-
-                baseRank += addRank;
-            }
-
-            return true;
-        }
-
-        /// <summary>
-        /// 飛車が指定の場所に動けるか判断します。
-        /// </summary>
-        private bool CanMoveHisya(Square basePos, int relFile, int relRank)
-        {
-            var baseFile = basePos.File;
-            var baseRank = basePos.Rank;
-            var newFile = baseFile + relFile;
-            var newRank = baseRank + relRank;
-            var addFile = 0;
-            var addRank = 0;
-
-            if (relFile != 0 && relRank != 0)
-            {
-                return false;
-            }
-
-            if (relFile == 0)
-            {
-                addRank = (relRank >= 0 ? +1 : -1);
-            }
-            else
-            {
-                addFile = (relFile >= 0 ? +1 : -1);
-            }
-
-            // 基準点には自分がいるので、とりあえず一度は
-            // 駒の位置をズラしておきます。
-            baseFile += addFile;
-            baseRank += addRank;
-
-            // 駒を動かしながら、目的地まで動かします。
-            // 動かす途中に何か駒があれば、目的地へは動けません。
-            while (baseFile != newFile || baseRank != newRank)
-            {
-                // 自分の駒があっても相手の駒があってもダメです。
-                if (this[baseFile, baseRank] != null)
-                {
-                    return false;
-                }
-
-                baseFile += addFile;
-                baseRank += addRank;
-            }
-
-            return true;
-        }
-
-        /// <summary>
-        /// 角が指定の場所に動けるかどうか判断します。
-        /// </summary>
-        private bool CanMoveKaku(Square basePos, int relFile, int relRank)
-        {
-            var baseFile = basePos.File;
-            var baseRank = basePos.Rank;
-            var newFile = baseFile + relFile;
-            var newRank = baseRank + relRank;
-
-            if (Math.Abs(relFile) != Math.Abs(relRank))
-            {
-                return false;
-            }
-
-            var addFile = (relFile >= 0 ? +1 : -1);
-            var addRank = (relRank >= 0 ? +1 : -1);
-
-            // 基準点には自分がいるので、とりあえず一度は
-            // 駒の位置をズラしておきます。
-            baseFile += addFile;
-            baseRank += addRank;
-
-            // 駒を動かしながら、目的地まで動かします。
-            // 動かす途中に何か駒があれば、目的地へは動けません。
-            while (baseFile != newFile || baseRank != newRank)
-            {
-                // 自分の駒があっても相手の駒があってもダメです。
-                if (this[baseFile, baseRank] != null)
-                {
-                    return false;
-                }
-
-                baseFile += addFile;
-                baseRank += addRank;
-            }
-
-            return true;
-        }
-
-        /// <summary>
-        /// 実際に駒が動けるか確認します。
-        /// </summary>
-        private bool CanMovePiece(BoardMove move, Piece piece)
-        {
-            var relFile = move.DstSquare.File - move.SrcSquare.File;
-            var relRank = move.DstSquare.Rank - move.SrcSquare.Rank;
-
-            if (piece.PieceType == PieceType.None)
-            {
-                return false;
-            }
-
-            if (piece.IsPromoted)
-            {
-                // 成り駒が指定の場所に動けるか調べます。
-                switch (piece.PieceType)
-                {
-                    case PieceType.Gyoku:
-                        return CanMovePiece(piece.BWType, relFile, relRank, MoveTableGyoku);
-                    case PieceType.Hisya:
-                        if (CanMovePiece(piece.BWType, relFile, relRank, MoveTableGyoku))
-                        {
-                            return true;
-                        }
-                        return CanMoveHisya(move.SrcSquare, relFile, relRank);
-                    case PieceType.Kaku:
-                        if (CanMovePiece(piece.BWType, relFile, relRank, MoveTableGyoku))
-                        {
-                            return true;
-                        }
-                        return CanMoveKaku(move.SrcSquare, relFile, relRank);
-                    case PieceType.Kin:
-                    case PieceType.Gin:
-                    case PieceType.Kei:
-                    case PieceType.Kyo:
-                    case PieceType.Hu:
-                        return CanMovePiece(piece.BWType, relFile, relRank, MoveTableKin);
-                }
-            }
-            else
-            {
-                // 成り駒以外の駒が指定の場所に動けるか調べます。
-                switch (piece.PieceType)
-                {
-                    case PieceType.Gyoku:
-                        return CanMovePiece(piece.BWType, relFile, relRank, MoveTableGyoku);
-                    case PieceType.Hisya:
-                        return CanMoveHisya(move.SrcSquare, relFile, relRank);
-                    case PieceType.Kaku:
-                        return CanMoveKaku(move.SrcSquare, relFile, relRank);
-                    case PieceType.Kin:
-                        return CanMovePiece(piece.BWType, relFile, relRank, MoveTableKin);
-                    case PieceType.Gin:
-                        return CanMovePiece(piece.BWType, relFile, relRank, MoveTableGin);
-                    case PieceType.Kei:
-                        return CanMovePiece(piece.BWType, relFile, relRank, MoveTableKei);
-                    case PieceType.Kyo:
-                        return CanMoveKyo(piece.BWType, move.SrcSquare, relFile, relRank);
-                    case PieceType.Hu:
-                        return CanMovePiece(piece.BWType, relFile, relRank, MoveTableHu);
-                }
-            }
 
             return false;
-        }
-
-        /// <summary>
-        /// 駒がそこに動かせるか調べ、動かせる場合は可能な指し手を追加します。
-        /// </summary>
-        private IEnumerable<BoardMove> GetMovableMove(Piece piece,
-                                                      Square dstSquare,
-                                                      Square srcSquare)
-        {
-            if (!srcSquare.Validate())
-            {
-                yield break;
-            }
-
-            // 移動前の駒が指定の駒と同じかどうか
-            // 判定する必要があります。
-            var moveFromPiece = this[srcSquare];
-            if (moveFromPiece == null ||
-                moveFromPiece.PieceType != piece.PieceType ||
-                moveFromPiece.IsPromoted != piece.IsPromoted)
-            {
-                yield break;
-            }
-
-            var canUnpromote = false;
-
-            // 成り駒でなければ、成る可能性があります。
-            if (!piece.IsPromoted)
-            {
-                var movePromote = new BoardMove()
-                {
-                    BWType = piece.BWType,
-                    DstSquare = dstSquare,
-                    SrcSquare = srcSquare,
-                    ActionType = ActionType.Promote,
-                };
-                if (CanMove(movePromote))
-                {
-                    yield return movePromote;
-
-                    // 成れるということは成らずの選択が必要になります。
-                    canUnpromote = true;
-                }
-            }
-
-            var moveUnpromote = new BoardMove()
-            {
-                BWType = piece.BWType,
-                DstSquare = dstSquare,
-                SrcSquare = srcSquare,
-                ActionType = (canUnpromote ?
-                    ActionType.Unpromote :
-                    ActionType.None),
-            };
-            if (CanMove(moveUnpromote))
-            {
-                yield return moveUnpromote;
-            }
-        }
-
-        /// <summary>
-        /// 指定の領域で駒が動ける箇所を検索します。
-        /// </summary>
-        private IEnumerable<Square> GetRange(int fileRange,
-                                             int rankRange,
-                                             Square square)
-        {
-            var minFile = Math.Max(square.File - fileRange, 1);
-            var maxFile = Math.Min(square.File + fileRange, BoardSize);
-            var minRank = Math.Max(square.Rank - rankRange, 1);
-            var maxRank = Math.Min(square.Rank + rankRange, BoardSize);
-
-            for (var file = minFile; file <= maxFile; ++file)
-            {
-                for (var rank = minRank; rank <= maxRank; ++rank)
-                {
-                    yield return new Square(file, rank);
-                }
-            }
-        }
-
-        /// <summary>
-        /// 駒を<paramref name="square"/>に移動できる可能性のある
-        /// 異動元の位置をすべて列挙します。
-        /// </summary>
-        private IEnumerable<Square> GetMovableFromRange(Piece piece,
-                                                        Square square)
-        {
-            if (square == null || !square.Validate())
-            {
-                yield break;
-            }
-
-            using (LazyLock())
-            {
-                if (piece.IsPromoted)
-                {
-                    // 成り駒の場合は、とりあえず段列±１の領域を調べます。
-                    foreach (var p in GetRange(1, 1, square))
-                    {
-                        yield return p;
-                    }
-                }
-                else
-                {
-                    // 成り駒で無い場合
-                    switch (piece.PieceType)
-                    {
-                        case PieceType.Gyoku:
-                        case PieceType.Kin:
-                        case PieceType.Gin:
-                            foreach (var p in GetRange(1, 1, square))
-                            {
-                                yield return p;
-                            }
-                            break;
-                        case PieceType.Kei:
-                            foreach (var p in GetRange(1, 2, square))
-                            {
-                                yield return p;
-                            }
-                            break;
-                        case PieceType.Kyo:
-                            foreach (var p in GetRange(0, BoardSize, square))
-                            {
-                                yield return p;
-                            }
-                            break;
-                        case PieceType.Hu:
-                            foreach (var p in GetRange(0, 1, square))
-                            {
-                                yield return p;
-                            }
-                            break;
-                    }
-                }
-                
-                // 飛車角は成り／不成りに関わらず調べる箇所があります。
-                switch (piece.PieceType)
-                {
-                    case PieceType.Hisya:
-                        for (var file = 1; file <= BoardSize; ++file)
-                        {
-                            if (piece.IsPromoted &&
-                                Math.Abs(square.File - file) <= 1)
-                            {
-                                continue;
-                            }
-
-                            yield return new Square(file, square.Rank);
-                        }
-                        for (var rank = 1; rank <= BoardSize; ++rank)
-                        {
-                            if (piece.IsPromoted &&
-                                Math.Abs(square.Rank - rank) <= 1)
-                            {
-                                continue;
-                            }
-
-                            yield return new Square(square.File, rank);
-                        }
-                        break;
-
-                    case PieceType.Kaku:
-                        for (var index = -BoardSize; index <= BoardSize; ++index)
-                        {
-                            if (piece.IsPromoted && Math.Abs(index) <= 1)
-                            {
-                                continue;
-                            }
-
-                            yield return new Square(
-                                square.File + index,
-                                square.Rank + index);
-                        }
-                        for (var index = -BoardSize; index <= BoardSize; ++index)
-                        {
-                            if (piece.IsPromoted && Math.Abs(index) <= 1)
-                            {
-                                continue;
-                            }
-
-                            yield return new Square(
-                                square.File + index,
-                                square.Rank - index);
-                        }
-                        break;
-                }
-            }
-        }
-
-        /// <summary>
-        /// 駒の種類と新しい位置から、可能な差し手をすべて検索します。
-        /// </summary>
-        public IEnumerable<BoardMove> SearchMoveList(Piece piece,
-                                                     Square square)
-        {
-            using (LazyLock())
-            {
-                // 駒打ちが可能か調べます。
-                if (!piece.IsPromoted)
-                {
-                    var move = new BoardMove()
-                    {
-                        BWType = piece.BWType,
-                        DstSquare = square,
-                        ActionType = ActionType.Drop,
-                        DropPieceType = piece.PieceType,
-                    };
-                    if (CanMove(move))
-                    {
-                        yield return move;
-                    }
-                }
-
-                var list = GetMovableFromRange(piece, square)
-                    .SelectMany(_ => GetMovableMove(piece, square, _));
-
-                foreach (var m in list)
-                {
-                    yield return m;
-                }
-            }
         }
 
         /// <summary>
@@ -1591,10 +1081,10 @@ namespace Ragnarok.Shogi
                     // PieceType.Noneが0のため、
                     // 正しいピースのシリアライズデータは０以外の
                     // 数字となります。
-                    Piece piece = null;
+                    BoardPiece piece = null;
                     if (bytes[index] != 0)
                     {
-                        piece = new Piece();
+                        piece = new BoardPiece();
                         piece.Deserialize(bytes[index]);
                     }
 
@@ -1735,36 +1225,36 @@ namespace Ragnarok.Shogi
 
             if (isInitPiece)
             {
-                this[1, 9] = new Piece(PieceType.Kyo, false, BWType.Black);
-                this[2, 9] = new Piece(PieceType.Kei, false, BWType.Black);
-                this[3, 9] = new Piece(PieceType.Gin, false, BWType.Black);
-                this[4, 9] = new Piece(PieceType.Kin, false, BWType.Black);
-                this[5, 9] = new Piece(PieceType.Gyoku, false, BWType.Black);
-                this[6, 9] = new Piece(PieceType.Kin, false, BWType.Black);
-                this[7, 9] = new Piece(PieceType.Gin, false, BWType.Black);
-                this[8, 9] = new Piece(PieceType.Kei, false, BWType.Black);
-                this[9, 9] = new Piece(PieceType.Kyo, false, BWType.Black);
-                this[2, 8] = new Piece(PieceType.Hisya, false, BWType.Black);
-                this[8, 8] = new Piece(PieceType.Kaku, false, BWType.Black);
+                this[1, 9] = new BoardPiece(PieceType.Kyo, false, BWType.Black);
+                this[2, 9] = new BoardPiece(PieceType.Kei, false, BWType.Black);
+                this[3, 9] = new BoardPiece(PieceType.Gin, false, BWType.Black);
+                this[4, 9] = new BoardPiece(PieceType.Kin, false, BWType.Black);
+                this[5, 9] = new BoardPiece(PieceType.Gyoku, false, BWType.Black);
+                this[6, 9] = new BoardPiece(PieceType.Kin, false, BWType.Black);
+                this[7, 9] = new BoardPiece(PieceType.Gin, false, BWType.Black);
+                this[8, 9] = new BoardPiece(PieceType.Kei, false, BWType.Black);
+                this[9, 9] = new BoardPiece(PieceType.Kyo, false, BWType.Black);
+                this[2, 8] = new BoardPiece(PieceType.Hisya, false, BWType.Black);
+                this[8, 8] = new BoardPiece(PieceType.Kaku, false, BWType.Black);
                 for (var file = 1; file <= BoardSize; ++file)
                 {
-                    this[file, 7] = new Piece(PieceType.Hu, false, BWType.Black);
+                    this[file, 7] = new BoardPiece(PieceType.Hu, false, BWType.Black);
                 }
 
-                this[1, 1] = new Piece(PieceType.Kyo, false, BWType.White);
-                this[2, 1] = new Piece(PieceType.Kei, false, BWType.White);
-                this[3, 1] = new Piece(PieceType.Gin, false, BWType.White);
-                this[4, 1] = new Piece(PieceType.Kin, false, BWType.White);
-                this[5, 1] = new Piece(PieceType.Gyoku, false, BWType.White);
-                this[6, 1] = new Piece(PieceType.Kin, false, BWType.White);
-                this[7, 1] = new Piece(PieceType.Gin, false, BWType.White);
-                this[8, 1] = new Piece(PieceType.Kei, false, BWType.White);
-                this[9, 1] = new Piece(PieceType.Kyo, false, BWType.White);
-                this[2, 2] = new Piece(PieceType.Kaku, false, BWType.White);
-                this[8, 2] = new Piece(PieceType.Hisya, false, BWType.White);
+                this[1, 1] = new BoardPiece(PieceType.Kyo, false, BWType.White);
+                this[2, 1] = new BoardPiece(PieceType.Kei, false, BWType.White);
+                this[3, 1] = new BoardPiece(PieceType.Gin, false, BWType.White);
+                this[4, 1] = new BoardPiece(PieceType.Kin, false, BWType.White);
+                this[5, 1] = new BoardPiece(PieceType.Gyoku, false, BWType.White);
+                this[6, 1] = new BoardPiece(PieceType.Kin, false, BWType.White);
+                this[7, 1] = new BoardPiece(PieceType.Gin, false, BWType.White);
+                this[8, 1] = new BoardPiece(PieceType.Kei, false, BWType.White);
+                this[9, 1] = new BoardPiece(PieceType.Kyo, false, BWType.White);
+                this[2, 2] = new BoardPiece(PieceType.Kaku, false, BWType.White);
+                this[8, 2] = new BoardPiece(PieceType.Hisya, false, BWType.White);
                 for (var file = 1; file <= BoardSize; ++file)
                 {
-                    this[file, 3] = new Piece(PieceType.Hu, false, BWType.White);
+                    this[file, 3] = new BoardPiece(PieceType.Hu, false, BWType.White);
                 }
             }
         }

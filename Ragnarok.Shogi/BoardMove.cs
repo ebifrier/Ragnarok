@@ -5,6 +5,8 @@ using System.Text;
 using System.IO;
 using System.Runtime.Serialization;
 
+using Ragnarok.Utility;
+
 namespace Ragnarok.Shogi
 {
     /// <summary>
@@ -25,19 +27,20 @@ namespace Ragnarok.Shogi
     public class BoardMove : IEquatable<BoardMove>
     {
         /// <summary>
-        /// 投了を示す指し手です。
-        /// </summary>
-        public static readonly BoardMove Resign = new BoardMove
-        {
-            IsResign = true
-        };
-
-        /// <summary>
         /// オブジェクトのコピーを作成します。
         /// </summary>
         public BoardMove Clone()
         {
             return (BoardMove)MemberwiseClone();
+        }
+
+        /// <summary>
+        /// 駒を移動する場合の対象となる駒を取得または設定します。
+        /// </summary>
+        public Piece MovePiece
+        {
+            get;
+            set;
         }
 
         /// <summary>
@@ -71,15 +74,6 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
-        /// 駒打ち・成りなどの動作を取得または設定します。
-        /// </summary>
-        public ActionType ActionType
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
         /// 駒を打つ場合の駒を取得または設定します。
         /// </summary>
         public PieceType DropPieceType
@@ -89,9 +83,9 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
-        /// 投了かどうかを取得または設定します。
+        /// 駒打ち・成りなどの動作を取得または設定します。
         /// </summary>
-        public bool IsResign
+        public ActionType ActionType
         {
             get;
             set;
@@ -108,6 +102,31 @@ namespace Ragnarok.Shogi
         {
             get;
             set;
+        }
+
+        /// <summary>
+        /// 指し手を文字列化します。
+        /// </summary>
+        public override string ToString()
+        {
+            if (ActionType == ActionType.Drop)
+            {
+                return string.Format(
+                    "{0}{1}{2}打",
+                    StringConverter.ConvertInt(NumberType.Big, DstSquare.File),
+                    StringConverter.ConvertInt(NumberType.Kanji, DstSquare.Rank),
+                    DropPieceType);
+            }
+            else
+            {
+                return string.Format(
+                    "{0}{1}{2}({3}{4})",
+                    StringConverter.ConvertInt(NumberType.Big, DstSquare.File),
+                    StringConverter.ConvertInt(NumberType.Kanji, DstSquare.Rank),
+                    MovePiece,
+                    SrcSquare.File,
+                    SrcSquare.Rank);
+            }
         }
 
         /// <summary>
@@ -133,6 +152,11 @@ namespace Ragnarok.Shogi
                     return false;
                 }
 
+                if (MovePiece != null)
+                {
+                    return false;
+                }
+
                 if (DropPieceType == PieceType.None)
                 {
                     return false;
@@ -142,6 +166,11 @@ namespace Ragnarok.Shogi
             {
                 // 駒打ちでない場合
                 if (SrcSquare == null || !SrcSquare.Validate())
+                {
+                    return false;
+                }
+
+                if (MovePiece == null)
                 {
                     return false;
                 }
@@ -199,12 +228,12 @@ namespace Ragnarok.Shogi
                 return false;
             }
 
-            if (DropPieceType != other.DropPieceType)
+            if (MovePiece != other.MovePiece)
             {
                 return false;
             }
 
-            if (IsResign != other.IsResign)
+            if (DropPieceType != other.DropPieceType)
             {
                 return false;
             }
@@ -238,8 +267,8 @@ namespace Ragnarok.Shogi
                 (DstSquare != null ? DstSquare.GetHashCode() : 0) ^
                 (SrcSquare != null ? SrcSquare.GetHashCode() : 0) ^
                 ActionType.GetHashCode() ^
-                DropPieceType.GetHashCode() ^
-                IsResign.GetHashCode());
+                (MovePiece != null ? MovePiece.GetHashCode() : 0) ^
+                DropPieceType.GetHashCode());
         }
 
         #region シリアライズ/デシリアライズ
@@ -290,22 +319,25 @@ namespace Ragnarok.Shogi
 
             // 2bit
             bits |= (uint)BWType;
-            // 3bit
+            // 2bit
             bits |= ((uint)ActionType << 2);
-            // 1bit
-            bits |= ((uint)(TookPiece != null ? 1 : 0) << 5);
             // 7bit
-            bits |= ((uint)SerializeSquare(DstSquare) << 6);
+            bits |= ((uint)SerializeSquare(DstSquare) << 4);
             // 7bit
             bits |= (ActionType == ActionType.Drop ?
-                ((uint)DropPieceType << 13) :
-                ((uint)SerializeSquare(SrcSquare) << 13) );
-            // 1bit
-            bits |= ((uint)(IsResign ? 1 : 0) << 20);
+                ((uint)DropPieceType << 11) :
+                ((uint)SerializeSquare(SrcSquare) << 11) );
 
+            // 5bit
+            if (MovePiece != null)
+            {
+                bits |= ((uint)MovePiece.Serialize() << 18);
+            }
+
+            // 5bit
             if (TookPiece != null)
             {
-                bits |= ((uint)TookPiece.Serialize() << 24);
+                bits |= ((uint)TookPiece.Serialize() << 23);
             }
 
             return bits;
@@ -317,27 +349,34 @@ namespace Ragnarok.Shogi
         [CLSCompliant(false)]
         public void Deserialize(uint bits)
         {
+            uint tmp;
+
             // 2bit
             BWType = (BWType)((bits >> 0) & 0x03);
-            // 3bit
-            ActionType = (ActionType)((bits >> 2) & 0x07);
-            // 1bit
-            var hasTookPiece = (((bits >> 5) & 0x01) != 0);
+            // 2bit
+            ActionType = (ActionType)((bits >> 2) & 0x03);
             // 7bit
-            DstSquare = DeserializeSquare((bits >> 6) & 0x7f);
+            DstSquare = DeserializeSquare((bits >> 4) & 0x7f);
             // 7bit
             if (ActionType == ActionType.Drop)
-                DropPieceType = (PieceType)((bits >> 13) & 0x0f);
+                DropPieceType = (PieceType)((bits >> 11) & 0x0f);
             else
-                SrcSquare = DeserializeSquare((bits >> 13) & 0x7f);
-            // 1bit
-            IsResign = (((bits >> 20) & 0x01) != 0);
+                SrcSquare = DeserializeSquare((bits >> 11) & 0x7f);
 
-            if (hasTookPiece)
+            // 5bit
+            tmp = ((bits >> 18) & 0x1f);
+            if (tmp != 0)
+            {
+                MovePiece = new Piece();
+                MovePiece.Deserialize(tmp);
+            }
+
+            // 5bit
+            tmp = ((bits >> 23) & 0x1f);
+            if (tmp != 0)
             {
                 TookPiece = new Piece();
-
-                TookPiece.Deserialize((bits >> 24) & 0xff);
+                TookPiece.Deserialize(tmp);
             }
         }
 
