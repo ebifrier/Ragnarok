@@ -18,7 +18,8 @@ namespace Ragnarok
         /// <remarks>
         /// 古い.NETだとEnum.HasFlagが使えないため。
         /// </remarks>
-        public static bool HasFlag(this Enum value, Enum flag)
+        public static bool HasFlag<T>(this T value, T flag)
+            where T : struct
         {
             return (((int)(object)value & (int)(object)flag) != 0);
         }

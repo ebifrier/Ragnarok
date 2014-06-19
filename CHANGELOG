@@ -1,3 +1,7 @@
+2014-06-19  - Ver 2.7.7
+
+	* Ragnarok/EnumEx.cs: HasFlagをGenericメソッドにしました。
+
 2014-06-19  - Ver 2.7.6
 
 	* Ragnarok.Shogi/BoardMove.cs: 駒の表示に手番を入れるようにしました。
