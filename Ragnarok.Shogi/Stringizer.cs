@@ -105,6 +105,14 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 駒の種類を文字列で取得します。
         /// </summary>
+        public static string ToString(PieceType pieceType)
+        {
+            return ToString(new Piece(pieceType, false));
+        }
+
+        /// <summary>
+        /// 駒の種類を文字列で取得します。
+        /// </summary>
         public static string ToString(Piece piece)
         {
             if (!piece.IsPromoted)

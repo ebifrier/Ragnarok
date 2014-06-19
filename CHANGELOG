@@ -1,3 +1,7 @@
+2014-06-19  - Ver 2.7.6
+
+	* Ragnarok.Shogi/BoardMove.cs: 駒の表示に手番を入れるようにしました。
+
 2014-06-19  - Ver 2.7.5
 
 	* Ragnarok.Shogi/Board.mate.cs: 詰みや王手の判定方法を修正し、より正し
@@ -7,7 +11,6 @@
 	手の判定に失敗するため、手番をチェックしないような仕組みを導入しました。 
 	* Ragnarok.Shogi/Tests/BoardCheckMateTest.cs: 詰みや王手のテストを行い
 	ます。
-	* Ragnarok.Shogi/BoardMove.cs: 駒の表示に手番を入れるようにしました。
 
 2014-06-18  - Ver 2.7.4
 
