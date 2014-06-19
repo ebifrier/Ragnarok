@@ -133,15 +133,17 @@ namespace Ragnarok.Shogi
             if (ActionType == ActionType.Drop)
             {
                 return string.Format(
-                    "{0}{1}{2}打",
+                    "{0}{1}{2}{3}打",
+                    Stringizer.ToString(BWType),
                     StringConverter.ConvertInt(NumberType.Big, DstSquare.File),
                     StringConverter.ConvertInt(NumberType.Kanji, DstSquare.Rank),
-                    DropPieceType);
+                    Stringizer.ToString(DropPieceType));
             }
             else
             {
                 return string.Format(
-                    "{0}{1}{2}({3}{4})",
+                    "{0}{1}{2}{3}({4}{5})",
+                    Stringizer.ToString(BWType),
                     StringConverter.ConvertInt(NumberType.Big, DstSquare.File),
                     StringConverter.ConvertInt(NumberType.Kanji, DstSquare.Rank),
                     MovePiece,

@@ -429,11 +429,12 @@ namespace Ragnarok.Shogi
         /// <paramref name="srcSquare"/>の駒を<paramref name="dstSquare"/>
         /// に動かすことが可能な指し手をすべて列挙します。
         /// </summary>
-        private IEnumerable<BoardMove> GetAvailableMove(Square srcSquare,
+        private IEnumerable<BoardMove> GetAvailableMove(BWType bwType,
+                                                        Square srcSquare,
                                                         Square dstSquare)
         {
             var piece = this[srcSquare];
-            if (piece == null)
+            if (piece == null || piece.BWType != bwType)
             {
                 yield break;
             }
@@ -443,21 +444,21 @@ namespace Ragnarok.Shogi
                 DstSquare = dstSquare,
                 SrcSquare = srcSquare,
                 MovePiece = piece.Piece,
-                BWType = piece.BWType,
+                BWType = bwType,
             };
 
             // 成り駒でなければ、成る可能性があります。
             if (!piece.IsPromoted)
             {
                 move.IsPromote = true;
-                if (CanMove(move))
+                if (CanMove(move, MoveFlags.CheckOnly))
                 {
                     yield return move;
                 }
             }
 
             move.IsPromote = false;
-            if (CanMove(move))
+            if (CanMove(move, MoveFlags.CheckOnly))
             {
                 yield return move;
             }
@@ -468,42 +469,39 @@ namespace Ragnarok.Shogi
         /// </summary>
         public IEnumerable<BoardMove> ListupMoves(BWType bwType, Square dstSquare)
         {
-            //using (LazyLock())
+            // 打てる駒をすべて列挙します。
+            foreach (var pieceType in EnumEx.GetValues<PieceType>())
             {
-                // 打てる駒をすべて列挙します。
-                foreach (var pieceType in EnumEx.GetValues<PieceType>())
+                if (GetCapturedPieceCount(pieceType, bwType) <= 0)
                 {
-                    if (GetCapturedPieceCount(pieceType, bwType) <= 0)
-                    {
-                        continue;
-                    }
-
-                    var move = new BoardMove()
-                    {
-                        DstSquare = dstSquare,
-                        DropPieceType = pieceType,
-                        BWType = bwType,
-                    };
-
-                    // 駒打ちが可能なら、それも該当手となります。
-                    if (CanMove(move))
-                    {
-                        yield return move;
-                    }
+                    continue;
                 }
 
-                // 移動による指し手をすべて列挙します。
-                for (var file = 1; file <= BoardSize; ++file)
+                var move = new BoardMove()
                 {
-                    for (var rank = 1; rank <= BoardSize; ++rank)
-                    {
-                        var srcSquare = new Square(file, rank);
-                        var moves = GetAvailableMove(srcSquare, dstSquare);
+                    DstSquare = dstSquare,
+                    DropPieceType = pieceType,
+                    BWType = bwType,
+                };
 
-                        foreach (var move in moves)
-                        {
-                            yield return move;
-                        }
+                // 駒打ちが可能なら、それも該当手となります。
+                if (CanMove(move, MoveFlags.CheckOnly))
+                {
+                    yield return move;
+                }
+            }
+
+            // 移動による指し手をすべて列挙します。
+            for (var file = 1; file <= BoardSize; ++file)
+            {
+                for (var rank = 1; rank <= BoardSize; ++rank)
+                {
+                    var srcSquare = new Square(file, rank);
+                    var moves = GetAvailableMove(bwType, srcSquare, dstSquare);
+
+                    foreach (var move in moves)
+                    {
+                        yield return move;
                     }
                 }
             }

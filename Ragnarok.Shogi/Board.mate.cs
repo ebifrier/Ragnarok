@@ -50,7 +50,8 @@ namespace Ragnarok.Shogi
         /// <paramref name="square"/>に<paramref name="pieceType"/>を打ち、
         /// なお王手されているか確認します。
         /// </summary>
-        private bool IsDropAndChecked(PieceType pieceType, Square square)
+        private bool IsDropAndChecked(BWType bwType, PieceType pieceType,
+                                      Square square)
         {
             var piece = this[square];
             if (piece != null)
@@ -61,12 +62,12 @@ namespace Ragnarok.Shogi
             var move = new BoardMove()
             {
                 DstSquare = square,
-                BWType = piece.BWType,
                 DropPieceType = pieceType,
+                BWType = bwType,
             };
             if (DoMove(move))
             {
-                if (!IsChecked(Turn))
+                if (!IsChecked(bwType))
                 {
                     Undo();
                     return false;
@@ -83,10 +84,11 @@ namespace Ragnarok.Shogi
         /// <paramref name="srcSquare"/>の駒を<paramref name="dstSquare"/>
         /// に動かすことが可能な指し手を指してみて、なお王手されているか確認します。
         /// </summary>
-        private bool IsMoveAndChecked(Square srcSquare, Square dstSquare)
+        private bool IsMoveAndChecked(BWType bwType, Square srcSquare,
+                                      Square dstSquare)
         {
             var piece = this[srcSquare];
-            if (piece == null)
+            if (piece == null || piece.BWType != bwType)
             {
                 return true;
             }
@@ -96,7 +98,7 @@ namespace Ragnarok.Shogi
                 DstSquare = dstSquare,
                 SrcSquare = srcSquare,
                 MovePiece = piece.Piece,
-                BWType = piece.BWType,
+                BWType = bwType,
             };
 
             // 成り駒でなければ、成る可能性があります。
@@ -105,7 +107,7 @@ namespace Ragnarok.Shogi
                 move.IsPromote = true;
                 if (DoMove(move))
                 {
-                    if (!IsChecked(Turn))
+                    if (!IsChecked(bwType))
                     {
                         Undo();
                         return false;
@@ -119,7 +121,7 @@ namespace Ragnarok.Shogi
             move.IsPromote = false;
             if (DoMove(move))
             {
-                if (!IsChecked(Turn))
+                if (!IsChecked(bwType))
                 {
                     Undo();
                     return false;
@@ -172,7 +174,7 @@ namespace Ragnarok.Shogi
                 .FirstOrDefault();
             if (dropPieceType != PieceType.None)
             {
-                if (srcSquares.Any(_ => !IsDropAndChecked(dropPieceType, _)))
+                if (srcSquares.Any(_ => !IsDropAndChecked(Turn, dropPieceType, _)))
                 {
                     return false;
                 }
@@ -184,7 +186,7 @@ namespace Ragnarok.Shogi
                     GetCanMoveRange(_, Turn)
                         .Select(__ => Tuple.Create(_, __)))
                 .Where(_ => _.Item2.Validate());
-            if (sqList.Any(_ => !IsMoveAndChecked(_.Item1, _.Item2)))
+            if (sqList.Any(_ => !IsMoveAndChecked(Turn, _.Item1, _.Item2)))
             {
                 return false;
             }

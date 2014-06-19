@@ -12,6 +12,40 @@ using Ragnarok.ObjectModel;
 namespace Ragnarok.Shogi
 {
     /// <summary>
+    /// 指し手を指すときのオプションです。
+    /// </summary>
+    [Flags()]
+    public enum MoveFlags
+    {
+        /// <summary>
+        /// 特になし。
+        /// </summary>
+        None = 0x0000,
+        /// <summary>
+        /// 手番をチェックします。
+        /// </summary>
+        CheckTurn = 0x0001,
+        /// <summary>
+        /// 自玉が王手されているかチェックします。
+        /// </summary>
+        CheckChecked = 0x0002,
+        /// <summary>
+        /// 実際に指さず、指せるかどうかの確認のみを行います。
+        /// </summary>
+        CheckOnly = 0x0004,
+
+        /// <summary>
+        /// CanMoveメソッドのフラグデフォルト値です。
+        /// </summary>
+        CanMoveDefault = MoveFlags.CheckTurn | MoveFlags.CheckChecked |
+                         MoveFlags.CheckOnly,
+        /// <summary>
+        /// DoMoveメソッドのフラグデフォルト値です。
+        /// </summary>
+        DoMoveDefault = MoveFlags.CheckTurn | MoveFlags.CheckChecked,
+    }
+
+    /// <summary>
     /// 局面が変わったときに使われます。
     /// </summary>
     public class BoardChangedEventArgs : EventArgs
@@ -503,7 +537,7 @@ namespace Ragnarok.Shogi
                     return null;
                 }
                 
-                if (!CheckAndDoMove(move, false))
+                if (!CheckAndDoMove(move, MoveFlags.CheckTurn))
                 {
                     // リドゥに失敗したら、どうすればいいんだ・・・
                     this.redoList.Clear();
@@ -556,23 +590,27 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// その差し手が実際に実現できるか調べます。
         /// </summary>
-        public bool CanMove(BoardMove move)
+        public bool CanMove(BoardMove move, MoveFlags flags = MoveFlags.CanMoveDefault)
         {
-            return CheckAndDoMove(move, true);
+            flags |= MoveFlags.CheckOnly;
+
+            return CheckAndDoMove(move, flags);
         }
 
         /// <summary>
         /// その差し手を実際に実行します。
         /// </summary>
-        public bool DoMove(BoardMove move)
+        public bool DoMove(BoardMove move, MoveFlags flags = MoveFlags.DoMoveDefault)
         {
-            return CheckAndDoMove(move, false);
+            flags &= ~MoveFlags.CheckOnly;
+
+            return CheckAndDoMove(move, flags);
         }
 
         /// <summary>
         /// 駒を動かすか、または駒が動かせるか調べます。
         /// </summary>
-        private bool CheckAndDoMove(BoardMove move, bool checkOnly)
+        private bool CheckAndDoMove(BoardMove move, MoveFlags flags)
         {
             if (move == null || !move.Validate())
             {
@@ -582,19 +620,22 @@ namespace Ragnarok.Shogi
             using (LazyLock())
             {
                 // 手番があわなければ失敗とします。
-                if (this.turn == BWType.None ||
-                    this.turn != move.BWType)
+                if (EnumEx.HasFlag(flags, MoveFlags.CheckTurn))
                 {
-                    return false;
+                    if (this.turn == BWType.None ||
+                        this.turn != move.BWType)
+                    {
+                        return false;
+                    }
                 }
 
                 if (move.ActionType == ActionType.Drop)
                 {
-                    return CheckAndDoDrop(move, checkOnly);
+                    return CheckAndDoDrop(move, flags);
                 }
                 else
                 {
-                    return CheckAndDoMoveOnly(move, checkOnly);
+                    return CheckAndDoMoveOnly(move, flags);
                 }
             }
         }
@@ -630,7 +671,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 駒打ちの動作が行えるか調べ、必要なら実行します。
         /// </summary>
-        private bool CheckAndDoDrop(BoardMove move, bool checkOnly)
+        private bool CheckAndDoDrop(BoardMove move, MoveFlags flags)
         {
             if (GetCapturedPieceCount(move.DropPieceType, move.BWType) <= 0)
             {
@@ -674,7 +715,7 @@ namespace Ragnarok.Shogi
                     break;
             }
 
-            if (!checkOnly)
+            if (!EnumEx.HasFlag(flags, MoveFlags.CheckOnly))
             {
                 // 駒を盤面に置き、持ち駒から駒を減らします。
                 this[move.DstSquare] = new BoardPiece(
@@ -712,7 +753,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 駒の移動のみの動作を調べるか実際にそれを行います。
         /// </summary>
-        private bool CheckAndDoMoveOnly(BoardMove move, bool checkOnly)
+        private bool CheckAndDoMoveOnly(BoardMove move, MoveFlags flags)
         {
             // 駒の移動元に自分の駒がなければダメ
             var srcPiece = this[move.SrcSquare];
@@ -751,7 +792,7 @@ namespace Ragnarok.Shogi
                 if (IsPromoteForce(move)) return false;
             }
 
-            if (!checkOnly)
+            if (!EnumEx.HasFlag(flags, MoveFlags.CheckOnly))
             {
                 var pieceType = srcPiece.PieceType;
 

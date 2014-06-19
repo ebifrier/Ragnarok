@@ -1,3 +1,14 @@
+2014-06-19  - Ver 2.7.5
+
+	* Ragnarok.Shogi/Board.mate.cs: 詰みや王手の判定方法を修正し、より正し
+	いものにしました。
+	* Ragnarok.Shogi/Board.cs: 王手判定では調べる玉とは逆の手番の駒を相手の
+	玉の位置まで動かせるかをチェックします。指し手の手番をチェックすると王
+	手の判定に失敗するため、手番をチェックしないような仕組みを導入しました。 
+	* Ragnarok.Shogi/Tests/BoardCheckMateTest.cs: 詰みや王手のテストを行い
+	ます。
+	* Ragnarok.Shogi/BoardMove.cs: 駒の表示に手番を入れるようにしました。
+
 2014-06-18  - Ver 2.7.4
 
 	* Ragnarok.Shogi/BWType.cs: メソッド名をToggleからFlipに変更しました。

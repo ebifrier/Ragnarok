@@ -108,6 +108,7 @@
     <Compile Include="ShogiParser.cs" />
     <Compile Include="SkillLevel.cs" />
     <Compile Include="Stringizer.cs" />
+    <Compile Include="Tests\BoardCheckMateTest.cs" />
     <Compile Include="Tests\BoardTest.cs" />
     <Compile Include="Tests\ShogiParserTest.cs" />
     <Compile Include="KifuWriter.cs" />
