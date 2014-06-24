@@ -85,9 +85,35 @@ namespace Ragnarok.Shogi
     public partial class Board : NotifyObject
     {
         /// <summary>
+        /// 各駒の最大駒数を保持します。
+        /// </summary>
+        public static readonly int[] TotalPieceCountList = new int[]
+        {
+            0, // None
+            2, // Gyoku
+            2, // Hisya
+            2, // Kaku
+            4, // Kin
+            4, // Gin
+            4, // Kei
+            4, // Kyo
+            18, // Hu
+        };
+
+        /// <summary>
         /// 将棋盤のサイズです。
         /// </summary>
         public const int BoardSize = 9;
+
+        /// <summary>
+        /// すべてのマスを巡回するためのオブジェクトを取得します。
+        /// </summary>
+        public static IEnumerable<Square> AllSquares()
+        {
+            return from file in Enumerable.Range(1, Board.BoardSize)
+                   from rank in Enumerable.Range(1, Board.BoardSize)
+                   select new Square(file, rank);
+        }
 
         /// <summary>
         /// [0,0]が盤面の11地点を示します。
@@ -562,6 +588,20 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
+        /// 局面を元に戻すことができないようにします。
+        /// </summary>
+        public void ClearUndoList()
+        {
+            using (LazyLock())
+            {
+                this.moveList.Clear();
+                PrevMovedSquare = null;
+
+                this.RaisePropertyChanged("CanUndo");
+            }
+        }
+
+        /// <summary>
         /// 可能な限り局面をRedoします。
         /// </summary>
         public void RedoAll()
@@ -685,34 +725,10 @@ namespace Ragnarok.Shogi
                 return false;
             }
 
-            // 先手はそのまま後手なら上下を反転してから、駒が置けるか確かめます。
-            var rank =
-                ( move.BWType == BWType.Black
-                ? move.DstSquare.Rank
-                : (BoardSize + 1) - move.DstSquare.Rank);
-            switch (move.DropPieceType)
+            // 駒が置けるか確かめます。
+            if (!CanDrop(move.BWType, move.DstSquare, move.DropPieceType))
             {
-                case PieceType.None: // これは打てない
-                    return false;
-                case PieceType.Hu:
-                    // 2歩のチェックを行います。
-                    if (IsDoublePawn(move.BWType, move.DstSquare))
-                    {
-                        return false;
-                    }
-                    goto case PieceType.Kyo;
-                case PieceType.Kyo:
-                    if (rank == 1)
-                    {
-                        return false;
-                    }
-                    break;
-                case PieceType.Kei:
-                    if (rank < 3) // 1,2はダメ
-                    {
-                        return false;
-                    }
-                    break;
+                return false;
             }
 
             if (!EnumEx.HasFlag(flags, MoveFlags.CheckOnly))
@@ -732,22 +748,65 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// ２歩のチェックを行います。
         /// </summary>
-        private bool IsDoublePawn(BWType bwType, Square square)
+        public bool IsDoublePawn(BWType bwType, Square square)
         {
-            for (var i = 0; i < BoardSize; ++i)
+            using (LazyLock())
             {
-                var piece = this[square.File, i];
-
-                if (piece != null &&
-                    piece.BWType == bwType &&
-                    piece.PieceType == PieceType.Hu &&
-                    !piece.IsPromoted)
+                for (var i = 0; i < BoardSize; ++i)
                 {
-                    return true;
-                }
-            }
+                    var piece = this[square.File, i];
 
-            return false;
+                    if (piece != null &&
+                        piece.BWType == bwType &&
+                        piece.PieceType == PieceType.Hu &&
+                        !piece.IsPromoted)
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// 指定の位置に駒が打てるか調べます。
+        /// </summary>
+        public bool CanDrop(BWType bwType, Square square, PieceType pieceType)
+        {
+            using (LazyLock())
+            {
+                var rank =
+                    (bwType == BWType.Black
+                    ? square.Rank
+                    : (BoardSize + 1) - square.Rank);
+                switch (pieceType)
+                {
+                    case PieceType.None: // これは打てない
+                        return false;
+                    case PieceType.Hu:
+                        // 2歩のチェックを行います。
+                        if (IsDoublePawn(bwType, square))
+                        {
+                            return false;
+                        }
+                        goto case PieceType.Kyo;
+                    case PieceType.Kyo:
+                        if (rank == 1)
+                        {
+                            return false;
+                        }
+                        break;
+                    case PieceType.Kei:
+                        if (rank < 3) // 1,2はダメ
+                        {
+                            return false;
+                        }
+                        break;
+                }
+
+                return true;
+            }
         }
 
         /// <summary>
@@ -823,7 +882,7 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
-        /// 駒が成れるか調べます。
+        /// 駒を強制的に成る必要があるか調べます。
         /// </summary>
         public static bool CanPromote(BoardMove move)
         {
@@ -832,28 +891,37 @@ namespace Ragnarok.Shogi
                 throw new ArgumentNullException("move");
             }
 
-            if (move.DstSquare == null || !move.DstSquare.Validate())
+            return CanPromote(move.MovePiece, move.BWType,
+                              move.DstSquare, move.SrcSquare);
+        }
+
+        /// <summary>
+        /// 駒が成れるか調べます。
+        /// </summary>
+        public static bool CanPromote(Piece piece, BWType bwType,
+                                      Square dstSquare, Square srcSquare)
+        {
+            if (dstSquare == null || !dstSquare.Validate())
             {
                 return false;
             }
 
             // 駒の移動でない場合は成れません。
-            if (move.SrcSquare == null || !move.SrcSquare.Validate())
+            if (srcSquare == null || !srcSquare.Validate())
             {
                 return false;
             }
 
             // 既に成っている駒を再度成ることはできません。
-            var piece = move.MovePiece;
             if (piece == null || piece.IsPromoted)
             {
                 return false;
             }
 
-            var srcRank = move.SrcSquare.Rank;
-            var dstRank = move.DstSquare.Rank;
+            var srcRank = srcSquare.Rank;
+            var dstRank = dstSquare.Rank;
 
-            if (move.BWType == BWType.White)
+            if (bwType == BWType.White)
             {
                 srcRank = (BoardSize + 1) - srcRank;
                 dstRank = (BoardSize + 1) - dstRank;
@@ -881,22 +949,35 @@ namespace Ragnarok.Shogi
         /// </summary>
         public static bool IsPromoteForce(BoardMove move)
         {
-            if (move.DstSquare == null || !move.DstSquare.Validate())
+            if (move == null)
+            {
+                throw new ArgumentNullException("move");
+            }
+
+            return IsPromoteForce(move.MovePiece, move.BWType, move.DstSquare);
+        }
+
+        /// <summary>
+        /// 駒を強制的に成る必要があるか調べます。
+        /// </summary>
+        public static bool IsPromoteForce(Piece piece, BWType bwType,
+                                          Square dstSquare)
+        {
+            if (dstSquare == null || !dstSquare.Validate())
             {
                 return false;
             }
 
             // 駒の移動元に自分の駒がなければダメ
-            var piece = move.MovePiece;
             if (piece == null || piece.IsPromoted)
             {
                 return false;
             }
 
             var normalizedRank = (
-                move.BWType == BWType.White ?
-                (BoardSize + 1) - move.DstSquare.Rank :
-                move.DstSquare.Rank);
+                bwType == BWType.White ?
+                (BoardSize + 1) - dstSquare.Rank :
+                dstSquare.Rank);
 
             if (piece.PieceType == PieceType.Kei)
             {

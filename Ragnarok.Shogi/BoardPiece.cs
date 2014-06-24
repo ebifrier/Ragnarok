@@ -80,7 +80,7 @@ namespace Ragnarok.Shogi
         /// </summary>
         public override string ToString()
         {
-            return Stringizer.ToString(Piece);
+            return (Stringizer.ToString(BWType) + Stringizer.ToString(Piece));
         }
 
         /// <summary>

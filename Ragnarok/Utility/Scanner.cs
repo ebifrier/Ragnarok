@@ -43,6 +43,7 @@ namespace Ragnarok.Utility
     {
         private string[] delimiters = { "," };
         private readonly string text;
+        private string peek;
         private int index;
         
         /// <summary>
@@ -182,7 +183,7 @@ namespace Ragnarok.Utility
         /// <remarks>
         /// 先頭に"がある場合は、次の"までをまとめて取得します。
         /// </remarks>
-        public string ParseText()
+        public string PeekText()
         {
             CheckEof();
 
@@ -215,6 +216,21 @@ namespace Ragnarok.Utility
             }
 
             this.index += m.Length;
+            this.peek = result;
+            return result;
+        }
+
+        /// <summary>
+        /// 文字列を解析します。
+        /// </summary>
+        /// <remarks>
+        /// 先頭に"がある場合は、次の"までをまとめて取得します。
+        /// </remarks>
+        public string ParseText()
+        {
+            var result = (this.peek != null ? this.peek : PeekText());
+
+            this.peek = null;
             return result;
         }
 
