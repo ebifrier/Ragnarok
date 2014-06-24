@@ -31,8 +31,12 @@ namespace Ragnarok.Presentation.Shogi.View
     /// <summary>
     /// 将棋の盤面を扱う3D用のエレメントです。
     /// </summary>
-    public class ShogiUIElement3D : UIElement3D
+    public partial class ShogiUIElement3D : UIElement3D
     {
+        /// <summary>
+        /// 各マスに対する上下左右の余白の比です。
+        /// </summary>
+        public const double BanBorderRate = 0.4;
         /// <summary>
         /// 盤エフェクトのＺ座標です。
         /// </summary>
@@ -81,21 +85,12 @@ namespace Ragnarok.Presentation.Shogi.View
             }
             .Apply(_ => _.Freeze());
 
-        private Model3DGroup capturedPieceContainer;
-        private Model3DGroup pieceContainer;
         private Model3DGroup banEffectGroup;
         private Model3DGroup effectGroup;
 
-        private readonly List<PieceObject> pieceObjectList =
-            new List<PieceObject>();
-        private readonly List<PieceObject>[] capturedPieceObjectList =
-            new List<PieceObject>[2];
-        private readonly Rect[] capturedPieceBoxBounds = new Rect[2];
         private EntityObject banEffectObjectRoot = new EntityObject();
         private EntityObject effectObjectRoot = new EntityObject();
-        private PieceObject movingPiece;
         private AutoPlay autoPlay;
-        private Window promoteDialog;
         private ReentrancyLock renderLock = new ReentrancyLock();
 
         #region イベント
@@ -282,10 +277,20 @@ namespace Ragnarok.Presentation.Shogi.View
 
             if (self != null)
             {
-                self.EndMove();
+                self.UpdateEditMode();
 
                 WPFUtil.InvalidateCommand();
             }
+        }
+
+        private void UpdateEditMode()
+        {
+            EndMove();
+            UpdateIsPieceBoxVisible();
+            UpdateIsLeaveTimeVisibleInternal();
+            UpdatePieceBoxBrush();
+
+            SyncCapturedPieceObject();
         }
 
         /// <summary>
@@ -391,18 +396,31 @@ namespace Ragnarok.Presentation.Shogi.View
         /// <summary>
         /// 駒台画像を扱う依存プロパティです。
         /// </summary>
-        public static readonly DependencyProperty PieceBoxBrushProperty =
+        public static readonly DependencyProperty CapturedPieceBoxBrushProperty =
             DependencyProperty.Register(
-                "PieceBoxBrush", typeof(Brush), typeof(ShogiUIElement3D),
+                "CapturedPieceBoxBrush", typeof(Brush), typeof(ShogiUIElement3D),
                 new FrameworkPropertyMetadata(DefaultPieceBoxBrush));
 
         /// <summary>
         /// 駒台画像を取得または設定します。
         /// </summary>
-        public Brush PieceBoxBrush
+        public Brush CapturedPieceBoxBrush
         {
-            get { return (Brush)GetValue(PieceBoxBrushProperty); }
-            set { SetValue(PieceBoxBrushProperty, value); }
+            get { return (Brush)GetValue(CapturedPieceBoxBrushProperty); }
+            set { SetValue(CapturedPieceBoxBrushProperty, value); }
+        }
+
+        /// <summary>
+        /// 駒台画像が変更されたときに呼ばれます。
+        /// </summary>
+        static void OnCapturedPieceBoxBrushChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var self = (ShogiUIElement3D)d;
+
+            if (self != null)
+            {
+                self.UpdatePieceBoxBrush();
+            }
         }
 
         /// <summary>
@@ -434,6 +452,59 @@ namespace Ragnarok.Presentation.Shogi.View
             {
                 self.SyncBoard(false);
             }
+        }
+
+        /// <summary>
+        /// 駒箱画像を扱う依存プロパティです。
+        /// </summary>
+        public static readonly DependencyProperty PieceBoxBrushProperty =
+            DependencyProperty.Register(
+                "PieceBoxBrush", typeof(Brush), typeof(ShogiUIElement3D),
+                new FrameworkPropertyMetadata(null));
+
+        /// <summary>
+        /// 駒箱画像を取得または設定します。
+        /// </summary>
+        public Brush PieceBoxBrush
+        {
+            get { return (Brush)GetValue(PieceBoxBrushProperty); }
+            private set { SetValue(PieceBoxBrushProperty, value); }
+        }
+
+        /// <summary>
+        /// 駒箱は局面編集モードでは表示させます。
+        /// </summary>
+        private void UpdatePieceBoxBrush()
+        {
+            PieceBoxBrush = (
+                EditMode == EditMode.Editing ?
+                CapturedPieceBoxBrush :
+                null);
+        }
+
+        /// <summary>
+        /// 駒箱を表示するかどうかを扱う依存プロパティです。
+        /// </summary>
+        public static readonly DependencyProperty IsPieceBoxVisibleProperty =
+            DependencyProperty.Register(
+                "IsPieceBoxVisible", typeof(bool), typeof(ShogiUIElement3D),
+                new FrameworkPropertyMetadata(false));
+
+        /// <summary>
+        /// 駒箱を表示するかどうかを取得します。
+        /// </summary>
+        public bool IsPieceBoxVisible
+        {
+            get { return (bool)GetValue(IsPieceBoxVisibleProperty); }
+            private set { SetValue(IsPieceBoxVisibleProperty, value); }
+        }
+
+        /// <summary>
+        /// 駒箱は局面編集モードでは表示させます。
+        /// </summary>
+        private void UpdateIsPieceBoxVisible()
+        {
+            IsPieceBoxVisible = (EditMode == EditMode.Editing);
         }
 
         /// <summary>
@@ -473,12 +544,39 @@ namespace Ragnarok.Presentation.Shogi.View
 
         #region 時間系プロパティ
         /// <summary>
+        /// 残り時間の表示を実際に行うかどうかを扱う依存プロパティです。
+        /// </summary>
+        public static readonly DependencyProperty IsLeaveTimeVisibleInternalProperty =
+            DependencyProperty.Register(
+                "IsLeaveTimeVisibleInternal", typeof(bool), typeof(ShogiUIElement3D),
+                new FrameworkPropertyMetadata(true));
+
+        /// <summary>
+        /// 残り時間の表示を実際に行うかどうかを取得または設定します。
+        /// </summary>
+        public bool IsLeaveTimeVisibleInternal
+        {
+            get { return (bool)GetValue(IsLeaveTimeVisibleInternalProperty); }
+            private set { SetValue(IsLeaveTimeVisibleInternalProperty, value); }
+        }
+
+        /// <summary>
+        /// 残り時間は局面編集時は必ず非表示にします。(でないと駒箱とかぶります)
+        /// </summary>
+        private void UpdateIsLeaveTimeVisibleInternal()
+        {
+            IsLeaveTimeVisibleInternal = IsLeaveTimeVisible &&
+                                         (EditMode != EditMode.Editing);
+        }
+
+        /// <summary>
         /// 残り時間の表示を行うかどうかを扱う依存プロパティです。
         /// </summary>
         public static readonly DependencyProperty IsLeaveTimeVisibleProperty =
             DependencyProperty.Register(
                 "IsLeaveTimeVisible", typeof(bool), typeof(ShogiUIElement3D),
-                new FrameworkPropertyMetadata(true));
+                new FrameworkPropertyMetadata(true,
+                    OnIsLeaveTimeVisibleChanged));
 
         /// <summary>
         /// 残り時間の表示を行うかどうかを取得または設定します。
@@ -487,6 +585,19 @@ namespace Ragnarok.Presentation.Shogi.View
         {
             get { return (bool)GetValue(IsLeaveTimeVisibleProperty); }
             set { SetValue(IsLeaveTimeVisibleProperty, value); }
+        }
+
+        /// <summary>
+        /// 残り時間の表示が変更されたときに呼ばれます。
+        /// </summary>
+        static void OnIsLeaveTimeVisibleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var self = (ShogiUIElement3D)d;
+
+            if (self != null)
+            {
+                self.UpdateIsLeaveTimeVisibleInternal();
+            }
         }
 
         /// <summary>
@@ -607,663 +718,6 @@ namespace Ragnarok.Presentation.Shogi.View
         }
         #endregion
 
-        #region Overrides
-        private Point InvarseTranslate(Point pos)
-        {
-            var inv = Transform.Inverse;
-            if (inv == null)
-            {
-                return pos;
-            }
-
-            var pos3d = new Point3D(pos.X, pos.Y, 0.0);
-            pos3d = inv.Transform(pos3d);
-            return new Point(pos3d.X, pos3d.Y);
-        }
-
-        /// <summary>
-        /// マウスの右ボタン押下時に呼ばれます。
-        /// </summary>
-        protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
-        {
-            base.OnMouseLeftButtonDown(e);
-
-            // マウスがどのセルにいるかです。
-            var boardPos = InvarseTranslate(e.GetPosition(this));
-
-            if (movingPiece == null)
-            {
-                // 駒検索
-                var square = GetCell(boardPos);
-                if (square != null)
-                {
-                    var pieceObject = GetPieceObject(square);
-                    if (pieceObject != null)
-                    {
-                        BeginMovePiece(pieceObject);
-                        MovePiece(e);
-                        return;
-                    }
-                }
-
-                // 駒台の駒を検索
-                var boardPiece = GetCapturedPieceType(boardPos);
-                if (boardPiece != null)
-                {
-                    var pieceObject = GetCapturedPieceObject(
-                        boardPiece.BWType, boardPiece.PieceType);
-                    if (pieceObject != null && pieceObject.Count > 0)
-                    {
-                        BeginDropPiece(pieceObject);
-                        MovePiece(e);
-                        return;
-                    }
-                }
-            }
-            else
-            {
-                // 駒の移動を完了します。
-                var square = GetCell(boardPos);
-                if (square == null)
-                {
-                    EndMove();
-                    return;
-                }
-
-                DoMove(square);
-            }
-        }
-
-        /// <summary>
-        /// マウス移動時に呼ばれます。
-        /// </summary>
-        protected override void OnMouseMove(MouseEventArgs e)
-        {
-            base.OnMouseMove(e);
-
-            MovePiece(e);
-        }
-
-        /// <summary>
-        /// マウスの右ボタンが上がったときに呼ばれます。
-        /// </summary>
-        protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
-        {
-            base.OnMouseLeftButtonUp(e);
-        }
-        #endregion
-
-        #region 駒の移動など
-        /// <summary>
-        /// 駒の移動などを開始できるかどうか調べます。
-        /// </summary>
-        private bool CanBeginMove(BWType pieceSide)
-        {
-            if (this.movingPiece != null)
-            {
-                return false;
-            }
-
-            if (this.autoPlay != null)
-            {
-                return false;
-            }
-
-            var teban = (Board != null ? Board.Turn : BWType.None);
-            if ((EditMode == EditMode.NoEdit) ||
-                (EditMode == EditMode.Normal && teban != pieceSide))
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        /// <summary>
-        /// 駒の移動を開始します。
-        /// </summary>
-        private void BeginMovePiece(PieceObject pieceObject)
-        {
-            if (!CanBeginMove(pieceObject.Piece.BWType))
-            {
-                return;
-            }
-
-            this.movingPiece = pieceObject;
-
-            // 描画順を変えます。
-            this.pieceContainer.Children.Remove(pieceObject.ModelGroup);
-            this.pieceContainer.Children.Add(pieceObject.ModelGroup);
-
-            if (EffectManager != null)
-            {
-                EffectManager.BeginMove(pieceObject.Position, pieceObject.Piece);
-            }
-        }
-
-        /// <summary>
-        /// 駒打ちの処理を開始します。
-        /// </summary>
-        private void BeginDropPiece(PieceObject pieceObject)
-        {
-            var piece = pieceObject.Piece;
-
-            if (!CanBeginMove(piece.BWType))
-            {
-                return;
-            }
-
-            if (Board.GetCapturedPieceCount(piece.PieceType, piece.BWType) <= 0)
-            {
-                return;
-            }
-
-            // 表示用の駒を追加します。
-            this.movingPiece = new PieceObject(this, piece);
-            AddPieceObject(this.movingPiece, true);
-
-            if (EffectManager != null)
-            {
-                EffectManager.BeginMove(null, piece);
-            }
-        }
-
-        /// <summary>
-        /// 移動中の駒を動かします。
-        /// </summary>
-        private void MovePiece(MouseEventArgs e)
-        {
-            if (this.movingPiece == null)
-            {
-                return;
-            }
-
-            // 駒とマウスの位置の差を求めておきます。
-            var mousePos = InvarseTranslate(e.GetPosition(this));
-
-            this.movingPiece.Coord = WPFUtil.MakeVector3D(mousePos, MovingPieceZ);
-        }
-
-        /// <summary>
-        /// 指し手が実際に着手可能か確認します。
-        /// </summary>
-        private bool CanMove(BoardMove move)
-        {
-            var tmp = Board.Clone();
-
-            // 成り・不成りの選択ダイアログを出す前に
-            // 駒の移動ができるか調べておきます。
-            // 失敗したら移動中だった駒は元の位置に戻されます。
-            if (!tmp.DoMove(move))
-            {
-                return false;
-            }
-
-            // 通常モードの場合、今指した側の玉が王手されていたら
-            // その手は採用しません。（王手放置禁止）
-            if (EditMode == EditMode.Normal &&
-                tmp.IsChecked(tmp.Turn.Flip()))
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        /// <summary>
-        /// 移動中の駒を新しい位置に移動します。
-        /// </summary>
-        /// <remarks>
-        /// 指せない指し手の場合は、駒の移動を終了します。
-        /// </remarks>
-        private void DoMove(Square dstSquare)
-        {
-            if (this.movingPiece == null)
-            {
-                return;
-            }
-
-            // 駒を新しい位置に動かします。
-            var srcSquare = this.movingPiece.Position;
-            var piece = this.movingPiece.Piece;
-
-            var move = (srcSquare != null ?
-                new BoardMove()
-                {
-                    SrcSquare = srcSquare,
-                    DstSquare = dstSquare,
-                    MovePiece = Board[srcSquare].Piece,
-                    BWType = Board.Turn,
-                } :
-                new BoardMove()
-                {
-                    DstSquare = dstSquare,
-                    DropPieceType = piece.PieceType,
-                    BWType = Board.Turn,
-                });
-
-            // 成／不成りのダイアログを出す前に着手可能か確認します。
-            if (!CanMove(move))
-            {
-                // 駒の移動であれば成りを確認します。
-                if (move.ActionType != ActionType.Drop)
-                {
-                    move.IsPromote = true;
-                    if (!CanMove(move))
-                    {
-                        EndMove();
-                        return;
-                    }
-                }
-                else
-                {
-                    EndMove();
-                    return;
-                }
-            }
-
-            // 成れる場合は選択用のダイアログを出します。
-            if (move.ActionType != ActionType.Promote && Board.CanPromote(move))
-            {
-                var promote = CheckToPromote(piece.PieceType, move.BWType);
-
-                move.IsPromote = promote;
-            }
-
-            EndMove();
-            DoMove(move);
-        }
-
-        /// <summary>
-        /// 成り・不成り選択中に外から局面が設定されることがあります。
-        /// その場合には選択ダイアログを強制的にクローズします。
-        /// </summary>
-        private void ClosePromoteDialog()
-        {
-            if (this.promoteDialog != null)
-            {
-                this.promoteDialog.Close();
-                this.promoteDialog = null;
-            }
-        }
-
-        /// <summary>
-        /// 成るか不成りかダイアログによる選択を行います。
-        /// </summary>
-        private bool CheckToPromote(PieceType pieceType, BWType bwType)
-        {
-            var dialog = DialogUtil.CreateDialog(
-                null,
-                "成りますか？",
-                "成り／不成り",
-                MessageBoxButton.YesNo,
-                MessageBoxResult.Yes);
-            dialog.Topmost = true;
-
-            dialog.Loaded += (sender, e) =>
-            {
-                var p = WPFUtil.GetMousePosition(dialog);
-                var screenPos = dialog.PointToScreen(p);
-
-                dialog.WindowStartupLocation = WindowStartupLocation.Manual;
-                dialog.Left = screenPos.X - (dialog.ActualWidth / 2);
-                dialog.Top = screenPos.Y + CellSize.Height / 2;
-                dialog.AdjustInDisplay();
-            };
-
-            try
-            {
-                ClosePromoteDialog();
-
-                // 成り・不成り選択中に外から局面が設定されることがあります。
-                // その場合に備えてダイアログ自体を持っておきます。
-                this.promoteDialog = dialog;
-
-                var result = dialog.ShowDialog();
-                ClosePromoteDialog();
-
-                return (result != null ? result.Value : false);
-            }
-            finally
-            {
-                ClosePromoteDialog();
-            }
-        }
-
-        /// <summary>
-        /// 実際に指し手を進めます。
-        /// </summary>
-        private void DoMove(BoardMove move)
-        {
-            if (move == null || !move.Validate())
-            {
-                return;
-            }
-
-            this.RaiseEvent(new BoardPieceRoutedEventArgs(
-                BoardPieceChangingEvent, Board.Clone(), move));
-            Board.DoMove(move);
-            this.RaiseEvent(new BoardPieceRoutedEventArgs(
-                BoardPieceChangedEvent, Board.Clone(), move));
-        }
-
-        /// <summary>
-        /// 駒の移動を終了します。
-        /// </summary>
-        private void EndMove()
-        {
-            if (this.movingPiece == null)
-            {
-                return;
-            }
-
-            // 移動中の駒の位置を元に戻します。
-            var position = this.movingPiece.Position;
-            if (position != null)
-            {
-                var pos = GetPiecePos(position);
-                pos.Z = PieceZ;
-
-                this.movingPiece.Coord = pos;
-            }
-            else
-            {
-                // 駒うちの場合は、表示用オブジェクトを新規に作成しています。
-                RemovePieceObject(this.movingPiece);
-            }
-
-            this.movingPiece = null;
-            ClosePromoteDialog();
-
-            if (EffectManager != null)
-            {
-                EffectManager.EndMove();
-            }
-
-            //ReleaseMouseCapture();
-        }
-        #endregion
-
-        #region 駒オブジェクト
-        /// <summary>
-        /// 与えられた座標のセルを取得します。
-        /// </summary>
-        private Square GetCell(Point pos)
-        {
-            // とりあえず設定します。
-            var file = (int)((pos.X - BanBounds.Left) / CellSize.Width);
-            var rank = (int)((pos.Y - BanBounds.Top) / CellSize.Height);
-
-            // 正しい位置にありましぇん。
-            var square = new Square(Board.BoardSize - file, rank + 1);
-            if (!square.Validate())
-            {
-                return null;
-            }
-
-            /*// 各セルの幅と高さを取得します。
-            var gridX = pos.X % this.model.CellWidth;
-            var gridY = pos.Y % this.model.CellHeight;
-
-            // セルの端ぎりぎりならそのセルにいると判定しません。
-            if (gridX < CellWidth * 0.1 || CellWidth * 0.9 < gridX)
-            {
-                return null;
-            }
-
-            if (gridY < CellHeight * 0.1 || CellHeight * 0.9 < gridY)
-            {
-                return null;
-            }*/
-
-            return (ViewSide == BWType.White ? square.Flip() : square);
-        }
-
-        /// <summary>
-        /// 画面表示上の位置を取得します。
-        /// </summary>
-        public Vector3D GetPiecePos(Square square)
-        {
-            if ((object)square == null)
-            {
-                return new Vector3D();
-            }
-
-            var relative =
-                (ViewSide == BWType.Black
-                ? new Point(
-                    (Board.BoardSize - square.File) * CellSize.Width,
-                    (square.Rank - 1) * CellSize.Height)
-                : new Point(
-                    (square.File - 1) * CellSize.Width,
-                    (Board.BoardSize - square.Rank) * CellSize.Height));
-
-            var leftTop = BanBounds.TopLeft;
-            return new Vector3D(
-                leftTop.X + relative.X + (CellSize.Width / 2.0),
-                leftTop.Y + relative.Y + (CellSize.Height / 2.0),
-                PieceZ);
-        }
-
-        /// <summary>
-        /// 指定の座標値に駒台上の駒があればそれを取得します。
-        /// </summary>
-        public BoardPiece GetCapturedPieceType(Point pos)
-        {
-            var bwTypes = new[]
-            {
-                BWType.Black,
-                BWType.White
-            };
-
-            for (var index = 0; index < bwTypes.Count(); ++index)
-            {
-                // 盤の反転を考慮して駒台の領域を調べます。
-                var viewIndex = (ViewSide == BWType.Black ? index : 1 - index);
-                if (!this.capturedPieceBoxBounds[viewIndex].Contains(pos))
-                {
-                    continue;
-                }
-
-                var bwType = bwTypes[index];
-                foreach (var pieceType in EnumEx.GetValues<PieceType>())
-                {
-                    var center = GetCapturedPiecePos(pieceType, bwType);
-                    var rect = new Rect(
-                        center.X - CellSize.Width / 2,
-                        center.Y - CellSize.Height / 2,
-                        CellSize.Width,
-                        CellSize.Height);
-
-                    if (rect.Contains(pos))
-                    {
-                        return new BoardPiece(pieceType, false, bwType);
-                    }
-                }
-            }
-
-            return null;
-        }
-
-        /// <summary>
-        /// 駒台上の駒のデフォルト位置を取得します。
-        /// </summary>
-        public Vector3D GetCapturedPiecePos(BoardPiece piece)
-        {
-            return GetCapturedPiecePos(piece.PieceType, piece.BWType);
-        }
-
-        /// <summary>
-        /// 駒台上の駒のデフォルト位置を取得します。
-        /// </summary>
-        public Vector3D GetCapturedPiecePos(PieceType pieceType, BWType bwType)
-        {
-            var index = (bwType == ViewSide ? 0 : 1);
-            var bounds = this.capturedPieceBoxBounds[index];
-
-            // ○ 駒位置の計算方法
-            // 駒台には駒を横に２つ並べます。また、両端と駒と駒の間には
-            // 駒の幅/2をスペースとして挿入します。
-            // このため、駒の幅/2 を基本区間とし、
-            //   2(両端) + 1(駒間) + 4(駒数*2) = 7
-            // を区間数として、駒の位置を計算します。
-            //
-            // また、縦の計算では先手・後手などの文字列を表示するため、
-            // 手前側は上部、向かい側は下部に余計な空間を作ります。
-            //   4(上下端+α) + 3(駒間) + 8(駒数*4) = 15
-            var hw = bounds.Width / 7;
-            var hh = bounds.Height / 15;
-            var x = ((int)pieceType - 2) % 2;
-            var y = ((int)pieceType - 2) / 2;
-
-            if (bwType != ViewSide)
-            {
-                x = 1 - x;
-                y = 3 - y;
-            }
-
-            // 駒の中心位置
-            // 駒の数を右肩に表示するため、少し左にずらしています。
-            // また、対局者名などを表示するため上下にずらしています。
-            return new Vector3D(
-                bounds.Left + hw * (x * 3 + 2 - 0.2),
-                bounds.Top + hh * (y * 3 + 2 + (1 - index) * 2.3 - index * 0.3),
-                PieceZ);
-        }
-
-        /// <summary>
-        /// 指定の位置にある駒を取得します。
-        /// </summary>
-        private PieceObject GetPieceObject(Square position)
-        {
-            if (position == null || !position.Validate())
-            {
-                return null;
-            }
-
-            return this.pieceObjectList.FirstOrDefault(
-                _ => _.Position == position);
-        }
-
-        /// <summary>
-        /// 駒の表示用オブジェクトを取得します。
-        /// </summary>
-        private void AddPieceObject(PieceObject value, bool initPos)
-        {
-            if (value == null)
-            {
-                return;
-            }
-
-            // 駒をデフォルト位置まで移動させます。
-            if (initPos)
-            {
-                value.Coord =
-                    (value.Position != null
-                    ? GetPiecePos(value.Position)
-                    : GetCapturedPiecePos(value.Piece));
-            }
-
-            this.pieceContainer.Children.Add(value.ModelGroup);
-            this.pieceObjectList.Add(value);
-        }
-
-        /// <summary>
-        /// 指定の位置にある駒を削除します。
-        /// </summary>
-        private void RemovePieceObject(PieceObject piece)
-        {
-            if (piece == null)
-            {
-                return;
-            }
-
-            this.pieceContainer.Children.Remove(piece.ModelGroup);
-            this.pieceObjectList.Remove(piece);
-        }
-
-        /// <summary>
-        /// 指定の位置にある駒を削除します。
-        /// </summary>
-        private void RemovePieceObject(Square position)
-        {
-            if (position == null || !position.Validate())
-            {
-                return;
-            }
-
-            // 指定のマスにある駒を探します。
-            var index = this.pieceObjectList.FindIndex(
-                _ => _.Position == position);
-            if (index < 0)
-            {
-                return;
-            }
-
-            RemovePieceObject(this.pieceObjectList[index]);
-        }
-
-        /// <summary>
-        /// 表示されている駒をすべて削除します。
-        /// </summary>
-        private void ClearPieceObjects()
-        {
-            this.pieceObjectList.Clear();
-            this.pieceContainer.Children.Clear();
-        }
-
-        /// <summary>
-        /// 駒台上の表示用の駒を取得します。
-        /// </summary>
-        private PieceObject GetCapturedPieceObject(BWType bwType, PieceType pieceType)
-        {
-            var index = (bwType == BWType.Black ? 0 : 1);
-            var capturedPieceList = this.capturedPieceObjectList[index];
-
-            return (
-                (int)pieceType < capturedPieceList.Count ?
-                capturedPieceList[(int)pieceType] :
-                null);
-        }
-
-        /// <summary>
-        /// 駒台上の駒の表示用オブジェクトを取得します。
-        /// </summary>
-        private PieceObject CreateCapturedPieceObject(BWType bwType, PieceType pieceType)
-        {
-            var value = new PieceObject(this, new BoardPiece(pieceType, false, bwType))
-            {
-                Count = (Board == null ? 0 : Board.GetCapturedPieceCount(pieceType, bwType)),
-                IsAlwaysVisible = false,
-            };
-
-            // 駒をデフォルト位置まで移動させます。
-            value.Coord = GetCapturedPiecePos(pieceType, bwType);
-
-            // 玉などは駒台に表示しません。
-            if (pieceType != PieceType.None && pieceType != PieceType.Gyoku)
-            {
-                this.capturedPieceContainer.Children.Add(value.ModelGroup);
-            }
-
-            return value;
-        }
-
-        /// <summary>
-        /// 局面と表示で駒台の駒の数を合わせます。
-        /// </summary>
-        private void SyncCapturedPieceCount(BWType bwType, PieceType pieceType)
-        {
-            var piece = GetCapturedPieceObject(bwType, pieceType);
-            var count = Board.GetCapturedPieceCount(pieceType, bwType);
-
-            if (piece != null)
-            {
-                piece.Count = count;
-            }
-        }
-        #endregion
-
         #region 盤とビューとの同期など
         /// <summary>
         /// 盤面の駒が移動したときに呼ばれます。
@@ -1297,32 +751,30 @@ namespace Ragnarok.Presentation.Shogi.View
             if (move.DropPieceType != PieceType.None)
             {
                 SyncCapturedPieceCount(
-                    move.BWType,
-                    move.DropPieceType);
+                    move.DropPieceType,
+                    move.BWType);
             }
 
             // 駒を取った場合
             if (move.TookPiece != null)
             {
                 SyncCapturedPieceCount(
-                    move.BWType,
-                    move.TookPiece.PieceType);
+                    move.TookPiece.PieceType,
+                    move.BWType);
 
                 // 取った駒を元の位置に戻します。
                 if (e.IsUndo)
                 {
-                    AddPieceObject(
-                        new PieceObject(this, Board[np], np),
-                        true);
+                    AddPieceObject(new PieceObject(this, Board[np], np));
                 }
             }
 
             // リドゥ時は新しい場所に、アンドゥ時は昔の場所に駒をおきます。
             // アンドゥで駒打ちの場合、追加される駒はありません。
-            var position = (e.IsUndo ? move.SrcSquare : move.DstSquare);
-            if (position != null)
+            var square = (e.IsUndo ? move.SrcSquare : move.DstSquare);
+            if (square != null)
             {
-                AddPieceObject(new PieceObject(this, Board[position], position), true);
+                AddPieceObject(new PieceObject(this, Board[square], square));
             }
 
             // 指し手が進んだときのエフェクトを追加します。
@@ -1351,77 +803,6 @@ namespace Ragnarok.Presentation.Shogi.View
 
             // 駒などをとりあえず表示させます。
             Render(TimeSpan.FromMilliseconds(1));
-        }
-
-        /// <summary>
-        /// 駒台上に表示する描画用の駒を設定します。
-        /// </summary>
-        /// <remarks>
-        /// 盤上の駒と違って、駒台上の駒はプロパティで表示・非表示などを
-        /// 切り替えるため、駒の移動ごとに追加・削除をする必要はありません。
-        /// </remarks>
-        private void SyncCapturedPieceObject()
-        {
-            if (Board == null)
-            {
-                return;
-            }
-
-            var bwTypes = new[]
-            {
-                BWType.Black,
-                BWType.White
-            };
-
-            // 先に駒を削除します。
-            foreach (var capturedPieceList in this.capturedPieceObjectList)
-            {
-                if (capturedPieceList != null)
-                {
-                    capturedPieceList.ToArray()
-                        .ForEach(_ => _.Terminate());
-                    capturedPieceList.Clear();
-                }
-            }
-            this.capturedPieceContainer.Children.Clear();
-
-            // 先手・後手用の駒台にある駒を用意します。
-            bwTypes.ForEachWithIndex((bwType, index) =>
-            {
-                var capturedPieceList = EnumEx.GetValues<PieceType>()
-                    .Select(_ => CreateCapturedPieceObject(bwType, _));
-
-                this.capturedPieceObjectList[index] =
-                    capturedPieceList.ToList();
-            });
-        }
-
-        /// <summary>
-        /// 今の局面と画面の表示を合わせます。
-        /// </summary>
-        private void SyncBoardPiece()
-        {
-            if (Board == null)
-            {
-                return;
-            }
-
-            ClearPieceObjects();
-
-            // 各マスに対応する描画用の駒を設定します。
-            for (var rank = 1; rank <= Board.BoardSize; ++rank)
-            {
-                for (var file = 1; file <= Board.BoardSize; ++file)
-                {
-                    var position = new Square(file, rank);
-                    var model = Board[position];
-
-                    if ((object)model != null)
-                    {
-                        AddPieceObject(new PieceObject(this, model, position), true);
-                    }
-                }
-            }
         }
         #endregion
 
@@ -1617,7 +998,7 @@ namespace Ragnarok.Presentation.Shogi.View
             Initialize();
 
             BanBrush = DefaultBanBrush.Clone();
-            PieceBoxBrush = DefaultPieceBoxBrush.Clone();
+            CapturedPieceBoxBrush = DefaultPieceBoxBrush.Clone();
             PieceImage = DefaultPieceImage.Clone();
 
             Board = new Board();
@@ -1646,14 +1027,16 @@ namespace Ragnarok.Presentation.Shogi.View
                 var banTitleGeometry = (Model3D)dic["banTitleGeometry"];
                 var komadai0Geometry = (Model3D)dic["komadai0Geometry"];
                 var komadai1Geometry = (Model3D)dic["komadai1Geometry"];
+                var komaboxGeometry = (Model3D)dic["komaboxGeometry"];
                 var autoPlayGeometry = (Model3D)dic["autoPlayGeometry"];
 
                 // モデルの設定
                 var group = new Model3DGroup();
                 group.Children.Add(banGeometry); // 盤
                 group.Children.Add(banTitleGeometry); // 盤
-                group.Children.Add(komadai0Geometry); // 右下の駒台
-                group.Children.Add(komadai1Geometry); // 左上の駒台
+                group.Children.Add(komadai0Geometry); // →↓の駒台
+                group.Children.Add(komadai1Geometry); // ←↑の駒台
+                group.Children.Add(komaboxGeometry);  // ←↓の駒箱
                 group.Children.Add(this.banEffectGroup); // 盤のエフェクト
                 group.Children.Add(this.capturedPieceContainer); // 取った駒
                 group.Children.Add(this.pieceContainer); // 駒
@@ -1661,10 +1044,9 @@ namespace Ragnarok.Presentation.Shogi.View
                 group.Children.Add(autoPlayGeometry);
                 Visual3DModel = group;
 
-                SetElementBounds(
-                    banGeometry.Bounds,
-                    komadai0Geometry.Bounds,
-                    komadai1Geometry.Bounds);
+                InitializeBounds(
+                    banGeometry.Bounds, komaboxGeometry.Bounds,
+                    komadai0Geometry.Bounds, komadai1Geometry.Bounds);
 
                 // エフェクトなどを初期化します。
                 this.banEffectObjectRoot.Duration = TimeSpan.MaxValue;
@@ -1706,29 +1088,6 @@ namespace Ragnarok.Presentation.Shogi.View
                 XamlReader.Load(info.Stream, context);
 
             return resource;
-        }
-
-        /// <summary>
-        /// 盤などのサイズを設定します。
-        /// </summary>
-        private void SetElementBounds(Rect3D banBounds, Rect3D komadai0Bounds,
-                                      Rect3D komadai1Bounds)
-        {
-            // 各マスに対する上下左右の余白の比です。
-            var BanBorderRate = 0.4;
-
-            // 駒の表示サイズなどを計算します。
-            CellSize = new Size(
-                banBounds.SizeX / (Board.BoardSize + BanBorderRate * 2),
-                banBounds.SizeY / (Board.BoardSize + BanBorderRate * 2));
-            BanBounds = new Rect(
-                banBounds.X + CellSize.Width * BanBorderRate,
-                banBounds.Y + CellSize.Height * BanBorderRate,
-                CellSize.Width * Board.BoardSize,
-                CellSize.Height * Board.BoardSize);
-
-            capturedPieceBoxBounds[0] = WPFUtil.MakeRectXY(komadai0Bounds);
-            capturedPieceBoxBounds[1] = WPFUtil.MakeRectXY(komadai1Bounds);
         }
 
         /// <summary>

@@ -18,25 +18,10 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
     using View;
 
     /// <summary>
-    /// 各駒を表示します。
+    /// 各盤上の駒や持ち駒などを表示します。
     /// </summary>
     public sealed class PieceObject : EntityObject
     {
-        public static readonly DependencyProperty IsAlwaysVisibleProperty =
-            DependencyProperty.Register(
-                "IsAlwaysVisible", typeof(bool), typeof(PieceObject),
-                new UIPropertyMetadata(true, OnElementChanged));
-
-        public static readonly DependencyProperty PositionProperty =
-            DependencyProperty.Register(
-                "Position", typeof(Square), typeof(PieceObject),
-                new UIPropertyMetadata(default(Square), OnElementChanged));
-
-        public static readonly DependencyProperty CountProperty =
-            DependencyProperty.Register(
-                "Count", typeof(int), typeof(PieceObject),
-                new UIPropertyMetadata(0, OnElementChanged));
-
         private readonly ShogiUIElement3D shogi;
         private DecoratedText numberText;
 
@@ -48,6 +33,14 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
             get;
             private set;
         }
+
+        /// <summary>
+        /// 常に駒を表示するかどうかを扱う依存プロパティです。
+        /// </summary>
+        public static readonly DependencyProperty IsAlwaysVisibleProperty =
+            DependencyProperty.Register(
+                "IsAlwaysVisible", typeof(bool), typeof(PieceObject),
+                new UIPropertyMetadata(true, OnElementChanged));
 
         /// <summary>
         /// 常に駒を表示するかどうかを取得または設定します。
@@ -62,13 +55,29 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
         }
 
         /// <summary>
-        /// 駒のある位置を取得または設定します。
+        /// 駒のあるマス目を扱う依存プロパティです。
         /// </summary>
-        public Square Position
+        public static readonly DependencyProperty SquareProperty =
+            DependencyProperty.Register(
+                "Square", typeof(Square), typeof(PieceObject),
+                new UIPropertyMetadata(default(Square), OnElementChanged));
+
+        /// <summary>
+        /// 駒のあるマス目を取得または設定します。
+        /// </summary>
+        public Square Square
         {
-            get { return (Square)GetValue(PositionProperty); }
-            set { SetValue(PositionProperty, value); }
+            get { return (Square)GetValue(SquareProperty); }
+            set { SetValue(SquareProperty, value); }
         }
+
+        /// <summary>
+        /// 駒台の駒の数を示す依存プロパティです。
+        /// </summary>
+        public static readonly DependencyProperty CountProperty =
+            DependencyProperty.Register(
+                "Count", typeof(int), typeof(PieceObject),
+                new UIPropertyMetadata(0, OnElementChanged));
 
         /// <summary>
         /// 駒台の駒の数を取得または設定します。
@@ -90,16 +99,33 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
         }
 
         /// <summary>
+        /// イメージのＹ方向インデックスを取得します。
+        /// </summary>
+        private static int ImageIndexY(ShogiUIElement3D shogi, BoardPiece piece)
+        {
+            if (piece.BWType == BWType.None)
+            {
+                // 駒箱の駒は常に０
+                return 0;
+            }
+            else
+            {
+                // 駒台の駒は視点と同じなら０
+                return (piece.BWType == shogi.ViewSide ? 0 : 2);
+            }
+        }
+
+        /// <summary>
         /// 駒描画用のイメージブラシを作成します。
         /// </summary>
-        public static ImageBrush CreateBrush(ShogiUIElement3D shogi, BoardPiece piece)
+        private static ImageBrush CreateBrush(ShogiUIElement3D shogi, BoardPiece piece)
         {
             if (piece == null || piece.PieceType == PieceType.None)
             {
                 return null;
             }
 
-            var y = (piece.BWType == shogi.ViewSide ? 0 : 2) + (!piece.IsPromoted ? 0 : 1);
+            var y = ImageIndexY(shogi, piece) + (!piece.IsPromoted ? 0 : 1);
             var x = (int)piece.PieceType - 1;
 
             // 画像にはすべての駒の絵が入っています。
@@ -149,7 +175,7 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
             }
 
             // 駒台の駒の場合
-            if (Position == null)
+            if (Square == null)
             {
                 // 駒数の表示用オブジェクトを追加します。
                 var numberModel = new GeometryModel3D()
@@ -175,7 +201,7 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
                 1.0);
 
             // 駒台の駒の場合
-            if (Position == null)
+            if (Square == null)
             {
                 this.numberText = new DecoratedText()
                 {
@@ -233,9 +259,12 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
             return Piece.ToString();
         }
 
+        /// <summary>
+        /// とりあえず継承しておきます。
+        /// </summary>
         protected override Freezable CreateInstanceCore()
         {
-            return new PieceObject(this.shogi, Piece, Position);
+            return new PieceObject(this.shogi, Piece, Square);
         }
 
         /// <summary>
@@ -247,7 +276,7 @@ namespace Ragnarok.Presentation.Shogi.ViewModel
 
             IsFastInitialize = true;
             Piece = piece;
-            Position = square;
+            Square = square;
         }
 
         /// <summary>

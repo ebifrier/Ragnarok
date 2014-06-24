@@ -1,3 +1,12 @@
+2014-06-24  - Ver 2.7.9
+
+	* Ragnarok.Presentation.Shogi/View/ShogiUIElement3D.cs: 駒の移動などに
+	関するコードを別ファイルに移動しました。駒箱の表示に対応しました。
+	* Ragnarok.Presentation.Shogi/View/ShogiUIElement3D.move.cs: 局面編集モ
+	ードを追加しました。
+	* Ragnarok.Presentation.Shogi/ViewModel/PieceObject.cs: 駒箱の駒の表示
+	に対応しました。(局面反転に関係なく常に同じ方向を向きます)
+
 2014-06-24  - Ver 2.7.8
 
 	* Ragnarok.Shogi/Board.canmove.cs, Ragnarok.Shogi/Board.mate.cs: 

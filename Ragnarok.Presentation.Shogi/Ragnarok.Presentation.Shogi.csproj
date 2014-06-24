@@ -81,6 +81,7 @@
     <Compile Include="View\ShogiUIElement3D.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="View\ShogiUIElement3D.move.cs" />
     <Compile Include="Xaml\BoardText.cs" />
     <Compile Include="Xaml\CellMeshConverter.cs" />
     <Compile Include="Xaml\MakeMeshExtension.cs" />
