@@ -72,6 +72,7 @@
     <Compile Include="BoardExtension.cs" />
     <Compile Include="BoardMove.cs" />
     <Compile Include="BoardPiece.cs" />
+    <Compile Include="BoardType.cs" />
     <Compile Include="Bonanza\Bonanza.cs" />
     <Compile Include="Bonanza\BonanzaEventArgs.cs" />
     <Compile Include="Bonanza\BonanzaException.cs" />
