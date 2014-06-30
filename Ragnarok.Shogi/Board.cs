@@ -101,9 +101,13 @@ namespace Ragnarok.Shogi
         };
 
         /// <summary>
-        /// 将棋盤のサイズです。
+        /// 将棋盤の一方向のサイズです。
         /// </summary>
         public const int BoardSize = 9;
+        /// <summary>
+        /// 将棋盤のマスの数です。
+        /// </summary>
+        public const int SquareCount = 9 * 9;
 
         /// <summary>
         /// すべてのマスを巡回するためのオブジェクトを取得します。

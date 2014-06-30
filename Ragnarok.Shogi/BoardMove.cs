@@ -312,10 +312,10 @@ namespace Ragnarok.Shogi
                 return 0;
             }
 
-            // 1*10+1 ～ 9*10+9
+            // 0*10+0 ～ 8*9+8
             return (byte)(
-                square.File * (Board.BoardSize + 1) +
-                square.Rank);
+                (square.File - 1) * Board.BoardSize +
+                (square.Rank - 1));
         }
 
         /// <summary>
@@ -328,8 +328,8 @@ namespace Ragnarok.Shogi
                 return null;
             }
 
-            var file = (int)bits / (Board.BoardSize + 1);
-            var rank = (int)bits % (Board.BoardSize + 1);
+            var file = ((int)bits / Board.BoardSize) + 1;
+            var rank = ((int)bits % Board.BoardSize) + 1;
             return new Square(file, rank);
         }
 
@@ -349,7 +349,7 @@ namespace Ragnarok.Shogi
             bits |= ((uint)SerializeSquare(DstSquare) << 3);
             // 7bit
             bits |= (ActionType == ActionType.Drop ?
-                ((uint)DropPieceType << 10) :
+                ((uint)(DropPieceType + Board.SquareCount) << 10) :
                 ((uint)SerializeSquare(SrcSquare) << 10) );
 
             // 5bit
@@ -382,10 +382,11 @@ namespace Ragnarok.Shogi
             // 7bit
             DstSquare = DeserializeSquare((bits >> 3) & 0x7f);
             // 7bit
-            if (ActionType == ActionType.Drop)
-                DropPieceType = (PieceType)((bits >> 10) & 0x0f);
+            tmp = ((bits >> 10) & 0x0f);
+            if (tmp > Board.SquareCount)
+                DropPieceType = (PieceType)(tmp - Board.SquareCount);
             else
-                SrcSquare = DeserializeSquare((bits >> 10) & 0x7f);
+                SrcSquare = DeserializeSquare(tmp);
 
             // 5bit
             tmp = ((bits >> 17) & 0x1f);

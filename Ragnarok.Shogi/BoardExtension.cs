@@ -422,9 +422,7 @@ namespace Ragnarok.Shogi
             var move = new Move()
             {
                 BWType = referenceMove.BWType,
-                Piece = new Piece(
-                    fromPiece.PieceType,
-                    fromPiece.IsPromoted),
+                Piece = fromPiece,
                 File = nextPos.File,
                 Rank = nextPos.Rank,
                 ActionType = ( // '打', '不成'は消える可能性があります。
@@ -618,8 +616,8 @@ namespace Ragnarok.Shogi
 
             var fromPiece = (
                 move.ActionType == ActionType.Drop ?
-                new BoardPiece(move.DropPieceType, false, move.BWType) :
-                board[move.SrcSquare]);
+                new Piece(move.DropPieceType) :
+                move.MovePiece);
             if (fromPiece == null)
             {
                 return null;
@@ -627,11 +625,11 @@ namespace Ragnarok.Shogi
 
             // 駒の種類と最終位置から、あり得る指し手をすべて検索します。
             var boardMoveList = board.ListupMoves(
-                fromPiece.Piece, fromPiece.BWType, move.DstSquare)
+                fromPiece, move.BWType, move.DstSquare)
                 .ToList();
 
             return FilterMove(
-                board, boardMoveList, move, fromPiece.Piece, useSrcSquare);
+                board, boardMoveList, move, fromPiece, useSrcSquare);
         }
 
         /// <summary>

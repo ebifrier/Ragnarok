@@ -74,9 +74,14 @@ namespace Ragnarok.Shogi
 
             foreach (var elem in table)
             {
-                yield return new Square(
+                var sq = new Square(
                     square.File + elem[0],
                     square.Rank + elem[1] * sign);
+
+                if (sq.Validate())
+                {
+                    yield return sq;
+                }
             }
         }
 

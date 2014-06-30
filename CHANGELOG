@@ -1,3 +1,8 @@
+2014-06-30  - Ver 2.7.11
+
+	* Ragnarok.Shogi/BoardMove.cs: シリアライズ・デシリアライズにかかわるバ
+	グを修正しました。
+
 2014-06-26  - Ver 2.7.10
 
 	* Ragnarok.Shogi/BoardType.cs: 駒落ちなどの局面を簡単に作れるようにしま
