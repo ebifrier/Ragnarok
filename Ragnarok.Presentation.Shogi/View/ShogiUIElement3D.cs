@@ -1009,6 +1009,11 @@ namespace Ragnarok.Presentation.Shogi.View
         /// </summary>
         private void Initialize()
         {
+            if (WPFUtil.IsInDesignMode)
+            {
+                return;
+            }
+
             try
             {
                 this.capturedPieceContainer = new Model3DGroup();

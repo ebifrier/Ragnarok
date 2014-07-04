@@ -51,6 +51,14 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
+        /// 文字列化します。
+        /// </summary>
+        public override string ToString()
+        {
+            return string.Format("{0}{1}", File, Rank);
+        }
+
+        /// <summary>
         /// 正しい位置にあるか確かめます。
         /// </summary>
         public bool Validate()

@@ -316,10 +316,14 @@ namespace Ragnarok.Shogi
 
             // 移動後の位置を取得します。
             // 同○○なら前回の位置を使います。
-            var dstSquare = (
-                move.SameAsOld ?
-                board.PrevMovedSquare :
-                new Square(move.File, move.Rank));
+            var dstSquare = move.DstSquare;
+            if (move.SameAsOld)
+            {
+                move = move.Clone();
+                move.DstSquare = board.PrevMovedSquare;
+
+                dstSquare = board.PrevMovedSquare;
+            }
 
             var boardMoveList = board.ListupMoves(
                 move.Piece, bwType, dstSquare)

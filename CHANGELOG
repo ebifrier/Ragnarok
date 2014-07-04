@@ -1,3 +1,13 @@
+2014-07-05  - Ver 2.7.12
+
+	* Ragnarok.Presentation.Shogi/View/ShogiUIElement3D.cs: リソースファイ
+	ルのロードに失敗しVIsual Studioを巻き込んで落ちるバグを修正しました。
+	* Ragnarok.Shogi/Board.mate.cs: 指し手の列挙中、戻り値であるオブジェク
+	トのプロパティを変更していたバグを修正しました。
+	* Ragnarok.Shogi/BoardMove.cs: ToStringメソッドで、指し手に「成」を入れ
+	るようにしました。
+	* Ragnarok.Shogi/Square.cs: ToStringメソッドを追加しました。
+
 2014-06-30  - Ver 2.7.11
 
 	* Ragnarok.Shogi/BoardMove.cs: シリアライズ・デシリアライズにかかわるバ

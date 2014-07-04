@@ -142,11 +142,12 @@ namespace Ragnarok.Shogi
             else
             {
                 return string.Format(
-                    "{0}{1}{2}{3}({4}{5})",
+                    "{0}{1}{2}{3}{4}({5}{6})",
                     Stringizer.ToString(BWType),
                     StringConverter.ConvertInt(NumberType.Big, DstSquare.File),
                     StringConverter.ConvertInt(NumberType.Kanji, DstSquare.Rank),
                     MovePiece,
+                    Stringizer.ToString(ActionType),
                     SrcSquare.File,
                     SrcSquare.Rank);
             }

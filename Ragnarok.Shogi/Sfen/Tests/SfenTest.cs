@@ -67,7 +67,7 @@ namespace Ragnarok.Shogi.Sfen.Tests
                 new char[] { ' ' },
                 StringSplitOptions.RemoveEmptyEntries);
 
-            return board.SfenToBoardMoveList(sfenList);
+            return board.SfenToBoardMoveList(sfenList).ToList();
         }
 
         [Test()]
@@ -93,7 +93,8 @@ namespace Ragnarok.Shogi.Sfen.Tests
                 .ToList();
 
             // 指し手を読み込みます。
-            var moveList = board1.SfenToBoardMoveList(sfenMoveList);
+            var moveList = board1.SfenToBoardMoveList(sfenMoveList)
+                .ToList();
             Assert.AreEqual(sfenMoveList.Count(), moveList.Count());
 
             moveList.ForEach(_ => Assert.True(board1.DoMove(_)));

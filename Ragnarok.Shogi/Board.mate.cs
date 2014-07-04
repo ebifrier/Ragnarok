@@ -36,7 +36,8 @@ namespace Ragnarok.Shogi
                 move.IsPromote = true;
                 if (CanMove(move, MoveFlags.CheckOnly))
                 {
-                    yield return move;
+                    // yield returnなのでCloneしないとまずい。
+                    yield return move.Clone();
                 }
             }
 
@@ -75,17 +76,13 @@ namespace Ragnarok.Shogi
             }
 
             // 移動による指し手をすべて列挙します。
-            for (var file = 1; file <= BoardSize; ++file)
+            foreach (var srcSquare in Board.AllSquares())
             {
-                for (var rank = 1; rank <= BoardSize; ++rank)
-                {
-                    var srcSquare = new Square(file, rank);
-                    var moves = GetAvailableMove(bwType, srcSquare, dstSquare);
+                var moves = GetAvailableMove(bwType, srcSquare, dstSquare);
 
-                    foreach (var move in moves)
-                    {
-                        yield return move;
-                    }
+                foreach (var move in moves)
+                {
+                    yield return move;
                 }
             }
         }
@@ -96,15 +93,10 @@ namespace Ragnarok.Shogi
         public IEnumerable<BoardMove> ListupMoves(Piece piece, BWType bwType,
                                                   Square dstSquare)
         {
-            var moves = ListupMoves(bwType, dstSquare)
+            return ListupMoves(bwType, dstSquare)
                 .Where(_ =>
                     (_.MovePiece == piece) ||
                     (_.DropPieceType == piece.PieceType && !piece.IsPromoted));
-
-            foreach (var move in moves)
-            {
-                yield return move;
-            }
         }
         #endregion
 
