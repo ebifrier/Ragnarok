@@ -1,3 +1,7 @@
+2014-07-05  - Ver 2.7.13
+
+	* Ragnarok/Util.cs: 一部のメソッドを拡張メソッドに修正しました。
+
 2014-07-05  - Ver 2.7.12
 
 	* Ragnarok.Presentation.Shogi/View/ShogiUIElement3D.cs: リソースファイ

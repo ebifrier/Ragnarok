@@ -53,7 +53,7 @@ namespace Ragnarok
         /// <summary>
         /// PropertyChangedイベントを呼び出します。
         /// </summary>
-        public static void CallPropertyChanged(PropertyChangedEventHandler handler,
+        public static void CallPropertyChanged(this PropertyChangedEventHandler handler,
                                                object sender,
                                                PropertyChangedEventArgs e)
         {
@@ -87,7 +87,7 @@ namespace Ragnarok
         /// <summary>
         /// PropertyChangedイベントを呼び出します。
         /// </summary>
-        public static void CallCollectionChanged(NotifyCollectionChangedEventHandler handler,
+        public static void CallCollectionChanged(this NotifyCollectionChangedEventHandler handler,
                                                  object sender,
                                                  NotifyCollectionChangedEventArgs e)
         {
@@ -121,7 +121,7 @@ namespace Ragnarok
         /// <summary>
         /// イベントを呼び出します。
         /// </summary>
-        public static void CallEvent(Action handler)
+        public static void CallEvent(this Action handler)
         {
             if (handler == null)
             {
