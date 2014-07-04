@@ -46,6 +46,8 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
     <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+    <WarningLevel>4</WarningLevel>
+    <Optimize>false</Optimize>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
@@ -56,6 +58,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
     <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
@@ -65,8 +68,8 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xaml" />
-    <Reference Include="System.XML" />
     <Reference Include="WindowsBase" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -86,6 +89,10 @@
     <Compile Include="Scenario.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Ragnarok\Ragnarok.csproj">
+      <Project>{A348968A-DD91-47B4-9420-C7D370A2BE92}</Project>
+      <Name>Ragnarok</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Ragnarok.Extra\Ragnarok.Extra.csproj">
       <Project>{8EBDC79A-607B-4B56-A298-1471CD6753DB}</Project>
       <Name>Ragnarok.Extra</Name>
@@ -93,10 +100,6 @@
     <ProjectReference Include="..\Ragnarok.Presentation\Ragnarok.Presentation.csproj">
       <Project>{2E5515A8-7B34-44A2-9C50-F423C5F87798}</Project>
       <Name>Ragnarok.Presentation</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Ragnarok\Ragnarok.csproj">
-      <Project>{A348968A-DD91-47B4-9420-C7D370A2BE92}</Project>
-      <Name>Ragnarok</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
