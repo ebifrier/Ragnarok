@@ -1,3 +1,9 @@
+2014-07-07  - Ver 2.7.16
+
+	* Ragnarok.Presentation/Command/RelayCommand.cs: 
+	CanExecuteRelayEventArgsのParameterをobject型にし、クラスのテンプレート
+	引数を削除しました。
+
 2014-07-05  - Ver 2.7.15
 
 	* Ragnarok.Forms: WinForms用のライブラリを追加しました。

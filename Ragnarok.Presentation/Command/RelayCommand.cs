@@ -21,6 +21,15 @@ namespace Ragnarok.Presentation.Command
         }
 
         /// <summary>
+        /// コマンドパラメーターを取得します。
+        /// </summary>
+        public object Parameter
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
         /// コマンドが実行可能かどうかを取得または設定します。
         /// </summary>
         public bool CanExecute
@@ -37,48 +46,14 @@ namespace Ragnarok.Presentation.Command
             Command = command;
             CanExecute = true;
         }
-    }
-
-    /// <summary>
-    /// <seeref name="RelayCommand"/>の実行可否を調べるためのイベント引数です。
-    /// </summary>
-    public class CanExecuteRelayEventArgs<T> : EventArgs
-    {
-        /// <summary>
-        /// コマンドを取得します。
-        /// </summary>
-        public ICommand Command
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
-        /// コマンドパラメーターを取得します。
-        /// </summary>
-        public T Parameter
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
-        /// コマンドが実行可能かどうかを取得または設定します。
-        /// </summary>
-        public bool CanExecute
-        {
-            get;
-            set;
-        }
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public CanExecuteRelayEventArgs(ICommand command, T paramter)
+        public CanExecuteRelayEventArgs(ICommand command, object parameter)
+            : this(command)
         {
-            Command = command;
-            Parameter = paramter;
-            CanExecute = true;
+            Parameter = parameter;
         }
     }
 
@@ -169,7 +144,7 @@ namespace Ragnarok.Presentation.Command
     public class RelayCommand<T> : ICommand
     {
         private readonly Action<T> execute;
-        private readonly EventHandler<CanExecuteRelayEventArgs<T>> canExecute;
+        private readonly EventHandler<CanExecuteRelayEventArgs> canExecute;
 
         /// <summary>
         /// コマンドの実行可能状態の変更を調べるイベントを追加または削除します。
@@ -205,7 +180,7 @@ namespace Ragnarok.Presentation.Command
                 return true;
             }
 
-            var e = new CanExecuteRelayEventArgs<T>(this, (T)parameter);
+            var e = new CanExecuteRelayEventArgs(this, parameter);
             this.canExecute(this, e);
             return e.CanExecute;
         }
@@ -214,7 +189,7 @@ namespace Ragnarok.Presentation.Command
         /// コンストラクタ
         /// </summary>
         public RelayCommand(Action<T> execute,
-                            EventHandler<CanExecuteRelayEventArgs<T>> canExecute)
+                            EventHandler<CanExecuteRelayEventArgs> canExecute)
         {
             if (execute == null)
             {
