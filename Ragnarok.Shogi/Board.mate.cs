@@ -105,23 +105,15 @@ namespace Ragnarok.Shogi
         /// </summary>
         public Square GetGyoku(BWType bwType)
         {
-            for (var file = 1; file <= Board.BoardSize; ++file)
-            {
-                for (var rank = 1; rank <= Board.BoardSize; ++rank)
-                {
-                    var sq = new Square(file, rank);
-                    var piece = this[sq];
+            var list =
+                from sq in Board.AllSquares()
+                let piece = this[sq]
+                where piece != null
+                where piece.PieceType == PieceType.Gyoku
+                where piece.BWType == bwType
+                select sq;
 
-                    if (piece != null &&
-                        piece.PieceType == PieceType.Gyoku &&
-                        piece.BWType == bwType)
-                    {
-                        return sq;
-                    }
-                }
-            }
-
-            return null;
+            return list.FirstOrDefault();
         }
 
         /// <summary>
