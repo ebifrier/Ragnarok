@@ -117,28 +117,24 @@ namespace Ragnarok.Shogi.File
         /// <summary>
         /// 指し手行をパースします。
         /// </summary>
-        private Move ParseMoveLine(string line, out int moveNumber,
-                                   out bool hasVariation)
+        private MoveNode ParseMoveNode(Board board, string line,
+                                       out bool hasVariation)
         {
             var m = MoveLineRegex.Match(line);
             if (!m.Success)
             {
-                moveNumber = -1;
                 hasVariation = false;
                 return null;
             }
 
-            moveNumber = int.Parse(m.Groups[1].Value);
+            var moveCount = int.Parse(m.Groups[1].Value);
             hasVariation = m.Groups[4].Success;
 
             // 差し手'３六歩(37)'のような形式でパースします。
             var moveText = m.Groups[2].Value;
             if (moveText == "中断")
             {
-                return new Move()
-                {
-                    IsResigned = true,
-                };
+                return null;
             }
 
             var move = ShogiParser.ParseMove(moveText, false);
@@ -149,15 +145,28 @@ namespace Ragnarok.Shogi.File
                         "{0}手目: 差し手が正しくありません。",
                         m.Groups[1].Value));
             }
-            
-            return move;
+
+            var bmove = board.ConvertMove(move, true);
+            if (bmove == null || !bmove.Validate())
+            {
+                if (move.IsResigned) return null;
+                throw new InvalidOperationException(
+                    string.Format(
+                        "{0}手目: 差し手が正しくありません。",
+                        m.Groups[1].Value));
+            }
+
+            return new MoveNode
+            {
+                MoveCount = moveCount,
+                Move = bmove,
+            };
         }
 
         /// <summary>
         /// ひとかたまりになっている一連の変化をパースします。
         /// </summary>
-        private List<Move> ParseVariationList(out int variationBeginNumber,
-                                              out HashSet<int> variationNumSet)
+        private MoveNode ParseNode(Board board, out List<Tuple<Board, int>> variationList)
         {
             while (IsCommentLine())
             {
@@ -170,16 +179,12 @@ namespace Ragnarok.Shogi.File
             var m = BeginVariationLineRegex.Match(this.currentLine);
             if (m.Success)
             {
-                variationBeginNumber = int.Parse(m.Groups[1].Value);
                 ReadNextLine();
             }
-            else
-            {
-                variationBeginNumber = -1;
-            }
 
-            var result = new List<Move>();
-            variationNumSet = new HashSet<int>();
+            var head = new MoveNode();
+            var last = head;
+            variationList = new List<Tuple<Board, int>>();
 
             while (this.currentLine != null)
             {
@@ -190,39 +195,32 @@ namespace Ragnarok.Shogi.File
                 }
 
                 // 指し手行を１行だけパースします。
-                var moveNumber = -1;
                 var hasVariation = false;
-                var move = ParseMoveLine(this.currentLine, out moveNumber,
+                var node = ParseMoveNode(board, this.currentLine,
                                          out hasVariation);
-                if (move == null)
+                if (node == null)
                 {
                     break;
-                }
-
-                // 投了はスキップします。
-                if (move.IsResigned)
-                {
-                    ReadNextLine();
-                    continue;
-                }
-
-                // 変化の開始行がない場合は、指し手の番号をそれとします。
-                if (variationBeginNumber < 0)
-                {
-                    variationBeginNumber = moveNumber;
                 }
 
                 // 変化がある場合は、その手数を記録します。
                 if (hasVariation)
                 {
-                    variationNumSet.Add(moveNumber);
+                    variationList.Add(Tuple.Create(board.Clone(), node.MoveCount));
                 }
 
-                result.Add(move);
+                // 局面を進めます。
+                if (!board.DoMove(node.Move))
+                {
+                }
+
+                last.NextNodes.Add(node);
+                last = node;                
+
                 ReadNextLine();
             }
 
-            return result;
+            return head.NextNode;
         }
 
         /// <summary>
@@ -230,48 +228,41 @@ namespace Ragnarok.Shogi.File
         /// </summary>
         private void MergeVariation(MoveNode node, MoveNode source)
         {
-            while (node.MoveCount != source.MoveCount)
+            while (node.MoveCount + 1 != source.MoveCount)
             {
-                if (node.NextChild == null)
+                if (node.NextNode == null)
                 {
                     return;
                 }
 
-                node = node.NextChild;
+                node = node.NextNode;
             }
 
             // 変化を追加します。
-            while (node.NextVariation != null)
-            {
-                node = node.NextVariation;
-            }
-
-            node.NextVariation = source;
+            node.NextNodes.Add(source);
         }
 
         /// <summary>
-        /// 変化をパースします。
+        /// 変化や指し手をパースします。
         /// </summary>
-        private MoveNode ParseVariationNode()
+        private MoveNode ParseNode(Board board)
         {
-            var numSet = new HashSet<int>();
-            var moveNumber = -1;
+            List<Tuple<Board, int>> variationList;
 
             // 後続する変化の手数も取得します。
             // これがないとどれだけ変化をパースすればいいのか分かりません。
-            var moveList = ParseVariationList(out moveNumber, out numSet);
-            if (!moveList.Any())
+            var root = ParseNode(board.Clone(), out variationList);
+            if (root == null)
             {
                 return null;
             }
 
-            var root = KifuObject.Convert2Node(moveList, moveNumber);
-
             // 以下、変化リストをパースします。
-            while (numSet.Any())
+            variationList.Reverse();
+            foreach (var variation in variationList)
             {
-                var node = ParseVariationNode();
-                if (!numSet.Remove(node.MoveCount))
+                var node = ParseNode(variation.Item1);
+                if (node.MoveCount != variation.Item2)
                 {
                     throw new InvalidDataException(
                         string.Format(
@@ -300,7 +291,7 @@ namespace Ragnarok.Shogi.File
 
             ReadNextLine();
             var header = ParseHeader(reader);
-            var root = ParseVariationNode();
+            var root = ParseNode(new Board());
 
             return new KifuObject(header, root);
         }

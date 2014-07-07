@@ -27,39 +27,16 @@ namespace Ragnarok.Shogi.File
         }
 
         /// <summary>
-        /// 出力用の指し手に変換します。
+        /// 指し手行、１行分を作成します。
         /// </summary>
-        private Move ModifyMove(Move move)
+        private string MakeLine(MoveNode node, bool hasVariation)
         {
-            if (move.SrcSquare == null)
-            {
-                // kif形式では、駒を打つ時は必ず'打'と書きます。
-                move = move.Clone();
-                move.ActionType = ActionType.Drop;
-            }
-            else if (move.ActionType == ActionType.Unpromote)
-            {
-                // kif形式では、不成りは何も書きません。
-                move = move.Clone();
-                move.ActionType = ActionType.None;
-            }
-
-            return move;
-        }
-
-        /// <summary>
-        /// 指し手を出力します。
-        /// </summary>
-        private string MakeMoveLine(Move move, int number, bool hasVariation)
-        {
-            var modifiedMove = ModifyMove(move);
-
-            // 半角文字相当の文字数で空白を計算します。
-            var moveText = Stringizer.ToString(modifiedMove, MoveTextStyle.KifFile);
+            // 半角文字相当の文字数で空白の数を計算します。
+            var moveText = node.Move.ToString();
             var hanLen = moveText.HankakuLength();
 
             return string.Format("{0,4} {1}{2} ( 0:00/00:00:00){3}",
-                number,
+                node.MoveCount,
                 moveText,
                 new string(' ', Math.Max(0, 14 - hanLen)),
                 (hasVariation ? "+" : ""));
@@ -68,7 +45,8 @@ namespace Ragnarok.Shogi.File
         /// <summary>
         /// 変化の分岐を含めて出力します。
         /// </summary>
-        private void WriteMoveNode(TextWriter writer, MoveNode node)
+        private void WriteMoveNode(TextWriter writer, MoveNode node,
+                                   bool hasVariation)
         {
             if (node == null || node.Move == null)
             {
@@ -76,26 +54,22 @@ namespace Ragnarok.Shogi.File
             }
 
             // とりあえず指し手を書きます。
-            var moveStr = MakeMoveLine(
-                node.Move,
-                node.MoveCount,
-                (node.NextVariation != null));
-            writer.WriteLine(moveStr);
+            writer.WriteLine(MakeLine(node, hasVariation));
 
             // 次の指し手があればそれも出力します。
-            if (node.NextChild != null)
+            for (var i = 0; i < node.NextNodes.Count(); ++i)
             {
-                WriteMoveNode(writer, node.NextChild);
-            }
+                var child = node.NextNodes[i];
+                var hasVariationNext = (i < node.NextNodes.Count() - 1);
 
-            var child = node.NextVariation;
-            if (child != null)
-            {
-                writer.WriteLine();
-                writer.WriteLine();
-                writer.WriteLine("変化：{0}手", child.MoveCount);
+                if (i > 0)
+                {
+                    writer.WriteLine();
+                    writer.WriteLine();
+                    writer.WriteLine("変化：{0}手", child.MoveCount);
+                }
 
-                WriteMoveNode(writer, child);
+                WriteMoveNode(writer, child, hasVariationNext);
             }
         }
 
@@ -105,7 +79,7 @@ namespace Ragnarok.Shogi.File
         public void Save(TextWriter writer, KifuObject kifu)
         {
             WriteHeader(writer, kifu);
-            WriteMoveNode(writer, kifu.RootNode);
+            WriteMoveNode(writer, kifu.RootNode, false);
         }
     }
 }

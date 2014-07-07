@@ -87,7 +87,6 @@ namespace Ragnarok.Shogi
             }
 
             // 最後に棋譜の指し手のチェックと正規化を行います。
-            result.Normalize();
             return result;
         }
     }

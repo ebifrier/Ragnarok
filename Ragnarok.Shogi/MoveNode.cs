@@ -6,7 +6,7 @@ using System.Text;
 namespace Ragnarok.Shogi
 {
     /// <summary>
-    /// 変化を木構造で表すためのクラスです。
+    /// 変化を木構造で表すためのクラス
     /// </summary>
     public sealed class MoveNode
     {
@@ -22,7 +22,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 指し手を取得または設定します。
         /// </summary>
-        public Move Move
+        public BoardMove Move
         {
             get;
             set;
@@ -31,63 +31,37 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 次の指し手を取得または設定します。
         /// </summary>
-        public MoveNode NextChild
+        /// <remarks>
+        /// index=0が本譜、それ以外は違う変化の手となります。
+        /// </remarks>
+        public List<MoveNode> NextNodes
         {
             get;
             set;
         }
 
         /// <summary>
-        /// 次の変化の手を取得または設定します。
+        /// 本譜における次の指し手を取得します。
         /// </summary>
-        public MoveNode NextVariation
+        public MoveNode NextNode
         {
-            get;
-            set;
+            get { return NextNodes.FirstOrDefault(); }
         }
 
         /// <summary>
-        /// 指定の局面でこの手が指されたとして、指し手などを正規化します。
+        /// 次の指し手に本譜以外の変化があるか調べます。
         /// </summary>
-        public void Normalize(Board board)
+        public bool HasVariationNext
         {
-            var bmove = board.ConvertMove(Move);
-            if (bmove == null || !bmove.Validate())
-            {
-                throw new ShogiException(string.Format(
-                    "{0}手目: {1}が指せません。",
-                    MoveCount, Move));
-            }
+            get { return (NextNodes.Count() > 1); }
+        }
 
-            // 棋譜の形式によっては指し手の記号が変わっていることがあります。
-            // これを一意にするため、再度指し手文字列を取得しています。
-            var move = board.ConvertMove(bmove, false);
-            if (move == null || !move.Validate())
-            {
-                throw new ShogiException(string.Format(
-                    "{0}手目: {1}が指せません。",
-                    MoveCount, Move));
-            }
-
-            if (NextChild != null)
-            {
-                var nextBoard = board.Clone();
-                if (!nextBoard.DoMove(bmove))
-                {
-                    throw new ShogiException(string.Format(
-                        "{0}手目: {1}が指せません。",
-                        MoveCount, Move));
-                }
-
-                NextChild.Normalize(nextBoard);
-            }
-
-            if (NextVariation != null)
-            {
-                NextVariation.Normalize(board);
-            }
-
-            Move = move;
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public MoveNode()
+        {
+            NextNodes = new List<MoveNode>();
         }
     }
 }
