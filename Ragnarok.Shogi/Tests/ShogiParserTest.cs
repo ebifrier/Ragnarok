@@ -165,6 +165,16 @@ namespace Ragnarok.Shogi.Tests
                     DstSquare = new Square(6, 9),
                     Piece = Piece.Hu,
                 });
+
+             Assert.AreEqual(
+                ShogiParser.ParseMove("△６二角行", true),
+                new Move
+                {
+                    Piece = Piece.Kaku,
+                    DstSquare = new Square(6, 2),
+                    RankMoveType = RankMoveType.Up,
+                    BWType = BWType.White,
+                });
         }
 
         [Test()]

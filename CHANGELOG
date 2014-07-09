@@ -1,3 +1,7 @@
+2014-07-09  - Ver 2.7.19
+
+	* Ragnarok.Shogi/Sfen/SfenExtension.cs: メソッドを名を少し修正しました。
+
 2014-07-09  - Ver 2.7.18
 
 	* Ragnarok.Shogi/BoardExtension.cs: 竜と馬は「直」を使わずに、右左を使

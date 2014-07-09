@@ -10,7 +10,7 @@ namespace Ragnarok.Shogi.Sfen
     /// </summary>
     public static class SfenUtil
     {
-        private static char[] SfenPieceList =
+        private static readonly char[] SfenPieceList =
         {
             '?', // None = 0
             'K', // Gyoku = 1

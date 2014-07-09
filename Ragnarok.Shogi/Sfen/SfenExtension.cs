@@ -66,7 +66,7 @@ namespace Ragnarok.Shogi.Sfen
         /// <summary>
         /// SFEN形式の指し手を、指し手に変換します。
         /// </summary>
-        public static BoardMove SfenToBoardMove(this Board board, string sfen)
+        public static BoardMove SfenToMove(this Board board, string sfen)
         {
             if (board == null)
             {
@@ -142,8 +142,8 @@ namespace Ragnarok.Shogi.Sfen
         /// <summary>
         /// 連続したSFEN形式の指し手を、連続した指し手に変換します。
         /// </summary>
-        public static IEnumerable<BoardMove> SfenToBoardMoveList(this Board board,
-                                                                 IEnumerable<string> sfenList)
+        public static IEnumerable<BoardMove> SfenToMoveList(this Board board,
+                                                            IEnumerable<string> sfenList)
         {
             if (board == null)
             {
@@ -158,7 +158,7 @@ namespace Ragnarok.Shogi.Sfen
             var tmpBoard = board.Clone();
             foreach (var sfen in sfenList)
             {
-                var move = tmpBoard.SfenToBoardMove(sfen);
+                var move = tmpBoard.SfenToMove(sfen);
                 if (move == null || !move.Validate())
                 {
                     yield break;
