@@ -1,3 +1,8 @@
+2014-07-09  - Ver 2.7.21
+
+	* Ragnarok.Shogi/Kif/BodBoard.cs: bod形式の文字列と局面を相互変換するよ
+	うなクラスを追加しました。
+
 2014-07-09  - Ver 2.7.20
 
 	* Ragnarok.Shogi/File/IKifuReader.cs: ファイル形式がそのReaderと合致し

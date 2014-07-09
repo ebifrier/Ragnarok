@@ -406,6 +406,24 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
+        /// 文字列化した局面を取得します。
+        /// </summary>
+        /// <remarks>
+        /// Visual Studioで局面を文字列で確認するためのプロパティです。
+        /// ほぼデバッグ用
+        /// </remarks>
+        public string BodString
+        {
+            get
+            {
+                using (LazyLock())
+                {
+                    return Kif.BodBoard.ToBod(this);
+                }
+            }
+        }
+
+        /// <summary>
         /// 持ち駒の数を取得します。
         /// </summary>
         public CapturedPieceBox GetCapturedPieceBox(BWType bwType)
