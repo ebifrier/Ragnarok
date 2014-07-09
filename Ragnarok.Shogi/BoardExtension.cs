@@ -152,7 +152,7 @@ namespace Ragnarok.Shogi
             if (referenceMove.RelFileType != RelFileType.None)
             {
                 boardMoveListTmp = boardMoveListTmp.Where(
-                    bm => CheckRelPosType(bm, referenceMove))
+                    bm => CheckRelPosType(bm, referenceMove, boardMoveListTmp))
                     .ToList();
                 if (boardMoveListTmp.Count() == 1)
                 {
@@ -217,31 +217,68 @@ namespace Ragnarok.Shogi
         /// 左、右、直の判定をします。
         /// </summary>
         private static bool CheckRelPosType(BoardMove bm,
-                                            Move referenceMove)
+                                            Move referenceMove,
+                                            List<BoardMove> boardMoveList)
         {
             if (bm.ActionType == ActionType.Drop)
             {
                 return false;
             }
 
-            var fileMove = bm.DstSquare.File - bm.SrcSquare.File;
-            var rankMove = bm.DstSquare.Rank - bm.SrcSquare.Rank;
-
-            switch (referenceMove.RelFileType)
+            if (bm.MovePiece == Piece.Ryu || bm.MovePiece == Piece.Uma)
             {
-                case RelFileType.Left:
-                    return (bm.BWType == BWType.Black
-                                ? (fileMove < 0)
-                                : (fileMove > 0));
-                case RelFileType.Right:
-                    return (bm.BWType == BWType.Black
-                                ? (fileMove > 0)
-                                : (fileMove < 0));
-                case RelFileType.Straight:
-                    return (bm.BWType == BWType.Black
-                                ? (rankMove < 0)
-                                : (rankMove > 0)) &&
-                           (fileMove == 0);
+                // 竜、馬の場合、「直」は使わずに「右左」のみを使用します。
+                if (boardMoveList.Count() == 1)
+                {
+                    return (referenceMove.RelFileType == RelFileType.None);
+                }
+                else
+                {
+                    // 駒は二つしかないはずなので、相方に比べて自分が
+                    // 左にあれば「左」、右にあれば「右」となっているか
+                    // 判定します。
+                    var other = (
+                        ReferenceEquals(bm, boardMoveList[0])
+                        ? boardMoveList[1]
+                        : boardMoveList[0]);
+                    var fileDif = bm.SrcSquare.File - other.SrcSquare.File;
+
+                    switch (referenceMove.RelFileType)
+                    {
+                        case RelFileType.Left:
+                            return (bm.BWType == BWType.Black
+                                        ? (fileDif > 0)
+                                        : (fileDif < 0));
+                        case RelFileType.Right:
+                            return (bm.BWType == BWType.Black
+                                        ? (fileDif < 0)
+                                        : (fileDif > 0));
+                        case RelFileType.None:
+                            return (fileDif == 0);
+                    }
+                }
+            }
+            else
+            {
+                var fileMove = bm.DstSquare.File - bm.SrcSquare.File;
+                var rankMove = bm.DstSquare.Rank - bm.SrcSquare.Rank;
+
+                switch (referenceMove.RelFileType)
+                {
+                    case RelFileType.Left:
+                        return (bm.BWType == BWType.Black
+                                    ? (fileMove < 0)
+                                    : (fileMove > 0));
+                    case RelFileType.Right:
+                        return (bm.BWType == BWType.Black
+                                    ? (fileMove > 0)
+                                    : (fileMove < 0));
+                    case RelFileType.Straight:
+                        return (bm.BWType == BWType.Black
+                                    ? (rankMove < 0)
+                                    : (rankMove > 0)) &&
+                               (fileMove == 0);
+                }
             }
 
             return false;
@@ -275,6 +312,13 @@ namespace Ragnarok.Shogi
                         bm.ActionType == ActionType.Unpromote ||
                         bm.ActionType == ActionType.Drop);
                 }
+            }
+            else if (referenceMove.ActionType == ActionType.Unpromote)
+            {
+                // 「不成」の場合は無と成らずでおｋとします。
+                return (
+                    bm.ActionType == ActionType.None ||
+                    bm.ActionType == ActionType.Unpromote);
             }
             
             return (bm.ActionType == referenceMove.ActionType);
@@ -385,9 +429,10 @@ namespace Ragnarok.Shogi
             var result = new List<BoardMove>();
             foreach (var move in moveList)
             {
-                var boardMove = ConvertMove(boardTmp, move);
+                var boardMove = ConvertMove(boardTmp, move, true);
                 if (boardMove == null)
                 {
+                    ConvertMove(boardTmp, move);
                     break;
                 }
 

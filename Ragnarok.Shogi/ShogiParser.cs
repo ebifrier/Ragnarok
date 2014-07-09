@@ -250,7 +250,7 @@ namespace Ragnarok.Shogi
             {"HI", Piece.Hisya},
             {"ROOK", Piece.Hisya},
 
-            {"角行", Piece.Kaku},
+            //{"角行", Piece.Kaku},
             {"角", Piece.Kaku},
             {"核", Piece.Kaku},
             {"格", Piece.Kaku},

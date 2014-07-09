@@ -17,17 +17,16 @@ namespace Ragnarok.Presentation.Shogi
         /// <summary>
         /// パスなどを初期化します。
         /// </summary>
-        public static void Initialize()
+        public static void Initialize(Assembly asm, string dataDir)
         {
             WPFUtil.Init();
 
             // パーティクルシステムの想定画面サイズを設定。
             FlintSharp.Utils.ScreenSize = new Size(640, 360);
 
-            var asm = Assembly.GetExecutingAssembly();
             var uri = new Uri(
                 new Uri(asm.Location),
-                "ShogiData/xxx");
+                dataDir + "/xxx");
 
             EffectInfo.BaseDir = uri;
 

@@ -1,3 +1,12 @@
+2014-07-09  - Ver 2.7.18
+
+	* Ragnarok.Shogi/BoardExtension.cs: 竜と馬は「直」を使わずに、右左を使
+	うため、それに合わせてソースを修正しました。また、「不成」の指し手に関
+	するバグを修正しました。
+	* Ragnarok.Shogi/BoardType.cs: 三枚落ちなどの駒落ち局面を追加しました。
+	* Ragnarok.Shogi/ShogiParser.cs: 「角行」で角と解釈されるバグを修正しま
+	した。（これをやると角行成などが正しく解釈されなくなります）
+
 2014-07-07  - Ver 2.7.17
 
 	* Ragnarok.Shogi/MoveNode.cs: 本譜の手と変化の手をGUIで扱いやすくするよ
