@@ -1,3 +1,16 @@
+2014-07-09  - Ver 2.7.20
+
+	* Ragnarok.Shogi/File/IKifuReader.cs: ファイル形式がそのReaderと合致し
+	ているかチェックするメソッドインターフェースを追加しました。
+	* Ragnarok.Shogi/File/KifReader.cs: kif, ki2, bod形式のファイルをまとめ
+	て読み込めるようにしました。
+	* Ragnarok.Shogi/Kif/BodParser.cs: bod形式のテキストを解釈するクラスを
+	追加しました。
+	* Ragnarok.Shogi/KifuReader.cs: ファイル読み込み時に形式が合致するかど
+	うかのチェックを入れるようにしました。
+	* Ragnarok.Shogi/KifuWriter.cs: ファイル保存時に形式を指定できるように
+	しました。
+
 2014-07-09  - Ver 2.7.19
 
 	* Ragnarok.Shogi/Sfen/SfenExtension.cs: メソッドを名を少し修正しました。

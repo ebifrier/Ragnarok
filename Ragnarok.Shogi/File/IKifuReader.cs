@@ -10,6 +10,14 @@ namespace Ragnarok.Shogi.File
     /// </summary>
     internal interface IKifuReader
     {
+        /// <summary>
+        /// このReaderで与えられたファイルを処理できるか調べます。
+        /// </summary>
+        bool CanHandle(TextReader reader);
+
+        /// <summary>
+        /// 棋譜ファイルを読み込みます。
+        /// </summary>
         KifuObject Load(TextReader reader);
     }
 }

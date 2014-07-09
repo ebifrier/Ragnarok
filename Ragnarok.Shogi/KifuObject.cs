@@ -26,6 +26,15 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
+        /// 開始局面を取得します。
+        /// </summary>
+        public Board StartBoard
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
         /// 変化を含んだ指し手の開始ノードを取得します。
         /// </summary>
         public MoveNode RootNode
@@ -37,7 +46,16 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 差し手リストを取得します。
         /// </summary>
-        public IEnumerable<Move> MoveList
+        public IEnumerable<BoardMove> MoveList
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// 棋譜にあったエラーを取得します。
+        /// </summary>
+        public Exception Error
         {
             get;
             private set;
@@ -46,9 +64,9 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 指し手ツリーをリスト形式に変換します。
         /// </summary>
-        public static IEnumerable<Move> Convert2List(MoveNode root)
+        public static IEnumerable<BoardMove> Convert2List(MoveNode root)
         {
-            for (var node = root; node != null; node = node.NextChild)
+            for (var node = root; node != null; node = node.NextNode)
             {
                 yield return node.Move;
             }
@@ -57,8 +75,8 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 指し手リストをツリー形式に変換します。
         /// </summary>
-        public static MoveNode Convert2Node(IEnumerable<Move> moveList,
-                                                 int firstMoveCount)
+        public static MoveNode Convert2Node(IEnumerable<BoardMove> moveList,
+                                            int firstMoveCount)
         {
             if (moveList == null || !moveList.Any())
             {
@@ -76,8 +94,8 @@ namespace Ragnarok.Shogi
                 {
                     MoveCount = --beginNumber,
                     Move = move,
-                    NextChild = root,
                 };
+                node.NextNodes.Add(root);
 
                 root = node;
             }
@@ -110,7 +128,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 変化リストを設定します。
         /// </summary>
-        public void SetMoveList(IEnumerable<Move> moveList)
+        public void SetMoveList(IEnumerable<BoardMove> moveList)
         {
             if (moveList == null)
             {
@@ -126,30 +144,18 @@ namespace Ragnarok.Shogi
         /// </summary>
         public Board CreateBoard()
         {
-            var board = new Board();
+            var board = StartBoard.Clone();
 
-            var boardMoveList = board.ConvertMove(MoveList);
-            if (boardMoveList.Count != MoveList.Count())
+            MoveList.ForEachWithIndex((move, n) =>
             {
-                throw new InvalidOperationException(
-                    string.Format(
-                        "{0}手目: 差し手が正しくないため、局面の作成に失敗しました。",
-                        boardMoveList.Count + 1));
-            }
-
-            var num = 1;
-            foreach (var boardMove in boardMoveList)
-            {
-                if (!board.DoMove(boardMove))
+                if (!board.DoMove(move))
                 {
                     throw new InvalidOperationException(
                         string.Format(
                             "{0}手目: 差し手が正しくありません。",
-                            num));
+                            n + 1));
                 }
-
-                num += 1;
-            }
+            });
 
             return board;
         }
@@ -157,42 +163,69 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 棋譜の確認と指し手の正規化を行います。
         /// </summary>
-        public void Normalize()
+        public void Validate()
         {
-            if (Headers == null || RootNode == null)
+            if (Headers == null)
             {
                 throw new ShogiException(
-                    "ヘッダーかノードが設定されていません。");
+                    "ヘッダーが設定されていません。");
             }
 
-            RootNode.Normalize(new Board());
-        }
+            if (RootNode == null)
+            {
+                throw new ShogiException(
+                    "指し手が設定されていません。");
+            }
 
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        public KifuObject()
-        {
+            if (StartBoard == null || !StartBoard.Validate())
+            {
+                throw new ShogiException(
+                    "開始局面が正しくありません。");
+            }
         }
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
         public KifuObject(Dictionary<string, string> header,
-                         IEnumerable<Move> moveList)
+                          Board startBoard,
+                          Exception error = null)
+        {
+            SetHeader(header);
+
+            MoveList = new List<BoardMove>();
+            RootNode = new MoveNode();
+            StartBoard = startBoard;
+            Error = error;
+        }
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public KifuObject(Dictionary<string, string> header,
+                         Board startBoard,
+                         IEnumerable<BoardMove> moveList,
+                         Exception error = null)
         {
             SetHeader(header);
             SetMoveList(moveList);
+
+            StartBoard = startBoard;
+            Error = error;
         }
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
         public KifuObject(Dictionary<string, string> header,
-                         MoveNode root)
+                          Board startBoard,
+                          MoveNode root, Exception error = null)
         {
             SetHeader(header);
             SetRootNode(root);
+
+            StartBoard = startBoard;
+            Error = error;
         }
     }
 }

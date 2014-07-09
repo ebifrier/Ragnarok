@@ -10,6 +10,9 @@ namespace Ragnarok.Shogi.File
     /// </summary>
     internal interface IKifuWriter
     {
+        /// <summary>
+        /// 棋譜ファイルの保存を行います。
+        /// </summary>
         void Save(TextWriter writer, KifuObject kifu);
     }
 }

@@ -23,8 +23,7 @@ namespace Ragnarok.Shogi
                 throw new ArgumentNullException("filepath");
             }
 
-            using (var stream = new FileStream(filepath, FileMode.Open))
-            using (var reader = new StreamReader(stream, KifuObject.DefaultEncoding))
+            using (var reader = new StreamReader(filepath, KifuObject.DefaultEncoding))
             {
                 return Load(reader);
             }
@@ -33,22 +32,6 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 棋譜を文字列から読み込みます。
         /// </summary>
-        public static KifuObject LoadFrom(string text)
-        {
-            if (string.IsNullOrEmpty(text))
-            {
-                throw new ArgumentNullException("text");
-            }
-
-            using (var reader = new StringReader(text))
-            {
-                return Load(reader);
-            }
-        }
-
-        /// <summary>
-        /// 棋譜の読み込みます。
-        /// </summary>
         public static KifuObject Load(TextReader reader)
         {
             if (reader == null)
@@ -56,38 +39,44 @@ namespace Ragnarok.Shogi
                 throw new ArgumentNullException("reader");
             }
 
+            return LoadFrom(reader.ReadToEnd());
+        }
+
+        /// <summary>
+        /// 棋譜の読み込みます。
+        /// </summary>
+        public static KifuObject LoadFrom(string text)
+        {
+            if (string.IsNullOrEmpty(text))
+            {
+                throw new ArgumentNullException("text");
+            }
+
             var kifuReaders = new IKifuReader[]
             {
                 new KifReader(),
-                new Ki2Reader(),
             };
-            KifuObject result = null;
 
             // すべての形式のファイルを読み込んでみます。
             foreach (var kifuReader in kifuReaders)
             {
-                try
+                // readerは読み込みごとに再作成します。
+                using (var reader = new StringReader(text))
                 {
-                    result = kifuReader.Load(reader);
-                    if (result != null)
+                    if (!kifuReader.CanHandle(reader))
                     {
-                        break;
+                        continue;
                     }
                 }
-                catch
+
+                using (var reader = new StringReader(text))
                 {
-                    // 違う形式のファイルだった場合
+                    return kifuReader.Load(reader);
                 }
             }
 
-            if (result == null)
-            {
-                throw new ShogiException(
-                    "棋譜の読み込みに失敗しました。");
-            }
-
-            // 最後に棋譜の指し手のチェックと正規化を行います。
-            return result;
+            throw new ShogiException(
+                "不明なフォーマットの棋譜です。");
         }
     }
 }
