@@ -1,0 +1,233 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace Ragnarok.Shogi.Csa
+{
+    /// <summary>
+    /// CSA形式の局面を各行ごとにパースするためのクラスです。
+    /// </summary>
+    public sealed class CsaBoardParser
+    {
+        private Board board;
+        private int boardRank;
+        private BWType turn;
+
+        /// <summary>
+        /// 局面を読み取り中か取得します。
+        /// </summary>
+        public bool IsBoardParsing
+        {
+            get { return (this.boardRank != 0 && this.boardRank != 10); }
+        }
+
+        /// <summary>
+        /// パースした局面が存在するかどうかを取得します。
+        /// </summary>
+        public bool HasBoard
+        {
+            get { return (this.board != null); }
+        }
+
+        /// <summary>
+        /// パースした局面を取得します。
+        /// </summary>
+        public Board Board
+        {
+            get
+            {
+                if (this.board == null)
+                {
+                    throw new ShogiException(
+                        "局面が正しく読み込まれていません。");
+                }
+
+                if (this.turn == BWType.None)
+                {
+                    throw new ShogiException(
+                        "手番が正しく読み込まれていません。");
+                }
+
+                this.board.Turn = this.turn;
+                return this.board;
+            }
+        }
+
+        /// <summary>
+        /// CSA形式の局面を１行ごと読み込んでみます。
+        /// </summary>
+        public bool TryParse(string line)
+        {
+            if (string.IsNullOrEmpty(line))
+            {
+                throw new ArgumentNullException("line");
+            }
+
+            // 手番読み取り
+            var ch0 = line[0];
+            if (line.Length == 1 && (ch0 == '+' || ch0 == '-'))
+            {
+                this.turn = (ch0 == '+' ? BWType.Black : BWType.White);
+                return true;
+            }
+
+            // 各形式の局面読み取り
+            if (ch0 == 'P' && line.Length >= 2)
+            {
+                var ch1 = line[1];
+                if (ch1 == 'I')
+                {
+                    ParseBoardPI(line);
+                    return true;
+                }
+
+                if (ch1 == '+' || ch1 == '-')
+                {
+                    ParseBoardP(line);
+                    return true;
+                }
+
+                if ('1' <= ch1 && ch1 <= '9')
+                {
+                    ParseBoardPn(line);
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// 落とす駒をパースします。
+        /// </summary>
+        /// <remarks>
+        /// 00OU など４文字形式の駒をパースします。
+        /// </remarks>
+        private BoardMove ParsePiece(string str)
+        {
+            var file = (int)(str[0] - '0');
+            var rank = (int)(str[1] - '0');
+            var pieceStr = str.Substring(2);
+            var piece = CsaUtil.StrToPiece(pieceStr);
+
+            if (piece == null)
+            {
+                throw new ShogiException(
+                    str + ": CSA形式の駒を正しく読み込めませんでした。");
+            }
+
+            return new BoardMove
+            {
+                DstSquare = new Square(file, rank),
+                MovePiece = piece,
+            };
+        }
+
+        #region 平手初期配置と駒落ち形式
+        /// <summary>
+        /// 平手局面からの駒落ち形式を扱います。
+        /// </summary>
+        /// <example>
+        /// PI82HI22KA -> PIの後に落とす駒を指定します。
+        /// </example>
+        private void ParseBoardPI(string line)
+        {
+            this.board = new Board();
+
+            line.Skip(2).TakeBy(4)
+                .Select(_ => new string(_.ToArray()))
+                .Select(_ => ParsePiece(_))
+                .ForEach(_ => this.board[_.DstSquare] = null);
+        }
+        #endregion
+
+        #region 駒別単独表現
+        /// <summary>
+        /// 駒を一つずつ指定する表現形式を扱います。
+        /// </summary>
+        /// <example>
+        /// P+99KY89KE
+        /// </example>
+        private void ParseBoardP(string line)
+        {
+            var bwType = (line[1] == '+' ? BWType.Black : BWType.White);
+
+            // 局面は駒を全くおかない状態で初期化します。
+            if (this.board == null)
+            {
+                this.board = new Board(false);
+            }
+
+            if (line.StartsWith("00AL"))
+            {
+            }
+
+            line.Skip(2).TakeBy(4)
+                .Select(_ => new string(_.ToArray()))
+                .Select(_ => ParsePiece(_))
+                .ForEach(_ => SetPiece(bwType, _));
+        }
+
+        /// <summary>
+        /// 持ち駒の数を増やします。
+        /// </summary>
+        private void SetPiece(BWType bwType, BoardMove tmp)
+        {
+            // 駒位置が"00"の場合は持ち駒となります。
+            if (tmp.DstSquare.File != 0)
+            {
+                this.board[tmp.DstSquare] = new BoardPiece(tmp.MovePiece, bwType);
+            }
+            else
+            {
+                this.board.IncCapturedPieceCount(tmp.MovePiece.PieceType, bwType);
+            }
+        }
+        #endregion
+
+        #region 一括表現
+        /// <summary>
+        /// 一括表現形式の局面を読み取ります。
+        /// </summary>
+        /// <example>
+        /// P1-KY-KE-GI-KI-OU-KI-GI-KE-KY
+        /// P2 * -HI *  *  *  *  * -KA * 
+        /// </example>
+        private void ParseBoardPn(string line)
+        {
+            var currentRank = (int)(line[1] - '0');
+            var rank = this.boardRank + 1;
+
+            if (currentRank != rank)
+            {
+                throw new ShogiException(
+                    line + ": CSA形式の局面を正しく読み込めませんでした。");
+            }
+
+            // 局面は駒を全くおかない状態で初期化します。
+            if (this.board == null)
+            {
+                this.board = new Board(false);
+            }
+
+            var pieceList = line.Skip(2).TakeBy(3)
+                .Select(_ => new string(_.ToArray()))
+                .Select(_ => CsaUtil.StrToBoardPiece(_))
+                .ToList();
+            if (pieceList.Count() != Board.BoardSize)
+            {
+                throw new ShogiException(
+                    line + ": CSA形式の局面を正しく読み込めませんでした。");
+            }
+
+            for (var file = 1; file <= Board.BoardSize; ++file)
+            {
+                Board[file, rank] = pieceList[file - 1];
+            }
+
+            this.boardRank += 1;
+        }
+        #endregion
+    }
+}

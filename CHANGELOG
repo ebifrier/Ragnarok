@@ -1,3 +1,14 @@
+2014-07-12  - Ver 2.7.24
+
+	* Ragnarok.Shogi/Csa/CsaBoard.cs: CSA形式の局面のread/writeを行うクラス
+	を追加しました。
+	* Ragnarok.Shogi/Csa/CsaBoardParser.cs: CSA形式の局面を各行ごとにパース
+	するオブジェクトを追加しました。
+	* Ragnarok.Shogi/Csa/CsaExtension.cs: CSA形式の指し手を読み込むクラスを
+	追加しました。
+	* Ragnarok.Shogi/File/CsaReader.cs: CSA形式のファイルを読み込むクラスを
+	追加しました。
+
 2014-07-12  - Ver 2.7.23
 
 	* Ragnarok.Shogi/File/HeaderItem.cs: 棋譜ファイルのヘッダアイテムを保持
