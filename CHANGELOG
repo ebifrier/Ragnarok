@@ -1,3 +1,8 @@
+2014-07-12  - Ver 2.7.22
+
+	* Ragnarok.Shogi/Csa/CsaMove.cs: 不要なファイルを削除しました。
+	* 
+
 2014-07-09  - Ver 2.7.21
 
 	* Ragnarok.Shogi/Kif/BodBoard.cs: bod形式の文字列と局面を相互変換するよ

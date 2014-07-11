@@ -81,10 +81,13 @@
     <Compile Include="BWType.cs" />
     <Compile Include="CapturedPiece.cs" />
     <Compile Include="CapturedPieceBox.cs" />
-    <Compile Include="Csa\CsaMoveExtension.cs" />
+    <Compile Include="Csa\CsaBoard.cs" />
     <Compile Include="Csa\Tests\CsaMoveTest.cs" />
     <Compile Include="Csa\CsaUtil.cs" />
     <Compile Include="Csa\CsaExtension.cs" />
+    <Compile Include="Csa\CsaBoardParser.cs" />
+    <Compile Include="File\CsaReader.cs" />
+    <Compile Include="File\HeaderItem.cs" />
     <Compile Include="Kif\BodBoard.cs" />
     <Compile Include="Kif\BodParser.cs" />
     <Compile Include="File\IKifuReader.cs" />
