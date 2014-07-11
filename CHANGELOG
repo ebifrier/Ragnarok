@@ -1,7 +1,11 @@
+2014-07-12  - Ver 2.7.23
+
+	* Ragnarok.Shogi/File/HeaderItem.cs: 棋譜ファイルのヘッダアイテムを保持
+	するクラスを別ファイルから移動しました。
+
 2014-07-12  - Ver 2.7.22
 
 	* Ragnarok.Shogi/Csa/CsaMove.cs: 不要なファイルを削除しました。
-	* 
 
 2014-07-09  - Ver 2.7.21
 

@@ -10,7 +10,7 @@ namespace Ragnarok.Shogi.File
     using Kif;
 
     /// <summary>
-    /// kifファイルの読み込みを行います。
+    /// kif, ki2, bod形式のファイルの読み込みを行います。
     /// </summary>
     internal sealed class KifReader : IKifuReader
     {

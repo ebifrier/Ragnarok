@@ -6,38 +6,7 @@ using System.Text.RegularExpressions;
 
 namespace Ragnarok.Shogi.Kif
 {
-    /// <summary>
-    /// kifファイルの各ヘッダアイテムを保持します。
-    /// </summary>
-    public sealed class HeaderItem
-    {
-        /// <summary>
-        /// キーを取得します。
-        /// </summary>
-        public string Key
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
-        /// 値を取得します。
-        /// </summary>
-        public string Value
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        public HeaderItem(string key, string value)
-        {
-            Key = key;
-            Value = value;
-        }
-    }
+    using File;
 
     /// <summary>
     /// kifやbod形式で扱う便利クラスです。
