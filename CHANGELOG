@@ -1,3 +1,8 @@
+2014-07-13  - Ver 2.7.27
+
+	* Ragnarok.Shogi/Bonanza/Bonanza.cs: デフォルトでは定跡ファイルを使用し
+	ないようにしました。
+
 2014-07-13  - Ver 2.7.26
 
 	* Ragnarok.Shogi/File/Tests/CsaTest.cs: CSA形式のファイル読み込みテスト

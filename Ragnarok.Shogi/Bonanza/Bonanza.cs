@@ -365,6 +365,7 @@ namespace Ragnarok.Shogi.Bonanza
                         "名前はアルファベット＋数字の組み合わせでお願いします。");
                 }
 
+                WriteCommand(string.Format("book off"));
                 WriteCommand(string.Format("tlp num {0}", threadNum));
                 WriteCommand(string.Format("hash {0}", hashSize));
 
