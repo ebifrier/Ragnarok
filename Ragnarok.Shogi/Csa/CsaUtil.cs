@@ -85,11 +85,11 @@ namespace Ragnarok.Shogi.Csa
         /// <summary>
         /// 駒のCSA表示文字列を取得します。
         /// </summary>
-        public static string PieceToChar(Piece piece)
+        public static string PieceToStr(Piece piece)
         {
             if (piece == null || piece.PieceType == PieceType.None)
             {
-                return "**";
+                return "* ";
             }
 
             foreach (var pair in PieceTable)
@@ -100,7 +100,22 @@ namespace Ragnarok.Shogi.Csa
                 }
             }
 
-            return "**";
+            return "* ";
+        }
+
+        /// <summary>
+        /// 駒のCSA表示文字列を取得します。
+        /// </summary>
+        public static string BoardPieceToStr(BoardPiece piece)
+        {
+            if (piece == null || piece.PieceType == PieceType.None)
+            {
+                return " * ";
+            }
+
+            return string.Format("{0}{1}",
+                (piece.BWType == BWType.Black ? '+' : '-'),
+                PieceToStr(piece.Piece));
         }
 
         /// <summary>

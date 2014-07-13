@@ -1,3 +1,13 @@
+2014-07-13  - Ver 2.7.30
+
+	* Ragnarok.Shogi/Csa/CsaBoardParser.cs: 棋譜の読み込みが完了しない、局
+	面が左右反転されるなどのバグを修正しました。また、残りのすべての駒を示
+	す'AL'識別子に対応しました。
+	* Ragnarok.Shogi/Csa/CsaExtension.cs: CSA形式の指し手に直すときの、成の
+	扱いを修正しました。
+	* Ragnarok.Shogi/File/CsaReader.cs: １行に複数の行を記述できる','への対
+	応を行いました。
+
 2014-07-13  - Ver 2.7.29
 
 	* Ragnarok.Shogi/Csa/CsaException.cs: CSA用の例外クラスを追加しました。

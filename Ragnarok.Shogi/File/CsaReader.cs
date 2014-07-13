@@ -15,7 +15,8 @@ namespace Ragnarok.Shogi.File
     internal sealed class CsaReader : IKifuReader
     {
         private TextReader reader;
-        private string currentLine;
+        private string[] currentLines;
+        private int currentLineIndex;
         private int lineNumber;
 
         /// <summary>
@@ -48,16 +49,30 @@ namespace Ragnarok.Shogi.File
         /// <summary>
         /// 次の行を読み込みます。
         /// </summary>
+        /// <remarks>
+        /// CSAファイルは','で、行を区切ることができるため、
+        /// その対策も入れています。
+        /// </remarks>
         private string ReadNextLine()
         {
-            this.currentLine = this.reader.ReadLine();
-            if (this.currentLine != null)
+            // 次の行を読み込みます。
+            while (this.currentLines == null ||
+                   this.currentLineIndex >= this.currentLines.Count())
             {
-                this.currentLine = this.currentLine.TrimStart(' ', '\t');
+                var line = this.reader.ReadLine();
+                if (line == null)
+                {
+                    // ファイル終了
+                    return null;
+                }
+
+                this.currentLines = line.Split(',');
+                this.currentLineIndex = 0;
+                this.lineNumber += 1;
             }
 
-            this.lineNumber += 1;
-            return this.currentLine;
+            var split = this.currentLines[this.currentLineIndex++];
+            return split.TrimStart(' ', '\t');
         }
 
         /// <summary>
@@ -221,7 +236,8 @@ namespace Ragnarok.Shogi.File
             try
             {
                 this.reader = reader;
-                this.currentLine = null;
+                this.currentLines = null;
+                this.currentLineIndex = 0;
                 this.lineNumber = 0;
 
                 Header = new Dictionary<string, string>();
@@ -257,7 +273,8 @@ namespace Ragnarok.Shogi.File
             }
 
             this.reader = reader;
-            this.currentLine = null;
+            this.currentLines = null;
+            this.currentLineIndex = 0;
             this.lineNumber = 0;
 
             Header = new Dictionary<string, string>();

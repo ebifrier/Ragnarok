@@ -11,7 +11,7 @@ namespace Ragnarok.Shogi.Csa
     public sealed class CsaBoardParser
     {
         private Board board;
-        private int boardRank;
+        private int parsedRank;
         private BWType turn;
 
         /// <summary>
@@ -19,8 +19,11 @@ namespace Ragnarok.Shogi.Csa
         /// </summary>
         public bool IsBoardParsing
         {
-            get { return ((this.turn == BWType.None) ||
-                          (this.boardRank != 0 && this.boardRank != 10)); }
+            get
+            {
+                return ((this.turn == BWType.None) ||
+                        (this.parsedRank != 0 && this.parsedRank != 9));
+            }
         }
 
         /// <summary>
@@ -160,14 +163,20 @@ namespace Ragnarok.Shogi.Csa
                 this.board = new Board(false);
             }
 
-            if (line.StartsWith("00AL"))
+            if (line.Substring(2).StartsWith("00AL"))
             {
+                // 残りの駒をすべて手番側の持ち駒に設定します。
+                EnumEx.GetValues<PieceType>()
+                    .ForEach(_ => Board.SetCapturedPieceCount(
+                        _, bwType, this.board.GetLeavePieceCount(_)));
             }
-
-            line.Skip(2).TakeBy(4)
-                .Select(_ => new string(_.ToArray()))
-                .Select(_ => ParsePiece(_))
-                .ForEach(_ => SetPiece(bwType, _));
+            else
+            {
+                line.Skip(2).TakeBy(4)
+                    .Select(_ => new string(_.ToArray()))
+                    .Select(_ => ParsePiece(_))
+                    .ForEach(_ => SetPiece(bwType, _));
+            }
         }
 
         /// <summary>
@@ -197,10 +206,26 @@ namespace Ragnarok.Shogi.Csa
         /// </example>
         private void ParseBoardPn(string line)
         {
-            var currentRank = (int)(line[1] - '0');
-            var rank = this.boardRank + 1;
+            if (line[1] < '1' || '9' < line[1])
+            {
+                throw new ShogiException(
+                    line + ": CSA形式の局面の段数が正しくありません。");
+            }
 
+            var currentRank = (int)(line[1] - '0');
+            var rank = this.parsedRank + 1;
             if (currentRank != rank)
+            {
+                throw new ShogiException(
+                    line + ": CSA形式の局面を正しく読み込めませんでした。");
+            }
+
+            var pieceList = line.Skip(2).TakeBy(3)
+                .Select(_ => new string(_.ToArray()))
+                .Select(_ => CsaUtil.StrToBoardPiece(_))
+                .ToList();
+            if (pieceList.Count() != Board.BoardSize ||
+                pieceList.Any(_ => _ == null))
             {
                 throw new ShogiException(
                     line + ": CSA形式の局面を正しく読み込めませんでした。");
@@ -212,24 +237,15 @@ namespace Ragnarok.Shogi.Csa
                 this.board = new Board(false);
             }
 
-            var pieceList = line.Skip(2).TakeBy(3)
-                .Select(_ => new string(_.ToArray()))
-                .Select(_ => CsaUtil.StrToBoardPiece(_))
-                .ToList();
-            if (pieceList.Count() != Board.BoardSize)
+            pieceList.ForEachWithIndex((piece, index) =>
             {
-                throw new ShogiException(
-                    line + ": CSA形式の局面を正しく読み込めませんでした。");
-            }
+                var isNone = (piece.PieceType == PieceType.None);
+                var file = Board.BoardSize - index;
 
-            for (var file = Board.BoardSize; file >= 1; --file)
-            {
-                var isNull = (pieceList[file - 1].PieceType == PieceType.None);
+                this.board[file, rank] = (isNone ? null : piece);
+            });
 
-                this.board[file, rank] = (isNull ? null : pieceList[file - 1]);
-            }
-
-            this.boardRank += 1;
+            this.parsedRank += 1;
         }
         #endregion
     }

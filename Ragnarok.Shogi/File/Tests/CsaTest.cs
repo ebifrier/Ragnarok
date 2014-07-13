@@ -27,14 +27,8 @@ namespace Ragnarok.Shogi.File.Tests
             }
 
             // 棋譜の読み込み
-            try
-            {
-                var kifu = KifuReader.LoadFrom(text);
-                Assert.NotNull(kifu);
-            }
-            catch (Exception ex)
-            {
-            }
+            var kifu = KifuReader.LoadFrom(text);
+            Assert.NotNull(kifu);
 
             // 手数を取得
             /*var count = TestUtil.GetMoveCount(text);
@@ -53,7 +47,7 @@ namespace Ragnarok.Shogi.File.Tests
         /// <summary>
         /// すべての棋譜のテストを行います。
         /// </summary>
-#if true
+#if false
         [Test()]
 #endif
         public void CsaAllTest()
@@ -71,12 +65,16 @@ namespace Ragnarok.Shogi.File.Tests
         {
             var pathList = TestUtil.LoadPathList(PathListFile);
 
-            var path = @"E:/Dropbox/NicoNico/bin/kifuexpl/database/1600-1979_変換先/16190816その他大橋本因無114.csa";
-            //foreach (var path in TestUtil.FileList("*.csa", pathList))
+            //var path = @"E:/Dropbox/NicoNico/bin/kifuexpl/database/1600-1979/csa/16190816その他大橋本因無114.csa";
+            foreach (var path in TestUtil.FileList("*.csa", pathList))
             {
                 Console.WriteLine(path);
 
-                TestCsaFile(path);
+                try
+                {
+                    TestCsaFile(path);
+                }
+                catch{}
             }
         }
     }

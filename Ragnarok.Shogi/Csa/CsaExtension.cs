@@ -54,14 +54,17 @@ namespace Ragnarok.Shogi.Csa
                 sb.Append("00");
             }
 
-            if (move.ActionType == ActionType.Drop)
+            var piece = (
+                move.ActionType == ActionType.Drop ?
+                new Piece(move.DropPieceType) :
+                move.MovePiece);
+            if (move.IsPromote)
             {
-                sb.Append(CsaUtil.PieceToChar(new Piece(move.DropPieceType)));
+                // 駒を成った場合は、なった後の駒を出力します。
+                piece = new Piece(piece.PieceType, true);
             }
-            else
-            {
-                sb.Append(CsaUtil.PieceToChar(move.MovePiece));
-            }
+
+            sb.Append(CsaUtil.PieceToStr(piece));
 
             return sb.ToString();
         }
