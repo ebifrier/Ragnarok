@@ -181,7 +181,7 @@ namespace Ragnarok.Shogi
                     return false;
                 }
 
-                if (ActionType != ActionType.Drop)
+                if (IsPromote)
                 {
                     return false;
                 }
@@ -195,12 +195,6 @@ namespace Ragnarok.Shogi
                 }
 
                 if (MovePiece == null)
-                {
-                    return false;
-                }
-
-                if (ActionType != ActionType.None &&
-                    ActionType != ActionType.Promote)
                 {
                     return false;
                 }

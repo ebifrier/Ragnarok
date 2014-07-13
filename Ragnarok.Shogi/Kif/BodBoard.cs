@@ -92,16 +92,28 @@ namespace Ragnarok.Shogi.Kif
             }
 
             var result = new List<string>();
-            result.Add("後手の持駒：" + HandToBod(board, BWType.White));
-            result.Add("  ９ ８ ７ ６ ５ ４ ３ ２ １");
-            result.Add("+---------------------------+");
-            result.AddRange(
-                Enumerable.Range(1, Board.BoardSize)
-                    .Select(_ => RankToBod(board, _)));
-            result.Add("+---------------------------+");
-            result.Add("先手の持駒：" + HandToBod(board, BWType.Black));
-            result.Add("手数＝" + board.MoveCount);
-            result.Add(board.Turn == BWType.Black ? "先手番" : "後手番");
+
+            if (Board.BoardEquals(board, new Board()))
+            {
+                result.Add("手合割：平手");
+            }
+            else
+            {
+                result.Add("後手の持駒：" + HandToBod(board, BWType.White));
+                result.Add("  ９ ８ ７ ６ ５ ４ ３ ２ １");
+                result.Add("+---------------------------+");
+                result.AddRange(
+                    Enumerable.Range(1, Board.BoardSize)
+                        .Select(_ => RankToBod(board, _)));
+                result.Add("+---------------------------+");
+                result.Add("先手の持駒：" + HandToBod(board, BWType.Black));
+                result.Add("手数＝" + board.MoveCount);
+            }
+
+            if (board.Turn == BWType.White)
+            {
+                result.Add("後手番");
+            }
 
             return string.Join("\n", result);
         }
@@ -112,15 +124,12 @@ namespace Ragnarok.Shogi.Kif
         private static string RankToBod(Board board, int rank)
         {
             var sb = new StringBuilder();
-
             sb.Append("|");
 
             // ９筋が一番左で、１筋は右になります。
             for (var file = Board.BoardSize; file >= 1; --file)
             {
-                var piece = board[file, rank];
-
-                sb.Append(KifUtil.PieceToStr(piece));
+                sb.Append(KifUtil.PieceToStr(board[file, rank]));
             }
 
             sb.Append("|");
@@ -142,9 +151,9 @@ namespace Ragnarok.Shogi.Kif
                     Count = board.GetCapturedPieceCount(pieceType, turn),
                 }
                 where obj.Count > 0
-                select string.Format("{0}{1}　",
+                select string.Format("{0}{1}{2}　",
                     KifUtil.PieceToChar(obj.Piece),
-                    (obj.Count >= 10 ? "十" : "") +
+                    (obj.Count >= 10 ? "十" : ""),
                     (obj.Count == 10 || obj.Count == 1 ? "" :
                         StringConverter.ConvertInt(NumberType.Kanji, obj.Count % 10)));
 

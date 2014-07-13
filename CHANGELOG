@@ -1,3 +1,7 @@
+2014-07-13  - Ver 2.7.29
+
+	* Ragnarok.Shogi/Csa/CsaException.cs: CSA用の例外クラスを追加しました。
+
 2014-07-13  - Ver 2.7.28
 
 	* Ragnarok.Shogi/Board.cs: 局面にない駒の数を数えるメソッドを

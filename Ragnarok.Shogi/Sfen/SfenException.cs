@@ -8,7 +8,7 @@ namespace Ragnarok.Shogi.Sfen
     /// <summary>
     /// SFEN用の例外クラスです。
     /// </summary>
-    public class SfenException : Exception
+    public class SfenException : ShogiException
     {
         /// <summary>
         /// コンストラクタ
