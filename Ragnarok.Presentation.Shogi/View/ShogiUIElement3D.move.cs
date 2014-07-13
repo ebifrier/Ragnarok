@@ -900,28 +900,13 @@ namespace Ragnarok.Presentation.Shogi.View
         }
 
         /// <summary>
-        /// 簡略化
-        /// </summary>
-        private delegate int F(PieceType PieceType);
-
-        /// <summary>
         /// 現在の局面から、駒箱に入るべき駒数を調べます。
         /// </summary>
         private void InitKomaboxPieceCount()
         {
-            var funcs = new F[]
-            {
-                new F(_ => Board.GetCapturedPieceCount(_, BWType.Black)),
-                new F(_ => Board.GetCapturedPieceCount(_, BWType.White)),
-                new F(_ => Board.AllSquares().Sum(sq =>
-                    Board[sq] != null && Board[sq].PieceType == _ ? 1 : 0)),
-            };
-
             foreach (var pieceType in EnumEx.GetValues<PieceType>())
             {
-                var total = Board.TotalPieceCountList[(int)pieceType];
-                var curr = funcs.Sum(f => f(pieceType));
-                var count = Math.Max(total - curr, 0);
+                var count = Board.GetLeavePieceCount(pieceType);
 
                 this.komaboxCount[(int)pieceType] = count;
             }
@@ -932,7 +917,7 @@ namespace Ragnarok.Presentation.Shogi.View
         /// </summary>
         private int GetCapturedPieceCount(PieceType pieceType, BWType bwType)
         {
-            if (bwType == 0)
+            if (bwType == BWType.None)
             {
                 // 駒箱の駒の数
                 return this.komaboxCount[(int)pieceType];

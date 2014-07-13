@@ -492,6 +492,31 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
+        /// 簡略化
+        /// </summary>
+        private delegate int F(PieceType PieceType);
+
+        /// <summary>
+        /// 現在の局面で、駒箱にも局面にもない駒の数を調べます。
+        /// </summary>
+        public int GetLeavePieceCount(PieceType pieceType)
+        {
+            var funcs = new F[]
+            {
+                new F(_ => GetCapturedPieceCount(_, BWType.Black)),
+                new F(_ => GetCapturedPieceCount(_, BWType.White)),
+                new F(_ => AllSquares()
+                    .Select(sq => this[sq])
+                    .Where(p => p != null)
+                    .Sum(p => p.PieceType == _ ? 1 : 0)),
+            };
+
+            var total = TotalPieceCountList[(int)pieceType];
+            var curr = funcs.Sum(f => f(pieceType));
+            return Math.Max(total - curr, 0);
+        }
+
+        /// <summary>
         /// １手戻します。
         /// </summary>
         public BoardMove Undo()
