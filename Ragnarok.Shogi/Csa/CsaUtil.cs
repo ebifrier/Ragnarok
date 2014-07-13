@@ -40,8 +40,12 @@ namespace Ragnarok.Shogi.Csa
         /// <summary>
         /// ヘッダー部分の正規表現
         /// </summary>
+        /// <example>
+        /// $NAME:VALUE
+        /// $NAME
+        /// </example>
         private static readonly Regex HeaderRegex = new Regex(
-            @"^\s*[$](.+)\s*[:]\s*(.*)\s*$",
+            @"^\s*[$](.+)(\s*[:]\s*(.*))?\s*$",
             RegexOptions.Compiled);
 
         /// <summary>
@@ -54,9 +58,7 @@ namespace Ragnarok.Shogi.Csa
                 throw new ArgumentNullException("line");
             }
 
-            return (
-                line.Length == 0 ||
-                line[0] == '\'');
+            return (line.Length == 0 || line[0] == '\'');
         }
 
         /// <summary>
@@ -76,7 +78,7 @@ namespace Ragnarok.Shogi.Csa
             }
 
             var key = m.Groups[1].Value;
-            var value = m.Groups[2].Value;
+            var value = (m.Groups[3].Success ? m.Groups[3].Value : null);
             return new HeaderItem(key, value);
         }
 
@@ -134,7 +136,12 @@ namespace Ragnarok.Shogi.Csa
                 str[0] == '+' ? BWType.Black :
                 str[0] == '-' ? BWType.White :
                 BWType.None);
-            var piece = StrToPiece(str.Substring(1));
+
+            var piece = StrToPiece(str.Length > 2 ? str.Substring(1) : str);
+            if (piece == null)
+            {
+                return null;
+            }
 
             return new BoardPiece(piece, bwType);
         }

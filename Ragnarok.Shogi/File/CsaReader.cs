@@ -18,13 +18,28 @@ namespace Ragnarok.Shogi.File
         private string currentLine;
         private int lineNumber;
 
+        /// <summary>
+        /// CSAのヘッダを取得します。
+        /// </summary>
         public Dictionary<string, string> Header
         {
             get;
             private set;
         }
 
+        /// <summary>
+        /// 読み込んだ局面を取得します。
+        /// </summary>
         public Board Board
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// 指し手リストを取得します。
+        /// </summary>
+        public List<BoardMove> MoveList
         {
             get;
             private set;
@@ -38,7 +53,7 @@ namespace Ragnarok.Shogi.File
             this.currentLine = this.reader.ReadLine();
             if (this.currentLine != null)
             {
-                this.currentLine = this.currentLine.Trim();
+                this.currentLine = this.currentLine.TrimStart(' ', '\t');
             }
 
             this.lineNumber += 1;
@@ -53,8 +68,6 @@ namespace Ragnarok.Shogi.File
         /// </remarks>
         private void Parse()
         {
-            Header = new Dictionary<string, string>();
-
             var parser = new CsaBoardParser();
             while (ParseLine(ReadNextLine(), parser))
             {
@@ -65,8 +78,6 @@ namespace Ragnarok.Shogi.File
                 throw new FileFormatException(
                     "局面の読み取りを完了できませんでした。");
             }
-
-            //Board = MakeStartBoard(parser);
         }
 
         /// <summary>
@@ -130,6 +141,9 @@ namespace Ragnarok.Shogi.File
         {
             if (line.Length < 2)
             {
+                throw new FileFormatException(
+                    this.lineNumber,
+                    line + ": CSAファイル形式が正しくありません。");
             }
 
             if (line[1] == '+')
@@ -142,6 +156,9 @@ namespace Ragnarok.Shogi.File
             }
             else
             {
+                throw new FileFormatException(
+                    this.lineNumber,
+                    line + ": 対局者名が先手でも後手でもありません。");
             }
         }
 
@@ -153,12 +170,12 @@ namespace Ragnarok.Shogi.File
             var item = CsaUtil.ParseHeaderItem(line);
             if (item == null)
             {
+                throw new FileFormatException(
+                    this.lineNumber,
+                    line + ": CSA形式のヘッダ行が正しくありません。");
             }
 
-            if (Header != null)
-            {
-                Header[item.Key] = item.Value;
-            }
+            Header[item.Key] = item.Value;
         }
 
         private void ParseTime(string line)
@@ -170,6 +187,13 @@ namespace Ragnarok.Shogi.File
         /// </summary>
         private BoardMove ParseMove(string line)
         {
+            if (Board == null)
+            {
+                throw new FileFormatException(
+                    this.lineNumber,
+                    "指し手の前に局面が設定されていません。");
+            }
+
             var move = Board.CsaToMove(line);
             if (move == null)
             {
@@ -178,13 +202,14 @@ namespace Ragnarok.Shogi.File
                     line + ": CSA形式の指し手が正しく読み込めません。");
             }
 
-            /*if (!Board.DoMove(move))
+            if (!Board.DoMove(move))
             {
                 throw new FileFormatException(
                     this.lineNumber,
                     line + ": CSA形式の指し手を正しく指せません。");
-            }*/
+            }
 
+            MoveList.Add(move);
             return move;
         }
 
@@ -198,7 +223,10 @@ namespace Ragnarok.Shogi.File
                 this.reader = reader;
                 this.currentLine = null;
                 this.lineNumber = 0;
-                Header = null;
+
+                Header = new Dictionary<string, string>();
+                Board = null;
+                MoveList = new List<BoardMove>();
 
                 // ファイルを３行読めれば、CSA形式であると判断します。
                 var parser = new CsaBoardParser();
@@ -232,10 +260,14 @@ namespace Ragnarok.Shogi.File
             this.currentLine = null;
             this.lineNumber = 0;
 
+            Header = new Dictionary<string, string>();
+            Board = null;
+            MoveList = new List<BoardMove>();
+
             // ヘッダーや局面の読み取り
             Parse();
 
-            return null; // new KifuObject(header, board);
+            return new KifuObject(Header, Board, MoveList);
         }
     }
 }

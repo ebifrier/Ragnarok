@@ -125,20 +125,41 @@ namespace Ragnarok.Shogi.Csa
                 return null;
             }
 
-            return (srcSquare == null ?
-                new BoardMove
+            if (srcSquare == null)
+            {
+                // 駒打ちの場合
+                return new BoardMove
                 {
                     DstSquare = dstSquare,
                     DropPieceType = piece.PieceType,
                     BWType = side,
-                } :
-                new BoardMove
+                };
+            }
+            else
+            {
+                // 駒の移動の場合、成りの判定を行います。
+                var srcPiece = board[srcSquare];
+                if (srcPiece == null || !srcPiece.Validate())
+                {
+                    return null;
+                }
+
+                // CSA形式の場合、駒が成ると駒の種類が変わります。
+                var isPromote = (!srcPiece.IsPromoted && piece.IsPromoted);
+                if (isPromote)
+                {
+                    piece = new Piece(piece.PieceType, false);
+                }
+
+                return new BoardMove
                 {
                     DstSquare = dstSquare,
                     SrcSquare = srcSquare,
                     MovePiece = piece,
+                    IsPromote = isPromote,
                     BWType = side,
-                });
+                };
+            }
         }
 
         /// <summary>

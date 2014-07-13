@@ -55,6 +55,7 @@ namespace Ragnarok.Shogi
             var kifuReaders = new IKifuReader[]
             {
                 new KifReader(),
+                new CsaReader(),
             };
 
             // すべての形式のファイルを読み込んでみます。

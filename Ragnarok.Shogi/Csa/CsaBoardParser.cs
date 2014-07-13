@@ -19,7 +19,8 @@ namespace Ragnarok.Shogi.Csa
         /// </summary>
         public bool IsBoardParsing
         {
-            get { return (this.boardRank != 0 && this.boardRank != 10); }
+            get { return ((this.turn == BWType.None) ||
+                          (this.boardRank != 0 && this.boardRank != 10)); }
         }
 
         /// <summary>
@@ -221,9 +222,11 @@ namespace Ragnarok.Shogi.Csa
                     line + ": CSA形式の局面を正しく読み込めませんでした。");
             }
 
-            for (var file = 1; file <= Board.BoardSize; ++file)
+            for (var file = Board.BoardSize; file >= 1; --file)
             {
-                Board[file, rank] = pieceList[file - 1];
+                var isNull = (pieceList[file - 1].PieceType == PieceType.None);
+
+                this.board[file, rank] = (isNull ? null : pieceList[file - 1]);
             }
 
             this.boardRank += 1;

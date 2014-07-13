@@ -1,3 +1,15 @@
+2014-07-13  - Ver 2.7.25
+
+	* Ragnarok.Shogi/Csa/CsaBoardParser.cs: 駒がないマスをnullで初期化する
+	ようにしました。
+	* Ragnarok.Shogi/Csa/CsaExtension.cs: 局面を見て指し手の成り・不成りを
+	判別するようにしました。
+	* Ragnarok.Shogi/Csa/CsaUtil.cs: CSA形式のヘッダーは':'の後の値がないこ
+	とがあるため、それに対応しました。
+	* Ragnarok.Shogi/File/CsaReader.cs: 例外などの追加を行いました。
+	* Ragnarok.Shogi/KifuReader.cs: CSA形式のファイル読み込みに対応しました
+	。
+
 2014-07-12  - Ver 2.7.24
 
 	* Ragnarok.Shogi/Csa/CsaBoard.cs: CSA形式の局面のread/writeを行うクラス
