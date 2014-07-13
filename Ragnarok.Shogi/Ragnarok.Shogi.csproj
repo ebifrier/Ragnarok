@@ -88,6 +88,8 @@
     <Compile Include="Csa\CsaBoardParser.cs" />
     <Compile Include="File\CsaReader.cs" />
     <Compile Include="File\HeaderItem.cs" />
+    <Compile Include="File\Tests\TestUtil.cs" />
+    <Compile Include="File\Tests\CsaTest.cs" />
     <Compile Include="Kif\BodBoard.cs" />
     <Compile Include="Kif\BodParser.cs" />
     <Compile Include="File\IKifuReader.cs" />

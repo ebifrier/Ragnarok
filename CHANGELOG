@@ -1,3 +1,10 @@
+2014-07-13  - Ver 2.7.26
+
+	* Ragnarok.Shogi/File/Tests/CsaTest.cs: CSA形式のファイル読み込みテスト
+	を追加しました。
+	* Ragnarok.Shogi/File/Tests/TestUtil.cs: テスト用の便利クラスを追加しま
+	した。
+
 2014-07-13  - Ver 2.7.25
 
 	* Ragnarok.Shogi/Csa/CsaBoardParser.cs: 駒がないマスをnullで初期化する

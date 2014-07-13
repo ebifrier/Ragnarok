@@ -14,65 +14,6 @@ namespace Ragnarok.Shogi.File.Tests
     internal sealed class Ki2Test
     {
         /// <summary>
-        /// 正しく読み込めた棋譜のリストを読み込みます。
-        /// </summary>
-        /// <remarks>
-        /// 大量の棋譜をテストするため、一度正しく読み込めた棋譜は
-        /// テストしないようにします。
-        /// </remarks>
-        private static HashSet<string> LoadPathList()
-        {
-            if (!System.IO.File.Exists("kifu.list"))
-            {
-                return new HashSet<string>();
-            }
-
-            return new HashSet<string>(Util.ReadLines("kifu.list", Encoding.UTF8));
-        }
-
-        /// <summary>
-        /// 正しく読み込めた棋譜のリストを保存します。
-        /// </summary>
-        private static void SavePathList(HashSet<string> pathList)
-        {
-            using (var writer = new StreamWriter("kifu.list", false, Encoding.UTF8))
-            {
-                pathList.ForEach(_ => writer.WriteLine(_));
-            }
-        }
-
-        /// <summary>
-        /// ki2ファイルの一覧を取得します。
-        /// </summary>
-        private static IEnumerable<string> Ki2FileList(HashSet<string> pathList = null)
-        {
-            var dir = @"E:/Dropbox/NicoNico/bin/kifuexpl/棋譜データベース";
-
-            pathList = pathList ?? new HashSet<string>();
-            return Directory
-                .EnumerateFiles(dir, "*.ki2", SearchOption.AllDirectories)
-                .Where(_ => !pathList.Contains(_));
-        }
-
-        /// <summary>
-        /// 棋譜から手数を取得します。
-        /// </summary>
-        private static int? GetMoveCount(string text)
-        {
-            var m = Regex.Match(text, @"まで.*(\d+)手", RegexOptions.Multiline);
-            if (!m.Success)
-            {
-                m = Regex.Match(text, @"(\d+)手まで", RegexOptions.Multiline);
-                if (!m.Success)
-                {
-                    return null;
-                }
-            }
-
-            return int.Parse(m.Groups[1].Value);
-        }
-
-        /// <summary>
         /// 棋譜の読み込みテストを行います。
         /// </summary>
         private static void TestKif(string path)
@@ -88,7 +29,7 @@ namespace Ragnarok.Shogi.File.Tests
             Assert.NotNull(kifu);
 
             // 手数を取得
-            var count = GetMoveCount(text);
+            var count = TestUtil.GetMoveCount(text);
             Assert.NotNull(count);
 
             if (kifu.Error != null)
@@ -107,35 +48,11 @@ namespace Ragnarok.Shogi.File.Tests
 #if false
         [Test()]
 #endif
-        public void AllKifTest()
+        public void Ki2AllTest()
         {
-            var pathList = new HashSet<string>();
-
-            Parallel.ForEach(
-                Ki2FileList(),
-                path =>
-                {
-                    var line = path + "... ";
-
-                    try
-                    {
-                        TestKif(path);
-                        lock (pathList)
-                        {
-                            pathList.Add(path);
-                        }
-
-                        line = line + "ok";
-                    }
-                    catch (Exception)
-                    {
-                        line = line + "failed";
-                    }
-
-                    Console.WriteLine(line);
-                });
-
-            SavePathList(pathList);
+            TestUtil.KifTest(
+                "file.list", "*.ki2",
+                _ => TestKif(_));
         }
 
         /// <summary>
@@ -144,10 +61,10 @@ namespace Ragnarok.Shogi.File.Tests
         [Test()]
         public void KifTest()
         {
-            var pathList = LoadPathList();
+            var pathList = TestUtil.LoadPathList("file.list");
 
             //var path = @"E:/Dropbox/NicoNico/bin/kifuexpl/棋譜データベース/2005\20051017順位戦森下三浦無108.KI2";
-            foreach (var path in Ki2FileList(pathList))
+            foreach (var path in TestUtil.FileList("*.ki2", pathList))
             {
                 Console.WriteLine(path);
 
