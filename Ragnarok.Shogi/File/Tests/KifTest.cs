@@ -10,22 +10,22 @@ using NUnit.Framework;
 
 namespace Ragnarok.Shogi.File.Tests
 {
+    using Kif;
+
     [TestFixture()]
-    internal sealed class Ki2Test
+    internal sealed class KifTest
     {
         /// <summary>
         /// 棋譜から手数を取得します。
         /// </summary>
         public static int? GetMoveCount(string text)
         {
-            var m = Regex.Match(text, @"まで.*(\d+)手", RegexOptions.Multiline);
+            var m = Regex.Match(text,
+                string.Format(@"(\d+)\s+({0})", KifUtil.SpecialMoveText),
+                RegexOptions.Multiline);
             if (!m.Success)
             {
-                m = Regex.Match(text, @"(\d+)手まで", RegexOptions.Multiline);
-                if (!m.Success)
-                {
-                    return null;
-                }
+                return null;
             }
 
             return int.Parse(m.Groups[1].Value);
@@ -50,14 +50,7 @@ namespace Ragnarok.Shogi.File.Tests
             var count = GetMoveCount(text);
             Assert.NotNull(count);
 
-            if (kifu.Error != null)
-            {
-                Assert.LessOrEqual(count.Value - 1, kifu.MoveList.Count());
-            }
-            else
-            {
-                Assert.LessOrEqual(count.Value, kifu.MoveList.Count());
-            }
+            Assert.LessOrEqual(count.Value - 1, kifu.MoveList.Count());
         }
 
         /// <summary>
@@ -66,10 +59,10 @@ namespace Ragnarok.Shogi.File.Tests
 #if false
         [Test()]
 #endif
-        public void Ki2AllTest()
+        public void AllKifTest()
         {
             TestUtil.KifTest(
-                "file.list", "*.ki2",
+                "file.list", "*.kif",
                 _ => TestKif(_));
         }
 
@@ -77,12 +70,12 @@ namespace Ragnarok.Shogi.File.Tests
         /// 正しく読み込めていない棋譜のテストを行います。
         /// </summary>
         [Test()]
-        public void KifTest()
+        public void Test()
         {
             var pathList = TestUtil.LoadPathList("file.list");
 
-            //var path = @"E:/Dropbox/NicoNico/bin/kifuexpl/棋譜データベース/2005\20051017順位戦森下三浦無108.KI2";
-            foreach (var path in TestUtil.FileList("*.ki2", pathList))
+            //var path = @"E:\Dropbox\NicoNico\bin\kifuexpl\database\1600-1979\kif\18720111その他大矢小野有105.KIF";
+            foreach (var path in TestUtil.FileList("*.kif", pathList))
             {
                 Console.WriteLine(path);
 
@@ -90,7 +83,7 @@ namespace Ragnarok.Shogi.File.Tests
             }
         }
 
-        /// <summary>
+        /*/// <summary>
         /// 不正な指し手が含まれる棋譜のテスト
         /// </summary>
         [Test()]
@@ -134,7 +127,7 @@ namespace Ragnarok.Shogi.File.Tests
 
             Assert.AreEqual(65, kifu.MoveList.Count());
             Assert.IsInstanceOf(typeof(FileFormatException), kifu.Error);
-        }
+        }*/
     }
 }
 #endif

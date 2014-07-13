@@ -53,24 +53,6 @@ namespace Ragnarok.Shogi.File.Tests
         }
 
         /// <summary>
-        /// 棋譜から手数を取得します。
-        /// </summary>
-        public static int? GetMoveCount(string text)
-        {
-            var m = Regex.Match(text, @"まで.*(\d+)手", RegexOptions.Multiline);
-            if (!m.Success)
-            {
-                m = Regex.Match(text, @"(\d+)手まで", RegexOptions.Multiline);
-                if (!m.Success)
-                {
-                    return null;
-                }
-            }
-
-            return int.Parse(m.Groups[1].Value);
-        }
-
-        /// <summary>
         /// すべての棋譜のテストを行います。
         /// </summary>
         public static void KifTest(string filepath, string extension,
@@ -79,8 +61,8 @@ namespace Ragnarok.Shogi.File.Tests
             var pathList = new HashSet<string>();
             var fileList = FileList(extension).ToList();
 
-            //Parallel.ForEach(fileList,
-            fileList.ForEach(
+            Parallel.ForEach(fileList,
+            //fileList.ForEach(
                 path =>
                 {
                     var line = path + "... ";
