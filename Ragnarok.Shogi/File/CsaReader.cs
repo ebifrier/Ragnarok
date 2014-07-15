@@ -248,7 +248,14 @@ namespace Ragnarok.Shogi.File
                 var parser = new CsaBoardParser();
                 for (var i = 0; i < 3; ++i)
                 {
-                    if (!ParseLine(ReadNextLine(), parser))
+                    var line = ReadNextLine();
+
+                    if (line == null)
+                    {
+                        return true;
+                    }
+
+                    if (!ParseLine(line, parser))
                     {
                         return false;
                     }

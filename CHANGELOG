@@ -1,3 +1,8 @@
+2014-07-15  - Ver 2.7.33
+
+	* Ragnarok.Shogi/File/CsaReader.cs: ３行未満のCSAファイルでも正しく読み 
+	込めるようにしました。
+
 2014-07-15  - Ver 2.7.32
 
 	* Ragnarok.Shogi\Csa: 不要なファイルを削除しました。

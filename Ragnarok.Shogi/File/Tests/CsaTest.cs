@@ -34,13 +34,13 @@ namespace Ragnarok.Shogi.File.Tests
             /*var count = TestUtil.GetMoveCount(text);
             Assert.NotNull(count);
 
-            if (kifu.Error != null)
+            if (kifu1.Error != null)
             {
-                Assert.LessOrEqual(count.Value - 1, kifu.MoveList.Count());
+                Assert.LessOrEqual(count.Value - 1, kifu1.MoveList.Count());
             }
             else
             {
-                Assert.LessOrEqual(count.Value, kifu.MoveList.Count());
+                Assert.LessOrEqual(count.Value, kifu1.MoveList.Count());
             }*/
         }
 
