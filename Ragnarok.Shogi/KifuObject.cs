@@ -66,7 +66,12 @@ namespace Ragnarok.Shogi
         /// </summary>
         public static IEnumerable<BoardMove> Convert2List(MoveNode root)
         {
-            for (var node = root; node != null; node = node.NextNode)
+            if (root == null)
+            {
+                throw new ArgumentNullException("root");
+            }
+
+            for (var node = root.NextNode; node != null; node = node.NextNode)
             {
                 yield return node.Move;
             }
@@ -78,26 +83,24 @@ namespace Ragnarok.Shogi
         public static MoveNode Convert2Node(IEnumerable<BoardMove> moveList,
                                             int firstMoveCount)
         {
-            if (moveList == null || !moveList.Any())
+            if (moveList == null)
             {
-                return null;
+                throw new ArgumentNullException("moveList");
             }
 
-            var clonedMoveList = moveList.ToList();
-            var beginNumber = firstMoveCount + clonedMoveList.Count();
-            MoveNode root = null;
+            var root = new MoveNode();
+            var last = root;
 
-            clonedMoveList.Reverse();
-            foreach (var move in clonedMoveList)
+            foreach (var move in moveList)
             {
                 var node = new MoveNode()
                 {
-                    MoveCount = --beginNumber,
+                    MoveCount = firstMoveCount++,
                     Move = move,
                 };
-                node.NextNodes.Add(root);
 
-                root = node;
+                last.NextNodes.Add(node);
+                last = node;
             }
 
             return root;

@@ -12,7 +12,7 @@ namespace Ragnarok.Shogi
     {
         Kif,
         Ki2,
-        Bod,
+        Csa,
     }
 
     /// <summary>
@@ -20,16 +20,17 @@ namespace Ragnarok.Shogi
     /// </summary>
     public static class KifuWriter
     {
+        /// <summary>
+        /// 各フォーマットに対応するライターを取得します。
+        /// </summary>
         private static IKifuWriter GetWriter(KifuFormat format)
         {
             switch (format)
             {
                 case KifuFormat.Kif:
-                    return new KifWriter();
+                    return new KifWriter(true);
                 case KifuFormat.Ki2:
-                    return new KifWriter();
-                case KifuFormat.Bod:
-                    return new KifWriter();
+                    return new KifWriter(false);
             }
 
             return null;
@@ -83,6 +84,12 @@ namespace Ragnarok.Shogi
             }
 
             var kifuWriter = GetWriter(format);
+            if (kifuWriter == null)
+            {
+                throw new ShogiException(
+                    format + ": このフォーマットの棋譜出力は未対応です。");
+            }
+
             kifuWriter.Save(writer, kifuObj);
         }
     }
