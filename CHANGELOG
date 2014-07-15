@@ -1,3 +1,8 @@
+2014-07-15  - Ver 2.7.32
+
+	* Ragnarok.Shogi\Csa: 不要なファイルを削除しました。
+	* Makefile: Makefile削除しました。ビルドにはnantを使います。
+
 2014-07-13  - Ver 2.7.31
 
 	* Ragnarok.Shogi/File/Tests/KifTest.cs: kifファイルのテスト用クラスを追
