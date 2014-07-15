@@ -186,7 +186,7 @@ namespace Ragnarok.Shogi.File
         {
             // 先にリスト化しないと、ConvertMoveでエラーがあった時に
             // ファイルを最後までパースしなくなります。
-            var moveList = ParseMoveLines().ToList();
+            var moveList = ParseMoveLinesKi2().ToList();
             var bmoveList = board.ConvertMove(moveList);
 
             Exception error = null;
@@ -213,7 +213,7 @@ namespace Ragnarok.Shogi.File
         /// <summary>
         /// 複数の指し手行をパースします。
         /// </summary>
-        private IEnumerable<Move> ParseMoveLines()
+        private IEnumerable<Move> ParseMoveLinesKi2()
         {
             while (this.currentLine != null)
             {
@@ -230,7 +230,7 @@ namespace Ragnarok.Shogi.File
                     continue;
                 }
 
-                var list = ParseMoveLine(this.currentLine);
+                var list = ParseMoveLineKi2(this.currentLine);
                 foreach (var move in list)
                 {
                     yield return move;
@@ -243,7 +243,7 @@ namespace Ragnarok.Shogi.File
         /// <summary>
         /// 指し手行をパースします。
         /// </summary>
-        private IEnumerable<Move> ParseMoveLine(string line)
+        private IEnumerable<Move> ParseMoveLineKi2(string line)
         {
             while (!Util.IsWhiteSpaceOnly(line))
             {
@@ -270,87 +270,138 @@ namespace Ragnarok.Shogi.File
         /// </summary>
         private KifuObject LoadKif(Dictionary<string, string> header, Board board)
         {
-            var root = ParseNode(board);
+            var head = ParseNodeKif(board, false);
+            Exception error;
 
-            return new KifuObject(header, board, root);
+            // KifMoveNodeからMoveNodeへ変換します。
+            var root = head.ConvertToMoveNode(board, out error);
+            root.Regulalize();
+
+            return new KifuObject(header, board, root, error);
         }
 
         /// <summary>
         /// 変化や指し手をパースします。
         /// </summary>
-        private MoveNode ParseNode(Board board)
+        private KifMoveNode ParseNodeKif(Board board, bool isVariation)
         {
-            List<Tuple<Board, int>> variationList;
-
             // 後続する変化の手数も取得します。
             // これがないとどれだけ変化をパースすればいいのか分かりません。
-            var root = ParseNode(board.Clone(), out variationList);
-            if (root == null)
+            var head = ParseMoveLinesKif(isVariation);
+            if (head == null)
             {
                 return null;
             }
 
             // 以下、変化リストをパースします。
-            variationList.Reverse();
-            foreach (var variation in variationList)
+            var variationLineSet = MakeVariationLineSet(head);
+            while(variationLineSet.Any())
             {
-                var node = ParseNode(variation.Item1);
-                if (node.MoveCount != variation.Item2)
+                var variationNode = ParseNodeKif(board, true);
+                if (variationNode == null)
+                {
+                    continue;
+                }
+
+                if (!variationLineSet.Contains(variationNode.MoveCount))
                 {
                     throw new FileFormatException(
                         this.lineNumber,
                         string.Format(
                             "{0}手目に対応する変化がありません。",
-                            node.MoveCount));
+                            variationNode.MoveCount));
                 }
 
-                MergeVariation(root, node);
+                variationLineSet.Remove(variationNode.MoveCount);
+
+                // 変化を棋譜にマージします。
+                MergeVariation(head, variationNode);
             }
 
-            return root;
+            return head;
+        }
+
+        /// <summary>
+        /// ノードの中に含まれる'変化がある指し手番号のセット'を作成します。
+        /// </summary>
+        private HashSet<int> MakeVariationLineSet(KifMoveNode head)
+        {
+            var result = new HashSet<int>();
+
+            for (var node = head; node != null; node = node.Next)
+            {
+                if (node.HasVariation)
+                {
+                    result.Add(node.MoveCount);
+                }
+            }
+
+            return result;
         }
 
         /// <summary>
         /// 変化を既存のノードに追加します。
         /// </summary>
-        private void MergeVariation(MoveNode node, MoveNode source)
+        private void MergeVariation(KifMoveNode node, KifMoveNode source)
         {
-            while (node.MoveCount + 1 != source.MoveCount)
+            while (node.MoveCount != source.MoveCount)
             {
-                if (node.NextNode == null)
+                if (node.Next == null)
                 {
+                    //throw 
                     return;
                 }
 
-                node = node.NextNode;
+                node = node.Next;
+            }
+
+            for (var next = node; next != null; next = next.Variation)
+            {
+                if (next == null)
+                {
+                    break;
+                }
+
+                node = next;
             }
 
             // 変化を追加します。
-            node.NextNodes.Add(source);
+            node.Variation = source;
         }
 
         /// <summary>
         /// ひとかたまりになっている一連の指し手をパースします。
         /// </summary>
-        private MoveNode ParseNode(Board board, out List<Tuple<Board, int>> variationList)
+        private KifMoveNode ParseMoveLinesKif(bool isVariation)
         {
-            while (IsCommentLine(this.currentLine))
-            {
-                ReadNextLine();
-            }
-
-            // 新しい変化が始まる場合は、
-            // 　変化 ○手目
-            // という行から始まります。
-            var m = BeginVariationLineRegex.Match(this.currentLine);
-            if (m.Success)
-            {
-                ReadNextLine();
-            }
-
-            var head = new MoveNode();
+            var head = new KifMoveNode();
             var last = head;
-            variationList = new List<Tuple<Board, int>>();
+
+            // もし変化を読み取る場合は、開始記号を探します。
+            if (isVariation)
+            {
+                while (this.currentLine != null)
+                {
+                    if (IsCommentLine(this.currentLine))
+                    {
+                        ReadNextLine();
+                        continue;
+                    }
+
+                    // 新しい変化が始まる場合は、
+                    // 　変化 ○手目
+                    // という行から始まります。
+                    var m = BeginVariationLineRegex.Match(this.currentLine);
+                    if (m.Success)
+                    {
+                        head.MoveCount = int.Parse(m.Groups[1].Value);
+                        ReadNextLine();
+                        break;
+                    }
+
+                    ReadNextLine();
+                }
+            }
 
             while (this.currentLine != null)
             {
@@ -361,54 +412,35 @@ namespace Ragnarok.Shogi.File
                 }
 
                 // 指し手行を１行だけパースします。
-                var hasVariation = false;
-                var node = ParseMoveLine(board, this.currentLine,
-                                         out hasVariation);
+                var node = ParseMoveLineKif(this.currentLine);
                 if (node == null)
                 {
                     break;
                 }
 
-                // 変化がある場合は、その手数を記録します。
-                if (hasVariation)
-                {
-                    variationList.Add(Tuple.Create(board.Clone(), node.MoveCount));
-                }
-
-                // 局面を進めます。
-                if (!board.DoMove(node.Move))
-                {
-                    throw new FileFormatException(
-                        this.lineNumber,
-                        string.Format(
-                            "{0}手目の手を指すことができませんでした。",
-                            node.MoveCount));
-                }
-
-                last.NextNodes.Add(node);
+                // 指し手はリンクリストで保存します。
+                last.Next = node;
                 last = node;
 
                 ReadNextLine();
             }
 
-            return head.NextNode;
+            return head.Next;
         }
         
         /// <summary>
         /// 指し手行をパースします。
         /// </summary>
-        private MoveNode ParseMoveLine(Board board, string line,
-                                       out bool hasVariation)
+        private KifMoveNode ParseMoveLineKif(string line)
         {
             var m = MoveLineRegex.Match(line);
             if (!m.Success)
             {
-                hasVariation = false;
                 return null;
             }
 
             var moveCount = int.Parse(m.Groups[1].Value);
-            hasVariation = m.Groups[4].Success;
+            var hasVariation = m.Groups[4].Success;
 
             // 指し手'３六歩(37)'のような形式でパースします。
             var moveText = m.Groups[2].Value;
@@ -427,20 +459,12 @@ namespace Ragnarok.Shogi.File
                         m.Groups[1].Value));
             }
 
-            var bmove = board.ConvertMove(move, true);
-            if (bmove == null || !bmove.Validate())
+            return new KifMoveNode
             {
-                throw new FileFormatException(
-                    this.lineNumber,
-                    string.Format(
-                        "{0}手目: 指し手が正しくありません。",
-                        m.Groups[1].Value));
-            }
-
-            return new MoveNode
-            {
+                Move = move,
                 MoveCount = moveCount,
-                Move = bmove,
+                LineNumber = this.lineNumber,
+                HasVariation = hasVariation,
             };
         }
         #endregion
@@ -462,8 +486,14 @@ namespace Ragnarok.Shogi.File
                 var parser = new BodParser();
                 for (var i = 0; i < 3; ++i)
                 {
-                    ReadNextLine();
-                    if (!ParseHeaderLine(this.currentLine, parser))
+                    var line = ReadNextLine();
+
+                    if (line == null)
+                    {
+                        return true;
+                    }
+
+                    if (!ParseHeaderLine(line, parser))
                     {
                         return false;
                     }
@@ -500,7 +530,7 @@ namespace Ragnarok.Shogi.File
             // 指し手の読み取りに入ります。
             if (this.currentLine == null)
             {
-                // bod形式
+                // ファイルが終わっている場合はbod形式
                 return new KifuObject(header, board);
             }
             else if (this.isKif)

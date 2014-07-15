@@ -6,55 +6,85 @@ using System.Text;
 
 namespace Ragnarok.Shogi.File
 {
+    using Kif;
+
     /// <summary>
     /// kifファイルの書き出しを行います。
     /// </summary>
     internal sealed class KifWriter : IKifuWriter
     {
         /// <summary>
+        /// kif形式で出力するか取得します。(でなければki2形式)
+        /// </summary>
+        public bool IsKif
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
         /// ヘッダ部分を出力します。
         /// </summary>
         private void WriteHeader(TextWriter writer, KifuObject kifu)
         {
-            writer.WriteLine("# ----  投票将棋 棋譜ファイル  ----");
+            writer.WriteLine("# ----  Ragnarok 棋譜ファイル  ----");
 
             foreach (var header in kifu.Headers)
             {
                 writer.WriteLine("{0}：{1}", header.Key, header.Value);
             }
-
-            writer.WriteLine("手数----指手---------消費時間--");
         }
 
         /// <summary>
-        /// 指し手行、１行分を作成します。
+        /// 局面を出力します。
         /// </summary>
-        private string MakeLine(MoveNode node, bool hasVariation)
+        private void WriteBoard(TextWriter writer, Board board)
         {
-            // 半角文字相当の文字数で空白の数を計算します。
-            var moveText = node.Move.ToString();
-            var hanLen = moveText.HankakuLength();
+            writer.WriteLine(BodBoard.ToBod(board));
 
-            return string.Format("{0,4} {1}{2} ( 0:00/00:00:00){3}",
-                node.MoveCount,
-                moveText,
-                new string(' ', Math.Max(0, 14 - hanLen)),
-                (hasVariation ? "+" : ""));
+            if (IsKif)
+            {
+                writer.WriteLine("手数----指手---------消費時間--");
+            }
         }
 
+        #region ki2
+        /// <summary>
+        /// ki2形式の指し手を出力します。
+        /// </summary>
+        private void WriteMoveNodeKi2(TextWriter writer, MoveNode node, Board board)
+        {
+            var moveList = KifuObject.Convert2List(node);
+            var lineList = board.ConvertMove(moveList, false)
+                .Select(_ => _.ToString())
+                .TakeBy(6)
+                .Select(_ => string.Join("　", _.ToArray()));
+
+            // 各指し手行を出力します。
+            foreach (var line in lineList)
+            {
+                writer.WriteLine(line);
+            }
+        }
+        #endregion
+
+        #region kif
         /// <summary>
         /// 変化の分岐を含めて出力します。
         /// </summary>
-        private void WriteMoveNode(TextWriter writer, MoveNode node,
-                                   bool hasVariation)
+        private void WriteMoveNodeKif(TextWriter writer, MoveNode node,
+                                      bool hasVariation)
         {
-            if (node == null || node.Move == null)
+            if (node == null)
             {
                 return;
             }
 
             // とりあえず指し手を書きます。
-            writer.WriteLine(MakeLine(node, hasVariation));
+            if (node.Move != null)
+            {
+                writer.WriteLine(MakeLineKif(node, hasVariation));
+            }
 
             // 次の指し手があればそれも出力します。
             for (var i = 0; i < node.NextNodes.Count(); ++i)
@@ -69,9 +99,26 @@ namespace Ragnarok.Shogi.File
                     writer.WriteLine("変化：{0}手", child.MoveCount);
                 }
 
-                WriteMoveNode(writer, child, hasVariationNext);
+                WriteMoveNodeKif(writer, child, hasVariationNext);
             }
         }
+
+        /// <summary>
+        /// 指し手行、１行分を作成します。
+        /// </summary>
+        private string MakeLineKif(MoveNode node, bool hasVariation)
+        {
+            // 半角文字相当の文字数で空白の数を計算します。
+            var moveText = node.Move.ToString();
+            var hanLen = moveText.HankakuLength();
+
+            return string.Format("{0,4} {1}{2} ( 0:00/00:00:00){3}",
+                node.MoveCount,
+                moveText,
+                new string(' ', Math.Max(0, 14 - hanLen)),
+                (hasVariation ? "+" : ""));
+        }
+        #endregion
 
         /// <summary>
         /// 局面と差し手をファイルに保存します。
@@ -79,7 +126,24 @@ namespace Ragnarok.Shogi.File
         public void Save(TextWriter writer, KifuObject kifu)
         {
             WriteHeader(writer, kifu);
-            WriteMoveNode(writer, kifu.RootNode, false);
+            WriteBoard(writer, kifu.StartBoard);
+
+            if (IsKif)
+            {
+                WriteMoveNodeKif(writer, kifu.RootNode, false);
+            }
+            else
+            {
+                WriteMoveNodeKi2(writer, kifu.RootNode, kifu.StartBoard);
+            }
+        }
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public KifWriter(bool isKif)
+        {
+            IsKif = isKif;
         }
     }
 }

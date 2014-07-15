@@ -1,3 +1,12 @@
+2014-07-15  - Ver 2.7.35
+
+	* Ragnarok.Shogi/File/KifReader.cs: 変化つきの棋譜を正しく読み込めるよ
+	うにしました。
+	* Ragnarok.Shogi/File/KifWriter.cs: kifやki2形式の棋譜を出力できるよう
+	にしました。
+	* Ragnarok.Shogi/Kif/KifMoveNode.cs: 変化のあるkif形式ファイルを読み込
+	むための中間ノードクラスを追加しました。
+
 2014-07-15  - Ver 2.7.34
 
 	* Ragnarok.Shogi/BoardExtension.cs: 竜や馬は'直'使わずに左右で指し手の

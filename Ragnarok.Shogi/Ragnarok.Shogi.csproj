@@ -103,6 +103,7 @@
     <Compile Include="HangameSkillLevel.cs" />
     <Compile Include="KifuObject.cs" />
     <Compile Include="File\KifWriter.cs" />
+    <Compile Include="Kif\KifMoveNode.cs" />
     <Compile Include="Kif\Tests\BodTest.cs" />
     <Compile Include="Kif\KifUtil.cs" />
     <Compile Include="Move.cs" />
