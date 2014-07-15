@@ -18,7 +18,7 @@ namespace Ragnarok.Shogi.File.Tests
         /// </summary>
         public static int? GetMoveCount(string text)
         {
-            var m = Regex.Match(text, @"まで.*(\d+)手", RegexOptions.Multiline);
+            var m = Regex.Match(text, @"^まで.*(\d+)手", RegexOptions.Multiline);
             if (!m.Success)
             {
                 m = Regex.Match(text, @"(\d+)手まで", RegexOptions.Multiline);
@@ -32,7 +32,7 @@ namespace Ragnarok.Shogi.File.Tests
         }
 
         /// <summary>
-        /// 棋譜の読み込みテストを行います。
+        /// 棋譜の読み込み＆書き込みテストを行います。
         /// </summary>
         private static void TestKif(string path)
         {
@@ -43,21 +43,37 @@ namespace Ragnarok.Shogi.File.Tests
             }
 
             // 棋譜の読み込み
-            var kifu = KifuReader.LoadFrom(text);
-            Assert.NotNull(kifu);
+            var kifu1 = KifuReader.LoadFrom(text);
+            Assert.NotNull(kifu1);
 
             // 手数を取得
-            var count = GetMoveCount(text);
-            Assert.NotNull(count);
+            var countObj = GetMoveCount(text);
+            Assert.NotNull(countObj);
 
-            if (kifu.Error != null)
-            {
-                Assert.LessOrEqual(count.Value - 1, kifu.MoveList.Count());
-            }
-            else
-            {
-                Assert.LessOrEqual(count.Value, kifu.MoveList.Count());
-            }
+            var count = countObj.Value + (kifu1.Error != null ? -1 : 0);
+            Assert.LessOrEqual(count, kifu1.MoveList.Count());
+
+            // 棋譜の書き出し
+            var wrote = KifuWriter.WriteTo(kifu1, KifuFormat.Ki2);
+            Assert.IsNotNullOrEmpty(wrote);
+
+            // 棋譜の読み込み パート２
+            var kifu2 = KifuReader.LoadFrom(wrote);
+            Assert.NotNull(kifu1);
+
+            // 読み込んだ棋譜の確認
+            Assert.LessOrEqual(count, kifu2.MoveList.Count());
+
+            // 局面の比較を行います。
+            var board1 = kifu1.StartBoard.Clone();
+            kifu1.MoveList.ForEach(_ => board1.DoMove(_));
+
+            var board2 = kifu2.StartBoard.Clone();
+            kifu2.MoveList.ForEach(_ => board2.DoMove(_));
+
+            Assert.True(Board.BoardEquals(kifu1.StartBoard, kifu2.StartBoard));
+            Assert.True(kifu1.RootNode.NodeEquals(kifu2.RootNode));
+            Assert.True(Board.BoardEquals(board1, board2));
         }
 
         /// <summary>

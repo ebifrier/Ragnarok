@@ -1,3 +1,8 @@
+2014-07-15  - Ver 2.7.37
+
+	* Ragnarok.Shogi/File/Tests/Ki2Test.cs, KifTest.cs: kifやki2形式のファ
+	イル入出力が正しくできているか調べるテストを追加しました。
+
 2014-07-15  - Ver 2.7.36
 
 	* Ragnarok.Shogi/KifuWriter.cs: kifやki2形式の棋譜を出力できるようにし

@@ -44,7 +44,7 @@ namespace Ragnarok.Shogi.File.Tests
         public static IEnumerable<string> FileList(string extenstion,
                                                    HashSet<string> pathList = null)
         {
-            var dir = @"E:/Dropbox/NicoNico/bin/kifuexpl/database";
+            var dir = @"E:/Dropbox/NicoNico/shogi/test_kif";
 
             pathList = pathList ?? new HashSet<string>();
             return Directory
