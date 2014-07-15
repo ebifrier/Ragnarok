@@ -35,7 +35,7 @@ namespace Ragnarok.Shogi
             {
                 var parsedText = string.Empty;
 
-                // 与えられた文字列の差し手を解析します。
+                // 与えられた文字列の指し手を順次パースします。
                 var move = ShogiParser.ParseMoveEx(
                     text, false, true, ref parsedText);
                 if (move == null)
@@ -43,7 +43,7 @@ namespace Ragnarok.Shogi
                     break;
                 }
 
-                // 次の解析は解析が終わった部分からはじめます。
+                // パースが終わった部分から次のパースをはじめます。
                 text = text.Substring(parsedText.Length);
                 yield return move;
             }
@@ -54,8 +54,11 @@ namespace Ragnarok.Shogi
             RegexOptions.IgnoreCase);
 
         /// <summary>
-        /// 文字列から差し手オブジェクトを作成します。
+        /// 文字列から指し手オブジェクトを作成します。
         /// </summary>
+        /// <example>
+        /// 54歩同歩　コメント
+        /// </example>
         public static List<Move> MakeMoveList(string text, out string comment)
         {
             if (string.IsNullOrEmpty(text))
@@ -89,13 +92,13 @@ namespace Ragnarok.Shogi
                 }
 
                 // 指し手のパースが上手くいかなくなったら、そこで解析を終了します。
-                var oldCount = result.Count();
-                result.AddRange(MakeMoveListInternal(thisText));
-                if (result.Count() == oldCount)
+                var list = MakeMoveListInternal(thisText).ToArray();
+                if (!list.Any())
                 {
                     break;
                 }
 
+                result.AddRange(list);
                 text = nextText;
             }
 
@@ -326,8 +329,8 @@ namespace Ragnarok.Shogi
         #endregion
 
         /// <summary>
-        /// 文字列から得られた差し手から、移動前の情報も含むような
-        /// 差し手情報を取得します。
+        /// 文字列から得られた指し手から、移動前の情報も含むような
+        /// 指し手情報を取得します。
         /// </summary>
         public static BoardMove ConvertMove(this Board board, Move move,
                                             bool multipleIsNull = false)
@@ -336,8 +339,8 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
-        /// 文字列から得られた差し手から、移動前の情報も含むような
-        /// 差し手情報を取得します。
+        /// 文字列から得られた指し手から、移動前の情報も含むような
+        /// 指し手情報を取得します。
         /// </summary>
         public static BoardMove ConvertMove(this Board board, Move move,
                                             BWType bwType,
@@ -385,7 +388,7 @@ namespace Ragnarok.Shogi
 
         /// <summary>
         /// 文字列から得られた差し手から、移動前の情報も含むような
-        /// 差し手情報を取得します。
+        /// 指し手情報を取得します。
         /// </summary>
         public static bool CanMoveList(this Board board,
                                        IEnumerable<BoardMove> moveList)
@@ -412,7 +415,7 @@ namespace Ragnarok.Shogi
 
         /// <summary>
         /// 文字列から得られた差し手から、移動前の情報も含むような
-        /// 差し手情報を取得します。
+        /// 指し手情報を取得します。
         /// </summary>
         public static List<BoardMove> ConvertMove(this Board board,
                                                   IEnumerable<Move> moveList)
@@ -596,50 +599,73 @@ namespace Ragnarok.Shogi
                 return null;
             }
 
-            // 黒から見ると正の場合は引く or 左へ移動(右)で
-            // 負の場合は上がる or 右へ移動(左)です。
-            var relFile = nextPos.File - prevPos.File;
-
-            // 列の位置でフィルターします。
-            var tmpMoveList = boardMoveList.Where(mv =>
+            if ((move.Piece == Piece.Ryu || move.Piece == Piece.Uma) &&
+                boardMoveList.Count() == 2)
             {
-                var rel = nextPos.File - mv.SrcSquare.File;
-                if (relFile < 0)
-                {
-                    return (rel < 0);
-                }
-                else if (relFile > 0)
-                {
-                    return (rel > 0);
-                }
-                else
-                {
-                    return (rel == 0);
-                }
-            }).ToList();
+                // 馬と竜の場合は'直'ではなく、右と左しか使いません。
+                var other = (
+                    referenceMove == boardMoveList[0] ?
+                    boardMoveList[1] : boardMoveList[0]);
 
-            // 列情報でフィルターされた場合は、列の移動情報を付加します。
-            if (tmpMoveList.Count() != boardMoveList.Count())
-            {
-                var relFile2 = relFile * referenceMove.BWType.Sign();
+                // 動かす前の駒が相方に比べて右にあるか左にあるか調べます。
+                // 先手の場合は筋が小さい方が右です。
+                var relFile = prevPos.File - other.SrcSquare.File;
+                relFile *= (referenceMove.BWType == BWType.White ? -1 : +1);
 
-                if (relFile2 < 0)
+                if (relFile == 0)
                 {
-                    move.RelFileType = RelFileType.Left;
+                    return boardMoveList;
                 }
-                else if (relFile2 > 0)
+                else if (relFile < 0)
                 {
                     move.RelFileType = RelFileType.Right;
                 }
                 else
                 {
-                    // 直の場合は、左右の動きはありません。
-                    move.RankMoveType = RankMoveType.None;
-                    move.RelFileType = RelFileType.Straight;
+                    move.RelFileType = RelFileType.Left;
                 }
-            }
 
-            return tmpMoveList;
+                return new List<BoardMove> { referenceMove };
+            }
+            else
+            {
+                // 黒から見ると正の場合は引く or 左へ移動(右)で
+                // 負の場合は上がる or 右へ移動(左)です。
+                var relFile = nextPos.File - prevPos.File;
+
+                // 列の位置でフィルターします。
+                var tmpMoveList = boardMoveList.Where(mv =>
+                {
+                    var rel = nextPos.File - mv.SrcSquare.File;
+                    return (
+                        relFile < 0 ? (rel < 0) :
+                        relFile > 0 ? (rel > 0) :
+                        (rel == 0));
+                }).ToList();
+
+                // 列情報でフィルターされた場合は、列の移動情報を付加します。
+                if (tmpMoveList.Count() != boardMoveList.Count())
+                {
+                    var relFile2 = relFile * referenceMove.BWType.Sign();
+
+                    if (relFile2 < 0)
+                    {
+                        move.RelFileType = RelFileType.Left;
+                    }
+                    else if (relFile2 > 0)
+                    {
+                        move.RelFileType = RelFileType.Right;
+                    }
+                    else
+                    {
+                        // 直の場合は、左右の動きはありません。
+                        move.RankMoveType = RankMoveType.None;
+                        move.RelFileType = RelFileType.Straight;
+                    }
+                }
+
+                return tmpMoveList;
+            }
         }
         #endregion
 
@@ -679,6 +705,44 @@ namespace Ragnarok.Shogi
 
             return FilterMove(
                 board, boardMoveList, move, fromPiece, useSrcSquare);
+        }
+
+        /// <summary>
+        /// 指し手をXX->YYの形式から、ZZ銀上などの形に変換します。
+        /// </summary>
+        /// <remarks>
+        /// <paramref name="useSrcSquare"/>を真にすると、差し手の後に
+        /// 古い位置の情報が付加されるようになります。(例: 32金(22))
+        /// </remarks>
+        public static List<Move> ConvertMove(this Board board,
+                                             IEnumerable<BoardMove> bmoveList,
+                                             bool useSrcSquare)
+        {
+            if (board == null)
+            {
+                throw new ArgumentNullException("board");
+            }
+
+            var moveList = new List<Move>();
+            var cloned = board.Clone();
+
+            foreach (var boardMove in bmoveList)
+            {
+                var move = ConvertMove(cloned, boardMove, useSrcSquare);
+                if (move == null)
+                {
+                    break;
+                }
+
+                if (!cloned.DoMove(boardMove))
+                {
+                    break;
+                }
+
+                moveList.Add(move);
+            }
+
+            return moveList;
         }
 
         /// <summary>

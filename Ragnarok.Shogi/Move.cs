@@ -354,8 +354,7 @@ namespace Ragnarok.Shogi
 
             // 指し手が同○○でないときだけ、段・列の判定をします。
             if (!SameAsOld &&
-                (File != other.File ||
-                Rank != other.Rank))
+                (File != other.File || Rank != other.Rank))
             {
                 return false;
             }

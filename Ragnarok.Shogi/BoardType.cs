@@ -13,6 +13,10 @@ namespace Ragnarok.Shogi
     public enum BoardType
     {
         /// <summary>
+        /// 該当する局面なし
+        /// </summary>
+        None,
+        /// <summary>
         /// 平手
         /// </summary>
         [LabelDescription(Label = "平手")]
@@ -82,11 +86,6 @@ namespace Ragnarok.Shogi
         /// </summary>
         [LabelDescription(Label = "十枚落ち")]
         Handicap10,
-        /// <summary>
-        /// 歩三兵
-        /// </summary>
-        [LabelDescription(Label = "歩三兵")]
-        HandicapHu3,
     }
 
     /// <summary>
@@ -100,14 +99,13 @@ namespace Ragnarok.Shogi
         public static BoardType GetBoardTypeFromName(string handicap)
         {
             var list = EnumEx.GetValues<BoardType>()
+                .Where(_ => _ != BoardType.None)
                 .Where(_ => EnumEx.GetLabel(_) == handicap)
                 .ToArray();
 
             if (!list.Any())
             {
-                throw new ArgumentException(
-                    string.Format("{0}: 正しい手合い割が見つかりません。", handicap),
-                    "handicap");
+                return BoardType.None;
             }
 
             return list.FirstOrDefault();
@@ -118,7 +116,32 @@ namespace Ragnarok.Shogi
         /// </summary>
         public static Board CreateBoardFromName(string name)
         {
-            return GetBoardTypeFromName(name).ToBoard();
+            var type = GetBoardTypeFromName(name);
+            if (type == BoardType.None)
+            {
+                return null;
+            }
+
+            return type.ToBoard();
+        }
+
+        /// <summary>
+        /// 局面から駒落ちなどの局面名を取得します。
+        /// </summary>
+        public static BoardType GetBoardTypeFromBoard(Board board)
+        {
+            var list = EnumEx.GetValues<BoardType>()
+                .Where(_ => _ != BoardType.None)
+                .Where(_ => Board.BoardEquals(board, _.ToBoard()))
+                .ToArray();
+
+            if (!list.Any())
+            {
+                // 該当なし
+                return BoardType.None;
+            }
+
+            return list.FirstOrDefault();
         }
 
         /// <summary>
@@ -127,7 +150,6 @@ namespace Ragnarok.Shogi
         public static Board ToBoard(this BoardType type)
         {
             var board = new Board();
-            var i = 0;
 
             switch (type)
             {
@@ -179,13 +201,6 @@ namespace Ragnarok.Shogi
                     board[4, 1] = null;
                     board[6, 1] = null;
                     goto case BoardType.Handicap8;
-                case BoardType.HandicapHu3:
-                    for (i = 1; i <= Board.BoardSize; ++i)
-                    {
-                        board[i, 3] = null;
-                    }
-                    board.SetCapturedPieceCount(PieceType.Hu, BWType.White, 3);
-                    goto case BoardType.Handicap10;
                 default:
                     throw new ShogiException(
                         type + ": BoardTypeの値が間違っています。");

@@ -1,3 +1,15 @@
+2014-07-15  - Ver 2.7.34
+
+	* Ragnarok.Shogi/BoardExtension.cs: 竜や馬は'直'使わずに左右で指し手の
+	指定を行うため、それに合わせてソースを修正しました。
+	* Ragnarok.Shogi/BoardType.cs: 柿木将棋が未対応の歩三兵を消し、また局面
+	から局面名を求めるようなメソッドを追加しました。
+	* Ragnarok.Shogi/Kif/BodBoard.cs: 特定の駒落ち局面では、盤面全体ではな
+	く局面名のみを出力するようにしました。
+	* Ragnarok.Shogi/MoveNode.cs: 変化のある棋譜を扱うためのオブジェクトに
+	デバッグ用プロパティや、同じ手の変化をマージするメソッドなどを追加しま
+	した。
+
 2014-07-15  - Ver 2.7.33
 
 	* Ragnarok.Shogi/File/CsaReader.cs: ３行未満のCSAファイルでも正しく読み 

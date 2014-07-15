@@ -93,9 +93,10 @@ namespace Ragnarok.Shogi.Kif
 
             var result = new List<string>();
 
-            if (Board.BoardEquals(board, new Board()))
+            var type = BoardTypeUtil.GetBoardTypeFromBoard(board);
+            if (type != BoardType.None)
             {
-                result.Add("手合割：平手");
+                result.Add("手合割：" + EnumEx.GetLabel(type));
             }
             else
             {
@@ -108,11 +109,11 @@ namespace Ragnarok.Shogi.Kif
                 result.Add("+---------------------------+");
                 result.Add("先手の持駒：" + HandToBod(board, BWType.Black));
                 result.Add("手数＝" + board.MoveCount);
-            }
 
-            if (board.Turn == BWType.White)
-            {
-                result.Add("後手番");
+                if (board.Turn == BWType.White)
+                {
+                    result.Add("後手番");
+                }
             }
 
             return string.Join("\n", result);
