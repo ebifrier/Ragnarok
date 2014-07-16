@@ -1,3 +1,11 @@
+2014-07-16  - Ver 2.7.40
+
+	* Ragnarok.Shogi/Kif/KifReader.cs, Ragnarok.Shogi/Kif/KifWriter.cs,
+	  Ragnarok.Shogi/Kif/Tests/Ki2Test.cs, 
+	  Ragnarok.Shogi/Kif/Tests/KifTest.cs: ファイルの位置を変更しました。
+	* Ragnarok.Shogi/Kif/KifUtil.cs: 棋譜ヘッダを扱うためのメソッドをいくつ
+	か追加しました。
+
 2014-07-16  - Ver 2.7.39
 
 	* Ragnarok.Shogi/Csa/CsaReader.cs, Ragnarok.Shogi/Csa/CsaTest.cs: ファ

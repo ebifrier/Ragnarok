@@ -8,9 +8,9 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using NUnit.Framework;
 
-namespace Ragnarok.Shogi.File.Tests
+namespace Ragnarok.Shogi.Kif.Tests
 {
-    using Kif;
+    using File.Tests;
 
     [TestFixture()]
     internal sealed class KifTest
@@ -43,37 +43,18 @@ namespace Ragnarok.Shogi.File.Tests
             }
 
             // 棋譜の読み込み
-            var kifu1 = KifuReader.LoadFrom(text);
-            Assert.NotNull(kifu1);
+            var kifu = KifuReader.LoadFrom(text);
+            Assert.NotNull(kifu);
 
             // 手数を取得
             var countObj = GetMoveCount(text);
             Assert.NotNull(countObj);
 
-            var count = countObj.Value + (kifu1.Error != null ? -2 : -1);
-            Assert.LessOrEqual(count, kifu1.MoveList.Count());
+            var count = countObj.Value + (kifu.Error != null ? -2 : -1);
+            Assert.LessOrEqual(count, kifu.MoveList.Count());
 
-            // 棋譜の書き出し
-            var wrote = KifuWriter.WriteTo(kifu1, KifuFormat.Kif);
-            Assert.IsNotNullOrEmpty(wrote);
-
-            // 棋譜の読み込み パート２
-            var kifu2 = KifuReader.LoadFrom(wrote);
-            Assert.NotNull(kifu1);
-
-            // 読み込んだ棋譜の確認
-            Assert.LessOrEqual(count, kifu2.MoveList.Count());
-
-            // 局面の比較を行います。
-            var board1 = kifu1.StartBoard.Clone();
-            kifu1.MoveList.ForEach(_ => board1.DoMove(_));
-
-            var board2 = kifu2.StartBoard.Clone();
-            kifu2.MoveList.ForEach(_ => board2.DoMove(_));
-
-            Assert.True(Board.BoardEquals(kifu1.StartBoard, kifu2.StartBoard));
-            Assert.True(kifu1.RootNode.NodeEquals(kifu2.RootNode));
-            Assert.True(Board.BoardEquals(board1, board2));
+            // 入出力テストを行います。
+            TestUtil.ReadWriteTest(kifu, KifuFormat.Kif, count);
         }
 
         /// <summary>

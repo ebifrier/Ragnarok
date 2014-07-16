@@ -84,7 +84,7 @@ namespace Ragnarok.Shogi.Kif
         }
 
         /// <summary>
-        /// ヘッダ行をパースします。
+        /// ヘッダ行をパースし、そのパースしたアイテムを返します。
         /// </summary>
         public static HeaderItem ParseHeaderItem(string line)
         {
@@ -97,6 +97,64 @@ namespace Ragnarok.Shogi.Kif
             var key = m.Groups[1].Value;
             var value = m.Groups[2].Value;
             return new HeaderItem(key, value);
+        }
+
+        /// <summary>
+        /// ヘッダアイテム名から、その種類を判別します。
+        /// </summary>
+        public static KifuHeaderType? GetHeaderType(string str)
+        {
+            switch (str)
+            {
+                case "先手":
+                case "下手":
+                    return KifuHeaderType.BlackName;
+                case "後手":
+                case "上手":
+                    return KifuHeaderType.WhiteName;
+                case "棋戦":
+                    return KifuHeaderType.Event;
+                case "場所":
+                    return KifuHeaderType.Site;
+                case "持ち時間":
+                    return KifuHeaderType.TimeLimit;
+                case "開始日時":
+                    return KifuHeaderType.StartTime;
+                case "終了日時":
+                    return KifuHeaderType.EndTime;
+                case "戦型":
+                    return KifuHeaderType.Opening;
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// ヘッダアイテムの種類から、その名前を取得します。
+        /// </summary>
+        public static string GetHeaderName(KifuHeaderType type)
+        {
+            switch (type)
+            {
+                case KifuHeaderType.BlackName:
+                    return "先手";
+                case KifuHeaderType.WhiteName:
+                    return "後手";
+                case KifuHeaderType.Event:
+                    return "棋戦";
+                case KifuHeaderType.Site:
+                    return "場所";
+                case KifuHeaderType.TimeLimit:
+                    return "持ち時間";
+                case KifuHeaderType.StartTime:
+                    return "開始日時";
+                case KifuHeaderType.EndTime:
+                    return "終了日時";
+                case KifuHeaderType.Opening:
+                    return "戦型";
+            }
+
+            return null;
         }
 
         /// <summary>

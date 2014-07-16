@@ -1,10 +1,12 @@
-﻿using System;
+﻿#if TESTS
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using NUnit.Framework;
 
 namespace Ragnarok.Shogi.File.Tests
 {
@@ -77,8 +79,9 @@ namespace Ragnarok.Shogi.File.Tests
 
                         line = line + "ok";
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
+                        Console.WriteLine(ex.StackTrace);
                         line = line + "failed";
                     }
 
@@ -87,5 +90,35 @@ namespace Ragnarok.Shogi.File.Tests
 
             SavePathList(filepath, pathList);
         }
+
+        /// <summary>
+        /// 棋譜の出力＋入力を行い、ファイルが正しく扱えているか調べます。
+        /// </summary>
+        public static void ReadWriteTest(KifuObject kifu0, KifuFormat format,
+                                         int moveCount)
+        {
+            // 棋譜の書き出し
+            var wrote = KifuWriter.WriteTo(kifu0, format);
+            Assert.IsNotNullOrEmpty(wrote);
+
+            // 棋譜の読み込み パート２
+            var kifu1 = KifuReader.LoadFrom(wrote);
+            Assert.NotNull(kifu1);
+
+            // 読み込んだ棋譜の確認
+            Assert.LessOrEqual(moveCount, kifu1.MoveList.Count());
+
+            // 局面の比較を行います。
+            var board0 = kifu0.StartBoard.Clone();
+            kifu0.MoveList.ForEach(_ => board0.DoMove(_));
+
+            var board1 = kifu1.StartBoard.Clone();
+            kifu1.MoveList.ForEach(_ => board1.DoMove(_));
+
+            Assert.True(Board.BoardEquals(kifu0.StartBoard, kifu1.StartBoard));
+            Assert.True(kifu0.RootNode.NodeEquals(kifu1.RootNode));
+            Assert.True(Board.BoardEquals(board0, board1));
+        }
     }
 }
+#endif
