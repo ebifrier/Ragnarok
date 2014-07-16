@@ -1,3 +1,9 @@
+2014-07-16  - Ver 2.7.41
+
+	* Ragnarok/ObjectModel/ModelExtensions.cs,
+	  Ragnarok/ObjectModel/DynamicViewModel.Extensions.cs: マルチスレッド下
+	でモデルオブジェクトを正しく追加できないというバグを修正しました。
+
 2014-07-16  - Ver 2.7.40
 
 	* Ragnarok.Shogi/Kif/KifReader.cs, Ragnarok.Shogi/Kif/KifWriter.cs,

@@ -379,24 +379,20 @@ namespace Ragnarok.ObjectModel
         private static MultiMap<TypeProperty, string> GetDependPropertyMap(
             Type targetType)
         {
-            MultiMap<TypeProperty, string> dependMap;
-
             lock (dependPropertyDic)
             {
+                MultiMap<TypeProperty, string> dependMap;
                 if (dependPropertyDic.TryGetValue(targetType, out dependMap))
                 {
                     return dependMap;
                 }
-            }
 
-            // DependOn属性を持つプロパティの集合を作成し追加します。
-            dependMap = MakeDependPropertyMap(targetType);
-            lock (dependPropertyDic)
-            {
+                // DependOn属性を持つプロパティの集合を作成し追加します。
+                dependMap = MakeDependPropertyMap(targetType);
                 dependPropertyDic.Add(targetType, dependMap);
-            }
 
-            return dependMap;
+                return dependMap;
+            }
         }
 
         /// <summary>
