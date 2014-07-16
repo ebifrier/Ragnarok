@@ -118,6 +118,14 @@ namespace Ragnarok.Shogi.File.Tests
             Assert.True(Board.BoardEquals(kifu0.StartBoard, kifu1.StartBoard));
             Assert.True(kifu0.RootNode.NodeEquals(kifu1.RootNode));
             Assert.True(Board.BoardEquals(board0, board1));
+
+            // ヘッダ要素を比較します。
+            Assert.AreEqual(kifu0.Header.Count(), kifu1.Header.Count());
+            foreach (var item0 in kifu0.Header)
+            {
+                Assert.True(kifu1.Header.Contains(item0.Key));
+                Assert.AreEqual(item0.Value, kifu1.Header[item0.Key]);
+            }
         }
     }
 }

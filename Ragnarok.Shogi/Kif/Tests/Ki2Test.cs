@@ -20,7 +20,7 @@ namespace Ragnarok.Shogi.Kif.Tests
         /// </summary>
         public static int? GetMoveCount(string text)
         {
-            var m = Regex.Match(text, @"^まで.*(\d+)手", RegexOptions.Multiline);
+            var m = Regex.Match(text, @"^\s*まで.*(\d+)手", RegexOptions.Multiline);
             if (!m.Success)
             {
                 m = Regex.Match(text, @"(\d+)手まで", RegexOptions.Multiline);

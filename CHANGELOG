@@ -1,3 +1,12 @@
+2014-07-17  - Ver 2.7.42
+
+	* Ragnarok.Shogi/Csa/CsaUtil.cs: CSA形式のヘッダを正しく読み込めるよう
+	にしました。
+	* Ragnarok.Shogi/Csa/CsaWriter.cs: CSA形式の各ヘッダアイテムの先頭に$を
+	付加するようにしました。
+	* Ragnarok.Shogi/File/Tests/TestUtil.cs: 棋譜のヘッダアイテムを正しく読
+	み込み／書き込みできているか調べるようにしました。
+
 2014-07-16  - Ver 2.7.41
 
 	* Ragnarok/ObjectModel/ModelExtensions.cs,

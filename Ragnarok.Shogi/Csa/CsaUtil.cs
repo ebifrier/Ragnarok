@@ -45,7 +45,7 @@ namespace Ragnarok.Shogi.Csa
         /// $NAME
         /// </example>
         private static readonly Regex HeaderRegex = new Regex(
-            @"^\s*[$](.+)(\s*[:]\s*(.*))?\s*$",
+            @"^\s*[$](.+?)(\s*[:]\s*(.*))?\s*$",
             RegexOptions.Compiled);
 
         /// <summary>

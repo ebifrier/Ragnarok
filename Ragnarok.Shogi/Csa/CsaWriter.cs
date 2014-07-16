@@ -42,7 +42,7 @@ namespace Ragnarok.Shogi.Csa
                     continue;
                 }
 
-                writer.WriteLine("{0}:{1}", name, item.Value);
+                writer.WriteLine("${0}:{1}", name, item.Value);
             }
         }
 
