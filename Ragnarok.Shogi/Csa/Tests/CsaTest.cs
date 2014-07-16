@@ -8,12 +8,28 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using NUnit.Framework;
 
-namespace Ragnarok.Shogi.File.Tests
+namespace Ragnarok.Shogi.Csa.Tests
 {
+    using File.Tests;
+
     [TestFixture()]
     internal sealed class CsaTest
     {
         private static readonly string PathListFile = "csa.list";
+
+        private static int? GetMoveCount(string path)
+        {
+            var dir = Path.GetDirectoryName(path);
+            var filename = Path.GetFileNameWithoutExtension(path);
+            var newPath = Path.Combine(dir, "..", filename + ".ki2");
+
+            using (var reader = new StreamReader(newPath, KifuObject.DefaultEncoding))
+            {
+                var text = reader.ReadToEnd();
+
+                return Kif.Tests.Ki2Test.GetMoveCount(text);
+            }
+        }
 
         /// <summary>
         /// 棋譜の読み込みテストを行います。
@@ -31,17 +47,14 @@ namespace Ragnarok.Shogi.File.Tests
             Assert.NotNull(kifu);
 
             // 手数を取得
-            /*var count = TestUtil.GetMoveCount(text);
-            Assert.NotNull(count);
+            var countObj = GetMoveCount(path);
+            Assert.NotNull(countObj);
 
-            if (kifu1.Error != null)
-            {
-                Assert.LessOrEqual(count.Value - 1, kifu1.MoveList.Count());
-            }
-            else
-            {
-                Assert.LessOrEqual(count.Value, kifu1.MoveList.Count());
-            }*/
+            var count = countObj.Value + (kifu.Error != null ? -1 : 0);
+            Assert.LessOrEqual(count, kifu.MoveList.Count());
+
+            // 入出力テストを行います。
+            TestUtil.ReadWriteTest(kifu, KifuFormat.Csa, count);
         }
 
         /// <summary>
@@ -70,11 +83,7 @@ namespace Ragnarok.Shogi.File.Tests
             {
                 Console.WriteLine(path);
 
-                try
-                {
-                    TestCsaFile(path);
-                }
-                catch{}
+                TestCsaFile(path);
             }
         }
     }

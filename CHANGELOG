@@ -1,3 +1,19 @@
+2014-07-16  - Ver 2.7.39
+
+	* Ragnarok.Shogi/Csa/CsaReader.cs, Ragnarok.Shogi/Csa/CsaTest.cs: ファ
+	イル位置を変更しました。
+	* Ragnarok.Shogi/Csa/CsaWriter.cs: CSA形式の出力用ファイルを追加しまし
+	た。
+	* Ragnarok.Shogi/Csa/CsaBoard.cs: 持ち駒の棋譜出力に間違いがあったため、
+	それを修正しました。
+
+2014-07-16  - Ver 2.7.38
+
+	* Ragnarok.Shogi/KifuHeader.cs: 棋譜の各ヘッダアイテムを扱うためのクラ
+	スを追加しました。
+	* Ragnarok.Shogi/KifuObject.cs: 棋譜ファイルのヘッダの扱いを変更し、CSA
+	やKIFなど形式にかかわらず統一的に扱えるようにしました。
+
 2014-07-15  - Ver 2.7.37
 
 	* Ragnarok.Shogi/File/Tests/Ki2Test.cs, KifTest.cs: kifやki2形式のファ

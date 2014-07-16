@@ -5,9 +5,9 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Ragnarok.Shogi.File
+namespace Ragnarok.Shogi.Csa
 {
-    using Csa;
+    using File;
 
     /// <summary>
     /// kifファイルの読み込みを行います。
@@ -22,7 +22,7 @@ namespace Ragnarok.Shogi.File
         /// <summary>
         /// CSAのヘッダを取得します。
         /// </summary>
-        public Dictionary<string, string> Header
+        public KifuHeader Header
         {
             get;
             private set;
@@ -32,15 +32,6 @@ namespace Ragnarok.Shogi.File
         /// 読み込んだ局面を取得します。
         /// </summary>
         public Board Board
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
-        /// 指し手リストを取得します。
-        /// </summary>
-        public List<BoardMove> MoveList
         {
             get;
             private set;
@@ -163,11 +154,11 @@ namespace Ragnarok.Shogi.File
 
             if (line[1] == '+')
             {
-                Header["先手"] = line.Substring(2);
+                Header[KifuHeaderType.BlackName] = line.Substring(2);
             }
             else if (line[1] == '-')
             {
-                Header["後手"] = line.Substring(2);
+                Header[KifuHeaderType.WhiteName] = line.Substring(2);
             }
             else
             {
@@ -190,7 +181,11 @@ namespace Ragnarok.Shogi.File
                     line + ": CSA形式のヘッダ行が正しくありません。");
             }
 
-            Header[item.Key] = item.Value;
+            var type = CsaUtil.GetHeaderType(item.Key);
+            if (type != null)
+            {
+                Header[type.Value] = item.Value;
+            }
         }
 
         private void ParseTime(string line)
@@ -224,7 +219,6 @@ namespace Ragnarok.Shogi.File
                     line + ": CSA形式の指し手を正しく指せません。");
             }
 
-            MoveList.Add(move);
             return move;
         }
 
@@ -240,9 +234,8 @@ namespace Ragnarok.Shogi.File
                 this.currentLineIndex = 0;
                 this.lineNumber = 0;
 
-                Header = new Dictionary<string, string>();
+                Header = new KifuHeader();
                 Board = null;
-                MoveList = new List<BoardMove>();
 
                 // ファイルを３行読めれば、CSA形式であると判断します。
                 var parser = new CsaBoardParser();
@@ -284,14 +277,13 @@ namespace Ragnarok.Shogi.File
             this.currentLineIndex = 0;
             this.lineNumber = 0;
 
-            Header = new Dictionary<string, string>();
+            Header = new KifuHeader();
             Board = null;
-            MoveList = new List<BoardMove>();
 
             // ヘッダーや局面の読み取り
             Parse();
 
-            return new KifuObject(Header, Board, MoveList);
+            return new KifuObject(Header, Board);
         }
     }
 }

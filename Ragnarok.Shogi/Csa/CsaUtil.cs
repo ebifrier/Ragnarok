@@ -81,6 +81,62 @@ namespace Ragnarok.Shogi.Csa
             var value = (m.Groups[3].Success ? m.Groups[3].Value : null);
             return new HeaderItem(key, value);
         }
+        
+        /// <summary>
+        /// CSA形式のヘッダアイテム名から、その種類を判別します。
+        /// </summary>
+        public static KifuHeaderType? GetHeaderType(string key)
+        {
+            if (key == null)
+            {
+                throw new ArgumentNullException("key");
+            }
+
+            switch (key.ToUpper())
+            {
+                case "EVENT":
+                    return KifuHeaderType.Event;
+                case "SITE":
+                    return KifuHeaderType.Site;
+                case "START_TIME":
+                    return KifuHeaderType.StartTime;
+                case "END_TIME":
+                    return KifuHeaderType.EndTime;
+                case "TIME_LIMIT":
+                    return KifuHeaderType.TimeLimit;
+                case "OPENING":
+                    return KifuHeaderType.Opening;
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// ヘッダアイテムの種類から、その名前を取得します。
+        /// </summary>
+        public static string GetHeaderName(KifuHeaderType type)
+        {
+            switch (type)
+            {
+                case KifuHeaderType.BlackName:
+                case KifuHeaderType.WhiteName:
+                    return null;
+                case KifuHeaderType.Event:
+                    return "EVENT";
+                case KifuHeaderType.Site:
+                    return "SITE";
+                case KifuHeaderType.StartTime:
+                    return "START_TIME";
+                case KifuHeaderType.EndTime:
+                    return "END_TIME";
+                case KifuHeaderType.TimeLimit:
+                    return "TIME_LIMIT";
+                case KifuHeaderType.Opening:
+                    return "OPENING";
+            }
+
+            return null;
+        }
 
         /// <summary>
         /// 駒のCSA表示文字列を取得します。

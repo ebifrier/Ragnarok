@@ -45,21 +45,29 @@ namespace Ragnarok.Shogi.Csa
                 throw new ArgumentNullException("board");
             }
 
-            if (Board.BoardEquals(board, new Board()))
+            var comp = new Board();
+            var comp2 = new Board();
+            comp2.Turn = BWType.White;
+
+            if (Board.BoardEquals(board, comp))
             {
-                return "PI, +";
+                return "PI\n+";
+            }
+            else if (Board.BoardEquals(board, comp2))
+            {
+                return "PI\n-";
             }
             else
             {
                 var bhand = HandToCsa(board, BWType.Black);
                 var whand = HandToCsa(board, BWType.White);
 
-                if (string.IsNullOrEmpty(bhand))
+                if (!string.IsNullOrEmpty(bhand))
                 {
                     bhand += "\n";
                 }
 
-                if (string.IsNullOrEmpty(whand))
+                if (!string.IsNullOrEmpty(whand))
                 {
                     whand += "\n";
                 }
@@ -137,8 +145,8 @@ namespace Ragnarok.Shogi.Csa
             else
             {
                 return string.Format("P{0}{1}",
-                    string.Join("", array),
-                    turn == BWType.Black ? "+" : "-");
+                    turn == BWType.Black ? "+" : "-",
+                    string.Join("", array));
             }
         }
         #endregion
