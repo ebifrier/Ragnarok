@@ -28,9 +28,11 @@ namespace Ragnarok.Shogi
             switch (format)
             {
                 case KifuFormat.Kif:
-                    return new KifWriter(true);
+                    return new Kif.KifWriter(true);
                 case KifuFormat.Ki2:
-                    return new KifWriter(false);
+                    return new Kif.KifWriter(false);
+                case KifuFormat.Csa:
+                    return new Csa.CsaWriter();
             }
 
             return null;

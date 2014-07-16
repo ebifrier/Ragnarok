@@ -19,7 +19,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// ヘッダ部分の情報を取得します。
         /// </summary>
-        public Dictionary<string, string> Headers
+        public KifuHeader Header
         {
             get;
             private set;
@@ -109,9 +109,47 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// ヘッダを設定します。
         /// </summary>
-        public void SetHeader(Dictionary<string, string> header)
+        public void SetHeader(KifuHeader header)
         {
-            Headers = header ?? new Dictionary<string, string>();
+            Header = header ?? new KifuHeader();
+        }
+
+        /// <summary>
+        /// 局面を設定し、局面に指し手がある場合はそれを指し手リストに追加します。
+        /// </summary>
+        /// <remarks>
+        /// <paramref name="isStartBoard"/>が真の場合は開始局面のみ
+        /// （手を全く指していない＝手数が０）しか受け入れません。
+        /// </remarks>
+        public void SetBoard(Board board, bool isStartBoard)
+        {
+            if (board == null)
+            {
+                throw new ArgumentNullException("board");
+            }
+
+            if (isStartBoard)
+            {
+                if (board.MoveCount > 0)
+                {
+                    throw new ShogiException(
+                        "SetBoardには開始局面を設定してください。");
+                }
+
+                StartBoard = board;
+            }
+            else
+            {
+                // 開始局面でなくてもよい場合は、指し手を別に取得します。
+                var moveList = new List<BoardMove>();
+                for (var move = board.Undo(); move != null; move = board.Undo())
+                {
+                    moveList.Insert(0, move);
+                }
+
+                StartBoard = board;
+                SetMoveList(moveList);
+            }
         }
 
         /// <summary>
@@ -168,7 +206,7 @@ namespace Ragnarok.Shogi
         /// </summary>
         public void Validate()
         {
-            if (Headers == null)
+            if (Header == null)
             {
                 throw new ShogiException(
                     "ヘッダーが設定されていません。");
@@ -190,45 +228,45 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public KifuObject(Dictionary<string, string> header,
+        public KifuObject(KifuHeader header,
                           Board startBoard,
                           Exception error = null)
         {
-            SetHeader(header);
-
             MoveList = new List<BoardMove>();
             RootNode = new MoveNode();
-            StartBoard = startBoard;
             Error = error;
+
+            SetHeader(header);
+            SetBoard(startBoard, false);
         }
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public KifuObject(Dictionary<string, string> header,
+        public KifuObject(KifuHeader header,
                          Board startBoard,
                          IEnumerable<BoardMove> moveList,
                          Exception error = null)
         {
-            SetHeader(header);
-            SetMoveList(moveList);
-
-            StartBoard = startBoard;
             Error = error;
+
+            SetHeader(header);
+            SetBoard(startBoard, true);
+            SetMoveList(moveList);
         }
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public KifuObject(Dictionary<string, string> header,
+        public KifuObject(KifuHeader header,
                           Board startBoard,
                           MoveNode root, Exception error = null)
         {
-            SetHeader(header);
-            SetRootNode(root);
-
-            StartBoard = startBoard;
             Error = error;
+
+            SetHeader(header);
+            SetBoard(startBoard, true);
+            SetRootNode(root);
         }
     }
 }
