@@ -128,6 +128,14 @@ namespace Ragnarok.Shogi
                 throw new ArgumentNullException("board");
             }
 
+            if (!board.Validate())
+            {
+                throw new ArgumentException("board");
+            }
+
+            // 念のためクローンしておきます。
+            board = board.Clone();
+
             if (isStartBoard)
             {
                 if (board.MoveCount > 0)

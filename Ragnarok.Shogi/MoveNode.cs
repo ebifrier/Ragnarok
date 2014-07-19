@@ -8,6 +8,9 @@ namespace Ragnarok.Shogi
     /// <summary>
     /// 変化を木構造で表すためのクラス
     /// </summary>
+    /// <remarks>
+    /// このクラスは指し手としてBoardMoveオブジェクトを持ちます。
+    /// </remarks>
     public sealed class MoveNode
     {
         /// <summary>
