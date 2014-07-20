@@ -511,11 +511,11 @@ namespace Ragnarok.Shogi.Bonanza
                 return;
             }
 
-            command.Trim();
+            string trimmedCommand = command.Trim();
 
             lock (this.writeCommands)
             {
-                this.writeCommands.AddLast(command);
+                this.writeCommands.AddLast(trimmedCommand);
 
                 Monitor.PulseAll(this.writeCommands);
             }
