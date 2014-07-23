@@ -1,3 +1,8 @@
+2014-07-23  - Ver 2.7.43
+
+	* Ragnarok.Shogi/Board.cs: 必要になったため、指し手のやり直しリスト=
+	RedoListをプロパティとして追加しました。
+
 2014-07-17  - Ver 2.7.42
 
 	* Ragnarok.Shogi/Csa/CsaUtil.cs: CSA形式のヘッダを正しく読み込めるよう
