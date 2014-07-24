@@ -1,3 +1,8 @@
+2014-07-24  - Ver 2.7.44
+
+	* Ragnarok.Forms/Input: コマンドとそのバインディング機構をWinFormsに追
+	加しました。
+
 2014-07-23  - Ver 2.7.43
 
 	* Ragnarok.Shogi/Board.cs: 必要になったため、指し手のやり直しリスト=
