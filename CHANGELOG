@@ -1,3 +1,9 @@
+2014-07-29  - Ver 2.8.2
+
+	* Ragnarok.Forms/Controls/CheckGroupBox.cs: CheckBoxつきのGroupBox、
+	CheckGroupBoxを追加しました。
+	(see: http://www.codeproject.com/KB/miscctrl/CheckGBAndRadioGB.aspx)
+
 2014-07-29  - Ver 2.8.1
 
 	* Ragnarok.Forms/DialogUtil.cs: WinFormsでダイアログを表示するときに使
