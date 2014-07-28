@@ -66,7 +66,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Bindings\BindingCollection.cs" />
+    <Compile Include="Bindings\BindingData.cs" />
+    <Compile Include="Bindings\BindingPropertyChangedEventArgs.cs" />
+    <Compile Include="Bindings\Binding.cs" />
+    <Compile Include="Bindings\BindingMode.cs" />
+    <Compile Include="Controls\CheckGroupBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\CheckGroupBox.Designer.cs">
+      <DependentUpon>CheckGroupBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Converter\EnumToBooleanConverter.cs" />
+    <Compile Include="Converter\IValueConverter.cs" />
+    <Compile Include="Converter\ValueToDecimalConverter.cs" />
+    <Compile Include="Converter\ValueToIntConverter.cs" />
+    <Compile Include="DialogUtil.cs" />
     <Compile Include="FormsUtil.cs" />
+    <Compile Include="FormsValue.cs" />
     <Compile Include="Input\CommandBindingFactory.cs" />
     <Compile Include="Input\CommandManager.cs" />
     <Compile Include="Input\Command.cs" />
@@ -84,6 +101,11 @@
       <Project>{A348968A-DD91-47B4-9420-C7D370A2BE92}</Project>
       <Name>Ragnarok</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Controls\CheckGroupBox.resx">
+      <DependentUpon>CheckGroupBox.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
