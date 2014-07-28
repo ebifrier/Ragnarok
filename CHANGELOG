@@ -1,3 +1,9 @@
+2014-07-29  - Ver 2.8.3
+
+	* Ragnarok.Presentation/WpfUtil.cs: プロパティ値変更イベントで各
+	DelegateのTargetがDependencyObjectであるかどうかにかかわらず、UIスレッ
+	ド上でイベントを処理するようにしました。(WinForms対応のため)
+
 2014-07-29  - Ver 2.8.2
 
 	* Ragnarok.Forms/Controls/CheckGroupBox.cs: CheckBoxつきのGroupBox、

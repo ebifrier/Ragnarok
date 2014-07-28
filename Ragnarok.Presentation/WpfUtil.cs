@@ -401,8 +401,21 @@ namespace Ragnarok.Presentation
                 return;
             }
 
+            WPFUtil.UIProcess(() =>
+            {
+                try
+                {
+                    handler(sender, e);
+                }
+                catch (Exception ex)
+                {
+                    Log.ErrorException(ex,
+                        "PropertyChangedの呼び出しに失敗しました。");
+                }
+            });
+
             // 個々のDelegate単位で呼び出すスレッドを変更します。
-            foreach (PropertyChangedEventHandler child in
+            /*foreach (PropertyChangedEventHandler child in
                      handler.GetInvocationList())
             {
                 var target = child.Target as DispatcherObject;
@@ -426,7 +439,7 @@ namespace Ragnarok.Presentation
                     Log.ErrorException(ex,
                         "PropertyChangedの呼び出しに失敗しました。");
                 }
-            }
+            }*/
         }
 
         /// <summary>
