@@ -21,6 +21,27 @@ namespace Ragnarok.Forms
         /// <summary>
         /// UIThread上でメソッドを実行します。
         /// </summary>
+        public static void UIProcess(Action func)
+        {
+            if (InvokeControl == null)
+            {
+                throw new InvalidOperationException(
+                    "InvokeControlがnullです。");
+            }
+
+            if (InvokeControl.InvokeRequired)
+            {
+                InvokeControl.BeginInvoke(func);
+            }
+            else
+            {
+                func();
+            }
+        }
+
+        /// <summary>
+        /// UIThread上でメソッドを実行します。
+        /// </summary>
         public static void UIProcess(this Control control, Action func)
         {
             if (control.InvokeRequired)

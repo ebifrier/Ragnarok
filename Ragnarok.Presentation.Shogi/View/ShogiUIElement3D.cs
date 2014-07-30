@@ -1009,17 +1009,17 @@ namespace Ragnarok.Presentation.Shogi.View
         /// </summary>
         private void Initialize()
         {
-            if (WPFUtil.IsInDesignMode)
-            {
-                return;
-            }
-
             try
             {
                 this.capturedPieceContainer = new Model3DGroup();
                 this.pieceContainer = new Model3DGroup();
                 this.banEffectGroup = new Model3DGroup();
                 this.effectGroup = new Model3DGroup();
+
+                if (WPFUtil.IsInDesignMode)
+                {
+                    return;
+                }
 
                 var dic = LoadXaml();
 

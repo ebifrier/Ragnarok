@@ -1,3 +1,11 @@
+2014-07-30  - Ver 2.8.4
+
+	* Ragnarok.Forms/FormsUtil.cs: Control.BeginInvokeを呼び出すための静的
+	コントロールオブジェクトを追加しました。
+	* Ragnarok.Presentation.Shogi/View/ShogiUIElement3D.cs: VSデザイナが落
+	ちないように、デザインモードでも必要なプロパティを初期化するようにしま
+	した。
+
 2014-07-29  - Ver 2.8.3
 
 	* Ragnarok.Presentation/WpfUtil.cs: プロパティ値変更イベントで各
