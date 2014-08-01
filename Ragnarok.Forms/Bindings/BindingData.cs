@@ -307,6 +307,7 @@ namespace Ragnarok.Forms.Bindings
                 new BindableInfo(typeof(ListBox), "SelectedItem", Bind_ListBox_SelectedIndex),
                 new BindableInfo(typeof(ComboBox), "SelectedIndex", Bind_ComboBox_SelectedIndex),
                 new BindableInfo(typeof(ComboBox), "SelectedItem", Bind_ComboBox_SelectedIndex),
+                new BindableInfo(typeof(TabControl), "SelectedIndex", Bind_TabControl_SelectedIndex),
                 new BindableInfo(typeof(Label), "Text", Bind_Label_Text),
                 new BindableInfo(typeof(NumericUpDown), "Value", Bind_NumericUpDown_Value),
                 new BindableInfo(typeof(RadioButton), "Checked", Bind_RadioButton_Checked),
@@ -335,7 +336,7 @@ namespace Ragnarok.Forms.Bindings
             if (propertyObj != null && IsHandleToTarget(true))
             {
                 propertyObj.PropertyChanged += OnSourceValueChanged;
-                Unbound -= (_, __) => propertyObj.PropertyChanged -= OnSourceValueChanged;
+                Unbound += (_, __) => propertyObj.PropertyChanged -= OnSourceValueChanged;
             }
 
             if (IsHandleToSource(false))
@@ -343,7 +344,7 @@ namespace Ragnarok.Forms.Bindings
                 var handler = new EventHandler((_, __) => OnTargetValueChanged());
 
                 target.EnabledChanged += handler;
-                Unbound -= (_, __) => target.EnabledChanged -= handler;
+                Unbound += (_, __) => target.EnabledChanged -= handler;
             }
         }
         #endregion
@@ -357,7 +358,7 @@ namespace Ragnarok.Forms.Bindings
             if (propertyObj != null && IsHandleToTarget(true))
             {
                 propertyObj.PropertyChanged += OnSourceValueChanged;
-                Unbound -= (_, __) => propertyObj.PropertyChanged -= OnSourceValueChanged;
+                Unbound += (_, __) => propertyObj.PropertyChanged -= OnSourceValueChanged;
             }
 
             if (IsHandleToSource(true))
@@ -365,7 +366,7 @@ namespace Ragnarok.Forms.Bindings
                 var handler = new EventHandler((_, __) => OnTargetValueChanged());
 
                 target.TextChanged += handler;
-                Unbound -= (_, __) => target.TextChanged -= handler;
+                Unbound += (_, __) => target.TextChanged -= handler;
             }
         }
         #endregion
@@ -379,7 +380,7 @@ namespace Ragnarok.Forms.Bindings
             if (propertyObj != null && IsHandleToTarget(true))
             {
                 propertyObj.PropertyChanged += OnSourceValueChanged;
-                Unbound -= (_, __) => propertyObj.PropertyChanged -= OnSourceValueChanged;
+                Unbound += (_, __) => propertyObj.PropertyChanged -= OnSourceValueChanged;
             }
 
             if (IsHandleToSource(true))
@@ -387,7 +388,7 @@ namespace Ragnarok.Forms.Bindings
                 var handler = new EventHandler((_, __) => OnTargetValueChanged());
 
                 target.SelectedIndexChanged += handler;
-                Unbound -= (_, __) => target.TextChanged -= handler;
+                Unbound += (_, __) => target.SelectedIndexChanged -= handler;
             }
         }
         #endregion
@@ -401,7 +402,7 @@ namespace Ragnarok.Forms.Bindings
             if (propertyObj != null && IsHandleToTarget(true))
             {
                 propertyObj.PropertyChanged += OnSourceValueChanged;
-                Unbound -= (_, __) => propertyObj.PropertyChanged -= OnSourceValueChanged;
+                Unbound += (_, __) => propertyObj.PropertyChanged -= OnSourceValueChanged;
             }
 
             if (IsHandleToSource(true))
@@ -409,7 +410,29 @@ namespace Ragnarok.Forms.Bindings
                 var handler = new EventHandler((_, __) => OnTargetValueChanged());
 
                 target.SelectedIndexChanged += handler;
-                Unbound -= (_, __) => target.TextChanged -= handler;
+                Unbound += (_, __) => target.SelectedIndexChanged -= handler;
+            }
+        }
+        #endregion
+
+        #region TabControl
+        private void Bind_TabControl_SelectedIndex(object obj)
+        {
+            var target = (TabControl)obj;
+
+            var propertyObj = Binding.DataSource as INotifyPropertyChanged;
+            if (propertyObj != null && IsHandleToTarget(true))
+            {
+                propertyObj.PropertyChanged += OnSourceValueChanged;
+                Unbound += (_, __) => propertyObj.PropertyChanged -= OnSourceValueChanged;
+            }
+
+            if (IsHandleToSource(true))
+            {
+                var handler = new EventHandler((_, __) => OnTargetValueChanged());
+
+                target.SelectedIndexChanged += handler;
+                Unbound += (_, __) => target.SelectedIndexChanged -= handler;
             }
         }
         #endregion
@@ -423,7 +446,7 @@ namespace Ragnarok.Forms.Bindings
             if (propertyObj != null && IsHandleToTarget(true))
             {
                 propertyObj.PropertyChanged += OnSourceValueChanged;
-                Unbound -= (_, __) => propertyObj.PropertyChanged -= OnSourceValueChanged;
+                Unbound += (_, __) => propertyObj.PropertyChanged -= OnSourceValueChanged;
             }
 
             if (IsHandleToSource(false))
@@ -442,7 +465,7 @@ namespace Ragnarok.Forms.Bindings
             if (propertyObj != null && IsHandleToTarget(true))
             {
                 propertyObj.PropertyChanged += OnSourceValueChanged;
-                Unbound -= (_, __) => propertyObj.PropertyChanged -= OnSourceValueChanged;
+                Unbound += (_, __) => propertyObj.PropertyChanged -= OnSourceValueChanged;
             }
 
             if (IsHandleToSource(true))
@@ -450,7 +473,7 @@ namespace Ragnarok.Forms.Bindings
                 var handler = new EventHandler((_, __) => OnTargetValueChanged());
 
                 target.ValueChanged += handler;
-                Unbound -= (_, __) => target.TextChanged -= handler;
+                Unbound += (_, __) => target.ValueChanged -= handler;
             }
         }
         #endregion
@@ -464,7 +487,7 @@ namespace Ragnarok.Forms.Bindings
             if (propertyObj != null && IsHandleToTarget(true))
             {
                 propertyObj.PropertyChanged += OnSourceValueChanged;
-                Unbound -= (_, __) => propertyObj.PropertyChanged -= OnSourceValueChanged;
+                Unbound += (_, __) => propertyObj.PropertyChanged -= OnSourceValueChanged;
             }
 
             if (IsHandleToSource(true))
@@ -472,7 +495,7 @@ namespace Ragnarok.Forms.Bindings
                 var handler = new EventHandler((_, __) => OnTargetValueChanged());
 
                 target.CheckedChanged += handler;
-                Unbound -= (_, __) => target.CheckedChanged -= handler;
+                Unbound += (_, __) => target.CheckedChanged -= handler;
             }
         }
         #endregion
@@ -486,7 +509,7 @@ namespace Ragnarok.Forms.Bindings
             if (propertyObj != null && IsHandleToTarget(true))
             {
                 propertyObj.PropertyChanged += OnSourceValueChanged;
-                Unbound -= (_, __) => propertyObj.PropertyChanged -= OnSourceValueChanged;
+                Unbound += (_, __) => propertyObj.PropertyChanged -= OnSourceValueChanged;
             }
 
             if (IsHandleToSource(true))
@@ -494,7 +517,7 @@ namespace Ragnarok.Forms.Bindings
                 var handler = new EventHandler((_, __) => OnTargetValueChanged());
 
                 target.CheckedChanged += handler;
-                Unbound -= (_, __) => target.CheckedChanged -= handler;
+                Unbound += (_, __) => target.CheckedChanged -= handler;
             }
         }
         #endregion

@@ -1,3 +1,8 @@
+2014-08-02  - Ver 2.8.5
+
+	* Ragnarok.Forms/Bindings/BindingData.cs: バインディング削除時のバグを
+	修正し、さらに新たないくつかのバインディングも追加しました。
+
 2014-07-30  - Ver 2.8.4
 
 	* Ragnarok.Forms/FormsUtil.cs: Control.BeginInvokeを呼び出すための静的
