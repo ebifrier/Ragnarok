@@ -717,6 +717,34 @@ namespace Ragnarok.Presentation.Shogi.View
         }
 
         /// <summary>
+        /// PieceObjectの比較用オブジェクトです。
+        /// </summary>
+        private sealed class PieceObjectComparer : IEqualityComparer<PieceObject>
+        {
+            public bool Equals(PieceObject x, PieceObject y)
+            {
+                if (x.Square != y.Square)
+                {
+                    return false;
+                }
+
+                if (x.Piece != y.Piece)
+                {
+                    return false;
+                }
+
+                return true;
+            }
+
+            public int GetHashCode(PieceObject obj)
+            {
+                return (
+                    obj.Piece.GetHashCode() ^
+                    obj.Square.GetHashCode());
+            }
+        }
+
+        /// <summary>
         /// 今の局面と画面の表示を合わせます。
         /// </summary>
         private void SyncBoardPiece()
@@ -726,22 +754,21 @@ namespace Ragnarok.Presentation.Shogi.View
                 return;
             }
 
-            ClearPieceObjects();
+            var newList = Board.AllSquares()
+                .Where(_ => Board[_] != null)
+                .Select(_ => new PieceObject(this, Board[_], _))
+                .ToArray();
+            var union = this.pieceObjectList
+                .Intersect(newList, new PieceObjectComparer())
+                .ToArray();
 
-            // 各マスに対応する描画用の駒を設定します。
-            for (var rank = 1; rank <= Board.BoardSize; ++rank)
-            {
-                for (var file = 1; file <= Board.BoardSize; ++file)
-                {
-                    var square = new Square(file, rank);
-                    var piece = Board[square];
-
-                    if (!object.ReferenceEquals(piece, null))
-                    {
-                        AddPieceObject(new PieceObject(this, piece, square));
-                    }
-                }
-            }
+            // 差分のみを更新することで、画面のちらつきを抑えます。
+            this.pieceObjectList.ToArray()
+                .Except(union, new PieceObjectComparer())
+                .ForEach(_ => RemovePieceObject(_));
+            newList
+                .Except(union, new PieceObjectComparer())
+                .ForEach(_ => AddPieceObject(_));
         }
         #endregion
 
@@ -992,12 +1019,6 @@ namespace Ragnarok.Presentation.Shogi.View
                 IsAlwaysVisible = false,
             };
 
-            // 駒台に表示します。
-            if (pieceType != PieceType.None)
-            {
-                this.capturedPieceContainer.Children.Add(value.ModelGroup);
-            }
-
             return value;
         }
 
@@ -1040,11 +1061,15 @@ namespace Ragnarok.Presentation.Shogi.View
                 }
                 else
                 {
-                    var capturedPieceList = EnumEx.GetValues<PieceType>()
-                        .Select(_ => CreateCapturedPieceObject(_, bwType));
-
                     this.capturedPieceObjectList[index] =
-                        capturedPieceList.ToList();
+                        EnumEx.GetValues<PieceType>()
+                            .Select(_ => CreateCapturedPieceObject(_, bwType))
+                            .ToList();
+
+                    // 駒台に表示します。
+                    this.capturedPieceObjectList[index]
+                        .Where(_ => _.Piece.PieceType != PieceType.None)
+                        .ForEach(_ => this.capturedPieceContainer.Children.Add(_.ModelGroup));
                 }
             });
         }

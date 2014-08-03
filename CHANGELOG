@@ -1,3 +1,8 @@
+2014-08-03  - Ver 2.8.6
+
+	* Ragnarok.Presentation.Shogi/View/ShogiUIElement3D.move.cs: 局面更新時、
+	画面がちらつかないようにしました。
+
 2014-08-02  - Ver 2.8.5
 
 	* Ragnarok.Forms/Bindings/BindingData.cs: バインディング削除時のバグを
