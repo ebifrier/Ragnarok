@@ -307,6 +307,7 @@ namespace Ragnarok.Forms.Bindings
                 new BindableInfo(typeof(ListBox), "SelectedItem", Bind_ListBox_SelectedIndex),
                 new BindableInfo(typeof(ComboBox), "SelectedIndex", Bind_ComboBox_SelectedIndex),
                 new BindableInfo(typeof(ComboBox), "SelectedItem", Bind_ComboBox_SelectedIndex),
+                new BindableInfo(typeof(ComboBox), "SelectedValue", Bind_ComboBox_SelectedValue),
                 new BindableInfo(typeof(TabControl), "SelectedIndex", Bind_TabControl_SelectedIndex),
                 new BindableInfo(typeof(Label), "Text", Bind_Label_Text),
                 new BindableInfo(typeof(NumericUpDown), "Value", Bind_NumericUpDown_Value),
@@ -411,6 +412,26 @@ namespace Ragnarok.Forms.Bindings
 
                 target.SelectedIndexChanged += handler;
                 Unbound += (_, __) => target.SelectedIndexChanged -= handler;
+            }
+        }
+
+        private void Bind_ComboBox_SelectedValue(object obj)
+        {
+            var target = (ComboBox)obj;
+
+            var propertyObj = Binding.DataSource as INotifyPropertyChanged;
+            if (propertyObj != null && IsHandleToTarget(true))
+            {
+                propertyObj.PropertyChanged += OnSourceValueChanged;
+                Unbound += (_, __) => propertyObj.PropertyChanged -= OnSourceValueChanged;
+            }
+
+            if (IsHandleToSource(true))
+            {
+                var handler = new EventHandler((_, __) => OnTargetValueChanged());
+
+                target.SelectedValueChanged += handler;
+                Unbound += (_, __) => target.SelectedValueChanged -= handler;
             }
         }
         #endregion

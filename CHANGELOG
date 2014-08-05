@@ -1,3 +1,8 @@
+2014-08-05  - Ver 2.8.7
+
+	* Ragnarok.Forms/Bindings/BindingData.cs: Binding対象にコンボボックスの
+	SelectedValueを追加しました。
+
 2014-08-03  - Ver 2.8.6
 
 	* Ragnarok.Presentation.Shogi/View/ShogiUIElement3D.move.cs: 局面更新時、
