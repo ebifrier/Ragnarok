@@ -1,3 +1,9 @@
+2014-08-07  - Ver 2.8.7.1
+
+	* Ragnarok.Forms/Controls/CheckGroupBox.cs: Windowsクラシック表示時に
+	VisualStyleRendererが例外を投げるバグを修正しました。また、チェックボッ
+	クスの位置を少し上にずらしました。
+
 2014-08-05  - Ver 2.8.7
 
 	* Ragnarok.Forms/Bindings/BindingData.cs: Binding対象にコンボボックスの

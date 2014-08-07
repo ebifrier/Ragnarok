@@ -38,7 +38,7 @@ namespace Ragnarok.Forms.Controls
 	{
 		// Constants
 		private const int CHECKBOX_X_OFFSET = 10;
-		private const int CHECKBOX_Y_OFFSET = 0;
+		private const int CHECKBOX_Y_OFFSET = -3;
 
 		// Members
 		private bool m_bDisableChildrenIfUnchecked;
@@ -54,10 +54,18 @@ namespace Ragnarok.Forms.Controls
 			this.m_checkBox.Location = new System.Drawing.Point(CHECKBOX_X_OFFSET, CHECKBOX_Y_OFFSET);
 			this.Checked = true;
 
-			// Set the color of the CheckBox's text to the color of the label in a standard groupbox control.
-			VisualStyleRenderer vsr = new VisualStyleRenderer(VisualStyleElement.Button.GroupBox.Normal);
-			Color groupBoxTextColor = vsr.GetColor(ColorProperty.TextColor);
-			this.m_checkBox.ForeColor = groupBoxTextColor;
+			// Set the color of the CheckBox's text to the color of the label
+            // in a standard groupbox control.
+            try
+            {
+                VisualStyleRenderer vsr = new VisualStyleRenderer(VisualStyleElement.Button.GroupBox.Normal);
+
+                Color groupBoxTextColor = vsr.GetColor(ColorProperty.TextColor);
+                this.m_checkBox.ForeColor = groupBoxTextColor;
+            }
+            catch (InvalidOperationException)
+            {
+            }
 		}
 
 		#region Properties
