@@ -1,3 +1,10 @@
+2014-08-15  - Ver 2.8.7.5
+
+	* Ragnarok.Presentation.Shogi/AutoPlay.cs: 重要な自動再生かどうかを示す
+	フラグを追加しました。
+	* Ragnarok.Presentation.Shogi/View/ShogiUIElement3D.move.cs: 重要な自動
+	再生はマウス押下時でもキャンセルしないようにしました。
+
 2014-08-15  - Ver 2.8.7.4
 
 	* Ragnarok.Forms/Properties/AssemblyInfo.cs: アセンブリにCLSCompliant属

@@ -98,7 +98,7 @@ namespace Ragnarok.Presentation.Shogi.View
             if (this.movingPiece == null)
             {
                 // 自動再生中であれば、それを停止します。
-                if (this.autoPlay != null)
+                if (this.autoPlay != null && !this.autoPlay.IsImportant)
                 {
                     StopAutoPlay();
                     return;

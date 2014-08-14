@@ -156,6 +156,18 @@ namespace Ragnarok.Presentation.Shogi
             get;
             set;
         }
+
+        /// <summary>
+        /// 重要な自動再生かどうかを取得または設定します。
+        /// </summary>
+        /// <remarks>
+        /// 真の場合は、GUIのマウス押下で自動再生をキャンセルしません。
+        /// </remarks>
+        public bool IsImportant
+        {
+            get;
+            set;
+        }
         
         /// <summary>
         /// まだ指し手が残っているか取得します。
