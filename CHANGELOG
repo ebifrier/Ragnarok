@@ -1,3 +1,11 @@
+2014-08-15  - Ver 2.8.7.4
+
+	* Ragnarok.Forms/Properties/AssemblyInfo.cs: アセンブリにCLSCompliant属
+	性を追加しました。
+	* Ragnarok.Forms/Bindings/BindingData.cs: コントロールの型ごとに操作を
+	実行するのではなく、リフレクションを使って型関係なくコントロールのバイ
+	ンディングを行うようにしました。
+
 2014-08-15  - Ver 2.8.7.3
 
 	* Ragnarok/MathEx.cs: decimal用のBetweenメソッドを追加しました。

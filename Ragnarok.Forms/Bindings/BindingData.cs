@@ -7,6 +7,7 @@ using System.Windows.Forms;
 
 namespace Ragnarok.Forms.Bindings
 {
+    using Controls;
     using Utility;
 
     internal sealed class BindingData
@@ -25,8 +26,19 @@ namespace Ragnarok.Forms.Bindings
 
             this.targetPropertyObject = MethodUtil.GetPropertyObject(
                 Binding.BindableTarget.GetType(), Binding.BindingPropertyName);
+            if (this.targetPropertyObject == null)
+            {
+                throw new ArgumentException(
+                    Binding.BindingPropertyName + ": 指定のプロパティが存在しません。");
+            }
+
             this.sourcePropertyObject = MethodUtil.GetPropertyObject(
                 Binding.DataSource.GetType(), Binding.DataSourcePropertyName);
+            if (this.sourcePropertyObject == null)
+            {
+                throw new ArgumentException(
+                    Binding.DataSourcePropertyName + ": 指定のプロパティが存在しません。");
+            }
         }
 
         /// <summary>
@@ -126,7 +138,7 @@ namespace Ragnarok.Forms.Bindings
         /// <remarks>
         /// ソースデータの値を変更します。
         /// </remarks>
-        private void OnTargetValueChanged()
+        private void OnTargetValueChanged(object sender, EventArgs e)
         {
             using (var result = this.recurceLock.Lock())
             {
@@ -245,10 +257,7 @@ namespace Ragnarok.Forms.Bindings
         /// </summary>
         public void Bind()
         {
-            if (!BindInternal())
-            {
-                throw new NotImplementedException();
-            }
+            BindInternal();
 
             // 初期化時は、ソースからコントロールへ値を反映します。
             OnSourceValueChanged(this,
@@ -258,290 +267,36 @@ namespace Ragnarok.Forms.Bindings
             Binding.Control.Disposed += OnUnbind;
             Binding.IsBinding = true;
         }
-        #endregion
-
-        #region BindInternal
-        /// <summary>
-        /// バインド対象となるクラス型やコールバックなどを保持します。
-        /// </summary>
-        internal sealed class BindableInfo
-        {
-            public delegate void BindCallback(object target);
-
-            public BindableInfo(Type type, string name, BindCallback callback)
-            {
-                BindableType = type;
-                PropertyName = name;
-                Callback = callback;
-            }
-
-            public Type BindableType
-            {
-                get;
-                private set;
-            }
-
-            public string PropertyName
-            {
-                get;
-                private set;
-            }
-
-            public BindCallback Callback
-            {
-                get;
-                private set;
-            }
-        }
 
         /// <summary>
         /// 実際のバインディング処理を行い、失敗であれば偽を返します。
         /// </summary>
-        private bool BindInternal()
+        private void BindInternal()
         {
-            var BindTable = new BindableInfo[]
+            var propertyObj = Binding.DataSource as INotifyPropertyChanged;
+            if (propertyObj != null && IsHandleToTarget(true))
             {
-                new BindableInfo(typeof(Control), "Enabled", Bind_Control_Enabled),
-                new BindableInfo(typeof(TextBox), "Text", Bind_TextBox_Text),
-                new BindableInfo(typeof(ListBox), "SelectedIndex", Bind_ListBox_SelectedIndex),
-                new BindableInfo(typeof(ListBox), "SelectedItem", Bind_ListBox_SelectedIndex),
-                new BindableInfo(typeof(ComboBox), "SelectedIndex", Bind_ComboBox_SelectedIndex),
-                new BindableInfo(typeof(ComboBox), "SelectedItem", Bind_ComboBox_SelectedIndex),
-                new BindableInfo(typeof(ComboBox), "SelectedValue", Bind_ComboBox_SelectedValue),
-                new BindableInfo(typeof(TabControl), "SelectedIndex", Bind_TabControl_SelectedIndex),
-                new BindableInfo(typeof(Label), "Text", Bind_Label_Text),
-                new BindableInfo(typeof(NumericUpDown), "Value", Bind_NumericUpDown_Value),
-                new BindableInfo(typeof(RadioButton), "Checked", Bind_RadioButton_Checked),
-                new BindableInfo(typeof(CheckBox), "Checked", Bind_CheckBox_Checked),
-            };
+                propertyObj.PropertyChanged += OnSourceValueChanged;
+                Unbound += (_, __) => propertyObj.PropertyChanged -= OnSourceValueChanged;
+            }
 
-            foreach (var item in BindTable)
+            if (IsHandleToSource(true))
             {
-                if (item.BindableType.IsInstanceOfType(Binding.BindableTarget) &&
-                    item.PropertyName == Binding.BindingPropertyName)
+                var control = Binding.BindableTarget;
+
+                // 名前が"PropertyName + Changed"のイベントを検索します。
+                var eventName = Binding.BindingPropertyName + "Changed";
+                var ev = control.GetType().GetEvent(eventName);
+
+                if (ev != null)
                 {
-                    item.Callback(Binding.BindableTarget);
-                    return true;
+                    var handler = new EventHandler(OnTargetValueChanged);
+
+                    ev.AddEventHandler(control, handler);
+                    Unbound += (_, __) => ev.RemoveEventHandler(control, handler);
                 }
             }
-
-            return false;
         }
-
-        #region Control
-        private void Bind_Control_Enabled(object obj)
-        {
-            var target = (Control)obj;
-
-            var propertyObj = Binding.DataSource as INotifyPropertyChanged;
-            if (propertyObj != null && IsHandleToTarget(true))
-            {
-                propertyObj.PropertyChanged += OnSourceValueChanged;
-                Unbound += (_, __) => propertyObj.PropertyChanged -= OnSourceValueChanged;
-            }
-
-            if (IsHandleToSource(false))
-            {
-                var handler = new EventHandler((_, __) => OnTargetValueChanged());
-
-                target.EnabledChanged += handler;
-                Unbound += (_, __) => target.EnabledChanged -= handler;
-            }
-        }
-        #endregion
-
-        #region TextBox
-        private void Bind_TextBox_Text(object obj)
-        {
-            var target = (TextBox)obj;
-
-            var propertyObj = Binding.DataSource as INotifyPropertyChanged;
-            if (propertyObj != null && IsHandleToTarget(true))
-            {
-                propertyObj.PropertyChanged += OnSourceValueChanged;
-                Unbound += (_, __) => propertyObj.PropertyChanged -= OnSourceValueChanged;
-            }
-
-            if (IsHandleToSource(true))
-            {
-                var handler = new EventHandler((_, __) => OnTargetValueChanged());
-
-                target.TextChanged += handler;
-                Unbound += (_, __) => target.TextChanged -= handler;
-            }
-        }
-        #endregion
-
-        #region ListBox
-        private void Bind_ListBox_SelectedIndex(object obj)
-        {
-            var target = (ListBox)obj;
-
-            var propertyObj = Binding.DataSource as INotifyPropertyChanged;
-            if (propertyObj != null && IsHandleToTarget(true))
-            {
-                propertyObj.PropertyChanged += OnSourceValueChanged;
-                Unbound += (_, __) => propertyObj.PropertyChanged -= OnSourceValueChanged;
-            }
-
-            if (IsHandleToSource(true))
-            {
-                var handler = new EventHandler((_, __) => OnTargetValueChanged());
-
-                target.SelectedIndexChanged += handler;
-                Unbound += (_, __) => target.SelectedIndexChanged -= handler;
-            }
-        }
-        #endregion
-
-        #region ComboBox
-        private void Bind_ComboBox_SelectedIndex(object obj)
-        {
-            var target = (ComboBox)obj;
-
-            var propertyObj = Binding.DataSource as INotifyPropertyChanged;
-            if (propertyObj != null && IsHandleToTarget(true))
-            {
-                propertyObj.PropertyChanged += OnSourceValueChanged;
-                Unbound += (_, __) => propertyObj.PropertyChanged -= OnSourceValueChanged;
-            }
-
-            if (IsHandleToSource(true))
-            {
-                var handler = new EventHandler((_, __) => OnTargetValueChanged());
-
-                target.SelectedIndexChanged += handler;
-                Unbound += (_, __) => target.SelectedIndexChanged -= handler;
-            }
-        }
-
-        private void Bind_ComboBox_SelectedValue(object obj)
-        {
-            var target = (ComboBox)obj;
-
-            var propertyObj = Binding.DataSource as INotifyPropertyChanged;
-            if (propertyObj != null && IsHandleToTarget(true))
-            {
-                propertyObj.PropertyChanged += OnSourceValueChanged;
-                Unbound += (_, __) => propertyObj.PropertyChanged -= OnSourceValueChanged;
-            }
-
-            if (IsHandleToSource(true))
-            {
-                var handler = new EventHandler((_, __) => OnTargetValueChanged());
-
-                target.SelectedValueChanged += handler;
-                Unbound += (_, __) => target.SelectedValueChanged -= handler;
-            }
-        }
-        #endregion
-
-        #region TabControl
-        private void Bind_TabControl_SelectedIndex(object obj)
-        {
-            var target = (TabControl)obj;
-
-            var propertyObj = Binding.DataSource as INotifyPropertyChanged;
-            if (propertyObj != null && IsHandleToTarget(true))
-            {
-                propertyObj.PropertyChanged += OnSourceValueChanged;
-                Unbound += (_, __) => propertyObj.PropertyChanged -= OnSourceValueChanged;
-            }
-
-            if (IsHandleToSource(true))
-            {
-                var handler = new EventHandler((_, __) => OnTargetValueChanged());
-
-                target.SelectedIndexChanged += handler;
-                Unbound += (_, __) => target.SelectedIndexChanged -= handler;
-            }
-        }
-        #endregion
-
-        #region Label
-        private void Bind_Label_Text(object obj)
-        {
-            var target = (Label)obj;
-
-            var propertyObj = Binding.DataSource as INotifyPropertyChanged;
-            if (propertyObj != null && IsHandleToTarget(true))
-            {
-                propertyObj.PropertyChanged += OnSourceValueChanged;
-                Unbound += (_, __) => propertyObj.PropertyChanged -= OnSourceValueChanged;
-            }
-
-            if (IsHandleToSource(false))
-            {
-                throw new NotSupportedException();
-            }
-        }
-        #endregion
-
-        #region NumericUpDown
-        private void Bind_NumericUpDown_Value(object obj)
-        {
-            var target = (NumericUpDown)obj;
-
-            var propertyObj = Binding.DataSource as INotifyPropertyChanged;
-            if (propertyObj != null && IsHandleToTarget(true))
-            {
-                propertyObj.PropertyChanged += OnSourceValueChanged;
-                Unbound += (_, __) => propertyObj.PropertyChanged -= OnSourceValueChanged;
-            }
-
-            if (IsHandleToSource(true))
-            {
-                var handler = new EventHandler((_, __) => OnTargetValueChanged());
-
-                target.ValueChanged += handler;
-                Unbound += (_, __) => target.ValueChanged -= handler;
-            }
-        }
-        #endregion
-
-        #region RadioButton
-        private void Bind_RadioButton_Checked(object obj)
-        {
-            var target = (RadioButton)obj;
-
-            var propertyObj = Binding.DataSource as INotifyPropertyChanged;
-            if (propertyObj != null && IsHandleToTarget(true))
-            {
-                propertyObj.PropertyChanged += OnSourceValueChanged;
-                Unbound += (_, __) => propertyObj.PropertyChanged -= OnSourceValueChanged;
-            }
-
-            if (IsHandleToSource(true))
-            {
-                var handler = new EventHandler((_, __) => OnTargetValueChanged());
-
-                target.CheckedChanged += handler;
-                Unbound += (_, __) => target.CheckedChanged -= handler;
-            }
-        }
-        #endregion
-
-        #region CheckBox
-        private void Bind_CheckBox_Checked(object obj)
-        {
-            var target = (CheckBox)obj;
-
-            var propertyObj = Binding.DataSource as INotifyPropertyChanged;
-            if (propertyObj != null && IsHandleToTarget(true))
-            {
-                propertyObj.PropertyChanged += OnSourceValueChanged;
-                Unbound += (_, __) => propertyObj.PropertyChanged -= OnSourceValueChanged;
-            }
-
-            if (IsHandleToSource(true))
-            {
-                var handler = new EventHandler((_, __) => OnTargetValueChanged());
-
-                target.CheckedChanged += handler;
-                Unbound += (_, __) => target.CheckedChanged -= handler;
-            }
-        }
-        #endregion
         #endregion
     }
 }
