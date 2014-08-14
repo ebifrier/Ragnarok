@@ -336,13 +336,13 @@ namespace Ragnarok.Presentation.Shogi
         /// </summary>
         protected IEnumerable<bool> GetUpdateEnumerator()
         {
-            foreach (var result in WaitExecutor(BeginningInterval))
+            // 最初に背景色のみを更新します。
+            foreach (var result in BackgroundFadeInExecutor())
             {
                 yield return result;
             }
 
-            // 最初に背景色のみを更新します。
-            foreach (var result in BackgroundFadeInExecutor())
+            foreach (var result in WaitExecutor(BeginningInterval))
             {
                 yield return result;
             }
@@ -353,13 +353,13 @@ namespace Ragnarok.Presentation.Shogi
                 yield return result;
             }
 
-            // 背景色をもとに戻します。
-            foreach (var result in BackgroundFadeOutExecutor())
+            foreach (var result in WaitExecutor(EndingInterval))
             {
                 yield return result;
             }
 
-            foreach (var result in WaitExecutor(EndingInterval))
+            // 背景色をもとに戻します。
+            foreach (var result in BackgroundFadeOutExecutor())
             {
                 yield return result;
             }

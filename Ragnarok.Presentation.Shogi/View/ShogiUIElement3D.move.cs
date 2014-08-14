@@ -86,7 +86,7 @@ namespace Ragnarok.Presentation.Shogi.View
         }
 
         /// <summary>
-        /// マウスの右ボタン押下時に呼ばれます。
+        /// マウスの左ボタン押下時に呼ばれます。
         /// </summary>
         protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
         {
@@ -95,8 +95,15 @@ namespace Ragnarok.Presentation.Shogi.View
             // マウスがどのセルにいるかです。
             var pos = InvarseTranslate(e.GetPosition(this));
 
-            if (movingPiece == null)
+            if (this.movingPiece == null)
             {
+                // 自動再生中であれば、それを停止します。
+                if (this.autoPlay != null)
+                {
+                    StopAutoPlay();
+                    return;
+                }
+
                 // 駒検索
                 var square = PointToSquare(pos);
                 if (square != null)
@@ -203,6 +210,8 @@ namespace Ragnarok.Presentation.Shogi.View
             {
                 EffectManager.BeginMove(pieceObject.Square, pieceObject.Piece);
             }
+
+            InManipulating = true;
         }
 
         /// <summary>
@@ -230,6 +239,8 @@ namespace Ragnarok.Presentation.Shogi.View
             {
                 EffectManager.BeginMove(null, piece);
             }
+
+            InManipulating = true;
         }
 
         /// <summary>
@@ -262,7 +273,7 @@ namespace Ragnarok.Presentation.Shogi.View
                 EffectManager.EndMove();
             }
 
-            //ReleaseMouseCapture();
+            InManipulating = false;
         }
         #endregion
 

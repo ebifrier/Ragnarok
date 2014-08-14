@@ -88,10 +88,10 @@ namespace Ragnarok.Presentation.Shogi.View
         private Model3DGroup banEffectGroup;
         private Model3DGroup effectGroup;
 
+        private readonly ReentrancyLock renderLock = new ReentrancyLock();
         private EntityObject banEffectObjectRoot = new EntityObject();
         private EntityObject effectObjectRoot = new EntityObject();
         private AutoPlay autoPlay;
-        private ReentrancyLock renderLock = new ReentrancyLock();
 
         #region イベント
         /// <summary>
@@ -715,6 +715,23 @@ namespace Ragnarok.Presentation.Shogi.View
         {
             get { return (Size)GetValue(CellSizeProperty); }
             private set { SetValue(CellSizeProperty, value); }
+        }
+
+        /// <summary>
+        /// 駒が掴まれているなどするかどうかを扱う依存プロパティです。
+        /// </summary>
+        public static readonly DependencyProperty InManipulatingProperty =
+            DependencyProperty.Register(
+                "InManipulating", typeof(bool), typeof(ShogiUIElement3D),
+                new FrameworkPropertyMetadata(default(bool)));
+
+        /// <summary>
+        /// 駒が掴まれているなどするかどうかを取得します。
+        /// </summary>
+        public bool InManipulating
+        {
+            get { return (bool)GetValue(InManipulatingProperty); }
+            private set { SetValue(InManipulatingProperty, value); }
         }
         #endregion
 

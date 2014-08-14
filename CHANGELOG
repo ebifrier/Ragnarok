@@ -1,3 +1,11 @@
+2014-08-15  - Ver 2.8.7.2
+
+	* Ragnarok.Presentation.Shogi/AutoPlay.cs: 背景色を変えた後に、指定のウ
+	ェイトがくるようにしました。
+	* Ragnarok.Presentation.Shogi/View/ShogiUIElement3D.cs: 駒をつかむなど、
+	なんらかの操作中であることを示すフラグを追加しました。また、自動再生中
+	にマウスを押下した場合、自動再生が止まるようにしました。	
+
 2014-08-07  - Ver 2.8.7.1
 
 	* Ragnarok.Forms/Controls/CheckGroupBox.cs: Windowsクラシック表示時に
