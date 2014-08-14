@@ -1,3 +1,7 @@
+2014-08-15  - Ver 2.8.7.3
+
+	* Ragnarok/MathEx.cs: decimal用のBetweenメソッドを追加しました。
+
 2014-08-15  - Ver 2.8.7.2
 
 	* Ragnarok.Presentation.Shogi/AutoPlay.cs: 背景色を変えた後に、指定のウ

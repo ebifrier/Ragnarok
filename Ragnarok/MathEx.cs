@@ -184,6 +184,14 @@ namespace Ragnarok
         /// <summary>
         /// a～bに値が収まるようにvを調整します。
         /// </summary>
+        public static decimal Between(decimal a, decimal b, decimal v)
+        {
+            return Math.Max(a, Math.Min(v, b));
+        }
+
+        /// <summary>
+        /// a～bに値が収まるようにvを調整します。
+        /// </summary>
         public static int Between(int a, int b, int v)
         {
             return Math.Max(a, Math.Min(v, b));
