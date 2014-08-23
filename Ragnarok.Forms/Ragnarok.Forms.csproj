@@ -90,6 +90,10 @@
     <Compile Include="Input\CommandBindingBase.cs" />
     <Compile Include="Input\Detail\ButtonCommandBinding.cs" />
     <Compile Include="Input\Detail\ButtonCommandBindingFactory.cs" />
+    <Compile Include="Input\Detail\MenuItemCommandBindingFactory.cs" />
+    <Compile Include="Input\Detail\MenuItemCommandBinding.cs" />
+    <Compile Include="Input\Detail\ToolStripButtonCommandBindingFactory.cs" />
+    <Compile Include="Input\Detail\ToolStripButtonCommandBinding.cs" />
     <Compile Include="Input\RelayCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -7,20 +7,20 @@ using System.Windows.Forms;
 namespace Ragnarok.Forms.Input.Detail
 {
     /// <summary>
-    /// ButtonBase用のバインディングクラスです。
+    /// MenuItem用のバインディングクラスです。
     /// </summary>
-    internal sealed class ButtonCommandBinding : CommandBindingBase
+    internal sealed class MenuItemCommandBinding : CommandBindingBase
     {
-        private ButtonBase target;
+        private ToolStripMenuItem target;
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public ButtonCommandBinding(ButtonBase button, ICommand command,
-                                    Func<object> commandParameterCallback)
-            : base(button, command, commandParameterCallback)
+        public MenuItemCommandBinding(ToolStripMenuItem target, ICommand command,
+                                      Func<object> commandParameterCallback)
+            : base(target, command, commandParameterCallback)
         {
-            this.target = button;
+            this.target = target;
             this.target.Click += (_, __) => DoExecute();
 
             OnUpdatedEnabled();

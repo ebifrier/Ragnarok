@@ -14,8 +14,8 @@ namespace Ragnarok.Forms.Input
             new List<ICommandBindingFactory>()
             {
                 new Detail.ButtonCommandBindingFactory(),
-                /*new MenuItemCommandBindingFactory(),
-                new ToolStripButtonCommandBindingFactory()*/
+                new Detail.MenuItemCommandBindingFactory(),
+                new Detail.ToolStripButtonCommandBindingFactory(),
             };
 
         private static readonly List<CommandBindingBase> bindings =

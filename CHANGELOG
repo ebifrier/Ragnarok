@@ -1,3 +1,8 @@
+2014-08-23  - Ver 2.8.7.6
+
+	* Ragnarok.Forms/Input: 別コンポーネントのコマンドバインディング担当ク
+	ラスを追加しました。
+
 2014-08-15  - Ver 2.8.7.5
 
 	* Ragnarok.Presentation.Shogi/AutoPlay.cs: 重要な自動再生かどうかを示す

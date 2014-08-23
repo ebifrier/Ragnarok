@@ -7,18 +7,73 @@ using System.Windows.Forms;
 
 namespace Ragnarok.Forms.Input
 {
-    public abstract class CommandBindingBase
+    public abstract class CommandBindingBase : IDisposable
     {
+        private bool disposed;
+
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        protected CommandBindingBase(Component component, ICommand command)
+        protected CommandBindingBase(Component component, ICommand command,
+                                     Func<object> commandParameterCallback)
         {
             Component = component;
             Command = command;
+            CommandParameterCallback = commandParameterCallback;
 
-            Component.Disposed += ComponentDisposed;
+            Component.Disposed += (_, __) => Dispose();
             Command.CanExecuteChanged += CanExecuteChanged;
+        }
+
+        /// <summary>
+        /// デストラクタ
+        /// </summary>
+        ~CommandBindingBase()
+        {
+            Dispose(false);
+        }
+
+        /// <summary>
+        /// オブジェクトを破棄します。
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected abstract void OnDisposed();
+
+        /// <summary>
+        /// オブジェクトを破棄します。
+        /// </summary>
+        protected void Dispose(bool disposing)
+        {
+            if (!this.disposed)
+            {
+                if (disposing)
+                {
+                    OnDisposed();
+
+                    Command.CanExecuteChanged -= CanExecuteChanged;
+                    Component.Disposed -= (_, __) => Dispose();
+                }
+
+                CommandParameterCallback = null;
+                Command = null;
+                Component = null;
+
+                this.disposed = true;
+            }
+        }
+
+        /// <summary>
+        /// 対応するコンポーネントを取得します。
+        /// </summary>
+        public Component Component
+        {
+            get;
+            private set;
         }
 
         /// <summary>
@@ -31,38 +86,38 @@ namespace Ragnarok.Forms.Input
         }
 
         /// <summary>
-        /// 対応するコンポーネントを取得します。
+        /// コマンドパラメーターを返すコールバックを取得します。
         /// </summary>
-        public Component Component
+        public Func<object> CommandParameterCallback
         {
             get;
             private set;
         }
 
-        protected abstract void OnCanExecuteChanged();
+        /// <summary>
+        /// コマンドを実行します。
+        /// </summary>
+        protected void DoExecute()
+        {
+            Command.Execute(CommandParameterCallback());
+        }
+
+        /// <summary>
+        /// コマンドが実行可能か調べます。
+        /// </summary>
+        protected bool DoCanExecute()
+        {
+            return Command.CanExecute(CommandParameterCallback());
+        }
+
+        protected abstract void OnUpdatedEnabled();
 
         /// <summary>
         /// コマンドの実行可能性が変わった時に呼ばれます。
         /// </summary>
         private void CanExecuteChanged(object sender, EventArgs e)
         {
-            OnCanExecuteChanged();
-        }
-
-        protected abstract void OnComponentDisposed();
-
-        /// <summary>
-        /// 対応するコンポーネントが破棄されたときに呼ばれます。
-        /// </summary>
-        private void ComponentDisposed(object sender, EventArgs e)
-        {
-            OnComponentDisposed();
-
-            Command.CanExecuteChanged -= CanExecuteChanged;
-            Component.Disposed -= ComponentDisposed;
-
-            Component = null;
-            Command = null;
+            OnUpdatedEnabled();
         }
     }
 }
