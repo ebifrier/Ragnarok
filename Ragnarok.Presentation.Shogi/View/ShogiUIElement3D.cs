@@ -215,7 +215,7 @@ namespace Ragnarok.Presentation.Shogi.View
                     newBoard.BoardChanged += self.OnBoardPieceChanged;
                 }
 
-                self.SyncBoard(true);
+                self.SyncBoard(false, true);
             }
         }
 
@@ -248,7 +248,7 @@ namespace Ragnarok.Presentation.Shogi.View
             if (self != null)
             {
                 // 駒の配置とエフェクトを初期化します。
-                self.SyncBoard(true);
+                self.SyncBoard(true, true);
             }
         }
 
@@ -290,7 +290,7 @@ namespace Ragnarok.Presentation.Shogi.View
             UpdateIsLeaveTimeVisibleInternal();
             UpdatePieceBoxBrush();
 
-            SyncCapturedPieceObject();
+            SyncCapturedPieceObject(true);
         }
 
         /// <summary>
@@ -450,7 +450,7 @@ namespace Ragnarok.Presentation.Shogi.View
 
             if (self != null)
             {
-                self.SyncBoard(false);
+                self.SyncBoard(true, false);
             }
         }
 
@@ -804,11 +804,11 @@ namespace Ragnarok.Presentation.Shogi.View
         /// <summary>
         /// 今の局面と画面の表示を合わせます。
         /// </summary>
-        private void SyncBoard(bool initEffect)
+        private void SyncBoard(bool forceUpdate, bool initEffect)
         {
             // 今の局面と画面の表示を合わせます。
-            SyncCapturedPieceObject();
-            SyncBoardPiece();
+            SyncCapturedPieceObject(forceUpdate);
+            SyncBoardPiece(forceUpdate);
 
             if (initEffect && EffectManager != null)
             {
@@ -1078,7 +1078,7 @@ namespace Ragnarok.Presentation.Shogi.View
                 this.effectGroup.Children.Add(this.effectObjectRoot.ModelGroup);
 
                 // 今の局面と画面の表示を合わせます。
-                SyncBoard(true);
+                SyncBoard(true, true);
             }
             catch (Exception ex)
             {

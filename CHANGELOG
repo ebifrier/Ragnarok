@@ -1,3 +1,8 @@
+2014-08-24  - Ver 2.8.7.7
+
+	* Ragnarok.Presentation.Shogi/View/ShogiUIElement3D.cs: 変化した位置に
+	ある駒だけでなく、すべての駒を更新するようなフラグを追加しました。
+
 2014-08-23  - Ver 2.8.7.6
 
 	* Ragnarok.Forms/Input: 別コンポーネントのコマンドバインディング担当ク

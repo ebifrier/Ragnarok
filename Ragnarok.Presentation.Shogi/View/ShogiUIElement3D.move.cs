@@ -758,7 +758,7 @@ namespace Ragnarok.Presentation.Shogi.View
         /// <summary>
         /// 今の局面と画面の表示を合わせます。
         /// </summary>
-        private void SyncBoardPiece()
+        private void SyncBoardPiece(bool forceUpdate)
         {
             if (Board == null)
             {
@@ -769,17 +769,27 @@ namespace Ragnarok.Presentation.Shogi.View
                 .Where(_ => Board[_] != null)
                 .Select(_ => new PieceObject(this, Board[_], _))
                 .ToArray();
-            var union = this.pieceObjectList
-                .Intersect(newList, new PieceObjectComparer())
-                .ToArray();
 
-            // 差分のみを更新することで、画面のちらつきを抑えます。
-            this.pieceObjectList.ToArray()
-                .Except(union, new PieceObjectComparer())
-                .ForEach(_ => RemovePieceObject(_));
-            newList
-                .Except(union, new PieceObjectComparer())
-                .ForEach(_ => AddPieceObject(_));
+            if (forceUpdate)
+            {
+                // 全部更新
+                ClearPieceObjects();
+                newList.ForEach(_ => AddPieceObject(_));
+            }
+            else
+            {
+                // 差分のみを更新することで、画面のちらつきを抑えます。
+                var union = this.pieceObjectList
+                    .Intersect(newList, new PieceObjectComparer())
+                    .ToArray();
+                
+                this.pieceObjectList.ToArray()
+                    .Except(union, new PieceObjectComparer())
+                    .ForEach(_ => RemovePieceObject(_));
+                newList
+                    .Except(union, new PieceObjectComparer())
+                    .ForEach(_ => AddPieceObject(_));
+            }
         }
         #endregion
 
@@ -951,6 +961,24 @@ namespace Ragnarok.Presentation.Shogi.View
         }
 
         /// <summary>
+        /// 表示用の持ち駒をすべて削除します。
+        /// </summary>
+        private void ClearCapturedPieceObjects()
+        {
+            foreach (var list in this.capturedPieceObjectList)
+            {
+                if (list != null)
+                {
+                    list.ToArray()
+                        .ForEach(_ => _.Terminate());
+                    list.Clear();
+                }
+            }
+
+            this.capturedPieceContainer.Children.Clear();
+        }
+
+        /// <summary>
         /// 持ち駒や駒箱の駒の数を取得します。
         /// </summary>
         private int GetCapturedPieceCount(PieceType pieceType, BWType bwType)
@@ -1040,7 +1068,7 @@ namespace Ragnarok.Presentation.Shogi.View
         /// 盤上の駒と違って、駒台上の駒はプロパティで表示・非表示などを
         /// 切り替えるため、駒の移動ごとに追加・削除をする必要はありません。
         /// </remarks>
-        private void SyncCapturedPieceObject()
+        private void SyncCapturedPieceObject(bool forceUpdate)
         {
             if (Board == null)
             {
@@ -1051,16 +1079,7 @@ namespace Ragnarok.Presentation.Shogi.View
             InitKomaboxPieceCount();
 
             // 先に駒を削除します。
-            foreach (var list in this.capturedPieceObjectList)
-            {
-                if (list != null)
-                {
-                    list.ToArray()
-                        .ForEach(_ => _.Terminate());
-                    list.Clear();
-                }
-            }
-            this.capturedPieceContainer.Children.Clear();
+            ClearCapturedPieceObjects();
 
             // 駒箱・先手・後手用の駒台にある駒を用意します。
             EnumEx.GetValues<BWType>().ForEachWithIndex((bwType, index) =>
