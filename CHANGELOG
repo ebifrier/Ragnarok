@@ -1,3 +1,7 @@
+2014-09-12  - Ver 2.8.7.8
+
+	* Ragnarok/MathEx.cs: float用のメソッドを追加しました。
+
 2014-08-24  - Ver 2.8.7.7
 
 	* Ragnarok.Presentation.Shogi/View/ShogiUIElement3D.cs: 変化した位置に
