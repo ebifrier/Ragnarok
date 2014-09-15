@@ -92,9 +92,10 @@ namespace Ragnarok.Presentation.Extra.Element
         /// <summary>
         /// 背景のトランジションを開始します。
         /// </summary>
-        private void StartTransition()
+        private void StartTransition(TimeSpan? duration)
         {
-            var seconds = FadeDuration.TimeSpan.TotalSeconds;
+            var timeSpan = (duration != null ? duration.Value : FadeDuration.TimeSpan);
+            var seconds = timeSpan.TotalSeconds;
             var fadeTime0 = TimeSpan.FromSeconds(seconds / 4 * 1);
             var fadeTime1 = TimeSpan.FromSeconds(seconds / 2);
             var fadeTime2 = TimeSpan.FromSeconds(seconds / 4 * 3);
@@ -126,7 +127,7 @@ namespace Ragnarok.Presentation.Extra.Element
         /// <summary>
         /// 次のエフェクトを設定します。
         /// </summary>
-        public void AddEntity(EntityObject effect)
+        public void AddEntity(EntityObject effect, TimeSpan? duration = null)
         {
             if (this.prevBg == null || this.nextBg == null)
             {
@@ -153,7 +154,7 @@ namespace Ragnarok.Presentation.Extra.Element
                 this.nextBg.Children.Add(effect);
             }
 
-            StartTransition();
+            StartTransition(duration);
         }
 
         /// <summary>

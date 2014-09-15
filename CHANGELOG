@@ -1,3 +1,10 @@
+2014-09-15  - Ver 2.8.7.9
+
+	* Ragnarok.Presentation.Extra/Element/BackgroundUIElement3D.cs: 背景エ
+	フェクトのフェード時間を切り替えられるようにしました。
+	* Ragnarok.Presentation.Shogi/AutoPlay.cs: RedoやUndoを行う最大手数を設
+	定できるようにしました。
+
 2014-09-12  - Ver 2.8.7.8
 
 	* Ragnarok/MathEx.cs: float用のメソッドを追加しました。

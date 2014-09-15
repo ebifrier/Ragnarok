@@ -48,9 +48,8 @@ namespace Ragnarok.Presentation.Shogi
         public static readonly TimeSpan DefaultBackgroundFadeInterval =
             TimeSpan.FromSeconds(0.5);
 
-        private List<BoardMove> moveList;
+        private readonly List<BoardMove> moveList;
         private int moveIndex;
-        private int maxMoveCount;
         private DateTime prevTime = DateTime.Now;
 
         /// <summary>
@@ -168,13 +167,22 @@ namespace Ragnarok.Presentation.Shogi
             get;
             set;
         }
+
+        /// <summary>
+        /// 指し手の最大数を取得します。
+        /// </summary>
+        public int MaxMoveCount
+        {
+            get;
+            private set;
+        }
         
         /// <summary>
         /// まだ指し手が残っているか取得します。
         /// </summary>
         private bool HasMove
         {
-            get { return (this.moveIndex < this.maxMoveCount); }
+            get { return (this.moveIndex < MaxMoveCount); }
         }
 
         /// <summary>
@@ -481,15 +489,16 @@ namespace Ragnarok.Presentation.Shogi
             }
 
             AutoPlayType = AutoPlayType.Normal;
+            MaxMoveCount = moveList.Count();
 
             this.moveList = new List<BoardMove>(moveList);
-            this.maxMoveCount = moveList.Count();
         }
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public AutoPlay(Board board, AutoPlayType autoPlayType)
+        public AutoPlay(Board board, AutoPlayType autoPlayType,
+                        int maxMoveCount = -1)
             : this(board)
         {
             if (autoPlayType != AutoPlayType.Undo &&
@@ -501,11 +510,12 @@ namespace Ragnarok.Presentation.Shogi
             }
 
             AutoPlayType = autoPlayType;
-
-            this.maxMoveCount =
+            MaxMoveCount = (
+                maxMoveCount >= 0 ?
+                maxMoveCount :
                 (autoPlayType == AutoPlayType.Undo ?
-                 board.CanUndoCount :
-                 board.CanRedoCount);
+                    board.CanUndoCount :
+                    board.CanRedoCount));
         }
     }
 }
