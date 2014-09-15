@@ -191,7 +191,7 @@ namespace Ragnarok.Presentation.Extra.Effect
         public static readonly DependencyProperty ImageUriProperty =
             DependencyProperty.Register(
                 "ImageUri", typeof(string), typeof(EffectObject),
-                new UIPropertyMetadata(null));
+                new UIPropertyMetadata(null, OnImageUriChanged));
 
         /// <summary>
         /// 描画するイメージのURIを取得または設定します。
@@ -203,6 +203,16 @@ namespace Ragnarok.Presentation.Extra.Effect
         {
             get { return (string)GetValue(ImageUriProperty); }
             set { SetValue(ImageUriProperty, value); }
+        }
+
+        static void OnImageUriChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var self = d as EffectObject;
+
+            if (self != null)
+            {
+                self.UpdateImage();
+            }
         }
 
         /// <summary>
@@ -300,7 +310,7 @@ namespace Ragnarok.Presentation.Extra.Effect
             var self = d as EffectObject;
             if (self != null)
             {
-                self.UpdateAnimationIndex();
+                self.UpdateImage();
             }
         }
         #endregion
@@ -391,8 +401,7 @@ namespace Ragnarok.Presentation.Extra.Effect
             if (ImageUri != null)
             {
                 this.brush = new ImageBrush();
-
-                UpdateAnimationIndex();
+                UpdateImage();
             }
             else
             {
@@ -449,6 +458,7 @@ namespace Ragnarok.Presentation.Extra.Effect
 
             return true;
         }
+
         /// <summary>
         /// 不透明度が変わったときに呼ばれます。
         /// </summary>
@@ -456,12 +466,10 @@ namespace Ragnarok.Presentation.Extra.Effect
         {
             base.OnInheritedOpacityUpdated(oldValue, newValue);
 
-            if (this.brush == null)
+            if (this.brush != null)
             {
-                return;
+                this.brush.Opacity = newValue;
             }
-
-            this.brush.Opacity = newValue;
         }
 
         /// <summary>
@@ -498,10 +506,10 @@ namespace Ragnarok.Presentation.Extra.Effect
         /// <summary>
         /// エフェクトのアニメーション画像の位置などを修正します。
         /// </summary>
-        private void UpdateAnimationIndex()
+        private void UpdateImage()
         {
             var brush = this.brush as ImageBrush;
-            if (brush == null)
+            if (brush == null || string.IsNullOrEmpty(ImageUri))
             {
                 return;
             }
@@ -515,7 +523,7 @@ namespace Ragnarok.Presentation.Extra.Effect
             }
 
             var oldImage = brush.ImageSource;
-            var newImage = imageList[AnimationImageIndex];
+            var newImage = imageList[AnimationImageIndex % imageList.Count()];
 
             // 必要ならメッシュの更新を行います。
             if (AutoUpdateMesh)

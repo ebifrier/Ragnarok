@@ -22,10 +22,10 @@ namespace Ragnarok.Presentation.Extra.Entity
     [ContentProperty("Children")]
     public class EntityObject : Animatable
     {
+        private readonly ReentrancyLock dataContextSync = new ReentrancyLock();
         private DateTime startTime = DateTime.MinValue;
         private TimeSpan progressSpan = TimeSpan.Zero;
         private bool dataContextInherits = true;
-        private bool dataContextSync;
         private bool initialized;
         private bool started;
         private bool terminated;
@@ -178,19 +178,16 @@ namespace Ragnarok.Presentation.Extra.Entity
         {
             var self = d as EntityObject;
 
+            if (ReferenceEquals(e.OldValue, e.NewValue))
+            {
+                return;
+            }
+
             if (self != null)
             {
-                self.OnParentChanged();
+                self.OnDataContextChanged(true);
+                self.UpdateInheritedOpacity();
             }
-        }
-
-        /// <summary>
-        /// Parentプロパティが変更されたときに呼ばれます。
-        /// </summary>
-        private void OnParentChanged()
-        {
-            OnDataContextChanged(true);
-            UpdateInheritedOpacity();
         }
 
         /// <summary>
@@ -216,8 +213,7 @@ namespace Ragnarok.Presentation.Extra.Entity
         public static readonly DependencyProperty DataContextProperty =
             DependencyProperty.Register(
                 "DataContext", typeof(object), typeof(EntityObject),
-                new UIPropertyMetadata(null,
-                    (_, __) => OnDataContextChanged(_, false)));
+                new UIPropertyMetadata(null, OnDataContextChanged));
 
         /// <summary>
         /// XAMLにデータを渡すためのオブジェクトを取得または設定します。
@@ -231,46 +227,45 @@ namespace Ragnarok.Presentation.Extra.Entity
         /// <summary>
         /// DataContextにかかわるプロパティが変更されたときに呼ばれます。
         /// </summary>
-        static void OnDataContextChanged(DependencyObject d, bool inherits)
+        static void OnDataContextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var self = d as EntityObject;
 
             if (self != null)
             {
-                self.OnDataContextChanged(inherits);
+                self.OnDataContextChanged(false);
             }
         }
 
         /// <summary>
         /// DataContextにかかわるプロパティが変更されたときに呼ばれます。
         /// </summary>
-        private void OnDataContextChanged(bool inherits)
+        private void OnDataContextChanged(bool parentChanged)
         {
             // OnDataContextChangedは再度呼ばれることがあるため、
             // このようにして無限ループを防いでいます。
-            if (this.dataContextSync)
+            using (var result = this.dataContextSync.Lock())
             {
-                return;
-            }
+                if (result == null) return;
 
-            using (new ActionOnDispose(() => this.dataContextSync = false))
-            {
-                this.dataContextSync = true;
-
-                // 自分のDataContextが指定されてなければ、
-                // 親のオブジェクトを使います。
-                if (!inherits)
-                {
-                    // inherits=falseの場合、DataContextはすでに設定されています。
-                    this.dataContextInherits = false;
-                }
-                else if (inherits && this.dataContextInherits)
+                // 親のDataContextを使う設定の時、親が変更された場合は
+                // DataContextを新たに設定しなおします。
+                if (this.dataContextInherits && parentChanged)
                 {
                     var p = Parent;
 
                     // ここでさらにOnDataContextChangedが呼ばれることがあります。
                     DataContext = (p != null ? p.DataContext : null);
                 }
+                else if (!parentChanged)
+                {
+                    // 自分のDataContextが変更された場合は
+                    // それを使い続けます。
+                    this.dataContextInherits = false;
+                }
+
+                // 子のDataContextも再設定します。
+                Children.ForEach(_ => _.OnDataContextChanged(true));
             }
         }
 
@@ -739,8 +734,6 @@ namespace Ragnarok.Presentation.Extra.Entity
 
             // 描画用モデルと子要素のリスト、両方に追加します。
             parent.ModelGroup.Children.Add(ModelGroup);
-
-            Initialize();
         }
 
         /// <summary>

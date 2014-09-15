@@ -1,3 +1,12 @@
+2014-09-16  - Ver 2.8.7.10
+
+	* Ragnarok.Presentation.Extra/Entity/EntityObject.cs: 親オブジェクトが
+	変わった時、子のDataContextを正しく修正するようにしました。また、
+	Initializeは親に追加されたときではなくフレーム処理を行うときに呼ぶよう
+	にしました。
+	* Ragnarok.Presentation.Extra/Effect/EffectObject.cs: 画像URIが変わった
+	時、自動的にイメージを入れ替えるようにしました。
+
 2014-09-15  - Ver 2.8.7.9
 
 	* Ragnarok.Presentation.Extra/Element/BackgroundUIElement3D.cs: 背景エ
