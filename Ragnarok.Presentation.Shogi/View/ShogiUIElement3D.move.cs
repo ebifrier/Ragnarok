@@ -246,7 +246,7 @@ namespace Ragnarok.Presentation.Shogi.View
         /// <summary>
         /// 駒の移動を終了します。
         /// </summary>
-        private void EndMove()
+        public void EndMove()
         {
             if (this.movingPiece == null)
             {
