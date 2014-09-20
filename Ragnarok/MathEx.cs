@@ -141,6 +141,14 @@ namespace Ragnarok
         }
 
         /// <summary>
+        /// ０以上の時間を返します。
+        /// </summary>
+        public static TimeSpan MoreThanZero(TimeSpan t)
+        {
+            return Max(t, TimeSpan.Zero);
+        }
+
+        /// <summary>
         /// <paramref name="currentDirection"/>から<paramref name="targetDirection"/>
         /// に移動するような角度を計算します。
         /// </summary>
