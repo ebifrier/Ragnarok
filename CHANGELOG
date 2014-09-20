@@ -1,3 +1,9 @@
+2014-09-21  - Ver 2.8.7.12
+
+	* Ragnarok.Shogi/Csa/CsaBoardParser.cs: 改行コードの扱いを修正しました。
+	* Ragnarok.Shogi/Csa/CsaUtil.cs: CSAヘッダの先頭に$がない形式でも処理で
+	きるようにしました。
+
 2014-09-17  - Ver 2.8.7.11
 
 	* Ragnarok.Presentation.Shogi/View/ShogiUIElement3D.move.cs: EndMoveを

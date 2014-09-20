@@ -68,33 +68,35 @@ namespace Ragnarok.Shogi.Csa
                 throw new ArgumentNullException("line");
             }
 
+            var trimmedLine = line.TrimEnd('\r', '\n');
+
             // 手番読み取り
-            var ch0 = line[0];
-            if (line.Length == 1 && (ch0 == '+' || ch0 == '-'))
+            var ch0 = trimmedLine[0];
+            if (trimmedLine.Length == 1 && (ch0 == '+' || ch0 == '-'))
             {
                 this.turn = (ch0 == '+' ? BWType.Black : BWType.White);
                 return true;
             }
 
             // 各形式の局面読み取り
-            if (ch0 == 'P' && line.Length >= 2)
+            if (ch0 == 'P' && trimmedLine.Length >= 2)
             {
-                var ch1 = line[1];
+                var ch1 = trimmedLine[1];
                 if (ch1 == 'I')
                 {
-                    ParseBoardPI(line);
+                    ParseBoardPI(trimmedLine);
                     return true;
                 }
 
                 if (ch1 == '+' || ch1 == '-')
                 {
-                    ParseBoardP(line);
+                    ParseBoardP(trimmedLine);
                     return true;
                 }
 
                 if ('1' <= ch1 && ch1 <= '9')
                 {
-                    ParseBoardPn(line);
+                    ParseBoardPn(trimmedLine);
                     return true;
                 }
             }
@@ -223,6 +225,7 @@ namespace Ragnarok.Shogi.Csa
             var pieceList = line.Skip(2).TakeBy(3)
                 .Select(_ => new string(_.ToArray()))
                 .Select(_ => CsaUtil.StrToBoardPiece(_))
+                .Where(_ => _ != null)
                 .ToList();
             if (pieceList.Count() != Board.BoardSize ||
                 pieceList.Any(_ => _ == null))

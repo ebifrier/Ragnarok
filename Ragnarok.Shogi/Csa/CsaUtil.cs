@@ -43,9 +43,11 @@ namespace Ragnarok.Shogi.Csa
         /// <example>
         /// $NAME:VALUE
         /// $NAME
+        /// NAME:VALUE
+        /// NAME
         /// </example>
         private static readonly Regex HeaderRegex = new Regex(
-            @"^\s*[$](.+?)(\s*[:]\s*(.*))?\s*$",
+            @"^\s*([$]?)(.+?)(\s*[:]\s*(.*))?\s*$",
             RegexOptions.Compiled);
 
         /// <summary>
@@ -64,7 +66,7 @@ namespace Ragnarok.Shogi.Csa
         /// <summary>
         /// CSAファイルのヘッダ行を解析します。
         /// </summary>
-        public static HeaderItem ParseHeaderItem(string line)
+        public static HeaderItem ParseHeaderItem(string line, bool needKeySign = true)
         {
             if (line == null)
             {
@@ -77,8 +79,14 @@ namespace Ragnarok.Shogi.Csa
                 return null;
             }
 
-            var key = m.Groups[1].Value;
-            var value = (m.Groups[3].Success ? m.Groups[3].Value : null);
+            // ヘッダ行先頭の$はなくてもいい場合があります。
+            if (needKeySign && !m.Groups[1].Success)
+            {
+                return null;
+            }
+
+            var key = m.Groups[2].Value;
+            var value = (m.Groups[4].Success ? m.Groups[4].Value : null);
             return new HeaderItem(key, value);
         }
         
