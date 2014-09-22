@@ -1,3 +1,8 @@
+2014-09-22  - Ver 2.8.7.14
+
+	* Ragnarok/Update/make_release.rb: 更新用ダウンロードファイルのパスを更
+	新しました。
+
 2014-09-21  - Ver 2.8.7.13
 
 	* Ragnarok/MathEx.cs: TimeSpanの値をTimeSpan.Zero以上にするようなメソッ
