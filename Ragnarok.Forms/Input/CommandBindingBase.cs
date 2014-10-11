@@ -21,7 +21,7 @@ namespace Ragnarok.Forms.Input
             Command = command;
             CommandParameterCallback = commandParameterCallback;
 
-            Component.Disposed += (_, __) => Dispose();
+            Component.Disposed += event_Dispose;
             Command.CanExecuteChanged += CanExecuteChanged;
         }
 
@@ -56,7 +56,7 @@ namespace Ragnarok.Forms.Input
                     OnDisposed();
 
                     Command.CanExecuteChanged -= CanExecuteChanged;
-                    Component.Disposed -= (_, __) => Dispose();
+                    Component.Disposed -= event_Dispose;
                 }
 
                 CommandParameterCallback = null;
@@ -65,6 +65,11 @@ namespace Ragnarok.Forms.Input
 
                 this.disposed = true;
             }
+        }
+
+        private void event_Dispose(object sender, EventArgs e)
+        {
+            Dispose();
         }
 
         /// <summary>
@@ -92,6 +97,11 @@ namespace Ragnarok.Forms.Input
         {
             get;
             private set;
+        }
+
+        protected void event_DoExecute(object sender, EventArgs e)
+        {
+            DoExecute();
         }
 
         /// <summary>
