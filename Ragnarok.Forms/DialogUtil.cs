@@ -98,20 +98,8 @@ namespace Ragnarok.Forms
         /// <summary>
         /// エラーメッセージの表示用メソッドです。
         /// </summary>
-        public static void ShowError(string message)
-        {
-            // ログにも出力します。
-            Log.Error(message);
-
-            MessageBox.Show(
-                message, "エラー", MessageBoxButtons.OK,
-                MessageBoxIcon.Error);
-        }
-
-        /// <summary>
-        /// エラーメッセージの表示用メソッドです。
-        /// </summary>
-        public static void ShowError(Exception ex, string message)
+        public static void ShowError(IWin32Window owner, Exception ex,
+                                     string message)
         {
             var text = string.Format(
                 "{1}{0}{0} 詳細: {2}",
@@ -122,8 +110,39 @@ namespace Ragnarok.Forms
             Log.ErrorException(ex, message);
 
             MessageBox.Show(
-                text, "エラー", MessageBoxButtons.OK,
+                owner, text, "エラー",
+                MessageBoxButtons.OK,
                 MessageBoxIcon.Error);
+        }
+
+        /// <summary>
+        /// エラーメッセージの表示用メソッドです。
+        /// </summary>
+        public static void ShowError(IWin32Window owner, string message)
+        {
+            // ログにも出力します。
+            Log.Error(message);
+
+            MessageBox.Show(
+                owner, message, "エラー",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Error);
+        }
+
+        /// <summary>
+        /// エラーメッセージの表示用メソッドです。
+        /// </summary>
+        public static void ShowError(Exception ex, string message)
+        {
+            ShowError(null, ex, message);
+        }
+
+        /// <summary>
+        /// エラーメッセージの表示用メソッドです。
+        /// </summary>
+        public static void ShowError(string message)
+        {
+            ShowError((IWin32Window)null, message);
         }
 
         #region フォント

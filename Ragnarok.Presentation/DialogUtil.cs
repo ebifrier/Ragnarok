@@ -264,30 +264,20 @@ namespace Ragnarok.Presentation
         /// <summary>
         /// エラーメッセージの表示用メソッドです。
         /// </summary>
-        private static void ShowErrorInternal(string message)
+        private static void ShowErrorInternal(Window owner, string message)
         {
             var dialog = CreateDialog(
                 message, "エラー", MessageBoxButton.OK);
 
             dialog.Topmost = true;
+            dialog.Owner = owner;
             dialog.ShowDialogCenterMouse();
         }
 
         /// <summary>
         /// エラーメッセージの表示用メソッドです。
         /// </summary>
-        public static void ShowError(string message)
-        {
-            // ログにも出力します。
-            Log.Error(message);
-
-            ShowErrorInternal(message);
-        }
-
-        /// <summary>
-        /// エラーメッセージの表示用メソッドです。
-        /// </summary>
-        public static void ShowError(Exception ex, string message)
+        public static void ShowError(Window owner, Exception ex, string message)
         {
             var text = string.Format(
                 "{1}{0}{0} 詳細: {2}",
@@ -297,7 +287,34 @@ namespace Ragnarok.Presentation
             // ログにも出力します。
             Log.ErrorException(ex, message);
 
-            ShowErrorInternal(text);
+            ShowErrorInternal(owner, text);
+        }
+
+        /// <summary>
+        /// エラーメッセージの表示用メソッドです。
+        /// </summary>
+        public static void ShowError(Window owner, string message)
+        {
+            // ログにも出力します。
+            Log.Error(message);
+
+            ShowErrorInternal(owner, message);
+        }
+
+        /// <summary>
+        /// エラーメッセージの表示用メソッドです。
+        /// </summary>
+        public static void ShowError(Exception ex, string message)
+        {
+            ShowError(ex, message);
+        }
+
+        /// <summary>
+        /// エラーメッセージの表示用メソッドです。
+        /// </summary>
+        public static void ShowError(string message)
+        {
+            ShowError(message);
         }
 
         #region TimeSpan
