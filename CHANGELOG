@@ -1,3 +1,7 @@
+2014-10-13  - Ver 2.8.7.17
+
+	* Ragnarok.Presentation/DialogUtil.cs: 無限ループバグを修正しました。
+
 2014-10-13  - Ver 2.8.7.16
 
 	* Ragnarok.Forms/DialogUtil.cs, Ragnarok.Presentation/DialogUtil.cs: エ

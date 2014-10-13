@@ -306,7 +306,7 @@ namespace Ragnarok.Presentation
         /// </summary>
         public static void ShowError(Exception ex, string message)
         {
-            ShowError(ex, message);
+            ShowError(null, ex, message);
         }
 
         /// <summary>
@@ -314,7 +314,7 @@ namespace Ragnarok.Presentation
         /// </summary>
         public static void ShowError(string message)
         {
-            ShowError(message);
+            ShowError((Window)null, message);
         }
 
         #region TimeSpan
