@@ -1,3 +1,9 @@
+2014-10-20  - Ver 1.8.7.19
+
+	* Ragnarok.Presentation/Control/EvaluationControl.cs,
+	  Ragnarok.Presentation/Control/EvaluationSettingDialog.xaml: 評価値画
+	像の背景色や設定ダイアログの項目などを調整できるようにしました。
+
 2014-10-20  - Ver 1.8.7.18
 
 	* Ragnarok.Presentation/Control/ColorDialog.xaml: 色設定ダイアログの見

@@ -323,6 +323,53 @@ namespace Ragnarok.Presentation.Control
             get { return (bool)GetValue(IsShowEvaluationPointProperty); }
             set { SetValue(IsShowEvaluationPointProperty, value); }
         }
+
+        /// <summary>
+        /// 評価値画像の背景色を扱う依存プロパティです。
+        /// </summary>
+        public static readonly DependencyProperty BackgroundColorProperty =
+            DependencyProperty.Register(
+                "BackgroundColor",
+                typeof(Color),
+                typeof(EvaluationControl),
+                new FrameworkPropertyMetadata(Colors.Transparent,
+                    FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
+                    OnBackgroundColorChanged));
+
+        /// <summary>
+        /// 評価値画像の背景色を取得または設定します。
+        /// </summary>
+        public Color BackgroundColor
+        {
+            get { return (Color)GetValue(BackgroundColorProperty); }
+            set { SetValue(BackgroundColorProperty, value); }
+        }
+
+        static void OnBackgroundColorChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var self = (EvaluationControl)d;
+
+            self.Background = new SolidColorBrush(self.BackgroundColor);
+        }
+
+        /// <summary>
+        /// 設定ダイアログに評価値の設定項目を表示させるかどうかを扱う依存プロパティです。
+        /// </summary>
+        public static readonly DependencyProperty IsShowEvaluationItemsInDialogProperty =
+            DependencyProperty.Register(
+                "IsShowEvaluationItemsInDialog",
+                typeof(bool),
+                typeof(EvaluationControl),
+                new FrameworkPropertyMetadata(true));
+
+        /// <summary>
+        /// 設定ダイアログに評価値の設定項目を表示させるかどうかを取得または設定します。
+        /// </summary>
+        public bool IsShowEvaluationItemsInDialog
+        {
+            get { return (bool)GetValue(IsShowEvaluationItemsInDialogProperty); }
+            set { SetValue(IsShowEvaluationItemsInDialogProperty, value); }
+        }
         #endregion
 
         /// <summary>
