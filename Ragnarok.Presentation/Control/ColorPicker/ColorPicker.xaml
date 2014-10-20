@@ -189,7 +189,9 @@
                 <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
                   <GradientStop Offset="0" Color="#FFFFFFFF"/>
                   <GradientStop Offset="1"
-                      Color="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Hue, Converter={StaticResource HueToColorConverter}}"/>
+                                Color="{Binding Path=Hue,
+                                                RelativeSource={RelativeSource TemplatedParent},
+                                                Converter={StaticResource HueToColorConverter}}"/>
                 </LinearGradientBrush>
               </Rectangle.Fill>
             </Rectangle>
