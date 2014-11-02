@@ -233,11 +233,9 @@ namespace Ragnarok.Shogi
                 return false;
             }
 
-            var srcSquares = (
-                from file in Enumerable.Range(1, BoardSize)
-                from rank in Enumerable.Range(1, BoardSize)
-                select new Square(file, rank))
-                .ToList();
+            // 実際に駒を動かしながら調べるため、
+            // コピーしたオブジェクトを使います。
+            var clone = Clone();
 
             // 駒打ちは合い駒を調べればいいので、
             // 打てる範囲がもっとも広い駒を１つだけ調べます。
@@ -255,23 +253,20 @@ namespace Ragnarok.Shogi
                 PieceType.Kei,
             };
             var dropPieceType = pieceList
-                .Where(_ => GetCapturedPieceCount(_, Turn) > 0)
+                .Where(_ => clone.GetCapturedPieceCount(_, Turn) > 0)
                 .FirstOrDefault();
-            if (dropPieceType != PieceType.None)
+            if (dropPieceType != PieceType.None &&
+                AllSquares().Any(_ => !clone.IsDropAndChecked(Turn, dropPieceType, _)))
             {
-                if (srcSquares.Any(_ => !IsDropAndChecked(Turn, dropPieceType, _)))
-                {
-                    return false;
-                }
+                return false;
             }
 
             // 駒の移動はすべてを試します。
-            var sqList = srcSquares
+            var sqList = AllSquares()
                 .SelectMany(_ =>
-                    GetCanMoveRange(_, Turn)
-                        .Select(__ => Tuple.Create(_, __)))
-                .Where(_ => _.Item2.Validate());
-            if (sqList.Any(_ => !IsMoveAndChecked(Turn, _.Item1, _.Item2)))
+                    clone.GetCanMoveRange(_, Turn)
+                        .Select(__ => Tuple.Create(_, __)));
+            if (sqList.Any(_ => !clone.IsMoveAndChecked(Turn, _.Item1, _.Item2)))
             {
                 return false;
             }

@@ -37,11 +37,6 @@ namespace Ragnarok.Shogi.Tests
                 "| 香 桂 銀 ・ 玉 ・ 銀 桂 香|九\n" +
                 "+---------------------------+\n" +
                 "先手の持駒：なし");
-            var board1 = SfenBoard.Parse(
-                "lnsgkgsnl/9/p1pppp1pp/1p4p2/9/2P6/PP1P1bPPP/4+r4/LNS1K1SNL" +
-                " b rb2g2p 1");
-
-            Assert.True(Board.BoardEquals(board, board1));
 
             Assert.True(board.IsChecked(BWType.Black));
             Assert.False(board.IsChecked(BWType.White));
@@ -69,11 +64,6 @@ namespace Ragnarok.Shogi.Tests
                 "| 香 桂 銀 ・ 玉 ・ ・ 桂 香|九\n" +
                 "+---------------------------+\n" +
                 "先手の持駒：なし");
-            var board1 = SfenBoard.Parse(
-                "ln1gkgsnl/9/p1pppp1pp/1p4p2/9/2P6/PP1P+r+bPPP/6s2/LNS1K2NL" +
-                " b rb2gs2p 1");
-
-            Assert.True(Board.BoardEquals(board, board1));
 
             Assert.True(board.IsChecked(BWType.Black));
             Assert.False(board.IsChecked(BWType.White));
@@ -101,11 +91,6 @@ namespace Ragnarok.Shogi.Tests
                 "| 香 桂 銀 ・ 玉 ・ ・ 桂 香|九\n" +
                 "+---------------------------+\n" +
                 "先手の持駒：角");
-            var board1 = SfenBoard.Parse(
-                "ln1gkgsnl/9/p1pppp1pp/1p4p2/9/2P6/PP1P+r+bPPP/6s2/LNS1K2NL" +
-                " b r2gs2pB 1");
-
-            Assert.True(Board.BoardEquals(board, board1));
 
             Assert.True(board.IsChecked(BWType.Black));
             Assert.False(board.IsChecked(BWType.White));
@@ -134,11 +119,6 @@ namespace Ragnarok.Shogi.Tests
                 "+---------------------------+\n" +
                 "先手の持駒：歩\n" +
                 "後手番");
-            var board1 = SfenBoard.Parse(
-                "ln2k1snl/2g1+R1g2/p1pp+Rp1pp/1p4p2/9/2P6/PP1P1+bPPP/6s2/LNS1K2NL" +
-                " w Pb2gs2p 1");
-
-            Assert.True(Board.BoardEquals(board, board1));
 
             Assert.False(board.IsChecked(BWType.Black));
             Assert.True(board.IsChecked(BWType.White));
@@ -167,11 +147,6 @@ namespace Ragnarok.Shogi.Tests
                 "+---------------------------+\n" +
                 "先手の持駒：角　金二　歩二\n" +
                 "後手番");
-            var board1 = SfenBoard.Parse(
-                "ln2k1snl/2G3g2/p1pp+R+R1pp/1p2p1p2/9/2P6/PP1P1+bPPP/6s2/LNS1K2NL" +
-                " w B2G2Psp 1");
-
-            Assert.True(Board.BoardEquals(board, board1));
 
             Assert.False(board.IsChecked(BWType.Black));
             Assert.True(board.IsChecked(BWType.White));

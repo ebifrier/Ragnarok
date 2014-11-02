@@ -391,7 +391,11 @@ namespace Ragnarok.Shogi
                                 continue;
                             }
 
-                            yield return new Square(f, rank);
+                            var sq = new Square(f, rank);
+                            if (sq.Validate())
+                            {
+                                yield return sq;
+                            }
                         }
                         for (var r = 1; r <= BoardSize; ++r)
                         {
@@ -400,7 +404,11 @@ namespace Ragnarok.Shogi
                                 continue;
                             }
 
-                            yield return new Square(file, r);
+                            var sq = new Square(file, r);
+                            if (sq.Validate())
+                            {
+                                yield return sq;
+                            }
                         }
                         break;
 
@@ -412,7 +420,11 @@ namespace Ragnarok.Shogi
                                 continue;
                             }
 
-                            yield return new Square(file + index, rank + index);
+                            var sq = new Square(file + index, rank + index);
+                            if (sq.Validate())
+                            {
+                                yield return sq;
+                            }
                         }
                         for (var index = -BoardSize; index <= BoardSize; ++index)
                         {
@@ -421,7 +433,11 @@ namespace Ragnarok.Shogi
                                 continue;
                             }
 
-                            yield return new Square(file + index, rank - index);
+                            var sq = new Square(file + index, rank - index);
+                            if (sq.Validate())
+                            {
+                                yield return sq;
+                            }
                         }
                         break;
                 }
