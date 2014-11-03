@@ -52,7 +52,7 @@ namespace Ragnarok.NLog
                     separator = this.InnerExceptionSeparator;
 
                     logEvent.Exception = ex;
-                    base.Append(builder, logEvent);                    
+                    base.Append(builder, logEvent);
                 }
             }
             finally
