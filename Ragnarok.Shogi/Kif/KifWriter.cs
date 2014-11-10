@@ -118,10 +118,12 @@ namespace Ragnarok.Shogi.Kif
             var moveText = node.Move.ToString();
             var hanLen = moveText.HankakuLength();
 
-            return string.Format("{0,4} {1}{2} ( 0:00/00:00:00){3}",
+            return string.Format(@"{0,4} {1}{2} ({3:mm\:ss}/{4:hh\:mm\:ss}){5}",
                 node.MoveCount,
                 moveText,
                 new string(' ', Math.Max(0, 14 - hanLen)),
+                node.Duration,
+                node.TotalDuration,
                 (hasVariation ? "+" : ""));
         }
         #endregion

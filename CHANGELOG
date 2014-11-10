@@ -1,3 +1,11 @@
+2014-11-10  - Ver 1.8.7.21
+
+	* Ragnarok.Shogi/MoveNode.cs: 指し手の思考時間を設定できるようにしまし
+	た。また、親ノードを設定するようにしました。
+	* Ragnarok.Shogi/Csa/CsaReader.cs: 思考時間の読み取り機能を追加しました。
+	* Ragnarok.Shogi/Kif/KifReader.cs, Ragnarok.Shogi/Kif/KifWriter.cs: 思
+	考時間の読み取りや書き込み機能を追加しました。
+
 2014-11-02  - Ver 1.8.7.20
 
 	* Ragnarok.Shogi/Board.mate.cs: IsCheckMatedメソッドでは、実際に駒を動

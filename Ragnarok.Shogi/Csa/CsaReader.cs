@@ -18,24 +18,11 @@ namespace Ragnarok.Shogi.Csa
         private string[] currentLines;
         private int currentLineIndex;
         private int lineNumber;
-
-        /// <summary>
-        /// CSAのヘッダを取得します。
-        /// </summary>
-        public KifuHeader Header
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
-        /// 読み込んだ局面を取得します。
-        /// </summary>
-        public Board Board
-        {
-            get;
-            private set;
-        }
+        private KifuHeader header;
+        private Board startBoard;
+        private Board board;
+        private MoveNode rootNode;
+        private MoveNode lastNode;
 
         /// <summary>
         /// 次の行を読み込みます。
@@ -107,7 +94,8 @@ namespace Ragnarok.Shogi.Csa
             {
                 if (parser.HasBoard && !parser.IsBoardParsing)
                 {
-                    Board = parser.Board.Clone();
+                    this.startBoard = parser.Board.Clone();
+                    this.board = this.startBoard.Clone();
                 }
 
                 return true;
@@ -126,11 +114,23 @@ namespace Ragnarok.Shogi.Csa
                     ParseHeader(line);
                     return true;
 
-                case 'T':
+                case '+': case '-':
+                    var move = ParseMove(line);
+                    var node = new MoveNode
+                    {
+                        Move = move,
+                    };
+
+                    this.lastNode.AddNext(node);
+                    this.lastNode = node;
                     return true;
 
-                case '+': case '-':
-                    ParseMove(line);
+                case 'T':
+                    var seconds = ParseTime(line);
+                    if (this.lastNode != null)
+                    {
+                        this.lastNode.DurationSeconds = seconds;
+                    }
                     return true;
 
                 case '%':
@@ -154,11 +154,11 @@ namespace Ragnarok.Shogi.Csa
 
             if (line[1] == '+')
             {
-                Header[KifuHeaderType.BlackName] = line.Substring(2);
+                this.header[KifuHeaderType.BlackName] = line.Substring(2);
             }
             else if (line[1] == '-')
             {
-                Header[KifuHeaderType.WhiteName] = line.Substring(2);
+                this.header[KifuHeaderType.WhiteName] = line.Substring(2);
             }
             else
             {
@@ -184,12 +184,8 @@ namespace Ragnarok.Shogi.Csa
             var type = CsaUtil.GetHeaderType(item.Key);
             if (type != null)
             {
-                Header[type.Value] = item.Value;
+                this.header[type.Value] = item.Value;
             }
-        }
-
-        private void ParseTime(string line)
-        {
         }
 
         /// <summary>
@@ -197,14 +193,14 @@ namespace Ragnarok.Shogi.Csa
         /// </summary>
         private BoardMove ParseMove(string line)
         {
-            if (Board == null)
+            if (this.board == null)
             {
                 throw new FileFormatException(
                     this.lineNumber,
                     "指し手の前に局面が設定されていません。");
             }
 
-            var move = Board.CsaToMove(line);
+            var move = this.board.CsaToMove(line);
             if (move == null)
             {
                 throw new FileFormatException(
@@ -212,7 +208,7 @@ namespace Ragnarok.Shogi.Csa
                     line + ": CSA形式の指し手が正しく読み込めません。");
             }
 
-            if (!Board.DoMove(move))
+            if (!this.board.DoMove(move))
             {
                 throw new FileFormatException(
                     this.lineNumber,
@@ -220,6 +216,24 @@ namespace Ragnarok.Shogi.Csa
             }
 
             return move;
+        }
+
+        /// <summary>
+        /// 思考時間をパースします。
+        /// </summary>
+        private int ParseTime(string line)
+        {
+            var sub = line.Substring(1);
+            int result;
+
+            if (!int.TryParse(sub, out result))
+            {
+                throw new FileFormatException(
+                    this.lineNumber,
+                    line + ": CSA形式の消費時間を正しく取得できません。");
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -234,8 +248,11 @@ namespace Ragnarok.Shogi.Csa
                 this.currentLineIndex = 0;
                 this.lineNumber = 0;
 
-                Header = new KifuHeader();
-                Board = null;
+                this.header = new KifuHeader();
+                this.startBoard = null;
+                this.board = null;
+                this.rootNode = new MoveNode();
+                this.lastNode = this.rootNode;
 
                 // ファイルを３行読めれば、CSA形式であると判断します。
                 var parser = new CsaBoardParser();
@@ -263,6 +280,18 @@ namespace Ragnarok.Shogi.Csa
         }
 
         /// <summary>
+        /// ファイルの読み込み処理を行います。
+        /// </summary>
+        private KifuObject LoadCsa()
+        {
+            // ヘッダーや局面の読み取り
+            Parse();           
+            this.rootNode.Regulalize();
+
+            return new KifuObject(this.header, this.startBoard, this.rootNode);
+        }
+
+        /// <summary>
         /// ファイル内容から棋譜ファイルを読み込みます。
         /// </summary>
         public KifuObject Load(TextReader reader)
@@ -277,13 +306,13 @@ namespace Ragnarok.Shogi.Csa
             this.currentLineIndex = 0;
             this.lineNumber = 0;
 
-            Header = new KifuHeader();
-            Board = null;
+            this.header = new KifuHeader();
+            this.startBoard = null;
+            this.board = null;
+            this.rootNode = new MoveNode();
+            this.lastNode = this.rootNode;
 
-            // ヘッダーや局面の読み取り
-            Parse();
-
-            return new KifuObject(Header, Board);
+            return LoadCsa();
         }
     }
 }

@@ -40,6 +40,24 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
+        /// 着手にかかった時間を取得または設定します。
+        /// </summary>
+        public TimeSpan Duration
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 着手にかかった時間を秒単位で取得または設定します。
+        /// </summary>
+        public int DurationSeconds
+        {
+            get { return (int)Duration.TotalSeconds; }
+            set { Duration = TimeSpan.FromSeconds(value); }
+        }
+
+        /// <summary>
         /// 本譜における次の指し手を取得または設定します。
         /// </summary>
         public KifMoveNode Next
@@ -137,7 +155,7 @@ namespace Ragnarok.Shogi
                 var cloned = board.Clone();
 
                 // 指し手を実際に指してみます。
-                var bmove = node.DoMove(cloned, errors);
+                var bmove = node.MakeMove(cloned, errors);
                 if (bmove == null)
                 {
                     continue;
@@ -147,6 +165,7 @@ namespace Ragnarok.Shogi
                 {
                     Move = bmove,
                     MoveCount = node.MoveCount,
+                    Duration = node.Duration,
                 };
 
                 // 次の指し手とその変化を変換します。
@@ -155,14 +174,14 @@ namespace Ragnarok.Shogi
                     node.Next.ConvertToMoveNode(cloned, moveNode, errors);
                 }
 
-                root.NextNodes.Add(moveNode);
+                root.AddNext(moveNode);
             }
         }
 
         /// <summary>
         /// このノードの手を実際に指してみて、着手可能か確認します。
         /// </summary>
-        private BoardMove DoMove(Board board, List<Exception> errors)
+        private BoardMove MakeMove(Board board, List<Exception> errors)
         {
             var bmove = board.ConvertMove(Move, true);
             if (bmove == null || !bmove.Validate())

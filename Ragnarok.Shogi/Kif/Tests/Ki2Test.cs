@@ -132,7 +132,9 @@ namespace Ragnarok.Shogi.Kif.Tests
             Assert.NotNull(kifu.Error);
 
             Assert.AreEqual(65, kifu.MoveList.Count());
-            Assert.IsInstanceOf(typeof(FileFormatException), kifu.Error);
+            Assert.IsInstanceOf(
+                typeof(Ragnarok.Shogi.File.FileFormatException),
+                kifu.Error);
         }
     }
 }

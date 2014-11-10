@@ -32,6 +32,52 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
+        /// 着手にかかった時間を取得または設定します。
+        /// </summary>
+        public TimeSpan Duration
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 着手にかかった時間を秒単位で取得または設定します。
+        /// </summary>
+        public int DurationSeconds
+        {
+            get { return (int)Duration.TotalSeconds; }
+            set { Duration = TimeSpan.FromSeconds(value); }
+        }
+
+        /// <summary>
+        /// 総消費時間を取得します。
+        /// </summary>
+        public TimeSpan TotalDuration
+        {
+            get
+            {
+                // 自分の手番の消費時間のみを考えます。
+                if (ParentNode == null || ParentNode.ParentNode == null)
+                {
+                    return Duration;
+                }
+                else
+                {
+                    return (ParentNode.ParentNode.TotalDuration + Duration);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 一手前の指し手ノードを取得します。
+        /// </summary>
+        public MoveNode ParentNode
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
         /// 次の指し手を取得または設定します。
         /// </summary>
         /// <remarks>
@@ -40,7 +86,7 @@ namespace Ragnarok.Shogi
         public List<MoveNode> NextNodes
         {
             get;
-            set;
+            private set;
         }
 
         /// <summary>
@@ -71,6 +117,26 @@ namespace Ragnarok.Shogi
                 MakeString(sb, 0);
                 return sb.ToString();
             }
+        }
+
+        /// <summary>
+        /// 次の指し手ノードを追加します。
+        /// </summary>
+        public void AddNext(MoveNode node)
+        {
+            if (node == null)
+            {
+                throw new ArgumentNullException("node");
+            }
+
+            if (node.ParentNode != null)
+            {
+                throw new InvalidOperationException(
+                    "すでに親ノードが登録されています。");
+            }
+
+            NextNodes.Add(node);
+            node.ParentNode = this;
         }
 
         /// <summary>
@@ -119,7 +185,8 @@ namespace Ragnarok.Shogi
                         // もし同じ指し手の変化があれば、子の指し手をマージします。
                         // 子の重複チェックはこの後行うので、
                         // ここで重複があっても構いません。
-                        baseNode.NextNodes.AddRange(compNode.NextNodes);
+                        compNode.NextNodes.ForEach(_ => _.ParentNode = null);
+                        compNode.NextNodes.ForEach(_ => baseNode.AddNext(_));
 
                         NextNodes.RemoveAt(j);
                     }
@@ -156,6 +223,11 @@ namespace Ragnarok.Shogi
             }
 
             if (Move != other.Move)
+            {
+                return false;
+            }
+
+            if (Duration != other.Duration)
             {
                 return false;
             }
