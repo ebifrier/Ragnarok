@@ -205,10 +205,14 @@ namespace Ragnarok.Utility
                     return null;
                 }
 
-                var method = PropertyInfo.GetGetMethod();
+                var method = PropertyInfo.GetGetMethod(false);
                 if (method == null)
                 {
-                    return null;
+                    method = PropertyInfo.GetGetMethod(true);
+                    if (method == null)
+                    {
+                        return null;
+                    }
                 }
 
                 // 作成するラムダ関数
@@ -252,10 +256,14 @@ namespace Ragnarok.Utility
                     return null;
                 }
 
-                var method = PropertyInfo.GetSetMethod();
+                var method = PropertyInfo.GetSetMethod(false);
                 if (method == null)
                 {
-                    return null;
+                    method = PropertyInfo.GetSetMethod(true);
+                    if (method == null)
+                    {
+                        return null;
+                    }
                 }
 
                 // 作成するラムダ関数

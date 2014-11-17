@@ -1,3 +1,8 @@
+2014-11-17  - Ver 1.8.7.25
+
+	* Ragnarok/Utility/MethodUtil.cs: Set or Get PropertyValue時に、public
+	プロパティでなくても値の取得や設定などが行えるようにしました。
+
 2014-11-17  - Ver 1.8.7.24
 
 	* Ragnarok.Shogi/Csa/CsaExtension.cs: CSAサーバー対局時の反則手などを処
