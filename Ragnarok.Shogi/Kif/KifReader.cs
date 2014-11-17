@@ -15,7 +15,7 @@ namespace Ragnarok.Shogi.Kif
     internal sealed class KifReader : IKifuReader
     {
         /// <summary>
-        /// kif形式の差し手行の正規表現
+        /// kif形式の指し手行の正規表現
         /// </summary>
         /// <example>
         ///  81 同　飛成(62) ( 0:01/00:00:33)
@@ -65,12 +65,6 @@ namespace Ragnarok.Shogi.Kif
             if (line == null)
             {
                 throw new ArgumentNullException("line");
-            }
-
-            // 「まで77手で先手の勝ち」などの特殊コメント
-            if (KifUtil.SpecialMoveRegex.IsMatch(line))
-            {
-                return true;
             }
 
             return KifUtil.IsCommentLine(line);
@@ -226,6 +220,13 @@ namespace Ragnarok.Shogi.Kif
                 {
                     ReadNextLine();
                     continue;
+                }
+
+                // 「まで77手で先手の反則勝ち」などの特殊コメント
+                var smove = KifUtil.ParseSpecialMove(this.currentLine);
+                if (smove != null)
+                {
+                    //yield return smove;
                 }
 
                 var c = this.currentLine[0];

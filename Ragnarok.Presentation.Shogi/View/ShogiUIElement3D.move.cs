@@ -371,13 +371,8 @@ namespace Ragnarok.Presentation.Shogi.View
             if (srcSquare != null)
             {
                 // 駒の移動の場合
-                move = new BoardMove()
-                {
-                    SrcSquare = srcSquare,
-                    DstSquare = dstSquare,
-                    MovePiece = piece.Piece,
-                    BWType = piece.BWType,
-                };
+                move = BoardMove.CreateMove(
+                    piece.BWType, srcSquare, dstSquare, piece.Piece, false);
 
                 // 成／不成りのダイアログを出す前に着手可能か確認します。
                 if (!CanMove(move))
@@ -401,12 +396,8 @@ namespace Ragnarok.Presentation.Shogi.View
             else
             {
                 // 駒打ちの場合
-                move = new BoardMove()
-                {
-                    DstSquare = dstSquare,
-                    DropPieceType = piece.PieceType,
-                    BWType = piece.BWType,
-                };
+                move = BoardMove.CreateDrop(
+                    piece.BWType, dstSquare, piece.PieceType);
 
                 if (!CanMove(move))
                 {

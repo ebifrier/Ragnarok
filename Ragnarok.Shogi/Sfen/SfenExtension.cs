@@ -39,10 +39,25 @@ namespace Ragnarok.Shogi.Sfen
                 throw new ArgumentException("move");
             }
 
+            if (move.IsSpecialMove)
+            {
+                // 投了などの特殊な指し手
+                throw new SfenException(
+                    move + ": sfenに変換することはできません。");
+            }
+
             var dstFile = move.DstSquare.File;
             var dstRank = (char)((int)'a' + (move.DstSquare.Rank - 1));
 
-            if (move.ActionType != ActionType.Drop)
+            if (move.ActionType == ActionType.Drop)
+            {
+                // 駒打ちの場合
+                var piece = SfenUtil.PieceTypeToSfen(move.DropPieceType);
+
+                return string.Format("{0}*{1}{2}",
+                    piece, dstFile, dstRank);
+            }
+            else
             {
                 // 駒の移動の場合
                 var srcFile = move.SrcSquare.File;
@@ -52,14 +67,6 @@ namespace Ragnarok.Shogi.Sfen
                 return string.Format("{0}{1}{2}{3}{4}",
                     srcFile, srcRank, dstFile, dstRank,
                     (isPromote ? "+" : ""));
-            }
-            else
-            {
-                // 駒打ちの場合
-                var piece = SfenUtil.PieceTypeToSfen(move.DropPieceType);
-
-                return string.Format("{0}*{1}{2}",
-                    piece, dstFile, dstRank);
             }
         }
 
@@ -84,7 +91,23 @@ namespace Ragnarok.Shogi.Sfen
             }
 
             var dropPieceType = SfenUtil.SfenToPieceType(sfen[0]);
-            if (dropPieceType == PieceType.None)
+            if (dropPieceType != PieceType.None)
+            {
+                // 駒打ちの場合
+                if ((sfen[1] != '*') ||
+                    (sfen[2] < '1' || '9' < sfen[2]) ||
+                    (sfen[3] < 'a' || 'i' < sfen[3]))
+                {
+                    return null;
+                }
+
+                var dstFile = (sfen[2] - '1') + 1;
+                var dstRank = (sfen[3] - 'a') + 1;
+
+                return BoardMove.CreateDrop(
+                    board.Turn, new Square(dstFile, dstRank), dropPieceType);
+            }
+            else
             {
                 // 駒の移動の場合
                 if ((sfen[0] < '1' || '9' < sfen[0]) ||
@@ -106,36 +129,13 @@ namespace Ragnarok.Shogi.Sfen
                 }
 
                 var promote = (sfen.Length > 4 && sfen[4] == '+');
-                return new BoardMove
-                {
-                    DstSquare = new Square(dstFile, dstRank),
-                    SrcSquare = new Square(srcFile, srcRank),
-                    MovePiece = piece.Piece,
-                    TookPiece = BoardPiece.GetPiece(board[dstFile, dstRank]),
-                    IsPromote = promote,
-                    BWType = board.Turn,
-                };
-            }
-            else
-            {
-                // 駒打ちの場合
-                if ((sfen[1] != '*') ||
-                    (sfen[2] < '1' || '9' < sfen[2]) ||
-                    (sfen[3] < 'a' || 'i' < sfen[3]) )
-                {
-                    return null;
-                }
-
-                var dstFile = (sfen[2] - '1') + 1;
-                var dstRank = (sfen[3] - 'a') + 1;
-
-                return new BoardMove
-                {
-                    DstSquare = new Square(dstFile, dstRank),
-                    SrcSquare = null,
-                    BWType = board.Turn,
-                    DropPieceType = dropPieceType,
-                };
+                return BoardMove.CreateMove(
+                    board.Turn,
+                    new Square(srcFile, srcRank),
+                    new Square(dstFile, dstRank),
+                    piece.Piece,
+                    promote,
+                    BoardPiece.GetPiece(board[dstFile, dstRank]));
             }
         }
 

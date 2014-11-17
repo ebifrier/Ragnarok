@@ -49,7 +49,7 @@ namespace Ragnarok.Shogi.Kif
             @"中断|投了|持将棋|千日手|詰み|切れ負け|反則勝ち|反則負け";
 
         /// <summary>
-        /// 「まで77手で先手の勝ち」など、特殊なコメントを判別します。
+        /// 「まで77手で先手の反則勝ち」など、特殊なコメントを判別します。
         /// </summary>
         public static readonly Regex SpecialMoveRegex = new Regex(
             string.Format(@"{0}", SpecialMoveText),
@@ -81,6 +81,50 @@ namespace Ragnarok.Shogi.Kif
                 line.Length == 0 ||
                 line[0] == '#' ||
                 line[0] == '*');
+        }
+
+        /// <summary>
+        /// 特殊な指し手をパースします。
+        /// </summary>
+        public static BoardMove ParseSpecialMove(string line)
+        {
+            var m = SpecialMoveRegex.Match(line);
+            if (!m.Success)
+            {
+                return null;
+            }
+
+            var smoveType = SpecialMoveType.None;
+            switch (m.Value)
+            {
+                case "中断":
+                    smoveType = SpecialMoveType.Interrupt;
+                    break;
+                case "投了":
+                    smoveType = SpecialMoveType.Resign;
+                    break;
+                case "持将棋":
+                    smoveType = SpecialMoveType.Jishogi;
+                    break;
+                case "千日手":
+                    smoveType = SpecialMoveType.Sennichite;
+                    break;
+                case "詰み":
+                    smoveType = SpecialMoveType.CheckMate;
+                    break;
+                case "切れ負け":
+                    smoveType = SpecialMoveType.TimeUp;
+                    break;
+                case "反則勝ち":
+                case "反則負け":
+                    smoveType = SpecialMoveType.IllegalMove;
+                    break;
+                default:
+                    throw new InvalidOperationException(
+                        m.Value + ": 対応していない特殊な指し手です。");
+            }
+
+            return BoardMove.CreateSpecialMove(BWType.None, smoveType);
         }
 
         /// <summary>

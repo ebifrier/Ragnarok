@@ -22,13 +22,8 @@ namespace Ragnarok.Shogi
                 yield break;
             }
 
-            var move = new BoardMove()
-            {
-                DstSquare = dstSquare,
-                SrcSquare = srcSquare,
-                MovePiece = piece.Piece,
-                BWType = bwType,
-            };
+            var move = BoardMove.CreateMove(
+                bwType, srcSquare, dstSquare, piece.Piece, false);
 
             // 成り駒でなければ、成る可能性があります。
             if (!piece.IsPromoted)
@@ -61,12 +56,7 @@ namespace Ragnarok.Shogi
                     continue;
                 }
 
-                var move = new BoardMove()
-                {
-                    DstSquare = dstSquare,
-                    DropPieceType = pieceType,
-                    BWType = bwType,
-                };
+                var move = BoardMove.CreateDrop(bwType, dstSquare, pieceType);
 
                 // 駒打ちが可能なら、それも該当手となります。
                 if (CanMove(move, MoveFlags.CheckOnly))
@@ -144,12 +134,7 @@ namespace Ragnarok.Shogi
                 return true;
             }
 
-            var move = new BoardMove()
-            {
-                DstSquare = square,
-                DropPieceType = pieceType,
-                BWType = bwType,
-            };
+            var move = BoardMove.CreateDrop(bwType, square, pieceType);
             if (DoMove(move))
             {
                 if (!IsChecked(bwType))
@@ -178,13 +163,8 @@ namespace Ragnarok.Shogi
                 return true;
             }
 
-            var move = new BoardMove()
-            {
-                DstSquare = dstSquare,
-                SrcSquare = srcSquare,
-                MovePiece = piece.Piece,
-                BWType = bwType,
-            };
+            var move = BoardMove.CreateMove(
+                bwType, srcSquare, dstSquare, piece.Piece, false);
 
             // 成り駒でなければ、成る可能性があります。
             if (!piece.IsPromoted)

@@ -342,6 +342,21 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
+        /// 投了などの特殊な指し手があるかどうかを取得します。
+        /// </summary>
+        [DependOnProperty("LastMove")]
+        public bool HasSpecialMove
+        {
+            get
+            {
+                using (LazyLock())
+                {
+                    return (LastMove != null && LastMove.IsSpecialMove);
+                }
+            }
+        }
+
+        /// <summary>
         /// <paramref name="dstSquare"/> にある駒を取得します。
         /// </summary>
         public BoardPiece this[Square square]
@@ -567,7 +582,11 @@ namespace Ragnarok.Shogi
         /// </summary>
         private void DoUndo(BoardMove move)
         {
-            if (move.ActionType == ActionType.Drop)
+            if (move.IsSpecialMove)
+            {
+                // 何もしません。
+            }
+            else if (move.ActionType == ActionType.Drop)
             {
                 // 駒打ちの場合は、その駒を駒台に戻します。
                 this[move.DstSquare] = null;
@@ -624,9 +643,11 @@ namespace Ragnarok.Shogi
                     return null;
                 }
                 
-                if (!CheckAndDoMove(move, MoveFlags.CheckTurn))
+                if (!CheckAndMakeMove(move, MoveFlags.CheckTurn))
                 {
                     // リドゥに失敗したら、どうすればいいんだ・・・
+                    Log.Error("{0}: リドゥ操作に失敗しました。", move);
+
                     this.redoList.Clear();
                     return null;
                 }
@@ -689,29 +710,44 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
-        /// その差し手が実際に実現できるか調べます。
+        /// 投了などの特殊な指し手があれば、それを削除します。
+        /// </summary>
+        public void RemoveSpecialMove()
+        {
+            using (LazyLock())
+            {
+                if (HasSpecialMove)
+                {
+                    Undo();
+                    ClearRedoList();
+                }
+            }
+        }
+
+        /// <summary>
+        /// その指し手が実際に実現できるか調べます。
         /// </summary>
         public bool CanMove(BoardMove move, MoveFlags flags = MoveFlags.CanMoveDefault)
         {
             flags |= MoveFlags.CheckOnly;
 
-            return CheckAndDoMove(move, flags);
+            return CheckAndMakeMove(move, flags);
         }
 
         /// <summary>
-        /// その差し手を実際に実行します。
+        /// その指し手を実際に実行します。
         /// </summary>
         public bool DoMove(BoardMove move, MoveFlags flags = MoveFlags.DoMoveDefault)
         {
             flags &= ~MoveFlags.CheckOnly;
 
-            return CheckAndDoMove(move, flags);
+            return CheckAndMakeMove(move, flags);
         }
 
         /// <summary>
         /// 駒を動かすか、または駒が動かせるか調べます。
         /// </summary>
-        private bool CheckAndDoMove(BoardMove move, MoveFlags flags)
+        private bool CheckAndMakeMove(BoardMove move, MoveFlags flags)
         {
             if (move == null || !move.Validate())
             {
@@ -723,20 +759,30 @@ namespace Ragnarok.Shogi
                 // 手番があわなければ失敗とします。
                 if (EnumEx.HasFlag(flags, MoveFlags.CheckTurn))
                 {
-                    if (this.turn == BWType.None ||
-                        this.turn != move.BWType)
+                    if (this.turn == BWType.None || this.turn != move.BWType)
                     {
                         return false;
                     }
                 }
 
-                if (move.ActionType == ActionType.Drop)
+                // 投了などの特殊な指し手がある場合はゲームが既に終了しているので
+                // 指し手を進めることはできません。
+                if (HasSpecialMove)
                 {
-                    return CheckAndDoDrop(move, flags);
+                    return false;
+                }
+
+                if (move.IsSpecialMove)
+                {
+                    return CheckAndMakeSpecialMove(move, flags);
+                }
+                else if (move.ActionType == ActionType.Drop)
+                {
+                    return CheckAndMakeDrop(move, flags);
                 }
                 else
                 {
-                    return CheckAndDoMoveOnly(move, flags);
+                    return CheckAndMakeMoveOnly(move, flags);
                 }
             }
         }
@@ -770,9 +816,22 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
+        /// 特殊な指し手の着手が行えるか調べ、必要なら実行します。
+        /// </summary>
+        private bool CheckAndMakeSpecialMove(BoardMove move, MoveFlags flags)
+        {
+            if (!EnumEx.HasFlag(flags, MoveFlags.CheckOnly))
+            {
+                MoveDone(move);
+            }
+
+            return true;
+        }
+
+        /// <summary>
         /// 駒打ちの動作が行えるか調べ、必要なら実行します。
         /// </summary>
-        private bool CheckAndDoDrop(BoardMove move, MoveFlags flags)
+        private bool CheckAndMakeDrop(BoardMove move, MoveFlags flags)
         {
             if (GetCapturedPieceCount(move.DropPieceType, move.BWType) <= 0)
             {
@@ -873,7 +932,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 駒の移動のみの動作を調べるか実際にそれを行います。
         /// </summary>
-        private bool CheckAndDoMoveOnly(BoardMove move, MoveFlags flags)
+        private bool CheckAndMakeMoveOnly(BoardMove move, MoveFlags flags)
         {
             // 駒の移動元に自分の駒がなければダメ
             var srcPiece = this[move.SrcSquare];
@@ -935,6 +994,9 @@ namespace Ragnarok.Shogi
 
                 // 移動前の位置からは駒をなくします。
                 this[move.SrcSquare] = null;
+
+                // 前回の指し手と位置が同じか調べます。
+                move.HasSameSquareAsPrev = (move.DstSquare == PrevMovedSquare);
 
                 MoveDone(move);
             }

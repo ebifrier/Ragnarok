@@ -1,3 +1,12 @@
+2014-11-17  - Ver 1.8.7.22
+
+	* Ragnarok.Shogi/BoardMove.cs: 投了などの特殊な指し手を指し手として扱え
+	るようにしました。また、移動手や打つ手などの作成メソッドを追加しました。
+	* Ragnarok.Shogi/Board.cs: 投了などの特殊な手を指せるようにしました。
+	* Ragnarok.Shogi/Kif/KifUtil.cs: 投了や反則手などを扱うようにしました。
+	* Ragnarok.Shogi/SpecialMoveType.cs: 投了などの特殊な指し手の列挙子を追
+	加しました。
+
 2014-11-10  - Ver 1.8.7.21
 
 	* Ragnarok.Shogi/MoveNode.cs: 指し手の思考時間を設定できるようにしまし

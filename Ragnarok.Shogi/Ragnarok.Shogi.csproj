@@ -118,6 +118,7 @@
     <Compile Include="Sfen\SfenUtil.cs" />
     <Compile Include="Sfen\SfenBoard.cs" />
     <Compile Include="Sfen\Tests\SfenTest.cs" />
+    <Compile Include="SpecialMoveType.cs" />
     <Compile Include="Square.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sfen\SfenExtension.cs" />

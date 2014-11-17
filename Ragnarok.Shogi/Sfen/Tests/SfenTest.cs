@@ -146,6 +146,14 @@ namespace Ragnarok.Shogi.Sfen.Tests
                 "5e7c 9h9i+ G*8i 9i8i 7i8i 5b5c 8a5a G*5b 7c6b 5c5d " +
                 "6b5b 6c5b 5a5b P*5c S*5f L*8f 8i7i B*4f P*5g P*8g 5f4e");
         }
+
+        [Test()]
+        public void SpecialMoveTest()
+        {
+            var move = BoardMove.CreateSpecialMove(BWType.Black, SpecialMoveType.Interrupt);
+
+            Assert.Catch<SfenException>(() => move.ToSfen());
+        }
     }
 }
 #endif

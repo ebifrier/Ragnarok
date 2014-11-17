@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using NUnit.Framework;
 
+using Ragnarok.Utility;
+
 namespace Ragnarok.Shogi.Tests
 {
     using Sfen;
@@ -26,7 +28,7 @@ namespace Ragnarok.Shogi.Tests
                     var sq = new Square(file, rank);
                     var avail = availables.FirstOrDefault(_ => _.Item1 == sq);
 
-                    move.DstSquare = sq;
+                    MethodUtil.SetPropertyValue(move, "DstSquare", sq);
                     if (avail != null)
                     {
                         if (avail.Item2)
@@ -96,25 +98,20 @@ namespace Ragnarok.Shogi.Tests
         {
             var board = MakeBoard1(BWType.Black);
 
-            var move = new BoardMove
-            {
-                DstSquare = new Square(8, 2),
-                SrcSquare = new Square(8, 3),
-                MovePiece = new Piece(PieceType.Kyo, false),
-                IsPromote = true,
-                BWType = BWType.Black,
-            };
+            var move = BoardMove.CreateMove(
+                BWType.Black, new Square(8, 3), new Square(8, 2),
+                new Piece(PieceType.Kyo, false), true);
             Assert.True(board.CanMove(move));
 
             // 駒が設定されてないと動けません。
-            move.MovePiece = new Piece();
+            MethodUtil.SetPropertyValue(move, "MovePiece", new Piece());
             Assert.False(board.CanMove(move));
-            move.MovePiece = new Piece(PieceType.Kyo, false);
+            MethodUtil.SetPropertyValue(move, "MovePiece", new Piece(PieceType.Kyo, false));
 
             // 84の駒は移動できません。
-            move.SrcSquare = new Square(8, 4);
+            MethodUtil.SetPropertyValue(move, "SrcSquare", new Square(8, 4));
             Assert.False(board.CanMove(move));
-            move.SrcSquare = new Square(8, 3);
+            MethodUtil.SetPropertyValue(move, "SrcSquare", new Square(8, 3));
 
             CanMoveTo(board, move, new List<Tuple<Square, bool>>
             {
@@ -128,20 +125,15 @@ namespace Ragnarok.Shogi.Tests
         {
             var board = MakeBoard1(BWType.White);
 
-            var move = new BoardMove
-            {
-                DstSquare = new Square(9, 8),
-                SrcSquare = new Square(9, 7),
-                MovePiece = new Piece(PieceType.Hu, false),
-                IsPromote = true,
-                BWType = BWType.White,
-            };
+            var move = BoardMove.CreateMove(
+                BWType.White, new Square(9, 7), new Square(9, 8),
+                new Piece(PieceType.Hu, false), true);
             Assert.True(board.CanMove(move));
 
             // 84の駒は移動できません。
-            move.SrcSquare = new Square(8, 4);
+            MethodUtil.SetPropertyValue(move, "SrcSquare", new Square(8, 4));
             Assert.False(board.CanMove(move));
-            move.SrcSquare = new Square(9, 7);
+            MethodUtil.SetPropertyValue(move, "SrcSquare", new Square(9, 7));
 
             CanMoveTo(board, move, new List<Tuple<Square, bool>>
             {

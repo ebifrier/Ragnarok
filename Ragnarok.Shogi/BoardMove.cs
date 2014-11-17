@@ -35,12 +35,29 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
+        /// 特殊な指し手の場合はその種類を取得または設定します。
+        /// </summary>
+        public SpecialMoveType SpecialMoveType
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// 特殊な指し手であるかどうかを取得します。
+        /// </summary>
+        public bool IsSpecialMove
+        {
+            get { return (SpecialMoveType != SpecialMoveType.None); }
+        }
+
+        /// <summary>
         /// 駒を移動する場合の対象となる駒を取得または設定します。
         /// </summary>
         public Piece MovePiece
         {
             get;
-            set;
+            private set;
         }
 
         /// <summary>
@@ -49,7 +66,7 @@ namespace Ragnarok.Shogi
         public BWType BWType
         {
             get;
-            set;
+            private set;
         }
         
         /// <summary>
@@ -58,7 +75,7 @@ namespace Ragnarok.Shogi
         public Square DstSquare
         {
             get;
-            set;
+            private set;
         }
 
         /// <summary>
@@ -70,7 +87,7 @@ namespace Ragnarok.Shogi
         public Square SrcSquare
         {
             get;
-            set;
+            private set;
         }
 
         /// <summary>
@@ -88,17 +105,21 @@ namespace Ragnarok.Shogi
         public PieceType DropPieceType
         {
             get;
-            set;
+            private set;
         }
 
         /// <summary>
-        /// 駒打ち・成りなどの動作を取得または設定します。
+        /// 駒打ち・成りなどの動作を取得します。
         /// </summary>
         public ActionType ActionType
         {
             get
             {
-                if (DropPieceType != PieceType.None)
+                if (IsSpecialMove)
+                {
+                    return ActionType.None;
+                }
+                else if (DropPieceType != PieceType.None)
                 {
                     return ActionType.Drop;
                 }
@@ -118,8 +139,19 @@ namespace Ragnarok.Shogi
         /// <remarks>
         /// 戻る操作のために必要です。
         /// </remarks>
-        [DataMember(Order = 2, IsRequired = true)]
         public Piece TookPiece
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 一手前の指し手と着手位置が同じかどうかを取得または設定します。
+        /// </summary>
+        /// <remarks>
+        /// 「同飛」などと出力するためのもので、それ以上の意味はありません。
+        /// </remarks>
+        public bool HasSameSquareAsPrev
         {
             get;
             set;
@@ -130,7 +162,11 @@ namespace Ragnarok.Shogi
         /// </summary>
         public override string ToString()
         {
-            if (ActionType == ActionType.Drop)
+            if (SpecialMoveType != SpecialMoveType.None)
+            {
+                return EnumEx.GetLabel(SpecialMoveType);
+            }
+            else if (ActionType == ActionType.Drop)
             {
                 return string.Format(
                     "{0}{1}{2}{3}打",
@@ -138,6 +174,16 @@ namespace Ragnarok.Shogi
                     StringConverter.ConvertInt(NumberType.Big, DstSquare.File),
                     StringConverter.ConvertInt(NumberType.Kanji, DstSquare.Rank),
                     Stringizer.ToString(DropPieceType));
+            }
+            else if (HasSameSquareAsPrev)
+            {
+                return string.Format(
+                    "{0}同　{1}{2}({3}{4})",
+                    Stringizer.ToString(BWType),
+                    MovePiece,
+                    Stringizer.ToString(ActionType),
+                    SrcSquare.File,
+                    SrcSquare.Rank);
             }
             else
             {
@@ -163,14 +209,18 @@ namespace Ragnarok.Shogi
                 return false;
             }
 
-            if (DstSquare == null || !DstSquare.Validate())
+            if (SpecialMoveType != SpecialMoveType.None)
             {
-                return false;
+                // 特に確認は行いません。
             }
-
-            if (DropPieceType != PieceType.None)
+            else if (ActionType == ActionType.Drop)
             {
                 // 駒打ちの場合
+                if (DstSquare == null || !DstSquare.Validate())
+                {
+                    return false;
+                }
+                
                 if (SrcSquare != null)
                 {
                     return false;
@@ -189,6 +239,11 @@ namespace Ragnarok.Shogi
             else
             {
                 // 駒打ちでない場合
+                if (DstSquare == null || !DstSquare.Validate())
+                {
+                    return false;
+                }
+
                 if (SrcSquare == null || !SrcSquare.Validate())
                 {
                     return false;
@@ -257,6 +312,11 @@ namespace Ragnarok.Shogi
                 return false;
             }
 
+            if (SpecialMoveType != other.SpecialMoveType)
+            {
+                return false;
+            }
+
             return true;
         }
 
@@ -287,7 +347,8 @@ namespace Ragnarok.Shogi
                 (SrcSquare != null ? SrcSquare.GetHashCode() : 0) ^
                 (MovePiece != null ? MovePiece.GetHashCode() : 0) ^
                 DropPieceType.GetHashCode() ^
-                IsPromote.GetHashCode());
+                IsPromote.GetHashCode() ^
+                SpecialMoveType.GetHashCode());
         }
 
         #region シリアライズ/デシリアライズ
@@ -346,17 +407,25 @@ namespace Ragnarok.Shogi
             bits |= (ActionType == ActionType.Drop ?
                 ((uint)(DropPieceType + Board.SquareCount) << 10) :
                 ((uint)SerializeSquare(SrcSquare) << 10) );
+            // 1bit
+            bits |= ((uint)(HasSameSquareAsPrev ? 1 : 0) << 17);
 
             // 5bit
             if (MovePiece != null)
             {
-                bits |= ((uint)MovePiece.Serialize() << 17);
+                bits |= ((uint)MovePiece.Serialize() << 18);
             }
 
             // 5bit
             if (TookPiece != null)
             {
-                bits |= ((uint)TookPiece.Serialize() << 22);
+                bits |= ((uint)TookPiece.Serialize() << 23);
+            }
+
+            // 4bit
+            if (SpecialMoveType != SpecialMoveType.None)
+            {
+                bits |= ((uint)SpecialMoveType << 28);
             }
 
             return bits;
@@ -377,14 +446,16 @@ namespace Ragnarok.Shogi
             // 7bit
             DstSquare = DeserializeSquare((bits >> 3) & 0x7f);
             // 7bit
-            tmp = ((bits >> 10) & 0x0f);
+            tmp = ((bits >> 10) & 0x7f);
             if (tmp > Board.SquareCount)
                 DropPieceType = (PieceType)(tmp - Board.SquareCount);
             else
                 SrcSquare = DeserializeSquare(tmp);
+            // 1bit
+            HasSameSquareAsPrev = (((bits >> 17) & 0x01) != 0);
 
             // 5bit
-            tmp = ((bits >> 17) & 0x1f);
+            tmp = ((bits >> 18) & 0x1f);
             if (tmp != 0)
             {
                 MovePiece = new Piece();
@@ -392,11 +463,18 @@ namespace Ragnarok.Shogi
             }
 
             // 5bit
-            tmp = ((bits >> 22) & 0x1f);
+            tmp = ((bits >> 23) & 0x1f);
             if (tmp != 0)
             {
                 TookPiece = new Piece();
                 TookPiece.Deserialize(tmp);
+            }
+
+            // 4bit
+            tmp = ((bits >> 28) & 0x0f);
+            if (tmp != 0)
+            {
+                SpecialMoveType = (SpecialMoveType)tmp;
             }
         }
 
@@ -427,6 +505,95 @@ namespace Ragnarok.Shogi
             BWType = BWType.None;
             IsPromote = false;
             DropPieceType = PieceType.None;
+        }
+
+        /// <summary>
+        /// 特殊な指し手を生成します。
+        /// </summary>
+        public static BoardMove CreateSpecialMove(BWType turn, SpecialMoveType smoveType)
+        {
+            if (smoveType == SpecialMoveType.None)
+            {
+                throw new ArgumentException("smoveType");
+            }
+
+            return new BoardMove
+            {
+                BWType = turn,
+                SpecialMoveType = smoveType,
+            };
+        }
+
+        /// <summary>
+        /// 移動手を生成します。
+        /// </summary>
+        public static BoardMove CreateMove(BWType turn, Square src, Square dst,
+                                           Piece movePiece, bool isPromote,
+                                           Piece tookPiece = null)
+        {
+            if (turn == BWType.None)
+            {
+                throw new ArgumentException("turn");
+            }
+
+            if (src == null || !src.Validate())
+            {
+                throw new ArgumentException("src");
+            }
+
+            if (dst == null || !dst.Validate())
+            {
+                throw new ArgumentException("dst");
+            }
+
+            if (movePiece == null || !movePiece.Validate())
+            {
+                throw new ArgumentException("movePiece");
+            }
+
+            if (tookPiece != null && !tookPiece.Validate())
+            {
+                throw new ArgumentException("tookPiece");
+            }
+
+            return new BoardMove
+            {
+                BWType = turn,
+                SrcSquare = src,
+                DstSquare = dst,
+                MovePiece = movePiece,
+                IsPromote = isPromote,
+                TookPiece = tookPiece,
+            };
+        }
+
+        /// <summary>
+        /// 駒を打つ手を生成します。
+        /// </summary>
+        public static BoardMove CreateDrop(BWType turn, Square dst,
+                                           PieceType dropPieceType)
+        {
+            if (turn == BWType.None)
+            {
+                throw new ArgumentException("turn");
+            }
+
+            if (dst == null || !dst.Validate())
+            {
+                throw new ArgumentException("dst");
+            }
+
+            if (dropPieceType == PieceType.None)
+            {
+                throw new ArgumentException("dropPieceType");
+            }
+
+            return new BoardMove
+            {
+                BWType = turn,
+                DstSquare = dst,
+                DropPieceType = dropPieceType,
+            };
         }
     }
 }
