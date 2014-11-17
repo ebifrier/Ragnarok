@@ -12,6 +12,36 @@ namespace Ragnarok.Shogi.Csa
     public static class CsaExtension
     {
         /// <summary>
+        /// 特殊な指し手をCSA形式に変換します。
+        /// </summary>
+        public static string ToCsa(this SpecialMoveType smoveType)
+        {
+            switch (smoveType)
+            {
+                case SpecialMoveType.Interrupt:
+                    return "%CHUDAN";
+                case SpecialMoveType.Resign:
+                    return "%TORYO";
+                case SpecialMoveType.Sennichite:
+                    return "%SENNICHITE";
+                case SpecialMoveType.OuteSennichite:
+                    return "%OUTE_SENNICHITE";
+                case SpecialMoveType.IllegalMove:
+                    return "%ILLEGAL_MOVE";
+                case SpecialMoveType.TimeUp:
+                    return "%TIME_UP";
+                case SpecialMoveType.Jishogi:
+                    return "%JISHOGI";
+                case SpecialMoveType.CheckMate:
+                    return "%TSUMI";
+                case SpecialMoveType.Error:
+                    return "%ERROR";
+            }
+
+            throw new ArgumentException("smoveType");
+        }
+
+        /// <summary>
         /// <paramref name="move"/>をCSA形式に変換します。
         /// </summary>
         public static string ToCsa(this BoardMove move)
@@ -24,6 +54,11 @@ namespace Ragnarok.Shogi.Csa
             if (!move.Validate())
             {
                 throw new ArgumentException("move");
+            }
+
+            if (move.IsSpecialMove)
+            {
+                return move.SpecialMoveType.ToCsa();
             }
 
             var sb = new StringBuilder();
@@ -69,9 +104,62 @@ namespace Ragnarok.Shogi.Csa
             return sb.ToString();
         }
 
+        private static readonly Regex SpecialMoveRegex = new Regex(
+            @"^%(CHUDAN|TORYO|SENNICHITE|OUTE_SENNICHITE|ILLEGAL_MOVE|TIME_UP|JISHOGI" +
+               @"KACHI|HIKIWAKE|MATTA|TSUMI|FUZUMI|ERROR)",
+            RegexOptions.IgnoreCase);
         private static readonly Regex MoveRegex = new Regex(
             @"^(\+|\-)?(\d)(\d)(\d)(\d)([\w|\*][\w|\*])",
             RegexOptions.IgnoreCase);
+
+        /// <summary>
+        /// CSA形式の指し手を特殊な指し手に変換します。
+        /// </summary>
+        public static BoardMove CsaToSpecialMove(this Board board, string csa)
+        {
+            var m = SpecialMoveRegex.Match(csa);
+            if (!m.Success)
+            {
+                return null;
+            }
+
+            var smoveType = SpecialMoveType.None;
+            switch (m.Groups[1].Value)
+            {
+                case "CHUDAN":
+                    smoveType = SpecialMoveType.Interrupt;
+                    break;
+                case "TORYO":
+                    smoveType = SpecialMoveType.Resign;
+                    break;
+                case "SENNICHITE":
+                    smoveType = SpecialMoveType.Sennichite;
+                    break;
+                case "OUTE_SENNICHITE":
+                    smoveType = SpecialMoveType.OuteSennichite;
+                    break;
+                case "ILLEGAL_MOVE":
+                    smoveType = SpecialMoveType.IllegalMove;
+                    break;
+                case "TIME_UP":
+                    smoveType = SpecialMoveType.TimeUp;
+                    break;
+                case "JISHOGI":
+                    smoveType = SpecialMoveType.Jishogi;
+                    break;
+                case "TSUMI":
+                    smoveType = SpecialMoveType.CheckMate;
+                    break;
+                case "ERROR":
+                    smoveType = SpecialMoveType.Error;
+                    break;
+                default:
+                    throw new CsaException(
+                        m.Groups[1].Value + ": 対応していないCSA形式の指し手です。");
+            }
+
+            return BoardMove.CreateSpecialMove(board.Turn, smoveType);
+        }
 
         /// <summary>
         /// CSA形式の指し手を解析します。
@@ -88,11 +176,14 @@ namespace Ragnarok.Shogi.Csa
                 throw new ArgumentNullException("csa");
             }
 
-            if (csa.Length < 6)
+            // 特殊な指し手
+            var smove = board.CsaToSpecialMove(csa);
+            if (smove != null)
             {
-                throw new ArgumentException("csa");
+                return smove;
             }
 
+            // 普通の指し手
             var m = MoveRegex.Match(csa);
             if (!m.Success)
             {
@@ -131,12 +222,7 @@ namespace Ragnarok.Shogi.Csa
             if (srcSquare == null)
             {
                 // 駒打ちの場合
-                return new BoardMove
-                {
-                    DstSquare = dstSquare,
-                    DropPieceType = piece.PieceType,
-                    BWType = side,
-                };
+                return BoardMove.CreateDrop(side, dstSquare, piece.PieceType);
             }
             else
             {
@@ -154,14 +240,7 @@ namespace Ragnarok.Shogi.Csa
                     piece = new Piece(piece.PieceType, false);
                 }
 
-                return new BoardMove
-                {
-                    DstSquare = dstSquare,
-                    SrcSquare = srcSquare,
-                    MovePiece = piece,
-                    IsPromote = isPromote,
-                    BWType = side,
-                };
+                return BoardMove.CreateMove(side, srcSquare, dstSquare, piece, isPromote);
             }
         }
 

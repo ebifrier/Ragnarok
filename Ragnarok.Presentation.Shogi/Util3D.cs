@@ -22,7 +22,7 @@ namespace Ragnarok.Presentation.Shogi
             var indices = new Int32Collection();
             var texCoords = new PointCollection();
 
-            foreach (var square in squares)
+            foreach (var square in squares.Where(_ => _ != null))
             {
                 var x = Board.BoardSize - square.File;
                 var y = square.Rank - 1;

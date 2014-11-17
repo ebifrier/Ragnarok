@@ -105,12 +105,21 @@ namespace Ragnarok.Shogi.Csa
         }
 
         /// <summary>
+        /// 内部で使う構造体
+        /// </summary>
+        private struct PieceSquare
+        {
+            public Square Square;
+            public Piece Piece;
+        }
+
+        /// <summary>
         /// 落とす駒をパースします。
         /// </summary>
         /// <remarks>
         /// 00OU など４文字形式の駒をパースします。
         /// </remarks>
-        private BoardMove ParsePiece(string str)
+        private PieceSquare ParsePiece(string str)
         {
             var file = (int)(str[0] - '0');
             var rank = (int)(str[1] - '0');
@@ -123,10 +132,10 @@ namespace Ragnarok.Shogi.Csa
                     str + ": CSA形式の駒を正しく読み込めませんでした。");
             }
 
-            return new BoardMove
+            return new PieceSquare
             {
-                DstSquare = new Square(file, rank),
-                MovePiece = piece,
+                Square = new Square(file, rank),
+                Piece = piece,
             };
         }
 
@@ -144,7 +153,7 @@ namespace Ragnarok.Shogi.Csa
             line.Skip(2).TakeBy(4)
                 .Select(_ => new string(_.ToArray()))
                 .Select(_ => ParsePiece(_))
-                .ForEach(_ => this.board[_.DstSquare] = null);
+                .ForEach(_ => this.board[_.Square] = null);
         }
         #endregion
 
@@ -184,16 +193,16 @@ namespace Ragnarok.Shogi.Csa
         /// <summary>
         /// 持ち駒の数を増やします。
         /// </summary>
-        private void SetPiece(BWType bwType, BoardMove tmp)
+        private void SetPiece(BWType bwType, PieceSquare ps)
         {
             // 駒位置が"00"の場合は持ち駒となります。
-            if (tmp.DstSquare.File != 0)
+            if (ps.Square.File != 0)
             {
-                this.board[tmp.DstSquare] = new BoardPiece(tmp.MovePiece, bwType);
+                this.board[ps.Square] = new BoardPiece(ps.Piece, bwType);
             }
             else
             {
-                this.board.IncCapturedPieceCount(tmp.MovePiece.PieceType, bwType);
+                this.board.IncCapturedPieceCount(ps.Piece.PieceType, bwType);
             }
         }
         #endregion
