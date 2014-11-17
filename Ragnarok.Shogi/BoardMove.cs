@@ -118,7 +118,6 @@ namespace Ragnarok.Shogi
         /// <remarks>
         /// 戻る操作のために必要です。
         /// </remarks>
-        [DataMember(Order = 2, IsRequired = true)]
         public Piece TookPiece
         {
             get;
@@ -377,7 +376,7 @@ namespace Ragnarok.Shogi
             // 7bit
             DstSquare = DeserializeSquare((bits >> 3) & 0x7f);
             // 7bit
-            tmp = ((bits >> 10) & 0x0f);
+            tmp = ((bits >> 10) & 0x7f);
             if (tmp > Board.SquareCount)
                 DropPieceType = (PieceType)(tmp - Board.SquareCount);
             else
