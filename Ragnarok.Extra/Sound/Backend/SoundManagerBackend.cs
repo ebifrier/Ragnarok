@@ -138,16 +138,17 @@ namespace Ragnarok.Extra.Sound.Backend
                     "音声ファイルの読み込みに失敗しました。");
             }
 
-            // 音量を設定します。
-            source.DefaultVolume = MathEx.Between(0.0f, 1.0f, (float)volume);
-
             // 再生
-            var sound = engine.Play2D(source, false, false, false);
+            var sound = engine.Play2D(source, false, true, false);
             if (sound == null)
             {
                 throw new InvalidOperationException(
                     "音声ファイルの再生に失敗しました。");
             }
+
+            // 音量を設定します。
+            sound.Volume = MathEx.Between(0.0f, 1.0f, (float)volume);
+            sound.Paused = false;
 
             return new SoundObjectBackend(sound);
         }

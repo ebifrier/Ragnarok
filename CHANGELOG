@@ -1,3 +1,8 @@
+2014-11-20  - Ver 1.8.7.29
+
+	* Ragnarok.Extra/Sound/Backend/SoundManagerBackend.cs: 音量調整の後に音
+	を再生し、異音が出るのを防ぐようにしました。
+
 2014-11-20  - Ver 1.8.7.28
 
 	* Ragnarok.Shogi/Move.cs: IsResignをSpecialMoveTypeに変更し、投了以外の
