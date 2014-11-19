@@ -169,10 +169,12 @@ namespace Ragnarok.Shogi
 
         /// <summary>
         /// 指し手を文字列に変換します。
+        /// </summary>
+        /// <remarks>
         /// KifFileに使う指し手は同○○の場合、
         /// 「同」と「○○」の間に空白を入れないと"kif for windows"では
         /// 正しく読み込めなくなります。
-        /// </summary>
+        /// </remarks>
         public static string ToString(Move move,
                                       MoveTextStyle style = MoveTextStyle.Normal)
         {
@@ -181,9 +183,17 @@ namespace Ragnarok.Shogi
                 return null;
             }
 
-            if (move.IsResigned)
+            if (move.IsSpecialMove)
             {
-                return "投了";
+                var turnStr = string.Empty;
+
+                // 必要なら▲△を先頭に入れます。
+                if (style == MoveTextStyle.Normal)
+                {
+                    turnStr = ToString(move.BWType);
+                }
+
+                return (turnStr + EnumEx.GetLabel(move.SpecialMoveType));
             }
 
             var result = new StringBuilder();

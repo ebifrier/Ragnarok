@@ -196,13 +196,21 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
-        /// 投了かどうかを取得または設定します。
+        /// 投了などの特殊な指し手を取得または設定します。
         /// </summary>
         [DataMember(Order = 9, IsRequired = true)]
-        public bool IsResigned
+        public SpecialMoveType SpecialMoveType
         {
             get;
             set;
+        }
+
+        /// <summary>
+        /// 特殊な指し手であるか調べます。
+        /// </summary>
+        public bool IsSpecialMove
+        {
+            get { return (SpecialMoveType != SpecialMoveType.None); }
         }
 
         /// <summary>
@@ -238,7 +246,7 @@ namespace Ragnarok.Shogi
         /// </summary>
         public bool Validate()
         {
-            if (IsResigned)
+            if (IsSpecialMove)
             {
                 return true;
             }
@@ -337,7 +345,7 @@ namespace Ragnarok.Shogi
                 return false;
             }
 
-            if (IsResigned != other.IsResigned)
+            if (SpecialMoveType != other.SpecialMoveType)
             {
                 return false;
             }
@@ -382,14 +390,13 @@ namespace Ragnarok.Shogi
         public override int GetHashCode()
         {
             // ValueType.GetHashCodeは遅いらしい。。。
-            if (IsResigned)
+            if (IsSpecialMove)
             {
-                return IsResigned.GetHashCode();
+                return SpecialMoveType.GetHashCode();
             }
             else
             {
                 var baseHashCode =
-                    IsResigned.GetHashCode() ^
                     BWType.GetHashCode() ^
                     SameAsOld.GetHashCode() ^
                     RelFileType.GetHashCode() ^
@@ -417,7 +424,7 @@ namespace Ragnarok.Shogi
         /// </summary>
         public static bool operator ==(Move lhs, Move rhs)
         {
-            return Ragnarok.Util.GenericEquals(lhs, rhs);
+            return Util.GenericEquals(lhs, rhs);
         }
 
         /// <summary>

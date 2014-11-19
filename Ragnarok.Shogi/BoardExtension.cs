@@ -351,7 +351,7 @@ namespace Ragnarok.Shogi
                 throw new ArgumentNullException("board");
             }
 
-            if (move == null || move.IsResigned)
+            if (move == null)
             {
                 return null;
             }
@@ -359,6 +359,12 @@ namespace Ragnarok.Shogi
             if (move.SameAsOld && board.PrevMovedSquare == null)
             {
                 return null;
+            }
+
+            if (move.IsSpecialMove)
+            {
+                return BoardMove.CreateSpecialMove(
+                    bwType, move.SpecialMoveType);
             }
 
             // 移動後の位置を取得します。
@@ -687,6 +693,15 @@ namespace Ragnarok.Shogi
             if (move == null || !move.Validate())
             {
                 throw new ArgumentNullException("move");
+            }
+
+            if (move.IsSpecialMove)
+            {
+                return new Move
+                {
+                    BWType = move.BWType,
+                    SpecialMoveType = move.SpecialMoveType,
+                };
             }
 
             var fromPiece = (

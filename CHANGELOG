@@ -1,3 +1,8 @@
+2014-11-20  - Ver 1.8.7.28
+
+	* Ragnarok.Shogi/Move.cs: IsResignをSpecialMoveTypeに変更し、投了以外の
+	特殊な指し手を扱えるようにしました。
+
 2014-11-19  - Ver 1.8.7.27
 
 	* Ragnarok.Extra/Sound/SoundObject.cs: ここのサウンドの音量などを調整す

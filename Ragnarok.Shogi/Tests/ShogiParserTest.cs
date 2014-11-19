@@ -15,7 +15,7 @@ namespace Ragnarok.Shogi.Tests
         {
             var resign = new Move
             {
-                IsResigned = true,
+                SpecialMoveType = SpecialMoveType.Resign,
             };
 
             Assert.AreEqual(

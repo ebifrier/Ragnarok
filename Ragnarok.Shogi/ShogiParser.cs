@@ -839,7 +839,7 @@ namespace Ragnarok.Shogi
             var m = resignRegex.Match(text);
             if (m.Success)
             {
-                move.IsResigned = true;
+                move.SpecialMoveType = SpecialMoveType.Resign;
             }
             else
             {
