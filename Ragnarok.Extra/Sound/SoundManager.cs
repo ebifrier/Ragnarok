@@ -15,7 +15,7 @@ namespace Ragnarok.Extra.Sound
         private readonly object SyncRoot = new object();
         private readonly Dictionary<string, DateTime> lastPlayedTime =
             new Dictionary<string, DateTime>();
-        private readonly SoundBackend backend = null;
+        private readonly Backend.SoundManagerBackend backend = null;
 
         private TimeSpan playInterval = TimeSpan.FromSeconds(2);
         private string defaultPath = string.Empty;
@@ -186,23 +186,28 @@ namespace Ragnarok.Extra.Sound
         /// <summary>
         /// SEを再生します。再生中のファイルがあればその再生の直後に鳴らします。
         /// </summary>
-        private void PlaySEInternal(string filename, double volume, bool checkTime,
-                                    EventHandler<SoundStopEventArgs> stopCallback)
+        private SoundObject PlaySEInternal(string filename, double volume, bool checkTime)
         {
             lock (SyncRoot)
             {
                 if (this.backend == null)
                 {
-                    return;
+                    return null;
                 }
 
                 var fullpath = GetSoundFilePath(filename);
                 if (checkTime && !CanPlaySE(fullpath))
                 {
-                    return;
+                    return null;
                 }
 
-                this.backend.PlaySE(fullpath, volume, stopCallback);
+                var bsound = this.backend.PlaySE(fullpath, volume);
+                if (bsound == null)
+                {
+                    return null;
+                }
+
+                return new SoundObject(bsound);
             }
         }
 
@@ -213,7 +218,7 @@ namespace Ragnarok.Extra.Sound
         {
             try
             {
-                PlaySEInternal(filename, 0.0, false, null);
+                PlaySEInternal(filename, 0.0, false);
             }
             catch (FileNotFoundException)
             {
@@ -232,19 +237,17 @@ namespace Ragnarok.Extra.Sound
         /// <summary>
         /// SEを再生します。再生中のファイルがあればその再生の直後に鳴らします。
         /// </summary>
-        public void PlaySE(string filename, double volume = 1.0,
-                           bool checkTime = true, bool ignoreError = false,
-                           EventHandler<SoundStopEventArgs> stopCallback = null)
+        public SoundObject PlaySE(string filename, double volume = 1.0,
+                                  bool checkTime = true, bool ignoreError = false)
         {
             try
             {
-                PlaySEInternal(filename, volume, checkTime, stopCallback);
+                return PlaySEInternal(filename, volume, checkTime);
             }
             catch (FileNotFoundException)
             {
                 // サウンドシステムの初期化に失敗すると、
                 // 恒常的にこの例外が出るようになります。
-                return;
             }
             catch (Exception ex)
             {
@@ -255,6 +258,8 @@ namespace Ragnarok.Extra.Sound
                         Path.GetFileName(filename));
                 }
             }
+
+            return null;
         }
         
         /// <summary>
@@ -264,7 +269,7 @@ namespace Ragnarok.Extra.Sound
         {
             try
             {
-                this.backend = new SoundBackend();
+                this.backend = new Backend.SoundManagerBackend();
             }
             catch (Exception ex)
             {

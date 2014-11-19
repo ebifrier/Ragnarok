@@ -1,3 +1,14 @@
+2014-11-19  - Ver 1.8.7.27
+
+	* Ragnarok.Extra/Sound/SoundObject.cs: ここのサウンドの音量などを調整す
+	るためのラッピングオブジェクトを追加しました。
+	* Ragnarok.Extra/Sound/Backend/SoundObjectBackend.cs: バックエンドライ
+	ブラリ(IrrKlang)用のdllが読み込めない場合、IrrKlangのクラスを参照しただ
+	けで例外が発生してしまいます。そのため、関連クラスをラップするためのク
+	ラスを作成しました。
+	* Ragnarok.Extra/Sound/Backend/SoundManagerBackend.cs: SoundBackendから
+	クラス名を変更しました。
+
 2014-11-19  - Ver 1.8.7.26
 
 	* Ragnarok.Extra/Sound/SoundBackend.cs, 
