@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Reflection;
 
 using IrrKlang;
@@ -18,7 +19,45 @@ namespace Ragnarok.Extra.Sound
     /// </remarks>
     internal sealed class SoundBackend
     {
-        private readonly ISoundEngine engine = null;
+        private class SoundStopEventReceiver : ISoundStopEventReceiver
+        {
+            private EventHandler<SoundStopEventArgs> stopCallback;
+
+            public SoundStopEventReceiver(EventHandler<SoundStopEventArgs> stopCallback)
+            {
+                this.stopCallback = stopCallback;
+            }
+
+            public void OnSoundStopped(ISound sound, StopEventCause cause,
+                                       object userData)
+            {
+                var handler = Interlocked.Exchange(ref this.stopCallback, null);
+
+                if (handler != null)
+                {
+                    var reason = ConvertReason(cause);
+
+                    handler(null, new SoundStopEventArgs(reason));
+                }
+            }
+
+            private SoundStopReason ConvertReason(StopEventCause cause)
+            {
+                switch (cause)
+                {
+                    case StopEventCause.SoundFinishedPlaying:
+                        return SoundStopReason.FinishedPlaying;
+                    case StopEventCause.SoundStoppedByUser:
+                        return SoundStopReason.StoppedByUser;
+                    case StopEventCause.SoundStoppedBySourceRemoval:
+                        return SoundStopReason.StoppedBySourceRemoval;
+                }
+
+                throw new ArgumentException("cause");
+            }
+        }
+
+        private readonly ISoundEngine engine;
 
         /// <summary>
         /// 音声を再生できるかどうかを取得します。
@@ -120,7 +159,8 @@ namespace Ragnarok.Extra.Sound
         /// <summary>
         /// SEを再生します。
         /// </summary>
-        public ISound PlaySE(string filename, double volume)
+        public ISound PlaySE(string filename, double volume,
+                             EventHandler<SoundStopEventArgs> stopCallback = null)
         {
             if (engine == null)
             {
@@ -140,7 +180,7 @@ namespace Ragnarok.Extra.Sound
             }
 
             // 音量を設定します。
-            source.DefaultVolume = Math.Max(Math.Min((float)volume, 1.0f), 0.0f);
+            source.DefaultVolume = MathEx.Between(0.0f, 1.0f, (float)volume);
 
             // 再生
             var sound = engine.Play2D(source, false, false, false);
@@ -148,6 +188,12 @@ namespace Ragnarok.Extra.Sound
             {
                 throw new InvalidOperationException(
                     "音声ファイルの再生に失敗しました。");
+            }
+
+            if (stopCallback != null)
+            {
+                sound.setSoundStopEventReceiver(
+                    new SoundStopEventReceiver(stopCallback));
             }
 
             return sound;

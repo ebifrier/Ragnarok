@@ -222,6 +222,8 @@
     <Compile Include="Sound\PlaySoundInfo.cs" />
     <Compile Include="Sound\SoundBackend.cs" />
     <Compile Include="Sound\SoundManager.cs" />
+    <Compile Include="Sound\SoundObject.cs" />
+    <Compile Include="Sound\SoundStopEventArgs.cs" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="FlintSharp\Particle.png" />

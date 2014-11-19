@@ -186,8 +186,8 @@ namespace Ragnarok.Extra.Sound
         /// <summary>
         /// SEを再生します。再生中のファイルがあればその再生の直後に鳴らします。
         /// </summary>
-        private void PlaySEInternal(string filename, double volume,
-                                    bool checkTime)
+        private void PlaySEInternal(string filename, double volume, bool checkTime,
+                                    EventHandler<SoundStopEventArgs> stopCallback)
         {
             lock (SyncRoot)
             {
@@ -202,7 +202,7 @@ namespace Ragnarok.Extra.Sound
                     return;
                 }
 
-                this.backend.PlaySE(fullpath, volume);
+                this.backend.PlaySE(fullpath, volume, stopCallback);
             }
         }
 
@@ -213,7 +213,7 @@ namespace Ragnarok.Extra.Sound
         {
             try
             {
-                PlaySEInternal(filename, 0.0, false);
+                PlaySEInternal(filename, 0.0, false, null);
             }
             catch (FileNotFoundException)
             {
@@ -233,11 +233,12 @@ namespace Ragnarok.Extra.Sound
         /// SEを再生します。再生中のファイルがあればその再生の直後に鳴らします。
         /// </summary>
         public void PlaySE(string filename, double volume = 1.0,
-                           bool checkTime = true, bool ignoreError = false)
+                           bool checkTime = true, bool ignoreError = false,
+                           EventHandler<SoundStopEventArgs> stopCallback = null)
         {
             try
             {
-                PlaySEInternal(filename, volume, checkTime);
+                PlaySEInternal(filename, volume, checkTime, stopCallback);
             }
             catch (FileNotFoundException)
             {

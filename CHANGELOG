@@ -1,3 +1,11 @@
+2014-11-19  - Ver 1.8.7.26
+
+	* Ragnarok.Extra/Sound/SoundBackend.cs, 
+	  Ragnarok.Extra/Sound/SoundManager.cs: サウンドの停止時にコールバック
+	を呼べるようにしました。
+	* Ragnarok.Extra/Sound/SoundStopEventArgs.cs: サウンド停止時のコールバ
+	ックイベント引数を追加しました。
+
 2014-11-17  - Ver 1.8.7.25
 
 	* Ragnarok/Utility/MethodUtil.cs: Set or Get PropertyValue時に、public
