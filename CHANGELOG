@@ -1,3 +1,10 @@
+2014-11-22  - Ver 1.8.7.31
+
+	* Ragnarok.Forms/Draw/BitmapExtension.cs: Bitmapクラス用の操作メソッド
+	を追加しました。
+	* Ragnarok.Extra/FlintSharp/Counters/PerformanceAdjusted.cs: 不要なファ
+	イルを削除しました。
+
 2014-11-22  - Ver 1.8.7.30
 
 	* FlintSharpからWPFへの直接的な依存関係を外し、環境ごとの違いに対応する
