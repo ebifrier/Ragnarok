@@ -82,6 +82,7 @@
     <Compile Include="Converter\ValueToDecimalConverter.cs" />
     <Compile Include="Converter\ValueToIntConverter.cs" />
     <Compile Include="DialogUtil.cs" />
+    <Compile Include="Draw\BitmapExtension.cs" />
     <Compile Include="FormsUtil.cs" />
     <Compile Include="FormsValue.cs" />
     <Compile Include="Input\CommandBindingFactory.cs" />

@@ -72,10 +72,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FlintSharpEx\MaterialWrap.cs" />
+    <Compile Include="FlintSharpEx\WPFImageLoader.cs" />
+    <Compile Include="FlintSharpEx\WPFImageData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Effect\EffectInfo.cs" />
     <Compile Include="Effect\EffectObject.cs" />
-    <Compile Include="Effect\Model3DRenderer.cs" />
+    <Compile Include="FlintSharpEx\WPFRenderer.cs" />
     <Compile Include="Element\BackgroundUIElement3D.cs" />
     <Compile Include="Behaviors\Behavior.cs" />
     <Compile Include="Behaviors\ScenarioBehavior.cs" />

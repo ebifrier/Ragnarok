@@ -74,7 +74,7 @@ namespace FlintSharp
             set;
         }
 
-        public static Timer Timer
+        public static IImageLoader ImageLoader
         {
             get;
             set;

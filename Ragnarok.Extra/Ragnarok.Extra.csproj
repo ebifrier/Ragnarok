@@ -63,16 +63,11 @@
     <Reference Include="irrKlang.NET4">
       <HintPath>..\externals\net\irrKlang.NET4.dll</HintPath>
     </Reference>
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Xaml" />
     <Reference Include="WindowsBase" />
-    <Reference Include="System.Windows.Interactivity">
-      <HintPath>..\externals\net\System.Windows.Interactivity.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FlintSharp\Activities\Activity.cs" />
@@ -133,7 +128,6 @@
     <Compile Include="FlintSharp\Counters\Blast.cs" />
     <Compile Include="FlintSharp\Counters\Counter.cs" />
     <Compile Include="FlintSharp\Counters\KeyDownCounter.cs" />
-    <Compile Include="FlintSharp\Counters\PerformanceAdjusted.cs" />
     <Compile Include="FlintSharp\Counters\Pulse.cs" />
     <Compile Include="FlintSharp\Counters\SineCounter.cs" />
     <Compile Include="FlintSharp\Counters\Steady.cs" />
@@ -197,9 +191,10 @@
     <Compile Include="FlintSharp\Renderers\Renderer.cs" />
     <Compile Include="FlintSharp\Utils\DegreesRadians.cs" />
     <Compile Include="FlintSharp\Utils\GeneralCollection.cs" />
+    <Compile Include="FlintSharp\Utils\IImageData.cs" />
+    <Compile Include="FlintSharp\Utils\IImageLoader.cs" />
     <Compile Include="FlintSharp\Utils\InterpolateColors.cs" />
     <Compile Include="FlintSharp\Utils\IObjectBase.cs" />
-    <Compile Include="FlintSharp\Utils\MaterialWrap.cs" />
     <Compile Include="FlintSharp\Utils\Misc.cs" />
     <Compile Include="FlintSharp\Utils\PointDistance.cs" />
     <Compile Include="FlintSharp\Utils\PointPolar.cs" />

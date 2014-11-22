@@ -32,11 +32,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Windows;
-using System.Windows.Markup;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Media.Media3D;
 
 using FlintSharp.Behaviours;
 using FlintSharp.Activities;
@@ -62,12 +57,10 @@ namespace FlintSharp.Initializers
 	/// </summary>
     public class ParticleImage : Initializer
     {
-        private static BitmapImage defaultImage;
-        private MaterialType m_materialType = MaterialType.Emissive;
-
         public ParticleImage()
         {
             IsSingle = false;
+            MaterialType = MaterialType.Emissive;
         }
 
         /// <summary>
@@ -84,33 +77,8 @@ namespace FlintSharp.Initializers
         /// </summary>
         public MaterialType MaterialType
         {
-            get { return m_materialType; }
-            set { m_materialType = value; }
-        }
-
-        /// <summary>
-        /// Returns the image brush from the cache or creates it if need.
-        /// </summary>
-        private BitmapImage GetImage()
-        {
-            try
-            {
-                if (defaultImage != null)
-                {
-                    return defaultImage;
-                }
-
-                var uri = new Uri("pack://application:,,,/Ragnarok.Extra;component/FlintSharp/Particle.png");
-                var source = new BitmapImage(uri);
-                source.Freeze();
-
-                defaultImage = source;
-                return source;
-            }
-            catch /*(Exception ex)*/
-            {
-                return null;
-            }
+            get;
+            set;
         }
 
         /// <summary>
@@ -122,64 +90,24 @@ namespace FlintSharp.Initializers
         /// <param name="particle">The particle to be initialized.</param>
         public override void Initialize(Emitter emitter, Particle particle)
         {
-            BitmapImage image = GetImage();
-            ImageBrush brush = new ImageBrush(image);
-
-            if (IsSingle)
+            if (Utils.ImageLoader == null)
             {
-                MaterialWrap materialWrap = new MaterialWrap()
-                {
-                    MaterialType = MaterialType,
-                    Brush = brush,
-                    Color = Colors.White,
-                };
-                Material material = materialWrap.Create();
-
-                GeometryModel3D model = new GeometryModel3D()
-                {
-                    Geometry = Particle.CreateDefaultMesh(1.0, 1.0, image.Width, image.Height),
-                    Material = material,
-                };
-
-                particle.Brush = brush;
-                particle.Material = material;
-                particle.Model = model;
+                throw new InvalidOperationException(
+                    "Utils.ImageLoader isnt't initialized.");
             }
-            else
+
+            if (particle.ImageData != null)
             {
-                // front
-                MaterialWrap materialWrap1 = new MaterialWrap()
-                {
-                    MaterialType = MaterialType,
-                    Brush = brush,
-                    Color = Colors.White,
-                };
-
-                // back
-                MaterialWrap materialWrap2 = new MaterialWrap()
-                {
-                    MaterialType = MaterialType,
-                    Brush = brush,
-                    Color = Color.FromArgb(0xC0, 0xFF, 0xFF, 0xFF),
-                };
-
-                Material material1 = materialWrap1.Create();
-                Material material2 = materialWrap2.Create();
-
-                MaterialGroup matGroup = new MaterialGroup();
-                matGroup.Children.Add(material2);
-                matGroup.Children.Add(material1);
-
-                GeometryModel3D model = new GeometryModel3D()
-                {
-                    Geometry = Particle.CreateDefaultMesh(1.0, 1.0, image.Width, image.Height),
-                    Material = matGroup,
-                };
-
-                particle.Brush = brush;
-                particle.Material = material1;
-                particle.Model = model;
+                // already initialized.
+                return;
             }
+
+            var data = Utils.ImageLoader.LoadParticleImage(IsSingle, MaterialType);
+            if (data == null)
+            {
+            }
+
+            particle.ImageData = data;
         }
     }
 }

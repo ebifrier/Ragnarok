@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Windows;
 
 using Ragnarok.Presentation.Extra.Effect;
+using Ragnarok.Presentation.Extra.FlintSharpEx;
 
 namespace Ragnarok.Presentation.Shogi
 {
@@ -23,6 +24,9 @@ namespace Ragnarok.Presentation.Shogi
 
             // パーティクルシステムの想定画面サイズを設定。
             FlintSharp.Utils.ScreenSize = new Size(640, 360);
+
+            // 画像のローダーを設定。
+            FlintSharp.Utils.ImageLoader = new WPFImageLoader();
 
             var uri = new Uri(
                 new Uri(asm.Location),

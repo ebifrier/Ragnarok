@@ -30,9 +30,6 @@
  */
 
 using System;
-using System.Windows;
-using System.Windows.Media;
-using System.Windows.Media.Media3D;
 
 using FlintSharp.Behaviours;
 using FlintSharp.Activities;
@@ -75,40 +72,7 @@ namespace FlintSharp.Particles
         private double m_age = 0;
         private double m_energy = 1;
         private bool m_isDead = false;
-
-        /// <summary>
-        /// 単純な四角形のジオメトリを作成します。
-        /// </summary>
-        public static MeshGeometry3D CreateDefaultMesh(
-            double width, double height,
-            double imageWidth, double imageHeight)
-        {
-            double texAdjX = (imageWidth != 0.0 ? 30.0 / imageWidth : 0.0);
-            double texAdjY = (imageHeight != 0.0 ? 30.0 / imageHeight : 0.0);
-
-            return new MeshGeometry3D
-            {
-                Positions =
-                {
-                    new Point3D(-width / 2, -height / 2, 0),
-                    new Point3D(width / 2, -height / 2, 0),
-                    new Point3D(-width / 2, height / 2, 0),
-                    new Point3D(width / 2, height / 2, 0),
-                },
-                TextureCoordinates =
-                {
-                    new Point(0.0,           0.0),
-                    new Point(1.0 - texAdjX, 0.0),
-                    new Point(0.0,           1.0 - texAdjY),
-                    new Point(1.0 - texAdjX, 1.0 - texAdjY),
-                },
-                TriangleIndices =
-                {
-                    0, 2, 1,
-                    1, 2, 3,
-                },
-            };
-        }
+        private IImageData m_imageData;
 
         /// <summary>
         /// Creates a particle. Alternatively particles can be reused by using the ParticleCreator to create
@@ -117,19 +81,6 @@ namespace FlintSharp.Particles
         /// </summary>
         public Particle()
         {
-            Brush = new SolidColorBrush(Colors.White);
-
-            Material = new EmissiveMaterial()
-            {
-                Brush = Brush,
-                Color = Colors.White,
-            };
-
-            Model = new GeometryModel3D()
-            {
-                Geometry = CreateDefaultMesh(1.0, 1.0, 0, 0),
-                Material = Material,
-            };
         }
 
         /// <summary>
@@ -137,8 +88,6 @@ namespace FlintSharp.Particles
         /// </summary>
         public void Initialize()
         {
-            Model.Transform = null;
-
             m_x = 0;
             m_y = 0;
             m_previousX = 0;
@@ -155,18 +104,12 @@ namespace FlintSharp.Particles
             m_age = 0;
             m_energy = 1;
             m_isDead = false;
+
+            if (m_imageData != null)
+            {
+                m_imageData.Reset();
+            }
         }
-
-        /*/// <summary>
-        /// A transformation matrix for the position, scale and rotation of the particle.
-        /// </summary>
-        public Matrix3D MatrixTransform()
-        {
-            double cos = (m_scale * Math.Cos(m_rotation));
-            double sin = (m_scale * Math.Sin(m_rotation));
-
-            return new System.Drawing.Drawing2D.Matrix(cos, sin, -sin, cos, m_x, m_y);
-        }*/
 
         /// <summary>
         /// The x coordinate of the particle in pixels.
@@ -312,22 +255,13 @@ namespace FlintSharp.Particles
             set { m_isDead = value; }
         }
 
-        public GeometryModel3D Model
+        /// <summary>
+        /// The image data.
+        /// </summary>
+        public IImageData ImageData
         {
-            get;
-            set;
-        }
-
-        public Material Material
-        {
-            get;
-            set;
-        }
-
-        public Brush Brush
-        {
-            get;
-            set;
+            get { return m_imageData; }
+            set { m_imageData = value; }
         }
 
         /// <summary>

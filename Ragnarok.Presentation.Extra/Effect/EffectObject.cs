@@ -73,7 +73,7 @@ namespace Ragnarok.Presentation.Extra.Effect
     {
         private GeometryModel3D model;
         private Brush brush;
-        private EffectRenderer renderer;
+        private FlintSharpEx.WPFRenderer renderer;
 
         /// <summary>
         /// サウンド再生用オブジェクトを取得または設定します。
@@ -597,7 +597,7 @@ namespace Ragnarok.Presentation.Extra.Effect
         /// </summary>
         public EffectObject()
         {
-            this.renderer = new EffectRenderer(this);
+            this.renderer = new FlintSharpEx.WPFRenderer(this);
 
             // 値をForeverにすると、子要素があってもなくてもオブジェクトが
             // 終了しなくなります。

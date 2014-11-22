@@ -32,7 +32,6 @@
 using System;
 using System.Collections.Generic;
 using System.Windows;
-using System.Windows.Media.Media3D;
 
 using FlintSharp.Behaviours;
 using FlintSharp.Activities;

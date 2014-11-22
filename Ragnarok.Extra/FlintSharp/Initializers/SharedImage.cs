@@ -34,9 +34,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Markup;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Media.Media3D;
 
 using FlintSharp.Behaviours;
 using FlintSharp.Activities;
@@ -62,27 +59,12 @@ namespace FlintSharp.Initializers
 	/// </summary>
     public class SharedImage : Initializer, IUriContext
     {
-        private static readonly Dictionary<Uri, BitmapImage> imageDic =
-            new Dictionary<Uri, BitmapImage>();
-        private MaterialType m_materialType = MaterialType.Diffuse;
-        private BitmapSource m_image;
-        private MeshGeometry3D m_mesh;
+        private MaterialType m_materialType;
         private Uri m_baseUri;
         private Uri m_imageUri;
 
         public SharedImage()
         {
-        }
-
-        /// <summary>
-        /// The constructor creates a SharedImage initializer for use by 
-        /// an emitter. To add a SharedImage to all particles created by 
-        /// an emitter, use the emitter's addInitializer method.
-        /// </summary>
-        /// <param name="source"></param>
-        public SharedImage(BitmapSource source)
-        {
-            m_image = source;
         }
 
         /// <summary>
@@ -124,64 +106,6 @@ namespace FlintSharp.Initializers
         }
 
         /// <summary>
-        /// Creates a new Image.
-        /// </summary>
-        private BitmapImage CreateImage(Uri uri)
-        {
-            try
-            {
-                var source = new BitmapImage(uri);
-                source.Freeze();
-
-                return source;
-            }
-            catch /*(Exception ex)*/
-            {
-                return null;
-            }
-        }
-
-        /// <summary>
-        /// Returns the image brush from the cache or creates it if need.
-        /// </summary>
-        private BitmapImage GetImage(Uri uri)
-        {
-            lock (imageDic)
-            {
-                BitmapImage source;
-
-                if (imageDic.TryGetValue(uri, out source))
-                {
-                    return source;
-                }
-
-                source = CreateImage(uri);
-                imageDic[uri] = source;
-                return source;
-            }
-        }
-
-        /// <summary>
-        /// Initializes the image brush if need.
-        /// </summary>
-        public override void AddedToEmitter(Emitter emitter)
-        {
-            base.AddedToEmitter(emitter);
-
-            if (m_image == null)
-            {
-                var uri =
-                    (m_imageUri.IsAbsoluteUri
-                    ? m_imageUri
-                    : new Uri(m_baseUri, m_imageUri));
-
-                m_image = GetImage(uri);
-                m_mesh = Particle.CreateDefaultMesh(1.0, 1.0, m_image.Width, m_image.Height);
-                m_mesh.Freeze();
-            }
-        }
-
-        /// <summary>
 		/// The initialize method is used by the emitter to initialize the particle.
 		/// It is called within the emitter's createParticle method and need not
 		/// be called by the user.
@@ -190,31 +114,23 @@ namespace FlintSharp.Initializers
         /// <param name="particle">The particle to be initialized.</param>
         public override void Initialize(Emitter emitter, Particle particle)
         {
-            var brush = new ImageBrush()
+            if (Utils.ImageLoader == null)
             {
-                ImageSource = m_image,
-            };
+                throw new InvalidOperationException(
+                    "Utils.ImageLoader isnt't initialized.");
+            }
 
-            Material material =
-                (m_materialType == MaterialType.Emissive
-                ? (Material)new EmissiveMaterial()
-                {
-                    Brush = brush,
-                }
-                : new DiffuseMaterial()
-                {
-                    Brush = brush,
-                });
+            var uri =
+                (m_imageUri.IsAbsoluteUri
+                ? m_imageUri
+                : new Uri(m_baseUri, m_imageUri));
 
-            GeometryModel3D model = new GeometryModel3D()
+            var data = Utils.ImageLoader.LoadImage(uri, m_materialType);
+            if (data == null)
             {
-                Geometry = m_mesh,
-                Material = material,
-            };
+            }
 
-            particle.Brush = brush;
-            particle.Material = material;
-            particle.Model = model;
+            particle.ImageData = data;
         }
     }
 }
