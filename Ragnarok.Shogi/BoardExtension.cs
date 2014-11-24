@@ -112,7 +112,7 @@ namespace Ragnarok.Shogi
         /// </summary>
         /// <remarks>
         /// BoardMoveは移動前と移動後の情報を持ったオブジェクトで
-        /// Moveは同金右などの移動情報を持ったオブジェクトです。
+        /// Moveは同金右などの移動方向を持ったオブジェクトです。
         /// 
         /// 盤面から検索された複数の着手可能な手から
         /// <paramref name="referenceMove"/>が指示するような手を
@@ -125,42 +125,27 @@ namespace Ragnarok.Shogi
                                                  Move referenceMove,
                                                  bool multipleIsNull = false)
         {
-            var boardMoveListTmp = boardMoveList;
+            IEnumerable<BoardMove> boardMoveListTmp = boardMoveList;
 
             // 移動前の座標情報があれば、それを使います。
             if (referenceMove.SrcSquare != null)
             {
                 boardMoveListTmp = boardMoveListTmp.Where(
-                    bm => referenceMove.SrcSquare == bm.SrcSquare)
-                    .ToList();
-                if (boardMoveListTmp.Count() == 1)
-                {
-                    return boardMoveListTmp.First();
-                }
+                    bm => referenceMove.SrcSquare == bm.SrcSquare);
             }
 
             // 上、引、寄るの判定をします。
             if (referenceMove.RankMoveType != RankMoveType.None)
             {
                 boardMoveListTmp = boardMoveListTmp.Where(
-                    bm => CheckRankMoveType(bm, referenceMove))
-                    .ToList();
-                if (boardMoveListTmp.Count() == 1)
-                {
-                    return boardMoveListTmp.First();
-                }
+                    bm => CheckRankMoveType(bm, referenceMove));
             }
 
             // 左、右、直の判定をします。
             if (referenceMove.RelFileType != RelFileType.None)
             {
                 boardMoveListTmp = boardMoveListTmp.Where(
-                    bm => CheckRelPosType(bm, referenceMove, boardMoveListTmp))
-                    .ToList();
-                if (boardMoveListTmp.Count() == 1)
-                {
-                    return boardMoveListTmp.First();
-                }
+                    bm => CheckRelPosType(bm, referenceMove, boardMoveList));
             }
 
             // 駒打ちなどの判定を行います。
@@ -172,17 +157,16 @@ namespace Ragnarok.Shogi
             // ここでは、canMoveというフラグを使って上記の場合分けを行っています。
             var canMove = boardMoveListTmp.Any(
                 _ => _.ActionType != ActionType.Drop);
-            
+
             boardMoveListTmp = boardMoveListTmp.Where(
-                bm => CheckActionType(bm, referenceMove, canMove))
-                .ToList();
-            if (boardMoveListTmp.Count() == 1)
-            {
-                return boardMoveListTmp.First();
-            }
+                bm => CheckActionType(bm, referenceMove, canMove));
 
             // 適切な差し手が無い場合は、最初に見つかったものを返します。
-            return (multipleIsNull ? null : boardMoveListTmp.FirstOrDefault());
+            var list = boardMoveListTmp.ToList();
+            return (
+                multipleIsNull ?
+                (list.Count() == 1 ? list.FirstOrDefault() : null) :
+                list.FirstOrDefault());
         }
 
         /// <summary>
@@ -459,7 +443,7 @@ namespace Ragnarok.Shogi
 
         #region FilterMove
         /// <summary>
-        /// 複数ある差し手の中から、適切なひとつの差し手を選択します。
+        /// 複数ある指し手の中から、適切なひとつの指し手を選択します。
         /// </summary>
         /// <remarks>
         /// <paramref name="referenceMove"/>にはXからYに移動したという情報
@@ -477,7 +461,7 @@ namespace Ragnarok.Shogi
             }
 
             var nextPos = referenceMove.DstSquare;
-            var move = new Move()
+            var move = new Move
             {
                 BWType = referenceMove.BWType,
                 Piece = fromPiece,
@@ -501,6 +485,36 @@ namespace Ragnarok.Shogi
             }
 
             // 駒打ち、成り、不成りなどでフィルターします。
+            var tmpMoveList = FilterAction(move, referenceMove, boardMoveList);
+            if (!tmpMoveList.Any())
+            {
+                return null;
+            }
+
+            // 段の位置でフィルターします。
+            tmpMoveList = FilterRank(move, referenceMove, tmpMoveList);
+            if (!tmpMoveList.Any())
+            {
+                return null;
+            }
+
+            // 列の位置でフィルターします。
+            tmpMoveList = FilterFile(move, referenceMove, tmpMoveList);
+            if (!tmpMoveList.Any())
+            {
+                return null;
+            }
+
+            return move;
+        }
+
+        /// <summary>
+        /// 指し手の種類で手をフィルターし、Moveに適切なRankMoveTypeを設定します。
+        /// </summary>
+        private static List<BoardMove> FilterAction(Move move,
+                                                    BoardMove referenceMove,
+                                                    List<BoardMove> boardMoveList)
+        {
             var tmpMoveList = boardMoveList.Where(
                 mv => mv.ActionType == referenceMove.ActionType)
                 .ToList();
@@ -508,27 +522,8 @@ namespace Ragnarok.Shogi
             {
                 move.ActionType = referenceMove.ActionType;
             }
-            if (tmpMoveList.Count() == 1)
-            {
-                return move;
-            }
 
-            // 段の位置でフィルターします。
-            tmpMoveList = FilterRank(move, referenceMove, tmpMoveList);
-            if (tmpMoveList.Count() == 1)
-            {
-                return move;
-            }
-
-            // 列の位置でフィルターします。
-            tmpMoveList = FilterFile(move, referenceMove, tmpMoveList);
-            if (tmpMoveList.Count() == 1)
-            {
-                return move;
-            }
-
-            // 不明。
-            return null;
+            return tmpMoveList;
         }
 
         /// <summary>
@@ -543,7 +538,8 @@ namespace Ragnarok.Shogi
             var prevPos = referenceMove.SrcSquare;
             if (prevPos == null)
             {
-                return null;
+                // 何もフィルターしません。
+                return boardMoveList;
             }
 
             // 黒から見ると正の場合は引く or 左へ移動(右)で
@@ -602,7 +598,8 @@ namespace Ragnarok.Shogi
             var prevPos = referenceMove.SrcSquare;
             if (prevPos == null)
             {
-                return null;
+                // 何もフィルターしません。
+                return boardMoveList;
             }
 
             if ((move.Piece == Piece.Ryu || move.Piece == Piece.Uma) &&
@@ -758,6 +755,62 @@ namespace Ragnarok.Shogi
             }
 
             return moveList;
+        }
+
+        /// <summary>
+        /// 与えられた指し手が着手可能か調べ、もし着手可能な場合はそれを正式な表記に変換します。
+        /// </summary>
+        /// <remarks>
+        /// 「正式な表記」にするとは、たとえば不要な「打」を削除したり、
+        /// 右や直などの表記を正確なものに修正することです。
+        /// </remarks>
+        public static Move NormalizeMove(this Board board, Move move)
+        {
+            if (board == null)
+            {
+                throw new ArgumentNullException("board");
+            }
+
+            if (!board.Validate())
+            {
+                throw new ArgumentException("board");
+            }
+
+            if (move == null)
+            {
+                throw new ArgumentNullException("move");
+            }
+
+            if (!move.Validate())
+            {
+                throw new ArgumentException("move");
+            }
+
+            // 投了などの特殊な指し手は常にさせることにします。
+            /*if (move.IsSpecialMove)
+            {
+                return move;
+            }*/
+
+            // 一度、指し手の正規化を行います（打を消したり、左を追加するなど）
+            // あり得る指し手が複数ある場合は失敗とします。
+            var bmove = board.ConvertMove(move, true);
+            if (bmove == null || !board.CanMove(bmove))
+            {
+                return null;
+            }
+
+            // 指し手を表記形式に再度変換します。
+            // 移動元の情報は使いません。("65銀(55)"という表記にはしません)
+            var newMove = board.ConvertMove(bmove, false);
+            if (newMove == null)
+            {
+                return null;
+            }
+
+            // 最後に元の文字列を保存して返します。
+            newMove.OriginalText = move.OriginalText;
+            return newMove;
         }
 
         /// <summary>

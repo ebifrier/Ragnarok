@@ -1,3 +1,11 @@
+2014-11-24  - Ver 1.8.7.36
+
+	* Ragnarok.Shogi/Tests: 局面や指し手のテストケースを追加しました。
+	* Ragnarok.Shogi/BoardMove.cs: Serialize/Deserializeを呼んだとき、
+	Squareが意図せずnullになってしまうバグを修正しました。
+	* Ragnarok.Shogi/BoardExtension.cs: MoveとBoardMoveの変換メソッドをより
+	正確なものにしました。
+
 2014-11-24  - Ver 1.8.7.35
 
 	* Ragnarok.Presentation.Extra/FlintSharpEx/WPFImageData.cs: CreateMesh

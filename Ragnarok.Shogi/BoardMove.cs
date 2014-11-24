@@ -359,7 +359,9 @@ namespace Ragnarok.Shogi
         /// Squareをシリアライズします。
         /// </summary>
         /// <remarks>
-        /// 1*10+1 ～ 9*10+9の値にシリアライズされます。
+        /// 11～99の値にシリアライズされます。
+        /// （0～81の値にシリアライズすると、0の解釈がnull or 11のどちらでも
+        /// 可能になってしまうため、値を減らすことはしていません）
         /// </remarks>
         private static byte SerializeSquare(Square square)
         {
@@ -368,10 +370,10 @@ namespace Ragnarok.Shogi
                 return 0;
             }
 
-            // 0*10+0 ～ 8*9+8
+            // 11 ～ 99
             return (byte)(
-                (square.File - 1) * Board.BoardSize +
-                (square.Rank - 1));
+                square.File * (Board.BoardSize + 1) +
+                square.Rank);
         }
 
         /// <summary>
@@ -384,8 +386,8 @@ namespace Ragnarok.Shogi
                 return null;
             }
 
-            var file = ((int)bits / Board.BoardSize) + 1;
-            var rank = ((int)bits % Board.BoardSize) + 1;
+            var file = (int)bits / (Board.BoardSize + 1);
+            var rank = (int)bits % (Board.BoardSize + 1);
             return new Square(file, rank);
         }
 
@@ -405,7 +407,7 @@ namespace Ragnarok.Shogi
             bits |= ((uint)SerializeSquare(DstSquare) << 3);
             // 7bit
             bits |= (ActionType == ActionType.Drop ?
-                ((uint)(DropPieceType + Board.SquareCount) << 10) :
+                ((uint)(DropPieceType + 100) << 10) :
                 ((uint)SerializeSquare(SrcSquare) << 10) );
             // 1bit
             bits |= ((uint)(HasSameSquareAsPrev ? 1 : 0) << 17);
@@ -447,8 +449,8 @@ namespace Ragnarok.Shogi
             DstSquare = DeserializeSquare((bits >> 3) & 0x7f);
             // 7bit
             tmp = ((bits >> 10) & 0x7f);
-            if (tmp > Board.SquareCount)
-                DropPieceType = (PieceType)(tmp - Board.SquareCount);
+            if (tmp >= 100)
+                DropPieceType = (PieceType)(tmp - 100);
             else
                 SrcSquare = DeserializeSquare(tmp);
             // 1bit
