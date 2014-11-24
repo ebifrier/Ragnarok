@@ -6,6 +6,8 @@ using System.Drawing;
 using System.Windows;
 using System.Windows.Forms;
 
+using WinForms = System.Windows.Forms;
+
 namespace Ragnarok.Forms
 {
     /// <summary>
@@ -63,7 +65,7 @@ namespace Ragnarok.Forms
                                         MessageBoxButtons buttons,
                                         MessageBoxDefaultButton defaultButton)
         {
-            return MessageBox.Show(
+            return WinForms.MessageBox.Show(
                 owner, message, title, buttons,
                 MessageBoxIcon.None, defaultButton);
         }
@@ -75,7 +77,8 @@ namespace Ragnarok.Forms
                                         string title,
                                         MessageBoxButtons buttons)
         {
-            return MessageBox.Show(owner, message, title, buttons);
+            return WinForms.MessageBox.Show(
+                owner, message, title, buttons);
         }
         
         /// <summary>
@@ -84,7 +87,8 @@ namespace Ragnarok.Forms
         public static DialogResult Show(string message, string title,
                                         MessageBoxButtons buttons)
         {
-            return MessageBox.Show(message, title, buttons);
+            return WinForms.MessageBox.Show(
+                message, title, buttons);
         }
 
         /// <summary>
@@ -109,7 +113,7 @@ namespace Ragnarok.Forms
             // ログにも出力します。
             Log.ErrorException(ex, message);
 
-            MessageBox.Show(
+            WinForms.MessageBox.Show(
                 owner, text, "エラー",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Error);
@@ -123,7 +127,7 @@ namespace Ragnarok.Forms
             // ログにも出力します。
             Log.Error(message);
 
-            MessageBox.Show(
+            WinForms.MessageBox.Show(
                 owner, message, "エラー",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Error);

@@ -2,6 +2,7 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Windows.Markup;
 
 // アセンブリに関する一般情報は以下の属性セットをとおして制御されます。
 // アセンブリに関連付けられている情報を変更するには、
@@ -23,6 +24,13 @@ using System.Runtime.InteropServices;
 
 // 次の GUID は、このプロジェクトが COM に公開される場合の、typelib の ID です
 [assembly: Guid("5d7f5cf2-b3eb-4c0d-968f-9c1c4d178306")]
+
+[assembly: XmlnsDefinition("http://schemas.garnet-alice.net/ragnarok/xaml/forms", "Ragnarok.Forms")]
+[assembly: XmlnsDefinition("http://schemas.garnet-alice.net/ragnarok/xaml/forms", "Ragnarok.Forms.Bindings")]
+[assembly: XmlnsDefinition("http://schemas.garnet-alice.net/ragnarok/xaml/forms", "Ragnarok.Forms.Controls")]
+[assembly: XmlnsDefinition("http://schemas.garnet-alice.net/ragnarok/xaml/forms", "Ragnarok.Forms.Converter")]
+[assembly: XmlnsDefinition("http://schemas.garnet-alice.net/ragnarok/xaml/forms", "Ragnarok.Forms.Draw")]
+[assembly: XmlnsDefinition("http://schemas.garnet-alice.net/ragnarok/xaml/forms", "Ragnarok.Forms.Input")]
 
 // アセンブリのバージョン情報は、以下の 4 つの値で構成されています:
 //

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -9,13 +11,20 @@ namespace Ragnarok.Forms
 {
     public static class FormsUtil
     {
+        private static Control invokeControl;
+
         /// <summary>
-        /// BeginInvokeなどを実行するコントロールを取得または設定します。
+        /// WPFを使うための初期化処理を行います。
         /// </summary>
-        public static Control InvokeControl
+        public static void Initialize()
         {
-            get;
-            set;
+            Initializer.Initialize();
+
+            invokeControl = new Control();
+
+            Util.SetPropertyChangedCaller(CallPropertyChanged);
+            Util.SetColletionChangedCaller(CallCollectionChanged);
+            Util.SetEventCaller(UIProcess);
         }
 
         /// <summary>
@@ -23,15 +32,9 @@ namespace Ragnarok.Forms
         /// </summary>
         public static void UIProcess(Action func)
         {
-            if (InvokeControl == null)
+            if (invokeControl.InvokeRequired)
             {
-                throw new InvalidOperationException(
-                    "InvokeControlがnullです。");
-            }
-
-            if (InvokeControl.InvokeRequired)
-            {
-                InvokeControl.BeginInvoke(func);
+                invokeControl.BeginInvoke(func);
             }
             else
             {
@@ -51,6 +54,84 @@ namespace Ragnarok.Forms
             else
             {
                 func();
+            }
+        }
+
+        /// <summary>
+        /// 必要ならGUIスレッド上でPropertyChangedを呼び出します。
+        /// </summary>
+        public static void CallPropertyChanged(PropertyChangedEventHandler handler,
+                                               object sender,
+                                               PropertyChangedEventArgs e)
+        {
+            if (handler == null)
+            {
+                return;
+            }
+
+            // 個々のDelegate単位で呼び出すスレッドを変更します。
+            foreach (PropertyChangedEventHandler child in
+                     handler.GetInvocationList())
+            {
+                var target = child.Target as Control;
+
+                try
+                {
+                    // 必要があれば指定のスレッド上で実行します。
+                    if (target != null && !target.InvokeRequired)
+                    {
+                        target.BeginInvoke(child, sender, e);
+                    }
+                    else
+                    {
+                        child(sender, e);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.ErrorException(ex,
+                        "PropertyChangedの呼び出しに失敗しました。");
+                }
+            }
+        }
+
+        /// <summary>
+        /// 必要ならGUIスレッド上でCollectionChangedを呼び出します。
+        /// </summary>
+        public static void CallCollectionChanged(NotifyCollectionChangedEventHandler handler,
+                                                 object sender,
+                                                 NotifyCollectionChangedEventArgs e)
+        {
+            if (handler == null)
+            {
+                return;
+            }
+
+            // 個々のDelegate単位で呼び出すスレッドを変更します。
+            foreach (NotifyCollectionChangedEventHandler child in
+                     handler.GetInvocationList())
+            {
+                var target = child.Target as Control;
+
+                try
+                {
+                    // 必要があれば指定のスレッド上で実行します。
+                    if (target != null && !target.InvokeRequired)
+                    {
+                        // コレクションの状態が変わる前に変更通知を出す
+                        // 必要があるため、Invokeを使っています。
+                        target.Invoke(child, sender, e);
+                    }
+                    else
+                    {
+                        child(sender, e);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.ErrorException(ex,
+                        "CollectionChangedの呼び出しに失敗しました。");
+                }
             }
         }
     }
