@@ -93,6 +93,11 @@ namespace Ragnarok.Presentation.Shogi
         /// </summary>
         [LabelDescription(Label = "紙", Description = "ban/ban_paper.jpg")]
         Paper,
+        /// <summary>
+        /// 透明
+        /// </summary>
+        [LabelDescription(Label = "透明", Description = "ban/ban_trans.png")]
+        Transparent,
     }
 
     /// <summary>

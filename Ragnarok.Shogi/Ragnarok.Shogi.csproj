@@ -129,6 +129,7 @@
     <Compile Include="Stringizer.cs" />
     <Compile Include="Tests\BoardCheckMateTest.cs" />
     <Compile Include="Tests\BoardTest.cs" />
+    <Compile Include="Tests\ConvertMoveTest.cs" />
     <Compile Include="Tests\ShogiParserTest.cs" />
     <Compile Include="KifuWriter.cs" />
     <Compile Include="Tests\MoveStatisticsTest.cs" />

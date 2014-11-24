@@ -1,3 +1,13 @@
+2014-11-24  - Ver 1.8.7.33
+
+	* Ragnarok.Shogi/Tests/ConvertMoveTest.cs: Board.ConvertMoveのテスト用
+	クラスを追加しました。
+
+2014-11-24  - Ver 1.8.7.32
+
+	* Ragnarok.Presentation.Shogi/Resources/Image/ban/ban_trans.png: 透明な
+	盤の画像を追加しました。
+
 2014-11-22  - Ver 1.8.7.31
 
 	* Ragnarok.Forms/Draw/BitmapExtension.cs: Bitmapクラス用の操作メソッド
