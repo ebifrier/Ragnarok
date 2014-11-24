@@ -5,8 +5,14 @@ using System.Text;
 
 namespace FlintSharp
 {
-    public interface IImageData
+    /// <summary>
+    /// イメージ情報を保持します。
+    /// </summary>
+    public interface IImageData : IDisposable
     {
-        void Reset();
+        /// <summary>
+        /// オブジェクトの破棄時に呼ばれます。
+        /// </summary>
+        void Dispose();
     }
 }

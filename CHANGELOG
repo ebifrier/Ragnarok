@@ -1,3 +1,10 @@
+2014-11-24  - Ver 1.8.7.37
+
+	* Ragnarok.Extra/FlintSharp/Utils/IImageData.cs: ResetメソッドをDispose
+	に変更しました。
+	* Ragnarok.Presentation.Extra/FlintSharpEx/WPFImageLoader.cs: メッシュ
+	の使い方などで少し高速化しました。
+
 2014-11-24  - Ver 1.8.7.36
 
 	* Ragnarok.Shogi/Tests: 局面や指し手のテストケースを追加しました。

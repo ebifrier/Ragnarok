@@ -107,7 +107,8 @@ namespace FlintSharp.Particles
 
             if (m_imageData != null)
             {
-                m_imageData.Reset();
+                m_imageData.Dispose();
+                m_imageData = null;
             }
         }
 

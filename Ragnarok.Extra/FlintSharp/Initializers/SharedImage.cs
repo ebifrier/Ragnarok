@@ -128,6 +128,9 @@ namespace FlintSharp.Initializers
             var data = Utils.ImageLoader.LoadImage(uri, m_materialType);
             if (data == null)
             {
+                Ragnarok.Log.Error(
+                    "{0}: イメージの読み込みに失敗しました。", uri);
+                return;
             }
 
             particle.ImageData = data;

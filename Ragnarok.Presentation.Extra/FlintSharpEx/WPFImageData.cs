@@ -17,11 +17,10 @@ namespace Ragnarok.Presentation.Extra.FlintSharpEx
     internal sealed class WPFImageData : IImageData
     {
         /// <summary>
-        /// パーティクルの再利用時に呼ばれます。
+        /// オブジェクトの破棄時に呼ばれます。
         /// </summary>
-        public void Reset()
+        public void Dispose()
         {
-            Model.Transform = null;
         }
 
         /// <summary>

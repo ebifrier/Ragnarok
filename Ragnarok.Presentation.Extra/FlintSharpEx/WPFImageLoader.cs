@@ -141,9 +141,12 @@ namespace Ragnarok.Presentation.Extra.FlintSharpEx
                 };
                 Material material = materialWrap.Create();
 
+                var mesh = WPFUtil.CreateDefaultMesh(1.0, 1.0, image.Width, image.Height);
+                mesh.Freeze();
+
                 GeometryModel3D model = new GeometryModel3D()
                 {
-                    Geometry = WPFUtil.CreateDefaultMesh(1.0, 1.0, image.Width, image.Height),
+                    Geometry = mesh,
                     Material = material,
                 };
 
@@ -179,9 +182,12 @@ namespace Ragnarok.Presentation.Extra.FlintSharpEx
                 matGroup.Children.Add(material2);
                 matGroup.Children.Add(material1);
 
+                var mesh = WPFUtil.CreateDefaultMesh(1.0, 1.0, image.Width, image.Height);
+                mesh.Freeze();
+
                 GeometryModel3D model = new GeometryModel3D()
                 {
-                    Geometry = WPFUtil.CreateDefaultMesh(1.0, 1.0, image.Width, image.Height),
+                    Geometry = mesh,
                     Material = matGroup,
                 };
 
