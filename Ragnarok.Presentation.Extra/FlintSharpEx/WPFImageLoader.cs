@@ -98,8 +98,7 @@ namespace Ragnarok.Presentation.Extra.FlintSharpEx
                 ImageSource = image,
             };
 
-            var mesh = WPFImageData.CreateDefaultMesh(
-                1.0, 1.0, image.Width, image.Height);
+            var mesh = WPFUtil.CreateDefaultMesh(1.0, 1.0, image.Width, image.Height);
             mesh.Freeze();
 
             var materialWrap = new MaterialWrap
@@ -144,8 +143,7 @@ namespace Ragnarok.Presentation.Extra.FlintSharpEx
 
                 GeometryModel3D model = new GeometryModel3D()
                 {
-                    Geometry = WPFImageData.CreateDefaultMesh(
-                        1.0, 1.0, image.Width, image.Height),
+                    Geometry = WPFUtil.CreateDefaultMesh(1.0, 1.0, image.Width, image.Height),
                     Material = material,
                 };
 
@@ -183,8 +181,7 @@ namespace Ragnarok.Presentation.Extra.FlintSharpEx
 
                 GeometryModel3D model = new GeometryModel3D()
                 {
-                    Geometry = WPFImageData.CreateDefaultMesh(
-                        1.0, 1.0, image.Width, image.Height),
+                    Geometry = WPFUtil.CreateDefaultMesh(1.0, 1.0, image.Width, image.Height),
                     Material = matGroup,
                 };
 

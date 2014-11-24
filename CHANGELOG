@@ -1,3 +1,8 @@
+2014-11-24  - Ver 1.8.7.35
+
+	* Ragnarok.Presentation.Extra/FlintSharpEx/WPFImageData.cs: CreateMesh
+	を別のクラスのメソッドに置き換えました。
+
 2014-11-24  - Ver 1.8.7.34
 
 	* Ragnarok.Forms/FormsUtil.cs: Ragnarok.Forms用の初期化メソッドや特別な
