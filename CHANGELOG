@@ -1,3 +1,8 @@
+2014-11-24  - Ver 1.8.7.23
+
+	* Ragnarok.Presentation.Shogi/Resources/Image/ban/ban_trans.png: 透明な
+	盤の画像を追加しました。
+
 2014-11-17  - Ver 1.8.7.22
 
 	* Ragnarok.Shogi/BoardMove.cs: 駒のシリアライズ・デシリアライズのバグを
