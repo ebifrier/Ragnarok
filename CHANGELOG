@@ -1,3 +1,9 @@
+2014-11-28  - Ver 1.8.7.45
+
+	* Ragnarok.Forms/Properties/AssemblyInfo.cs: RagnarokとFlintSharpではク
+	ラス名がバッティングすることがあるため、Xamlのネームスペースを分離しま
+	した。
+
 2014-11-28  - Ver 1.8.7.44
 
 	* Ragnarok.Shogi/Square.cs: '87'などの形式からSquareを作成するためのパ
