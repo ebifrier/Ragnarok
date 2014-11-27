@@ -8,12 +8,12 @@ using System.Text;
 namespace Ragnarok.Shogi
 {
     /// <summary>
-    /// Squareクラスと文字列との変換を行います。
+    /// SquareCollectionクラスと文字列との変換を行います。
     /// </summary>
-    public sealed class SquareConverter : TypeConverter
+    public sealed class SquareCollectionConverter : TypeConverter
     {
         /// <summary>
-        /// 他の値をSquareに変換できるか調べます。
+        /// 他の値をSquareCollectionに変換できるか調べます。
         /// </summary>
         public override bool CanConvertFrom(ITypeDescriptorContext context,
                                             Type sourceType)
@@ -27,7 +27,7 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
-        /// 文字列型をSquare型に変換します。
+        /// 文字列型をSquareCollection型に変換します。
         /// </summary>
         public override object ConvertFrom(ITypeDescriptorContext context,
                                            CultureInfo culture, object value)
@@ -35,14 +35,14 @@ namespace Ragnarok.Shogi
             var str = value as string;
             if (str != null)
             {
-                return Square.Parse(str);
+                return SquareCollection.Parse(str);
             }
 
             return base.ConvertFrom(context, culture, value);
         }
 
         /// <summary>
-        /// Square型を変換できるか調べます。
+        /// SquareCollection型を変換できるか調べます。
         /// </summary>
         public override bool CanConvertTo(ITypeDescriptorContext context,
                                           Type destinationType)
@@ -56,7 +56,7 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
-        /// Square型を文字列に変換します。
+        /// SquareCollection型を文字列に変換します。
         /// </summary>
         public override object ConvertTo(ITypeDescriptorContext context,
                                          CultureInfo culture, object value,

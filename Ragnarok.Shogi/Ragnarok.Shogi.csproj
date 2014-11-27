@@ -81,6 +81,7 @@
     <Compile Include="BWType.cs" />
     <Compile Include="CapturedPiece.cs" />
     <Compile Include="CapturedPieceBox.cs" />
+    <Compile Include="SquareCollection.cs" />
     <Compile Include="SquareConverter.cs" />
     <Compile Include="Csa\CsaBoard.cs" />
     <Compile Include="Csa\CsaException.cs" />
@@ -136,6 +137,7 @@
     <Compile Include="KifuWriter.cs" />
     <Compile Include="Tests\MoveStatisticsTest.cs" />
     <Compile Include="Tests\BoardMoveTest.cs" />
+    <Compile Include="SquareCollectionConverter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Ragnarok.Shogi.snk" />

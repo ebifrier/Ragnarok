@@ -61,6 +61,36 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
+        /// 文字列からSquareオブジェクトを作成します。
+        /// </summary>
+        public static Square Parse(string source)
+        {
+            if (source == null)
+            {
+                throw new ArgumentNullException("source");
+            }
+
+            var trimmedSource = source.Trim();
+            if (trimmedSource.Length != 2)
+            {
+                throw new FormatException(
+                    source + ": Square型への変換に失敗しました。");
+            }
+
+            var file = int.Parse(trimmedSource.Substring(0, 1));
+            var rank = int.Parse(trimmedSource.Substring(1, 1));
+            var square = new Square(file, rank);
+
+            if (!square.Validate())
+            {
+                throw new FormatException(
+                    source + ": 正しくないSquare型です。");
+            }
+
+            return square;
+        }
+
+        /// <summary>
         /// 正しい位置にあるか確かめます。
         /// </summary>
         public bool Validate()
