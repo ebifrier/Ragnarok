@@ -81,6 +81,7 @@
     <Compile Include="BWType.cs" />
     <Compile Include="CapturedPiece.cs" />
     <Compile Include="CapturedPieceBox.cs" />
+    <Compile Include="SquareConverter.cs" />
     <Compile Include="Csa\CsaBoard.cs" />
     <Compile Include="Csa\CsaException.cs" />
     <Compile Include="Csa\CsaUtil.cs" />

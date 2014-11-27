@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Runtime.Serialization;
@@ -10,6 +11,7 @@ namespace Ragnarok.Shogi
     /// 駒の位置を保存します。
     /// </summary>
     [DataContract()]
+    [TypeConverter(typeof(SquareConverter))]
     public class Square : IEquatable<Square>
     {
         /// <summary>
