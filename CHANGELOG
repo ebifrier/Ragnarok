@@ -1,3 +1,9 @@
+2014-11-28  - Ver 1.8.7.43
+
+	* Ragnarok/Utility/DurationConverter.cs: Xaml上からForeverと指定するこ
+	とでTimeSpanのMaxValueにすることや、マイナスの値を許可しないなどの制約
+	をつけたXamlコンバータを追加しました。
+
 2014-11-27  - Ver 1.8.7.42
 
 	* Ragnarok.Extra/FlintSharp/Renderers/Renderer.cs: パーティクルの更新と
