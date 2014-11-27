@@ -1,3 +1,8 @@
+2014-11-27  - Ver 1.8.7.38
+
+	* Ragnarok/Utility/Pointd.cs: Point管理用のクラスとそのコンバーターを追
+	加しました。
+
 2014-11-24  - Ver 1.8.7.37
 
 	* Ragnarok.Extra/FlintSharp/Utils/IImageData.cs: ResetメソッドをDispose

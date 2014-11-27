@@ -1,0 +1,129 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Text;
+
+namespace Ragnarok.Utility
+{
+    /// <summary>
+    /// ポイントクラスです。
+    /// </summary>
+    [TypeConverter(typeof(PointdConverter))]
+    public struct Pointd : IEquatable<Pointd>
+    {
+        private double x;
+        private double y;
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public Pointd(double x, double y)
+        {
+            this.x = x;
+            this.y = y;
+        }
+
+        /// <summary>
+        /// X座標を取得または設定します。
+        /// </summary>
+        public double X
+        {
+            get { return this.x; }
+            set { this.x = value; }
+        }
+
+        /// <summary>
+        /// Y座標を取得または設定します。
+        /// </summary>
+        public double Y
+        {
+            get { return this.y; }
+            set { this.y = value; }
+        }
+
+        /// <summary>
+        /// 座標値を指定した分だけ移動させます。
+        /// </summary>
+        public void Offset(double offsetX, double offsetY)
+        {
+            X += offsetX;
+            Y += offsetY;
+        }
+
+        /// <summary>
+        /// ハッシュ値を計算します。
+        /// </summary>
+        public override int GetHashCode()
+        {
+            return (X.GetHashCode() ^ Y.GetHashCode());
+        }
+
+        /// <summary>
+        /// オブジェクトが等値か検証します。
+        /// </summary>
+        public override bool Equals(object obj)
+        {
+            var status = this.PreEquals(obj);
+            if (status != null)
+            {
+                return status.Value;
+            }
+
+            return Equals((Pointd)obj);
+        }
+
+        /// <summary>
+        /// オブジェクトが等値か検証します。
+        /// </summary>
+        public bool Equals(Pointd other)
+        {
+            if ((object)other == null)
+            {
+                return false;
+            }
+
+            return (X == other.X && Y == other.Y);
+        }
+
+        public static bool operator ==(Pointd lhs, Pointd rhs)
+        {
+            return Util.GenericEquals(lhs, rhs);
+        }
+
+        public static bool operator !=(Pointd lhs, Pointd rhs)
+        {
+            return !(lhs == rhs);
+        }
+
+        /// <summary>
+        /// 文字列化します。
+        /// </summary>
+        public override string ToString()
+        {
+            return string.Format("{0},{1}", X, Y);
+        }
+
+        /// <summary>
+        /// 文字列からパースします。
+        /// </summary>
+        public static Pointd Parse(string source)
+        {
+            if (source == null)
+            {
+                throw new ArgumentNullException("source");
+            }
+
+            var list = source.Split(new char[] { ',' });
+            if (list == null || list.Count() != 2)
+            {
+                throw new FormatException(
+                    "Point3d型への変換に失敗しました。");
+            }
+
+            var x = double.Parse(list[0]);
+            var y = double.Parse(list[1]);
+            return new Pointd(x, y);
+        }
+    }
+}
