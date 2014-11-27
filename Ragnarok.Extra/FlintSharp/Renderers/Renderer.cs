@@ -85,7 +85,7 @@ namespace FlintSharp.Renderers
 
         internal void emitterUpdated(object sender, EmitterEventArgs e)
         {
-            RenderParticles(e.Emitter.Particles);
+            //RenderParticles(e.Emitter.Particles);
         }
 
         /// <summary>
@@ -127,6 +127,17 @@ namespace FlintSharp.Renderers
             foreach (var emitter in m_emitters)
             {
                 emitter.OnUpdateFrame(elapsedTime);
+            }
+        }
+
+        /// <summary>
+        /// Renders the frame.
+        /// </summary>
+        public virtual void OnRenderFrame()
+        {
+            foreach (var emitter in m_emitters)
+            {
+                RenderParticles(emitter.Particles);
             }
         }
 

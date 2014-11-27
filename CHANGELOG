@@ -1,3 +1,8 @@
+2014-11-27  - Ver 1.8.7.42
+
+	* Ragnarok.Extra/FlintSharp/Renderers/Renderer.cs: パーティクルの更新と
+	描画を別スレッドで行うようにしました。
+
 2014-11-27  - Ver 1.8.7.41
 
 	* Ragnarok.Shogi/SquareConverter.cs: Xaml用のコンバータークラスを追加し

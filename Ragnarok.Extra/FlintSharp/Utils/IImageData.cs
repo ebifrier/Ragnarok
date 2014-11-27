@@ -10,9 +10,5 @@ namespace FlintSharp
     /// </summary>
     public interface IImageData : IDisposable
     {
-        /// <summary>
-        /// オブジェクトの破棄時に呼ばれます。
-        /// </summary>
-        void Dispose();
     }
 }
