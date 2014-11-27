@@ -279,10 +279,12 @@
     <Compile Include="Utility\MethodUtil.cs" />
     <Compile Include="Utility\MultiMap.cs" />
     <Compile Include="Utility\PassingTmpFile.cs" />
+    <Compile Include="Utility\Point3d.cs" />
     <Compile Include="Utility\ReentrantLock.cs" />
     <Compile Include="Utility\Scanner.cs" />
     <Compile Include="Utility\AppSettingsBase.cs" />
     <Compile Include="Utility\Signal.cs" />
+    <Compile Include="Utility\Point3dConverter.cs" />
     <Compile Include="Utility\StackTraceUtil.cs" />
     <Compile Include="Utility\StringConverter.cs" />
     <Compile Include="Utility\StringNormalizer.cs" />
@@ -296,6 +298,12 @@
     <Compile Include="Utility\Unlock.cs" />
     <Compile Include="Utility\WeakEventHandler.basic.cs" />
     <Compile Include="Utility\WeakEventHandler.cs" />
+    <Compile Include="Utility\Pointd.cs" />
+    <Compile Include="Utility\PointdConverter.cs" />
+    <Compile Include="Xaml\CalcExtension.cs" />
+    <Compile Include="Xaml\EnumListExtension.cs" />
+    <Compile Include="Xaml\FileListExtension.cs" />
+    <Compile Include="Xaml\ImageSetListExtension.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="NLog.config">
