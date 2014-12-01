@@ -167,13 +167,14 @@ namespace Ragnarok.Shogi
             {
                 case PieceType.Hisya:
                 case PieceType.Kaku:
-                case PieceType.Gyoku:
-                case PieceType.Kin:
                 case PieceType.Gin:
                 case PieceType.Kei:
                 case PieceType.Kyo:
                 case PieceType.Hu:
                     break;
+                case PieceType.Gyoku:
+                case PieceType.Kin:
+                    return !IsPromoted;
                 default:
                     // Noneもここになります。
                     return false;

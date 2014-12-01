@@ -1,3 +1,8 @@
+2014-12-01  - Ver 1.8.8.2
+
+	* Ragnarok.Shogi/SquareCollection.cs: マスを指定した文字列に要素が全く
+	ないときの処理を追加しました。
+
 2014-12-01  - Ver 1.8.8.1
 
 	* Ragnarok/Utility/Matrix44d.cs: 行列変換用のMatrixクラスを追加しました。 

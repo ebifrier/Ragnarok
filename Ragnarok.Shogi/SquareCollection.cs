@@ -250,7 +250,9 @@ namespace Ragnarok.Shogi
                 throw new ArgumentNullException("source");
             }
 
-            var list = source.Split(new char[] { ',' });
+            var list = source.Split(
+                new char[] { ',' },
+                StringSplitOptions.RemoveEmptyEntries);
             if (list == null || !list.Any())
             {
                 return new SquareCollection();
