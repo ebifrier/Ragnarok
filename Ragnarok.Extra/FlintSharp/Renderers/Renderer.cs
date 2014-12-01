@@ -85,7 +85,7 @@ namespace FlintSharp.Renderers
 
         internal void emitterUpdated(object sender, EmitterEventArgs e)
         {
-            //RenderParticles(e.Emitter.Particles);
+            UpdateParticles(e.Emitter.Particles);
         }
 
         /// <summary>
@@ -103,6 +103,18 @@ namespace FlintSharp.Renderers
         /// </summary>
         /// <param name="particle">The particle.</param>
         public virtual void RemoveParticle(Particle particle)
+        {
+        }
+
+        /// <summary>
+        /// The updateParticles method is called during the update phase of 
+        /// every frame if the state of one of the emitters being rendered
+        /// by this renderer has changed.
+        /// </summary>
+        /// <param name="particles">The particles being managed by all the emitters
+        /// being rendered by this renderer. The particles are in no particular
+        /// order.</param>
+        public virtual void UpdateParticles(IEnumerable<Particle> particles)
         {
         }
 
