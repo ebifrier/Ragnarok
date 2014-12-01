@@ -1,0 +1,210 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+
+using SharpGL;
+
+using Ragnarok.Extra.Effect;
+using Ragnarok.Utility;
+
+namespace Ragnarok.Forms.Shogi.GL
+{
+    /// <summary>
+    /// オブジェクトの描画順序をzorder順にするためのクラスです。
+    /// </summary>
+    public sealed class RenderBuffer
+    {
+        /// <summary>
+        /// デフォルトのメッシュデータです。
+        /// </summary>
+        private static readonly Mesh DefaultMesh = Mesh.CreateDefault(1, 1, 0, 0);
+
+        private readonly object syncObject = new object();
+        private readonly List<RenderData> dataList = new List<RenderData>();
+
+        /// <summary>
+        /// 登録されたデータをまとめて描画します。
+        /// </summary>
+        [CLSCompliant(false)]
+        public void Render(OpenGL gl)
+        {
+            lock(this.syncObject)
+            {
+                var list =
+                    from data in this.dataList
+                    orderby data.ZOrder
+                    select data;
+
+                list.ForEach(_ => _.Render(gl));
+            }
+        }
+
+        /// <summary>
+        /// バッファ内容をすべてクリアします。
+        /// </summary>
+        public void Clear()
+        {
+            lock (this.syncObject)
+            {
+                this.dataList.Clear();
+            }
+        }
+
+        /// <summary>
+        /// RectangleF型を同じ変換を行う行列に直します。
+        /// </summary>
+        private static Matrix44d ToMatrix(RectangleF bounds)
+        {
+            var m = new Matrix44d();
+            m.Translate(
+                bounds.Left + bounds.Width / 2,
+                bounds.Top + bounds.Height / 2,
+                0.0);
+            m.Scale(bounds.Width, bounds.Height, 1.0);
+            return m;
+        }
+
+        /// <summary>
+        /// 描画オブジェクトを追加します。
+        /// </summary>
+        private void AddRenderInternal(RenderData data)
+        {
+            if (data == null)
+            {
+                throw new ArgumentNullException("data");
+            }
+
+            lock (this.syncObject)
+            {
+                this.dataList.Add(data);
+            }
+        }
+
+        /// <summary>
+        /// 描画オブジェクトを追加します。
+        /// </summary>
+        public void AddRender(Texture texture, BlendType blend, Color color,
+                              Mesh mesh, Matrix44d transform, double zorder)
+        {
+            if (mesh == null)
+            {
+                throw new ArgumentNullException("mesh");
+            }
+
+            AddRenderInternal(new RenderData
+            {
+                Texture = texture,
+                Blend = blend,
+                Color = color,
+                Mesh = mesh,
+                Transform = transform,
+                ZOrder = zorder,
+            });
+        }
+
+        /// <summary>
+        /// 描画オブジェクトを追加します。
+        /// </summary>
+        public void AddRender(Texture texture, BlendType blend, Color color,
+                              Matrix44d transform, double zorder)
+        {
+            AddRenderInternal(new RenderData
+            {
+                Mesh = DefaultMesh,
+                Texture = texture,
+                Blend = blend,
+                Color = color,
+                Transform = transform,
+                ZOrder = zorder,
+            });
+        }
+
+        /// <summary>
+        /// 描画オブジェクトを追加します。
+        /// </summary>
+        public void AddRender(BlendType blend, Color color, Mesh mesh,
+                              Matrix44d transform, double zorder)
+        {
+            if (mesh == null)
+            {
+                throw new ArgumentNullException("mesh");
+            }
+
+            AddRenderInternal(new RenderData
+            {
+                Blend = blend,
+                Color = color,
+                Mesh = mesh,
+                Transform = transform,
+                ZOrder = zorder,
+            });
+        }
+
+        /// <summary>
+        /// 描画オブジェクトを追加します。
+        /// </summary>
+        public void AddRender(BlendType blend, Color color,
+                              Matrix44d transform, double zorder)
+        {
+            AddRenderInternal(new RenderData
+            {
+                Mesh = DefaultMesh,
+                Blend = blend,
+                Color = color,
+                Transform = transform,
+                ZOrder = zorder,
+            });
+        }
+
+        /// <summary>
+        /// 描画オブジェクトを追加します。
+        /// </summary>
+        public void AddRender(GL.Texture texture, BlendType blend,
+                              RectangleF bounds, double zorder,
+                              double opacity = 1.0)
+        {
+            if (texture == null || texture.TextureName == 0)
+            {
+                return;
+            }
+
+            var alphaByte = (byte)Math.Min(256 * opacity, 255);
+            var color = Color.FromArgb(alphaByte, Color.White);
+            var transform = ToMatrix(bounds);
+
+            AddRender(texture, blend, color, transform, zorder);
+        }
+
+        /// <summary>
+        /// 描画オブジェクトを追加します。
+        /// </summary>
+        public void AddRender(GL.Texture texture, BlendType blend,
+                              RectangleF bounds, Mesh mesh, double zorder,
+                              double opacity = 1.0)
+        {
+            if (texture == null || texture.TextureName == 0)
+            {
+                return;
+            }
+
+            var alphaByte = (byte)Math.Min(256 * opacity, 255);
+            var color = Color.FromArgb(alphaByte, Color.White);
+            var transform = ToMatrix(bounds);
+
+            AddRender(texture, blend, color, mesh, transform, zorder);
+        }
+
+        /// <summary>
+        /// 描画オブジェクトを追加します。
+        /// </summary>
+        public void AddRender(BlendType blend, RectangleF bounds,
+                               Color color, double zorder)
+        {
+            var transform = ToMatrix(bounds);
+
+            AddRender(blend, color, transform, zorder);
+        }
+    }
+}

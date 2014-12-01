@@ -1,3 +1,9 @@
+2014-12-01  - Ver 1.8.8.7
+
+	* Ragnarok.Forms.Shogi: WinForms上でOpenGLを使った局面表示を行うための
+	ライブラリを追加しました。以前のWPF版の局面表示と比べてより高速化され、
+	またポータビリティも上がります。
+
 2014-12-01  - Ver 1.8.8.6
 
 	* Ragnarok.Extra/Xaml/DefaultMeshExtension.cs: Xaml上でDefaultのメッシ
