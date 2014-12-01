@@ -64,6 +64,38 @@ namespace Ragnarok.Utility
         }
 
         /// <summary>
+        /// ポイントの座標値を加算した新たなポイントを作成します。
+        /// </summary>
+        public static Point3d Add(Point3d x, Point3d y)
+        {
+            return new Point3d(x.X + y.X, x.Y + y.Y, x.Z + y.Z);
+        }
+
+        /// <summary>
+        /// ポイントの座標値を減算した新たなポイントを作成します。
+        /// </summary>
+        public static Point3d Subtract(Point3d x, Point3d y)
+        {
+            return new Point3d(x.X - y.X, x.Y - y.Y, x.Z - y.Z);
+        }
+
+        /// <summary>
+        /// ポイントの座標値を加算した新たなポイントを作成します。
+        /// </summary>
+        public static Point3d operator +(Point3d x, Point3d y)
+        {
+            return Point3d.Add(x, y);
+        }
+
+        /// <summary>
+        /// ポイントの座標値を減算した新たなポイントを作成します。
+        /// </summary>
+        public static Point3d operator -(Point3d x, Point3d y)
+        {
+            return Point3d.Subtract(x, y);
+        }
+
+        /// <summary>
         /// ハッシュ値を計算します。
         /// </summary>
         public override int GetHashCode()

@@ -1,3 +1,7 @@
+2014-12-01  - Ver 1.8.8.1
+
+	* Ragnarok/Utility/Matrix44d.cs: 行列変換用のMatrixクラスを追加しました。 
+
 2014-11-28  - Ver 1.8.7.46
 
 	* Ragnarok.Extra/Effect: 描画用オブジェクトや、プロパティ値を補完するた

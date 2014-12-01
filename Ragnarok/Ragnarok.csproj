@@ -276,6 +276,7 @@
     <Compile Include="Utility\InfoBase.cs" />
     <Compile Include="Utility\Json.cs" />
     <Compile Include="Utility\LabelDescriptionAttribute.cs" />
+    <Compile Include="Utility\Matrix44d.cs" />
     <Compile Include="Utility\MemoryStreamExtensions.cs" />
     <Compile Include="Utility\MethodUtil.cs" />
     <Compile Include="Utility\MultiMap.cs" />
