@@ -85,10 +85,10 @@ namespace Ragnarok.Extra.Effect
         public EffectObject()
         {
             Children = new EffectCollection(this);
+            Scenario = new Scenario();
             BaseScale = new Point3d(1.0, 1.0, 1.0);
             Scale = new Point3d(1.0, 1.0, 1.0);
-            AnimationImageCount = 1;
-            BlendType = BlendType.Diffuse;
+            Blend = BlendType.Diffuse;
             Opacity = 1.0;
             InheritedOpacity = 1.0;
 
@@ -213,6 +213,30 @@ namespace Ragnarok.Extra.Effect
         }
 
         /// <summary>
+        /// Z座標を取得または設定します。
+        /// </summary>
+        public double ZOrder
+        {
+            get { return GetValue<double>("ZOrder"); }
+            set { SetValue("ZOrder", value); }
+        }
+
+        public double InheritedZOrder
+        {
+            get
+            {
+                if (Parent == null)
+                {
+                    return ZOrder;
+                }
+                else
+                {
+                    return (Parent.ZOrder + ZOrder);
+                }
+            }
+        }
+
+        /// <summary>
         /// XAMLにデータを渡すためのオブジェクトを取得または設定します。
         /// </summary>
         public object DataContext
@@ -296,7 +320,6 @@ namespace Ragnarok.Extra.Effect
         #endregion
 
         #region Transform Property
-        #region 基本変換プロパティ
         /// <summary>
         /// モデル内の座標変換基準位置(0.0～1.0)を取得または設定します。
         /// </summary>
@@ -321,9 +344,16 @@ namespace Ragnarok.Extra.Effect
             get { return GetValue<Point3d>("BaseScale"); }
             set { SetValue("BaseScale", value); }
         }
-        #endregion
 
-        #region その他
+        /// <summary>
+        /// 表示位置を取得または設定します。
+        /// </summary>
+        public Point3d Coord
+        {
+            get { return GetValue<Point3d>("Coord"); }
+            set { SetValue("Coord", value); }
+        }
+
         /// <summary>
         /// 拡大率を取得または設定します。
         /// </summary>
@@ -343,23 +373,29 @@ namespace Ragnarok.Extra.Effect
         }
 
         /// <summary>
-        /// 表示位置を取得または設定します。
+        /// このオブジェクトの変換行列を取得します。
         /// </summary>
-        public Point3d Coord
+        [DependOnProperty("CenterPoint")]
+        [DependOnProperty("BaseScale")]
+        [DependOnProperty("Coord")]
+        [DependOnProperty("Scale")]
+        [DependOnProperty("RotateZ")]
+        public Matrix44d Transform
         {
-            get { return GetValue<Point3d>("Coord"); }
-            set { SetValue("Coord", value); }
-        }
+            get
+            {
+                // 親の変換行列を基準に変換を行います。
+                var m = (Parent != null ? Parent.Transform : new Matrix44d());
 
-        /// <summary>
-        /// Z座標を取得または設定します。
-        /// </summary>
-        public double ZOrder
-        {
-            get { return GetValue<double>("ZOrder"); }
-            set { SetValue("ZOrder", value); }
+                m.Translate(Coord.X, Coord.Y, Coord.Z);
+                //m.Rotate(RotateZ, 0.0, 0.0, 1.0);
+                m.Scale(Scale.X, Scale.Y, Scale.Z);
+
+                m.Scale(BaseScale.X, BaseScale.Y, BaseScale.Z);
+                m.Translate(CenterPoint.X, CenterPoint.Y, CenterPoint.Z);
+                return m;
+            }
         }
-        #endregion
         #endregion
 
         #region 不透明度
@@ -406,65 +442,23 @@ namespace Ragnarok.Extra.Effect
         }
         #endregion
 
-        #region イメージ・アニメーション関係
+        #region イメージ関係
+        /// <summary>
+        /// このオブジェクトのメッシュを取得または設定します。
+        /// </summary>
+        public Mesh Mesh
+        {
+            get { return GetValue<Mesh>("Mesh"); }
+            set { SetValue("Mesh", value); }
+        }
+
         /// <summary>
         /// 描画種別を取得または設定します。
         /// </summary>
-        public BlendType BlendType
+        public BlendType Blend
         {
-            get { return GetValue<BlendType>("BlendType"); }
-            set { SetValue("BlendType", value); }
-        }
-
-        /// <summary>
-        /// 最初に画像をランダムで選ぶ場合、このリストから選択します。
-        /// </summary>
-        /// <remarks>
-        /// XAML上での処理を考え、string型にしています。
-        /// </remarks>
-        public string[] InitialImageUriList
-        {
-            get { return GetValue<string[]>("InitialImageUriList"); }
-            set { SetValue("InitialImageUriList", value); }
-        }
-
-        /// <summary>
-        /// 描画するイメージのURIを取得または設定します。
-        /// </summary>
-        /// <remarks>
-        /// XAML上での処理を考え、string型にしています。
-        /// </remarks>
-        public string ImageUri
-        {
-            get { return GetValue<string>("ImageUri"); }
-            set { SetValue("ImageUri", value); }
-        }
-
-        /// <summary>
-        /// アニメーションのタイプを取得または設定します。
-        /// </summary>
-        public AnimationType AnimationType
-        {
-            get { return GetValue<AnimationType>("AnimationType"); }
-            set { SetValue("AnimationType", value); }
-        }
-
-        /// <summary>
-        /// アニメーションさせる画像の総数を取得または設定します。
-        /// </summary>
-        public int AnimationImageCount
-        {
-            get { return GetValue<int>("AnimationImageCount"); }
-            set { SetValue("AnimationImageCount", value); }
-        }
-
-        /// <summary>
-        /// アニメーション画像のインデックスを取得または設定します。
-        /// </summary>
-        public int AnimationImageIndex
-        {
-            get { return GetValue<int>("AnimationImageIndex"); }
-            set { SetValue("AnimationImageIndex", value); }
+            get { return GetValue<BlendType>("Blend"); }
+            set { SetValue("Blend", value); }
         }
         #endregion
 
@@ -546,7 +540,7 @@ namespace Ragnarok.Extra.Effect
         /// <summary>
         /// 開始時の効果音を再生します。
         /// </summary>
-        public bool PlayStartSound(bool isVolumeZero = false)
+        public bool PlayStartSound(bool isPlay = true)
         {
             var soundManager = SoundManager;
             if (soundManager == null)
@@ -562,10 +556,14 @@ namespace Ragnarok.Extra.Effect
             }
 
             var uri = MakeContentUri(soundPath);
-            soundManager.PlaySE(
+            var sound = soundManager.PlaySE(
                 uri.LocalPath,
-                (isVolumeZero ? 0.0 : StartSoundVolume),
+                (isPlay ? StartSoundVolume : 0.0),
                 false);
+            if (sound == null)
+            {
+                return false;
+            }
 
             return true;
         }
@@ -668,11 +666,6 @@ namespace Ragnarok.Extra.Effect
         /// </summary>
         protected virtual void OnInitialize()
         {
-            // ランダムイメージの設定を行います。
-            if (InitialImageUriList != null && InitialImageUriList.Any())
-            {
-                ImageUri = InitialImageUriList[MathEx.RandInt(0, InitialImageUriList.Length)];
-            }
         }
 
         /// <summary>
@@ -751,7 +744,7 @@ namespace Ragnarok.Extra.Effect
         /// <summary>
         /// フレーム毎に呼ばれ、オブジェクトの更新処理を行います。
         /// </summary>
-        public void DoEnterFrame(TimeSpan elapsedTime)
+        public void DoEnterFrame(TimeSpan elapsedTime, object state)
         {
             if (RemoveMe)
             {
@@ -786,10 +779,11 @@ namespace Ragnarok.Extra.Effect
                 }
             }
 
-            var e = new EnterFrameEventArgs(elapsedTime, progressSpan, Duration);
+            var e = new EnterFrameEventArgs(
+                elapsedTime, progressSpan, Duration, state);
             OnEnterFrame(e);
 
-            UpdateChildren(elapsedTime);
+            UpdateChildren(elapsedTime, state);
         }
 
         /// <summary>
@@ -799,23 +793,10 @@ namespace Ragnarok.Extra.Effect
         {
             EnterFrame.SafeRaiseEvent(this, e);
 
-            // 必要ならアニメーションインデックスを変更
-            switch (AnimationType)
-            {
-                case AnimationType.Normal:
-                    AnimationImageIndex = Math.Min(
-                        (int)(AnimationImageCount * e.ProgressRate),
-                        AnimationImageCount - 1);
-                    break;
-                case AnimationType.Random:
-                    AnimationImageIndex = MathEx.RandInt(0, AnimationImageCount);
-                    break;
-            }
-
             // シナリオの更新を行います。
             if (Scenario != null)
             {
-                Scenario.DoEnterFrame(e.ElapsedTime);
+                Scenario.DoEnterFrame(e.ElapsedTime, e.StateObject);
             }
 
             // パーティクルの更新を行います。
@@ -828,14 +809,14 @@ namespace Ragnarok.Extra.Effect
         /// <summary>
         /// 各子要素を更新します。
         /// </summary>
-        private void UpdateChildren(TimeSpan elapsedTime)
+        private void UpdateChildren(TimeSpan elapsedTime, object state)
         {
             for (var i = 0; i < Children.Count; )
             {
-                var entity = Children[i];
+                var child = Children[i];
 
-                entity.DoEnterFrame(elapsedTime);
-                if (entity.RemoveMe)
+                child.DoEnterFrame(elapsedTime, state);
+                if (child.RemoveMe)
                 {
                     Children.RemoveAt(i);
                 }

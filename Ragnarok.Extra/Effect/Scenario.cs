@@ -14,22 +14,22 @@ namespace Ragnarok.Extra.Effect
     /// オブジェクトの各プロパティの変化を記述します。
     /// </summary>
     [ContentProperty("Children")]
-    public class Scenario : NotifyObject, IAnimationObject
+    public class Scenario : NotifyObject, IAnimationTimeline
     {
         /// <summary>
         /// コンストラクタ
         /// </summary>
         public Scenario()
         {
-            Children = new NotifyCollection<IAnimationObject>();
+            Children = new NotifyCollection<IAnimationTimeline>();
         }
 
         /// <summary>
         /// フレームごとに更新するオブジェクトのリストを取得します。
         /// </summary>
-        public NotifyCollection<IAnimationObject> Children
+        public NotifyCollection<IAnimationTimeline> Children
         {
-            get { return GetValue<NotifyCollection<IAnimationObject>>("Children"); }
+            get { return GetValue<NotifyCollection<IAnimationTimeline>>("Children"); }
             private set { SetValue("Children", value); }
         }
 
@@ -58,11 +58,11 @@ namespace Ragnarok.Extra.Effect
         /// <summary>
         /// フレーム毎に呼ばれ、オブジェクトの更新処理を行います。
         /// </summary>
-        public void DoEnterFrame(TimeSpan elapsedTime)
+        public void DoEnterFrame(TimeSpan elapsedTime, object state)
         {
             foreach (var child in Children)
             {
-                child.DoEnterFrame(elapsedTime);
+                child.DoEnterFrame(elapsedTime, state);
             }
         }
     }

@@ -13,6 +13,6 @@ namespace Ragnarok.Extra.Effect
         /// <summary>
         /// フレーム毎に呼ばれ、オブジェクトの更新処理を行います。
         /// </summary>
-        void DoEnterFrame(TimeSpan elapsedTime);
+        void DoEnterFrame(TimeSpan elapsedTime, object state);
     }
 }

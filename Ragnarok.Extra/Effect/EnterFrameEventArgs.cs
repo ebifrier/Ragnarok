@@ -11,16 +11,16 @@ namespace Ragnarok.Extra.Effect
     public class EnterFrameEventArgs : EventArgs
     {
         /// <summary>
-        /// このフレームの時間を取得または設定します。
+        /// このフレームの時間を取得します。
         /// </summary>
         public TimeSpan ElapsedTime
         {
             get;
-            set;
+            private set;
         }
 
         /// <summary>
-        /// 表示期間を取得または設定します。
+        /// 表示期間を取得します。
         /// </summary>
         public TimeSpan Duration
         {
@@ -29,7 +29,7 @@ namespace Ragnarok.Extra.Effect
         }
 
         /// <summary>
-        /// 表示期間がある場合、その進み具合を取得または設定します。
+        /// 表示期間がある場合、その進み具合を取得します。
         /// </summary>
         /// <remarks>
         /// 範囲は0.0～1.0です。
@@ -41,7 +41,7 @@ namespace Ragnarok.Extra.Effect
         }
 
         /// <summary>
-        /// 初期化からの経過時間を取得または設定します。
+        /// 初期化からの経過時間を取得します。
         /// </summary>
         public TimeSpan ProgressSpan
         {
@@ -50,7 +50,7 @@ namespace Ragnarok.Extra.Effect
         }
 
         /// <summary>
-        /// 初期化からの開始時間を秒で取得または設定します。
+        /// 初期化からの開始時間を秒で取得します。
         /// </summary>
         public double ProgressSeconds
         {
@@ -58,14 +58,24 @@ namespace Ragnarok.Extra.Effect
         }
 
         /// <summary>
+        /// 各アプリケーションに固有の引数を取得します。
+        /// </summary>
+        public object StateObject
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
         /// コンストラクタ
         /// </summary>
         public EnterFrameEventArgs(TimeSpan elapsedTime, TimeSpan progressSpan,
-                                   TimeSpan duration)
+                                   TimeSpan duration, object state)
         {
             ElapsedTime = elapsedTime;
             ProgressSpan = progressSpan;
             Duration = duration;
+            StateObject = state;
 
             ProgressRate = 0.0;
             if (duration != TimeSpan.MaxValue)

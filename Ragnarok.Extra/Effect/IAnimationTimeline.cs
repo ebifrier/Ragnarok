@@ -8,7 +8,7 @@ namespace Ragnarok.Extra.Effect
     /// <summary>
     /// アニメーションの基本インターフェースです。
     /// </summary>
-    public interface IAnimationObject : IFrameObject
+    public interface IAnimationTimeline : IFrameObject
     {
         /// <summary>
         /// アニメーションを開始します。

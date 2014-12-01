@@ -1,3 +1,14 @@
+2014-12-01  - Ver 1.8.8.4
+
+	* Ragnarok.Extra/Effect/AnimationEffect.cs: EffectObjectのアニメーショ
+	ン関係のプロパティをAnimationEffectクラスに移動しました。
+	* Ragnarok.Extra/Effect/EffectLoader.cs: エフェクトを読み込むためのクラ
+	スを追加しました。
+	* Ragnarok.Extra/Effect/EffectArgumentAttribute.cs: Xaml読み込み時の文
+	字列置き換えようプロパティを指定するための属性を追加しました。
+	* Ragnarok.Extra/Effect/Mesh.cs: 3Dでオブジェクトを表現するためのメッシ
+	ュクラスを追加しました。
+
 2014-12-01  - Ver 1.8.8.3
 
 	* Ragnarok.Extra/Effect/Animation: EffectObjectのプロパティを定期的にア
