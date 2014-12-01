@@ -64,8 +64,6 @@
     <Reference Include="irrKlang.NET4">
       <HintPath>..\externals\net\irrKlang.NET4.dll</HintPath>
     </Reference>
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -74,6 +72,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Effect\AnimationEffect.cs" />
     <Compile Include="Effect\Animation\DoubleAnimationUsingKeyFrame.cs" />
     <Compile Include="Effect\Animation\DoubleKeyFrame.cs" />
     <Compile Include="Effect\Animation\IKeyFrame.cs" />
@@ -81,12 +80,14 @@
     <Compile Include="Effect\Animation\Point3dAnimationUsingKeyFrame.cs" />
     <Compile Include="Effect\Animation\Point3dKeyFrame.cs" />
     <Compile Include="Effect\Animation\PropertyAnimation.cs" />
+    <Compile Include="Effect\EffectArgumentAttribute.cs" />
     <Compile Include="Effect\EffectException.cs" />
-    <Compile Include="Effect\EffectInfo.cs" />
+    <Compile Include="Effect\EffectLoader.cs" />
+    <Compile Include="Effect\Mesh.cs" />
     <Compile Include="Effect\EnterFrameEventArgs.cs" />
     <Compile Include="Effect\EffectCollection.cs" />
     <Compile Include="Effect\EffectObject.cs" />
-    <Compile Include="Effect\IAnimationObject.cs" />
+    <Compile Include="Effect\IAnimationTimeline.cs" />
     <Compile Include="Effect\IFrameObject.cs" />
     <Compile Include="FlintSharp\Activities\Activity.cs" />
     <Compile Include="FlintSharp\Activities\EmitterImage.cs" />
@@ -239,6 +240,7 @@
     <Compile Include="Sound\SoundManager.cs" />
     <Compile Include="Sound\SoundObject.cs" />
     <Compile Include="Sound\SoundStopEventArgs.cs" />
+    <Compile Include="Xaml\DefaultMeshExtension.cs" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="FlintSharp\Particle.png" />

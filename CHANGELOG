@@ -1,3 +1,8 @@
+2014-12-01  - Ver 1.8.8.6
+
+	* Ragnarok.Extra/Xaml/DefaultMeshExtension.cs: Xaml上でDefaultのメッシ
+	ュを追加するための拡張構文を追加しました。
+
 2014-12-01  - Ver 1.8.8.5
 
 	* Ragnarok.Extra/FlintSharp/Renderers/Renderer.cs: パーティクルシステム
