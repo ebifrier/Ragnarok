@@ -17,7 +17,7 @@ namespace Ragnarok.Extra.Effect.Animation
         /// <summary>
         /// 同じ値で固定させます。
         /// </summary>
-        Discreate,
+        Discrete,
     }
 
     /// <summary>
@@ -35,7 +35,7 @@ namespace Ragnarok.Extra.Effect.Animation
             {
                 case EasingFunctions.Linear:
                     return (x * (1.0 - r) + y * r);
-                case EasingFunctions.Discreate:
+                case EasingFunctions.Discrete:
                     return (r == 0.0 ? x : y);
             }
 

@@ -74,16 +74,36 @@ namespace Ragnarok.Extra.Effect.Animation
             : base(EasingFunctions.Linear)
         {
         }
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public LinearPoint3dKeyFrame(Point3d value, TimeSpan keyTime)
+            : this()
+        {
+            Value = value;
+            KeyTime = keyTime;
+        }
     }
 
     /// <summary>
     /// 固定値を使うキーフレームクラスです。
     /// </summary>
-    public class DiscreatePoint3dKeyFrame : Point3dKeyFrame
+    public class DiscretePoint3dKeyFrame : Point3dKeyFrame
     {
-        public DiscreatePoint3dKeyFrame()
-            : base(EasingFunctions.Discreate)
+        public DiscretePoint3dKeyFrame()
+            : base(EasingFunctions.Discrete)
         {
+        }
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public DiscretePoint3dKeyFrame(Point3d value, TimeSpan keyTime)
+            : this()
+        {
+            Value = value;
+            KeyTime = keyTime;
         }
     }
 }

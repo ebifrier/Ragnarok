@@ -19,7 +19,7 @@ namespace Ragnarok.Extra.Effect.Animation
         /// ダミーのキーフレームオブジェクトです。
         /// </summary>
         private static readonly DoubleKeyFrame DoubleKeyFrameZero =
-            new DiscreateDoubleKeyFrame
+            new DiscreteDoubleKeyFrame
             {
                 KeyTime = TimeSpan.Zero,
                 Value = 0.0,

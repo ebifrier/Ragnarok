@@ -26,7 +26,7 @@ namespace Ragnarok.Extra.Effect.Animation
     /// <summary>
     /// プロパティアニメーションに関わる基本クラスです。
     /// </summary>
-    public abstract class PropertyAnimation : NotifyObject, IAnimationObject
+    public abstract class PropertyAnimation : NotifyObject, IAnimationTimeline
     {
         private bool initialized;
         private IPropertyObject pobj;
@@ -223,7 +223,7 @@ namespace Ragnarok.Extra.Effect.Animation
         /// <summary>
         /// アニメーションの更新処理を行います。
         /// </summary>
-        public void DoEnterFrame(TimeSpan elapsedTime)
+        public void DoEnterFrame(TimeSpan elapsedTime, object state)
         {
             if (!this.initialized)
             {

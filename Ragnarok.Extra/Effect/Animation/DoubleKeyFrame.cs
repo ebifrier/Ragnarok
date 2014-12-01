@@ -68,16 +68,39 @@ namespace Ragnarok.Extra.Effect.Animation
             : base(EasingFunctions.Linear)
         {
         }
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public LinearDoubleKeyFrame(double value, TimeSpan keyTime)
+            : this()
+        {
+            Value = value;
+            KeyTime = keyTime;
+        }
     }
 
     /// <summary>
     /// 固定値を使うキーフレームクラスです。
     /// </summary>
-    public class DiscreateDoubleKeyFrame : DoubleKeyFrame
+    public class DiscreteDoubleKeyFrame : DoubleKeyFrame
     {
-        public DiscreateDoubleKeyFrame()
-            : base(EasingFunctions.Discreate)
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public DiscreteDoubleKeyFrame()
+            : base(EasingFunctions.Discrete)
         {
+        }
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public DiscreteDoubleKeyFrame(double value, TimeSpan keyTime)
+            : this()
+        {
+            Value = value;
+            KeyTime = keyTime;
         }
     }
 }

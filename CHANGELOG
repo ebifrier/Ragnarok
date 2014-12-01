@@ -1,3 +1,8 @@
+2014-12-01  - Ver 1.8.8.3
+
+	* Ragnarok.Extra/Effect/Animation: EffectObjectのプロパティを定期的にア
+	ニメーションさせるためのクラス群を追加しました。
+
 2014-12-01  - Ver 1.8.8.2
 
 	* Ragnarok.Shogi/SquareCollection.cs: マスを指定した文字列に要素が全く

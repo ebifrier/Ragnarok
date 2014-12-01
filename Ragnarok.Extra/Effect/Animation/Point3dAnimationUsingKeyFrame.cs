@@ -20,7 +20,7 @@ namespace Ragnarok.Extra.Effect.Animation
         /// ダミーのキーフレームオブジェクトです。
         /// </summary>
         private static readonly Point3dKeyFrame Point3dKeyFrameZero =
-            new DiscreatePoint3dKeyFrame
+            new DiscretePoint3dKeyFrame
             {
                 KeyTime = TimeSpan.Zero,
                 Value = new Point3d(),
