@@ -1,23 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Drawing;
 using System.Data;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-
 using SharpGL;
 using SharpGL.WinForms;
 
 using Ragnarok.Extra.Effect;
+using Ragnarok.ObjectModel;
 
 namespace Ragnarok.Forms.Shogi.View
 {
     [CLSCompliant(false)]
     public partial class GLContainer : OpenGLControl
     {
-        private readonly List<GLElement> glElements = new List<GLElement>();
+        private readonly NotifyCollection<GLElement> glElements =
+            new NotifyCollection<GLElement>();
         private readonly GL.RenderBuffer renderBuffer = new GL.RenderBuffer();
         private int screenWidth = 640;
         private int screenHeight = 360;
@@ -30,8 +32,7 @@ namespace Ragnarok.Forms.Shogi.View
         {
             InitializeComponent();
 
-            /*ControlAdded += GLContainer_ControlAdded;
-            ControlRemoved += GLContainer_ControlRemoved;*/
+            this.glElements.CollectionChanged += glElements_CollectionChanged;
 
             OpenGLInitialized += GLContainer_OpenGLInitialized;
             Resized += GLContainer_Resized;
@@ -57,36 +58,43 @@ namespace Ragnarok.Forms.Shogi.View
             // 背景は透明色
             gl.ClearColor(0, 0, 0, 0);
 
-            Elements
+            GLElements
                 .Where(_ => _ != null)
                 .ForEach(_ => _.Initialize(this));
             this.glInitialized = true;
         }
 
-        /*void GLContainer_ControlAdded(object sender, ControlEventArgs e)
+        /// <summary>
+        /// コレクション変更時に呼ばれます。
+        /// </summary>
+        void glElements_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            var glelem = e.Control as OpenGLElement;
-
-            if (this.glInitialized && glelem != null)
+            if (this.glInitialized)
             {
-                glelem.InitializeOpenGL(OpenGL);
+                foreach (var item in e.NewItems)
+                {
+                    var glelem = item as GLElement;
+                    if (glelem != null)
+                    {
+                        glelem.Initialize(this);
+                    }
+                }
+
+                foreach (var item in e.OldItems)
+                {
+                    var glelem = item as GLElement;
+                    if (glelem != null)
+                    {
+                        glelem.Initialize(null);
+                    }
+                }
             }
         }
-
-        void GLContainer_ControlRemoved(object sender, ControlEventArgs e)
-        {
-            var glelem = e.Control as OpenGLElement;
-
-            if (glelem != null)
-            {
-                glelem.InitializeOpenGL(null);
-            }
-        }*/
 
         /// <summary>
         /// OpenGL用の画面要素のリストを取得します。
         /// </summary>
-        public List<GLElement> Elements
+        public NotifyCollection<GLElement> GLElements
         {
             get { return this.glElements; }
         }
@@ -163,7 +171,7 @@ namespace Ragnarok.Forms.Shogi.View
 
             this.renderBuffer.Render(gl);
 
-            Elements
+            GLElements
                 .Where(_ => _ != null)
                 .ForEach(_ => _.OnOpenGLDraw(e));
 
@@ -177,14 +185,14 @@ namespace Ragnarok.Forms.Shogi.View
         {
             this.renderBuffer.Clear();
 
-            Elements
+            GLElements
                 .Where(_ => _ != null)
                 .ForEach(_ => _.OnEnterFrame(elapsedTime));
         }
 
         protected override void OnHandleDestroyed(EventArgs e)
         {
-            Elements
+            GLElements
                 .Where(_ => _ != null)
                 .ForEach(_ => _.OnClosed(e));
 
@@ -195,7 +203,7 @@ namespace Ragnarok.Forms.Shogi.View
         {
             base.OnMouseDown(e);
 
-            Elements
+            GLElements
                 .Where(_ => _ != null)
                 .ForEach(_ => _.OnMouseDown(e));
         }
@@ -204,7 +212,7 @@ namespace Ragnarok.Forms.Shogi.View
         {
             base.OnMouseMove(e);
 
-            Elements
+            GLElements
                 .Where(_ => _ != null)
                 .ForEach(_ => _.OnMouseMove(e));
         }
@@ -213,7 +221,7 @@ namespace Ragnarok.Forms.Shogi.View
         {
             base.OnMouseUp(e);
 
-            Elements
+            GLElements
                 .Where(_ => _ != null)
                 .ForEach(_ => _.OnMouseUp(e));
         }

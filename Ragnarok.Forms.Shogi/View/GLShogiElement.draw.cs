@@ -189,6 +189,14 @@ namespace Ragnarok.Forms.Shogi.View
 
         #region 見た目のプロパティ
         /// <summary>
+        /// エフェクトルートを取得または設定します。
+        /// </summary>
+        public EffectObject EffectRoot
+        {
+            get { return this.effectRoot; }
+        }
+
+        /// <summary>
         /// IsLeaveTimeVisibleプロパティの変更時に呼ばれるイベントです。
         /// </summary>
         public event EventHandler IsLeaveTimeVisibleChanged;
@@ -405,12 +413,12 @@ namespace Ragnarok.Forms.Shogi.View
         public override void OnEnterFrame(TimeSpan elapsedTime)
         {
             /*if (this.autoPlay != null)
+            {
+                if (!this.autoPlay.Update(elapsedTime))
                 {
-                    if (!this.autoPlay.Update(elapsedTime))
-                    {
-                        StopAutoPlay();
-                    }
-                }*/
+                    StopAutoPlay();
+                }
+            }*/
 
             // 盤
             RenderBuffer.AddRender(

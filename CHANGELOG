@@ -1,3 +1,9 @@
+2014-12-02  - Ver 1.8.8.8
+
+	* Ragnarok.Forms.Shogi/View/GLContainer.cs: Elementsプロパティを
+	GLElementsに改名し、要素の削除追加時に要素の初期化処理を行うようにしま
+	した。
+
 2014-12-01  - Ver 1.8.8.7
 
 	* Ragnarok.Forms.Shogi: WinForms上でOpenGLを使った局面表示を行うための
