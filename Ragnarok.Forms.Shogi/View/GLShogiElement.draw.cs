@@ -50,6 +50,11 @@ namespace Ragnarok.Forms.Shogi.View
             base.OnOpenGLInitialized(e);
             var gl = OpenGL;
 
+            // (640,360)サイズの仮想スクリーンサイズを使っているので、
+            // 描画時はそれを元に戻します。
+            LocalTransform = new Matrix44d();
+            LocalTransform.Scale(1.0 / 640.0, 1.0 / 360.0, 1.0);
+
             for (var i = 0; i < 3; ++i)
             {
                 this.nameTexture[i] = new GL.TextTexture(gl);
@@ -468,8 +473,8 @@ namespace Ragnarok.Forms.Shogi.View
                 this.nameTexture[index].EdgeLength = 2.0;
                 bounds.Inflate(-4, 0);
                 DrawString(
-                    renderBuffer, this.nameTexture[index], bounds,
-                    ShogiZOrder.PostBoardZ);
+                    renderBuffer, this.nameTexture[index].Texture,
+                    bounds, ShogiZOrder.PostBoardZ);
             }
 
             // 残り時間を描画します。
@@ -496,8 +501,8 @@ namespace Ragnarok.Forms.Shogi.View
                 this.leaveTimeTexture[index].Color = Color.White;
                 bounds.Inflate(-4, 0);
                 DrawString(
-                    renderBuffer, this.leaveTimeTexture[index], bounds,
-                    ShogiZOrder.PostBoardZ);
+                    renderBuffer, this.leaveTimeTexture[index].Texture,
+                    bounds, ShogiZOrder.PostBoardZ);
             }
         }
 
@@ -599,11 +604,9 @@ namespace Ragnarok.Forms.Shogi.View
             return mesh;
         }
 
-        private void DrawString(GL.RenderBuffer renderBuffer, GL.TextTexture texture,
+        private void DrawString(GL.RenderBuffer renderBuffer, GL.Texture texture,
                                 RectangleF bounds, double zorder)
         {
-            texture.UpdateTexture();
-
             if (texture.TextureName != 0)
             {
                 var r = (float)texture.OriginalWidth / texture.OriginalHeight;
