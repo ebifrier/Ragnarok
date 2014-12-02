@@ -15,8 +15,6 @@ using Ragnarok.ObjectModel;
 
 namespace Ragnarok.Forms.Shogi.View
 {
-    using Effect;
-
     /// <summary>
     /// GLElementを管理するためのクラスです。
     /// </summary>

@@ -5,11 +5,8 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Markup;
 
-using FlintSharp;
-using FlintSharp.Renderers;
 using Ragnarok.Utility;
 using Ragnarok.ObjectModel;
-using Ragnarok.Extra.Sound;
 
 namespace Ragnarok.Extra.Effect
 {
@@ -29,21 +26,6 @@ namespace Ragnarok.Extra.Effect
     }
 
     /// <summary>
-    /// アニメーションのタイプです。
-    /// </summary>
-    public enum AnimationType
-    {
-        /// <summary>
-        /// 通常のアニメーション
-        /// </summary>
-        Normal,
-        /// <summary>
-        /// ランダム
-        /// </summary>
-        Random,
-    }
-
-    /// <summary>
     /// エフェクト用のオブジェクトです。
     /// </summary>
     /// <remarks>
@@ -60,24 +42,6 @@ namespace Ragnarok.Extra.Effect
         private bool initialized;
         private bool started;
         private bool terminated;
-        
-        /// <summary>
-        /// サウンド再生用オブジェクトを取得または設定します。
-        /// </summary>
-        [CLSCompliant(false)]
-        public static SoundManager SoundManager
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// 静的コンストラクタ
-        /// </summary>
-        static EffectObject()
-        {
-            SoundManager = new SoundManager();
-        }
 
         /// <summary>
         /// コンストラクタ
@@ -86,9 +50,9 @@ namespace Ragnarok.Extra.Effect
         {
             Children = new EffectCollection(this);
             Scenario = new Scenario();
+            LocalTransform = new Matrix44d();
             BaseScale = new Point3d(1.0, 1.0, 1.0);
             Scale = new Point3d(1.0, 1.0, 1.0);
-            Blend = BlendType.Diffuse;
             Opacity = 1.0;
             InheritedOpacity = 1.0;
 
@@ -221,6 +185,9 @@ namespace Ragnarok.Extra.Effect
             set { SetValue("ZOrder", value); }
         }
 
+        /// <summary>
+        /// 親のZOrderを考慮したZOrderを取得します。
+        /// </summary>
         public double InheritedZOrder
         {
             get
@@ -290,36 +257,21 @@ namespace Ragnarok.Extra.Effect
             get { return GetValue<bool>("IsFastInitialize"); }
             set { SetValue("IsFastInitialize", value); }
         }
-
-        /// <summary>
-        /// パーティクルのレンダラーを取得または設定します。
-        /// </summary>
-        [CLSCompliant(false)]
-        public Renderer ParticleRenderer
-        {
-            get { return GetValue<Renderer>("ParticleRenderer"); }
-            set { SetValue("ParticleRenderer", value); }
-        }
-
-        /// <summary>
-        /// パーティクルの放出元リストを取得します。
-        /// </summary>
-        [CLSCompliant(false)]
-        public EmitterCollection ParticleEmitters
-        {
-            get
-            {
-                if (ParticleRenderer == null)
-                {
-                    return null;
-                }
-
-                return ParticleRenderer.Emitters;
-            }
-        }
         #endregion
 
         #region Transform Property
+        /// <summary>
+        /// 自分のローカル座標系から親座標系への変換を行う行列を取得または設定します。
+        /// </summary>
+        /// <remarks>
+        /// 各オブジェクトの内部で使います。
+        /// </remarks>
+        protected Matrix44d LocalTransform
+        {
+            get { return GetValue<Matrix44d>("LocalTransform"); }
+            set { SetValue("LocalTransform", value); }
+        }
+
         /// <summary>
         /// モデル内の座標変換基準位置(0.0～1.0)を取得または設定します。
         /// </summary>
@@ -373,8 +325,13 @@ namespace Ragnarok.Extra.Effect
         }
 
         /// <summary>
-        /// このオブジェクトの変換行列を取得します。
+        /// このオブジェクトでの座標をワールド座標系に変換するための行列を取得します。
         /// </summary>
+        /// <remarks>
+        /// ワールド座標系に直すため、親の変換行列なども考慮に入れています。
+        /// </remarks>
+        [DependOnProperty("Parent")]
+        [DependOnProperty("LocalTransform")]
         [DependOnProperty("CenterPoint")]
         [DependOnProperty("BaseScale")]
         [DependOnProperty("Coord")]
@@ -384,9 +341,16 @@ namespace Ragnarok.Extra.Effect
         {
             get
             {
+                // 行列変換は以下の操作が逆順で行われます。
+
                 // 親の変換行列を基準に変換を行います。
+                // （ワールド座標系から親座標系への変換行列）
                 var m = (Parent != null ? Parent.Transform : new Matrix44d());
 
+                // 親座標系からローカル座標系への変換
+                m.Multiply(LocalTransform);
+
+                // ローカル座標系での各種変換
                 m.Translate(Coord.X, Coord.Y, Coord.Z);
                 m.Rotate(RotateZ, 0.0, 0.0, 1.0);
                 m.Scale(Scale.X, Scale.Y, Scale.Z);
@@ -442,46 +406,6 @@ namespace Ragnarok.Extra.Effect
         }
         #endregion
 
-        #region イメージ関係
-        /// <summary>
-        /// このオブジェクトのメッシュを取得または設定します。
-        /// </summary>
-        public Mesh Mesh
-        {
-            get { return GetValue<Mesh>("Mesh"); }
-            set { SetValue("Mesh", value); }
-        }
-
-        /// <summary>
-        /// 描画種別を取得または設定します。
-        /// </summary>
-        public BlendType Blend
-        {
-            get { return GetValue<BlendType>("Blend"); }
-            set { SetValue("Blend", value); }
-        }
-        #endregion
-
-        #region サウンド
-        /// <summary>
-        /// 開始時に鳴らすサウンドのパスを取得または設定します。
-        /// </summary>
-        public string StartSoundPath
-        {
-            get { return GetValue<string>("StartSoundPath"); }
-            set { SetValue("StartSoundPath", value); }
-        }
-
-        /// <summary>
-        /// 開始時に鳴らすサウンドの音量を0.0～1.0の範囲で取得または設定します。
-        /// </summary>
-        public double StartSoundVolume
-        {
-            get { return GetValue<double>("StartSoundVolume"); }
-            set { SetValue("StartSoundVolume", value); }
-        }
-        #endregion
-
         #region その他プロパティ
         /// <summary>
         /// 初期化時に開始するストーリーボードを取得または設定します。
@@ -514,58 +438,6 @@ namespace Ragnarok.Extra.Effect
         public void Kill()
         {
             RemoveMe = true;
-        }
-
-        /// <summary>
-        /// 指定の係数を各オブジェクトの音量にかけて調整します。
-        /// </summary>
-        /// <remarks>
-        /// 子オブジェクトの音量も調整します。
-        /// </remarks>
-        public void MultiplyStartVolume(double rate)
-        {
-            StartSoundVolume *= rate;
-
-            foreach (var child in Children)
-            {
-                if (child == null)
-                {
-                    continue;
-                }
-
-                child.MultiplyStartVolume(rate);
-            }
-        }
-
-        /// <summary>
-        /// 開始時の効果音を再生します。
-        /// </summary>
-        public bool PlayStartSound(bool isPlay = true)
-        {
-            var soundManager = SoundManager;
-            if (soundManager == null)
-            {
-                return false;
-            }
-
-            // 開始時のサウンドを鳴らします。
-            var soundPath = StartSoundPath;
-            if (string.IsNullOrEmpty(soundPath))
-            {
-                return false;
-            }
-
-            var uri = MakeContentUri(soundPath);
-            var sound = soundManager.PlaySE(
-                uri.LocalPath,
-                (isPlay ? StartSoundVolume : 0.0),
-                false);
-            if (sound == null)
-            {
-                return false;
-            }
-
-            return true;
         }
 
         /// <summary>
@@ -673,15 +545,6 @@ namespace Ragnarok.Extra.Effect
         /// </summary>
         protected virtual void OnStart()
         {
-            if (ParticleRenderer != null)
-            {
-                foreach (var emitter in ParticleRenderer.Emitters)
-                {
-                    emitter.Start();
-                }
-            }
-
-            PlayStartSound();
         }
 
         /// <summary>
@@ -725,19 +588,14 @@ namespace Ragnarok.Extra.Effect
         /// <summary>
         /// 追加の子要素があるかどうかを取得します。
         /// </summary>
-        private bool HasChildren()
+        protected virtual bool HasChildren()
         {
             if (Children.Any())
             {
                 return true;
             }
 
-            if (ParticleRenderer == null)
-            {
-                return true;
-            }
-
-            return !ParticleRenderer.Emitters.All(_ => !_.Particles.Any());
+            return false;
         }
 
         #region EnterFrame
@@ -798,12 +656,6 @@ namespace Ragnarok.Extra.Effect
             {
                 Scenario.DoEnterFrame(e.ElapsedTime, e.StateObject);
             }
-
-            // パーティクルの更新を行います。
-            if (ParticleRenderer != null)
-            {
-                ParticleRenderer.OnUpdateFrame(e.ElapsedTime.TotalSeconds);
-            }
         }
 
         /// <summary>
@@ -841,7 +693,7 @@ namespace Ragnarok.Extra.Effect
             }
 
             OnRender(EventArgs.Empty);
-            Render.SafeRaiseEvent(this, EventArgs.Empty);
+            RenderChildren();
         }
 
         /// <summary>
@@ -849,18 +701,7 @@ namespace Ragnarok.Extra.Effect
         /// </summary>
         protected virtual void OnRender(EventArgs e)
         {
-            RenderChildren();
-        }
-
-        /// <summary>
-        /// パーティクルの描画を行います。
-        /// </summary>
-        protected void RenderParticles()
-        {
-            if (ParticleRenderer != null)
-            {
-                ParticleRenderer.OnRenderFrame();
-            }
+            Render.SafeRaiseEvent(this, EventArgs.Empty);
         }
 
         /// <summary>

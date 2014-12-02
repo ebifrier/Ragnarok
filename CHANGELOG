@@ -1,3 +1,10 @@
+2014-12-03  - Ver 1.8.8.12
+
+	* Ragnarok.Extra/Effect/VisualEffect.cs: AnimationEffectからクラス名を
+	変更し、EffectObjectのビジュアル要素の多くをこのクラスに移動しました。
+	* Ragnarok.Extra/Effect/EffectObject.cs: 見た目や音に関するプロパティは
+	なくなり、オブジェクトの基本的な要素のみで構成されるようになりました。
+
 2014-12-03  - Ver 1.8.8.11
 
 	* Ragnarok.Forms.Shogi/GL/Texture.cs: テクスチャをCache可能オブジェクト

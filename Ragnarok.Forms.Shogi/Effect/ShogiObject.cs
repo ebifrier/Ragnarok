@@ -29,7 +29,7 @@ namespace Ragnarok.Forms.Shogi.Effect
     ///   </item>
     /// </list>
     /// </remarks>
-    public class ShogiObject : AnimationEffect
+    public class ShogiObject : VisualEffect
     {
         private readonly FlintSharpEx.GLRenderer renderer;
         private OpenGL gl;
@@ -116,11 +116,11 @@ namespace Ragnarok.Forms.Shogi.Effect
                 return;
             }
 
-            var textureList = GL.TextureCache.GetTextureList(
+            var animTexture = GL.TextureCache.GetAnimationTexture(
                 OpenGL,
                 MakeContentUri(ImageUri),
                 AnimationImageCount);
-            if (textureList == null)
+            if (animTexture == null)
             {
                 Texture = null;
                 return;
@@ -132,7 +132,8 @@ namespace Ragnarok.Forms.Shogi.Effect
                 Mesh = Mesh.CreateDefault(1, 1, 0, 0);
             }
 
-            Texture = textureList[AnimationImageIndex % textureList.Count()];
+            var list = animTexture.TextureList;
+            Texture = list[AnimationImageIndex % list.Count()];
         }
 
         /// <summary>

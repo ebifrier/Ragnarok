@@ -211,12 +211,8 @@ namespace Ragnarok.Extra.Effect
         public static void PreLoad(string path, Type paramType)
         {
             var args = CreateDefaultArguments(paramType);
-            var effect = LoadInternal(path, args);
-
-            if (effect != null)
-            {
-                effect.PlayStartSound(false);
-            }
+            
+            LoadInternal(path, args);
         }
     }
 }
