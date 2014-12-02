@@ -65,14 +65,20 @@ namespace Ragnarok.Forms.Shogi.Effect
                     return this.gl;
                 }
 
-                var effectParent = Parent as ShogiObject;
-                if (effectParent == null)
+                var shogiParent = Parent as ShogiObject;
+                if (shogiParent != null)
                 {
-                    throw new InvalidOperationException(
-                        "OpenGL用のコンテキストを設定してください。");
+                    return shogiParent.OpenGL;
                 }
 
-                return effectParent.OpenGL;
+                var glElement = Parent as View.GLElement;
+                if (glElement != null)
+                {
+                    return glElement.OpenGL;
+                }
+
+                throw new InvalidOperationException(
+                    "OpenGL用のコンテキストを設定してください。");
             }
             set
             {

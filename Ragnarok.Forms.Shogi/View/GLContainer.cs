@@ -15,6 +15,12 @@ using Ragnarok.ObjectModel;
 
 namespace Ragnarok.Forms.Shogi.View
 {
+    using Effect;
+
+    /// <summary>
+    /// GLElementを管理するためのクラスです。
+    /// </summary>
+    /// <see cref="GLElement"/>
     [CLSCompliant(false)]
     public partial class GLContainer : OpenGLControl
     {
@@ -60,7 +66,7 @@ namespace Ragnarok.Forms.Shogi.View
 
             GLElements
                 .Where(_ => _ != null)
-                .ForEach(_ => _.Initialize(this));
+                .ForEach(_ => _.InitializeOpenGL(this));
             this.glInitialized = true;
         }
 
@@ -71,21 +77,27 @@ namespace Ragnarok.Forms.Shogi.View
         {
             if (this.glInitialized)
             {
-                foreach (var item in e.NewItems)
+                if (e.NewItems != null)
                 {
-                    var glelem = item as GLElement;
-                    if (glelem != null)
+                    foreach (var item in e.NewItems)
                     {
-                        glelem.Initialize(this);
+                        var glelem = item as GLElement;
+                        if (glelem != null)
+                        {
+                            glelem.InitializeOpenGL(this);
+                        }
                     }
                 }
 
-                foreach (var item in e.OldItems)
+                if (e.OldItems != null)
                 {
-                    var glelem = item as GLElement;
-                    if (glelem != null)
+                    foreach (var item in e.OldItems)
                     {
-                        glelem.Initialize(null);
+                        var glelem = item as GLElement;
+                        if (glelem != null)
+                        {
+                            glelem.InitializeOpenGL(null);
+                        }
                     }
                 }
             }
@@ -154,6 +166,9 @@ namespace Ragnarok.Forms.Shogi.View
             gl.LoadIdentity();
         }
 
+        /// <summary>
+        /// コントロールのリサイズ時に呼ばれます。
+        /// </summary>
         void GLContainer_Resized(object sender, EventArgs e)
         {
             UpdateProjectionMatrix();
@@ -173,7 +188,7 @@ namespace Ragnarok.Forms.Shogi.View
 
             GLElements
                 .Where(_ => _ != null)
-                .ForEach(_ => _.OnOpenGLDraw(e));
+                .ForEach(_ => _.DoRender());
 
             gl.Flush();
         }
@@ -187,18 +202,31 @@ namespace Ragnarok.Forms.Shogi.View
 
             GLElements
                 .Where(_ => _ != null)
-                .ForEach(_ => _.OnEnterFrame(elapsedTime));
+                .ForEach(_ =>
+                {
+                    // 一時的にZOrderの下駄をはかせます。
+                    this.renderBuffer.BaseZOrder = _.BaseZOrder;
+                    _.DoEnterFrame(elapsedTime, this.renderBuffer);
+                });
         }
 
+        #region イベント伝達
+        /// <summary>
+        /// ハンドルが閉じられたときに呼ばれます。
+        /// </summary>
         protected override void OnHandleDestroyed(EventArgs e)
         {
             GLElements
                 .Where(_ => _ != null)
-                .ForEach(_ => _.OnClosed(e));
+                .ForEach(_ => _.Terminate());
+            GLElements.Clear();
 
             base.OnHandleDestroyed(e);
         }
 
+        /// <summary>
+        /// マウスボタンの押下時に呼ばれます。
+        /// </summary>
         protected override void OnMouseDown(MouseEventArgs e)
         {
             base.OnMouseDown(e);
@@ -208,6 +236,9 @@ namespace Ragnarok.Forms.Shogi.View
                 .ForEach(_ => _.OnMouseDown(e));
         }
 
+        /// <summary>
+        /// マウスの移動時に呼ばれます。
+        /// </summary>
         protected override void OnMouseMove(MouseEventArgs e)
         {
             base.OnMouseMove(e);
@@ -217,6 +248,9 @@ namespace Ragnarok.Forms.Shogi.View
                 .ForEach(_ => _.OnMouseMove(e));
         }
 
+        /// <summary>
+        /// マウスボタンが離されたときに呼ばれます。
+        /// </summary>
         protected override void OnMouseUp(MouseEventArgs e)
         {
             base.OnMouseUp(e);
@@ -225,5 +259,6 @@ namespace Ragnarok.Forms.Shogi.View
                 .Where(_ => _ != null)
                 .ForEach(_ => _.OnMouseUp(e));
         }
+        #endregion
     }
 }

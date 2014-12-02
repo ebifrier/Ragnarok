@@ -40,7 +40,7 @@ namespace Ragnarok.Forms.Shogi.View
         /// <summary>
         /// エレメントのアンロードを行います。
         /// </summary>
-        public override void OnClosed(EventArgs e)
+        protected override void OnTerminate()
         {
             if (this.prevBg != null)
             {
@@ -54,7 +54,7 @@ namespace Ragnarok.Forms.Shogi.View
                 this.nextBg = null;
             }
 
-            base.OnClosed(e);
+            base.OnTerminate();
         }
 
         /// <summary>
@@ -135,27 +135,28 @@ namespace Ragnarok.Forms.Shogi.View
         /// <summary>
         /// 更新処理を行います。
         /// </summary>
-        public override void OnEnterFrame(TimeSpan elapsedTime)
+        protected override void OnEnterFrame(EnterFrameEventArgs e)
         {
-            base.OnEnterFrame(elapsedTime);
+            base.OnEnterFrame(e);
+            var renderBuffer = (GL.RenderBuffer)e.StateObject;
 
             if (this.prevBg != null)
             {
-                this.prevBg.DoEnterFrame(elapsedTime, RenderBuffer);
+                this.prevBg.DoEnterFrame(e.ElapsedTime, renderBuffer);
             }
 
             if (this.nextBg != null)
             {
-                this.nextBg.DoEnterFrame(elapsedTime, RenderBuffer);
+                this.nextBg.DoEnterFrame(e.ElapsedTime, renderBuffer);
             }
         }
 
         /// <summary>
         /// 描画処理などを行います。
         /// </summary>
-        public override void OnOpenGLDraw(RenderEventArgs e)
+        protected override void OnRender(EventArgs e)
         {
-            base.OnOpenGLDraw(e);
+            base.OnRender(e);
 
             if (this.prevBg != null)
             {

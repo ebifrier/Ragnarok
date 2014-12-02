@@ -25,6 +25,19 @@ namespace Ragnarok.Forms.Shogi.GL
         private readonly List<RenderData> dataList = new List<RenderData>();
 
         /// <summary>
+        /// 基準となるZOrder値を取得または設定します。
+        /// </summary>
+        /// <remarks>
+        /// この値は後のAddRenderで使用され、
+        /// 以降はこの値を基準にZOrderの値を設定します。
+        /// </remarks>
+        public double BaseZOrder
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// 登録されたデータをまとめて描画します。
         /// </summary>
         [CLSCompliant(false)]
@@ -55,9 +68,12 @@ namespace Ragnarok.Forms.Shogi.GL
         /// <summary>
         /// RectangleF型を同じ変換を行う行列に直します。
         /// </summary>
-        private static Matrix44d ToMatrix(RectangleF bounds)
+        /// <param name="transform">
+        /// 事前に積算する基準となる行列です。
+        /// </param>
+        private static Matrix44d ToMatrix(RectangleF bounds, Matrix44d transform)
         {
-            var m = new Matrix44d();
+            var m = (transform != null ? transform.Clone() : new Matrix44d());
             m.Translate(
                 bounds.Left + bounds.Width / 2,
                 bounds.Top + bounds.Height / 2,
@@ -78,6 +94,9 @@ namespace Ragnarok.Forms.Shogi.GL
 
             lock (this.syncObject)
             {
+                // ZOrder値に下駄をはかせます。
+                data.ZOrder += BaseZOrder;
+
                 this.dataList.Add(data);
             }
         }
@@ -162,8 +181,8 @@ namespace Ragnarok.Forms.Shogi.GL
         /// 描画オブジェクトを追加します。
         /// </summary>
         public void AddRender(GL.Texture texture, BlendType blend,
-                              RectangleF bounds, double zorder,
-                              double opacity = 1.0)
+                              RectangleF bounds, Matrix44d transform,
+                              double zorder, double opacity = 1.0)
         {
             if (texture == null || texture.TextureName == 0)
             {
@@ -172,16 +191,17 @@ namespace Ragnarok.Forms.Shogi.GL
 
             var alphaByte = (byte)Math.Min(256 * opacity, 255);
             var color = Color.FromArgb(alphaByte, Color.White);
-            var transform = ToMatrix(bounds);
+            var transform2 = ToMatrix(bounds, transform);
 
-            AddRender(texture, blend, color, transform, zorder);
+            AddRender(texture, blend, color, transform2, zorder);
         }
 
         /// <summary>
         /// 描画オブジェクトを追加します。
         /// </summary>
         public void AddRender(GL.Texture texture, BlendType blend,
-                              RectangleF bounds, Mesh mesh, double zorder,
+                              RectangleF bounds, Matrix44d transform,
+                              Mesh mesh, double zorder,
                               double opacity = 1.0)
         {
             if (texture == null || texture.TextureName == 0)
@@ -191,20 +211,20 @@ namespace Ragnarok.Forms.Shogi.GL
 
             var alphaByte = (byte)Math.Min(256 * opacity, 255);
             var color = Color.FromArgb(alphaByte, Color.White);
-            var transform = ToMatrix(bounds);
+            var transform2 = ToMatrix(bounds, transform);
 
-            AddRender(texture, blend, color, mesh, transform, zorder);
+            AddRender(texture, blend, color, mesh, transform2, zorder);
         }
 
         /// <summary>
         /// 描画オブジェクトを追加します。
         /// </summary>
         public void AddRender(BlendType blend, RectangleF bounds,
-                               Color color, double zorder)
+                              Matrix44d transform, Color color, double zorder)
         {
-            var transform = ToMatrix(bounds);
+            var transform2 = ToMatrix(bounds, transform);
 
-            AddRender(blend, color, transform, zorder);
+            AddRender(blend, color, transform2, zorder);
         }
     }
 }

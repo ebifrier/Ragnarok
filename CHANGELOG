@@ -1,3 +1,18 @@
+2014-12-02  - Ver 1.8.8.9
+
+	* Ragnarok.Forms.Shogi/View/GLElement.cs: GLElementをEffectObjectから継
+	承するようにし、描画時の行列変換などが自動で行われるようにしました。ま
+	た、エレメントごとの基準ZOrder値を設定できるようにしました。
+	* Ragnarok.Forms.Shogi/View/GLContainer.cs: エレメント更新前にZOrder値
+	の調整を行うようにしました。また、公開プロパティとして持っていた
+	RenderBufferを描画タイミング中だけ渡すように変更しました。
+	* Ragnarok.Forms.Shogi/View/GLShogiElement.cs: 子要素をeffectRootフィー
+	ルドの子供として登録するのをやめ、自分の子供として登録するようにしまし
+	た。(GLElementをEffectObjectから継承するようになったため可能になりまし
+	た。)
+	* Ragnarok.Forms.Shogi/GL/RenderBuffer.cs: 描画オブジェクトの登録時に固
+	有のZOrder値を増減させるためのBaseZOrderプロパティを追加しました。
+
 2014-12-02  - Ver 1.8.8.8
 
 	* Ragnarok.Forms.Shogi/View/GLContainer.cs: Elementsプロパティを

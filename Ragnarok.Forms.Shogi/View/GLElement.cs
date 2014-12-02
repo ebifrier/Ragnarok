@@ -3,40 +3,43 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-
 using SharpGL;
 
+using Ragnarok.ObjectModel;
 using Ragnarok.Extra.Effect;
 
 namespace Ragnarok.Forms.Shogi.View
 {
+    using Effect;
+
     /// <summary>
     /// GLContainer配下となるコントロールの基本インターフェースです。
     /// </summary>
     [CLSCompliant(false)]
-    public class GLElement
+    public class GLElement : EffectObject
     {
-        private GLContainer container;
-
         /// <summary>
         /// コンストラクタ
         /// </summary>
         public GLElement()
         {
+            // 表示期間はすごく長く設定します。
+            Duration = TimeSpan.MaxValue;
+
+            BaseZOrder = 0.0;
         }
 
         /// <summary>
         /// OpenGLオブジェクトの初期化を行います。
         /// </summary>
-        public void Initialize(GLContainer container)
+        internal void InitializeOpenGL(GLContainer container)
         {
-            if (container == null)
-            {
-                throw new ArgumentNullException("container");
-            }
-
             GLContainer = container;
-            OnOpenGLInitialized(EventArgs.Empty);
+
+            if (container != null)
+            {
+                OnOpenGLInitialized(EventArgs.Empty);
+            }
         }
 
         /// <summary>
@@ -44,51 +47,40 @@ namespace Ragnarok.Forms.Shogi.View
         /// </summary>
         public GLContainer GLContainer
         {
-            get { return this.container; }
-            private set { this.container = value; }
+            get { return GetValue<GLContainer>("GLContainer"); }
+            private set { SetValue("GLContainer", value); }
         }
 
         /// <summary>
         /// OpenGLオブジェクトを取得または設定します。
         /// </summary>
+        [DependOnProperty("GLContainer")]
         public OpenGL OpenGL
         {
-            get { return this.container.OpenGL; }
+            get
+            {
+                if (GLContainer == null)
+                {
+                    return null;
+                }
+
+                return GLContainer.OpenGL;
+            }
         }
 
         /// <summary>
-        /// 描画用のオブジェクトを取得します。
+        /// コントロールの基準となるZOrder値を取得または設定します。
         /// </summary>
-        public GL.RenderBuffer RenderBuffer
+        public double BaseZOrder
         {
-            get { return this.container.RenderBuffer; }
-        }
-
-        /// <summary>
-        /// コントロールが閉じられたときに呼ばれます。
-        /// </summary>
-        public virtual void OnClosed(EventArgs e)
-        {
+            get { return GetValue<double>("BaseZOrder"); }
+            set { SetValue("BaseZOrder", value); }
         }
 
         /// <summary>
         /// OpenGLの初期化後に呼ばれます。
         /// </summary>
         public virtual void OnOpenGLInitialized(EventArgs e)
-        {
-        }
-        
-        /// <summary>
-        /// 描画のタイミングで呼ばれます。
-        /// </summary>
-        public virtual void OnOpenGLDraw(RenderEventArgs e)
-        {
-        }
-        
-        /// <summary>
-        /// 毎フレームごとの更新処理を行います。
-        /// </summary>
-        public virtual void OnEnterFrame(TimeSpan elapsedTime)
         {
         }
 

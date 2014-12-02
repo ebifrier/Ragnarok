@@ -95,7 +95,7 @@ namespace Ragnarok.Forms.Shogi.View
         /// <summary>
         /// コントロールをアンロードします。
         /// </summary>
-        public override void OnClosed(EventArgs e)
+        protected override void OnTerminate()
         {
             EndMove();
             //StopAutoPlay();
@@ -114,21 +114,10 @@ namespace Ragnarok.Forms.Shogi.View
                 Board.BoardChanged -= OnBoardPieceChanged;
             }
 
-            if (this.effectRoot != null)
-            {
-                this.effectRoot.Terminate();
-                this.effectRoot = null;
-            }
-
-            base.OnClosed(e);
+            base.OnTerminate();
         }
 
         #region イベント
-        /// <summary>
-        /// 各フレームごとに呼ばれるイベントを追加または削除します。
-        /// </summary>
-        public event EventHandler<EventArgs> EnterFrame;
-
         /// <summary>
         /// 指し手が進む直前に呼ばれるイベントを追加または削除します。
         /// </summary>
