@@ -148,6 +148,7 @@ namespace Ragnarok.Forms.Shogi.GL
             switch (Blend)
             {
                 case BlendType.Diffuse:
+                    // 色が濁る。もともとそういうもの？ :TODO
                     gl.BlendFunc(OpenGL.GL_SRC_ALPHA, OpenGL.GL_ONE_MINUS_SRC_ALPHA);
                     break;
                 case BlendType.Emissive:

@@ -24,15 +24,25 @@ namespace Ragnarok.Forms.Shogi.View
         //private Window promoteDialog;
 
         /// <summary>
-        /// クライアント座標を(640,360)の座標系に変換します。
+        /// クライアント座標を(640,380)のローカル座標系に変換します。
         /// </summary>
-        private Point ClientToViewport(Point p)
+        private Point ClientToLocal(Point p)
         {
+            if (GLContainer == null)
+            {
+                throw new InvalidOperationException("親コンテナに追加されていません。");
+            }
+
+            var m = Transform.Invert();
             var s = GLContainer.ClientSize;
 
+            var np = new Pointd(
+                p.X * 640.0 / s.Width,
+                p.Y * 360.0 / s.Height);
+
             return new Point(
-                p.X * 640 / s.Width,
-                p.Y * 360 / s.Height);
+                (int)(np.X * m[0,0] + np.Y * m[0,1]),
+                (int)(np.X * m[1,0] + np.Y * m[1,1]));
         }
 
         /// <summary>
@@ -42,7 +52,7 @@ namespace Ragnarok.Forms.Shogi.View
         {
             base.OnMouseDown(e);
 
-            var pos = ClientToViewport(e.Location);
+            var pos = ClientToLocal(e.Location);
             switch (e.Button)
             {
                 case MouseButtons.Left:
@@ -66,7 +76,7 @@ namespace Ragnarok.Forms.Shogi.View
         /// </summary>
         public override void OnMouseMove(MouseEventArgs e)
         {
-            var pos = ClientToViewport(e.Location);
+            var pos = ClientToLocal(e.Location);
 
             MovePiece(pos);
         }

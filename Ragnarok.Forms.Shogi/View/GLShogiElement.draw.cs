@@ -26,7 +26,6 @@ namespace Ragnarok.Forms.Shogi.View
         private readonly RectangleF[] pieceBoxBounds = new RectangleF[3];
         private RectangleF boardBounds;
         private RectangleF boardSquareBounds;
-        private ShogiObject effectRoot = new ShogiObject();
         private SizeF squareSize;
         private double boardOpacity = 1.0;
         private bool isLeaveTimeVisible = true;
@@ -50,9 +49,6 @@ namespace Ragnarok.Forms.Shogi.View
         {
             base.OnOpenGLInitialized(e);
             var gl = OpenGL;
-
-            this.effectRoot.OpenGL = gl;
-            this.effectRoot.Duration = TimeSpan.MaxValue;
 
             for (var i = 0; i < 3; ++i)
             {
@@ -188,14 +184,6 @@ namespace Ragnarok.Forms.Shogi.View
         #endregion
 
         #region 見た目のプロパティ
-        /// <summary>
-        /// エフェクトルートを取得または設定します。
-        /// </summary>
-        public EffectObject EffectRoot
-        {
-            get { return this.effectRoot; }
-        }
-
         /// <summary>
         /// IsLeaveTimeVisibleプロパティの変更時に呼ばれるイベントです。
         /// </summary>
@@ -384,10 +372,7 @@ namespace Ragnarok.Forms.Shogi.View
                 return;
             }
 
-            if (this.effectRoot != null)
-            {
-                this.effectRoot.Children.Add(effect);
-            }
+            Children.Add(effect);
         }
 
         /// <summary>
@@ -400,18 +385,18 @@ namespace Ragnarok.Forms.Shogi.View
                 return;
             }
 
-            if (this.effectRoot != null)
-            {
-                this.effectRoot.Children.Remove(effect);
-            }
+            Children.Remove(effect);
         }
         #endregion
 
         /// <summary>
         /// 各フレームごとに呼ばれます。
         /// </summary>
-        public override void OnEnterFrame(TimeSpan elapsedTime)
+        protected override void OnEnterFrame(EnterFrameEventArgs e)
         {
+            base.OnEnterFrame(e);
+            var renderBuffer = (GL.RenderBuffer)e.StateObject;
+
             /*if (this.autoPlay != null)
             {
                 if (!this.autoPlay.Update(elapsedTime))
@@ -421,31 +406,26 @@ namespace Ragnarok.Forms.Shogi.View
             }*/
 
             // 盤
-            RenderBuffer.AddRender(
-                this.boardTexture, BlendType.Diffuse, this.boardBounds,
+            renderBuffer.AddRender(
+                this.boardTexture, BlendType.Diffuse,
+                this.boardBounds, Transform,
                 ShogiZOrder.BoardZ, BoardOpacity);
 
             // 先手と後手の駒台と駒箱
             for (var index = 0; index < 3; ++index)
             {
-                AddRenderPieceBox(index);
+                AddRenderPieceBox(renderBuffer, index);
             }
 
             // 盤上の駒をすべて描画登録します。
-            AddRenderPieceAll();
-
-            // エフェクトの更新を行います。
-            if (this.effectRoot != null)
-            {
-                this.effectRoot.DoEnterFrame(elapsedTime, RenderBuffer);
-            }
+            AddRenderPieceAll(renderBuffer);
         }
 
         /// <summary>
         /// indexに対応した駒台を描画します。
         /// </summary>
         /// <param name="index">0なら駒箱、1なら先手用、2なら後手用の駒台となります。</param>
-        private void AddRenderPieceBox(int index)
+        private void AddRenderPieceBox(GL.RenderBuffer renderBuffer, int index)
         {
             // テクスチャがないときは帰ります。
             if (this.pieceTexture == null || this.pieceTexture.TextureName == 0)
@@ -460,10 +440,10 @@ namespace Ragnarok.Forms.Shogi.View
             }
 
             // 駒箱テクスチャ
-            RenderBuffer.AddRender(
+            renderBuffer.AddRender(
                 this.pieceBoxTexture, BlendType.Diffuse,
-                this.pieceBoxBounds[index], ShogiZOrder.BoardZ,
-                BoardOpacity);
+                this.pieceBoxBounds[index], Transform,
+                ShogiZOrder.BoardZ,  BoardOpacity);
 
             // 駒台の上に対局者名を描画します。
             {
@@ -473,8 +453,9 @@ namespace Ragnarok.Forms.Shogi.View
                 var bounds = new RectangleF(
                     this.pieceBoxBounds[index].Left + 5, y,
                     this.pieceBoxBounds[index].Width - 10, 15);
-                RenderBuffer.AddRender(
-                    BlendType.Diffuse, bounds, Color.Red, ShogiZOrder.PostBoardZ);
+                renderBuffer.AddRender(
+                    BlendType.Diffuse, bounds, Transform,
+                    Color.Red, ShogiZOrder.PostBoardZ);
 
                 // 対局者名を描画
                 var name = (
@@ -486,7 +467,9 @@ namespace Ragnarok.Forms.Shogi.View
                 this.nameTexture[index].EdgeColor = Color.White;
                 this.nameTexture[index].EdgeLength = 2.0;
                 bounds.Inflate(-4, 0);
-                DrawString(this.nameTexture[index], bounds, ShogiZOrder.PostBoardZ);
+                DrawString(
+                    renderBuffer, this.nameTexture[index], bounds,
+                    ShogiZOrder.PostBoardZ);
             }
 
             // 残り時間を描画します。
@@ -500,8 +483,9 @@ namespace Ragnarok.Forms.Shogi.View
                     this.pieceBoxBounds[index].Left, y,
                     this.pieceBoxBounds[index].Width, 15);
                 var color = Color.FromArgb(180, Color.Gray);
-                RenderBuffer.AddRender(
-                    BlendType.Diffuse, bounds, color, ShogiZOrder.PostBoardZ);
+                renderBuffer.AddRender(
+                    BlendType.Diffuse, bounds, Transform,
+                    color, ShogiZOrder.PostBoardZ);
 
                 // 残り時間を描画
                 var time = (index == 1 ? BlackLeaveTime : WhiteLeaveTime);
@@ -511,14 +495,16 @@ namespace Ragnarok.Forms.Shogi.View
                 this.leaveTimeTexture[index].Text = str;
                 this.leaveTimeTexture[index].Color = Color.White;
                 bounds.Inflate(-4, 0);
-                DrawString(this.leaveTimeTexture[index], bounds, ShogiZOrder.PostBoardZ);
+                DrawString(
+                    renderBuffer, this.leaveTimeTexture[index], bounds,
+                    ShogiZOrder.PostBoardZ);
             }
         }
 
         /// <summary>
         /// 盤上の全ての駒を描画します。
         /// </summary>
-        private void AddRenderPieceAll()
+        private void AddRenderPieceAll(GL.RenderBuffer renderBuffer)
         {
             if (this.pieceTexture == null || this.pieceTexture.TextureName == 0)
             {
@@ -536,7 +522,8 @@ namespace Ragnarok.Forms.Shogi.View
                 if (piece != null && sq != mpSquare)
                 {
                     var cpos = SquareToPoint(sq);
-                    AddRenderPiece(piece, cpos, ShogiZOrder.PieceZ);
+                    AddRenderPiece(
+                        renderBuffer, piece, cpos, ShogiZOrder.PieceZ);
                 }
             }
 
@@ -558,20 +545,24 @@ namespace Ragnarok.Forms.Shogi.View
             foreach (var hand in handList)
             {
                 var cpos = HandPieceToPoint(hand.Piece);
-                AddRenderPiece(hand.Piece, cpos, ShogiZOrder.PieceZ);
+                AddRenderPiece(
+                    renderBuffer, hand.Piece, cpos, ShogiZOrder.PieceZ);
             }
 
             // 移動中の駒を描画します。
             if (mp != null)
             {
-                AddRenderPiece(mp.BoardPiece, mp.Center, ShogiZOrder.MovingPieceZ);
+                AddRenderPiece(
+                    renderBuffer, mp.BoardPiece, mp.Center,
+                    ShogiZOrder.MovingPieceZ);
             }
         }
 
         /// <summary>
         /// 駒の描画を行います。
         /// </summary>
-        private void AddRenderPiece(BoardPiece piece, PointF cpos, double zorder)
+        private void AddRenderPiece(GL.RenderBuffer renderBuffer, BoardPiece piece,
+                                   PointF cpos, double zorder)
         {
             if (this.pieceTexture == null || this.pieceTexture.TextureName == 0)
             {
@@ -584,8 +575,9 @@ namespace Ragnarok.Forms.Shogi.View
                 s.Width, s.Height);
             var mesh = GetPieceMesh(piece);
 
-            RenderBuffer.AddRender(
-                this.pieceTexture, BlendType.Diffuse, bounds, mesh, zorder);
+            renderBuffer.AddRender(
+                this.pieceTexture, BlendType.Diffuse,
+                bounds, Transform, mesh, zorder);
         }
 
         /// <summary>
@@ -607,8 +599,8 @@ namespace Ragnarok.Forms.Shogi.View
             return mesh;
         }
 
-        private void DrawString(GL.TextTexture texture, RectangleF bounds,
-                                double zorder)
+        private void DrawString(GL.RenderBuffer renderBuffer, GL.TextTexture texture,
+                                RectangleF bounds, double zorder)
         {
             texture.UpdateTexture();
 
@@ -619,31 +611,14 @@ namespace Ragnarok.Forms.Shogi.View
                 var w = (r >= br ? bounds.Width : bounds.Height * r);
                 var h = (r >= br ? bounds.Width / r : bounds.Height);
 
-                var b = new RectangleF(
+                var result = new RectangleF(
                     (bounds.Left + bounds.Right) / 2 - w / 2,
                     (bounds.Top + bounds.Bottom) / 2 - h / 2,
                     w, h);
-                RenderBuffer.AddRender(
-                    texture, BlendType.Diffuse, b, zorder, 1.0);
+                renderBuffer.AddRender(
+                    texture, BlendType.Diffuse,
+                    result, Transform, zorder, 1.0);
             }
-        }
-
-        /// <summary>
-        /// フレーム毎の描画処理を行います。
-        /// </summary>
-        public override void OnOpenGLDraw(RenderEventArgs e)
-        {
-            base.OnOpenGLDraw(e);
-
-            //RenderBuffer.Render(OpenGL);
-
-            /*if (this.autoPlay != null)
-            {
-                if (!this.autoPlay.Update(elapsedTime))
-                {
-                    StopAutoPlay();
-                }
-            }*/
         }
     }
 }

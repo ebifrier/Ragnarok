@@ -388,7 +388,7 @@ namespace Ragnarok.Extra.Effect
                 var m = (Parent != null ? Parent.Transform : new Matrix44d());
 
                 m.Translate(Coord.X, Coord.Y, Coord.Z);
-                //m.Rotate(RotateZ, 0.0, 0.0, 1.0);
+                m.Rotate(RotateZ, 0.0, 0.0, 1.0);
                 m.Scale(Scale.X, Scale.Y, Scale.Z);
 
                 m.Scale(BaseScale.X, BaseScale.Y, BaseScale.Z);

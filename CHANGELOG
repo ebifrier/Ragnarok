@@ -1,3 +1,10 @@
+2014-12-02  - Ver 1.8.8.10
+
+	* Ragnarok.Forms.Shogi/View/GLShogiElement.move.cs: 座標変換時、自分の
+	変換行列を考慮するようにしました。
+	* Ragnarok.Forms.Shogi/View/GLShogiElement.draw.cs: EffectRootプロパテ
+	ィを削除し、エフェクトは自分の子要素として直接追加するようにしました。
+
 2014-12-02  - Ver 1.8.8.9
 
 	* Ragnarok.Forms.Shogi/View/GLElement.cs: GLElementをEffectObjectから継
