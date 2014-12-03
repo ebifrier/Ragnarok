@@ -49,7 +49,7 @@ namespace FlintSharp.Counters
     {
         private double m_timeToNext;
         private double m_period;
-        private uint m_quantity;
+        private int m_quantity;
         private bool m_stop;
 
         public Pulse()
@@ -63,7 +63,7 @@ namespace FlintSharp.Counters
         /// </summary>
         /// <param name="period">The time, in seconds, between each pulse.</param>
         /// <param name="quantity">The number of particles to emit at each pulse.</param>
-        public Pulse(double period, uint quantity)
+        public Pulse(double period, int quantity)
         {
             m_stop = false;
             m_quantity = quantity;
@@ -98,7 +98,7 @@ namespace FlintSharp.Counters
         /// <summary>
         /// The number of particles to emit at each pulse.
         /// </summary>
-        public uint Quantity
+        public int Quantity
         {
             get { return m_quantity; }
             set { m_quantity = value; }
@@ -110,7 +110,7 @@ namespace FlintSharp.Counters
         /// <param name="emitter">The emitter</param>
         /// <returns>The number of particles the emitter should emit
         /// at the moment it starts.</returns>
-        public uint StartEmitter(Emitter emitter)
+        public int StartEmitter(Emitter emitter)
         {
             m_timeToNext = m_period;
             return m_quantity;
@@ -124,12 +124,12 @@ namespace FlintSharp.Counters
         /// <param name="elapsedTime">The time, in seconds, since the previous call to this method.</param>
         /// <returns>The number of particles the emitter should emit
         /// at this time.</returns>
-        public uint UpdateEmitter(Emitter emitter, double elapsedTime)
+        public int UpdateEmitter(Emitter emitter, double elapsedTime)
         {
             if (m_stop)
                 return 0;
 
-            uint count = 0;
+            int count = 0;
 
             m_timeToNext -= elapsedTime;
 

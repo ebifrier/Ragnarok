@@ -144,7 +144,7 @@ namespace FlintSharp.Counters
         /// <param name="emitter">The emitter</param>
         /// <returns>The number of particles the emitter should emit
         /// at the moment it starts.</returns>
-        public uint StartEmitter(Emitter emitter)
+        public int StartEmitter(Emitter emitter)
         {
             m_lastTimeUpdate = 0;
             m_emitted = 0;
@@ -160,15 +160,15 @@ namespace FlintSharp.Counters
         /// <param name="elapsedTime">The time, in seconds, since the previous call to this method.</param>
         /// <returns>The number of particles the emitter should emit
         /// at this time.</returns>
-        public uint UpdateEmitter(Emitter emitter, double elapsedTime)
+        public int UpdateEmitter(Emitter emitter, double elapsedTime)
         {
             if (m_stop)
                 return 0;
 
             m_lastTimeUpdate += elapsedTime;
 
-            uint count = (uint)Math.Floor(m_rateMax * m_lastTimeUpdate + m_scale * (1 - Math.Cos(m_lastTimeUpdate * m_factor)) / m_factor);
-            uint ret = (uint)(count - m_emitted);
+            int count = (int)Math.Floor(m_rateMax * m_lastTimeUpdate + m_scale * (1 - Math.Cos(m_lastTimeUpdate * m_factor)) / m_factor);
+            int ret = (int)(count - m_emitted);
 
             m_emitted = count;
 

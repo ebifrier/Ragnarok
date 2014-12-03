@@ -79,7 +79,7 @@ namespace FlintSharp.Counters
 
                 NumParticles =
                     ( m_zone != null
-                    ? NumParticles = (uint)m_zone.Count()
+                    ? NumParticles = m_zone.Count()
                     : 0);
             }
         }

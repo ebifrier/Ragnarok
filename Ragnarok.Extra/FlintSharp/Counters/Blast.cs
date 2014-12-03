@@ -120,12 +120,12 @@ namespace FlintSharp.Counters
         /// <param name="emitter">The emitter</param>
         /// <returns>The number of particles the emitter should emit
         /// at the moment it starts.</returns>
-        public uint StartEmitter(Emitter emitter)
+        public int StartEmitter(Emitter emitter)
         {
             if (!double.IsNaN(m_startMax))
-                return (uint)Math.Round(Utils.RandomDouble(m_startMin, m_startMax));
+                return (int)Math.Round(Utils.RandomDouble(m_startMin, m_startMax));
             else
-                return (uint)Math.Round(m_startMin);
+                return (int)Math.Round(m_startMin);
         }
 
         /// <summary>
@@ -136,7 +136,7 @@ namespace FlintSharp.Counters
         /// <param name="elapsedTime">The time, in seconds, since the previous call to this method.</param>
         /// <returns>The number of particles the emitter should emit
         /// at this time.</returns>
-        public uint UpdateEmitter(Emitter emitter, double elapsedTime)
+        public int UpdateEmitter(Emitter emitter, double elapsedTime)
         {
             return 0;
         }

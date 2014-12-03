@@ -54,9 +54,9 @@ namespace FlintSharp.Counters
     /// </summary>
     public class TimePeriod : ICounter
     {
-        private uint m_particles;
+        private int m_particles;
         private double m_duration;
-        private uint m_particlesPassed;
+        private int m_particlesPassed;
         private double m_lastTimeUpdate;
         private EaseCategory m_category = EaseCategory.Linear;
         private EaseType m_easeType = EaseType.None;
@@ -67,7 +67,7 @@ namespace FlintSharp.Counters
         {
         }
 
-        public TimePeriod(uint numParticles, double duration)
+        public TimePeriod(int numParticles, double duration)
         {
             m_particles = numParticles;
             m_duration = duration;
@@ -91,7 +91,7 @@ namespace FlintSharp.Counters
         /// particles over the time period. If no easing function is passed a simple
         /// linear distribution is used in which particles are emitted at a constant
         /// rate over the time period.</param>
-        public TimePeriod(uint numParticles, double duration, EaseCategory easeCategory, EaseType easeType)
+        public TimePeriod(int numParticles, double duration, EaseCategory easeCategory, EaseType easeType)
         {
             m_particles = numParticles;
             m_duration = duration;
@@ -104,7 +104,7 @@ namespace FlintSharp.Counters
         /// The number of particles to emit over the full duration
         /// of the time period.
         /// </summary>
-        public uint NumParticles
+        public int NumParticles
         {
             get { return m_particles; }
             set { m_particles = value; }
@@ -165,7 +165,7 @@ namespace FlintSharp.Counters
         /// <param name="emitter">The emitter</param>
         /// <returns>The number of particles the emitter should emit
         /// at the moment it starts.</returns>
-        public uint StartEmitter(Emitter emitter)
+        public int StartEmitter(Emitter emitter)
         {
             m_particlesPassed = 0;
             m_lastTimeUpdate = 0;
@@ -181,7 +181,7 @@ namespace FlintSharp.Counters
         /// <param name="elapsedTime">The time, in seconds, since the previous call to this method.</param>
         /// <returns>The number of particles the emitter should emit
         /// at this time.</returns>
-        public uint UpdateEmitter(Emitter emitter, double elapsedTime)
+        public int UpdateEmitter(Emitter emitter, double elapsedTime)
         {
             if (m_particlesPassed == m_particles)
                 return 0;
@@ -190,16 +190,16 @@ namespace FlintSharp.Counters
 
             if (m_lastTimeUpdate >= m_duration)
             {
-                uint newParticles = m_particles - m_particlesPassed;
+                int newParticles = m_particles - m_particlesPassed;
 
                 m_particlesPassed = m_particles;
 
                 return newParticles;
             }
 
-            uint oldParticles = m_particlesPassed;
+            int oldParticles = m_particlesPassed;
 
-            m_particlesPassed = (uint)Math.Round(m_easingFunction(m_lastTimeUpdate, 0, m_particles, m_duration));
+            m_particlesPassed = (int)Math.Round(m_easingFunction(m_lastTimeUpdate, 0, m_particles, m_duration));
 
             return m_particlesPassed - oldParticles;
         }

@@ -213,7 +213,7 @@ namespace FlintSharp.Emitters
         {
             m_running = true;
 
-            uint len = (uint)m_activities.Count;
+            int len = m_activities.Count;
 
             for (int i = 0; i < len; i++)
                 m_activities[i].Initialize(this);
@@ -243,7 +243,7 @@ namespace FlintSharp.Emitters
             elapsedTime = (progress - m_waitTime).TotalSeconds;
             m_waitTime = TimeSpan.Zero;
 
-            uint len = m_counter.UpdateEmitter(this, elapsedTime);
+            int len = m_counter.UpdateEmitter(this, elapsedTime);
             for (int i = 0; i < len; i++)
                 CreateParticle();
 

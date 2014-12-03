@@ -58,7 +58,7 @@ namespace FlintSharp.Counters
         /// <param name="emitter">The emitter</param>
         /// <returns>The number of particles the emitter should emit
         /// at the moment it starts.</returns>
-        uint StartEmitter(Emitter emitter);
+        int StartEmitter(Emitter emitter);
 
         /// <summary>
         /// The updateEmitter method is called every frame after the
@@ -68,6 +68,6 @@ namespace FlintSharp.Counters
         /// <param name="elapsedTime">The time, in seconds, since the previous call to this method.</param>
         /// <returns>The number of particles the emitter should emit
         /// at this time.</returns>
-        uint UpdateEmitter(Emitter emitter, double elapsedTime);
+        int UpdateEmitter(Emitter emitter, double elapsedTime);
     }
 }
