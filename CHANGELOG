@@ -1,3 +1,8 @@
+2014-12-03  - Ver 1.8.8.14
+
+	* Ragnarok.Forms/Bindings: バインディング可能なオブジェクトをComponent
+	のみではなくINotifyPropertyChangedオブジェクトでもできるようにしました。
+
 2014-12-03  - Ver 1.8.8.13
 
 	* Ragnarok.Forms.Shogi/View: CLSCompliant属性が不要なクラスから、この属

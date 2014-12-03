@@ -40,7 +40,7 @@ namespace Ragnarok.Forms.Bindings
         /// <summary>
         /// バインドされるターゲットコントロールを取得します。
         /// </summary>
-        public Component BindableTarget
+        public object BindableTarget
         {
             get;
             set;

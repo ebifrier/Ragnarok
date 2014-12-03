@@ -47,7 +47,7 @@ namespace Ragnarok.Forms.Bindings
         /// <summary>
         /// バインディングを追加します。
         /// </summary>
-        public Binding Add(Component bindableTarget, string bindingPropertyName,
+        public Binding Add(object bindableTarget, string bindingPropertyName,
                            object dataSource, string dataSourcePropertyName,
                            string format = null)
         {
@@ -61,7 +61,7 @@ namespace Ragnarok.Forms.Bindings
         /// <summary>
         /// バインディングを追加します。
         /// </summary>
-        public Binding Add(Component bindableTarget, string bindingPropertyName,
+        public Binding Add(object bindableTarget, string bindingPropertyName,
                            object dataSource, string dataSourcePropertyName,
                            BindingMode mode, string format = null)
         {
@@ -74,7 +74,7 @@ namespace Ragnarok.Forms.Bindings
         /// <summary>
         /// バインディングを追加します。
         /// </summary>
-        public Binding Add(Component bindableTarget, string bindingPropertyName,
+        public Binding Add(object bindableTarget, string bindingPropertyName,
                            object dataSource, string dataSourcePropertyName,
                            BindingPropertyChangedCallback propertyChanged,
                            CoerceBindingValueCallback coerceValue = null)
@@ -89,7 +89,7 @@ namespace Ragnarok.Forms.Bindings
         /// <summary>
         /// バインディングを追加します。
         /// </summary>
-        public Binding Add(Component bindableTarget, string bindingPropertyName,
+        public Binding Add(object bindableTarget, string bindingPropertyName,
                            object dataSource, string dataSourcePropertyName,
                            BindingMode mode,
                            BindingPropertyChangedCallback propertyChanged,
@@ -105,7 +105,7 @@ namespace Ragnarok.Forms.Bindings
         /// <summary>
         /// バインディングを追加します。
         /// </summary>
-        public Binding Add(Component bindableTarget, string bindingPropertyName,
+        public Binding Add(object bindableTarget, string bindingPropertyName,
                            object dataSource, string dataSourcePropertyName,
                            Converter.IValueConverter converter,
                            BindingPropertyChangedCallback propertyChanged = null,
@@ -121,7 +121,7 @@ namespace Ragnarok.Forms.Bindings
         /// <summary>
         /// バインディングを追加します。
         /// </summary>
-        public Binding Add(Component bindableTarget, string bindingPropertyName,
+        public Binding Add(object bindableTarget, string bindingPropertyName,
                            object dataSource, string dataSourcePropertyName,
                            BindingMode mode,
                            Converter.IValueConverter converter,
@@ -146,7 +146,7 @@ namespace Ragnarok.Forms.Bindings
         /// <summary>
         /// バインディングを追加します。
         /// </summary>
-        public Binding Add(Component bindableTarget, string bindingPropertyName,
+        public Binding Add(object bindableTarget, string bindingPropertyName,
                            object dataSource, string dataSourcePropertyName,
                            BindingMode mode, string format,
                            BindingPropertyChangedCallback propertyChanged,

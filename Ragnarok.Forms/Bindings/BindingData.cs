@@ -247,7 +247,12 @@ namespace Ragnarok.Forms.Bindings
             Unbound.SafeRaiseEvent(this, EventArgs.Empty);
             Unbound = null;
 
-            Binding.BindableTarget.Disposed -= OnUnbind;
+            var component = Binding.BindableTarget as Component;
+            if (component != null)
+            {
+                component.Disposed -= OnUnbind;
+            }
+
             Binding.Control.Disposed -= OnUnbind;
             Binding.IsBinding = false;
         }
@@ -257,44 +262,97 @@ namespace Ragnarok.Forms.Bindings
         /// </summary>
         public void Bind()
         {
-            BindInternal();
+            BindDataSource(Binding.DataSource, Binding.DataSourcePropertyName);
+            BindBindableTarget(Binding.BindableTarget, Binding.BindingPropertyName);
 
             // 初期化時は、ソースからコントロールへ値を反映します。
             OnSourceValueChanged(this,
                 new PropertyChangedEventArgs(Binding.DataSourcePropertyName));
 
-            Binding.BindableTarget.Disposed += OnUnbind;
+            var component = Binding.BindableTarget as Component;
+            if (component != null)
+            {
+                component.Disposed += OnUnbind;
+            }
+
             Binding.Control.Disposed += OnUnbind;
             Binding.IsBinding = true;
         }
 
         /// <summary>
-        /// 実際のバインディング処理を行い、失敗であれば偽を返します。
+        /// ソースデータをバインディングします。
         /// </summary>
-        private void BindInternal()
+        private void BindDataSource(object dataSource, string propertyName)
         {
-            var propertyObj = Binding.DataSource as INotifyPropertyChanged;
-            if (propertyObj != null && IsHandleToTarget(true))
+            if (!IsHandleToTarget(true))
             {
-                propertyObj.PropertyChanged += OnSourceValueChanged;
-                Unbound += (_, __) => propertyObj.PropertyChanged -= OnSourceValueChanged;
+                // Source -> Targetへの通知が有効でない場合は何も設定しません。
+                return;
             }
 
-            if (IsHandleToSource(true))
+            var propertyObj = dataSource as INotifyPropertyChanged;
+            if (propertyObj != null)
             {
-                var control = Binding.BindableTarget;
+                var handler = new PropertyChangedEventHandler((sender, e) =>
+                {
+                    if (e.PropertyName == propertyName)
+                    {
+                        OnSourceValueChanged(sender, e);
+                    }
+                });
 
+                propertyObj.PropertyChanged += handler;
+                Unbound += (_, __) => propertyObj.PropertyChanged -= handler;
+                return;
+            }
+        }
+
+        /// <summary>
+        /// 実際のバインディング処理を行い、失敗であれば偽を返します。
+        /// </summary>
+        private void BindBindableTarget(object bindableTarget, string propertyName)
+        {
+            if (!IsHandleToSource(true))
+            {
+                // Source -> Targetへの通知が有効でない場合は何も設定しません。
+                return;
+            }
+
+            // TargetがComponent型の場合は、'PropertyName'+Changed
+            // という名前のイベントでプロパティの変更を把握します。
+            var component = bindableTarget as Component;
+            if (component != null)
+            {
                 // 名前が"PropertyName + Changed"のイベントを検索します。
-                var eventName = Binding.BindingPropertyName + "Changed";
-                var ev = control.GetType().GetEvent(eventName);
+                var eventName = propertyName + "Changed";
+                var ev = component.GetType().GetEvent(eventName);
 
                 if (ev != null)
                 {
                     var handler = new EventHandler(OnTargetValueChanged);
 
-                    ev.AddEventHandler(control, handler);
-                    Unbound += (_, __) => ev.RemoveEventHandler(control, handler);
+                    ev.AddEventHandler(component, handler);
+                    Unbound += (_, __) => ev.RemoveEventHandler(component, handler);
+                    return;
                 }
+            }
+
+            // TargetがINotifyPropertyChangedの場合は
+            // PropertyChangedイベントでプロパティの変更を把握します。
+            var propertyObj = bindableTarget as INotifyPropertyChanged;
+            if (propertyObj != null)
+            {
+                var handler = new PropertyChangedEventHandler((sender, e) =>
+                {
+                    if (e.PropertyName == propertyName)
+                    {
+                        OnTargetValueChanged(sender, e);
+                    }
+                });
+
+                propertyObj.PropertyChanged += handler;
+                Unbound += (_, __) => propertyObj.PropertyChanged -= handler;
+                return;
             }
         }
         #endregion
