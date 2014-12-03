@@ -6,16 +6,20 @@ using System.Drawing.Imaging;
 using System.Drawing.Text;
 using System.Linq;
 using System.Text;
-
 using SharpGL;
+
+using Ragnarok.Utility;
 
 namespace Ragnarok.Forms.Shogi.GL
 {
     /// <summary>
     /// 文字列用のテクスチャクラスです。
     /// </summary>
-    public class TextTexture : Texture
+    public class TextTexture : ICachable
     {
+        private readonly OpenGL gl;
+        private readonly Texture texture;
+
         private string text = string.Empty;
         private Font font = new Font(FontFamily.GenericSansSerif, 40);
         private Color color = Color.White;
@@ -28,8 +32,14 @@ namespace Ragnarok.Forms.Shogi.GL
         /// </summary>
         [CLSCompliant(false)]
         public TextTexture(OpenGL gl)
-            : base(gl)
         {
+            if (gl == null)
+            {
+                throw new ArgumentNullException("gl");
+            }
+
+            this.gl = gl;
+            this.texture = new Texture(gl);
         }
 
         /// <summary>
@@ -123,6 +133,56 @@ namespace Ragnarok.Forms.Shogi.GL
         }
 
         /// <summary>
+        /// テクスチャ用のフォントデータを取得または設定します。
+        /// </summary>
+        public TextTextureFont TextureFont
+        {
+            get
+            {
+                return new TextTextureFont
+                {
+                    Font = Font,
+                    Color = Color,
+                    EdgeColor = EdgeColor,
+                    EdgeLength = EdgeLength,
+                };
+            }
+            set
+            {
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
+                Font = value.Font;
+                Color = value.Color;
+                EdgeColor = value.EdgeColor;
+                EdgeLength = value.EdgeLength;
+            }
+        }
+
+        /// <summary>
+        /// キャッシュ用のオブジェクトサイズを取得します。
+        /// </summary>
+        public long ObjectSize
+        {
+            get { return this.texture.ObjectSize; }
+        }
+
+        /// <summary>
+        /// テクスチャを取得します。
+        /// </summary>
+        public Texture Texture
+        {
+            get
+            {
+                UpdateTexture();
+
+                return this.texture;
+            }
+        }
+
+        /// <summary>
         /// 必要ならテクスチャの更新処理を行います。
         /// </summary>
         public void UpdateTexture()
@@ -138,7 +198,7 @@ namespace Ragnarok.Forms.Shogi.GL
             // 文字列用のテクスチャを作成。
             using (var bitmap = CreateTextBitmap(bounds))
             {
-                if (!Create(bitmap))
+                if (!this.texture.Create(bitmap))
                 {
                     Log.Error(
                         "文字列テクスチャの作成に失敗しました。");

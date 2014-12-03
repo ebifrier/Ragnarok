@@ -1,3 +1,23 @@
+2014-12-03  - Ver 1.8.8.12
+
+	* Ragnarok.Extra/Effect/VisualEffect.cs: AnimationEffectからクラス名を
+	変更し、EffectObjectのビジュアル要素の多くをこのクラスに移動しました。
+	* Ragnarok.Extra/Effect/EffectObject.cs: 見た目や音に関するプロパティは
+	なくなり、オブジェクトの基本的な要素のみで構成されるようになりました。
+
+2014-12-03  - Ver 1.8.8.11
+
+	* Ragnarok.Forms.Shogi/GL/Texture.cs: テクスチャをCache可能オブジェクト
+	にし、また容量がかさばるビットマップの保存をやめました。
+	* Ragnarok.Forms.Shogi/GL/AnimationTexture.cs: 以前はテクスチャのリスト
+	として扱っていたアニメーション用テクスチャをクラスとして切り出しました。
+	* Ragnarok.Forms.Shogi/GL/TextTextureData.cs: 文字テクスチャ用のフォン
+	トや色などのデータをまとめて管理するクラスを追加しました。
+	* Ragnarok.Forms.Shogi/GL/TextTexture.cs: Textureクラスからの継承をやめ、
+	プロパティとして持つようにしました。
+	* Ragnarok/Utility/CacheManager.cs: Least Recently Usedアルゴリズムを用
+	いたキャッシュ管理用クラスを追加しました。
+
 2014-12-02  - Ver 1.8.8.10
 
 	* Ragnarok.Forms.Shogi/View/GLShogiElement.move.cs: 座標変換時、自分の

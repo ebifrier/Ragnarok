@@ -59,14 +59,14 @@ namespace Ragnarok.Forms.Shogi.FlintSharpEx
             if (ImageUri != null)
             {
                 // 通常画像
-                var list = GL.TextureCache.GetTextureList(gl, ImageUri, 1);
-                if (list == null)
+                var texture = GL.TextureCache.GetTexture(gl, ImageUri);
+                if (texture == null)
                 {
                     // うーん、どうしよう。
                     return;
                 }
 
-                Texture = list[0];
+                Texture = texture;
                 OpenGL = gl;
             }
             else if (IsParticle)

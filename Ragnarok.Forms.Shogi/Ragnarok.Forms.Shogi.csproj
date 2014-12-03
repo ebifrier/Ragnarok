@@ -63,9 +63,13 @@
   <ItemGroup>
     <Compile Include="AutoPlay.cs" />
     <Compile Include="BoardPieceEventArgs.cs" />
+    <Compile Include="GL\AnimationTexture.cs" />
+    <Compile Include="GL\TextTextureCache.cs" />
     <Compile Include="GL\RenderBuffer.cs" />
     <Compile Include="GL\RenderData.cs" />
     <Compile Include="GL\TextTexture.cs" />
+    <Compile Include="GL\AnimationTextureCache.cs" />
+    <Compile Include="GL\TextTextureData.cs" />
     <Compile Include="GL\TextureCache.cs" />
     <Compile Include="Effect\ShogiObject.cs" />
     <Compile Include="FlintSharpEx\GLRenderer.cs" />

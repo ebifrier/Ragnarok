@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Drawing;
 using System.Drawing.Imaging;
-
 using SharpGL;
 
 using Ragnarok.Forms.Draw;
+using Ragnarok.Utility;
 
 namespace Ragnarok.Forms.Shogi.GL
 {
     /// <summary>
     /// OpenGL用のテクスチャを管理します。
     /// </summary>
-    public class Texture
+    public class Texture : ICachable
     {
         private readonly OpenGL gl;
         private uint[] glTextureArray = new uint[1];
@@ -38,18 +38,6 @@ namespace Ragnarok.Forms.Shogi.GL
         {
             get { return glTextureArray[0]; }
         }
-        
-        /// <summary>
-        /// テクスチャの作成元となったビットマップイメージを取得します。
-        /// </summary>
-        /// <remarks>
-        /// 読み込まれた画像サイズなどが変わっている可能性があります。
-        /// </remarks>
-        public Bitmap Bitmap
-        {
-            get;
-            private set;
-        }
 
         /// <summary>
         /// テクスチャ画像の幅をPixel数で取得します。
@@ -75,12 +63,18 @@ namespace Ragnarok.Forms.Shogi.GL
             private set;
         }
 
+        /// <summary>
+        /// 読み込みに使われたオリジナル画像の幅をPixel数で取得します。
+        /// </summary>
         public int OriginalWidth
         {
             get;
             private set;
         }
 
+        /// <summary>
+        /// 読み込みに使われたオリジナル画像の高さをPixel数で取得します。
+        /// </summary>
         public int OriginalHeight
         {
             get;
@@ -94,6 +88,17 @@ namespace Ragnarok.Forms.Shogi.GL
         {
             get;
             private set;
+        }
+
+        /// <summary>
+        /// ビットマップサイズをbyte数で取得します。
+        /// </summary>
+        /// <remarks>
+        /// ICachableインターフェースの実装に必要です。
+        /// </remarks>
+        public long ObjectSize
+        {
+            get { return (4 * Width * Height); }
         }
 
         /// <summary>
@@ -206,7 +211,7 @@ namespace Ragnarok.Forms.Shogi.GL
             gl.TexParameter(OpenGL.GL_TEXTURE_2D, OpenGL.GL_TEXTURE_MAG_FILTER, OpenGL.GL_LINEAR);
 #else
             gl.TexParameter(OpenGL.GL_TEXTURE_2D, OpenGL.GL_TEXTURE_MIN_FILTER, OpenGL.GL_LINEAR_MIPMAP_LINEAR);
-            gl.TexParameter(OpenGL.GL_TEXTURE_2D, OpenGL.GL_TEXTURE_MAG_FILTER, OpenGL.GL_LINEAR_MIPMAP_LINEAR);
+            gl.TexParameter(OpenGL.GL_TEXTURE_2D, OpenGL.GL_TEXTURE_MAG_FILTER, OpenGL.GL_LINEAR);
 #endif
             gl.BindTexture(OpenGL.GL_TEXTURE_2D, 0);
             
@@ -214,13 +219,11 @@ namespace Ragnarok.Forms.Shogi.GL
             Destroy();
 
             this.glTextureArray = textureArray;
-            Bitmap = image;
             Width = image.Width;
             Height = image.Height;
             OriginalWidth = originalSize.Width;
             OriginalHeight = originalSize.Height;
             IsPremultipliedAlpha = toPremultipliedAlpha;
-
             return true;
         }
 
@@ -291,23 +294,26 @@ namespace Ragnarok.Forms.Shogi.GL
             // 画像のリサイズが必要な場合
             if (image.Width != targetWidth || image.Height != targetHeight)
             {
-                var newImage = image.ResizeHighQuality(
-                    targetWidth, targetHeight);
-
-                return CreateInternal(newImage, image.Size, toPremultipliedAlpha);
+                using (var newImage = image.ResizeHighQuality(
+                    targetWidth, targetHeight))
+                {
+                    return CreateInternal(newImage, image.Size, toPremultipliedAlpha);
+                }
             }
             else
             {
-                var newImage = (Bitmap)image.Clone();
-
-                return CreateInternal(newImage, image.Size, toPremultipliedAlpha);
+                // imageの内容が変わる可能性があるため、ここでCloneしています。
+                using (var newImage = (Bitmap)image.Clone())
+                {
+                    return CreateInternal(newImage, image.Size, toPremultipliedAlpha);
+                }
             }
         }
 
         /// <summary>
         /// ファイルからテクスチャを作成します。
         /// </summary>
-        public bool Create(string filepath, bool toPremultipliedAlpha = false)
+        public bool Load(string filepath, bool toPremultipliedAlpha = false)
         {
             using (var image = new Bitmap(filepath))
             {
@@ -324,13 +330,7 @@ namespace Ragnarok.Forms.Shogi.GL
         /// テクスチャを削除します。
         /// </summary>
         public void Destroy()
-        {
-            if (Bitmap != null)
-            {
-                Bitmap.Dispose();
-                Bitmap = null;
-            }
-          
+        {          
             if (this.glTextureArray[0] != 0)
             {
                 gl.DeleteTextures(1, this.glTextureArray);

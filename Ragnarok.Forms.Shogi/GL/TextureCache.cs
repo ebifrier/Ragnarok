@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows;
-
 using SharpGL;
+
+using Ragnarok.Forms.Draw;
+using Ragnarok.Utility;
 
 namespace Ragnarok.Forms.Shogi.GL
 {
-    using Ragnarok.Forms.Draw;
-
     /// <summary>
     /// 画像オブジェクトをキャッシュします。
     /// </summary>
@@ -21,131 +21,69 @@ namespace Ragnarok.Forms.Shogi.GL
     [CLSCompliant(false)]
     public class TextureCache
     {
+        public readonly static long AnimationCacheCapacity = 20L * 1024 * 1024; // 20MB
+        public readonly static long TextCacheCapacity = 20L * 1024 * 1024; // 20MB
+
         private readonly static object SyncRoot = new object();
-        private readonly static Dictionary<OpenGL, TextureCache> CacheRoot =
-            new Dictionary<OpenGL, TextureCache>();
+        private readonly static Dictionary<OpenGL, AnimationTextureCache> CacheDic =
+            new Dictionary<OpenGL, AnimationTextureCache>();
 
         /// <summary>
         /// OpenGLオブジェクトに対応するキャッシュを取得します。
         /// </summary>
-        public static TextureCache GetCache(OpenGL gl)
+        private static AnimationTextureCache GetAnimationCache(OpenGL gl)
         {
             lock (SyncRoot)
             {
-                TextureCache cache;
-                if (CacheRoot.TryGetValue(gl, out cache))
+                AnimationTextureCache cache;
+                if (CacheDic.TryGetValue(gl, out cache))
                 {
                     return cache;
                 }
 
-                cache = new TextureCache(gl);
-                CacheRoot.Add(gl, cache);
+                cache = new AnimationTextureCache(gl, AnimationCacheCapacity);
+                CacheDic.Add(gl, cache);
                 return cache;
             }
         }
 
         /// <summary>
-        /// 画像をキャッシュから探し、もしなければ読み込みます。
+        /// テクスチャをキャッシュから探し、もしなければ読み込みます。
         /// </summary>
-        public static List<GL.Texture> GetTextureList(OpenGL gl, Uri imageUri, int count)
+        public static Texture GetTexture(OpenGL gl, Uri imageUri)
+        {
+            var animTexture = GetAnimationTexture(gl, imageUri, 1);
+            if (animTexture == null || animTexture.TextureList.Count() != 1)
+            {
+                return null;
+            }
+
+            return animTexture.TextureList[0];
+        }
+
+        /// <summary>
+        /// アニメーション用テクスチャをキャッシュから探し、もしなければ読み込みます。
+        /// </summary>
+        public static AnimationTexture GetAnimationTexture(OpenGL gl, Uri imageUri,
+                                                           int count)
         {
             if (gl == null)
             {
                 throw new ArgumentNullException("gl");
             }
 
-            var cache = GetCache(gl);
-            return cache.GetTextureList(imageUri, count);
-        }
-
-        private readonly object syncRoot = new object();
-        private readonly Dictionary<Uri, List<GL.Texture>> cacheDic =
-            new Dictionary<Uri, List<Texture>>();
-        private readonly OpenGL gl;
-
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        public TextureCache(OpenGL gl)
-        {
-            this.gl = gl;
-        }
-
-        /// <summary>
-        /// ビットマップからテクスチャを読み込みます。
-        /// </summary>
-        private GL.Texture LoadTexture(Bitmap bitmap)
-        {
-            var tex = new GL.Texture(this.gl);
-            if (!tex.Create(bitmap))
+            if (imageUri == null)
             {
-                throw new RagnarokException(
-                    "テクスチャの作成に失敗しました。");
+                throw new ArgumentNullException("imageUri");
             }
 
-            return tex;
-        }
-
-        /// <summary>
-        /// count個に分割されたテクスチャを返します。
-        /// </summary>
-        private List<GL.Texture> LoadTextureList(Uri imageUri, int count)
-        {
-            try
+            if (count <= 0)
             {
-                var imagePath = imageUri.LocalPath;
-                var image = new Bitmap(imagePath);
-
-                List<GL.Texture> list = null;
-                if (count <= 1)
-                {
-                    // 画像一枚をテクスチャに直します。
-                    list = new List<GL.Texture>
-                    {
-                        LoadTexture(image)
-                    };
-                }
-                else
-                {
-                    // 各画像をクロッピングしテクスチャを作成します。
-                    var w = image.Width / count;
-                    var h = image.Height;
-
-                    list = (from i in Enumerable.Range(0, count)
-                            let bitmap = image.CropHighQuality(w * i, 0, w, h)
-                            select LoadTexture(bitmap))
-                           .ToList();
-                }
-
-                return list;
+                throw new ArgumentException("count");
             }
-            catch (Exception ex)
-            {
-                Log.ErrorException(ex,
-                    "{0}: 画像の読み込みに失敗しました。",
-                    imageUri);
 
-                return null;
-            }
-        }
-
-        /// <summary>
-        /// 画像をキャッシュから探し、もしなければ読み込みます。
-        /// </summary>
-        public List<GL.Texture> GetTextureList(Uri imageUri, int count)
-        {
-            lock (this.syncRoot)
-            {
-                List<GL.Texture> imageList;
-                if (this.cacheDic.TryGetValue(imageUri, out imageList))
-                {
-                    return imageList;
-                }
-
-                imageList = LoadTextureList(imageUri, count);
-                this.cacheDic.Add(imageUri, imageList);
-                return imageList;
-            }
+            var cache = GetAnimationCache(gl);
+            return cache.GetAnimationTexture(imageUri, count);
         }
     }
 }

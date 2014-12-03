@@ -1,0 +1,136 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Windows;
+using SharpGL;
+
+using Ragnarok.Forms.Draw;
+using Ragnarok.Utility;
+
+namespace Ragnarok.Forms.Shogi.GL
+{
+    /// <summary>
+    /// 文字列用テクスチャのキャッシュキーとして使うオブジェクトです。
+    /// </summary>
+    internal sealed class TextTextureKey : IEquatable<TextTextureKey>
+    {
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public TextTextureKey(string text, TextTextureFont textureFont)
+        {
+            Text = text;
+            TextureFont = textureFont;
+        }
+
+        /// <summary>
+        /// 描画する文字列を取得します。
+        /// </summary>
+        public string Text
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// 描画する文字列のフォントデータを取得します。
+        /// </summary>
+        public TextTextureFont TextureFont
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// オブジェクトが等しいか調べます。
+        /// </summary>
+        public override bool Equals(object obj)
+        {
+            var result = this.PreEquals(obj);
+            if (result != null)
+            {
+                return result.Value;
+            }
+
+            return Equals((TextTextureFont)obj);
+        }
+
+        /// <summary>
+        /// オブジェクトが等しいか調べます。
+        /// </summary>
+        public bool Equals(TextTextureKey other)
+        {
+            if ((object)other == null)
+            {
+                return false;
+            }
+
+            return (Text == other.Text && TextureFont == other.TextureFont);
+        }
+
+        /// <summary>
+        /// ハッシュ値を計算します。
+        /// </summary>
+        public override int GetHashCode()
+        {
+            return (Text.GetHashCode() ^ TextureFont.GetHashCode());
+        }
+    }
+
+    /// <summary>
+    /// 文字列用のテクスチャをキャッシュします。
+    /// </summary>
+    [CLSCompliant(false)]
+    public sealed class TextTextureCache
+    {
+        private readonly CacheManager<TextTextureKey, TextTexture> cache;
+        private readonly OpenGL gl;
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public TextTextureCache(OpenGL gl, long capacity)
+        {
+            this.cache = new CacheManager<TextTextureKey, TextTexture>(
+                CreateTextTexture, capacity);
+            this.gl = gl;
+        }
+
+        /// <summary>
+        /// 文字列用テクスチャを作成します。
+        /// </summary>
+        private TextTexture CreateTextTexture(TextTextureKey key)
+        {
+            var textTexture = new TextTexture(this.gl)
+            {
+                Text = key.Text,
+                TextureFont = key.TextureFont,
+            };
+
+            // テクスチャを作成してからオブジェクトを返します。
+            textTexture.UpdateTexture();
+            return textTexture;
+        }
+
+        /// <summary>
+        /// 文字列用テクスチャをキャッシュから探し、もしなければ読み込みます。
+        /// </summary>
+        public TextTexture GetTextTexture(string text,
+                                          TextTextureFont textureFont)
+        {
+            if (string.IsNullOrEmpty(text))
+            {
+                throw new ArgumentNullException("text");
+            }
+
+            if (textureFont == null)
+            {
+                throw new ArgumentNullException("textureFont");
+            }
+
+            var key = new TextTextureKey(text, textureFont);
+            return this.cache.GetOrCreate(key);
+        }
+    }
+}
