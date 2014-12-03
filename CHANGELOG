@@ -1,3 +1,10 @@
+2014-12-03  - Ver 1.8.8.15
+
+	* Ragnarok.Forms.Shogi/View/GLShogiElement.*.cs: プロパティを
+	INotifyPropertyChangedオブジェクトのプロパティとして管理するようにしま
+	した。以前はこのクラスがコントロールから継承されていたため、
+	PropertyName+Changedという名前のイベントを作っていました。
+
 2014-12-03  - Ver 1.8.8.14
 
 	* Ragnarok.Forms/Bindings: バインディング可能なオブジェクトをComponent

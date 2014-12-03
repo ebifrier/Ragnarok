@@ -6,8 +6,9 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-
 using SharpGL;
+
+using Ragnarok.ObjectModel;
 using Ragnarok.Utility;
 using Ragnarok.Shogi;
 
@@ -57,16 +58,9 @@ namespace Ragnarok.Forms.Shogi.View
         //private AutoPlay autoPlay;
 
         private Board board;
-        private EditMode editMode;
         private BWType viewSide;
-        private AutoPlayState autoPlayState;
+        private EditMode editMode;
         private IEffectManager effectManager;
-        private bool inManipulating;
-
-        private string blackPlayerName;
-        private string whitePlayerName;
-        private TimeSpan blackLeaveTime;
-        private TimeSpan whiteLeaveTime;
 
         /// <summary>
         /// コンストラクタ
@@ -81,6 +75,7 @@ namespace Ragnarok.Forms.Shogi.View
             WhitePlayerName = "△後手";
             BlackLeaveTime = TimeSpan.Zero;
             WhiteLeaveTime = TimeSpan.Zero;
+            InManipulating = false;
         }
 
         /// <summary>
@@ -131,11 +126,6 @@ namespace Ragnarok.Forms.Shogi.View
 
         #region 基本プロパティ
         /// <summary>
-        /// Boardプロパティの変更時に呼ばれるイベントです。
-        /// </summary>
-        public event EventHandler BoardChanged;
-
-        /// <summary>
         /// 表示する局面を取得または設定します。
         /// </summary>
         public Board Board
@@ -163,7 +153,7 @@ namespace Ragnarok.Forms.Shogi.View
 
                     SyncBoard(true);
 
-                    BoardChanged.SafeRaiseEvent(this, EventArgs.Empty);
+                    this.RaisePropertyChanged("Board");
                 }
             }
         }
@@ -219,38 +209,20 @@ namespace Ragnarok.Forms.Shogi.View
         }
 
         /// <summary>
-        /// AutoPlayStateプロパティの変更時に呼ばれるイベントです。
-        /// </summary>
-        public event EventHandler AutoPlayStateChanged;
-
-        /// <summary>
         /// 自動再生の状態を取得します。
         /// </summary>
         public AutoPlayState AutoPlayState
         {
-            get { return this.autoPlayState; }
-            private set
-            {
-                if (this.autoPlayState != value)
-                {
-                    this.autoPlayState = value;
-
-                    AutoPlayStateChanged.SafeRaiseEvent(this, EventArgs.Empty);
-                }
-            }
+            get { return GetValue<AutoPlayState>("AutoPlayState"); }
+            private set { SetValue("AutoPlayState", value); }
         }
-
-        /// <summary>
-        /// BlackPlayerNameプロパティの変更時に呼ばれるイベントです。
-        /// </summary>
-        public event EventHandler BlackPlayerNameChanged;
 
         /// <summary>
         /// 先手側の対局者名を取得または設定します。
         /// </summary>
         public string BlackPlayerName
         {
-            get { return this.blackPlayerName; }
+            get { return GetValue<string>("BlackPlayerName"); }
             set
             {
                 var newValue = (
@@ -258,26 +230,16 @@ namespace Ragnarok.Forms.Shogi.View
                     value :
                     "▲" + value);
 
-                if (this.blackPlayerName != newValue)
-                {
-                    this.blackPlayerName = newValue;
-
-                    BlackPlayerNameChanged.SafeRaiseEvent(this, EventArgs.Empty);
-                }
+                SetValue("BlackPlayerName", newValue);
             }
         }
-
-        /// <summary>
-        /// WhitePlayerNameプロパティの変更時に呼ばれるイベントです。
-        /// </summary>
-        public event EventHandler WhitePlayerNameChanged;
 
         /// <summary>
         /// 後手側の対局者名を取得または設定します。
         /// </summary>
         public string WhitePlayerName
         {
-            get { return this.whitePlayerName; }
+            get { return GetValue<string>("WhitePlayerName"); }
             set
             {
                 var newValue = (
@@ -285,59 +247,28 @@ namespace Ragnarok.Forms.Shogi.View
                     value :
                     "△" + value);
 
-                if (this.whitePlayerName != newValue)
-                {
-                    this.whitePlayerName = newValue;
-
-                    WhitePlayerNameChanged.SafeRaiseEvent(this, EventArgs.Empty);
-                }
+                SetValue("WhitePlayerName", newValue);
             }
         }
         #endregion
 
         #region 時間系プロパティ
         /// <summary>
-        /// BlackLeaveTimeプロパティの変更時に呼ばれるイベントです。
-        /// </summary>
-        public event EventHandler BlackLeaveTimeChanged;
-
-        /// <summary>
         /// 先手の残り時間を取得または設定します。
         /// </summary>
         public TimeSpan BlackLeaveTime
         {
-            get { return this.blackLeaveTime; }
-            set
-            {
-                if (this.blackLeaveTime != value)
-                {
-                    this.blackLeaveTime = value;
-
-                    BlackLeaveTimeChanged.SafeRaiseEvent(this, EventArgs.Empty);
-                }
-            }
+            get { return GetValue<TimeSpan>("BlackLeaveTime"); }
+            set { SetValue("BlackLeaveTime", value); }
         }
-
-        /// <summary>
-        /// WhiteLeaveTimeプロパティの変更時に呼ばれるイベントです。
-        /// </summary>
-        public event EventHandler WhiteLeaveTimeChanged;
 
         /// <summary>
         /// 後手の残り時間を取得または設定します。
         /// </summary>
         public TimeSpan WhiteLeaveTime
         {
-            get { return this.whiteLeaveTime; }
-            set
-            {
-                if (this.whiteLeaveTime != value)
-                {
-                    this.whiteLeaveTime = value;
-
-                    WhiteLeaveTimeChanged.SafeRaiseEvent(this, EventArgs.Empty);
-                }
-            }
+            get { return GetValue<TimeSpan>("WhiteLeaveTime"); }
+            set { SetValue("WhiteLeaveTime", value); }
         }
         #endregion
 
@@ -377,25 +308,12 @@ namespace Ragnarok.Forms.Shogi.View
         }
 
         /// <summary>
-        /// InManipulatingプロパティの変更時に呼ばれるイベントです。
-        /// </summary>
-        public event EventHandler InManipulatingChanged;
-
-        /// <summary>
         /// 駒が掴まれているなどするかどうかを取得します。
         /// </summary>
         public bool InManipulating
         {
-            get { return this.inManipulating; }
-            private set
-            {
-                if (this.inManipulating != value)
-                {
-                    this.inManipulating = value;
-
-                    InManipulatingChanged.SafeRaiseEvent(this, EventArgs.Empty);
-                }
-            }
+            get { return GetValue<bool>("InManipulating"); }
+            set { SetValue("InManipulating", value); }
         }
         #endregion
 

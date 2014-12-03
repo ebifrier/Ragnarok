@@ -24,12 +24,6 @@ namespace Ragnarok.Forms.Shogi.View
     public partial class GLShogiElement
     {
         private readonly RectangleF[] pieceBoxBounds = new RectangleF[3];
-        private RectangleF boardBounds;
-        private RectangleF boardSquareBounds;
-        private SizeF squareSize;
-        private double boardOpacity = 1.0;
-        private bool isLeaveTimeVisible = true;
-
         private Dictionary<BoardPiece, Mesh> pieceMeshDic;
         private Bitmap boardBitmap;
         private GL.Texture boardTexture;
@@ -50,11 +44,6 @@ namespace Ragnarok.Forms.Shogi.View
             base.OnOpenGLInitialized(e);
             var gl = OpenGL;
 
-            // (640,360)サイズの仮想スクリーンサイズを使っているので、
-            // 描画時はそれを元に戻します。
-            LocalTransform = new Matrix44d();
-            LocalTransform.Scale(1.0 / 640.0, 1.0 / 360.0, 1.0);
-
             for (var i = 0; i < 3; ++i)
             {
                 this.nameTexture[i] = new GL.TextTexture(gl);
@@ -67,12 +56,15 @@ namespace Ragnarok.Forms.Shogi.View
             this.boardTexture = new GL.Texture(gl);
             this.pieceTexture = new GL.Texture(gl);
             this.pieceBoxTexture = new GL.Texture(gl);
-            this.isLeaveTimeVisible = true;
 
             // テクスチャの実体化後に、Bitmapを設定します。
             BoardBitmap = DefaultBoardBitmap;
             PieceBoxBitmap = DefaultPieceBoxBitmap;
             PieceBitmap = DefaultPieceBitmap;
+
+            // デフォルトのプロパティ値も設定します。
+            IsLeaveTimeVisible = true;
+            BoardOpacity = 1.0;
         }
 
         /// <summary>
@@ -82,18 +74,18 @@ namespace Ragnarok.Forms.Shogi.View
         {
             var w2 = 340 / 2;
             var h2 = 350 / 2;
-            this.boardBounds = new RectangleF(
+            BoardBounds = new RectangleF(
                 320 - w2, 180 - h2, w2 * 2, h2 * 2);
 
             // 駒の表示サイズを設定
-            this.squareSize = new SizeF(
-                (float)(this.boardBounds.Width / (Board.BoardSize + BoardBorderRate * 2)),
-                (float)(this.boardBounds.Height / (Board.BoardSize + BoardBorderRate * 2)));
+            SquareSize = new SizeF(
+                (float)(BoardBounds.Width / (Board.BoardSize + BoardBorderRate * 2)),
+                (float)(BoardBounds.Height / (Board.BoardSize + BoardBorderRate * 2)));
 
             // 盤サイズの設定
-            this.boardSquareBounds = new RectangleF(
-                (float)(this.boardBounds.X + SquareSize.Width * BoardBorderRate),
-                (float)(this.boardBounds.Y + SquareSize.Height * BoardBorderRate),
+            BoardSquareBounds = new RectangleF(
+                (float)(BoardBounds.X + SquareSize.Width * BoardBorderRate),
+                (float)(BoardBounds.Y + SquareSize.Height * BoardBorderRate),
                 SquareSize.Width * Board.BoardSize,
                 SquareSize.Height * Board.BoardSize);
 
@@ -190,25 +182,12 @@ namespace Ragnarok.Forms.Shogi.View
 
         #region 見た目のプロパティ
         /// <summary>
-        /// IsLeaveTimeVisibleプロパティの変更時に呼ばれるイベントです。
-        /// </summary>
-        public event EventHandler IsLeaveTimeVisibleChanged;
-
-        /// <summary>
         /// 残り時間の表示を行うかどうかを取得または設定します。
         /// </summary>
         public bool IsLeaveTimeVisible
         {
-            get { return this.isLeaveTimeVisible; }
-            set
-            {
-                if (this.isLeaveTimeVisible != value)
-                {
-                    this.isLeaveTimeVisible = value;
-
-                    IsLeaveTimeVisibleChanged.SafeRaiseEvent(this, EventArgs.Empty);
-                }
-            }
+            get { return GetValue<bool>("IsLeaveTimeVisible"); }
+            set { SetValue("IsLeaveTimeVisible", value); }
         }
 
         /// <summary>
@@ -302,34 +281,19 @@ namespace Ragnarok.Forms.Shogi.View
         /// <summary>
         /// 駒箱を表示するかどうかを取得します。
         /// </summary>
+        [DependOnProperty("EditMode")]
         public bool IsKomaBoxVisible
         {
-            get
-            {
-                return (EditMode == EditMode.Editing);
-            }
+            get { return (EditMode == EditMode.Editing); }
         }
-
-        /// <summary>
-        /// BoardOpacityプロパティの変更時に呼ばれるイベントです。
-        /// </summary>
-        public event EventHandler BoardOpacityChanged;
 
         /// <summary>
         /// 盤と駒台画像の不透明度を取得または設定します。
         /// </summary>
         public double BoardOpacity
         {
-            get { return this.boardOpacity; }
-            set
-            {
-                if (this.boardOpacity != value)
-                {
-                    this.boardOpacity = value;
-
-                    BoardOpacityChanged.SafeRaiseEvent(this, EventArgs.Empty);
-                }
-            }
+            get { return GetValue<double>("BoardOpacity"); }
+            set { SetValue("BoardOpacity", value); }
         }
 
         /*/// <summary>
@@ -346,7 +310,8 @@ namespace Ragnarok.Forms.Shogi.View
         /// </summary>
         public RectangleF BoardBounds
         {
-            get { return this.boardBounds; }
+            get;
+            private set;
         }
         
         /// <summary>
@@ -354,7 +319,8 @@ namespace Ragnarok.Forms.Shogi.View
         /// </summary>
         public RectangleF BoardSquareBounds
         {
-            get { return this.boardSquareBounds; }
+            get;
+            private set;
         }
 
         /// <summary>
@@ -362,7 +328,8 @@ namespace Ragnarok.Forms.Shogi.View
         /// </summary>
         public SizeF SquareSize
         {
-            get { return this.squareSize; }
+            get;
+            private set;
         }
         #endregion
 
@@ -413,7 +380,7 @@ namespace Ragnarok.Forms.Shogi.View
             // 盤
             renderBuffer.AddRender(
                 this.boardTexture, BlendType.Diffuse,
-                this.boardBounds, Transform,
+                BoardBounds, Transform,
                 ShogiZOrder.BoardZ, BoardOpacity);
 
             // 先手と後手の駒台と駒箱
@@ -458,9 +425,9 @@ namespace Ragnarok.Forms.Shogi.View
                 var bounds = new RectangleF(
                     this.pieceBoxBounds[index].Left + 5, y,
                     this.pieceBoxBounds[index].Width - 10, 15);
-                renderBuffer.AddRender(
+                /*renderBuffer.AddRender(
                     BlendType.Diffuse, bounds, Transform,
-                    Color.Red, ShogiZOrder.PostBoardZ);
+                    Color.Red, ShogiZOrder.PostBoardZ);*/
 
                 // 対局者名を描画
                 var name = (
@@ -473,8 +440,8 @@ namespace Ragnarok.Forms.Shogi.View
                 this.nameTexture[index].EdgeLength = 2.0;
                 bounds.Inflate(-4, 0);
                 DrawString(
-                    renderBuffer, this.nameTexture[index].Texture,
-                    bounds, ShogiZOrder.PostBoardZ);
+                    renderBuffer, this.nameTexture[index], bounds,
+                    ShogiZOrder.PostBoardZ);
             }
 
             // 残り時間を描画します。
@@ -487,7 +454,7 @@ namespace Ragnarok.Forms.Shogi.View
                 var bounds = new RectangleF(
                     this.pieceBoxBounds[index].Left, y,
                     this.pieceBoxBounds[index].Width, 15);
-                var color = Color.FromArgb(180, Color.Gray);
+                var color = Color.FromArgb(180, Color.Black);
                 renderBuffer.AddRender(
                     BlendType.Diffuse, bounds, Transform,
                     color, ShogiZOrder.PostBoardZ);
@@ -501,8 +468,8 @@ namespace Ragnarok.Forms.Shogi.View
                 this.leaveTimeTexture[index].Color = Color.White;
                 bounds.Inflate(-4, 0);
                 DrawString(
-                    renderBuffer, this.leaveTimeTexture[index].Texture,
-                    bounds, ShogiZOrder.PostBoardZ);
+                    renderBuffer, this.leaveTimeTexture[index], bounds,
+                    ShogiZOrder.PostBoardZ);
             }
         }
 
@@ -604,9 +571,11 @@ namespace Ragnarok.Forms.Shogi.View
             return mesh;
         }
 
-        private void DrawString(GL.RenderBuffer renderBuffer, GL.Texture texture,
+        private void DrawString(GL.RenderBuffer renderBuffer, GL.TextTexture texture,
                                 RectangleF bounds, double zorder)
         {
+            texture.UpdateTexture();
+
             if (texture.TextureName != 0)
             {
                 var r = (float)texture.OriginalWidth / texture.OriginalHeight;
