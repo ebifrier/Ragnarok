@@ -13,7 +13,6 @@ namespace Ragnarok.Forms.Shogi.View
     /// <summary>
     /// OpenGLの背景表示用クラスです。
     /// </summary>
-    [CLSCompliant(false)]
     public class GLBackground : GLElement
     {
         private EffectObject prevBg;

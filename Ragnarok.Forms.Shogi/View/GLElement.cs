@@ -15,7 +15,6 @@ namespace Ragnarok.Forms.Shogi.View
     /// <summary>
     /// GLContainer配下となるコントロールの基本インターフェースです。
     /// </summary>
-    [CLSCompliant(false)]
     public class GLElement : EffectObject
     {
         /// <summary>
@@ -45,6 +44,7 @@ namespace Ragnarok.Forms.Shogi.View
         /// <summary>
         /// OpenGL用のコンテナオブジェクトを取得します。
         /// </summary>
+        [CLSCompliant(false)]
         public GLContainer GLContainer
         {
             get { return GetValue<GLContainer>("GLContainer"); }
@@ -54,6 +54,7 @@ namespace Ragnarok.Forms.Shogi.View
         /// <summary>
         /// OpenGLオブジェクトを取得または設定します。
         /// </summary>
+        [CLSCompliant(false)]
         [DependOnProperty("GLContainer")]
         public OpenGL OpenGL
         {

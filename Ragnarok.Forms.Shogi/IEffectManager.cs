@@ -8,7 +8,6 @@ namespace Ragnarok.Forms.Shogi
     /// <summary>
     /// 将棋盤のエフェクト管理オブジェクトです。
     /// </summary>
-    [CLSCompliant(false)]
     public interface IEffectManager
     {
         /// <summary>

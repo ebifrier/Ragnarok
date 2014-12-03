@@ -16,7 +16,6 @@ namespace Ragnarok.Forms.Shogi.View
     /// <summary>
     /// 将棋の盤面を扱うコントロールです。
     /// </summary>
-    [CLSCompliant(false)]
     public partial class GLShogiElement
     {
         private readonly int[] komaboxCount = new int[(int)PieceType.Hu + 1];
@@ -533,8 +532,8 @@ namespace Ragnarok.Forms.Shogi.View
         private Square PointToSquare(System.Drawing.Point pos)
         {
             // とりあえず設定します。
-            var file = (int)((pos.X - this.boardSquareBounds.Left) / SquareSize.Width);
-            var rank = (int)((pos.Y - this.boardSquareBounds.Top) / SquareSize.Height);
+            var file = (int)((pos.X - BoardSquareBounds.Left) / SquareSize.Width);
+            var rank = (int)((pos.Y - BoardSquareBounds.Top) / SquareSize.Height);
 
             // 正しい位置にありましぇん。
             var square = new Square(Board.BoardSize - file, rank + 1);
@@ -580,8 +579,8 @@ namespace Ragnarok.Forms.Shogi.View
                     (square.File - 1) * SquareSize.Width,
                     (Board.BoardSize - square.Rank) * SquareSize.Height));
 
-            var x = this.boardSquareBounds.Left;
-            var y = this.boardSquareBounds.Top;
+            var x = BoardSquareBounds.Left;
+            var y = BoardSquareBounds.Top;
             return new PointF(
                 x + relative.X + (SquareSize.Width / 2.0f),
                 y + relative.Y + (SquareSize.Height / 2.0f));
