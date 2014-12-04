@@ -28,6 +28,29 @@ namespace Ragnarok.Forms
         }
 
         /// <summary>
+        /// コマンドの状態をすべて更新します。
+        /// </summary>
+        public static void InvalidateCommand()
+        {
+            UIProcess(() =>
+                Input.CommandManager.InvalidateRequerySuggested());
+        }
+
+        /// <summary>
+        /// UIProcess時に別スレッドでの実行が必要になるか調べます。
+        /// </summary>
+        public static bool InvokeRequired()
+        {
+            if (invokeControl == null)
+            {
+                throw new InvalidOperationException(
+                    "Ragnarok.Formsは初期化されていません。");
+            }
+
+            return invokeControl.InvokeRequired;
+        }
+
+        /// <summary>
         /// UIThread上でメソッドを実行します。
         /// </summary>
         public static void UIProcess(Action func)
@@ -78,7 +101,7 @@ namespace Ragnarok.Forms
                 try
                 {
                     // 必要があれば指定のスレッド上で実行します。
-                    if (target != null && !target.InvokeRequired)
+                    if (target != null && target.InvokeRequired)
                     {
                         target.BeginInvoke(child, sender, e);
                     }
@@ -116,7 +139,7 @@ namespace Ragnarok.Forms
                 try
                 {
                     // 必要があれば指定のスレッド上で実行します。
-                    if (target != null && !target.InvokeRequired)
+                    if (target != null && target.InvokeRequired)
                     {
                         // コレクションの状態が変わる前に変更通知を出す
                         // 必要があるため、Invokeを使っています。
