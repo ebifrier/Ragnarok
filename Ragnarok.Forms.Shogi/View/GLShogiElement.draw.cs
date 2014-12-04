@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -25,15 +26,12 @@ namespace Ragnarok.Forms.Shogi.View
     {
         private readonly RectangleF[] pieceBoxBounds = new RectangleF[3];
         private Dictionary<BoardPiece, Mesh> pieceMeshDic;
-        private Bitmap boardBitmap;
         private GL.Texture boardTexture;
-        private Bitmap pieceBitmap;
         private GL.Texture pieceTexture;
-        private Bitmap pieceBoxBitmap;
         private GL.Texture pieceBoxTexture;
 
         private readonly GL.TextTexture[] nameTexture = new GL.TextTexture[3];
-        private readonly GL.TextTexture[] leaveTimeTexture = new GL.TextTexture[3];
+        private readonly GL.TextTexture[] timeTexture = new GL.TextTexture[3];
 
         #region 初期化
         /// <summary>
@@ -43,11 +41,11 @@ namespace Ragnarok.Forms.Shogi.View
         {
             base.OnOpenGLInitialized(e);
             var gl = OpenGL;
-
+            
             for (var i = 0; i < 3; ++i)
             {
                 this.nameTexture[i] = new GL.TextTexture(gl);
-                this.leaveTimeTexture[i] = new GL.TextTexture(gl);
+                this.timeTexture[i] = new GL.TextTexture(gl);
             }
 
             InitializeBounds();
@@ -57,13 +55,22 @@ namespace Ragnarok.Forms.Shogi.View
             this.pieceTexture = new GL.Texture(gl);
             this.pieceBoxTexture = new GL.Texture(gl);
 
-            // テクスチャの実体化後に、Bitmapを設定します。
+            // ハンドラの設定を行います。
+            AddPropertyChangedHandler("BoardBitmap", BoardBitmapUpdated);
+            AddPropertyChangedHandler("PieceBitmap", PieceBitmapUpdated);
+            AddPropertyChangedHandler("PieceBoxBitmap", PieceBoxBitmapUpdated);
+
+            // イベントハンドラの設定後にテクスチャの実体化などの、設定を行います。
             BoardBitmap = DefaultBoardBitmap;
             PieceBoxBitmap = DefaultPieceBoxBitmap;
             PieceBitmap = DefaultPieceBitmap;
 
             // デフォルトのプロパティ値も設定します。
-            IsLeaveTimeVisible = true;
+            LocalTransform.Scale(1.0 / 640.0, 1.0 / 360.0, 1.0);
+            IsTimeVisible = true;
+            TebanPlayerNameBackgroundColor = Color.FromArgb(128, Color.Orange);
+            UnTebanPlayerNameBackgroundColor = Color.FromArgb(128, Color.Black);
+            TimeBackgroundColor = Color.FromArgb(128, Color.Black);
             BoardOpacity = 1.0;
         }
 
@@ -182,12 +189,12 @@ namespace Ragnarok.Forms.Shogi.View
 
         #region 見た目のプロパティ
         /// <summary>
-        /// 残り時間の表示を行うかどうかを取得または設定します。
+        /// 時間の表示を行うかどうかを取得または設定します。
         /// </summary>
-        public bool IsLeaveTimeVisible
+        public bool IsTimeVisible
         {
-            get { return GetValue<bool>("IsLeaveTimeVisible"); }
-            set { SetValue("IsLeaveTimeVisible", value); }
+            get { return GetValue<bool>("IsTimeVisible"); }
+            set { SetValue("IsTimeVisible", value); }
         }
 
         /// <summary>
@@ -210,72 +217,54 @@ namespace Ragnarok.Forms.Shogi.View
         }
 
         /// <summary>
-        /// PieceBitmapプロパティの変更時に呼ばれるイベントです。
-        /// </summary>
-        public event EventHandler PieceBitmapChanged;
-
-        /// <summary>
         /// 駒画像を取得または設定します。
         /// </summary>
         public Bitmap PieceBitmap
         {
-            get { return this.pieceBitmap; }
-            set
-            {
-                if (this.pieceBitmap != value)
-                {
-                    this.pieceBitmap = value;
-                    LoadTexture(this.pieceTexture, value);
-
-                    PieceBitmapChanged.SafeRaiseEvent(this, EventArgs.Empty);
-                }
-            }
+            get { return GetValue<Bitmap>("PieceBitmap"); }
+            set { SetValue("PieceBitmap", value); }
         }
 
         /// <summary>
-        /// BoardBitmapプロパティの変更時に呼ばれるイベントです。
+        /// PieceBitmapの更新時に呼ばれ、テクスチャの更新を行います。
         /// </summary>
-        public event EventHandler BoardBitmapChanged;
+        private void PieceBitmapUpdated(object sender, PropertyChangedEventArgs e)
+        {
+            LoadTexture(this.pieceTexture, PieceBitmap);
+        }
 
         /// <summary>
         /// 盤画像を取得または設定します。
         /// </summary>
         public Bitmap BoardBitmap
         {
-            get { return this.BoardBitmap; }
-            set
-            {
-                if (this.boardBitmap != value)
-                {
-                    this.boardBitmap = value;
-                    LoadTexture(this.boardTexture, value);
-
-                    BoardBitmapChanged.SafeRaiseEvent(this, EventArgs.Empty);
-                }
-            }
+            get { return GetValue<Bitmap>("BoardBitmap"); }
+            set { SetValue("BoardBitmap", value); }
         }
 
         /// <summary>
-        /// PieceBitmapプロパティの変更時に呼ばれるイベントです。
+        /// 盤画像の更新時に呼ばれ、テクスチャの更新を行います。
         /// </summary>
-        public event EventHandler PieceBoxBitmapChanged;
+        private void BoardBitmapUpdated(object sender, PropertyChangedEventArgs e)
+        {
+            LoadTexture(this.boardTexture, BoardBitmap);
+        }
 
         /// <summary>
         /// 駒台画像を取得または設定します。
         /// </summary>
         public Bitmap PieceBoxBitmap
         {
-            get { return this.pieceBoxBitmap; }
-            set
-            {
-                if (this.pieceBoxBitmap != value)
-                {
-                    this.pieceBoxBitmap = value;
-                    LoadTexture(this.pieceBoxTexture, value);
+            get { return GetValue<Bitmap>("PieceBoxBitmap"); }
+            set { SetValue("PieceBoxBitmap", value); }
+        }
 
-                    PieceBoxBitmapChanged.SafeRaiseEvent(this, EventArgs.Empty);
-                }
-            }
+        /// <summary>
+        /// 駒台画像の更新時に呼ばれ、テクスチャの更新を行います。
+        /// </summary>
+        private void PieceBoxBitmapUpdated(object sender, PropertyChangedEventArgs e)
+        {
+            LoadTexture(this.pieceBoxTexture, PieceBoxBitmap);
         }
 
         /// <summary>
@@ -296,14 +285,32 @@ namespace Ragnarok.Forms.Shogi.View
             set { SetValue("BoardOpacity", value); }
         }
 
-        /*/// <summary>
-        /// 自動再生時のブラシを取得または設定します。
+        /// <summary>
+        /// 手番側の対局者の名前の背景色を取得または設定します。
         /// </summary>
-        public Brush AutoPlayBrush
+        public Color TebanPlayerNameBackgroundColor
         {
-            get { return GetValue<Brush>("AutoPlayBrush", value); }
-            set { SetValue("AutoPlayBrush", value); }
-        }*/
+            get { return GetValue<Color>("TebanPlayerNameBackgroundColor"); }
+            set { SetValue("TebanPlayerNameBackgroundColor", value); }
+        }
+
+        /// <summary>
+        /// 手番ではない方の対局者の名前の背景色を取得または設定します。
+        /// </summary>
+        public Color UnTebanPlayerNameBackgroundColor
+        {
+            get { return GetValue<Color>("UnTebanPlayerNameBackgroundColor"); }
+            set { SetValue("UnTebanPlayerNameBackgroundColor", value); }
+        }
+
+        /// <summary>
+        /// 時間部分の背景色を取得または設定します。
+        /// </summary>
+        public Color TimeBackgroundColor
+        {
+            get { return GetValue<Color>("TimeBackgroundColor"); }
+            set { SetValue("TimeBackgroundColor", value); }
+        }
 
         /// <summary>
         /// 盤全体が描画される領域を取得します。
@@ -369,13 +376,14 @@ namespace Ragnarok.Forms.Shogi.View
             base.OnEnterFrame(e);
             var renderBuffer = (GL.RenderBuffer)e.StateObject;
 
-            /*if (this.autoPlay != null)
+            // 自動再生の更新を行います。
+            if (this.autoPlay != null)
             {
-                if (!this.autoPlay.Update(elapsedTime))
+                if (!this.autoPlay.Update(e.ElapsedTime))
                 {
                     StopAutoPlay();
                 }
-            }*/
+            }
 
             // 盤
             renderBuffer.AddRender(
@@ -425,9 +433,15 @@ namespace Ragnarok.Forms.Shogi.View
                 var bounds = new RectangleF(
                     this.pieceBoxBounds[index].Left + 5, y,
                     this.pieceBoxBounds[index].Width - 10, 15);
-                /*renderBuffer.AddRender(
+
+                // 名前の背景に色をつけます。
+                var color = (
+                    Board.Turn == (BWType)index ?
+                    TebanPlayerNameBackgroundColor :
+                    UnTebanPlayerNameBackgroundColor);
+                renderBuffer.AddRender(
                     BlendType.Diffuse, bounds, Transform,
-                    Color.Red, ShogiZOrder.PostBoardZ);*/
+                    color, ShogiZOrder.PostBoardZ);
 
                 // 対局者名を描画
                 var name = (
@@ -435,18 +449,22 @@ namespace Ragnarok.Forms.Shogi.View
                     index == 2 ? WhitePlayerName :
                     "駒箱");
                 this.nameTexture[index].Text = name;
-                this.nameTexture[index].Color = Color.Black;
-                this.nameTexture[index].EdgeColor = Color.White;
+                this.nameTexture[index].Color = Color.White;
+                if (!this.nameTexture[index].Font.Bold)
+                {
+                    this.nameTexture[index].Font = new Font(this.nameTexture[index].Font, FontStyle.Bold);
+                }
+                this.nameTexture[index].EdgeColor = Color.Black;
                 this.nameTexture[index].EdgeLength = 2.0;
                 bounds.Inflate(-4, 0);
                 DrawString(
-                    renderBuffer, this.nameTexture[index], bounds,
-                    ShogiZOrder.PostBoardZ);
+                    renderBuffer, this.nameTexture[index].Texture,
+                    bounds, ShogiZOrder.PostBoardZ);
             }
 
-            // 残り時間を描画します。
+            // 合計時間や消費時間の描画を行います。
             // 局面編集中など駒箱が表示されているときは残り時間を表示しません。
-            if (IsLeaveTimeVisible && !IsKomaBoxVisible)
+            if (IsTimeVisible && !IsKomaBoxVisible)
             {
                 var y = (index == 2 ?
                     this.pieceBoxBounds[index].Bottom :
@@ -454,22 +472,25 @@ namespace Ragnarok.Forms.Shogi.View
                 var bounds = new RectangleF(
                     this.pieceBoxBounds[index].Left, y,
                     this.pieceBoxBounds[index].Width, 15);
-                var color = Color.FromArgb(180, Color.Black);
                 renderBuffer.AddRender(
                     BlendType.Diffuse, bounds, Transform,
-                    color, ShogiZOrder.PostBoardZ);
+                    TimeBackgroundColor, ShogiZOrder.PostBoardZ);
 
-                // 残り時間を描画
-                var time = (index == 1 ? BlackLeaveTime : WhiteLeaveTime);
-                var str = string.Format("{0:000}:{1:00} / 000:00",
-                    (int)time.TotalMinutes, time.Seconds);
+                // 消費時間などを描画
+                // 時間のフォーマットは '消費時間 / 合計時間' となっています。
+                var totalTime = (index == 1 ? BlackTotalTime : WhiteTotalTime);
+                var time = (index == 1 ? BlackTime : WhiteTime);
+                var str = string.Format(
+                    "{0:000}:{1:00} / 000:00",
+                    (int)time.TotalMinutes, time.Seconds,
+                    (int)totalTime.TotalMinutes, totalTime.Seconds);
 
-                this.leaveTimeTexture[index].Text = str;
-                this.leaveTimeTexture[index].Color = Color.White;
+                this.timeTexture[index].Text = str;
+                this.timeTexture[index].Color = Color.White;
                 bounds.Inflate(-4, 0);
                 DrawString(
-                    renderBuffer, this.leaveTimeTexture[index], bounds,
-                    ShogiZOrder.PostBoardZ);
+                    renderBuffer, this.timeTexture[index].Texture,
+                    bounds, ShogiZOrder.PostBoardZ);
             }
         }
 
@@ -534,7 +555,7 @@ namespace Ragnarok.Forms.Shogi.View
         /// 駒の描画を行います。
         /// </summary>
         private void AddRenderPiece(GL.RenderBuffer renderBuffer, BoardPiece piece,
-                                   PointF cpos, double zorder)
+                                    PointF cpos, double zorder)
         {
             if (this.pieceTexture == null || this.pieceTexture.TextureName == 0)
             {
@@ -571,11 +592,9 @@ namespace Ragnarok.Forms.Shogi.View
             return mesh;
         }
 
-        private void DrawString(GL.RenderBuffer renderBuffer, GL.TextTexture texture,
+        private void DrawString(GL.RenderBuffer renderBuffer, GL.Texture texture,
                                 RectangleF bounds, double zorder)
         {
-            texture.UpdateTexture();
-
             if (texture.TextureName != 0)
             {
                 var r = (float)texture.OriginalWidth / texture.OriginalHeight;

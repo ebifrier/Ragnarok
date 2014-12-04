@@ -34,6 +34,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject />
@@ -88,6 +89,7 @@
     <Compile Include="View\GLContainer.Designer.cs">
       <DependentUpon>GLContainer.cs</DependentUpon>
     </Compile>
+    <Compile Include="View\GLEvaluationElement.cs" />
     <Compile Include="View\GLShogiElement.cs" />
     <Compile Include="View\GLElement.cs" />
     <Compile Include="View\MovingPiece.cs" />

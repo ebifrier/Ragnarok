@@ -1,3 +1,10 @@
+2014-12-04  - Ver 1.8.8.16
+
+	* Ragnarok.Forms.Shogi/AutoPlay.cs: 変化表示画面用のヴィジュアルオブジ
+	ェクトの設定をクラスから外しました。
+	* Ragnarok.Forms.Shogi/View/GLShogiElement.cs: プロパティなどを整理し、
+	WPFではなくWinFormsで動くようにしました。
+
 2014-12-03  - Ver 1.8.8.15
 
 	* Ragnarok.Forms.Shogi/View/GLShogiElement.*.cs: プロパティを

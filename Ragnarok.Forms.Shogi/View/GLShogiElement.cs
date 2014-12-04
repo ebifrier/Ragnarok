@@ -55,26 +55,26 @@ namespace Ragnarok.Forms.Shogi.View
             }
             .Apply(_ => _.Freeze());*/
 
-        //private AutoPlay autoPlay;
-
         private Board board;
-        private BWType viewSide;
-        private EditMode editMode;
         private IEffectManager effectManager;
+        private AutoPlay autoPlay;
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
         public GLShogiElement()
         {
+            AddPropertyChangedHandler("ViewSide", ViewSideUpdated);
+            AddPropertyChangedHandler("EditMode", EditModeUpdated);
+
             Board = new Board();
             ViewSide = BWType.Black;
             EditMode = EditMode.Normal;
             AutoPlayState = AutoPlayState.None;
             BlackPlayerName = "▲先手";
             WhitePlayerName = "△後手";
-            BlackLeaveTime = TimeSpan.Zero;
-            WhiteLeaveTime = TimeSpan.Zero;
+            BlackTime = TimeSpan.Zero;
+            WhiteTime = TimeSpan.Zero;
             InManipulating = false;
         }
 
@@ -93,7 +93,7 @@ namespace Ragnarok.Forms.Shogi.View
         protected override void OnTerminate()
         {
             EndMove();
-            //StopAutoPlay();
+            StopAutoPlay();
 
             // エフェクトマネージャへの参照と、マネージャが持つ
             // このオブジェクトへの参照を初期化します。
@@ -137,7 +137,7 @@ namespace Ragnarok.Forms.Shogi.View
                 {
                     EndMove();
                     ClosePromoteDialog();
-                    //StopAutoPlay();
+                    StopAutoPlay();
 
                     if (this.board != null)
                     {
@@ -159,53 +159,39 @@ namespace Ragnarok.Forms.Shogi.View
         }
 
         /// <summary>
-        /// ViewSideプロパティの変更時に呼ばれるイベントです。
-        /// </summary>
-        public event EventHandler ViewSideChanged;
-
-        /// <summary>
         /// 番の手前側の先後を取得または設定します。
         /// </summary>
         public BWType ViewSide
         {
-            get { return this.viewSide; }
-            set
-            {
-                if (this.viewSide != value)
-                {
-                    this.viewSide = value;
-
-                    // 駒の配置やエフェクトを初期化します。
-                    SyncBoard(true);
-
-                    ViewSideChanged.SafeRaiseEvent(this, EventArgs.Empty);
-                }
-            }
+            get { return GetValue<BWType>("ViewSide"); }
+            set { SetValue("ViewSide", value); }
         }
 
         /// <summary>
-        /// EditModeプロパティの変更時に呼ばれるイベントです。
+        /// ViewSideの更新時に呼ばれ、表示盤の初期化などを行います。
         /// </summary>
-        public event EventHandler EditModeChanged;
+        private void ViewSideUpdated(object sender, PropertyChangedEventArgs e)
+        {
+            SyncBoard(true);
+        }
 
         /// <summary>
         /// 編集モードを取得または設定します。
         /// </summary>
         public EditMode EditMode
         {
-            get { return this.editMode; }
-            set
-            {
-                if (this.editMode != value)
-                {
-                    this.editMode = value;
+            get { return GetValue<EditMode>("EditMode"); }
+            set { SetValue("EditMode", value); }
+        }
 
-                    EndMove();
-                    EditModeChanged.SafeRaiseEvent(this, EventArgs.Empty);
+        /// <summary>
+        /// 編集モード変更時に呼ばれ、駒やコマンドの初期化などを行います。
+        /// </summary>
+        private void EditModeUpdated(object sender, PropertyChangedEventArgs e)
+        {
+            EndMove();
 
-                    //Ragnarok.Forms.Input.CommandManager.InvalidateRequerySuggested();
-                }
-            }
+            FormsUtil.InvalidateCommand();
         }
 
         /// <summary>
@@ -254,30 +240,43 @@ namespace Ragnarok.Forms.Shogi.View
 
         #region 時間系プロパティ
         /// <summary>
-        /// 先手の残り時間を取得または設定します。
+        /// 先手の合計持ち時間（秒読みの場合は秒読み時間）を取得または設定します。
         /// </summary>
-        public TimeSpan BlackLeaveTime
+        public TimeSpan BlackTotalTime
+        {
+            get { return GetValue<TimeSpan>("BlackTotalTime"); }
+            set { SetValue("BlackTotalTime", value); }
+        }
+
+        /// <summary>
+        /// 先手の消費時間を取得または設定します。
+        /// </summary>
+        public TimeSpan BlackTime
         {
             get { return GetValue<TimeSpan>("BlackLeaveTime"); }
             set { SetValue("BlackLeaveTime", value); }
         }
 
         /// <summary>
-        /// 後手の残り時間を取得または設定します。
+        /// 後手の合計持ち時間（秒読みの場合は秒読み時間）を取得または設定します。
         /// </summary>
-        public TimeSpan WhiteLeaveTime
+        public TimeSpan WhiteTotalTime
         {
-            get { return GetValue<TimeSpan>("WhiteLeaveTime"); }
-            set { SetValue("WhiteLeaveTime", value); }
+            get { return GetValue<TimeSpan>("WhiteTotalTime"); }
+            set { SetValue("WhiteTotalTime", value); }
+        }
+
+        /// <summary>
+        /// 後手の消費時間を取得または設定します。
+        /// </summary>
+        public TimeSpan WhiteTime
+        {
+            get { return GetValue<TimeSpan>("WhiteTime"); }
+            set { SetValue("WhiteTime", value); }
         }
         #endregion
 
         #region その他のプロパティ
-        /// <summary>
-        /// EffectManagerプロパティの変更時に呼ばれるイベントです。
-        /// </summary>
-        public event EventHandler EffectManagerChanged;
-
         /// <summary>
         /// エフェクト管理オブジェクトを取得または設定します。
         /// </summary>
@@ -302,7 +301,7 @@ namespace Ragnarok.Forms.Shogi.View
                         this.effectManager.Clear();
                     }
 
-                    EffectManagerChanged.SafeRaiseEvent(this, EventArgs.Empty);
+                    this.RaisePropertyChanged("EffectManager");
                 }
             }
         }
@@ -437,7 +436,6 @@ namespace Ragnarok.Forms.Shogi.View
         #endregion
 
         #region 自動再生
-#if false
         /// <summary>
         /// 自動再生を開始します。
         /// </summary>
@@ -454,12 +452,12 @@ namespace Ragnarok.Forms.Shogi.View
             }
 
             // コントロールを事前に設定する必要があります。
-            var brush =
+            /*var brush =
                 (AutoPlayBrush != null && AutoPlayBrush.IsFrozen ?
                  AutoPlayBrush.Clone() :
                  AutoPlayBrush);
-            AutoPlayBrush = brush;
-            autoPlay.Background = brush;
+            AutoPlayBrush = brush;*/
+            //autoPlay.Background = brush;
 
             // ここで局面を変更します。
             // 局面変更時は自動再生を自動で止めるようになっているので、
@@ -495,7 +493,6 @@ namespace Ragnarok.Forms.Shogi.View
             // Stopメソッドはすべての状態が落ち着いた後に呼びます。
             autoPlay.Stop();
         }
-#endif
         #endregion
     }
 }

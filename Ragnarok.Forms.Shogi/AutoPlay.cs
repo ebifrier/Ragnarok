@@ -6,6 +6,7 @@ using System.Threading;
 using System.Windows;
 
 using Ragnarok.Shogi;
+using Ragnarok.Extra.Effect;
 
 namespace Ragnarok.Forms.Shogi
 {
@@ -42,10 +43,7 @@ namespace Ragnarok.Forms.Shogi
         /// <summary>
         /// 指し手のデフォルトの再生間隔です。
         /// </summary>
-        public static readonly TimeSpan DefaultInterval =
-            TimeSpan.FromSeconds(1);
-        public static readonly TimeSpan DefaultBackgroundFadeInterval =
-            TimeSpan.FromSeconds(0.5);
+        public static readonly TimeSpan DefaultInterval = TimeSpan.FromSeconds(1);
 
         private readonly List<BoardMove> moveList;
         private int moveIndex;
@@ -64,15 +62,6 @@ namespace Ragnarok.Forms.Shogi
             get;
             set;
         }
-
-        /*/// <summary>
-        /// 背景を取得します。
-        /// </summary>
-        public Brush Background
-        {
-            get;
-            set;
-        }*/
 
         /// <summary>
         /// 開始局面を取得または設定します。
@@ -123,15 +112,6 @@ namespace Ragnarok.Forms.Shogi
         /// 背景を変化させるかどうかを取得または設定します。
         /// </summary>
         public bool IsChangeBackground
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// 背景がフェードイン／アウトする時間を取得または設定します。
-        /// </summary>
-        public TimeSpan BackgroundFadeInterval
         {
             get;
             set;
@@ -220,78 +200,6 @@ namespace Ragnarok.Forms.Shogi
         }
 
         /// <summary>
-        /// 背景色変更中の情報を取得します。
-        /// </summary>
-        private double GetBackgroundOpacity(TimeSpan progress, bool isReverse)
-        {
-            if (progress >= BackgroundFadeInterval)
-            {
-                return (isReverse ? 0.0 : 1.0);
-            }
-
-            // 背景の不透明度を更新します。
-            var progressSeconds = progress.TotalSeconds;
-            var totalSeconds = BackgroundFadeInterval.TotalSeconds;
-            var rate = (progressSeconds / totalSeconds);
-
-            return MathEx.Between(0.0, 1.0, isReverse ? 1.0 - rate : rate);
-        }
-
-        /// <summary>
-        /// 背景をフェードインします。
-        /// </summary>
-        protected IEnumerable<bool> BackgroundFadeInExecutor()
-        {
-            yield break;
-            /*if (!IsChangeBackground || Background == null)
-            {
-                yield break;
-            }
-
-            while (true)
-            {
-                var opacity = GetBackgroundOpacity(PositionFromBase, false);
-                if (opacity >= 1.0)
-                {
-                    break;
-                }
-
-                Background.Opacity = opacity;
-                yield return true;
-            }
-
-            BasePosition += BackgroundFadeInterval;
-            Background.Opacity = 1.0;*/
-        }
-
-        /// <summary>
-        /// 背景をフェードアウトします。
-        /// </summary>
-        protected IEnumerable<bool> BackgroundFadeOutExecutor()
-        {
-            yield break;
-            /*if (!IsChangeBackground || Background == null)
-            {
-                yield break;
-            }
-
-            while (true)
-            {
-                var opacity = GetBackgroundOpacity(PositionFromBase, true);
-                if (opacity <= 0.0)
-                {
-                    break;
-                }
-
-                Background.Opacity = opacity;
-                yield return true;
-            }
-
-            BasePosition += BackgroundFadeInterval;
-            Background.Opacity = 0.0;*/
-        }
-
-        /// <summary>
         /// 指し手を一手だけ進めます。
         /// </summary>
         private void DoMove()
@@ -348,6 +256,7 @@ namespace Ragnarok.Forms.Shogi
                 {
                     yield return true;
                 }
+
                 BasePosition += Interval;
             }
         }
@@ -357,12 +266,6 @@ namespace Ragnarok.Forms.Shogi
         /// </summary>
         protected IEnumerable<bool> GetUpdateEnumerator()
         {
-            // 最初に背景色のみを更新します。
-            foreach (var result in BackgroundFadeInExecutor())
-            {
-                yield return result;
-            }
-
             foreach (var result in WaitExecutor(BeginningInterval))
             {
                 yield return result;
@@ -375,12 +278,6 @@ namespace Ragnarok.Forms.Shogi
             }
 
             foreach (var result in WaitExecutor(EndingInterval))
-            {
-                yield return result;
-            }
-
-            // 背景色をもとに戻します。
-            foreach (var result in BackgroundFadeOutExecutor())
             {
                 yield return result;
             }
@@ -423,7 +320,7 @@ namespace Ragnarok.Forms.Shogi
                     handler(this, EventArgs.Empty));
             }
 
-            //FormsUtil.InvalidateCommand();
+            FormsUtil.InvalidateCommand();
         }
 
         /// <summary>
@@ -431,11 +328,6 @@ namespace Ragnarok.Forms.Shogi
         /// </summary>
         public void Stop()
         {
-            /*if (Background != null)
-            {
-                Background.Opacity = 0.0;
-            }*/
-
             RaiseStopped();
         }
 
@@ -472,7 +364,6 @@ namespace Ragnarok.Forms.Shogi
             Interval = DefaultInterval;
             BeginningInterval = TimeSpan.Zero;
             EndingInterval = TimeSpan.Zero;
-            BackgroundFadeInterval = DefaultBackgroundFadeInterval;
             Position = TimeSpan.Zero;
             BasePosition = TimeSpan.Zero;
             IsWaitForLastMove = true;

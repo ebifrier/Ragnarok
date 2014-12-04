@@ -20,3 +20,4 @@ Ragnarok.Forms/obj/
 Ragnarok.Forms/bin/
 Ragnarok.Forms.Shogi/bin/
 Ragnarok.Forms.Shogi/obj/
+*.old
