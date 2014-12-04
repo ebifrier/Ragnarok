@@ -37,6 +37,28 @@ namespace Ragnarok.Forms.Shogi.View
         /// <summary>
         /// 描画関係の初期化を行います。
         /// </summary>
+        private void InitializeDraw()
+        {
+            InitializeBounds();
+            InitializePieceMesh();
+
+            // ハンドラの設定を行います。
+            AddPropertyChangedHandler("BoardBitmap", BoardBitmapUpdated);
+            AddPropertyChangedHandler("PieceBitmap", PieceBitmapUpdated);
+            AddPropertyChangedHandler("PieceBoxBitmap", PieceBoxBitmapUpdated);
+
+            // デフォルトのプロパティ値も設定します。
+            LocalTransform.Scale(1.0 / 640.0, 1.0 / 360.0, 1.0);
+            IsTimeVisible = true;
+            TebanPlayerNameBackgroundColor = Color.FromArgb(128, Color.Orange);
+            UnTebanPlayerNameBackgroundColor = Color.FromArgb(128, Color.Black);
+            TimeBackgroundColor = Color.FromArgb(128, Color.Black);
+            BoardOpacity = 1.0;
+        }
+
+        /// <summary>
+        /// OpenGL初期化後の描画関係の初期化を行います。
+        /// </summary>
         public override void OnOpenGLInitialized(EventArgs e)
         {
             base.OnOpenGLInitialized(e);
@@ -48,30 +70,14 @@ namespace Ragnarok.Forms.Shogi.View
                 this.timeTexture[i] = new GL.TextTexture(gl);
             }
 
-            InitializeBounds();
-            InitializePieceMesh();
-
             this.boardTexture = new GL.Texture(gl);
             this.pieceTexture = new GL.Texture(gl);
             this.pieceBoxTexture = new GL.Texture(gl);
-
-            // ハンドラの設定を行います。
-            AddPropertyChangedHandler("BoardBitmap", BoardBitmapUpdated);
-            AddPropertyChangedHandler("PieceBitmap", PieceBitmapUpdated);
-            AddPropertyChangedHandler("PieceBoxBitmap", PieceBoxBitmapUpdated);
 
             // イベントハンドラの設定後にテクスチャの実体化などの、設定を行います。
             BoardBitmap = DefaultBoardBitmap;
             PieceBoxBitmap = DefaultPieceBoxBitmap;
             PieceBitmap = DefaultPieceBitmap;
-
-            // デフォルトのプロパティ値も設定します。
-            LocalTransform.Scale(1.0 / 640.0, 1.0 / 360.0, 1.0);
-            IsTimeVisible = true;
-            TebanPlayerNameBackgroundColor = Color.FromArgb(128, Color.Orange);
-            UnTebanPlayerNameBackgroundColor = Color.FromArgb(128, Color.Black);
-            TimeBackgroundColor = Color.FromArgb(128, Color.Black);
-            BoardOpacity = 1.0;
         }
 
         /// <summary>

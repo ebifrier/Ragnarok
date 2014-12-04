@@ -76,6 +76,8 @@ namespace Ragnarok.Forms.Shogi.View
             BlackTime = TimeSpan.Zero;
             WhiteTime = TimeSpan.Zero;
             InManipulating = false;
+
+            InitializeDraw();
         }
 
         /// <summary>
