@@ -261,6 +261,8 @@
     <Compile Include="Utility\AssemblyUtility\AssemblyAccessor.cs" />
     <Compile Include="Utility\AssemblyUtility\AssemblyNullAccessor.cs" />
     <Compile Include="Utility\CacheManager.cs" />
+    <Compile Include="Utility\Color4b.cs" />
+    <Compile Include="Utility\Color4bs.cs" />
     <Compile Include="Utility\ComObject.cs" />
     <Compile Include="Utility\DataSegment.cs" />
     <Compile Include="Utility\DeviceInventory.cs" />
@@ -283,6 +285,7 @@
     <Compile Include="Utility\MultiMap.cs" />
     <Compile Include="Utility\PassingTmpFile.cs" />
     <Compile Include="Utility\Point3d.cs" />
+    <Compile Include="Utility\Color4bConverter.cs" />
     <Compile Include="Utility\ReentrantLock.cs" />
     <Compile Include="Utility\Scanner.cs" />
     <Compile Include="Utility\AppSettingsBase.cs" />
