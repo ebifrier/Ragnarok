@@ -5,14 +5,23 @@ using System.Text;
 
 namespace Ragnarok.Utility
 {
+    /// <summary>
+    /// 行列用の例外クラスです。
+    /// </summary>
     public class MatrixException : ApplicationException
     {
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
         public MatrixException(string message)
             : base(message)
         {
         }
     }
 
+    /// <summary>
+    /// 4x4のdouble型行列を定義します。
+    /// </summary>
     public class Matrix44d
     {
         /// <summary>

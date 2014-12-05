@@ -1,3 +1,7 @@
+2014-12-05  - Ver 1.8.8.22
+
+	* Ragnarok/Utility/Tests: 行列などのテスト用クラスを追加しました。
+
 2014-12-05  - Ver 1.8.8.21
 
 	* Ragnarok.Forms.Shogi/View/GLShogiElement.cs: EffectManagerの変更時に
