@@ -1,3 +1,8 @@
+2014-12-05  - Ver 1.8.8.25
+
+	* Ragnarok.Forms.Shogi/View/GLEvaluationElement.cs: 評価値画像の表示用
+	エレメントを追加しました。
+
 2014-12-05  - Ver 1.8.8.24
 
 	* Ragnarok.Forms.Shogi/View/GLShogiElement.draw.cs: 文字列用のテクスチ
