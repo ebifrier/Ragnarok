@@ -235,7 +235,9 @@ namespace Ragnarok.Forms.Shogi.GL
                     Text, Font.FontFamily, (int)Font.Style, Font.SizeInPoints,
                     new Point(0, 0),
                     StringFormat.GenericTypographic);
-                var bounds = path.GetBounds(new Matrix(), pen);
+                var bounds = (EdgeLength > 0.0 ?
+                    path.GetBounds(new Matrix(), pen) :
+                    path.GetBounds(new Matrix()));
 
                 return new Rectangle(
                     (int)Math.Floor(bounds.Left),
@@ -277,7 +279,10 @@ namespace Ragnarok.Forms.Shogi.GL
                     StringFormat.GenericTypographic);
                 
                 g.FillPath(brush, path);
-                g.DrawPath(pen, path);
+                if (EdgeLength > 0.0)
+                {
+                    g.DrawPath(pen, path);
+                }
             }
 
             return bitmap;

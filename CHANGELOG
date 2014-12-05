@@ -1,3 +1,8 @@
+2014-12-05  - Ver 1.8.8.20
+
+	* Ragnarok.Forms.Shogi/GL/TextTexture.cs: 縁取り文字の長さが0の場合は
+	縁取りが描画されないようにしました。
+
 2014-12-05  - Ver 1.8.8.19
 
 	* Ragnarok.Forms/Controls/CheckGroupBox.cs: CheckGroupBoxのチェックボッ
