@@ -73,29 +73,32 @@ namespace Ragnarok.Forms.Shogi.View
         /// </summary>
         void glElements_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            if (this.glInitialized)
+            if (!this.glInitialized)
             {
-                if (e.NewItems != null)
+                // 未初期化の時は初期化時に同じ処理が行われます。
+                return;
+            }
+
+            if (e.NewItems != null)
+            {
+                foreach (var item in e.NewItems)
                 {
-                    foreach (var item in e.NewItems)
+                    var glelem = item as GLElement;
+                    if (glelem != null)
                     {
-                        var glelem = item as GLElement;
-                        if (glelem != null)
-                        {
-                            glelem.InitializeOpenGL(this);
-                        }
+                        glelem.InitializeOpenGL(this);
                     }
                 }
+            }
 
-                if (e.OldItems != null)
+            if (e.OldItems != null)
+            {
+                foreach (var item in e.OldItems)
                 {
-                    foreach (var item in e.OldItems)
+                    var glelem = item as GLElement;
+                    if (glelem != null)
                     {
-                        var glelem = item as GLElement;
-                        if (glelem != null)
-                        {
-                            glelem.InitializeOpenGL(null);
-                        }
+                        glelem.InitializeOpenGL(null);
                     }
                 }
             }

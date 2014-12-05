@@ -30,8 +30,30 @@ namespace Ragnarok.Forms.Shogi.View
         private GL.Texture pieceTexture;
         private GL.Texture pieceBoxTexture;
 
-        private readonly GL.TextTexture[] nameTexture = new GL.TextTexture[3];
-        private readonly GL.TextTexture[] timeTexture = new GL.TextTexture[3];
+        private readonly GL.TextTextureFont nameFont = new GL.TextTextureFont
+        {
+            Color = Color.Black,
+            EdgeColor = Color.White,
+            EdgeLength = 0.0,
+        };
+        private readonly GL.TextTextureFont timeFont = new GL.TextTextureFont
+        {
+            Color = Color.White,
+            EdgeColor = Color.White,
+            EdgeLength = 0.0,
+        };
+        private readonly GL.TextTextureFont boardSignFont = new GL.TextTextureFont
+        {
+            Color = Color.Black,
+            EdgeColor = Color.White,
+            EdgeLength = 0.0,
+        };
+        private readonly GL.TextTextureFont pieceCountFont = new GL.TextTextureFont
+        {
+            Color = Color.Black,
+            EdgeColor = Color.White,
+            EdgeLength = 1.5,
+        };
 
         #region 初期化
         /// <summary>
@@ -63,12 +85,6 @@ namespace Ragnarok.Forms.Shogi.View
         {
             base.OnOpenGLInitialized(e);
             var gl = OpenGL;
-            
-            for (var i = 0; i < 3; ++i)
-            {
-                this.nameTexture[i] = new GL.TextTexture(gl);
-                this.timeTexture[i] = new GL.TextTexture(gl);
-            }
 
             this.boardTexture = new GL.Texture(gl);
             this.pieceTexture = new GL.Texture(gl);
@@ -379,10 +395,7 @@ namespace Ragnarok.Forms.Shogi.View
             }
 
             // 盤
-            renderBuffer.AddRender(
-                this.boardTexture, BlendType.Diffuse,
-                BoardBounds, Transform,
-                ShogiZOrder.BoardZ, BoardOpacity);
+            AddRenderBoard(renderBuffer);
 
             // 先手と後手の駒台と駒箱
             for (var index = 0; index < 3; ++index)
@@ -392,6 +405,41 @@ namespace Ragnarok.Forms.Shogi.View
 
             // 盤上の駒をすべて描画登録します。
             AddRenderPieceAll(renderBuffer);
+        }
+
+        /// <summary>
+        /// 盤の描画を行います。
+        /// </summary>
+        private void AddRenderBoard(GL.RenderBuffer renderBuffer)
+        {
+            // 盤
+            renderBuffer.AddRender(
+                this.boardTexture, BlendType.Diffuse,
+                BoardBounds, Transform,
+                ShogiZOrder.BoardZ, BoardOpacity);
+
+            // 上部に描画する盤の符号の領域
+            var bounds = RectangleF.FromLTRB(
+                BoardSquareBounds.Left,
+                BoardBounds.Top,
+                BoardSquareBounds.Right,
+                BoardSquareBounds.Top);
+            var w = bounds.Width / Board.BoardSize;
+            for (int n = 1; n <= Board.BoardSize; ++n)
+            {
+                // 符号を描画する領域
+                var b = new RectangleF(
+                    bounds.Left + w * (n - 1),
+                    bounds.Top,
+                    w,
+                    bounds.Height);
+                b.Inflate(0, -2);
+                var str = Ragnarok.Utility.StringConverter.ConvertInt(
+                    NumberType.Big, n);
+                AddRenderText(
+                    renderBuffer, str, this.boardSignFont,
+                    b, ShogiZOrder.BoardZ);
+            }
         }
 
         /// <summary>
@@ -448,18 +496,9 @@ namespace Ragnarok.Forms.Shogi.View
                     index == 1 ? BlackPlayerName :
                     index == 2 ? WhitePlayerName :
                     "駒箱");
-                var texture = this.nameTexture[index];
-                texture.Text = name;
-                texture.Color = Color.Black;
-                if (!texture.Font.Bold)
-                {
-                    //texture.Font = new Font(texture.Font, FontStyle.Bold);
-                }
-                texture.EdgeColor = Color.White;
-                texture.EdgeLength = 0.0;
                 bounds.Inflate(-4, 0);
-                DrawString(
-                    renderBuffer, texture.Texture,
+                AddRenderText(
+                    renderBuffer, name, this.nameFont,
                     bounds, ShogiZOrder.PostBoardZ);
             }
 
@@ -485,13 +524,9 @@ namespace Ragnarok.Forms.Shogi.View
                     "{0:000}:{1:00} / 000:00",
                     (int)time.TotalMinutes, time.Seconds,
                     (int)totalTime.TotalMinutes, totalTime.Seconds);
-
-                var texture = this.timeTexture[index];
-                texture.Text = str;
-                texture.Color = Color.White;
                 bounds.Inflate(-4, 0);
-                DrawString(
-                    renderBuffer, texture.Texture,
+                AddRenderText(
+                    renderBuffer, str, this.timeFont,
                     bounds, ShogiZOrder.PostBoardZ);
             }
         }
@@ -600,24 +635,47 @@ namespace Ragnarok.Forms.Shogi.View
             return mesh;
         }
 
+        /// <summary>
+        /// 文字列の描画を行います。
+        /// </summary>
+        private void AddRenderText(GL.RenderBuffer renderBuffer, string text,
+                                   GL.TextTextureFont font, RectangleF bounds,
+                                   double zorder, double opacity = 1.0)
+        {
+            if (string.IsNullOrEmpty(text))
+            {
+                return;
+            }
+
+            var textTexture = GL.TextureCache.GetTextTexture(
+                OpenGL, text, font);
+            if (textTexture == null || textTexture.Texture == null)
+            {
+                // エラーだけどどうしようか。
+                return;
+            }
+
+            var texture = textTexture.Texture;
+            var r = (float)texture.OriginalWidth / texture.OriginalHeight;
+            var br = (float)bounds.Width / bounds.Height;
+            var w = (r >= br ? bounds.Width : bounds.Height * r);
+            var h = (r >= br ? bounds.Width / r : bounds.Height);
+
+            var result = new RectangleF(
+                (bounds.Left + bounds.Right) / 2 - w / 2,
+                (bounds.Top + bounds.Bottom) / 2 - h / 2,
+                w, h);
+            renderBuffer.AddRender(
+                texture, BlendType.Diffuse,
+                result, Transform, zorder, 1.0);
+        }
+
         private void DrawString(GL.RenderBuffer renderBuffer, GL.Texture texture,
                                 RectangleF bounds, double zorder)
         {
             if (texture.TextureName != 0)
             {
-                var r = (float)texture.OriginalWidth / texture.OriginalHeight;
-                var br = (float)bounds.Width / bounds.Height;
-                var w = (r >= br ? bounds.Width : bounds.Height * r);
-                var h = (r >= br ? bounds.Width / r : bounds.Height);
-
-                var result = new RectangleF(
-                    (bounds.Left + bounds.Right) / 2 - w / 2,
-                    (bounds.Top + bounds.Bottom) / 2 - h / 2,
-                    w, h);
-                renderBuffer.AddRender(
-                    texture, BlendType.Diffuse,
-                    result, Transform, zorder, 1.0);
-            }
+                }
         }
     }
 }

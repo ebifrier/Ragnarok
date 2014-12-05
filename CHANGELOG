@@ -1,3 +1,9 @@
+2014-12-05  - Ver 1.8.8.24
+
+	* Ragnarok.Forms.Shogi/View/GLShogiElement.draw.cs: 文字列用のテクスチ
+	ャをキャッシュするようにしました。また、盤上の符号を描画するようにしま
+	した（開発中）
+
 2014-12-05  - Ver 1.8.8.23
 
 	* Ragnarok.Forms/Utility/FrameTimer.cs: FPS固定用のタイマークラスを追加

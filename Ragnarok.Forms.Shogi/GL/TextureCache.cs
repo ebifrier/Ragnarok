@@ -21,28 +21,53 @@ namespace Ragnarok.Forms.Shogi.GL
     [CLSCompliant(false)]
     public class TextureCache
     {
-        public readonly static long AnimationCacheCapacity = 20L * 1024 * 1024; // 20MB
-        public readonly static long TextCacheCapacity = 20L * 1024 * 1024; // 20MB
+        public readonly static long AnimationTextureCacheCapacity = 20L * 1024 * 1024; // 20MB
+        public readonly static long TextTextureCacheCapacity = 20L * 1024 * 1024; // 20MB
 
-        private readonly static object SyncRoot = new object();
-        private readonly static Dictionary<OpenGL, AnimationTextureCache> CacheDic =
+        private readonly static object AnimationTextureSyncRoot = new object();
+        private readonly static Dictionary<OpenGL, AnimationTextureCache>
+            AnimationTextureCacheDic =
             new Dictionary<OpenGL, AnimationTextureCache>();
 
+        private readonly static object TextTextureSyncRoot = new object();
+        private readonly static Dictionary<OpenGL, TextTextureCache>
+            TextTextureCacheDic =
+            new Dictionary<OpenGL, TextTextureCache>();
+
         /// <summary>
-        /// OpenGLオブジェクトに対応するキャッシュを取得します。
+        /// OpenGLオブジェクトに対応するテクスチャのキャッシュを取得します。
         /// </summary>
-        private static AnimationTextureCache GetAnimationCache(OpenGL gl)
+        private static AnimationTextureCache GetAnimationTextureCache(OpenGL gl)
         {
-            lock (SyncRoot)
+            lock (AnimationTextureSyncRoot)
             {
                 AnimationTextureCache cache;
-                if (CacheDic.TryGetValue(gl, out cache))
+                if (AnimationTextureCacheDic.TryGetValue(gl, out cache))
                 {
                     return cache;
                 }
 
-                cache = new AnimationTextureCache(gl, AnimationCacheCapacity);
-                CacheDic.Add(gl, cache);
+                cache = new AnimationTextureCache(gl, AnimationTextureCacheCapacity);
+                AnimationTextureCacheDic.Add(gl, cache);
+                return cache;
+            }
+        }
+
+        /// <summary>
+        /// OpenGLオブジェクトに対応する文字列テクスチャのキャッシュを取得します。
+        /// </summary>
+        private static TextTextureCache GetTextTextureCache(OpenGL gl)
+        {
+            lock(TextTextureSyncRoot)
+            {
+                TextTextureCache cache;
+                if (TextTextureCacheDic.TryGetValue(gl, out cache))
+                {
+                    return cache;
+                }
+
+                cache = new TextTextureCache(gl, TextTextureCacheCapacity);
+                TextTextureCacheDic.Add(gl, cache);
                 return cache;
             }
         }
@@ -82,8 +107,33 @@ namespace Ragnarok.Forms.Shogi.GL
                 throw new ArgumentException("count");
             }
 
-            var cache = GetAnimationCache(gl);
+            var cache = GetAnimationTextureCache(gl);
             return cache.GetAnimationTexture(imageUri, count);
+        }
+
+        /// <summary>
+        /// 指定のフォントで指定の文字列を描画するためのテクスチャを取得します。
+        /// </summary>
+        public static TextTexture GetTextTexture(OpenGL gl, string text,
+                                                 TextTextureFont font)
+        {
+            if (gl == null)
+            {
+                throw new ArgumentNullException("gl");
+            }
+
+            if (text == null)
+            {
+                throw new ArgumentNullException("text");
+            }
+
+            if (font == null)
+            {
+                throw new ArgumentNullException("font");
+            }
+
+            var cache = GetTextTextureCache(gl);
+            return cache.GetTextTexture(text, font);
         }
     }
 }
