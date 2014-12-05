@@ -37,8 +37,8 @@ namespace Ragnarok.Forms.Controls
 	public partial class CheckGroupBox : GroupBox
 	{
 		// Constants
-		private const int CHECKBOX_X_OFFSET = 10;
-		private const int CHECKBOX_Y_OFFSET = -3;
+		private const int CHECKBOX_X_OFFSET = 7;
+		private const int CHECKBOX_Y_OFFSET = 0;
 
 		// Members
 		private bool m_bDisableChildrenIfUnchecked;
