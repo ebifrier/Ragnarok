@@ -1,3 +1,7 @@
+2014-12-06  - Ver 1.8.8.26
+
+	* Ragnarok/Utility: テストによって発見された不具合などを修正しました。
+
 2014-12-05  - Ver 1.8.8.25
 
 	* Ragnarok.Forms.Shogi/View/GLEvaluationElement.cs: 評価値画像の表示用

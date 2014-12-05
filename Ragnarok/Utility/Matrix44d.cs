@@ -90,7 +90,7 @@ namespace Ragnarok.Utility
         /// </summary>
         public bool HasInverse
         {
-            get { return (Math.Abs(Determinant()) < 0.0001); }
+            get { return (Math.Abs(Determinant()) > 0.0001); }
         }
 
         /// <summary>
@@ -176,12 +176,11 @@ namespace Ragnarok.Utility
                 return false;
             }
 
-            var eps = 1E-2; // E - 14;
             for (int i = 0; i < Rows; i++)
             {
                 for (int j = 0; j < Columns; j++)
                 {
-                    if (Math.Abs(this[i, j] - other[i, j]) > eps)
+                    if (MathEx.Compare(this[i, j], other[i, j]) != 0)
                     {
                         return false;
                     }
@@ -295,9 +294,9 @@ namespace Ragnarok.Utility
         /// </summary>
         public void Add(Matrix44d mat)
         {
-            for (var i = 0; i <= Rows; i++)
+            for (var i = 0; i < Rows; i++)
             {
-                for (var j = 0; j <= Columns; j++)
+                for (var j = 0; j < Columns; j++)
                 {
                     this[i, j] += mat[i, j];
                 }
@@ -319,9 +318,9 @@ namespace Ragnarok.Utility
         /// </summary>
         public void Subtract(Matrix44d mat)
         {
-            for (var i = 0; i <= Rows; i++)
+            for (var i = 0; i < Rows; i++)
             {
-                for (var j = 0; j <= Columns; j++)
+                for (var j = 0; j < Columns; j++)
                 {
                     this[i, j] -= mat[i, j];
                 }
@@ -495,6 +494,12 @@ namespace Ragnarok.Utility
         /// </remarks>
         public Matrix44d Invert()
         {
+            if (!HasInverse)
+            {
+                throw new MatrixException(
+                    "逆行列の計算ができません。");
+            }
+
             var inv = new Matrix44d();
             var clone = Clone();
 
@@ -511,7 +516,7 @@ namespace Ragnarok.Utility
                 {
                     if (i != j)
                     {
-                        var tmp2 = clone[i, j];
+                        var tmp2 = clone[j, i];
                         for (var k = 0; k < Columns; ++k)
                         {
                             clone[j, k] -= clone[i, k] * tmp2;

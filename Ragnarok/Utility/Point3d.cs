@@ -127,7 +127,10 @@ namespace Ragnarok.Utility
                 return false;
             }
 
-            return (X == other.X && Y == other.Y && Z == other.Z);
+            return (
+                MathEx.Compare(X, other.X) == 0 &&
+                MathEx.Compare(Y, other.Y) == 0 &&
+                MathEx.Compare(Z, other.Z) == 0);
         }
 
         public static bool operator ==(Point3d lhs, Point3d rhs)

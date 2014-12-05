@@ -115,7 +115,9 @@ namespace Ragnarok.Utility
                 return false;
             }
 
-            return (X == other.X && Y == other.Y);
+            return (
+                MathEx.Compare(X, other.X) == 0 &&
+                MathEx.Compare(Y, other.Y) == 0);
         }
 
         public static bool operator ==(Pointd lhs, Pointd rhs)

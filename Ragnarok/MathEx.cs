@@ -11,6 +11,10 @@ namespace Ragnarok
     public static class MathEx
     {
         /// <summary>
+        /// 小数点比較時の許容誤差
+        /// </summary>
+        public const double Tolerance = 1E-8;
+        /// <summary>
         /// 乱数用オブジェクトを取得または設定します。
         /// </summary>
         private static readonly Random Rand = new Random();
@@ -98,6 +102,34 @@ namespace Ragnarok
         public static double ToDeg(double rad)
         {
             return (rad / Math.PI * 180);
+        }
+
+        /// <summary>
+        /// 許容誤差を指定して、２つの浮動小数点数を比較します。
+        /// </summary>
+        public static int Compare(double x, double y,
+                                  double tolerance = Tolerance)
+        {
+            if (Math.Abs(x - y) <= tolerance)
+            {
+                return 0;
+            }
+
+            return (x < y ? -1 : +1);
+        }
+
+        /// <summary>
+        /// 許容誤差を指定して、２つの浮動小数点数を比較します。
+        /// </summary>
+        public static int Compare(float x, float y,
+                                  float tolerance = (float)Tolerance)
+        {
+            if (Math.Abs(x - y) <= tolerance)
+            {
+                return 0;
+            }
+
+            return (x < y ? -1 : +1);
         }
 
         /// <summary>

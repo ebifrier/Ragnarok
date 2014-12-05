@@ -28,8 +28,8 @@ namespace Ragnarok.Utility.Tests
         {
             var p1 = new Point3d(3, 4, 19);
             var p2 = new Point3d(-1999, 34344, 9119);
-            var p3 = new Point3d(2002, -32340, -9100);
-            var p4 = new Point3d(-2002, 32340, 9100);
+            var p3 = new Point3d(2002, -34340, -9100);
+            var p4 = new Point3d(-2002, 34340, 9100);
 
             Assert.AreEqual(p3, Point3d.Subtract(p1, p2));
             Assert.AreNotEqual(Point3d.Subtract(p1, p2), Point3d.Subtract(p2, p1));
@@ -42,7 +42,7 @@ namespace Ragnarok.Utility.Tests
         {
             Assert.AreEqual(new Point3d(0, 0, 0), Point3d.Parse("0,0,0"));
             Assert.AreEqual(new Point3d(0, 0, 0), Point3d.Parse(" 0 , 0 , 0 "));
-            Assert.AreEqual(new Point3d(-93.9, 590, 90.888), Point3d.Parse("-93.9,590,30.888"));
+            Assert.AreEqual(new Point3d(-93.9, 590, 90.888), Point3d.Parse("-93.9,590,90.888"));
             Assert.AreEqual(new Point3d(-1E-5, 555.87, 30.5), Point3d.Parse("-1E-5,+555.87,30.5"));
 
             Assert.Catch<ArgumentNullException>(() => Point3d.Parse(null));

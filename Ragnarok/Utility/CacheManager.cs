@@ -32,13 +32,15 @@ namespace Ragnarok.Utility
         /// </summary>
         private sealed class CacheData
         {
-            public CacheData(TKey key, TValue value)
+            public CacheData(TKey key, TValue value, long size)
             {
                 Key = key;
                 Value = value;
+                ObjectSize = size;
             }
             public TKey Key;
             public TValue Value;
+            public long ObjectSize;
         }
 
         /// <summary>
@@ -211,19 +213,26 @@ namespace Ragnarok.Utility
                 throw new ArgumentNullException("value");
             }
 
+            var size = value.ObjectSize;
+            if (size < 0)
+            {
+                throw new ArgumentException(
+                    "オブジェクトサイズが負数です。");
+            }
+
             lock(this.syncRoot)
             {
                 LinkedListNode<CacheData> node;
                 if (this.dic.TryGetValue(key, out node))
                 {
-                    this.cacheSize -= node.Value.Value.ObjectSize;
+                    this.cacheSize -= node.Value.ObjectSize;
                     this.usageList.Remove(node);
                 }
 
                 // 新しいオブジェクトの追加
-                var data = new CacheData(key, value);
+                var data = new CacheData(key, value, size);
                 this.dic[key] = this.usageList.AddFirst(data);
-                this.cacheSize += value.ObjectSize;
+                this.cacheSize += size;
 
                 // 先に古いオブジェクトの削除など
                 ControlCache();
@@ -240,7 +249,7 @@ namespace Ragnarok.Utility
                 LinkedListNode<CacheData> node;
                 if (this.dic.TryGetValue(key, out node))
                 {
-                    this.cacheSize -= node.Value.Value.ObjectSize;
+                    this.cacheSize -= node.Value.ObjectSize;
 
                     // オブジェクト要素を削除します。
                     this.usageList.Remove(node);

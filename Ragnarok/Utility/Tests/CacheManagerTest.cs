@@ -109,9 +109,7 @@ namespace Ragnarok.Utility.Tests
             var manager = new CacheManager<int, CacheObject>(CreateObject, 100);
 
             // ObjectSizeが負数になるようなオブジェクトを作成した場合
-            var obj = manager.GetOrCreate(-100);
-            Assert.AreEqual(1, manager.Count);
-            //Assert.AreEqual();
+            Assert.Catch(() => manager.GetOrCreate(-100));
         }
     }
 }

@@ -54,14 +54,14 @@ namespace Ragnarok.Utility.Tests
                 2, 0, 6, 0,
                 0, 12, 0, 16,
                 0, 20, 0, 24,
-                0, 24, 0, 32,
+                0, 28, 0, 32,
             });
             var result2 = Matrix44d.FromRowMajorArray(new double[]
             {
                 -2, 0, -6, 0,
                 0, -12, 0, -16,
                 0, -20, 0, -24,
-                0, -24, 0, -32,
+                0, -28, 0, -32,
             });
 
             var m = m1.Clone(); m.Subtract(m2);
@@ -70,8 +70,8 @@ namespace Ragnarok.Utility.Tests
             m = m2.Clone(); m.Subtract(m1);
             Assert.AreEqual(result2, m);
 
-            Assert.AreEqual(result1, m1 + m2);
-            Assert.AreEqual(result2, m2 + m1);
+            Assert.AreEqual(result1, m1 - m2);
+            Assert.AreEqual(result2, m2 - m1);
         }
 
         [Test()]
@@ -84,10 +84,10 @@ namespace Ragnarok.Utility.Tests
             m1.Translate(40, -50, 30);
 
             var m2 = new Matrix44d();
-            m2.Translate(40, -50, 30);
-            m2.Rotate(30, 0.0, 0.0, 1.0);
-            m2.Scale(20, 0.5, 0.5);
-            m2.Translate(100, 20, -899);
+            m2.Translate(-40, 50, -30);
+            m2.Rotate(-30, 0.0, 0.0, 1.0);
+            m2.Scale(1.0 / 20, 1.0 / 0.5, 1.0 / 0.5);
+            m2.Translate(-100, -20, 899);
 
             Assert.True(m1.HasInverse);
             Assert.True(m2.HasInverse);
