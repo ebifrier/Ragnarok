@@ -1,3 +1,12 @@
+2014-12-06  - Ver 1.8.8.27
+
+	* Ragnarok.Forms.Shogi/GL/TextTextureFont.cs: ファイル名を
+	TextTextureData.csから変更しました。
+	* Ragnarok.Forms.Shogi/View/GLShogiElement.draw.cs: 盤の符号や持ち駒の
+	数などを表示するようにしました。
+	* Ragnarok.Forms.Shogi/GL/TextTexture.cs: 文字が切れていたため、文字列
+	を描画するビットマップを少し大きくとるようにしました。
+
 2014-12-06  - Ver 1.8.8.26
 
 	* Ragnarok/Utility: テストによって発見された不具合などを修正しました。

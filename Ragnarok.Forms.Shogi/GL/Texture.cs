@@ -40,6 +40,14 @@ namespace Ragnarok.Forms.Shogi.GL
         }
 
         /// <summary>
+        /// テクスチャが使用可能か調べます。
+        /// </summary>
+        public bool IsAvailable
+        {
+            get { return (TextureName != 0); }
+        }
+
+        /// <summary>
         /// テクスチャ画像の幅をPixel数で取得します。
         /// </summary>
         /// <remarks>

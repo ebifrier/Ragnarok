@@ -70,7 +70,7 @@
     <Compile Include="GL\RenderData.cs" />
     <Compile Include="GL\TextTexture.cs" />
     <Compile Include="GL\AnimationTextureCache.cs" />
-    <Compile Include="GL\TextTextureData.cs" />
+    <Compile Include="GL\TextTextureFont.cs" />
     <Compile Include="GL\TextureCache.cs" />
     <Compile Include="Effect\ShogiObject.cs" />
     <Compile Include="FlintSharpEx\GLRenderer.cs" />

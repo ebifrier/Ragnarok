@@ -50,9 +50,10 @@ namespace Ragnarok.Forms.Shogi.View
         };
         private readonly GL.TextTextureFont pieceCountFont = new GL.TextTextureFont
         {
+            Font = new Font(GL.TextTextureFont.DefaultFont, FontStyle.Bold),
             Color = Color.Black,
             EdgeColor = Color.White,
-            EdgeLength = 1.5,
+            EdgeLength = 0.5,
         };
 
         #region 初期化
@@ -419,26 +420,51 @@ namespace Ragnarok.Forms.Shogi.View
                 ShogiZOrder.BoardZ, BoardOpacity);
 
             // 上部に描画する盤の符号の領域
-            var bounds = RectangleF.FromLTRB(
+            var totalBounds = RectangleF.FromLTRB(
                 BoardSquareBounds.Left,
                 BoardBounds.Top,
                 BoardSquareBounds.Right,
-                BoardSquareBounds.Top);
-            var w = bounds.Width / Board.BoardSize;
+                BoardSquareBounds.Top); // Topはミスではありません。
+            var w = totalBounds.Width / Board.BoardSize;
             for (int n = 1; n <= Board.BoardSize; ++n)
             {
                 // 符号を描画する領域
-                var b = new RectangleF(
-                    bounds.Left + w * (n - 1),
-                    bounds.Top,
+                var bounds = new RectangleF(
+                    totalBounds.Left + w * (n - 1),
+                    totalBounds.Top,
                     w,
-                    bounds.Height);
-                b.Inflate(0, -2);
+                    totalBounds.Height);
+                bounds.Inflate(0, -2);
                 var str = Ragnarok.Utility.StringConverter.ConvertInt(
-                    NumberType.Big, n);
+                    NumberType.Big,
+                    ViewSide == BWType.Black ? 10 - n : n);
                 AddRenderText(
                     renderBuffer, str, this.boardSignFont,
-                    b, ShogiZOrder.BoardZ);
+                    bounds, ShogiZOrder.BoardZ);
+            }
+
+            // 右側に描画する盤の符号の領域
+            totalBounds = RectangleF.FromLTRB(
+                BoardSquareBounds.Right, // Rightはミスではありません。
+                BoardSquareBounds.Top,
+                BoardBounds.Right,
+                BoardSquareBounds.Bottom);
+            var h = totalBounds.Height / Board.BoardSize;
+            for (int n = 1; n <= Board.BoardSize; ++n)
+            {
+                // 符号を描画する領域
+                var bounds = new RectangleF(
+                    totalBounds.Left,
+                    totalBounds.Top + h * (n - 1),
+                    totalBounds.Width,
+                    w);
+                bounds.Inflate(-1, 0);
+                var str = Ragnarok.Utility.StringConverter.ConvertInt(
+                    NumberType.Kanji,
+                    ViewSide == BWType.Black ? n : 10 - n);
+                AddRenderText(
+                    renderBuffer, str, this.boardSignFont,
+                    bounds, ShogiZOrder.BoardZ);
             }
         }
 
@@ -496,7 +522,11 @@ namespace Ragnarok.Forms.Shogi.View
                     index == 1 ? BlackPlayerName :
                     index == 2 ? WhitePlayerName :
                     "駒箱");
-                bounds.Inflate(-4, 0);
+                if (name.HankakuLength() > 17)
+                {
+                    name = name.HankakuSubstring(14) + "...";
+                }
+                bounds.Inflate(-1, -1);
                 AddRenderText(
                     renderBuffer, name, this.nameFont,
                     bounds, ShogiZOrder.PostBoardZ);
@@ -524,7 +554,7 @@ namespace Ragnarok.Forms.Shogi.View
                     "{0:000}:{1:00} / 000:00",
                     (int)time.TotalMinutes, time.Seconds,
                     (int)totalTime.TotalMinutes, totalTime.Seconds);
-                bounds.Inflate(-4, 0);
+                bounds.Inflate(-4, -1);
                 AddRenderText(
                     renderBuffer, str, this.timeFont,
                     bounds, ShogiZOrder.PostBoardZ);
@@ -536,7 +566,7 @@ namespace Ragnarok.Forms.Shogi.View
         /// </summary>
         private void AddRenderPieceAll(GL.RenderBuffer renderBuffer)
         {
-            if (this.pieceTexture == null || this.pieceTexture.TextureName == 0)
+            if (this.pieceTexture == null || !this.pieceTexture.IsAvailable)
             {
                 return;
             }
@@ -553,7 +583,8 @@ namespace Ragnarok.Forms.Shogi.View
                 {
                     var cpos = SquareToPoint(sq);
                     AddRenderPiece(
-                        renderBuffer, piece, cpos, ShogiZOrder.PieceZ);
+                        renderBuffer, piece, 1, cpos,
+                        ShogiZOrder.PieceZ);
                 }
             }
 
@@ -566,7 +597,7 @@ namespace Ragnarok.Forms.Shogi.View
                 let piece = new BoardPiece(pc, bw)
                 let count = GetHandCount(pc, bw)
                 let subCount = (mpSquare == null && mpPiece == piece ? 1 : 0)
-                //where count - subCount > 0
+                where count - subCount > 0
                 select new
                 {
                     Piece = piece,
@@ -576,14 +607,15 @@ namespace Ragnarok.Forms.Shogi.View
             {
                 var cpos = HandPieceToPoint(hand.Piece);
                 AddRenderPiece(
-                    renderBuffer, hand.Piece, cpos, ShogiZOrder.PieceZ);
+                    renderBuffer, hand.Piece, hand.Count, cpos,
+                    ShogiZOrder.PieceZ);
             }
 
             // 移動中の駒を描画します。
             if (mp != null)
             {
                 AddRenderPiece(
-                    renderBuffer, mp.BoardPiece, mp.Center,
+                    renderBuffer, mp.BoardPiece, 1, mp.Center,
                     ShogiZOrder.MovingPieceZ);
             }
         }
@@ -592,9 +624,14 @@ namespace Ragnarok.Forms.Shogi.View
         /// 駒の描画を行います。
         /// </summary>
         private void AddRenderPiece(GL.RenderBuffer renderBuffer, BoardPiece piece,
-                                    PointF cpos, double zorder)
+                                    int count, PointF cpos, double zorder)
         {
-            if (this.pieceTexture == null || this.pieceTexture.TextureName == 0)
+            if (this.pieceTexture == null || !this.pieceTexture.IsAvailable)
+            {
+                return;
+            }
+
+            if (count <= 0)
             {
                 return;
             }
@@ -603,11 +640,27 @@ namespace Ragnarok.Forms.Shogi.View
             var bounds = new RectangleF(
                 cpos.X - s.Width / 2, cpos.Y - s.Height / 2,
                 s.Width, s.Height);
-            var mesh = GetPieceMesh(piece);
 
+            // 駒自体の描画を行います。
             renderBuffer.AddRender(
                 this.pieceTexture, BlendType.Diffuse,
-                bounds, Transform, mesh, zorder);
+                bounds, Transform, GetPieceMesh(piece), zorder);
+
+            // 必要なら持ち駒の数も描画します。
+            if (count >= 2)
+            {
+                var text = string.Format(
+                    "×{0}",
+                    Ragnarok.Utility.StringConverter.ConvertInt(
+                        NumberType.Big, count));
+                bounds = new RectangleF(
+                    cpos.X,
+                    cpos.Y - s.Width * 0.6f,
+                    s.Width * 0.7f, s.Height * 0.7f);
+                AddRenderText(
+                    renderBuffer, text, this.pieceCountFont,
+                    bounds, zorder);
+            }
         }
 
         /// <summary>

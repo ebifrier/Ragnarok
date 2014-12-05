@@ -11,7 +11,8 @@ namespace Ragnarok.Forms.Shogi.GL
 {
     public sealed class TextTextureFont : IEquatable<TextTextureFont>
     {
-        private Font font = new Font(FontFamily.GenericSansSerif, 40);
+        public static Font DefaultFont = new Font(FontFamily.GenericSansSerif, 40);
+        private Font font = (Font)DefaultFont.Clone();
         private Color color = Color.White;
         private Color edgeColor = Color.Black;
         private double edgeLength = 1.0;
