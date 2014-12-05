@@ -50,8 +50,8 @@ namespace Ragnarok.Forms.Shogi.View
             // デフォルトのプロパティ値も設定します。
             LocalTransform.Scale(1.0 / 640.0, 1.0 / 360.0, 1.0);
             IsTimeVisible = true;
-            TebanPlayerNameBackgroundColor = Color.FromArgb(128, Color.Orange);
-            UnTebanPlayerNameBackgroundColor = Color.FromArgb(128, Color.Black);
+            TebanPlayerNameBackgroundColor = Color.FromArgb(128, Color.White);
+            UnTebanPlayerNameBackgroundColor = Color.FromArgb(32, Color.White);
             TimeBackgroundColor = Color.FromArgb(128, Color.Black);
             BoardOpacity = 1.0;
         }
@@ -169,27 +169,14 @@ namespace Ragnarok.Forms.Shogi.View
         /// </summary>
         private RectangleF GetPieceTextureUV(BoardPiece piece)
         {
-            var tyi = ImageIndexY(piece) + (!piece.IsPromoted ? 0 : 1);
+            // 先手番の駒か駒箱の駒なら、Yインデックスは0となります。
+            var yIndex = (
+                piece.BWType == BWType.None || piece.BWType == BWType.Black ?
+                0 : 2);
+            var tyi = yIndex + (!piece.IsPromoted ? 0 : 1);
             var txi = (int)piece.PieceType - 1;
 
             return new RectangleF(txi / 8.0f, tyi / 4.0f, 1.0f / 8.0f, 1.0f / 4.0f);
-        }
-
-        /// <summary>
-        /// 駒テクスチャのＹ方向インデックスを取得します。
-        /// </summary>
-        private int ImageIndexY(BoardPiece piece)
-        {
-            if (piece.BWType == BWType.None)
-            {
-                // 駒箱の駒は常に０
-                return 0;
-            }
-            else
-            {
-                // 駒台の駒は視点と同じなら０
-                return (piece.BWType == ViewSide ? 0 : 2);
-            }
         }
         #endregion
 
@@ -425,20 +412,27 @@ namespace Ragnarok.Forms.Shogi.View
                 return;
             }
 
+            // 盤面が反転している場合は、見た目の先後を入れ替えます。
+            var viewIndex = (
+                ViewSide != BWType.Black ? 
+                (index == 0 ? 0 : index == 1 ? 2 : 1) :
+                index);
+            var pieceBoxBounds = this.pieceBoxBounds[viewIndex];
+
             // 駒箱テクスチャ
             renderBuffer.AddRender(
                 this.pieceBoxTexture, BlendType.Diffuse,
-                this.pieceBoxBounds[index], Transform,
+                pieceBoxBounds, Transform,
                 ShogiZOrder.BoardZ,  BoardOpacity);
 
             // 駒台の上に対局者名を描画します。
             {
-                var y = (index == 2 ?
-                    this.pieceBoxBounds[index].Bottom - 5 - 15 :
-                    this.pieceBoxBounds[index].Top + 5);
+                var y = (viewIndex == 2 ?
+                    pieceBoxBounds.Bottom - 5 - 15 :
+                    pieceBoxBounds.Top + 5);
                 var bounds = new RectangleF(
-                    this.pieceBoxBounds[index].Left + 5, y,
-                    this.pieceBoxBounds[index].Width - 10, 15);
+                    pieceBoxBounds.Left + 5, y,
+                    pieceBoxBounds.Width - 10, 15);
 
                 // 名前の背景に色をつけます。
                 var color = (
@@ -454,17 +448,18 @@ namespace Ragnarok.Forms.Shogi.View
                     index == 1 ? BlackPlayerName :
                     index == 2 ? WhitePlayerName :
                     "駒箱");
-                this.nameTexture[index].Text = name;
-                this.nameTexture[index].Color = Color.White;
-                if (!this.nameTexture[index].Font.Bold)
+                var texture = this.nameTexture[index];
+                texture.Text = name;
+                texture.Color = Color.Black;
+                if (!texture.Font.Bold)
                 {
-                    this.nameTexture[index].Font = new Font(this.nameTexture[index].Font, FontStyle.Bold);
+                    //texture.Font = new Font(texture.Font, FontStyle.Bold);
                 }
-                this.nameTexture[index].EdgeColor = Color.Black;
-                this.nameTexture[index].EdgeLength = 2.0;
+                texture.EdgeColor = Color.White;
+                texture.EdgeLength = 0.0;
                 bounds.Inflate(-4, 0);
                 DrawString(
-                    renderBuffer, this.nameTexture[index].Texture,
+                    renderBuffer, texture.Texture,
                     bounds, ShogiZOrder.PostBoardZ);
             }
 
@@ -472,12 +467,12 @@ namespace Ragnarok.Forms.Shogi.View
             // 局面編集中など駒箱が表示されているときは残り時間を表示しません。
             if (IsTimeVisible && !IsKomaBoxVisible)
             {
-                var y = (index == 2 ?
-                    this.pieceBoxBounds[index].Bottom :
-                    this.pieceBoxBounds[index].Top - 15);
+                var y = (viewIndex == 2 ?
+                    pieceBoxBounds.Bottom :
+                    pieceBoxBounds.Top - 15);
                 var bounds = new RectangleF(
-                    this.pieceBoxBounds[index].Left, y,
-                    this.pieceBoxBounds[index].Width, 15);
+                    pieceBoxBounds.Left, y,
+                    pieceBoxBounds.Width, 15);
                 renderBuffer.AddRender(
                     BlendType.Diffuse, bounds, Transform,
                     TimeBackgroundColor, ShogiZOrder.PostBoardZ);
@@ -491,11 +486,12 @@ namespace Ragnarok.Forms.Shogi.View
                     (int)time.TotalMinutes, time.Seconds,
                     (int)totalTime.TotalMinutes, totalTime.Seconds);
 
-                this.timeTexture[index].Text = str;
-                this.timeTexture[index].Color = Color.White;
+                var texture = this.timeTexture[index];
+                texture.Text = str;
+                texture.Color = Color.White;
                 bounds.Inflate(-4, 0);
                 DrawString(
-                    renderBuffer, this.timeTexture[index].Texture,
+                    renderBuffer, texture.Texture,
                     bounds, ShogiZOrder.PostBoardZ);
             }
         }
@@ -587,6 +583,12 @@ namespace Ragnarok.Forms.Shogi.View
             if (piece == null || !piece.Validate())
             {
                 throw new ArgumentException("piece");
+            }
+
+            // 見た目が後手番中心の場合は、手番を反転します。
+            if (ViewSide == BWType.White)
+            {
+                piece = new BoardPiece(piece.Piece, piece.BWType.Flip());
             }
 
             Mesh mesh;

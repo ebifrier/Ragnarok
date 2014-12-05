@@ -153,7 +153,8 @@ namespace Ragnarok.Forms.Shogi.View
                         this.board.BoardChanged += OnBoardPieceChanged;
                     }
 
-                    SyncBoard(true);
+                    InitKomaboxPieceCount();
+                    InitEffect();
 
                     this.RaisePropertyChanged("Board");
                 }
@@ -170,11 +171,11 @@ namespace Ragnarok.Forms.Shogi.View
         }
 
         /// <summary>
-        /// ViewSideの更新時に呼ばれ、表示盤の初期化などを行います。
+        /// ViewSideの更新時に呼ばれ、エフェクトの初期化などを行います。
         /// </summary>
         private void ViewSideUpdated(object sender, PropertyChangedEventArgs e)
         {
-            SyncBoard(true);
+            InitEffect();
         }
 
         /// <summary>
@@ -303,6 +304,7 @@ namespace Ragnarok.Forms.Shogi.View
                         this.effectManager.Clear();
                     }
 
+                    InitEffect();
                     this.RaisePropertyChanged("EffectManager");
                 }
             }
@@ -421,19 +423,19 @@ namespace Ragnarok.Forms.Shogi.View
         }
 
         /// <summary>
-        /// 今の局面と画面の表示を合わせます。
+        /// エフェクトを初期化します。
         /// </summary>
-        private void SyncBoard(bool initEffect)
+        private void InitEffect()
         {
-            InitKomaboxPieceCount();
-
-            if (initEffect && EffectManager != null)
+            if (EffectManager == null)
             {
-                var board = Board;
-                var bwType = (board != null ? board.Turn : BWType.Black);
-
-                EffectManager.InitEffect(bwType);
+                return;
             }
+
+            var board = Board;
+            var bwType = (board != null ? board.Turn : BWType.Black);
+
+            EffectManager.InitEffect(bwType);
         }
         #endregion
 

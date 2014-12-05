@@ -1,3 +1,11 @@
+2014-12-05  - Ver 1.8.8.21
+
+	* Ragnarok.Forms.Shogi/View/GLShogiElement.cs: EffectManagerの変更時に
+	エフェクトの初期化をちゃんと行うようにしました。今までは初期化していな
+	かったため、手番などのエフェクトが表示されませんでした。
+	* Ragnarok.Forms.Shogi/View/GLShogiElement.draw.cs: 手番反転状態でも対
+	局者名や残り時間が正しく表示されるようにしました。
+
 2014-12-05  - Ver 1.8.8.20
 
 	* Ragnarok.Forms.Shogi/GL/TextTexture.cs: 縁取り文字の長さが0の場合は
