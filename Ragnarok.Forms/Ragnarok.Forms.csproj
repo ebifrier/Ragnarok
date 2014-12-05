@@ -98,6 +98,8 @@
     <Compile Include="Input\Detail\ToolStripButtonCommandBinding.cs" />
     <Compile Include="Input\RelayCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utility\FrameTimer.cs" />
+    <Compile Include="Utility\FrameTimerEventArgs.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Ragnarok.Forms.snk" />

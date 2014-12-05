@@ -1,3 +1,8 @@
+2014-12-05  - Ver 1.8.8.23
+
+	* Ragnarok.Forms/Utility/FrameTimer.cs: FPS固定用のタイマークラスを追加
+	しました（開発中）
+
 2014-12-05  - Ver 1.8.8.22
 
 	* Ragnarok/Utility/Tests: 行列などのテスト用クラスを追加しました。

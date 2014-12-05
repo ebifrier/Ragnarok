@@ -5,10 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
+using Ragnarok.Utility;
+
 namespace Ragnarok.Forms.Bindings
 {
     using Controls;
-    using Utility;
 
     internal sealed class BindingData
     {
