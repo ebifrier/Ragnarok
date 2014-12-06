@@ -1,3 +1,8 @@
+2014-12-06  - Ver 1.8.8.28
+
+	* Ragnarok.Forms.Shogi/View/GLContainer.cs: OnPaintなどの処理をやめ、高
+	速化しました。
+
 2014-12-06  - Ver 1.8.8.27
 
 	* Ragnarok.Forms.Shogi/GL/TextTextureFont.cs: ファイル名を

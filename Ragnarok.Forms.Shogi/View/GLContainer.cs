@@ -34,6 +34,8 @@ namespace Ragnarok.Forms.Shogi.View
         /// </summary>
         public GLContainer()
         {
+            SetStyle(ControlStyles.UserPaint, true);
+            SetStyle(ControlStyles.AllPaintingInWmPaint, true);
             InitializeComponent();
 
             this.glElements.CollectionChanged += glElements_CollectionChanged;
@@ -223,6 +225,21 @@ namespace Ragnarok.Forms.Shogi.View
             GLElements.Clear();
 
             base.OnHandleDestroyed(e);
+        }
+
+        /// <summary>
+        /// 背景描画は無視します。
+        /// </summary>
+        protected override void OnPaintBackground(PaintEventArgs e)
+        {
+        }
+
+        /// <summary>
+        /// 再描画時はDoRenderを呼びます。
+        /// </summary>
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            DoRender();
         }
 
         /// <summary>
