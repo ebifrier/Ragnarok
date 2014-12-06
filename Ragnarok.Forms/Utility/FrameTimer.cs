@@ -9,31 +9,15 @@ using Ragnarok.Utility;
 
 namespace Ragnarok.Forms.Utility
 {
-    using System.Runtime.InteropServices;
-    static class NativeMethods
-    {
-        /*[StructLayout(LayoutKind.Sequential)]
-        public struct Message
-        {
-            public IntPtr hWnd;
-            public uint Msg;
-            public IntPtr wParam;
-            public IntPtr lParam;
-            public uint Time;
-            public System.Drawing.Point Point;
-        }*/
-
-        [DllImport("User32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool PeekMessage(out Message message, IntPtr hWnd, uint filterMin, uint filterMax, uint flags);
-    }
-
     /// <summary>
     /// Windows.Forms上でフレーム時間を固定するために使います。
     /// </summary>
     public sealed class FrameTimer : NotifyObject, IDisposable
     {
+        private readonly ReentrancyLock locker = new ReentrancyLock();
         private double prevTick;
+        private Thread thread;
+        private volatile bool alive;
         private bool disposed;
         
         /// <summary>
@@ -106,7 +90,20 @@ namespace Ragnarok.Forms.Utility
         /// </summary>
         public void Start()
         {
-            Application.Idle += UpdateFrame;
+            if (this.alive)
+            {
+                throw new InvalidOperationException(
+                    "タイマーは既に起動しています。");
+            }
+            
+            // FPS管理用のスレッドを起動します。
+            this.thread = new Thread(UpdateFrame)
+            {
+                Name = "FrameTimer",
+                Priority = ThreadPriority.BelowNormal,
+                IsBackground = true,
+            };
+            this.thread.Start();
         }
 
         /// <summary>
@@ -114,17 +111,40 @@ namespace Ragnarok.Forms.Utility
         /// </summary>
         public void Stop()
         {
-            Application.Idle -= UpdateFrame;
+            this.alive = false;
+
+            // 手動でイベント処理しないと、
+            // スレッドが終わらないことがあります。
+            Application.DoEvents();
+
+            if (this.thread != null)
+            {
+                this.thread.Join();
+                this.thread = null;
+            }
         }
 
         /// <summary>
-        /// 次のフレームのためのイベント呼び出しを準備します。
+        /// 各フレームの処理を行います。
         /// </summary>
-        private void PrepareToNextRender()
+        private void UpdateFrame(object state)
         {
-            // こうするとWindowsメッセージが発生し
-            // 次のApplication.Idleが呼ばれるようになります。　
-            FormsUtil.Synchronizer.UIProcess(() => { FormsUtil.Synchronizer.Invalidate(); });
+            // フレームタイマーの起動フラグをオンにします。
+            this.alive = true;
+
+            // this.aliveは他の場所で更新されます。
+            while (this.alive)
+            {
+                var diff = WaitNextFrame();
+
+                // 各フレームの処理を行います。
+                // (念のため同期してメソッドを呼び出します)
+                if (this.alive)
+                {
+                    FormsUtil.Synchronizer.Invoke(
+                        new Action(() => DoEnterFrame(diff)));
+                }
+            }
         }
 
         /// <summary>
@@ -146,14 +166,12 @@ namespace Ragnarok.Forms.Utility
             if (sleepTime > 0.0)
             {
                 Thread.Sleep((int)sleepTime);
-                Console.WriteLine("come");
             }
 
             var nextTime = this.prevTick + (FrameTime - 1.0);
             while (Environment.TickCount < nextTime)
             {
                 Thread.Sleep(0);
-                //Console.WriteLine("come2");
             }
 
             // ぴったりに終わったと仮定します。
@@ -162,27 +180,12 @@ namespace Ragnarok.Forms.Utility
             return FrameTime;
         }
 
-        /// <summary>
-        /// 各フレームの処理を行います。
-        /// </summary>
-        private void UpdateFrame(object sender, EventArgs e)
+        private void DoEnterFrame(double diff)
         {
-            /*// アイドル時間を強制的に発生させます。
-            using (new ActionOnDispose(PrepareToNextRender))
+            using (var result = this.locker.Lock())
             {
-                var diff = WaitNextFrame();
+                if (result == null) return;
 
-                // 各フレームの処理を行います。
-                EnterFrame.SafeRaiseEvent(this, new FrameEventArgs(diff));
-            }*/
-
-            Message message;
-
-            while (!NativeMethods.PeekMessage(out message, IntPtr.Zero, 0, 0, 0))
-            {
-                var diff = WaitNextFrame();
-
-                // 各フレームの処理を行います。
                 EnterFrame.SafeRaiseEvent(this, new FrameEventArgs(diff));
             }
         }

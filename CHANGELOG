@@ -1,9 +1,12 @@
+2014-12-06  - Ver 1.8.8.30
+
+	* Ragnarok.Forms/Utility/FrameTimer.cs: FPSを固定させるためのクラスを修
+	正しました。
+
 2014-12-06  - Ver 1.8.8.29
 
 	* Ragnarok.Extra/Effect/EffectObject.cs: 時間をEnvironment.TickCountで
 	管理するようにしました。
-	* Ragnarok.Forms/Utility/FrameTimer.cs: FPSを固定させるためのクラスを修
-	正しました。（開発中）
 
 2014-12-06  - Ver 1.8.8.28
 
