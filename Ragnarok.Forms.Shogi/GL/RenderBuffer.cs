@@ -180,6 +180,20 @@ namespace Ragnarok.Forms.Shogi.GL
         /// <summary>
         /// 描画オブジェクトを追加します。
         /// </summary>
+        public void AddRender(BlendType blend, Color color,
+                              RectangleF bounds, Matrix44d transform,
+                              double zorder, double opacity = 1.0)
+        {
+            var alphaByte = (byte)Math.Min(color.A * opacity, 255);
+            var color2 = Color.FromArgb(alphaByte, color);
+            var transform2 = ToMatrix(bounds, transform);
+
+            AddRender(blend, color2, transform2, zorder);
+        }
+
+        /// <summary>
+        /// 描画オブジェクトを追加します。
+        /// </summary>
         public void AddRender(GL.Texture texture, BlendType blend,
                               RectangleF bounds, Matrix44d transform,
                               double zorder, double opacity = 1.0)

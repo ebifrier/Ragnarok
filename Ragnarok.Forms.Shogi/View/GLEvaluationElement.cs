@@ -34,7 +34,6 @@ namespace Ragnarok.Forms.Shogi.View
     /// <summary>
     /// 評価値表示用のOpenGL用エレメントクラスです。
     /// </summary>
-    [CLSCompliant(false)]
     public class GLEvaluationElement : GLElement
     {
         /// <summary>
@@ -46,6 +45,13 @@ namespace Ragnarok.Forms.Shogi.View
             EvaluationMode = EvaluationMode.Programmable;
             IsEnableUserValue = true;
             IsEnableServerValue = true;
+            IsVisibleValue = true;
+            ValueFont = new GL.TextTextureFont
+            {
+                Color = Color.Black,
+                EdgeColor = Color.Gray,
+                EdgeLength = 0.5,
+            };
 
             this.AddPropertyChangedHandler(
                 "EvaluationMode",
@@ -148,6 +154,15 @@ namespace Ragnarok.Forms.Shogi.View
         }
 
         /// <summary>
+        /// 評価値の数字を描画するためのフォントを取得または設定します。
+        /// </summary>
+        public GL.TextTextureFont ValueFont
+        {
+            get { return GetValue<GL.TextTextureFont>("ValueFont"); }
+            set { SetValue("ValueFont", value); }
+        }
+
+        /// <summary>
         /// 表示する評価値画像のセットを取得または設定します。
         /// </summary>
         public ImageSetInfo ImageSet
@@ -227,26 +242,13 @@ namespace Ragnarok.Forms.Shogi.View
             base.OnEnterFrame(e);
             var renderBuffer = (GL.RenderBuffer)e.StateObject;
 
-            var value = (int)(MathEx.RandInt(-10000, 10000));
-
             // 評価値画像の描画を行います。
-            var imageSet = ImageSet;
-            if (imageSet != null)
-            {
-                var imagePath = imageSet.GetSelectedImagePath(value);
-                if (!string.IsNullOrEmpty(imagePath))
-                {
-                    var uri = new Uri(imagePath);
-                    var texture = GL.TextureCache.GetTexture(OpenGL, uri);
+            AddRenderImage(renderBuffer);
 
-                    if (texture != null && texture.TextureName != 0)
-                    {
-                        // もし選択された評価値画像があれば、それを描画します。
-                        renderBuffer.AddRender(
-                            texture, BlendType.Diffuse, Color.White,
-                            Transform, 0.0);
-                    }
-                }
+            // 評価値を表示する場合は、数字の描画を行います。
+            if (IsVisibleValue)
+            {
+                AddRenderValue(renderBuffer, CurrentValue);
             }
         }
 
@@ -272,7 +274,7 @@ namespace Ragnarok.Forms.Shogi.View
             }
 
             // 描画領域はこのクラスの外側で指定します。
-            var bounds = new RectangleF(0, 0, 1, 1);
+            var bounds = new RectangleF(-0.5f, -0.5f, 1.0f, 1.0f);
 
             // 描画領域を設定します。
             var texture = GL.TextureCache.GetTexture(gl, new Uri(imagePath));
@@ -280,6 +282,60 @@ namespace Ragnarok.Forms.Shogi.View
             {
                 renderBuffer.AddRender(
                     texture, BlendType.Diffuse, bounds, Transform, 0.0);
+            }
+        }
+
+        /// <summary>
+        /// 評価値を数字として描画リストに加えます。
+        /// </summary>
+        private void AddRenderValue(GL.RenderBuffer renderBuffer, int value)
+        {
+            var gl = OpenGL;
+
+            var text = value.ToString();
+            var textTexture = GL.TextureCache.GetTextTexture(
+                gl, text, ValueFont);
+
+            if (textTexture != null)
+            {
+                // 描画するテクスチャを取得します。
+                var texture = textTexture.Texture;
+
+                // 描画領域はテクスチャサイズの割合から決定します。
+                // 評価値は画像の下部or上部の
+                // 横幅が全体の 3/4 以上になるか、
+                // 縦幅が全体の 1/5 以上になるまで
+                // 拡大します。拡大は縦横比を保存した状態で行います。
+
+                // フォントの描画高さを全体の高さからの割合で指定。
+                var eh = 1.0f / 6.0f;
+
+                // エレメント上での描画座標を上記の高さの割合と、テクスチャのサイズから取得。
+                var ew = eh * texture.OriginalWidth / texture.OriginalHeight; 
+
+                // エレメント上での幅がエレメントサイズを超えていたら、
+                // 文字列サイズの調整を行います。
+                if (ew > 3.0f / 4.0f)
+                {
+                    ew = 3.0f / 4.0f;
+                    eh = ew * texture.OriginalHeight / texture.OriginalWidth;
+                }
+
+                float Margin = 0.01f;
+
+                // 文字背景
+                var bounds = new RectangleF(
+                    -0.5f + 1.0f / 4.0f, -0.5f, 1.0f, eh + 2 * Margin);
+                renderBuffer.AddRender(
+                    BlendType.Diffuse, Color.FromArgb(128, Color.White),
+                    bounds, Transform, 1.0);
+
+                // 描画処理を追加します。
+                bounds = new RectangleF(
+                    0.5f - Margin - ew, -0.5f + Margin, ew, eh);
+                renderBuffer.AddRender(
+                    texture, BlendType.Diffuse,
+                    bounds, Transform, 1.0);
             }
         }
     }
