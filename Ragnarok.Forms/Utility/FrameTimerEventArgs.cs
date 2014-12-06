@@ -13,9 +13,9 @@ namespace Ragnarok.Forms.Utility
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public FrameEventArgs(TimeSpan elapsedTime)
+        public FrameEventArgs(double elapsed)
         {
-            ElapsedTime = elapsedTime;
+            ElapsedTime = TimeSpan.FromMilliseconds(elapsed);
         }
 
         /// <summary>

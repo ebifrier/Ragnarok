@@ -9,9 +9,19 @@ using System.Windows.Forms;
 
 namespace Ragnarok.Forms
 {
+    /// <summary>
+    /// WinForms関係の便利メソッドを定義します。
+    /// </summary>
     public static class FormsUtil
     {
-        private static Control invokeControl;
+        /// <summary>
+        /// UIProcessで動作させるためのコントロールです。
+        /// </summary>
+        public static Control Synchronizer 
+        {
+            get;
+            private set;
+        }
 
         /// <summary>
         /// WPFを使うための初期化処理を行います。
@@ -20,7 +30,7 @@ namespace Ragnarok.Forms
         {
             Initializer.Initialize();
 
-            invokeControl = new Control();
+            Synchronizer = new Control();
 
             Util.SetPropertyChangedCaller(CallPropertyChanged);
             Util.SetColletionChangedCaller(CallCollectionChanged);
@@ -41,13 +51,13 @@ namespace Ragnarok.Forms
         /// </summary>
         public static bool InvokeRequired()
         {
-            if (invokeControl == null)
+            if (Synchronizer == null)
             {
                 throw new InvalidOperationException(
                     "Ragnarok.Formsは初期化されていません。");
             }
 
-            return invokeControl.InvokeRequired;
+            return Synchronizer.InvokeRequired;
         }
 
         /// <summary>
@@ -55,9 +65,9 @@ namespace Ragnarok.Forms
         /// </summary>
         public static void UIProcess(Action func)
         {
-            if (invokeControl.InvokeRequired)
+            if (Synchronizer.InvokeRequired)
             {
-                invokeControl.BeginInvoke(func);
+                Synchronizer.BeginInvoke(func);
             }
             else
             {

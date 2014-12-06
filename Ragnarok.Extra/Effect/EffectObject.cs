@@ -36,7 +36,7 @@ namespace Ragnarok.Extra.Effect
     public class EffectObject : NotifyObject, IFrameObject, IUriContext
     {
         private readonly ReentrancyLock dataContextSync = new ReentrancyLock();
-        private DateTime startTime = DateTime.MinValue;
+        private int startTick = 0;
         private TimeSpan progressSpan = TimeSpan.Zero;
         private bool dataContextInherits = true;
         private bool initialized;
@@ -471,19 +471,19 @@ namespace Ragnarok.Extra.Effect
             }
 
             // 初回の呼び出し時に時刻を設定します。
-            var now = DateTime.Now;
-            if (this.startTime == DateTime.MinValue)
+            var now = Environment.TickCount;
+            if (this.startTick == 0)
             {
-                this.startTime = now;
+                this.startTick = now;
             }
 
             // 開始をWaitTime分だけ遅らせます。
-            var time = this.startTime + WaitTime;
+            var time = this.startTick + WaitTime.TotalMilliseconds;
             if (now < time)
             {
                 return false;
             }
-            this.progressSpan = now - time;
+            this.progressSpan = TimeSpan.FromMilliseconds(now - time);
 
             // シナリオを開始します。
             if (Scenario != null)
