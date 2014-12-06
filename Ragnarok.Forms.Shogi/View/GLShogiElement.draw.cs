@@ -434,7 +434,7 @@ namespace Ragnarok.Forms.Shogi.View
                     totalBounds.Top,
                     w,
                     totalBounds.Height);
-                bounds.Inflate(0, -2);
+                bounds.Inflate(0, -2.5f);
                 var str = Ragnarok.Utility.StringConverter.ConvertInt(
                     NumberType.Big,
                     ViewSide == BWType.Black ? 10 - n : n);
@@ -458,7 +458,7 @@ namespace Ragnarok.Forms.Shogi.View
                     totalBounds.Top + h * (n - 1),
                     totalBounds.Width,
                     w);
-                bounds.Inflate(-1, 0);
+                bounds.Inflate(-1.5f, 0);
                 var str = Ragnarok.Utility.StringConverter.ConvertInt(
                     NumberType.Kanji,
                     ViewSide == BWType.Black ? n : 10 - n);

@@ -34,8 +34,6 @@ namespace Ragnarok.Forms.Shogi.View
         /// </summary>
         public GLContainer()
         {
-            SetStyle(ControlStyles.UserPaint, true);
-            SetStyle(ControlStyles.AllPaintingInWmPaint, true);
             InitializeComponent();
 
             this.glElements.CollectionChanged += glElements_CollectionChanged;
@@ -239,7 +237,7 @@ namespace Ragnarok.Forms.Shogi.View
         /// </summary>
         protected override void OnPaint(PaintEventArgs e)
         {
-            DoRender();
+            //DoRender();
         }
 
         /// <summary>

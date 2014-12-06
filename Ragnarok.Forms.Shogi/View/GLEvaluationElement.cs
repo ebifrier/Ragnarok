@@ -48,8 +48,8 @@ namespace Ragnarok.Forms.Shogi.View
             IsVisibleValue = true;
             ValueFont = new GL.TextTextureFont
             {
-                Color = Color.Black,
-                EdgeColor = Color.Gray,
+                Color = Color.White,
+                EdgeColor = Color.LightGray,
                 EdgeLength = 0.5,
             };
 
@@ -308,7 +308,7 @@ namespace Ragnarok.Forms.Shogi.View
                 // 拡大します。拡大は縦横比を保存した状態で行います。
 
                 // フォントの描画高さを全体の高さからの割合で指定。
-                var eh = 1.0f / 6.0f;
+                var eh = 1.0f / 8.0f;
 
                 // エレメント上での描画座標を上記の高さの割合と、テクスチャのサイズから取得。
                 var ew = eh * texture.OriginalWidth / texture.OriginalHeight; 
@@ -327,7 +327,7 @@ namespace Ragnarok.Forms.Shogi.View
                 var bounds = new RectangleF(
                     -0.5f + 1.0f / 4.0f, -0.5f, 1.0f, eh + 2 * Margin);
                 renderBuffer.AddRender(
-                    BlendType.Diffuse, Color.FromArgb(128, Color.White),
+                    BlendType.Diffuse, Color.FromArgb(128, Color.Black),
                     bounds, Transform, 1.0);
 
                 // 描画処理を追加します。
