@@ -31,6 +31,11 @@ using System.Windows.Markup;
 [assembly: XmlnsDefinition("http://schemas.garnet-alice.net/ragnarok/xaml", "Ragnarok.Extra.Sound")]
 [assembly: XmlnsDefinition("http://schemas.garnet-alice.net/ragnarok/xaml", "Ragnarok.Extra.Xaml")]
 
+//[assembly: XmlnsDefinition("http://schemas.garnet-alice.net/ragnarok/xaml/presentation", "Ragnarok.Extra.Effect")]
+//[assembly: XmlnsDefinition("http://schemas.garnet-alice.net/ragnarok/xaml/presentation", "Ragnarok.Extra.Effect.Animation")]
+[assembly: XmlnsDefinition("http://schemas.garnet-alice.net/ragnarok/xaml/presentation", "Ragnarok.Extra.Sound")]
+[assembly: XmlnsDefinition("http://schemas.garnet-alice.net/ragnarok/xaml/presentation", "Ragnarok.Extra.Xaml")]
+
 [assembly: XmlnsDefinition("http://schemas.flint-sharp/xaml", "FlintSharp.Behaviours")]
 [assembly: XmlnsDefinition("http://schemas.flint-sharp/xaml", "FlintSharp.Activities")]
 [assembly: XmlnsDefinition("http://schemas.flint-sharp/xaml", "FlintSharp.Counters")]

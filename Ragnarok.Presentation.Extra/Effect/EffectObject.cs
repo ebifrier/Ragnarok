@@ -578,10 +578,8 @@ namespace Ragnarok.Presentation.Extra.Effect
                 AnimationImageIndex = MathEx.RandInt(0, AnimationImageCount);
             }
 
-            foreach (var emitter in this.renderer.Emitters)
-            {
-                emitter.OnUpdateFrame(e.ElapsedTime.TotalSeconds);
-            }
+            this.renderer.OnUpdateFrame(e.ElapsedTime.TotalSeconds);
+            this.renderer.OnRenderFrame();
         }
 
         /// <summary>

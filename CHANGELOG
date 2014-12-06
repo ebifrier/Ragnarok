@@ -1,3 +1,8 @@
+2014-12-07  - Ver 1.8.8.32
+
+	* AssemblyInfo.cs: アセンブリのxmlnsにpresentation用のものを追加しまし
+	た。
+
 2014-12-06  - Ver 1.8.8.31
 
 	* Ragnarok.Forms.Shogi/View/GLEvaluationElement.cs: 評価値が数字として
