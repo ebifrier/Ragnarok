@@ -31,6 +31,7 @@ namespace Ragnarok.Forms
             Initializer.Initialize();
 
             Synchronizer = new Control();
+            Synchronizer.CreateControl();
 
             Util.SetPropertyChangedCaller(CallPropertyChanged);
             Util.SetColletionChangedCaller(CallCollectionChanged);

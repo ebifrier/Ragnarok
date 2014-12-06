@@ -164,7 +164,10 @@ namespace Ragnarok.Shogi
         {
             if (SpecialMoveType != SpecialMoveType.None)
             {
-                return EnumEx.GetLabel(SpecialMoveType);
+                return string.Format(
+                    "{0}{1}",
+                    Stringizer.ToString(BWType),
+                    EnumEx.GetLabel(SpecialMoveType));
             }
             else if (ActionType == ActionType.Drop)
             {

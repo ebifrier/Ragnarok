@@ -5,7 +5,6 @@ using System.Threading;
 using System.Windows.Forms;
 
 using Ragnarok.ObjectModel;
-using Ragnarok.Utility;
 
 namespace Ragnarok.Forms.Utility
 {
@@ -14,7 +13,6 @@ namespace Ragnarok.Forms.Utility
     /// </summary>
     public sealed class FrameTimer : NotifyObject, IDisposable
     {
-        private readonly ReentrancyLock locker = new ReentrancyLock();
         private double prevTick;
         private Thread thread;
         private volatile bool alive;
@@ -111,6 +109,11 @@ namespace Ragnarok.Forms.Utility
         /// </summary>
         public void Stop()
         {
+            if (!this.alive)
+            {
+                return;
+            }
+
             this.alive = false;
 
             // 手動でイベント処理しないと、
@@ -119,7 +122,8 @@ namespace Ragnarok.Forms.Utility
 
             if (this.thread != null)
             {
-                this.thread.Join();
+                // スレッドは停止しなくても良しとします。
+                this.thread.Join(500);
                 this.thread = null;
             }
         }
@@ -180,14 +184,12 @@ namespace Ragnarok.Forms.Utility
             return FrameTime;
         }
 
+        /// <summary>
+        /// 各フレームに必要な処理を行います。
+        /// </summary>
         private void DoEnterFrame(double diff)
         {
-            using (var result = this.locker.Lock())
-            {
-                if (result == null) return;
-
-                EnterFrame.SafeRaiseEvent(this, new FrameEventArgs(diff));
-            }
+            EnterFrame.SafeRaiseEvent(this, new FrameEventArgs(diff));
         }
     }
 }

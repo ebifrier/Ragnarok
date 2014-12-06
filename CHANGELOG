@@ -1,3 +1,10 @@
+2014-12-07  - Ver 1.8.8.33
+
+	* Ragnarok.Forms/FormsUtil.cs: UIスレッドで処理を行うためのControlを初
+	期化し、実際に使用可能な状態に修正しました。
+	* Ragnarok.Shogi/BoardMove.cs: 投了などの指し手でも手番の記号が出るよう
+	にしました。
+
 2014-12-07  - Ver 1.8.8.32
 
 	* AssemblyInfo.cs: アセンブリのxmlnsにpresentation用のものを追加しまし
