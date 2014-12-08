@@ -1,3 +1,8 @@
+2014-12-08  - Ver 1.8.8.37
+
+	* Ragnarok/Forms.Shogi/View/PromoteDialog.cs: 成り・不成りを選択するた
+	めのダイアログを追加しました。
+
 2014-12-08  - Ver 1.8.8.36
 
 	* Ragnarok.Forms/FormsUtil.cs: プロパティ変更通知を確実にFormsのUIスレ

@@ -20,7 +20,7 @@ namespace Ragnarok.Forms.Shogi.View
     {
         private readonly int[] komaboxCount = new int[(int)PieceType.Hu + 1];
         private MovingPiece movingPiece;
-        //private Window promoteDialog;
+        private PromoteDialog promoteDialog;
 
         /// <summary>
         /// クライアント座標を(640,380)のローカル座標系に変換します。
@@ -94,12 +94,12 @@ namespace Ragnarok.Forms.Shogi.View
         /// </summary>
         private void BeginMove(Point pos)
         {
-            /*// 自動再生中であれば、それを停止します。
+            // 自動再生中であれば、それを停止します。
             if (this.autoPlay != null && !this.autoPlay.IsImportant)
             {
                 StopAutoPlay();
                 return;
-            }*/
+            }
 
             // 駒検索
             var square = PointToSquare(pos);
@@ -135,10 +135,10 @@ namespace Ragnarok.Forms.Shogi.View
                 return false;
             }
 
-            /*if (this.autoPlay != null)
+            if (this.autoPlay != null)
             {
                 return false;
-            }*/
+            }
 
             var turn = (Board != null ? Board.Turn : BWType.None);
             if ((EditMode == EditMode.NoEdit) ||
@@ -720,24 +720,13 @@ namespace Ragnarok.Forms.Shogi.View
         /// </summary>
         private bool CheckToPromote(PieceType pieceType, BWType bwType)
         {
-            /*var dialog = DialogUtil.CreateDialog(
-                null,
-                "成りますか？",
-                "成り／不成り",
-                MessageBoxButton.YesNo,
-                MessageBoxResult.Yes);
-            dialog.Topmost = true;
+            var dialog = new PromoteDialog();
+            var screenPos = Cursor.Position;
 
-            dialog.Loaded += (sender, e) =>
-            {
-                var p = WPFUtil.GetMousePosition(dialog);
-                var screenPos = dialog.PointToScreen(p);
-
-                dialog.WindowStartupLocation = WindowStartupLocation.Manual;
-                dialog.Left = screenPos.X - (dialog.ActualWidth / 2);
-                dialog.Top = screenPos.Y + SquareSize.Height / 2;
-                dialog.AdjustInDisplay();
-            };
+            dialog.StartPosition = FormStartPosition.Manual;
+            dialog.Left = screenPos.X - (dialog.Width / 2);
+            dialog.Top = screenPos.Y + (int)SquareSize.Height / 2;
+            dialog.AdjustInDisplay();
 
             try
             {
@@ -750,13 +739,12 @@ namespace Ragnarok.Forms.Shogi.View
                 var result = dialog.ShowDialog();
                 ClosePromoteDialog();
 
-                return (result != null ? result.Value : false);
+                return (result == DialogResult.OK);
             }
             finally
             {
                 ClosePromoteDialog();
-            }*/
-            return false;
+            }
         }
 
         /// <summary>
@@ -765,11 +753,11 @@ namespace Ragnarok.Forms.Shogi.View
         /// </summary>
         private void ClosePromoteDialog()
         {
-            /*if (this.promoteDialog != null)
+            if (this.promoteDialog != null)
             {
                 this.promoteDialog.Close();
                 this.promoteDialog = null;
-            }*/
+            }
         }
         #endregion
     }
