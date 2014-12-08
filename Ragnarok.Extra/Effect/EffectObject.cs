@@ -54,6 +54,7 @@ namespace Ragnarok.Extra.Effect
             BaseScale = new Point3d(1.0, 1.0, 1.0);
             Scale = new Point3d(1.0, 1.0, 1.0);
             Opacity = 1.0;
+            //Transform = new Matrix44d();
             InheritedOpacity = 1.0;
 
             // 値をForeverにすると、子要素があってもなくてもオブジェクトが
@@ -341,24 +342,32 @@ namespace Ragnarok.Extra.Effect
         {
             get
             {
-                // 行列変換は以下の操作が逆順で行われます。
-
-                // 親の変換行列を基準に変換を行います。
-                // （ワールド座標系から親座標系への変換行列）
-                var m = (Parent != null ? Parent.Transform : new Matrix44d());
-
-                // 親座標系からローカル座標系への変換
-                m.Multiply(LocalTransform);
-
-                // ローカル座標系での各種変換
-                m.Translate(Coord.X, Coord.Y, Coord.Z);
-                m.Rotate(RotateZ, 0.0, 0.0, 1.0);
-                m.Scale(Scale.X, Scale.Y, Scale.Z);
-
-                m.Scale(BaseScale.X, BaseScale.Y, BaseScale.Z);
-                m.Translate(CenterPoint.X, CenterPoint.Y, CenterPoint.Z);
-                return m;
+                var m = GetValue<Matrix44d>("Transform");
+                return (m != null ? m.Clone() : new Matrix44d());
             }
+            private set { SetValue("Transform", value); }
+        }
+
+        private void UpdateTransform()
+        {
+            // 行列変換は以下の操作が逆順で行われます。
+
+            // 親の変換行列を基準に変換を行います。
+            // （ワールド座標系から親座標系への変換行列）
+            var m = (Parent != null ? Parent.Transform : new Matrix44d());
+
+            // 親座標系からローカル座標系への変換
+            m.Multiply(LocalTransform);
+
+            // ローカル座標系での各種変換
+            m.Translate(Coord.X, Coord.Y, Coord.Z);
+            m.Rotate(RotateZ, 0.0, 0.0, 1.0);
+            m.Scale(Scale.X, Scale.Y, Scale.Z);
+
+            m.Scale(BaseScale.X, BaseScale.Y, BaseScale.Z);
+            m.Translate(CenterPoint.X, CenterPoint.Y, CenterPoint.Z);
+
+            Transform = m;
         }
         #endregion
 
@@ -656,6 +665,9 @@ namespace Ragnarok.Extra.Effect
             {
                 Scenario.DoEnterFrame(e.ElapsedTime, e.StateObject);
             }
+
+            // 行列の更新
+            UpdateTransform();
         }
 
         /// <summary>

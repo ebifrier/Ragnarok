@@ -1,3 +1,9 @@
+2014-12-08  - Ver 1.8.8.38
+
+	* Ragnarok.Extra/Effect/EffectObject.cs: プロファイリングの結果、
+	Transformプロパティの実行に時間がかかっていることが分かったため、事前計
+	算をして高速化しました。
+
 2014-12-08  - Ver 1.8.8.37
 
 	* Ragnarok/Forms.Shogi/View/PromoteDialog.cs: 成り・不成りを選択するた
