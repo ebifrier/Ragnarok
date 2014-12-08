@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using SharpGL;
@@ -11,10 +12,87 @@ namespace Ragnarok.Forms.Shogi.GL
     /// <summary>
     /// OpenGL用のテクスチャを管理します。
     /// </summary>
-    public class Texture : ICachable
+    public class Texture : IDisposable, ICachable
     {
+        private readonly static object textureListSync = new object();
+        private readonly static List<WeakReference> textureList = new List<WeakReference>();
+
+        /// <summary>
+        /// テクスチャリストに作成済みのテクスチャを追加します。
+        /// </summary>
+        private static void AddTexture(Texture texture)
+        {
+            if (texture == null)
+            {
+                throw new ArgumentNullException("texture");
+            }
+
+            lock (textureListSync)
+            {
+                textureList.Add(new WeakReference(texture));
+            }
+        }
+
+        /// <summary>
+        /// テクスチャリストからのテクスチャを削除します。
+        /// </summary>
+        private static void RemoveTexture(Texture texture)
+        {
+            if (texture == null)
+            {
+                throw new ArgumentNullException("texture");
+            }
+
+            lock (textureListSync)
+            {
+                textureList.RemoveIf(_ => _.Target == texture);
+            }
+        }
+
+        /// <summary>
+        /// 指定のOpenGLオブジェクトを持つテクスチャをすべて削除します。
+        /// </summary>
+        /// <remarks>
+        /// OpenGLの終了時に呼ばれます。
+        /// </remarks>
+        [CLSCompliant(false)]
+        public static void DeleteAll(OpenGL gl)
+        {
+            if (gl == null)
+            {
+                throw new ArgumentNullException("gl");
+            }
+
+            lock (textureListSync)
+            {
+                for (int index = 0; index < textureList.Count; )
+                {
+                    var texture = textureList[index].Target as Texture;
+                    if (texture == null)
+                    {
+                        // 要素を削除したため、indexの更新は行いません。
+                        textureList.RemoveAt(index);
+                        continue;
+                    }
+
+                    if (texture.OpenGL == gl)
+                    {
+                        // テクスチャを削除
+                        texture.Destroy();
+
+                        // 要素を削除したため、indexの更新は行いません。
+                        textureList.RemoveAt(index);
+                        continue;
+                    }
+
+                    index += 1;
+                }
+            }
+        }
+
         private readonly OpenGL gl;
         private uint[] glTextureArray = new uint[1];
+        private bool disposed;
 
         /// <summary>
         /// コンストラクタ
@@ -28,6 +106,63 @@ namespace Ragnarok.Forms.Shogi.GL
             }
 
             this.gl = gl;
+            AddTexture(this);
+        }
+
+        /// <summary>
+        /// ファイナライザ
+        /// </summary>
+        ~Texture()
+        {
+            Dispose(false);
+        }
+
+        /// <summary>
+        /// テクスチャの削除を行います。
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// テクスチャの削除を行います。
+        /// </summary>
+        private void Dispose(bool disposing)
+        {
+            if (!this.disposed)
+            {
+                if (disposing)
+                {
+                    if (TextureName != 0)
+                    {
+                        TextureDisposer.AddDeleteTexture(gl, TextureName);
+                        this.glTextureArray[0] = 0;
+                    }
+
+                    RemoveTexture(this);
+                }
+                else
+                {
+                    if (TextureName != 0)
+                    {
+                        Log.Error(
+                            "削除できないテクスチャが残りました。");
+                    }
+                }
+
+                this.disposed = true;
+            }
+        }
+
+        /// <summary>
+        /// テクスチャ名(ID)を取得します。
+        /// </summary>
+        [CLSCompliant(false)]
+        public OpenGL OpenGL
+        {
+            get { return this.gl; }
         }
 
         /// <summary>

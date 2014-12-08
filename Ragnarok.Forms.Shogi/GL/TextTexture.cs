@@ -287,5 +287,18 @@ namespace Ragnarok.Forms.Shogi.GL
 
             return bitmap;
         }
+
+        /// <summary>
+        /// テクスチャを削除します。
+        /// </summary>
+        public void Destroy()
+        {
+            if (this.texture == null)
+            {
+                return;
+            }
+
+            this.texture.Destroy();
+        }
     }
 }

@@ -132,5 +132,13 @@ namespace Ragnarok.Forms.Shogi.GL
             var key = new AnimationTextureKey(imageUri, count);
             return this.cache.GetOrCreate(key);
         }
+
+        /// <summary>
+        /// キャッシュされているすべてのテクスチャをクリアします。
+        /// </summary>
+        public void Clear()
+        {
+            this.cache.Clear();
+        }
     }
 }

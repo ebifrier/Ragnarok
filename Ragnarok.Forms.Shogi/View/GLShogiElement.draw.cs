@@ -80,6 +80,30 @@ namespace Ragnarok.Forms.Shogi.View
         }
 
         /// <summary>
+        /// 描画関係の終了処理を行います。
+        /// </summary>
+        private void TerminateDraw()
+        {
+            if (this.boardTexture != null)
+            {
+                this.boardTexture.Destroy();
+                this.boardTexture = null;
+            }
+
+            if (this.pieceTexture != null)
+            {
+                this.pieceTexture.Destroy();
+                this.pieceTexture = null;
+            }
+
+            if (this.pieceBoxTexture != null)
+            {
+                this.pieceBoxTexture.Destroy();
+                this.pieceBoxTexture = null;
+            }
+        }
+
+        /// <summary>
         /// OpenGL初期化後の描画関係の初期化を行います。
         /// </summary>
         public override void OnOpenGLInitialized(EventArgs e)
@@ -551,7 +575,7 @@ namespace Ragnarok.Forms.Shogi.View
                 var totalTime = (index == 1 ? BlackTotalTime : WhiteTotalTime);
                 var time = (index == 1 ? BlackTime : WhiteTime);
                 var str = string.Format(
-                    "{0:000}:{1:00} / 000:00",
+                    "{0:000}:{1:00} / {2:000}:{3:00}",
                     (int)time.TotalMinutes, time.Seconds,
                     (int)totalTime.TotalMinutes, totalTime.Seconds);
                 bounds.Inflate(-4, -1);
@@ -597,7 +621,7 @@ namespace Ragnarok.Forms.Shogi.View
                 let piece = new BoardPiece(pc, bw)
                 let count = GetHandCount(pc, bw)
                 let subCount = (mpSquare == null && mpPiece == piece ? 1 : 0)
-                where count - subCount > 0
+                //where count - subCount > 0
                 select new
                 {
                     Piece = piece,
@@ -721,14 +745,6 @@ namespace Ragnarok.Forms.Shogi.View
             renderBuffer.AddRender(
                 texture, BlendType.Diffuse,
                 result, Transform, zorder, 1.0);
-        }
-
-        private void DrawString(GL.RenderBuffer renderBuffer, GL.Texture texture,
-                                RectangleF bounds, double zorder)
-        {
-            if (texture.TextureName != 0)
-            {
-                }
         }
     }
 }

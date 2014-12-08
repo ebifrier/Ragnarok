@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,7 +25,7 @@ namespace Ragnarok.Utility
     /// 登録されたオブジェクトのサイズが一定値を越えたら、
     /// もっとも使われていないデータを捨てるようにしています。
     /// </remarks>
-    public class CacheManager<TKey, TValue>
+    public class CacheManager<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>
         where TValue: ICachable
     {
         /// <summary>
@@ -93,6 +94,14 @@ namespace Ragnarok.Utility
         }
 
         /// <summary>
+        /// 同期用のオブジェクトを取得します。
+        /// </summary>
+        public object SyncRoot
+        {
+            get { return this.syncRoot; }
+        }
+
+        /// <summary>
         /// オブジェクトの作成用関数を取得します。
         /// </summary>
         public CreatorFunc Creator
@@ -145,6 +154,30 @@ namespace Ragnarok.Utility
         public int Count
         {
             get { return this.usageList.Count(); }
+        }
+
+        /// <summary>
+        /// IEnumerableオブジェクトを取得します。
+        /// </summary>
+        public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
+        {
+            lock (this.syncRoot)
+            {
+                // dicが変わるかもしれないので、一応配列にして返します。
+                return this.dic
+                    .Select(_ => _.Value.Value)
+                    .Select(_ => new KeyValuePair<TKey, TValue>(_.Key, _.Value))
+                    .ToList()
+                    .GetEnumerator();
+            }
+        }
+
+        /// <summary>
+        /// IEnumerableオブジェクトを取得します。
+        /// </summary>
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return this.GetEnumerator();
         }
 
         /// <summary>

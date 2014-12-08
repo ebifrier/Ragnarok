@@ -150,5 +150,18 @@ namespace Ragnarok.Forms.Shogi.GL
 
             return tex;
         }
+
+        /// <summary>
+        /// テクスチャをすべて削除します。
+        /// </summary>
+        public void Destroy()
+        {
+            foreach (var texture in TextureList)
+            {
+                texture.Destroy();
+            }
+
+            TextureList.Clear();
+        }
     }
 }

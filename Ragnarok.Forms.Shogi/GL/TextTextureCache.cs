@@ -132,5 +132,13 @@ namespace Ragnarok.Forms.Shogi.GL
             var key = new TextTextureKey(text, textureFont);
             return this.cache.GetOrCreate(key);
         }
+
+        /// <summary>
+        /// キャッシュをすべてからにします。
+        /// </summary>
+        public void Clear()
+        {
+            this.cache.Clear();
+        }
     }
 }

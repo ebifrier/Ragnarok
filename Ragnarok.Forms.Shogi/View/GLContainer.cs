@@ -105,6 +105,25 @@ namespace Ragnarok.Forms.Shogi.View
         }
 
         /// <summary>
+        /// ハンドルが閉じられたときに呼ばれます。
+        /// </summary>
+        protected override void OnHandleDestroyed(EventArgs e)
+        {
+            GLElements
+                .Where(_ => _ != null)
+                .ForEach(_ => _.Terminate());
+            GLElements.Clear();
+
+            // このOpenGLに登録されているすべてのテクスチャを削除します。
+            if (OpenGL != null)
+            {
+                GL.Texture.DeleteAll(OpenGL);
+            }
+
+            base.OnHandleDestroyed(e);
+        }
+
+        /// <summary>
         /// OpenGL用の画面要素のリストを取得します。
         /// </summary>
         public NotifyCollection<GLElement> GLElements
@@ -209,22 +228,11 @@ namespace Ragnarok.Forms.Shogi.View
                     this.renderBuffer.BaseZOrder = _.BaseZOrder;
                     _.DoEnterFrame(elapsedTime, this.renderBuffer);
                 });
+
+            GL.TextureDisposer.Update(OpenGL);
         }
 
         #region イベント伝達
-        /// <summary>
-        /// ハンドルが閉じられたときに呼ばれます。
-        /// </summary>
-        protected override void OnHandleDestroyed(EventArgs e)
-        {
-            GLElements
-                .Where(_ => _ != null)
-                .ForEach(_ => _.Terminate());
-            GLElements.Clear();
-
-            base.OnHandleDestroyed(e);
-        }
-
         /// <summary>
         /// 背景描画は無視します。
         /// </summary>
