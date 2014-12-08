@@ -1,3 +1,8 @@
+2014-12-08  - Ver 1.8.8.39
+
+	* Ragnarok.Extra/Effect/EffectLoader.cs: エフェクトのプリロード時でも、
+	読み込んだエフェクトを返すようにしました。
+
 2014-12-08  - Ver 1.8.8.38
 
 	* Ragnarok.Extra/Effect/EffectObject.cs: プロファイリングの結果、

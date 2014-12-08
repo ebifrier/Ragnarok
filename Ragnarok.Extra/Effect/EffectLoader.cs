@@ -208,11 +208,11 @@ namespace Ragnarok.Extra.Effect
         /// <summary>
         /// 読み込み時間短縮のための事前読み込みを行います。
         /// </summary>
-        public static void PreLoad(string path, Type paramType)
+        public static EffectObject PreLoad(string path, Type paramType)
         {
             var args = CreateDefaultArguments(paramType);
             
-            LoadInternal(path, args);
+            return LoadInternal(path, args);
         }
     }
 }
