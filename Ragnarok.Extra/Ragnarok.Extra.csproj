@@ -235,6 +235,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Effect\Scenario.cs" />
     <Compile Include="Sound\Backend\SoundObjectBackend.cs" />
+    <Compile Include="Sound\ISoundManager.cs" />
     <Compile Include="Sound\PlaySoundInfo.cs" />
     <Compile Include="Sound\Backend\SoundManagerBackend.cs" />
     <Compile Include="Sound\SoundManager.cs" />

@@ -32,21 +32,12 @@ namespace Ragnarok.Extra.Effect
     public class VisualEffect : EffectObject
     {
         /// <summary>
-        /// サウンド再生用オブジェクトを取得または設定します。
+        /// デフォルトのサウンドマネージャを取得または設定します。
         /// </summary>
-        [CLSCompliant(false)]
-        public static SoundManager SoundManager
+        public static ISoundManager DefaultSoundManager
         {
             get;
             set;
-        }
-
-        /// <summary>
-        /// 静的コンストラクタ
-        /// </summary>
-        static VisualEffect()
-        {
-            SoundManager = new SoundManager();
         }
 
         /// <summary>
@@ -56,6 +47,7 @@ namespace Ragnarok.Extra.Effect
         {
             Blend = BlendType.Diffuse;
             AnimationImageCount = 1;
+            SoundManager = DefaultSoundManager;
             StartSoundVolume = 1.0;
         }
 
@@ -163,6 +155,15 @@ namespace Ragnarok.Extra.Effect
 
         #region サウンド
         /// <summary>
+        /// サウンドマネージャを取得または設定します。
+        /// </summary>
+        public ISoundManager SoundManager
+        {
+            get { return GetValue<ISoundManager>("SoundManager"); }
+            set { SetValue("SoundManager", value); }
+        }
+
+        /// <summary>
         /// 開始時に鳴らすサウンドのパスを取得または設定します。
         /// </summary>
         public string StartSoundPath
@@ -180,28 +181,6 @@ namespace Ragnarok.Extra.Effect
             set { SetValue("StartSoundVolume", value); }
         }
         #endregion
-
-        /// <summary>
-        /// 指定の係数を各オブジェクトの音量にかけて調整します。
-        /// </summary>
-        /// <remarks>
-        /// 子オブジェクトの音量も調整します。
-        /// </remarks>
-        public void MultiplyStartVolume(double rate)
-        {
-            StartSoundVolume *= rate;
-
-            foreach (var child in Children)
-            {
-                var visual = child as VisualEffect;
-                if (visual == null)
-                {
-                    continue;
-                }
-
-                visual.MultiplyStartVolume(rate);
-            }
-        }
 
         /// <summary>
         /// 開始時の効果音を再生します。
@@ -225,6 +204,7 @@ namespace Ragnarok.Extra.Effect
             var sound = soundManager.PlaySE(
                 uri.LocalPath,
                 (isPlay ? StartSoundVolume : 0.0),
+                false,
                 false);
             if (sound == null)
             {

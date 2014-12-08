@@ -1,3 +1,12 @@
+2014-12-08  - Ver 1.8.8.35
+
+	* Ragnarok.Extra\Effect\VisualEffect.cs: サウンドマネージャを外部から設
+	定するようにしました。
+	* Ragnarok.Extra/Sound/ISoundManager.cs: サウンドマネージャの基本インタ
+	ーフェースを追加しました。
+	* Ragnarok.Extra/Sound/SoundManager.cs: 音量の単位を0-100ではなく、
+	0.0-1.0としました。
+
 2014-12-08  - Ver 1.8.8.34
 
 	* テクスチャの削除を行うためのクラスや、OpenGL終了時に一括削除するため

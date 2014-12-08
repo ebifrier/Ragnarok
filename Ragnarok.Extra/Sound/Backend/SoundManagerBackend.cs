@@ -31,7 +31,7 @@ namespace Ragnarok.Extra.Sound.Backend
         }
 
         /// <summary>
-        /// ボリュームを0-100の間で取得または設定します。
+        /// ボリュームを0-1の間で取得または設定します。
         /// </summary>
         public double Volume
         {
@@ -42,7 +42,7 @@ namespace Ragnarok.Extra.Sound.Backend
                     return 0;
                 }
 
-                return Math.Round(engine.SoundVolume * 100);
+                return engine.SoundVolume;
             }
             set
             {
@@ -51,10 +51,8 @@ namespace Ragnarok.Extra.Sound.Backend
                     return;
                 }
 
-                var volume = (float)value / 100.0f;
-
                 // 設定可能な音量値は0.0～1.0
-                engine.SoundVolume = Math.Max(Math.Min(volume, 1.0f), 0.0f);
+                engine.SoundVolume = MathEx.Between(0.0f, 1.0f, (float)value);
             }
         }
 
@@ -147,7 +145,7 @@ namespace Ragnarok.Extra.Sound.Backend
             }
 
             // 音量を設定します。
-            sound.Volume = MathEx.Between(0.0f, 1.0f, (float)volume);
+            sound.Volume = MathEx.Between(0.0f, 1.0f, (float)(engine.SoundVolume * volume));
             sound.Paused = false;
 
             return new SoundObjectBackend(sound);

@@ -56,7 +56,7 @@ namespace Ragnarok.Extra.Sound
         }
 
         /// <summary>
-        /// ボリュームを0-100の間で取得または設定します。
+        /// ボリュームを0.0-1.0の間で取得または設定します。
         /// </summary>
         public double Volume
         {
