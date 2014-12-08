@@ -1,3 +1,8 @@
+2014-12-08  - Ver 1.8.8.36
+
+	* Ragnarok.Forms/FormsUtil.cs: プロパティ変更通知を確実にFormsのUIスレ
+	ッド上で実行するようにしました。
+
 2014-12-08  - Ver 1.8.8.35
 
 	* Ragnarok.Extra\Effect\VisualEffect.cs: サウンドマネージャを外部から設

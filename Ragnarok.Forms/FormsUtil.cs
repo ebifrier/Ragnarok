@@ -79,6 +79,21 @@ namespace Ragnarok.Forms
         /// <summary>
         /// UIThread上でメソッドを実行します。
         /// </summary>
+        public static void UIProcessSync(Action func)
+        {
+            if (Synchronizer.InvokeRequired)
+            {
+                Synchronizer.Invoke(func);
+            }
+            else
+            {
+                func();
+            }
+        }
+
+        /// <summary>
+        /// UIThread上でメソッドを実行します。
+        /// </summary>
         public static void UIProcess(this Control control, Action func)
         {
             if (control.InvokeRequired)
@@ -103,7 +118,19 @@ namespace Ragnarok.Forms
                 return;
             }
 
-            // 個々のDelegate単位で呼び出すスレッドを変更します。
+            try
+            {
+                UIProcess(() => handler(sender, e));
+            }
+            catch (Exception ex)
+            {
+                Util.ThrowIfFatal(ex);
+
+                Log.ErrorException(ex,
+                    "PropertyChangedの呼び出しに失敗しました。");
+            }
+
+            /*// 個々のDelegate単位で呼び出すスレッドを変更します。
             foreach (PropertyChangedEventHandler child in
                      handler.GetInvocationList())
             {
@@ -126,7 +153,7 @@ namespace Ragnarok.Forms
                     Log.ErrorException(ex,
                         "PropertyChangedの呼び出しに失敗しました。");
                 }
-            }
+            }*/
         }
 
         /// <summary>
@@ -141,8 +168,20 @@ namespace Ragnarok.Forms
                 return;
             }
 
+            try
+            {
+                UIProcessSync(() => handler(sender, e));
+            }
+            catch (Exception ex)
+            {
+                Util.ThrowIfFatal(ex);
+
+                Log.ErrorException(ex,
+                    "PropertyChangedの呼び出しに失敗しました。");
+            }
+
             // 個々のDelegate単位で呼び出すスレッドを変更します。
-            foreach (NotifyCollectionChangedEventHandler child in
+            /*foreach (NotifyCollectionChangedEventHandler child in
                      handler.GetInvocationList())
             {
                 var target = child.Target as Control;
@@ -166,7 +205,7 @@ namespace Ragnarok.Forms
                     Log.ErrorException(ex,
                         "CollectionChangedの呼び出しに失敗しました。");
                 }
-            }
+            }*/
         }
     }
 }
