@@ -101,6 +101,9 @@ namespace Ragnarok.Forms.Shogi.View
             // このオブジェクトへの参照を初期化します。
             EffectManager = null;
 
+            // 描画関係の終了処理
+            TerminateDraw();
+
             // Boardには駒が変化したときのハンドラを設定しているため
             // 最後に必ずそのハンドラを削除する必要があります。
             // しかしながら、ここで値をnullに設定してしまうと、
