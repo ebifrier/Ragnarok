@@ -183,6 +183,28 @@ namespace Ragnarok.Extra.Effect
         #endregion
 
         /// <summary>
+        /// 音量に指定の係数をかけ、音の調整を行います。
+        /// </summary>
+        /// <remarks>
+        /// この計算はすべての子オブジェクトで行われます。
+        /// </remarks>
+        public void MultiplyStartVolume(double rate)
+        {
+            StartSoundVolume *= rate;
+
+            foreach (var child in Children)
+            {
+                var visual = child as VisualEffect;
+                if (visual == null)
+                {
+                    continue;
+                }
+
+                visual.MultiplyStartVolume(rate);
+            }
+        }
+
+        /// <summary>
         /// 開始時の効果音を再生します。
         /// </summary>
         public bool PlayStartSound(bool isPlay = true)

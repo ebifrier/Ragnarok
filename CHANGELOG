@@ -1,3 +1,8 @@
+2014-12-09  - Ver 1.8.8.41
+
+	* Ragnarok.Extra/Effect/VisualEffect.cs: 音量調整用のメソッドを追加しま
+	した。
+
 2014-12-09  - Ver 1.8.8.40
 
 	* Ragnarok.Forms.Shogi/View/GLBackgroundElement.cs: ファイル名とクラス
