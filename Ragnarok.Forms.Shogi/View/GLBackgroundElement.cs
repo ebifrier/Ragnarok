@@ -13,7 +13,7 @@ namespace Ragnarok.Forms.Shogi.View
     /// <summary>
     /// OpenGLの背景表示用クラスです。
     /// </summary>
-    public class GLBackground : GLElement
+    public class GLBackgroundElement : GLElement
     {
         private EffectObject prevBg;
         private EffectObject nextBg;
@@ -22,7 +22,7 @@ namespace Ragnarok.Forms.Shogi.View
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public GLBackground()
+        public GLBackgroundElement()
         {
             DefaultFadeDuration = TimeSpan.FromSeconds(4);
         }
@@ -82,6 +82,7 @@ namespace Ragnarok.Forms.Shogi.View
                 this.nextBg = null;
             }
 
+            // 次の背景に設定
             this.nextBg = effect;
 
             StartTransition(duration);
@@ -100,22 +101,27 @@ namespace Ragnarok.Forms.Shogi.View
             var fadeTime3 = TimeSpan.FromSeconds(seconds / 4 * 3);
             var fadeTime4 = TimeSpan.FromSeconds(seconds);
 
+            // animForeはnextBgに対応し、0⇒1でαが変わる。
+            // animBackはprevBgに対応し、1⇒0でαが変わる。
             var animFore = new DoubleAnimationUsingKeyFrames
             {
                 TargetProperty = "Opacity",
+                FillBehavior = FillBehavior.HoldEnd,
             };
             animFore.KeyFrames.Add(new LinearDoubleKeyFrame(0.0, fadeTime0));
-            animFore.KeyFrames.Add(new LinearDoubleKeyFrame(1.0, fadeTime4));
+            animFore.KeyFrames.Add(new LinearDoubleKeyFrame(1.0, fadeTime1));
 
             var animBack = new DoubleAnimationUsingKeyFrames
             {
                 TargetProperty = "Opacity",
+                FillBehavior = FillBehavior.HoldEnd,
             };
             animBack.KeyFrames.Add(new LinearDoubleKeyFrame(1.0, fadeTime0));
             animBack.KeyFrames.Add(new LinearDoubleKeyFrame(0.0, fadeTime4));
 
-            //animFore.Completed += (_, __) =>
-            //{ this.nextBg = null; };
+            // アニメーション完了時は、nextBg(実際はprevBg)を廃棄します。
+            animBack.Completed += (_, __) =>
+                this.nextBg = null;
 
             // prevには古い背景が入っています。
             if (this.prevBg != null)
@@ -142,11 +148,13 @@ namespace Ragnarok.Forms.Shogi.View
             if (this.prevBg != null)
             {
                 this.prevBg.DoEnterFrame(e.ElapsedTime, renderBuffer);
+                Console.WriteLine("prev: {0}", this.prevBg.InheritedOpacity);
             }
 
             if (this.nextBg != null)
             {
                 this.nextBg.DoEnterFrame(e.ElapsedTime, renderBuffer);
+                Console.WriteLine("next: {0}", this.prevBg.InheritedOpacity);
             }
         }
 

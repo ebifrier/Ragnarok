@@ -83,7 +83,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ShogiInitializer.cs" />
     <Compile Include="ShogiZOrder.cs" />
-    <Compile Include="View\GLBackground.cs" />
+    <Compile Include="View\GLBackgroundElement.cs" />
     <Compile Include="View\GLContainer.cs">
       <SubType>UserControl</SubType>
     </Compile>
