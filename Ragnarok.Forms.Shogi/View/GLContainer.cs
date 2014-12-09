@@ -25,6 +25,7 @@ namespace Ragnarok.Forms.Shogi.View
         private readonly NotifyCollection<GLElement> glElements =
             new NotifyCollection<GLElement>();
         private readonly GL.RenderBuffer renderBuffer = new GL.RenderBuffer();
+        private Color clearColor = Color.Transparent;
         private int screenWidth = 640;
         private int screenHeight = 360;
         private bool glInitialized;
@@ -59,8 +60,8 @@ namespace Ragnarok.Forms.Shogi.View
             gl.CullFace(OpenGL.GL_BACK);
             gl.Hint(OpenGL.GL_PERSPECTIVE_CORRECTION_HINT, OpenGL.GL_NICEST);
 
-            // 背景は透明色
-            gl.ClearColor(0, 0, 0, 0);
+            // 背景色の更新
+            UpdateClearColor();
 
             GLElements
                 .Where(_ => _ != null)
@@ -137,6 +138,36 @@ namespace Ragnarok.Forms.Shogi.View
         public GL.RenderBuffer RenderBuffer
         {
             get { return this.renderBuffer; }
+        }
+
+        /// <summary>
+        /// 想定画面サイズを取得または設定します。
+        /// </summary>
+        public Color ClearColor
+        {
+            get { return this.clearColor; }
+            set
+            {
+                if (this.clearColor != value)
+                {
+                    this.clearColor = value;
+                    UpdateClearColor();
+                }
+            }
+        }
+
+        /// <summary>
+        /// OpenGLのClearColorを更新します。
+        /// </summary>
+        private void UpdateClearColor()
+        {
+            var gl = OpenGL;
+
+            gl.ClearColor(
+                MathEx.Between(0.0f, 1.0f, this.clearColor.R / 255.0f),
+                MathEx.Between(0.0f, 1.0f, this.clearColor.G / 255.0f),
+                MathEx.Between(0.0f, 1.0f, this.clearColor.B / 255.0f),
+                MathEx.Between(0.0f, 1.0f, this.clearColor.A / 255.0f));
         }
 
         /// <summary>

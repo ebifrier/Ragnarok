@@ -1,3 +1,8 @@
+2014-12-10  - Ver 1.8.8.42
+
+	* Ragnarok.Forms.Shogi/View/GLContainer.cs: 描画背景色の設定を追加しま
+	した。
+
 2014-12-09  - Ver 1.8.8.41
 
 	* Ragnarok.Extra/Effect/VisualEffect.cs: 音量調整用のメソッドを追加しま
