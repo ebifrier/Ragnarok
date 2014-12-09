@@ -173,7 +173,7 @@ namespace Ragnarok.Forms.Utility
             }
 
             var nextTime = this.prevTick + (FrameTime - 1.0);
-            while (Environment.TickCount < nextTime)
+            if (Environment.TickCount < nextTime)
             {
                 Thread.Sleep(0);
             }
