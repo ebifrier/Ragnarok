@@ -696,7 +696,7 @@ namespace Ragnarok.Forms.Shogi.View
 
             if (bwType == BWType.None || bwType == ViewSide)
             {
-                offsetY = 1.7f;
+                offsetY = 1.9f;
             }
             else
             {

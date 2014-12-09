@@ -53,7 +53,7 @@ namespace Ragnarok.Forms.Shogi.View
             Font = new Font(GL.TextTextureFont.DefaultFont, FontStyle.Bold),
             Color = Color.Black,
             EdgeColor = Color.White,
-            EdgeLength = 0.5,
+            EdgeLength = 0.0,
         };
 
         #region 初期化
@@ -71,12 +71,13 @@ namespace Ragnarok.Forms.Shogi.View
             AddPropertyChangedHandler("PieceBoxBitmap", PieceBoxBitmapUpdated);
 
             // デフォルトのプロパティ値も設定します。
-            LocalTransform.Scale(1.0 / 640.0, 1.0 / 360.0, 1.0);
             IsTimeVisible = true;
             TebanPlayerNameBackgroundColor = Color.FromArgb(128, Color.White);
             UnTebanPlayerNameBackgroundColor = Color.FromArgb(32, Color.White);
             TimeBackgroundColor = Color.FromArgb(128, Color.Black);
             BoardOpacity = 1.0;
+
+            LocalTransform.Scale(1.0 / 640.0, 1.0 / 360.0, 1.0);
         }
 
         /// <summary>
@@ -410,15 +411,6 @@ namespace Ragnarok.Forms.Shogi.View
             base.OnEnterFrame(e);
             var renderBuffer = (GL.RenderBuffer)e.StateObject;
 
-            // 自動再生の更新を行います。
-            if (this.autoPlay != null)
-            {
-                if (!this.autoPlay.Update(e.ElapsedTime))
-                {
-                    StopAutoPlay();
-                }
-            }
-
             // 盤
             AddRenderBoard(renderBuffer);
 
@@ -430,6 +422,15 @@ namespace Ragnarok.Forms.Shogi.View
 
             // 盤上の駒をすべて描画登録します。
             AddRenderPieceAll(renderBuffer);
+
+            // 自動再生の更新を行います。
+            if (this.autoPlay != null)
+            {
+                if (!this.autoPlay.Update(e.ElapsedTime))
+                {
+                    StopAutoPlay();
+                }
+            }
         }
 
         /// <summary>
@@ -673,17 +674,14 @@ namespace Ragnarok.Forms.Shogi.View
             // 必要なら持ち駒の数も描画します。
             if (count >= 2)
             {
-                var text = string.Format(
-                    "×{0}",
-                    Ragnarok.Utility.StringConverter.ConvertInt(
-                        NumberType.Big, count));
+                var text = Ragnarok.Utility.StringConverter.ConvertInt(
+                    NumberType.Big, count).ToString();
                 bounds = new RectangleF(
-                    cpos.X,
-                    cpos.Y - s.Width * 0.6f,
-                    s.Width * 0.7f, s.Height * 0.7f);
+                    cpos.X, cpos.Y - s.Height * 0.6f,
+                    s.Width * 0.8f, s.Height * 0.4f);
                 AddRenderText(
                     renderBuffer, text, this.pieceCountFont,
-                    bounds, zorder);
+                    bounds, zorder + 0.05);
             }
         }
 

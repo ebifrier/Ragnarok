@@ -1,3 +1,8 @@
+2014-12-10  - Ver 1.8.8.44
+
+	* Ragnarok.Forms.Shogi/View/GLShogiElement: 持ち駒の表示位置や、持って
+	いる数の表示サイズなどを修正しました。
+
 2014-12-10  - Ver 1.8.8.43
 
 	* Ragnarok.Extra/Effect/Scenario.cs: シナリオにアニメーションが新規追加
