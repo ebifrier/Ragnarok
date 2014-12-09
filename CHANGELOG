@@ -1,3 +1,12 @@
+2014-12-10  - Ver 1.8.8.43
+
+	* Ragnarok.Extra/Effect/Scenario.cs: シナリオにアニメーションが新規追加
+	されたとき、すでにシナリオが開始されていたらそのアニメーションも自動的
+	に開始するようにしました。今まではこれがなかったため、追加したアニメー
+	ションが開始されませんでした。
+	* Ragnarok.Extra/Effect/Animation/PropertyAnimation.cs: アニメーション
+	停止時に呼ばれるイベントなどを追加しました。
+
 2014-12-10  - Ver 1.8.8.42
 
 	* Ragnarok.Forms.Shogi/View/GLContainer.cs: 描画背景色の設定を追加しま

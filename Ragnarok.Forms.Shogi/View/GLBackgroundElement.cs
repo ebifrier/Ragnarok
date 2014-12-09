@@ -94,12 +94,6 @@ namespace Ragnarok.Forms.Shogi.View
         private void StartTransition(TimeSpan? duration)
         {
             var timeSpan = (duration != null ? duration.Value : DefaultFadeDuration);
-            var seconds = timeSpan.TotalSeconds;
-            var fadeTime0 = TimeSpan.FromSeconds(seconds / 4 * 0);
-            var fadeTime1 = TimeSpan.FromSeconds(seconds / 4 * 1);
-            var fadeTime2 = TimeSpan.FromSeconds(seconds / 2);
-            var fadeTime3 = TimeSpan.FromSeconds(seconds / 4 * 3);
-            var fadeTime4 = TimeSpan.FromSeconds(seconds);
 
             // animForeはnextBgに対応し、0⇒1でαが変わる。
             // animBackはprevBgに対応し、1⇒0でαが変わる。
@@ -108,16 +102,16 @@ namespace Ragnarok.Forms.Shogi.View
                 TargetProperty = "Opacity",
                 FillBehavior = FillBehavior.HoldEnd,
             };
-            animFore.KeyFrames.Add(new LinearDoubleKeyFrame(0.0, fadeTime0));
-            animFore.KeyFrames.Add(new LinearDoubleKeyFrame(1.0, fadeTime1));
+            animFore.KeyFrames.Add(new LinearDoubleKeyFrame(0.0, TimeSpan.Zero));
+            animFore.KeyFrames.Add(new LinearDoubleKeyFrame(1.0, timeSpan));
 
             var animBack = new DoubleAnimationUsingKeyFrames
             {
                 TargetProperty = "Opacity",
                 FillBehavior = FillBehavior.HoldEnd,
             };
-            animBack.KeyFrames.Add(new LinearDoubleKeyFrame(1.0, fadeTime0));
-            animBack.KeyFrames.Add(new LinearDoubleKeyFrame(0.0, fadeTime4));
+            animBack.KeyFrames.Add(new LinearDoubleKeyFrame(1.0, TimeSpan.Zero));
+            animBack.KeyFrames.Add(new LinearDoubleKeyFrame(0.0, timeSpan));
 
             // アニメーション完了時は、nextBg(実際はprevBg)を廃棄します。
             animBack.Completed += (_, __) =>
@@ -148,13 +142,11 @@ namespace Ragnarok.Forms.Shogi.View
             if (this.prevBg != null)
             {
                 this.prevBg.DoEnterFrame(e.ElapsedTime, renderBuffer);
-                Console.WriteLine("prev: {0}", this.prevBg.InheritedOpacity);
             }
 
             if (this.nextBg != null)
             {
                 this.nextBg.DoEnterFrame(e.ElapsedTime, renderBuffer);
-                Console.WriteLine("next: {0}", this.prevBg.InheritedOpacity);
             }
         }
 

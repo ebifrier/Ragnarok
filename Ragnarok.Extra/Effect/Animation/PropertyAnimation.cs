@@ -31,7 +31,7 @@ namespace Ragnarok.Extra.Effect.Animation
         private bool initialized;
         private IPropertyObject pobj;
         private object startValue;
-        private DateTime startTime;
+        private double currentTick;
         private bool isReversing;
 
         /// <summary>
@@ -46,6 +46,11 @@ namespace Ragnarok.Extra.Effect.Animation
 
             TargetPropertyType = propertyType;
         }
+
+        /// <summary>
+        /// アニメーションの完了時に呼ばれます。
+        /// </summary>
+        public event EventHandler Completed;
 
         /// <summary>
         /// アニメーション対象となるプロパティ型を取得します。
@@ -63,6 +68,15 @@ namespace Ragnarok.Extra.Effect.Animation
         {
             get { return GetValue<TimeSpan>("Duration"); }
             set { SetValue("Duration", value); }
+        }
+
+        /// <summary>
+        /// アニメーションの実行時間[ミリ秒]を取得します。
+        /// </summary>
+        [DependOnProperty("Duration")]
+        public double DurationMilliseconds
+        {
+            get { return Duration.TotalMilliseconds; }
         }
 
         /// <summary>
@@ -90,6 +104,24 @@ namespace Ragnarok.Extra.Effect.Animation
         {
             get { return GetValue<bool>("AutoReverse"); }
             set { SetValue("AutoReverse", value); }
+        }
+
+        /// <summary>
+        /// アニメーションが完了したかどうかを取得または設定します。
+        /// </summary>
+        public bool IsCompleted
+        {
+            get { return GetValue<bool>("IsCompleted"); }
+            private set { SetValue("IsCompleted", value); }
+        }
+
+        /// <summary>
+        /// アニメーションが停止したかどうかを取得または設定します。
+        /// </summary>
+        public bool IsStopped
+        {
+            get { return GetValue<bool>("IsStopped"); }
+            private set { SetValue("IsStopped", value); }
         }
 
         /// <summary>
@@ -126,6 +158,12 @@ namespace Ragnarok.Extra.Effect.Animation
                     "PropertyAnimationはすでに開始されています。");
             }
 
+            if (IsCompleted)
+            {
+                throw new InvalidOperationException(
+                    "PropertyAnimationはすでに完了されています。");
+            }
+
             // Targetが既に設定されている場合は引数のtargetを無視します。
             if (Target == null)
             {
@@ -141,7 +179,7 @@ namespace Ragnarok.Extra.Effect.Animation
 
             OnBegin(target);
 
-            this.startTime = DateTime.Now;
+            this.currentTick = 0;
             this.initialized = true;
         }
 
@@ -204,6 +242,8 @@ namespace Ragnarok.Extra.Effect.Animation
                 return;
             }
 
+            IsStopped = true;
+
             // 必要であれば値を元に戻します。
             if (FillBehavior == FillBehavior.Stop)
             {
@@ -221,6 +261,25 @@ namespace Ragnarok.Extra.Effect.Animation
         }
 
         /// <summary>
+        /// アニメーションが完了したときに呼ばれます。
+        /// </summary>
+        private void Complete()
+        {
+            // アニメーション完了時はフラグを立て、イベントを呼びます。
+            IsCompleted = true;
+            Completed.SafeRaiseEvent(this, EventArgs.Empty);
+
+            Stop();
+        }
+
+        /// <summary>
+        /// アニメーション完了時の処理を行います。
+        /// </summary>
+        protected virtual void OnCompleted()
+        {
+        }
+
+        /// <summary>
         /// アニメーションの更新処理を行います。
         /// </summary>
         public void DoEnterFrame(TimeSpan elapsedTime, object state)
@@ -230,29 +289,27 @@ namespace Ragnarok.Extra.Effect.Animation
                 return;
             }
 
+            var durationMillis = DurationMilliseconds;
+            var frameTick = 0.0;
+
+            // アニメーション時間を更新します。
+            this.currentTick += elapsedTime.TotalMilliseconds;
+
             // IsRepeatForeverの場合は永遠に繰り返します。
             // AutoReverseの場合は、アニメーションが最後まで行った後
             // 進行度を元に戻しながらアニメーションを続けます。
-            var frameTime = TimeSpan.Zero;
-
             if (IsRepeatForever && Duration == TimeSpan.Zero)
             {
                 // 永遠に繰り返す場合、Durationが０ならば
                 // frameTimeを常に０にします。
-                frameTime = TimeSpan.Zero;
+                frameTick = 0.0;
             }
             else if (IsRepeatForever)
             {
                 // 永遠に繰り返す場合は、進行度を巻き戻しながら繰り返します。
-                var progress = DateTime.Now - this.startTime;
-
-                // 期間になったら進行度を元に戻します。
-                while (progress > Duration)
+                while (this.currentTick >= durationMillis)
                 {
-                    progress -= Duration;
-
-                    // 次回からの計算用
-                    this.startTime += Duration;
+                    this.currentTick -= durationMillis;
                     this.isReversing = !this.isReversing;
                 }
 
@@ -260,27 +317,28 @@ namespace Ragnarok.Extra.Effect.Animation
                 if (AutoReverse && this.isReversing)
                 {
                     // 逆方向に進行度を進める場合
-                    frameTime = Duration - progress;
+                    frameTick = durationMillis - this.currentTick;
                 }
                 else
                 {
                     // 正方向に進行度を進める場合（通常時）
-                    frameTime = progress;
+                    frameTick = this.currentTick;
                 }
             }
             else
             {
                 // 永遠に繰り返さない場合は、時間が来たら終了します。
-                frameTime = DateTime.Now - this.startTime;
-
-                while (frameTime > Duration)
+                if (this.currentTick >= durationMillis)
                 {
-                    Stop();
+                    Complete();
                     return;
                 }
+
+                frameTick = this.currentTick;
             }
 
             // 新たなアニメーション補間値を設定します。
+            var frameTime = TimeSpan.FromMilliseconds(frameTick);
             var newValue = UpdateProperty(frameTime);
             this.pobj.SetValue(Target, newValue);
         }
