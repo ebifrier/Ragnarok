@@ -1,3 +1,8 @@
+2014-12-10  - Ver 1.8.8.45
+
+	* Ragnarok.Forms.Shogi/View/GLEvaluationElement.cs: 評価値の表示位置を
+	修正しました。
+
 2014-12-10  - Ver 1.8.8.44
 
 	* Ragnarok.Forms.Shogi/View/GLShogiElement: 持ち駒の表示位置や、持って

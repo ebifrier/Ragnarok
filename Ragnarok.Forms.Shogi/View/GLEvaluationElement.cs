@@ -36,16 +36,26 @@ namespace Ragnarok.Forms.Shogi.View
     /// </summary>
     public class GLEvaluationElement : GLElement
     {
+        private float imageHeight;
+        private float valueTop;
+
         /// <summary>
         /// コンストラクタ
         /// </summary>
         public GLEvaluationElement()
         {
+            this.imageHeight = 135.0f / 145.0f;
+            this.valueTop = this.imageHeight - 0.04f;
+
             // 評価値モードはデフォルトでは何でも許可します。
             EvaluationMode = EvaluationMode.Programmable;
             IsEnableUserValue = true;
             IsEnableServerValue = true;
             IsVisibleValue = true;
+
+            LocalTransform = new Matrix44d();
+            LocalTransform.Translate(-0.5, -0.5, 0.0);
+
             ValueFont = new GL.TextTextureFont
             {
                 Color = Color.White,
@@ -274,11 +284,11 @@ namespace Ragnarok.Forms.Shogi.View
             }
 
             // 描画領域はこのクラスの外側で指定します。
-            var bounds = new RectangleF(-0.5f, -0.5f, 1.0f, 1.0f);
+            var bounds = new RectangleF(0.0f, 0.0f, 1.0f, this.imageHeight);
 
             // 描画領域を設定します。
             var texture = GL.TextureCache.GetTexture(gl, new Uri(imagePath));
-            if (texture != null && texture.TextureName != 0)
+            if (texture != null && texture.IsAvailable)
             {
                 renderBuffer.AddRender(
                     texture, BlendType.Diffuse, bounds, Transform, 0.0);
@@ -295,11 +305,11 @@ namespace Ragnarok.Forms.Shogi.View
             var text = value.ToString();
             var textTexture = GL.TextureCache.GetTextTexture(
                 gl, text, ValueFont);
+            var texture = textTexture.Texture;
 
-            if (textTexture != null)
-            {
-                // 描画するテクスチャを取得します。
-                var texture = textTexture.Texture;
+            if (texture != null && texture.IsAvailable)
+            {                
+                var Margin = 0.02f;
 
                 // 描画領域はテクスチャサイズの割合から決定します。
                 // 評価値は画像の下部or上部の
@@ -307,32 +317,28 @@ namespace Ragnarok.Forms.Shogi.View
                 // 縦幅が全体の 1/5 以上になるまで
                 // 拡大します。拡大は縦横比を保存した状態で行います。
 
-                // フォントの描画高さを全体の高さからの割合で指定。
-                var eh = 1.0f / 8.0f;
-
-                // エレメント上での描画座標を上記の高さの割合と、テクスチャのサイズから取得。
+                // フォントの描画サイズを全体の高さからの割合で指定。
+                var eh = 1.0f - this.valueTop;
                 var ew = eh * texture.OriginalWidth / texture.OriginalHeight; 
 
-                // エレメント上での幅がエレメントサイズを超えていたら、
+                // 文字幅がエレメントサイズを超えていたら、
                 // 文字列サイズの調整を行います。
-                if (ew > 3.0f / 4.0f)
+                if (ew > 0.9f)
                 {
-                    ew = 3.0f / 4.0f;
+                    ew = 0.9f;
                     eh = ew * texture.OriginalHeight / texture.OriginalWidth;
                 }
 
-                float Margin = 0.01f;
-
-                // 文字背景
+                // 評価値の背景描画
                 var bounds = new RectangleF(
-                    -0.5f + 1.0f / 4.0f, -0.5f, 1.0f, eh + 2 * Margin);
+                    0.0f, this.valueTop, 1.0f, 1.0f - this.valueTop);
                 renderBuffer.AddRender(
                     BlendType.Diffuse, Color.FromArgb(128, Color.Black),
                     bounds, Transform, 1.0);
 
-                // 描画処理を追加します。
+                // 評価値の描画
                 bounds = new RectangleF(
-                    0.5f - Margin - ew, -0.5f + Margin, ew, eh);
+                    1.0f - Margin - ew, this.valueTop, ew, eh);
                 renderBuffer.AddRender(
                     texture, BlendType.Diffuse,
                     bounds, Transform, 1.0);
