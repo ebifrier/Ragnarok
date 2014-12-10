@@ -34,7 +34,7 @@ namespace Ragnarok.Extra.Effect
         /// <summary>
         /// デフォルトのサウンドマネージャを取得または設定します。
         /// </summary>
-        public static ISoundManager DefaultSoundManager
+        public static IEffectSoundManager DefaultSoundManager
         {
             get;
             set;
@@ -157,9 +157,9 @@ namespace Ragnarok.Extra.Effect
         /// <summary>
         /// サウンドマネージャを取得または設定します。
         /// </summary>
-        public ISoundManager SoundManager
+        public IEffectSoundManager SoundManager
         {
-            get { return GetValue<ISoundManager>("SoundManager"); }
+            get { return GetValue<IEffectSoundManager>("SoundManager"); }
             set { SetValue("SoundManager", value); }
         }
 
@@ -223,11 +223,9 @@ namespace Ragnarok.Extra.Effect
             }
 
             var uri = MakeContentUri(soundPath);
-            var sound = soundManager.PlaySE(
+            var sound = soundManager.PlayEffectSound(
                 uri.LocalPath,
-                (isPlay ? StartSoundVolume : 0.0),
-                false,
-                false);
+                (isPlay ? StartSoundVolume : 0.0));
             if (sound == null)
             {
                 return false;
