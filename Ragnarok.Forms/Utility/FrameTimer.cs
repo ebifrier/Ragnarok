@@ -139,14 +139,18 @@ namespace Ragnarok.Forms.Utility
             // this.aliveは他の場所で更新されます。
             while (this.alive)
             {
-                var diff = WaitNextFrame();
-
-                // 各フレームの処理を行います。
-                // (念のため同期してメソッドを呼び出します)
-                if (this.alive)
+                try
                 {
+                    var diff = WaitNextFrame();
+
+                    // 各フレームの処理を行います。
+                    // (念のため同期してメソッドを呼び出します)
                     FormsUtil.Synchronizer.Invoke(
                         new Action(() => DoEnterFrame(diff)));
+                }
+                catch (Exception ex)
+                {
+                    Util.ThrowIfFatal(ex);
                 }
             }
         }
