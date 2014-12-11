@@ -327,7 +327,6 @@ namespace Ragnarok.Forms.Bindings
                 // 名前が"PropertyName + Changed"のイベントを検索します。
                 var eventName = propertyName + "Changed";
                 var ev = component.GetType().GetEvent(eventName);
-
                 if (ev != null)
                 {
                     var handler = new EventHandler(OnTargetValueChanged);
@@ -336,6 +335,26 @@ namespace Ragnarok.Forms.Bindings
                     Unbound += (_, __) => ev.RemoveEventHandler(component, handler);
                     return;
                 }
+                else if (propertyName == "SelectedItem")
+                {
+                    // プロパティ名がSelectedItemの場合はイベントがないことがあるので、
+                    // SelectedIndexChangedを代りに探してみます。
+                    ev = component.GetType().GetEvent("SelectedIndexChanged");
+                    if (ev != null)
+                    {
+                        var handler = new EventHandler(OnTargetValueChanged);
+
+                        ev.AddEventHandler(component, handler);
+                        Unbound += (_, __) => ev.RemoveEventHandler(component, handler);
+                        return;
+                    }
+                }
+
+                throw new InvalidOperationException(
+                    string.Format(
+                        "'{0}': 指定のプロパティかその変更イベントが" +
+                        "コントロールに存在しません。",
+                        propertyName));
             }
 
             // TargetがINotifyPropertyChangedの場合は

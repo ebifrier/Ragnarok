@@ -1,3 +1,9 @@
+2014-12-12  - Ver 1.8.8.50
+
+	* Ragnarok.Forms/Bindings/BindingData.cs: コントロールのバインディング
+	時、PropertyName+Changedという名前のイベントがなければ例外を投げるよう
+	にしました。また、SelectedItemのバインディングに特別な対応を行いました。
+
 2014-12-12  - Ver 1.8.8.49
 
 	* Ragnarok.Forms.Shogi/View/GLEvaluationElement.cs: 評価値表示用のコン
