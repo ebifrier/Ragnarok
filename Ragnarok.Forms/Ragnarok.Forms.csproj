@@ -78,6 +78,12 @@
     <Compile Include="Controls\CheckGroupBox.Designer.cs">
       <DependentUpon>CheckGroupBox.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controls\InfoControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\InfoControl.Designer.cs">
+      <DependentUpon>InfoControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Converter\EnumToBooleanConverter.cs" />
     <Compile Include="Converter\IValueConverter.cs" />
     <Compile Include="Converter\ValueToDecimalConverter.cs" />
@@ -113,6 +119,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Controls\CheckGroupBox.resx">
       <DependentUpon>CheckGroupBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\InfoControl.resx">
+      <DependentUpon>InfoControl.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
