@@ -1,3 +1,13 @@
+2014-12-12  - Ver 1.8.8.49
+
+	* Ragnarok.Forms.Shogi/View/GLEvaluationElement.cs: 評価値表示用のコン
+	トロール上で右クリックした時、設定用のコンテキストメニューを表示するよ
+	うにしました。
+	* Ragnarok.Forms.Shogi/View/GLEvaluationElementSettingDialog.cs: 評価値
+	用の設定ダイアログを追加しました。
+	* Ragnarok.Forms/DialogUtil.cs: Controlの位置がScreen.FromHandleメソッ
+	ドの呼び出して変わるという仕様？に対応しました。
+
 2014-12-12  - Ver 1.8.8.48
 
 	* Ragnarok.Forms/Controls/InfoControl.cs: 情報表示用のコントロールを追

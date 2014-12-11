@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Windows.Forms;
 using SharpGL;
 
 using Ragnarok;
 using Ragnarok.Extra.Effect;
+using Ragnarok.Forms.Input;
 using Ragnarok.ObjectModel;
 using Ragnarok.Utility;
 
@@ -36,6 +38,43 @@ namespace Ragnarok.Forms.Shogi.View
     /// </summary>
     public class GLEvaluationElement : GLElement
     {
+        #region Command
+        /// <summary>
+        /// 評価値コントロール用のダイアログを表示します。
+        /// </summary>
+        public static readonly ICommand OpenEvaluationSettingDialog =
+            new RelayCommand<GLEvaluationElement>(
+                ExecuteOpenDialog);
+
+        private static void ExecuteOpenDialog(GLEvaluationElement element)
+        {
+            if (element == null)
+            {
+                throw new ArgumentNullException("element");
+            }
+
+            try
+            {
+                var dialog = new GLEvaluationElementSettingDialog(element);
+                dialog.SetCenterMouse();
+
+                // 親コントロールを取得します。
+                var glcontainer = element.GLContainer;
+                var parent = (glcontainer != null ? glcontainer.ParentForm : null);
+
+                // 親を指定して評価値用のダイアログを開きます。
+                dialog.ShowDialog(parent);
+            }
+            catch(Exception ex)
+            {
+                Util.ThrowIfFatal(ex);
+                Log.ErrorException(ex,
+                    "評価値ダイアログの表示に失敗しました；；");
+            }
+        }
+        #endregion
+
+        private ContextMenuStrip contextMenu;
         private float imageHeight;
         private float valueTop;
 
@@ -46,12 +85,14 @@ namespace Ragnarok.Forms.Shogi.View
         {
             this.imageHeight = 135.0f / 145.0f;
             this.valueTop = this.imageHeight - 0.04f;
+            this.contextMenu = CreateContextMenu();
 
             // 評価値モードはデフォルトでは何でも許可します。
             EvaluationMode = EvaluationMode.Programmable;
             IsEnableUserValue = true;
             IsEnableServerValue = true;
             IsVisibleValue = true;
+            IsValueFullWidth = true;
 
             LocalTransform = new Matrix44d();
             LocalTransform.Translate(-0.5, -0.5, 0.0);
@@ -72,6 +113,56 @@ namespace Ragnarok.Forms.Shogi.View
             this.AddPropertyChangedHandler(
                 "CurrentValue",
                 (_, __) => UpdateCurrentValue());
+        }
+
+        /// <summary>
+        /// コンテキストメニューを作成します。
+        /// </summary>
+        private ContextMenuStrip CreateContextMenu()
+        {
+            var contextMenu = new ContextMenuStrip();
+
+            // 評価値の設定ダイアログ
+            var item1 = new ToolStripMenuItem
+            {
+                Text = "評価値の設定",
+            };
+            item1.Click += (_, __) =>
+                OpenEvaluationSettingDialog.Execute(this);
+            contextMenu.Items.Add(item1);
+
+            // セパレータ
+            contextMenu.Items.Add(new ToolStripSeparator());
+
+            // 各項目の設定
+            var item2 = new ToolStripMenuItem
+            {
+                Text = "数字を表示する",
+                CheckOnClick = true,
+                Checked = true,
+            };
+            item2.Click += (_, __) =>
+                IsVisibleValue = item2.Checked;
+            this.AddPropertyChangedHandler(
+                "IsVisibleValue",
+                (_, __) => item2.Checked = IsVisibleValue);
+            contextMenu.Items.Add(item2);
+
+            // 各項目の設定
+            var item3 = new ToolStripMenuItem
+            {
+                Text = "数字を全角文字で表示する",
+                CheckOnClick = true,
+                Checked = IsValueFullWidth,
+            };
+            item3.Click += (_, __) =>
+                IsValueFullWidth = item3.Checked;
+            this.AddPropertyChangedHandler(
+                "IsValueFullWidth",
+                (_, __) => item3.Checked = IsValueFullWidth);
+            contextMenu.Items.Add(item3);
+
+            return contextMenu;
         }
 
         /// <summary>
@@ -164,6 +255,15 @@ namespace Ragnarok.Forms.Shogi.View
         }
 
         /// <summary>
+        /// 評価値を全角文字で表示するかどうかを取得または設定します。
+        /// </summary>
+        public bool IsValueFullWidth
+        {
+            get { return GetValue<bool>("IsValueFullWidth"); }
+            set { SetValue("IsValueFullWidth", value); }
+        }
+
+        /// <summary>
         /// 評価値の数字を描画するためのフォントを取得または設定します。
         /// </summary>
         public GL.TextTextureFont ValueFont
@@ -192,15 +292,6 @@ namespace Ragnarok.Forms.Shogi.View
             get { return GetValue<List<ImageSetInfo>>("ImageSetList"); }
             set { SetValue("ImageSetList", value); }
         }
-
-        /*/// <summary>
-        /// 評価値画像を表示するかどうかを取得または設定します。
-        /// </summary>
-        public bool IsVisibleImage
-        {
-            get { return GetValue<bool>("IsVisibleImage"); }
-            set { SetValue("IsVisibleImage", value); }
-        }*/
 
         /// <summary>
         /// 評価値モードが変わった時に呼ばれます。
@@ -302,7 +393,10 @@ namespace Ragnarok.Forms.Shogi.View
         {
             var gl = OpenGL;
 
-            var text = value.ToString();
+            var text = (
+                IsValueFullWidth ?
+                Ragnarok.Utility.StringConverter.ConvertInt(NumberType.Big, value) :
+                value.ToString());
             var textTexture = GL.TextureCache.GetTextTexture(
                 gl, text, ValueFont);
             var texture = textTexture.Texture;
@@ -343,6 +437,22 @@ namespace Ragnarok.Forms.Shogi.View
                     texture, BlendType.Diffuse,
                     bounds, Transform, 1.0);
             }
+        }
+
+        public override void OnMouseDown(MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                var p = ClientToLocal(e.Location);
+                var r = new RectangleF(0, 0, 1, 1);
+                if (r.Contains(p))
+                {
+                    // 右クリックメニューを開きます。
+                    this.contextMenu.Show(Cursor.Position);
+                }
+            }
+
+            base.OnMouseDown(e);
         }
     }
 }

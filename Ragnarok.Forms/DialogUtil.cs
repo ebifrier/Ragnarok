@@ -25,36 +25,37 @@ namespace Ragnarok.Forms
                 throw new ArgumentNullException("control");
             }
 
+            // control.LocationはScreen.FromHandle後に変わってしまう
+            // ことがあるので、先に値だけ取得しておきます。
+            var pos = control.Location;
             var screen = Screen.FromHandle(control.Handle);
             var bounds = screen.Bounds;
 
-            control.Left = Math.Max(control.Left, bounds.Left);
-            var right = control.Left + control.Width;
+            var left = Math.Max(pos.X, bounds.Left);
+            var right = left + control.Width;
             control.Left = Math.Min(right, bounds.Right) - control.Width;
 
-            control.Top = Math.Max(control.Top, bounds.Top);
-            var bottom = control.Top + control.Height;
+            var top = Math.Max(pos.Y, bounds.Top);
+            var bottom = top + control.Height;
             control.Top = Math.Min(bottom, bounds.Bottom) - control.Height;
         }
 
         /// <summary>
         /// マウス位置を中心にダイアログを開きます。
         /// </summary>
-        public static DialogResult ShowDialogCenterMouse(this Form dialog)
+        public static void SetCenterMouse(this Form form)
         {
-            if (dialog == null)
+            if (form == null)
             {
-                throw new ArgumentNullException("dialog");
+                throw new ArgumentNullException("form");
             }
 
             var screenPos = Cursor.Position;
 
-            dialog.StartPosition = FormStartPosition.Manual;
-            dialog.Left = screenPos.X - (dialog.Width / 2);
-            dialog.Top = screenPos.Y - (dialog.Height / 2);
-            dialog.AdjustInDisplay();
-
-            return dialog.ShowDialog();
+            form.StartPosition = FormStartPosition.Manual;
+            form.Left = screenPos.X - (form.Width / 2);
+            form.Top = screenPos.Y - (form.Height / 2);
+            form.AdjustInDisplay();
         }
 
         /// <summary>

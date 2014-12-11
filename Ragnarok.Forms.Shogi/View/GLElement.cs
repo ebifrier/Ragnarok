@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -76,6 +77,26 @@ namespace Ragnarok.Forms.Shogi.View
         {
             get { return GetValue<double>("BaseZOrder"); }
             set { SetValue("BaseZOrder", value); }
+        }
+
+        /// <summary>
+        /// クライアント座標を(1,1)のローカル座標系に変換します。
+        /// </summary>
+        public PointF ClientToLocal(PointF p)
+        {
+            if (GLContainer == null)
+            {
+                throw new InvalidOperationException(
+                    "親コンテナに追加されていません。");
+            }
+
+            var m = Transform.Invert();
+            var s = GLContainer.ClientSize;
+            var np = new PointF(p.X * 640 / s.Width, p.Y * 360 / s.Height);
+
+            return new PointF(
+                (float)(np.X * m[0, 0] + np.Y * m[0, 1] + m[0, 3]),
+                (float)(np.X * m[1, 0] + np.Y * m[1, 1] + m[1, 3]));
         }
 
         /// <summary>
