@@ -277,11 +277,17 @@ namespace Ragnarok.Forms.Shogi.GL
                     Text, Font.FontFamily, (int)Font.Style, Font.SizeInPoints,
                     new Point(-bounds.Left, -bounds.Top),
                     StringFormat.GenericTypographic);
-                
-                g.FillPath(brush, path);
+
                 if (EdgeLength > 0.0)
                 {
+                    g.FillPath(brush, path);
+
+                    path.Widen(pen, new Matrix());
                     g.DrawPath(pen, path);
+                }
+                else
+                {
+                    g.FillPath(brush, path);
                 }
             }
 

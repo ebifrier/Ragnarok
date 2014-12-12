@@ -52,8 +52,8 @@ namespace Ragnarok.Forms.Shogi.View
         {
             Font = new Font(GL.TextTextureFont.DefaultFont, FontStyle.Bold),
             Color = Color.Black,
-            EdgeColor = Color.White,
-            EdgeLength = 0.0,
+            EdgeColor = Color.FromArgb(32, Color.White),
+            EdgeLength = 1.0,
         };
 
         #region 初期化
