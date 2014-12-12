@@ -1,3 +1,12 @@
+2014-12-12  - Ver 1.8.8.52
+
+	* externals/net: SQLite関係のdllを更新しました。
+
+2014-12-12  - Ver 1.8.8.51
+
+	* Ragnarok.Forms.Shogi/GL/TextTexture.cs: 袋文字のレンダリング方法を少
+	し修正しました。
+
 2014-12-12  - Ver 1.8.8.50
 
 	* Ragnarok.Forms/Bindings/BindingData.cs: コントロールのバインディング
