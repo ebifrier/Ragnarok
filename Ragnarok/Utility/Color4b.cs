@@ -282,6 +282,10 @@ namespace Ragnarok.Utility
             }
 
             var trimmedSource = source.Trim();
+            if (string.IsNullOrEmpty(source))
+            {
+                throw new ArgumentException("source");
+            }
 
             if (trimmedSource[0] == '#')
             {

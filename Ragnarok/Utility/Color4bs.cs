@@ -11,6 +11,21 @@ namespace Ragnarok.Utility
     public static class Color4bs
     {
         /// <summary>
+        /// string型を大文字小文字の区別をせずに比較します。
+        /// </summary>
+        internal sealed class StringComparer : IEqualityComparer<string>
+        {
+            public bool Equals(string x, string y)
+            {
+                return x.Equals(y, StringComparison.InvariantCultureIgnoreCase);
+            }
+
+            public int GetHashCode(string obj)
+            {
+                return obj.GetHashCode();
+            }
+        }
+        /// <summary>
         /// このクラスに登録されている組み込み色を高速化のため
         /// 事前にリスト化しておきます。
         /// </summary>
@@ -31,7 +46,8 @@ namespace Ragnarok.Utility
                 .Where(_ => _.PropertyType == typeof(Color4b))
                 .ToDictionary(
                     _ => _.Name,
-                    _ => (Color4b)_.GetValue(null, null));
+                    _ => (Color4b)_.GetValue(null, null),
+                    new StringComparer());
         }
 
         /// <summary>

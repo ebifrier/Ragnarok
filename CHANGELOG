@@ -1,3 +1,8 @@
+2014-12-13  - Ver 1.8.8.54
+
+	* Ragnarok/Utility/Color4b.cs: 色の比較時に、色名の大文字・小文字を区別
+	しないようにしました。
+
 2014-12-13  - Ver 1.8.8.53
 
 	* Ragnarok.Forms.Shogi/GL/TextTexture.cs: 縁取り文字を描くとき、文字の
