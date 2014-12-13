@@ -17,12 +17,12 @@ namespace Ragnarok.Utility
         {
             public bool Equals(string x, string y)
             {
-                return x.Equals(y, StringComparison.InvariantCultureIgnoreCase);
+                return x.Equals(y, StringComparison.OrdinalIgnoreCase);
             }
 
             public int GetHashCode(string obj)
             {
-                return obj.GetHashCode();
+                return obj.ToLower().GetHashCode();
             }
         }
         /// <summary>
@@ -55,7 +55,7 @@ namespace Ragnarok.Utility
         /// </summary>
         public static Color4b AliceBlue
         {
-            get { return Color4b.FromValue(0xfff0f8ff); }
+            get { return Color4b.FromValue(0xFFF0F8FF); }
         }
 
         /// <summary>
@@ -63,7 +63,7 @@ namespace Ragnarok.Utility
         /// </summary>
         public static Color4b AntiqueWhite
         {
-            get { return Color4b.FromValue(0xFFFAEBD7); }
+            get { return Color4b.FromValue(0xFFFAEBD7); } 
         }
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace Ragnarok.Utility
         /// </summary>
         public static Color4b Aquamarine
         {
-            get { return Color4b.FromValue(0x7FFFD4); }
+            get { return Color4b.FromValue(0xFF7FFFD4); }
         }
 
         /// <summary>
@@ -303,7 +303,7 @@ namespace Ragnarok.Utility
         /// </summary>
         public static Color4b DarkRed
         {
-            get { return Color4b.FromValue(0xFF880000); }
+            get { return Color4b.FromValue(0xFF8B0000); }
         }
 
         /// <summary>
@@ -799,7 +799,7 @@ namespace Ragnarok.Utility
         /// </summary>
         public static Color4b Moccasin
         {
-            get { return Color4b.FromValue(0xFFFFe485); }
+            get { return Color4b.FromValue(0xFFFFE4B5); }
         }
 
         /// <summary>
@@ -968,6 +968,14 @@ namespace Ragnarok.Utility
         public static Color4b RosyBrown
         {
             get { return Color4b.FromValue(0xFFBC8F8F); }
+        }
+
+        /// <summary>
+        /// ロイヤルブルー色を取得します。
+        /// </summary>
+        public static Color4b RoyalBlue
+        {
+            get { return Color4b.FromValue(0xFF4169E1); }
         }
 
         /// <summary>

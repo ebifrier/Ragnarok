@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Runtime;
 using System.Windows;
@@ -119,6 +120,42 @@ namespace Ragnarok.Utility
         }
 
         /// <summary>
+        /// 色の ScRGB アルファ チャネルの値を取得または設定します。
+        /// </summary>
+        public float ScA
+        {
+            get { return ((float)A / 255.0f);}
+            set { A = (byte)MathEx.Between(0, 255, (int)(value * 255.0f)); }
+        }
+
+        /// <summary>
+        /// 色の ScRGB 赤チャネルの値を取得または設定します。
+        /// </summary>
+        public float ScR
+        {
+            get { return ((float)R / 255.0f); }
+            set { R = (byte)MathEx.Between(0, 255, (int)(value * 255.0f)); }
+        }
+        
+        /// <summary>
+        /// 色の ScRGB 緑チャネルの値を取得または設定します。
+        /// </summary>
+        public float ScG
+        {
+            get { return ((float)G / 255.0f); }
+            set { G = (byte)MathEx.Between(0, 255, (int)(value * 255.0f)); }
+        }
+
+        /// <summary>
+        /// 色の ScRGB 青チャネルの値を取得または設定します。
+        /// </summary>
+        public float ScB
+        {
+            get { return ((float)B / 255.0f); }
+            set { B = (byte)MathEx.Between(0, 255, (int)(value * 255.0f)); }
+        }
+
+        /// <summary>
         /// 色同士が近い色かどうかを取得します。
         /// </summary>
         public static bool AreClose(Color4b color1, Color4b color2)
@@ -185,37 +222,6 @@ namespace Ragnarok.Utility
         {
             return Color4b.Multiply(Color4b, coefficient);
         }
-
-#if false
-        //
-        // 概要:
-        //     色の ScRGB アルファ チャネルの値を取得または設定します。
-        //
-        // 戻り値:
-        //     現在の System.Windows.Media.Color4b 構造体の ScRGB アルファ チャネルの値。
-        public float ScA { get; set; }
-        //
-        // 概要:
-        //     色の ScRGB 青チャネルの値を取得または設定します。
-        //
-        // 戻り値:
-        //     現在の System.Windows.Media.Color4b 構造体の ScRGB 赤チャネルの値。
-        public float ScB { get; set; }
-        //
-        // 概要:
-        //     色の ScRGB 緑チャネルの値を取得または設定します。
-        //
-        // 戻り値:
-        //     現在の System.Windows.Media.Color4b 構造体の ScRGB 緑チャネルの値。
-        public float ScG { get; set; }
-        //
-        // 概要:
-        //     色の ScRGB 赤チャネルの値を取得または設定します。
-        //
-        // 戻り値:
-        //     現在の System.Windows.Media.Color4b 構造体の ScRGB 赤チャネルの値。
-        public float ScR { get; set; }
-#endif
 
         /// <summary>
         /// 色同士が同じ色を示しているかどうかを調べます。
@@ -290,7 +296,7 @@ namespace Ragnarok.Utility
             if (trimmedSource[0] == '#')
             {
                 var substr = trimmedSource.Substring(1);
-                var value = uint.Parse(substr);
+                var value = uint.Parse(substr, NumberStyles.AllowHexSpecifier);
 
                 switch (substr.Length)
                 {
