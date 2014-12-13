@@ -217,17 +217,11 @@ namespace Ragnarok.Forms.Shogi.GL
             using (var bitmap = new Bitmap(1, 1))
             using (var g = Graphics.FromImage(bitmap))
             using (var path = new GraphicsPath())
-            using (var pen = new Pen(EdgeColor, (float)EdgeLength))
             {
                 // 時間かかるかも。
                 g.SmoothingMode = SmoothingMode.HighQuality;
                 g.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
                 g.PixelOffsetMode = PixelOffsetMode.HighQuality;
-
-                // GraphicsPath.GetBoundsではPen.MiterLimitの値が考慮され
-                // デフォルト値=10のままだと、GetBoundsの返り値が
-                // 異様に大きな矩形になってしまいます。
-                pen.MiterLimit = 1;
 
                 // StringFormat.GenericTypographicを指定すると
                 // ビットマップから不要な空白が取り除かれます。
@@ -235,9 +229,25 @@ namespace Ragnarok.Forms.Shogi.GL
                     Text, Font.FontFamily, (int)Font.Style, Font.SizeInPoints,
                     new Point(0, 0),
                     StringFormat.GenericTypographic);
-                var bounds = (EdgeLength > 0.0 ?
-                    path.GetBounds(new Matrix(), pen) :
-                    path.GetBounds(new Matrix()));
+                RectangleF bounds;
+
+                if (EdgeLength > 0.0)
+                {
+                    using (var pen = new Pen(EdgeColor, (float)EdgeLength))
+                    {
+                        // GraphicsPath.GetBoundsではPen.MiterLimitの値が考慮され
+                        // デフォルト値=10のままだと、GetBoundsの返り値が
+                        // 異様に大きな矩形になってしまいます。
+                        pen.MiterLimit = 1;
+
+                        path.Widen(pen, new Matrix());
+                        bounds = path.GetBounds(new Matrix(), pen);
+                    }
+                }
+                else
+                {
+                    bounds = path.GetBounds(new Matrix());
+                }
 
                 return new Rectangle(
                     (int)Math.Floor(bounds.Left),
@@ -258,7 +268,6 @@ namespace Ragnarok.Forms.Shogi.GL
             using (var g = Graphics.FromImage(bitmap))
             using (var path = new GraphicsPath())
             using (var brush = new SolidBrush(Color))
-            using (var pen = new Pen(EdgeColor, (float)EdgeLength))
             {
                 // 時間かかるかも。
                 g.SmoothingMode = SmoothingMode.AntiAlias;
@@ -266,11 +275,6 @@ namespace Ragnarok.Forms.Shogi.GL
                 g.CompositingQuality = CompositingQuality.HighQuality;
                 g.PixelOffsetMode = PixelOffsetMode.HighQuality;
 
-                // GraphicsPath.GetBoundsではPen.MiterLimitの値が考慮され
-                // デフォルト値=10のままだと、GetBoundsの返り値が
-                // 異様に大きな矩形になってしまいます。
-                pen.MiterLimit = 1;
-                
                 // GraphicsPathの場合、描画原点が０にならないことがあるため
                 // 矩形領域の左上を原点として描画しています。
                 path.AddString(
@@ -280,15 +284,20 @@ namespace Ragnarok.Forms.Shogi.GL
 
                 if (EdgeLength > 0.0)
                 {
-                    g.FillPath(brush, path);
+                    using (var pen = new Pen(EdgeColor, (float)EdgeLength))
+                    using (var path2 = (GraphicsPath)path.Clone())
+                    {
+                        // GraphicsPath.GetBoundsではPen.MiterLimitの値が考慮され
+                        // デフォルト値=10のままだと、GetBoundsの返り値が
+                        // 異様に大きな矩形になってしまいます。
+                        pen.MiterLimit = 1;
 
-                    path.Widen(pen, new Matrix());
-                    g.DrawPath(pen, path);
+                        path2.Widen(pen, new Matrix());
+                        g.DrawPath(pen, path2);
+                    }
                 }
-                else
-                {
-                    g.FillPath(brush, path);
-                }
+
+                g.FillPath(brush, path);
             }
 
             return bitmap;

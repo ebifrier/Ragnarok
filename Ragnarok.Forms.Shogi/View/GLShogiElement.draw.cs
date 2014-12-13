@@ -52,8 +52,8 @@ namespace Ragnarok.Forms.Shogi.View
         {
             Font = new Font(GL.TextTextureFont.DefaultFont, FontStyle.Bold),
             Color = Color.Black,
-            EdgeColor = Color.FromArgb(32, Color.White),
-            EdgeLength = 1.0,
+            EdgeColor = Color.FromArgb(192, Color.White),
+            EdgeLength = 3.0,
         };
 
         #region 初期化
@@ -675,10 +675,10 @@ namespace Ragnarok.Forms.Shogi.View
             if (count >= 2)
             {
                 var text = Ragnarok.Utility.StringConverter.ConvertInt(
-                    NumberType.Big, count).ToString();
+                    NumberType.Big, count);
                 bounds = new RectangleF(
-                    cpos.X, cpos.Y - s.Height * 0.6f,
-                    s.Width * 0.8f, s.Height * 0.4f);
+                    cpos.X - s.Width * 0.1f, cpos.Y - s.Height * 0.6f,
+                    s.Width * 0.8f, s.Height * 0.5f);
                 AddRenderText(
                     renderBuffer, text, this.pieceCountFont,
                     bounds, zorder + 0.05);
