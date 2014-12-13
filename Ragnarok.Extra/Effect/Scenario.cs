@@ -17,8 +17,6 @@ namespace Ragnarok.Extra.Effect
     [ContentProperty("Children")]
     public class Scenario : NotifyObject, IAnimationTimeline
     {
-        private object target;
-
         /// <summary>
         /// コンストラクタ
         /// </summary>
