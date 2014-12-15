@@ -147,6 +147,7 @@ namespace Ragnarok.Forms.Shogi.View
                     if (this.board != null)
                     {
                         this.board.BoardChanged -= OnBoardPieceChanged;
+                        this.board.RemovePropertyChangedHandler("Turn", OnTurnChanged);
                     }
 
                     this.board = value;
@@ -154,6 +155,7 @@ namespace Ragnarok.Forms.Shogi.View
                     if (this.board != null)
                     {
                         this.board.BoardChanged += OnBoardPieceChanged;
+                        this.board.AddPropertyChangedHandler("Turn", OnTurnChanged);
                     }
 
                     InitKomaboxPieceCount();
@@ -423,6 +425,14 @@ namespace Ragnarok.Forms.Shogi.View
             {
                 EffectManager.Moved(move, e.IsUndo);
             }
+        }
+
+        /// <summary>
+        /// 手番が変わった時もエフェクトの初期化を行います。
+        /// </summary>
+        private void OnTurnChanged(object sender, PropertyChangedEventArgs e)
+        {
+            InitEffect();
         }
 
         /// <summary>
