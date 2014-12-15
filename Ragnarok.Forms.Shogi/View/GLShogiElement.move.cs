@@ -29,7 +29,8 @@ namespace Ragnarok.Forms.Shogi.View
         {
             if (GLContainer == null)
             {
-                throw new InvalidOperationException("親コンテナに追加されていません。");
+                throw new InvalidOperationException(
+                    "親コンテナに追加されていません。");
             }
 
             var m = Transform.Invert();
@@ -410,7 +411,7 @@ namespace Ragnarok.Forms.Shogi.View
             EndMove();
 
             // 盤上に駒を動かす場合は、２歩を禁止する必要があります。
-            if (dstSquare != null && piece.PieceType == PieceType.Hu)
+            if (dstSquare != null && piece.Piece == Piece.Hu)
             {
                 // 同じ筋に動かす場合は２歩の判定を行いません。
                 if ((srcSquare == null || dstSquare.File != srcSquare.File) &&
@@ -496,11 +497,18 @@ namespace Ragnarok.Forms.Shogi.View
             var clone = piece.Clone();
             var type = clone.PieceType;
 
-            // 金玉コンビは成れません。
-            if (type == PieceType.Gyoku ||
-                type == PieceType.Kin)
+            if (clone.PieceType == PieceType.Gyoku)
             {
-                clone.BWType = piece.BWType.Flip();
+                // 玉は同じ側に２つあることができません。
+                if (Board.GetGyoku(clone.BWType.Flip()) == null)
+                {
+                    clone.BWType = clone.BWType.Flip();
+                }
+            }
+            else if (clone.PieceType == PieceType.Kin)
+            {
+                // 金は成れません。
+                clone.BWType = clone.BWType.Flip();
             }
             else
             {
@@ -510,9 +518,16 @@ namespace Ragnarok.Forms.Shogi.View
                 }
                 else
                 {
-                    clone.BWType = piece.BWType.Flip();
+                    clone.BWType = clone.BWType.Flip();
                     clone.IsPromoted = false;
                 }
+            }
+
+            // 歩の場合は二歩を警戒する必要があります。
+            if (clone.Piece == Piece.Hu &&
+                Board.IsDoublePawn(clone.BWType, square))
+            {
+                clone.IsPromoted = true;
             }
 
             // 成りを強制する場合もあります。

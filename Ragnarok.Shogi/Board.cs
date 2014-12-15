@@ -878,8 +878,7 @@ namespace Ragnarok.Shogi
 
                     if (piece != null &&
                         piece.BWType == bwType &&
-                        piece.PieceType == PieceType.Hu &&
-                        !piece.IsPromoted)
+                        piece.Piece == Piece.Hu)
                     {
                         return true;
                     }
