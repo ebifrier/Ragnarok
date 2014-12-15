@@ -29,14 +29,17 @@ namespace Ragnarok.Shogi.Tests
                 from tookPc in EnumEx.GetValues<PieceType>()
                 from tookPromoted in new bool[] { false, true }
                 from promote in new bool[] { false, true }
-                where pc != PieceType.None
-                where tookPc != PieceType.None
+                let pcPiece = new Piece(pc, promoted)
+                let tookPiece = (tookPc != PieceType.None ?
+                    new Piece(tookPc, tookPromoted) : null)
+                where pcPiece.Validate()
+                where tookPiece == null || tookPiece.Validate()
                 where (dst.Rank % 2) == 1 && (dst.File % 3) == 1
                 where (src.Rank % 2) == 1 && (src.File % 3) == 1
                 let bmove = BoardMove.CreateMove(
                     turn, src, dst,
-                    new Piece(pc, promoted), promote,
-                    new Piece(tookPc, tookPromoted))
+                    pcPiece, promote,
+                    tookPiece)
                 where bmove.Validate()
                 select bmove;
 

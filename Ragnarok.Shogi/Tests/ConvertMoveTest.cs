@@ -105,7 +105,7 @@ namespace Ragnarok.Shogi.Tests
                 "| ・ ・ ・ ・ 飛 ・ 飛 ・ ・|八\n" +
                 "| ・ ・ ・ ・ ・ ・ ・ ・ 香|九\n" +
                 "+---------------------------+\n" +
-                "先手の持駒：桂　角　\n" +
+                "先手の持駒：桂　\n" +
                 "手数＝0\n" +
                 "後手番\n" +
                 "手数----指手---------消費時間--\n" +
@@ -156,14 +156,13 @@ namespace Ragnarok.Shogi.Tests
             TestMove(board, "83角行");
             TestMove(board, "83角上");
             TestMove(board, "83角引");
-            TestMove(board, "83角打");
             TestMove(board, "83角行成る");
             TestInvalidMove(board, "83角成らず");
             TestInvalidMove(board, "83角右");
             TestInvalidMove(board, "83角左");
             TestInvalidMove(board, "83角直");
             TestInvalidMove(board, "83角左成");
-            TestInvalidMove(board, "83角直打");
+            TestInvalidMove(board, "83角打");
 
             // 香車
             TestMove(board, "15香");
