@@ -80,6 +80,24 @@ namespace Ragnarok.Extra.Effect.Animation
         }
 
         /// <summary>
+        /// アニメーションの開始時刻を取得または設定します。
+        /// </summary>
+        public TimeSpan BeginTime
+        {
+            get { return GetValue<TimeSpan>("BeginTime"); }
+            set { SetValue("BeginTime", value); }
+        }
+
+        /// <summary>
+        /// アニメーションの開始時間[ミリ秒]を取得します。
+        /// </summary>
+        [DependOnProperty("BeginTime")]
+        public double BeginTimeMilliseconds
+        {
+            get { return BeginTime.TotalMilliseconds; }
+        }
+
+        /// <summary>
         /// 時間内でアニメーションを無限に繰り返すかどうかを取得または設定します。
         /// </summary>
         public bool IsRepeatForever
@@ -179,7 +197,7 @@ namespace Ragnarok.Extra.Effect.Animation
 
             OnBegin(target);
 
-            this.currentTick = 0;
+            this.currentTick = BeginTimeMilliseconds;
             this.initialized = true;
         }
 
