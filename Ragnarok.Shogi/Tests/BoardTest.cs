@@ -19,7 +19,6 @@ namespace Ragnarok.Shogi.Tests
         /// </summary>
         private void CanMoveTo(Board board, BoardMove move,
                                List<Tuple<Square, bool>> availables)
-                               
         {
             for (var file = 1; file <= Board.BoardSize; ++file)
             {

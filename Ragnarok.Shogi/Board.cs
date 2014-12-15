@@ -87,7 +87,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 各駒の最大駒数を保持します。
         /// </summary>
-        public static readonly int[] TotalPieceCountList = new int[]
+        public static readonly int[] MaxPieceCountList = new int[]
         {
             0, // None
             2, // Gyoku
@@ -521,14 +521,22 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
+        /// 駒の最大数を調べます。
+        /// </summary>
+        public int GetMaxPieceCount(PieceType pieceType)
+        {
+            return MaxPieceCountList[(int)pieceType];
+        }
+
+        /// <summary>
         /// 簡略化
         /// </summary>
         private delegate int F(PieceType PieceType);
 
         /// <summary>
-        /// 現在の局面で、駒箱にも局面にもない駒の数を調べます。
+        /// 現在の局面で、先手と後手の両方が持つ駒の数の合計を調べます。
         /// </summary>
-        public int GetLeavePieceCount(PieceType pieceType)
+        public int GetTotalPieceCount(PieceType pieceType)
         {
             var funcs = new F[]
             {
@@ -540,9 +548,17 @@ namespace Ragnarok.Shogi
                     .Sum(p => p.PieceType == _ ? 1 : 0)),
             };
 
-            var total = TotalPieceCountList[(int)pieceType];
-            var curr = funcs.Sum(f => f(pieceType));
-            return Math.Max(total - curr, 0);
+            return funcs.Sum(f => f(pieceType));
+        }
+
+        /// <summary>
+        /// 現在の局面で、駒箱にも局面にもない駒の数を調べます。
+        /// </summary>
+        public int GetLeavePieceCount(PieceType pieceType)
+        {
+            var maximum = GetMaxPieceCount(pieceType);
+            var current = GetTotalPieceCount(pieceType);
+            return Math.Max(maximum - current, 0);
         }
 
         /// <summary>
@@ -1115,6 +1131,51 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
+        /// 局面上にある駒の数を取得します。
+        /// </summary>
+        public int GetPieceCount(PieceType pieceType, BWType bwType)
+        {
+            var list =
+                from sq in Board.AllSquares()
+                let piece = this[sq]
+                where piece != null
+                where piece.PieceType == pieceType
+                where piece.BWType == bwType
+                select sq;
+
+            return list.Count();
+        }
+
+        /// <summary>
+        /// 玉の数を取得します。
+        /// </summary>
+        private int GetGyokuCount(BWType bwType)
+        {
+            var list =
+                from sq in Board.AllSquares()
+                let piece = this[sq]
+                where piece != null
+                where piece.PieceType == PieceType.Gyoku
+                where piece.BWType == bwType
+                select sq;
+
+            return list.Count();
+        }
+
+        /// <summary>
+        /// 指定の筋にある歩の数を取得します。
+        /// </summary>
+        private int GetHuCountOfFile(int file, BWType bwType)
+        {
+            return Enumerable.Range(1, BoardSize)
+                .Select(_ => this[file, _])
+                .Where(_ => _ != null)
+                .Where(_ => _.Piece == Piece.Hu)
+                .Where(_ => _.BWType == bwType)
+                .Count();
+        }
+
+        /// <summary>
         /// オブジェクトの妥当性を検証します。
         /// </summary>
         public bool Validate()
@@ -1169,6 +1230,38 @@ namespace Ragnarok.Shogi
                             return false;
                         }
                     }
+                }
+
+                foreach (var bwType in new BWType[] { BWType.Black, BWType.White })
+                {
+                    // 局面上の駒の数を確認します。
+                    foreach (var pieceType in EnumEx.GetValues<PieceType>())
+                    {
+                        if (pieceType == PieceType.None) continue;
+
+                        var count = GetTotalPieceCount(pieceType);
+                        var maxCount = GetMaxPieceCount(pieceType);
+                        if (count > maxCount)
+                        {
+                            return false;
+                        }
+                    }
+
+                    // ２歩の確認を行います。
+                    for (var file = 1; file <= BoardSize; ++file)
+                    {
+                        if (GetHuCountOfFile(file, bwType) > 1)
+                        {
+                            return false;
+                        }
+                    }
+                }
+
+                // 玉の数をカウントします。
+                if (GetGyokuCount(BWType.Black) > 1 ||
+                    GetGyokuCount(BWType.White) > 1)
+                {
+                    return false;
                 }
 
                 return true;
