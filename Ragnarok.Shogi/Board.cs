@@ -33,6 +33,10 @@ namespace Ragnarok.Shogi
         /// 実際に指さず、指せるかどうかの確認のみを行います。
         /// </summary>
         CheckOnly = 0x0004,
+        /// <summary>
+        /// 投了などの特殊な指し手を自動的に削除します。
+        /// </summary>
+        AutoRemoveSpecialMove = 0x0008,
 
         /// <summary>
         /// CanMoveメソッドのフラグデフォルト値です。
@@ -42,7 +46,8 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// DoMoveメソッドのフラグデフォルト値です。
         /// </summary>
-        DoMoveDefault = MoveFlags.CheckTurn | MoveFlags.CheckChecked,
+        DoMoveDefault = MoveFlags.CheckTurn | MoveFlags.CheckChecked |
+                        MoveFlags.AutoRemoveSpecialMove,
     }
 
     /// <summary>
@@ -639,11 +644,14 @@ namespace Ragnarok.Shogi
                 this[move.SrcSquare] = movedPiece;
             }
 
-            Turn = Turn.Flip();
-            PrevMovedSquare = (
-                this.moveList.Any() ?
-                this.moveList.Last().DstSquare :
-                null);
+            if (!move.IsSpecialMove)
+            {
+                Turn = Turn.Flip();
+                PrevMovedSquare = (
+                    this.moveList.Any() ?
+                    this.moveList.Last().DstSquare :
+                    null);
+            }
         }
 
         /// <summary>
@@ -770,6 +778,25 @@ namespace Ragnarok.Shogi
                 throw new ArgumentNullException("move");
             }
 
+            // 投了などの特殊な指し手がある場合はゲームが既に終了しているので
+            // 指し手を進めることはできません。
+            if (HasSpecialMove)
+            {
+                if (flags.HasFlag(MoveFlags.CheckOnly))
+                {
+                    // CheckOnlyの場合は、ここで失敗させません。
+                }
+                else if (flags.HasFlag(MoveFlags.AutoRemoveSpecialMove))
+                {
+                    // 特殊な指し手を取り除きます。
+                    RemoveSpecialMove();
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
             using (LazyLock())
             {
                 // 手番があわなければ失敗とします。
@@ -779,13 +806,6 @@ namespace Ragnarok.Shogi
                     {
                         return false;
                     }
-                }
-
-                // 投了などの特殊な指し手がある場合はゲームが既に終了しているので
-                // 指し手を進めることはできません。
-                if (HasSpecialMove)
-                {
-                    return false;
                 }
 
                 if (move.IsSpecialMove)
@@ -810,8 +830,13 @@ namespace Ragnarok.Shogi
         {
             NotifyBoardChanging(move, false);
 
-            Turn = Turn.Flip();
-            PrevMovedSquare = move.DstSquare;
+            // 特殊な指し手の場合は手番などの入れ替えを行いません。
+            // （投了後の局面から駒を移動するため）
+            if (!move.IsSpecialMove)
+            {
+                Turn = Turn.Flip();
+                PrevMovedSquare = move.DstSquare;
+            }
 
             this.moveList.Add(move);
 
