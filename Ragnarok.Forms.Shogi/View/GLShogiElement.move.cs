@@ -740,7 +740,7 @@ namespace Ragnarok.Forms.Shogi.View
 
             dialog.StartPosition = FormStartPosition.Manual;
             dialog.Left = screenPos.X - (dialog.Width / 2);
-            dialog.Top = screenPos.Y + (int)SquareSize.Height / 2;
+            dialog.Top = screenPos.Y - dialog.Height - (int)SquareSize.Height / 2;
             dialog.AdjustInDisplay();
 
             try
