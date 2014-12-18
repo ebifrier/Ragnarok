@@ -206,6 +206,41 @@ namespace Ragnarok.Utility
             return !(mat1 == mat2);
         }
 
+        /// <summary>
+        /// X座標の値のみに座標変換を行います。他の座標は0として計算されます。
+        /// </summary>
+        public double TransformX(double x)
+        {
+            return (x * this[0, 0] + this[0, 3]);
+        }
+
+        /// <summary>
+        /// Y座標の値のみに座標変換を行います。他の座標は0として計算されます。
+        /// </summary>
+        public double TransformY(double y)
+        {
+            return (y * this[1, 1] + this[1, 3]);
+        }
+
+        /// <summary>
+        /// Z座標の値のみに座標変換を行います。他の座標は0として計算されます。
+        /// </summary>
+        public double TransformZ(double z)
+        {
+            return (z * this[2, 2] + this[2, 3]);
+        }
+
+        /// <summary>
+        /// <paramref name="p"/>の値に座標変換を行います。
+        /// </summary>
+        public Point3d Transform(Point3d p)
+        {
+            return new Point3d(
+                p.X * this[0, 0] + p.Y * this[0, 1] + p.Z * this[0, 2] + this[0, 3],
+                p.X * this[1, 0] + p.Y * this[1, 1] + p.Z * this[1, 2] + this[1, 3],
+                p.X * this[2, 0] + p.Y * this[2, 1] + p.Z * this[2, 2] + this[2, 3]);
+        }
+
         #region Row/Column major
         /// <summary>
         /// 行優先の配列から行列を作成します。
