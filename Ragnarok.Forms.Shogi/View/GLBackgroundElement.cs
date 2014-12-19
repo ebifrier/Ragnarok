@@ -157,14 +157,17 @@ namespace Ragnarok.Forms.Shogi.View
         {
             base.OnRender(e);
 
-            if (this.prevBg != null)
+            if (IsVisible)
             {
-                this.prevBg.DoRender();
-            }
+                if (this.prevBg != null)
+                {
+                    this.prevBg.DoRender();
+                }
 
-            if (this.nextBg != null)
-            {
-                this.nextBg.DoRender();
+                if (this.nextBg != null)
+                {
+                    this.nextBg.DoRender();
+                }
             }
         }
     }

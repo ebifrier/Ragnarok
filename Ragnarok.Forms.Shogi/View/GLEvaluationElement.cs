@@ -343,13 +343,16 @@ namespace Ragnarok.Forms.Shogi.View
             base.OnEnterFrame(e);
             var renderBuffer = (GL.RenderBuffer)e.StateObject;
 
-            // 評価値画像の描画を行います。
-            AddRenderImage(renderBuffer);
-
-            // 評価値を表示する場合は、数字の描画を行います。
-            if (IsVisibleValue)
+            if (IsVisible)
             {
-                AddRenderValue(renderBuffer, CurrentValue);
+                // 評価値画像の描画を行います。
+                AddRenderImage(renderBuffer);
+
+                // 評価値を表示する場合は、数字の描画を行います。
+                if (IsVisibleValue)
+                {
+                    AddRenderValue(renderBuffer, CurrentValue);
+                }
             }
         }
 

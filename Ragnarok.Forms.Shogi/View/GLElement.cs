@@ -26,6 +26,7 @@ namespace Ragnarok.Forms.Shogi.View
             // 表示期間はすごく長く設定します。
             Duration = TimeSpan.MaxValue;
 
+            IsVisible = true;
             BaseZOrder = 0.0;
         }
 
@@ -68,6 +69,15 @@ namespace Ragnarok.Forms.Shogi.View
 
                 return GLContainer.OpenGL;
             }
+        }
+
+        /// <summary>
+        /// コントロールの表示を行うかどうかを取得または設定します。
+        /// </summary>
+        public bool IsVisible
+        {
+            get { return GetValue<bool>("IsVisible"); }
+            set { SetValue("IsVisible", value); }
         }
 
         /// <summary>
