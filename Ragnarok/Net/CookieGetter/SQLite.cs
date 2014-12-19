@@ -81,17 +81,17 @@ namespace Ragnarok.Net.CookieGetter
             {
                 if (File.Exists(temp))
                 {
-                    File.Delete(temp);
+                    Util.SafeCall(() => File.Delete(temp));
                 }
 
                 if (File.Exists(tempshm))
                 {
-                    File.Delete(tempshm);
+                    Util.SafeCall(() => File.Delete(tempshm));
                 }
 
                 if (File.Exists(tempwal))
                 {
-                    File.Delete(tempwal);
+                    Util.SafeCall(() => File.Delete(tempwal));
                 }
             }
         }
