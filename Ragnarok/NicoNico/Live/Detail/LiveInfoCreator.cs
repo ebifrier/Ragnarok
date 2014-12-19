@@ -17,19 +17,24 @@ namespace Ragnarok.NicoNico.Live.Detail
                                          int communityLevel);
     }
 
+    /// <summary>
+    /// ILiveInfoCreator用の便利クラスです。
+    /// </summary>
     public static class LiveInfoCreatorUtil
     {
+        /// <summary>
+        /// <paramref name="type"/>に合うInfoCreatorを作成します。
+        /// </summary>
         public static ILiveInfoCreator CreateCreator(ProviderType type)
         {
             switch (type)
             {
                 case ProviderType.Community:
                     return new UserLiveInfoCreator();
+                case ProviderType.Channel:
+                    return new ChannelInfoCreator();
                 case ProviderType.Official:
                     return new OfficialLiveInfoCreator();
-                case ProviderType.Channel:
-                    throw new NotImplementedException(
-                        "実装されていません。");
             }
 
             throw new NicoLiveException(

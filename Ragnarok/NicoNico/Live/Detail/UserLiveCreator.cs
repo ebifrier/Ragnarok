@@ -6,7 +6,7 @@ using System.Text;
 namespace Ragnarok.NicoNico.Live.Detail
 {
     /// <summary>
-    /// ユーザー生放送の各ルームのの接続情報を管理します。
+    /// ユーザー生放送の各ルームの接続情報を管理します。
     /// </summary>
     /// <remarks>
     /// ユーザー生放送ではコメントサーバーの使用において、

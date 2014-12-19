@@ -206,6 +206,7 @@
     <Compile Include="NicoNico\Live\CommunityInfo.cs" />
     <Compile Include="NicoNico\Live\CommunityLevelInfo.cs" />
     <Compile Include="NicoNico\Live\CommunityLevelTable.cs" />
+    <Compile Include="NicoNico\Live\Detail\ChannelInfoCreator.cs" />
     <Compile Include="NicoNico\Live\Detail\LiveInfoCreator.cs" />
     <Compile Include="NicoNico\Live\Detail\OfficialLiveInfoCreator.cs" />
     <Compile Include="NicoNico\Live\Heartbeat.cs" />

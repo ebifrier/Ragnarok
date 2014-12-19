@@ -222,6 +222,9 @@ namespace Ragnarok.NicoNico.Live
                 case ProviderType.Community:
                     SetCommunityInfo(live, pageStr);
                     break;
+                case ProviderType.Channel:
+                    SetChannelInfo(live, pageStr);
+                    break;
                 case ProviderType.Official:
                     SetOfficialInfo(live, pageStr);
                     break;
@@ -269,6 +272,28 @@ namespace Ragnarok.NicoNico.Live
             live.CommunityLevel = int.Parse(
                 m.Groups[1].Value,
                 NumberStyles.AllowThousands);
+        }
+        #endregion
+
+        #region チャンネル放送
+        private static readonly Regex ChannelVisitorsRegex = new Regex(
+            @"<span class=""total_score"">累計来場者数：([0-9,]+)</span>",
+            RegexOptions.IgnoreCase);
+
+        private static void SetChannelInfo(LiveInfo live, string pageStr)
+        {
+            // 累計来場者数
+            var m = ChannelVisitorsRegex.Match(pageStr);
+            if (!m.Success)
+            {
+                live.TotalVisitors = 0;
+            }
+            else
+            {
+                live.TotalVisitors = int.Parse(
+                    m.Groups[1].Value,
+                    NumberStyles.AllowThousands);
+            }
         }
         #endregion
 

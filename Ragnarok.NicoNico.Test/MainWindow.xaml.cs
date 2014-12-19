@@ -168,6 +168,10 @@ namespace Ragnarok.NicoNico.Test
                     return;
                 }
 
+                /*Live.LiveInfo.Create(
+                    "lv203771397",
+                    this.nicoClient.CookieContainer);*/
+
                 this.commentClient.Connect(
                     LiveUrl,
                     this.nicoClient.CookieContainer);
