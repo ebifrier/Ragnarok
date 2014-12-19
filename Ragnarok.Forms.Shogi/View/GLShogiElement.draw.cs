@@ -86,6 +86,9 @@ namespace Ragnarok.Forms.Shogi.View
             AddPropertyChangedHandler("PieceBoxBitmap", PieceBoxBitmapUpdated);
 
             // デフォルトのプロパティ値も設定します。
+            BoardBitmap = DefaultBoardBitmap;
+            PieceBoxBitmap = DefaultPieceBoxBitmap;
+            PieceBitmap = DefaultPieceBitmap;
             IsTimeVisible = true;
             TebanPlayerNameBackgroundColor = Color.FromArgb(128, Color.White);
             UnTebanPlayerNameBackgroundColor = Color.FromArgb(32, Color.White);
@@ -133,10 +136,10 @@ namespace Ragnarok.Forms.Shogi.View
             this.pieceTexture = new GL.Texture(gl);
             this.pieceBoxTexture = new GL.Texture(gl);
 
-            // イベントハンドラの設定後にテクスチャの実体化などの、設定を行います。
-            BoardBitmap = DefaultBoardBitmap;
-            PieceBoxBitmap = DefaultPieceBoxBitmap;
-            PieceBitmap = DefaultPieceBitmap;
+            // イベントハンドラの設定後にテクスチャの実体化を行います。
+            BoardBitmapUpdated(this, null);
+            PieceBitmapUpdated(this, null);
+            PieceBoxBitmapUpdated(this, null);
         }
 
         /// <summary>
@@ -282,7 +285,10 @@ namespace Ragnarok.Forms.Shogi.View
         /// </summary>
         private void PieceBitmapUpdated(object sender, PropertyChangedEventArgs e)
         {
-            LoadTexture(this.pieceTexture, PieceBitmap);
+            if (this.pieceTexture != null)
+            {
+                LoadTexture(this.pieceTexture, PieceBitmap);
+            }
         }
 
         /// <summary>
@@ -299,7 +305,10 @@ namespace Ragnarok.Forms.Shogi.View
         /// </summary>
         private void BoardBitmapUpdated(object sender, PropertyChangedEventArgs e)
         {
-            LoadTexture(this.boardTexture, BoardBitmap);
+            if (this.boardTexture != null)
+            {
+                LoadTexture(this.boardTexture, BoardBitmap);
+            }
         }
 
         /// <summary>
@@ -316,7 +325,10 @@ namespace Ragnarok.Forms.Shogi.View
         /// </summary>
         private void PieceBoxBitmapUpdated(object sender, PropertyChangedEventArgs e)
         {
-            LoadTexture(this.pieceBoxTexture, PieceBoxBitmap);
+            if (this.pieceBoxTexture != null)
+            {
+                LoadTexture(this.pieceBoxTexture, PieceBoxBitmap);
+            }
         }
 
         /// <summary>
@@ -455,22 +467,25 @@ namespace Ragnarok.Forms.Shogi.View
                 }
             }
 
-            // 盤
-            AddRenderBoard(renderBuffer);
-
-            // 先手と後手の駒台と駒箱
-            for (var index = 0; index < 3; ++index)
+            if (IsVisible)
             {
-                AddRenderPieceBox(renderBuffer, index);
-            }
+                // 盤
+                AddRenderBoard(renderBuffer);
 
-            // 盤上の駒をすべて描画登録します。
-            AddRenderPieceAll(renderBuffer);
+                // 先手と後手の駒台と駒箱
+                for (var index = 0; index < 3; ++index)
+                {
+                    AddRenderPieceBox(renderBuffer, index);
+                }
 
-            // 自動再生時のエフェクトを描画します。
-            if (AutoPlayState == AutoPlayState.Playing)
-            {
-                AddRenderAutoPlayEffect(renderBuffer);
+                // 盤上の駒をすべて描画登録します。
+                AddRenderPieceAll(renderBuffer);
+
+                // 自動再生時のエフェクトを描画します。
+                if (AutoPlayState == AutoPlayState.Playing)
+                {
+                    AddRenderAutoPlayEffect(renderBuffer);
+                }
             }
         }
 

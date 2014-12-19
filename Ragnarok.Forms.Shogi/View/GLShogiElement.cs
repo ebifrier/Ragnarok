@@ -502,7 +502,7 @@ namespace Ragnarok.Forms.Shogi.View
             AutoPlayState = AutoPlayState.None;
 
             // Boardが変更されるとAutoPlayはすべてクリアされます。
-            // Stop中にBoardが変更されると少し面倒なことになるため、
+            // Stopの中でBoardが変更されると少し面倒なことになるため、
             // Stopメソッドはすべての状態が落ち着いた後に呼びます。
             autoPlay.Stop();
         }
