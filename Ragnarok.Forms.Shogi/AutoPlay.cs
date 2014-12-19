@@ -43,7 +43,13 @@ namespace Ragnarok.Forms.Shogi
         /// <summary>
         /// 指し手のデフォルトの再生間隔です。
         /// </summary>
-        public static readonly TimeSpan DefaultInterval = TimeSpan.FromSeconds(1);
+        public static readonly TimeSpan DefaultInterval =
+            TimeSpan.FromSeconds(1);
+        /// <summary>
+        /// 自動再生用エフェクトのデフォルトのフェードイン・アウトの時間です。
+        /// </summary>
+        public static readonly TimeSpan DefaultEffectFadeInterval =
+            TimeSpan.FromSeconds(0.5);
 
         private readonly List<BoardMove> moveList;
         private int moveIndex;
@@ -61,6 +67,15 @@ namespace Ragnarok.Forms.Shogi
         {
             get;
             set;
+        }
+
+        /// <summary>
+        /// 自動再生を行う将棋エレメントを取得します。
+        /// </summary>
+        public GLShogiElement ShogiElement
+        {
+            get;
+            internal set;
         }
 
         /// <summary>
@@ -109,15 +124,6 @@ namespace Ragnarok.Forms.Shogi
         }
 
         /// <summary>
-        /// 背景を変化させるかどうかを取得または設定します。
-        /// </summary>
-        public bool IsChangeBackground
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
         /// 開始までの時間を取得または設定します。
         /// </summary>
         public TimeSpan BeginningInterval
@@ -142,6 +148,24 @@ namespace Ragnarok.Forms.Shogi
         /// 真の場合は、GUIのマウス押下で自動再生をキャンセルしません。
         /// </remarks>
         public bool IsImportant
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 自動再生用エフェクトを使用するかどうかを取得または設定します。
+        /// </summary>
+        public bool IsUseEffect
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 自動再生用エフェクトのフェードイン／アウトする時間を取得または設定します。
+        /// </summary>
+        public TimeSpan EffectFadeInterval
         {
             get;
             set;
@@ -197,6 +221,50 @@ namespace Ragnarok.Forms.Shogi
             }
 
             BasePosition += waitTime;
+        }
+
+        /// <summary>
+        /// 変更中のエフェクトの不透明度を計算します。
+        /// </summary>
+        private double GetEffectOpacity(TimeSpan progress, bool isReserve)
+        {
+            if (progress >= EffectFadeInterval)
+            {
+                return (isReserve ? 0.0 : 1.0);
+            }
+
+            var progressSeconds = progress.TotalSeconds;
+            var intervalSeconds = EffectFadeInterval.TotalSeconds;
+            var rate = progressSeconds / intervalSeconds;
+
+            return MathEx.Between(0.0, 1.0, isReserve ? 1.0 - rate : rate);
+        }
+
+        /// <summary>
+        /// エフェクトのフェードイン／アウトを処理します。
+        /// </summary>
+        protected IEnumerable<bool> EffectFadeExecutor(bool isReverse)
+        {
+            if (!IsUseEffect || ShogiElement == null)
+            {
+                yield break;
+            }
+
+            var target = (isReverse ? 0.0 : 1.0);
+            while (true)
+            {
+                var opacity = GetEffectOpacity(PositionFromBase, isReverse);
+                if (opacity == target)
+                {
+                    break;
+                }
+
+                ShogiElement.AutoPlayOpacity = opacity;
+                yield return true;
+            }
+
+            BasePosition += EffectFadeInterval;
+            ShogiElement.AutoPlayOpacity = target;
         }
 
         /// <summary>
@@ -266,6 +334,11 @@ namespace Ragnarok.Forms.Shogi
         /// </summary>
         protected IEnumerable<bool> GetUpdateEnumerator()
         {
+            foreach (var result in EffectFadeExecutor(false))
+            {
+                yield return result;
+            }
+
             foreach (var result in WaitExecutor(BeginningInterval))
             {
                 yield return result;
@@ -278,6 +351,11 @@ namespace Ragnarok.Forms.Shogi
             }
 
             foreach (var result in WaitExecutor(EndingInterval))
+            {
+                yield return result;
+            }
+
+            foreach (var result in EffectFadeExecutor(true))
             {
                 yield return result;
             }
@@ -328,6 +406,11 @@ namespace Ragnarok.Forms.Shogi
         /// </summary>
         public void Stop()
         {
+            if (ShogiElement !=null)
+            {
+                ShogiElement.AutoPlayOpacity = 0.0;
+            }
+
             RaiseStopped();
         }
 
@@ -362,6 +445,7 @@ namespace Ragnarok.Forms.Shogi
             UpdateEnumerator = GetUpdateEnumerator().GetEnumerator();
             Board = board;
             Interval = DefaultInterval;
+            EffectFadeInterval = DefaultEffectFadeInterval;
             BeginningInterval = TimeSpan.Zero;
             EndingInterval = TimeSpan.Zero;
             Position = TimeSpan.Zero;

@@ -468,20 +468,13 @@ namespace Ragnarok.Forms.Shogi.View
                 return;
             }
 
-            // コントロールを事前に設定する必要があります。
-            /*var brush =
-                (AutoPlayBrush != null && AutoPlayBrush.IsFrozen ?
-                 AutoPlayBrush.Clone() :
-                 AutoPlayBrush);
-            AutoPlayBrush = brush;*/
-            //autoPlay.Background = brush;
-
-            // ここで局面を変更します。
+            // this.autoPlayを変える前に局面を変更します。
             // 局面変更時は自動再生を自動で止めるようになっているので、
-            // autoPlayフィールドを変更した後に局面を変えると、
+            // this.autoPlayフィールドを変更した後に局面を変えると、
             // すぐに止まってしまいます。
             Board = autoPlay.Board;
 
+            autoPlay.ShogiElement = this;
             this.autoPlay = autoPlay;
             AutoPlayState = AutoPlayState.Playing;
         }
@@ -500,6 +493,9 @@ namespace Ragnarok.Forms.Shogi.View
             {
                 return;
             }
+
+            // コントロールは消去しておきます。
+            this.autoPlay.ShogiElement = null;
 
             var autoPlay = this.autoPlay;
             this.autoPlay = null;

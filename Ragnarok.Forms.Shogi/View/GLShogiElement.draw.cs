@@ -30,24 +30,39 @@ namespace Ragnarok.Forms.Shogi.View
         private GL.Texture pieceTexture;
         private GL.Texture pieceBoxTexture;
 
+        /// <summary>
+        /// 対局者名の描画用のフォントです。
+        /// </summary>
         private readonly GL.TextTextureFont nameFont = new GL.TextTextureFont
         {
             Color = Color.Black,
             EdgeColor = Color.White,
             EdgeLength = 0.0,
         };
+
+        /// <summary>
+        /// 思考時間などの時間描画用フォントです。
+        /// </summary>
         private readonly GL.TextTextureFont timeFont = new GL.TextTextureFont
         {
             Color = Color.White,
             EdgeColor = Color.White,
             EdgeLength = 0.0,
         };
+
+        /// <summary>
+        /// 盤の符号を描画するためのフォントです。
+        /// </summary>
         private readonly GL.TextTextureFont boardSignFont = new GL.TextTextureFont
         {
             Color = Color.Black,
             EdgeColor = Color.White,
             EdgeLength = 0.0,
         };
+
+        /// <summary>
+        /// 持ち駒の数を描画するためのフォントです。
+        /// </summary>
         private readonly GL.TextTextureFont pieceCountFont = new GL.TextTextureFont
         {
             Font = new Font(GL.TextTextureFont.DefaultFont, FontStyle.Bold),
@@ -75,6 +90,8 @@ namespace Ragnarok.Forms.Shogi.View
             TebanPlayerNameBackgroundColor = Color.FromArgb(128, Color.White);
             UnTebanPlayerNameBackgroundColor = Color.FromArgb(32, Color.White);
             TimeBackgroundColor = Color.FromArgb(128, Color.Black);
+            AutoPlayColor = Color.FromArgb(96, 0, 24, 86);
+            AutoPlayOpacity = 0.0;
             BoardOpacity = 1.0;
 
             LocalTransform.Scale(1.0 / 640.0, 1.0 / 360.0, 1.0);
@@ -348,6 +365,24 @@ namespace Ragnarok.Forms.Shogi.View
         }
 
         /// <summary>
+        /// 自動再生時の色を取得または設定します。
+        /// </summary>
+        public Color AutoPlayColor
+        {
+            get { return GetValue<Color>("AutoPlayColor"); }
+            set { SetValue("AutoPlayColor", value); }
+        }
+
+        /// <summary>
+        /// 自動再生時のエフェクトの不透明度を取得または設定します。
+        /// </summary>
+        public double AutoPlayOpacity
+        {
+            get { return GetValue<double>("AutoPlayOpacity"); }
+            set { SetValue("AutoPlayOpacity", value); }
+        }
+
+        /// <summary>
         /// 盤全体が描画される領域を取得します。
         /// </summary>
         public RectangleF BoardBounds
@@ -411,6 +446,15 @@ namespace Ragnarok.Forms.Shogi.View
             base.OnEnterFrame(e);
             var renderBuffer = (GL.RenderBuffer)e.StateObject;
 
+            // 自動再生の更新を行います。
+            if (this.autoPlay != null)
+            {
+                if (!this.autoPlay.Update(e.ElapsedTime))
+                {
+                    StopAutoPlay();
+                }
+            }
+
             // 盤
             AddRenderBoard(renderBuffer);
 
@@ -423,13 +467,10 @@ namespace Ragnarok.Forms.Shogi.View
             // 盤上の駒をすべて描画登録します。
             AddRenderPieceAll(renderBuffer);
 
-            // 自動再生の更新を行います。
-            if (this.autoPlay != null)
+            // 自動再生時のエフェクトを描画します。
+            if (AutoPlayState == AutoPlayState.Playing)
             {
-                if (!this.autoPlay.Update(e.ElapsedTime))
-                {
-                    StopAutoPlay();
-                }
+                AddRenderAutoPlayEffect(renderBuffer);
             }
         }
 
@@ -708,6 +749,29 @@ namespace Ragnarok.Forms.Shogi.View
             }
 
             return mesh;
+        }
+
+        /// <summary>
+        /// 自動再生用のエフェクト描画を行います。
+        /// </summary>
+        private void AddRenderAutoPlayEffect(GL.RenderBuffer renderBuffer)
+        {
+            if (AutoPlayState != AutoPlayState.Playing)
+            {
+                return;
+            }
+
+            if (AutoPlayOpacity == 0.0)
+            {
+                return;
+            }
+
+            var bounds = new RectangleF(0.0f, 0.0f, 640.0f, 480.0f);
+            var alpha = (byte)(AutoPlayColor.A * AutoPlayOpacity);
+
+            renderBuffer.AddRender(
+                BlendType.Diffuse, bounds, Transform,
+                Color.FromArgb(alpha, AutoPlayColor), ShogiZOrder.PostEffectZ2);
         }
 
         /// <summary>
