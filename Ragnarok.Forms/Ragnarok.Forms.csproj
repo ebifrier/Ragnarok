@@ -100,6 +100,7 @@
     <Compile Include="Input\CommandManager.cs" />
     <Compile Include="Input\Command.cs" />
     <Compile Include="Input\CommandBindingBase.cs" />
+    <Compile Include="Input\CommandUtil.cs" />
     <Compile Include="Input\Detail\ButtonCommandBinding.cs" />
     <Compile Include="Input\Detail\ButtonCommandBindingFactory.cs" />
     <Compile Include="Input\Detail\MenuItemCommandBindingFactory.cs" />
