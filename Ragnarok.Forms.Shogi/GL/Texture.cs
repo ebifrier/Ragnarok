@@ -435,12 +435,13 @@ namespace Ragnarok.Forms.Shogi.GL
             }
 
             // 画像のリサイズが必要な場合
+            var result = false;
             if (image.Width != targetWidth || image.Height != targetHeight)
             {
                 using (var newImage = image.ResizeHighQuality(
                     targetWidth, targetHeight))
                 {
-                    return CreateInternal(newImage, image.Size, toPremultipliedAlpha);
+                    result = CreateInternal(newImage, image.Size, toPremultipliedAlpha);
                 }
             }
             else
@@ -448,9 +449,12 @@ namespace Ragnarok.Forms.Shogi.GL
                 // imageの内容が変わる可能性があるため、ここでCloneしています。
                 using (var newImage = (Bitmap)image.Clone())
                 {
-                    return CreateInternal(newImage, image.Size, toPremultipliedAlpha);
+                    result = CreateInternal(newImage, image.Size, toPremultipliedAlpha);
                 }
             }
+
+            GC.Collect();
+            return result;
         }
 
         /// <summary>
