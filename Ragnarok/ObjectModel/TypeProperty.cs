@@ -29,6 +29,59 @@ namespace Ragnarok.ObjectModel
         }
 
         /// <summary>
+        /// Type.op_EqualityがMONOだと使えないため。
+        /// </summary>
+        public override bool Equals(object obj)
+        {
+            var status = this.PreEquals(obj);
+            if (status != null)
+            {
+                return status.Value;
+            }
+
+            return Equals(obj as TypeProperty);
+        }
+
+        /// <summary>
+        /// Type.op_EqualityがMONOだと使えないため。
+        /// </summary>
+        public bool Equals(TypeProperty other)
+        {
+            if ((object)other == null)
+            {
+                return false;
+            }
+
+            return (
+                Util.GenericEquals(Type, other.Type) &&
+                PropertyName == other.PropertyName);
+        }
+
+        /// <summary>
+        /// ハッシュ値を計算します。
+        /// </summary>
+        public override int GetHashCode()
+        {
+            return (Type.GetHashCode() ^ PropertyName.GetHashCode());
+        }
+
+        /// <summary>
+        /// Type.op_EqualityがMONOだと使えないため。
+        /// </summary>
+        public static bool operator==(TypeProperty x, TypeProperty y)
+        {
+            return Util.GenericEquals(x, y);
+        }
+
+        /// <summary>
+        /// Type.op_EqualityがMONOだと使えないため。
+        /// </summary>
+        public static bool operator!=(TypeProperty x, TypeProperty y)
+        {
+            return !(x == y);
+        }
+
+        /// <summary>
         /// コンストラクタ
         /// </summary>
         public TypeProperty(Type type, string propertyName)

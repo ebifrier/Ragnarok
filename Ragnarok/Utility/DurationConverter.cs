@@ -19,7 +19,7 @@ namespace Ragnarok.Utility
         public override bool CanConvertFrom(ITypeDescriptorContext context,
                                             Type sourceType)
         {
-            if (sourceType == typeof(string))
+            if (typeof(string).Equals(sourceType))
             {
                 return true;
             }
@@ -60,7 +60,7 @@ namespace Ragnarok.Utility
         public override bool CanConvertTo(ITypeDescriptorContext context,
                                           Type destinationType)
         {
-            if (destinationType == typeof(string))
+            if (typeof(string).Equals(destinationType))
             {
                 return true;
             }
@@ -75,7 +75,7 @@ namespace Ragnarok.Utility
                                          CultureInfo culture, object value,
                                          Type destinationType)
         {
-            if (destinationType == typeof(string))
+            if (typeof(string).Equals(destinationType))
             {
                 return value.ToString();
             }

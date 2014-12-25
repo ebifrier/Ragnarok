@@ -39,7 +39,7 @@ namespace Ragnarok.Extra.Effect.Animation
         /// </summary>
         public PropertyAnimation(Type propertyType)
         {
-            if (propertyType == null)
+            if ((object)propertyType == null)
             {
                 throw new ArgumentNullException("propertyType");
             }
@@ -216,7 +216,7 @@ namespace Ragnarok.Extra.Effect.Animation
                         target.GetType(), TargetProperty));
             }
 
-            if (pobj.PropertyType != TargetPropertyType)
+            if (!pobj.PropertyType.Equals(TargetPropertyType))
             {
                 throw new InvalidOperationException(
                     string.Format(

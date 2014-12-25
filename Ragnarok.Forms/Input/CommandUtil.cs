@@ -18,7 +18,7 @@ namespace Ragnarok.Forms.Input
         public static void BindMenuCommand(Type type, IEnumerable<ToolStripItem> items,
                                            object parameter = null)
         {
-            if (type == null)
+            if ((object)type == null)
             {
                 throw new ArgumentNullException("type");
             }
@@ -37,7 +37,7 @@ namespace Ragnarok.Forms.Input
         public static void BindMenuCommand(Type type, IEnumerable<ToolStripItem> items,
                                            Func<object> parameterCallback)
         {
-            if (type == null)
+            if ((object)type == null)
             {
                 throw new ArgumentNullException("type");
             }
@@ -77,7 +77,7 @@ namespace Ragnarok.Forms.Input
         public static void BindMenuCommandInternal(Type type, ToolStripItem item,
                                                    Func<object> parameterCallback)
         {
-            if (type == null)
+            if ((object)type == null)
             {
                 throw new ArgumentNullException("type");
             }

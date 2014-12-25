@@ -94,7 +94,7 @@ namespace Ragnarok.Forms.Bindings
         {
             var type = this.targetPropertyObject.PropertyType;
             value = (
-                type == typeof(string) ? string.Format("{0}", value) :
+                typeof(string).Equals(type) ? string.Format("{0}", value) :
                 value);
 
             this.targetPropertyObject.SetValue(Binding.BindableTarget, value);

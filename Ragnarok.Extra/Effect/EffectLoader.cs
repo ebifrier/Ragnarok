@@ -175,7 +175,7 @@ namespace Ragnarok.Extra.Effect
             var flags = /*BindingFlags.GetField |*/ BindingFlags.GetProperty |
                         BindingFlags.Public | BindingFlags.Instance;
 
-            if (paramType == null)
+            if ((object)paramType == null)
             {
                 return new Dictionary<string, object>();
             }

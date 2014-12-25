@@ -221,14 +221,13 @@ namespace Ragnarok.Forms.Shogi.GL
                 // 時間かかるかも。
                 g.SmoothingMode = SmoothingMode.HighQuality;
                 g.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
-                g.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                //g.PixelOffsetMode = PixelOffsetMode.HighQuality;
 
                 // StringFormat.GenericTypographicを指定すると
                 // ビットマップから不要な空白が取り除かれます。
                 path.AddString(
                     Text, Font.FontFamily, (int)Font.Style, Font.SizeInPoints,
-                    new Point(0, 0),
-                    StringFormat.GenericTypographic);
+                    new Point(0, 0), null);
                 RectangleF bounds;
 
                 if (EdgeLength > 0.0)
@@ -240,7 +239,9 @@ namespace Ragnarok.Forms.Shogi.GL
                         // 異様に大きな矩形になってしまいます。
                         pen.MiterLimit = 1;
 
-                        path.Widen(pen, new Matrix());
+                        // MONOで使えないため使わないようにする。
+                        //path.Widen(pen, new Matrix());
+
                         bounds = path.GetBounds(new Matrix(), pen);
                     }
                 }
@@ -273,14 +274,13 @@ namespace Ragnarok.Forms.Shogi.GL
                 g.SmoothingMode = SmoothingMode.AntiAlias;
                 g.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
                 g.CompositingQuality = CompositingQuality.HighQuality;
-                g.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                //g.PixelOffsetMode = PixelOffsetMode.HighQuality;
 
                 // GraphicsPathの場合、描画原点が０にならないことがあるため
                 // 矩形領域の左上を原点として描画しています。
                 path.AddString(
                     Text, Font.FontFamily, (int)Font.Style, Font.SizeInPoints,
-                    new Point(-bounds.Left, -bounds.Top),
-                    StringFormat.GenericTypographic);
+                    new Point(-bounds.Left, -bounds.Top), null);
 
                 if (EdgeLength > 0.0)
                 {
@@ -292,7 +292,9 @@ namespace Ragnarok.Forms.Shogi.GL
                         // 異様に大きな矩形になってしまいます。
                         pen.MiterLimit = 1;
 
-                        path2.Widen(pen, new Matrix());
+                        // MONOで使えないため使わないようにする。
+                        //path2.Widen(pen, new Matrix());
+
                         g.DrawPath(pen, path2);
                     }
                 }

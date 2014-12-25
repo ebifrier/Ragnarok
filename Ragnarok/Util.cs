@@ -276,7 +276,7 @@ namespace Ragnarok
             //   rhs.Equals(lhs as RhsType)
             // の結果を合わせるためには、as演算子の結果も合わせる必要があり、
             // 継承があった場合には型の比較をしないと上手くいかなくなります。
-            if (lhs.GetType() != rhs.GetType())
+            if (!lhs.GetType().Equals(rhs.GetType()))
             {
                 return false;
             }
@@ -711,7 +711,7 @@ namespace Ragnarok
         public static Type FindTypeFromCurrentDomain(string name)
         {
             var type = Type.GetType(name);
-            if (type != null)
+            if ((object)type != null)
             {
                 return type;
             }

@@ -17,6 +17,9 @@ namespace Ragnarok.Utility
         /// </summary>
         public static void Start()
         {
+#if MONO
+            throw new NotImplementedException();
+#else
             lock (SyncRoot)
             {
                 if (observing)
@@ -36,6 +39,7 @@ namespace Ragnarok.Utility
 
                 thread.Start();
             }
+#endif
         }
 
         /// <summary>
@@ -43,6 +47,9 @@ namespace Ragnarok.Utility
         /// </summary>
         public static void Stop()
         {
+#if MONO
+            throw new NotImplementedException();
+#else
             lock (SyncRoot)
             {
                 if (!observing)
@@ -59,8 +66,10 @@ namespace Ragnarok.Utility
                     thread = null;
                 }
             }
+#endif
         }
 
+#if !MONO
         /// <summary>
         /// GC監視用のメインスレッドです。
         /// </summary>
@@ -89,5 +98,6 @@ namespace Ragnarok.Utility
                 Log.Info("GC completed");
             }
         }
+#endif
     }
 }

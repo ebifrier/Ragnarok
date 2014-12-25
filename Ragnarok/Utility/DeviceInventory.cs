@@ -12,6 +12,7 @@ namespace Ragnarok.Utility
     /// </summary>
     public static class DeviceInventory
     {
+#if !MONO
         #region PInvoke
         [DllImport("kernel32.dll")]
         extern static void GlobalMemoryStatusEx(ref MEMORYSTATUSEX lpBuffer);
@@ -30,6 +31,7 @@ namespace Ragnarok.Utility
             public ulong ullAvailExtendedVirtual;
         }
         #endregion
+#endif
 
         /// <summary>
         /// x64システム化どうか取得します。
@@ -125,12 +127,16 @@ namespace Ragnarok.Utility
         /// </summary>
         private static void CollectRamSize()
         {
+#if MONO
+            MemorySize = 0;
+#else
             var ms = new MEMORYSTATUSEX();
             ms.dwLength = (uint)Marshal.SizeOf(ms);
             GlobalMemoryStatusEx(ref ms);
 
             // MemorySizeはbyte単位
             MemorySize = (long)ms.ullAvailPhys;
+#endif
         }
 
         /// <summary>

@@ -81,7 +81,7 @@ namespace Ragnarok.Net.ProtoBuf
             /// </summary>
             public bool IsRequestHandler
             {
-                get { return (ResponseType != null); }
+                get { return ((object)ResponseType != null); }
             }
 
             /// <summary>
@@ -861,7 +861,7 @@ namespace Ragnarok.Net.ProtoBuf
             // 型のフルネームからその型を検索し、もしあれば
             // それをキャッシュに登録します。
             type = TypeSerializer.Deserialize(typeName);
-            if (type == null)
+            if ((object)type == null)
             {
                 return null;
             }
@@ -892,7 +892,7 @@ namespace Ragnarok.Net.ProtoBuf
 
             // デシリアライズする型のオブジェクトを取得します。
             var type = GetTypeFrom(typename);
-            if (type == null)
+            if ((object)type == null)
             {
                 throw new PbException(
                     string.Format(

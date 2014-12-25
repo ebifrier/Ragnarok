@@ -39,7 +39,7 @@ namespace Ragnarok.Net.CookieGetter
                 // DTDを取得するためにウェブアクセスするのを抑制する
                 // (通信遅延や、アクセスエラーを排除するため)
                 settings.XmlResolver = null;
-#if CLR_GE_4_0
+#if !MONO && CLR_GE_4_0
                 settings.DtdProcessing = DtdProcessing.Ignore;
 #else
 				settings.ProhibitDtd = false;

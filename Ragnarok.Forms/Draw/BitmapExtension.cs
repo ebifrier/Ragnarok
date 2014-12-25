@@ -28,7 +28,7 @@ namespace Ragnarok.Forms.Draw
             {
                 g.SmoothingMode = SmoothingMode.HighQuality;
                 g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                g.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                //g.PixelOffsetMode = PixelOffsetMode.HighQuality;
 
                 g.DrawImage(bitmap, 0, 0, width, height); 
             }
@@ -52,7 +52,7 @@ namespace Ragnarok.Forms.Draw
             {
                 g.SmoothingMode = SmoothingMode.HighQuality;
                 g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                g.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                //g.PixelOffsetMode = PixelOffsetMode.HighQuality;
 
                 g.DrawImage(bitmap,
                     new Rectangle(0, 0, width, height), // dst

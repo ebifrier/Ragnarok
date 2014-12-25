@@ -107,17 +107,17 @@ namespace Ragnarok.Utility
         public static bool CanConvert(Type type)
         {
             return (
-                type == typeof(string) || type == typeof(bool) ||
-                type == typeof(char) || type == typeof(decimal) ||
-                type == typeof(byte) || type == typeof(sbyte) ||
+                typeof(string).Equals(type) || typeof(bool).Equals(type) ||
+                typeof(char).Equals(type) || typeof(decimal).Equals(type) ||
+                typeof(byte).Equals(type) || typeof(sbyte).Equals(type) ||
 
-                type == typeof(short) || type == typeof(ushort) ||
-                type == typeof(int) || type == typeof(uint) ||
-                type == typeof(long) || type == typeof(ulong) ||
-                type == typeof(float) || type == typeof(double) ||
-                   
-                type == typeof(DateTime) || type == typeof(TimeSpan) ||
-                type == typeof(Guid) || type.IsEnum);
+                typeof(short).Equals(type) || typeof(ushort).Equals(type) ||
+                typeof(int).Equals(type) || typeof(uint).Equals(type) ||
+                typeof(long).Equals(type) || typeof(ulong).Equals(type) ||
+                typeof(float).Equals(type) || typeof(double).Equals(type) ||
+
+                typeof(DateTime).Equals(type) || typeof(TimeSpan).Equals(type) ||
+                typeof(Guid).Equals(type) || type.IsEnum);
         }
 
         /// <summary>
@@ -125,80 +125,80 @@ namespace Ragnarok.Utility
         /// </summary>
         public static object Convert(Type type, string value)
         {
-            if (type == null)
+            if (ReferenceEquals(type, null))
             {
                 throw new ArgumentNullException("type");
             }
 
-            if (type == typeof(string))
+            if (typeof(string).Equals(type))
             {
                 return value;
             }
-            else if (type == typeof(bool))
+            else if (typeof(bool).Equals(type))
             {
                 return bool.Parse(value);
             }
-            else if (type == typeof(char))
+            else if (typeof(char).Equals(type))
             {
                 return Char.Parse(value);
             }
-            else if (type == typeof(byte))
+            else if (typeof(byte).Equals(type))
             {
                 return Byte.Parse(value);
             }
-            else if (type == typeof(sbyte))
+            else if (typeof(sbyte).Equals(type))
             {
                 return SByte.Parse(value);
             }
-            else if (type == typeof(decimal))
+            else if (typeof(decimal).Equals(type))
             {
                 return Decimal.Parse(value);
             }
 
-            else if (type == typeof(ushort))
+            else if (typeof(ushort).Equals(type))
             {
                 return UInt16.Parse(value);
             }
-            else if (type == typeof(uint))
+            else if (typeof(uint).Equals(type))
             {
                 return UInt32.Parse(value);
             }
-            else if (type == typeof(ulong))
+            else if (typeof(ulong).Equals(type))
             {
                 return UInt64.Parse(value);
             }
 
-            else if (type == typeof(short))
+            else if (typeof(short).Equals(type))
             {
                 return Int16.Parse(value);
             }
-            else if (type == typeof(int))
+            else if (typeof(int).Equals(type))
             {
                 return Int32.Parse(value);
             }
-            else if (type == typeof(long))
+            else if (typeof(long).Equals(type))
             {
                 return Int64.Parse(value);
             }
 
-            else if (type == typeof(float))
+            else if (typeof(float).Equals(type))
             {
                 return Single.Parse(value);
             }
-            else if (type == typeof(double))
+            else if (typeof(double).Equals(type))
             {
                 return Double.Parse(value);
             }
 
-            else if (type == typeof(DateTime))
+            else if (typeof(DateTime).Equals(type))
             {
                 return DateTime.Parse(value);
             }
-            else if (type == typeof(TimeSpan))
+            else if (typeof(TimeSpan).Equals(type))
             {
                 return TimeSpan.Parse(value);
             }
-            else if (type == typeof(Guid))
+            else if (typeof(Guid).Equals(type))
             {
                 return new Guid(value);
             }

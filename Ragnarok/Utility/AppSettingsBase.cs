@@ -383,7 +383,7 @@ namespace Ragnarok.Utility
                 if (value != null)
                 {
                     // 同じ型なら値を設定。
-                    if (value.GetType() == type)
+                    if (value.GetType().Equals(type))
                     {
                         propertyObj.SetValue(this, value);
                         return;

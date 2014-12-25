@@ -43,6 +43,7 @@ using System.Runtime.InteropServices;
 
 namespace FlintSharp
 {
+#if false
     public partial class Win32
     {
         [System.Security.SuppressUnmanagedCodeSecurity]
@@ -149,4 +150,5 @@ namespace FlintSharp
             get { return m_runningTime; }
         }
     }
+#endif
 }

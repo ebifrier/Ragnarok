@@ -196,7 +196,7 @@ namespace Ragnarok.Utility
         /// </remarks>
         public static string Serialize(Type type)
         {
-            if (type == null)
+            if ((object)type == null)
             {
                 throw new ArgumentNullException("type");
             }
@@ -282,7 +282,7 @@ namespace Ragnarok.Utility
 
             // とりあえず型名から、その型を取り出します。
             var type = Util.FindTypeFromCurrentDomain(lexer.Name);
-            if (type == null)
+            if ((object)type == null)
             {
                 throw new TypeLoadException(
                     string.Format(
@@ -346,7 +346,7 @@ namespace Ragnarok.Utility
             {
                 // 次の型をパースします。
                 var type = ParseType(lexer);
-                if (type == null)
+                if ((object)type == null)
                 {
                     throw new TypeLoadException(
                         "ジェネリック型の引数が正しくありません。");

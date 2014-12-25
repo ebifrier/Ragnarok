@@ -419,7 +419,7 @@ namespace Ragnarok.Utility
         public static Dictionary<string, IPropertyObject> GetPropertyDic(
             Type targetType)
         {
-            if (targetType == null)
+            if ((object)targetType == null)
             {
                 throw new ArgumentNullException("targetType");
             }

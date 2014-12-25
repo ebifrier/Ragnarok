@@ -91,7 +91,7 @@ namespace Ragnarok.Net.ProtoBuf
         /// </remarks>
         public static SerializeFunc GetSerializeMethod(Type type)
         {
-            if (type == null)
+            if ((object)type == null)
             {
                 throw new ArgumentNullException("type");
             }
@@ -157,7 +157,7 @@ namespace Ragnarok.Net.ProtoBuf
         /// </remarks>
         public static DeserializeFunc GetDeserializeMethod(Type type)
         {
-            if (type == null)
+            if ((object)type == null)
             {
                 throw new ArgumentNullException("type");
             }

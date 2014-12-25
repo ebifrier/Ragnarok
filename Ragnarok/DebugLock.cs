@@ -71,6 +71,7 @@ namespace Ragnarok
         /// </summary>
         public void WriteStackTrace()
         {
+#if !MONO
             var threads = Process.GetCurrentProcess().Threads;
 
             foreach (var th in threads)
@@ -99,6 +100,7 @@ namespace Ragnarok
                     Environment.NewLine,
                     strBuilder.ToString());
             }
+#endif
         }
 
         /// <summary>

@@ -57,7 +57,7 @@ namespace Ragnarok.Xaml
         /// </summary>
         public override object ProvideValue(IServiceProvider service)
         {
-            if (EnumType == null)
+            if ((object)EnumType == null)
             {
                 throw new InvalidOperationException(
                     "列挙子の型が設定されていません。");
