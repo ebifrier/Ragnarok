@@ -705,7 +705,7 @@ namespace Ragnarok.Utility
                 {
                     continue;
                 }
-                if (property.DeclaringType == typeof(AppSettingsBase))
+                if (typeof(AppSettingsBase).Equals(property.DeclaringType))
                 {
                     continue;
                 }

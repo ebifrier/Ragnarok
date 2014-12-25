@@ -329,7 +329,7 @@ namespace Ragnarok.Utility
         {
             // 継承クラス群を取得します。
             for (var type = targetType;
-                 type != typeof(object) && type != null;
+                 type != typeof(object) && (object)type != null;
                  type = type.BaseType)
             {
                 yield return type;
