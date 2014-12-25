@@ -141,12 +141,13 @@ namespace Ragnarok.Forms.Utility
             {
                 try
                 {
-                    var diff = WaitNextFrame();
+                    var frameSkipped = false;
+                    var diff = WaitNextFrame(out frameSkipped);
 
                     // 各フレームの処理を行います。
                     // (念のため同期してメソッドを呼び出します)
                     FormsUtil.Synchronizer.Invoke(
-                        new Action(() => DoEnterFrame(diff)));
+                        new Action(() => DoEnterFrame(diff, frameSkipped)));
                 }
                 catch (Exception ex)
                 {
@@ -158,13 +159,14 @@ namespace Ragnarok.Forms.Utility
         /// <summary>
         /// 次フレームまで待ちます。
         /// </summary>
-        private double WaitNextFrame()
+        private double WaitNextFrame(out bool frameSkipped)
         {
             var diff = Environment.TickCount - this.prevTick;
             if (diff > FrameTime)
             {
                 // 時間が過ぎている。
                 this.prevTick = Environment.TickCount;
+                frameSkipped = true;
                 return diff;
             }
 
@@ -185,15 +187,17 @@ namespace Ragnarok.Forms.Utility
             // ぴったりに終わったと仮定します。
             // 差分は次フレームに持ち越されます。
             this.prevTick += FrameTime;
+            frameSkipped = false;
             return FrameTime;
         }
 
         /// <summary>
         /// 各フレームに必要な処理を行います。
         /// </summary>
-        private void DoEnterFrame(double diff)
+        private void DoEnterFrame(double diff, bool frameSkipped)
         {
-            EnterFrame.SafeRaiseEvent(this, new FrameEventArgs(diff));
+            EnterFrame.SafeRaiseEvent(this,
+                new FrameEventArgs(diff, frameSkipped));
         }
     }
 }
