@@ -276,6 +276,7 @@
     <Compile Include="Utility\DurationConverter.cs" />
     <Compile Include="Utility\EnumWrapper.cs" />
     <Compile Include="Utility\EvaluationClient.cs" />
+    <Compile Include="Utility\GCObserver.cs" />
     <Compile Include="Utility\ImageSetInfo.cs" />
     <Compile Include="Utility\InfoBase.cs" />
     <Compile Include="Utility\Json.cs" />
