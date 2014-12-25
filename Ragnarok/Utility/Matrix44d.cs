@@ -90,7 +90,7 @@ namespace Ragnarok.Utility
         /// </summary>
         public bool HasInverse
         {
-            get { return (Math.Abs(Determinant()) > 0.0001); }
+            get { return (Math.Abs(Determinant()) > 1E-12); }
         }
 
         /// <summary>

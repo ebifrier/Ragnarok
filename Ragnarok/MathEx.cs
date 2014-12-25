@@ -246,6 +246,22 @@ namespace Ragnarok
         }
 
         /// <summary>
+        /// 内積を計算します。
+        /// </summary>
+        public static double InnerProduct(double x, double y)
+        {
+            return Math.Sqrt(x * x + y * y);
+        }
+
+        /// <summary>
+        /// 内積を計算します。
+        /// </summary>
+        public static float InnerProduct(float x, float y)
+        {
+            return (float)Math.Sqrt(x * x + y * y);
+        }
+
+        /// <summary>
         /// <paramref name="progress"/>が<paramref name="duration"/>
         /// 周期で0.0～1.0の値を返すようにします。
         /// </summary>
