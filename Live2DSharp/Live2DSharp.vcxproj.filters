@@ -1,0 +1,495 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="リソース ファイル">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="clrLib">
+      <UniqueIdentifier>{a533f29a-0b33-4d2d-a469-549aa039e98a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="framework">
+      <UniqueIdentifier>{33555ca3-c347-4180-b31b-79b84968168d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CppSharp.h" />
+    <ClInclude Include="framework\ExpressionMotion.h">
+      <Filter>framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\PriorityMotionQueueManager.h">
+      <Filter>framework</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\clrLive2DModelOpenGL.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\clrLive2DModelWinGL.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\clrModelContext.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\clrPriorityMotionQueueManager.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\avatar\clrAvatarPartsItem.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\base\clrBDAffine.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\base\clrBDBoxGrid.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\base\clrIBaseContext.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\base\clrIBaseData.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\base\private\clrAffineEnt.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\draw\clrDDTexture.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\draw\clrIDrawContext.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\draw\clrIDrawData.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\graphics\clrDrawParam.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\graphics\clrDrawParam_WinGL.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\id\clrBaseDataID.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\id\clrDrawDataID.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\id\clrID.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\id\clrParamID.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\id\clrPartsDataID.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\io\clrBReader.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\io\clrByteBuffer.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\io\clrFileFormat2.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\io\clrISerializableV2.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\io\clrRefString.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\io\data\clrArrays2D.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\memory\clrAMemoryHolder.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\memory\clrAPageHeader.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\memory\clrLDAllocator.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\memory\clrLDObject.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\memory\clrLDUnmanagedObject.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\memory\clrMemoryParam.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\memory\clrUtMemory.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\memory\debug\clrMemoryInfo.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\memory\debug\clrMemoryInfoSet.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\memory\fixed\clrMemoryHolderFixed.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\memory\fixed\clrMHPageHeaderFixed.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\memory\tmp\clrMemoryHolderTmp.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\memory\tmp\clrMHBin.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\model\clrModelImpl.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\model\clrPartsData.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\model\clrUtModel.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\motion\clrAMotion.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\motion\clrEyeBlinkMotion.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\motion\clrLive2DMotion.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\motion\clrLive2DMotionBin.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\motion\clrMotionQueueEnt.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\motion\clrMotionQueueManager.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\param\clrParamDefFloat.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\param\clrParamDefSet.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\param\clrParamPivots.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\param\clrPivotManager.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\physics\clrPhysicsHair.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\physics\clrPhysicsParams.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\type\clrLDAffineTransform.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\type\clrLDColor.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\type\clrLDMap.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\type\clrLDPoint.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\type\clrLDPointF.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\type\clrLDRect.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\type\clrLDRectF.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\type\clrLDString.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\type\clrLDVector.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\util\clrJson.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\util\clrUtArray.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\util\clrUtDebug.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\util\clrUtFile.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\util\clrUtInterpolate.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\util\clrUtMath.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\util\clrUtMotion.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\util\clrUtString.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\util\clrUtSystem.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\clrALive2DModel.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\clrDEF.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\clrExpressionMotion.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\clrLive2D.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+    <ClInclude Include="clrLib\graphics\clrDrawProfileCocos2D.h">
+      <Filter>clrLib</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="AssemblyInfo.cpp" />
+    <ClCompile Include="framework\ExpressionMotion.cpp">
+      <Filter>framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\PriorityMotionQueueManager.cpp">
+      <Filter>framework</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\clrLive2DModelOpenGL.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\clrLive2DModelWinGL.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\clrModelContext.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\clrPriorityMotionQueueManager.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\avatar\clrAvatarPartsItem.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\base\clrBDAffine.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\base\clrBDBoxGrid.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\base\clrIBaseContext.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\base\clrIBaseData.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\base\private\clrAffineEnt.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\draw\clrDDTexture.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\draw\clrIDrawContext.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\draw\clrIDrawData.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\graphics\clrDrawParam.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\graphics\clrDrawParam_WinGL.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\id\clrBaseDataID.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\id\clrDrawDataID.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\id\clrID.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\id\clrParamID.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\id\clrPartsDataID.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\io\clrBReader.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\io\clrByteBuffer.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\io\clrFileFormat2.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\io\clrISerializableV2.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\io\clrRefString.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\io\data\clrArrays2D.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\memory\clrAMemoryHolder.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\memory\clrAPageHeader.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\memory\clrLDAllocator.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\memory\clrLDObject.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\memory\clrLDUnmanagedObject.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\memory\clrMemoryParam.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\memory\clrUtMemory.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\memory\debug\clrMemoryInfo.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\memory\debug\clrMemoryInfoSet.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\memory\fixed\clrMemoryHolderFixed.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\memory\fixed\clrMHPageHeaderFixed.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\memory\tmp\clrMemoryHolderTmp.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\memory\tmp\clrMHBin.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\model\clrModelImpl.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\model\clrPartsData.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\model\clrUtModel.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\motion\clrAMotion.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\motion\clrEyeBlinkMotion.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\motion\clrLive2DMotion.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\motion\clrLive2DMotionBin.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\motion\clrMotionQueueEnt.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\motion\clrMotionQueueManager.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\param\clrParamDefFloat.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\param\clrParamDefSet.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\param\clrParamPivots.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\param\clrPivotManager.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\physics\clrPhysicsHair.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\physics\clrPhysicsParams.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\type\clrLDAffineTransform.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\type\clrLDColor.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\type\clrLDMap.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\type\clrLDPoint.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\type\clrLDPointF.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\type\clrLDRect.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\type\clrLDRectF.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\type\clrLDString.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\type\clrLDVector.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\util\clrJson.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\util\clrUtArray.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\util\clrUtDebug.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\util\clrUtFile.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\util\clrUtInterpolate.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\util\clrUtMath.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\util\clrUtMotion.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\util\clrUtString.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\util\clrUtSystem.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\clrALive2DModel.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\clrDEF.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\clrExpressionMotion.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\clrLive2D.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+    <ClCompile Include="clrLib\graphics\clrDrawProfileCocos2D.cpp">
+      <Filter>clrLib</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
