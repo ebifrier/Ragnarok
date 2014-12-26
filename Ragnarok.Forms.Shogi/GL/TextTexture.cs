@@ -253,8 +253,8 @@ namespace Ragnarok.Forms.Shogi.GL
                 return new Rectangle(
                     (int)Math.Floor(bounds.Left),
                     (int)Math.Floor(bounds.Top),
-                    (int)Math.Ceiling(bounds.Width + 1),
-                    (int)Math.Ceiling(bounds.Height + 1));
+                    (int)Math.Ceiling(bounds.Width + 2),
+                    (int)Math.Ceiling(bounds.Height + 2));
             }
         }
 
