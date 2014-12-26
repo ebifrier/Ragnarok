@@ -1,3 +1,7 @@
+obj/
+bin/
+Debug/
+Release/
 CommentGetter/bin/
 CommentGetter/obj/
 Ragnarok.Extra/bin/
@@ -21,3 +25,4 @@ Ragnarok.Forms/bin/
 Ragnarok.Forms.Shogi/bin/
 Ragnarok.Forms.Shogi/obj/
 *.old
+Live2DSharp.Framework/obj/

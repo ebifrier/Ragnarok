@@ -12,7 +12,8 @@
     <AssemblyName>Ragnarok</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -97,6 +98,7 @@
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Data" />
     <Reference Include="System.Security" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="NLog">
@@ -279,7 +281,8 @@
     <Compile Include="Utility\GCObserver.cs" />
     <Compile Include="Utility\ImageSetInfo.cs" />
     <Compile Include="Utility\InfoBase.cs" />
-    <Compile Include="Utility\Json.cs" />
+    <Compile Include="Utility\JsonUtil.cs" />
+    <Compile Include="Utility\JsonConverter.cs" />
     <Compile Include="Utility\LabelDescriptionAttribute.cs" />
     <Compile Include="Utility\Matrix44d.cs" />
     <Compile Include="Utility\MemoryStreamExtensions.cs" />
