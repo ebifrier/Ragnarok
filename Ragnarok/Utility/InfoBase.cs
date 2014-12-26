@@ -194,7 +194,7 @@ namespace Ragnarok.Utility
                 // パスをフルパスに直します。
                 var fullpath = Path.GetFullPath(filepath);
 
-                var obj = Json.DeserializeFromFile<T>(fullpath);
+                var obj = JsonUtil.DeserializeFromFile<T>(fullpath);
                 if (obj == null)
                 {
                     return null;
