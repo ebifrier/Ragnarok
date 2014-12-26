@@ -233,6 +233,16 @@ namespace Ragnarok.Utility
         /// <summary>
         /// <paramref name="p"/>の値に座標変換を行います。
         /// </summary>
+        public Pointd Transform(Pointd p)
+        {
+            return new Pointd(
+                p.X * this[0, 0] + p.Y * this[0, 1] + this[0, 3],
+                p.X * this[1, 0] + p.Y * this[1, 1] + this[1, 3]);
+        }
+
+        /// <summary>
+        /// <paramref name="p"/>の値に座標変換を行います。
+        /// </summary>
         public Point3d Transform(Point3d p)
         {
             return new Point3d(
