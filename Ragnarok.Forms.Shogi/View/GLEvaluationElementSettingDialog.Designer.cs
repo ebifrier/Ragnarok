@@ -29,14 +29,14 @@
         private void InitializeComponent()
         {
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.infoControl = new Ragnarok.Forms.Controls.InfoControl();
             this.label1 = new System.Windows.Forms.Label();
             this.imageSetListComboBox = new System.Windows.Forms.ComboBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.valueFullWidthCheckBox = new System.Windows.Forms.CheckBox();
             this.visibleValueCheckBox = new System.Windows.Forms.CheckBox();
             this.cancelButton = new System.Windows.Forms.Button();
             this.okButton = new System.Windows.Forms.Button();
-            this.infoControl = new Ragnarok.Forms.Controls.InfoControl();
-            this.valueFullWidthCheckBox = new System.Windows.Forms.CheckBox();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -50,6 +50,15 @@
             this.groupBox2.TabIndex = 5;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "基本情報";
+            // 
+            // infoControl
+            // 
+            this.infoControl.AutoSize = true;
+            this.infoControl.Info = null;
+            this.infoControl.Location = new System.Drawing.Point(6, 18);
+            this.infoControl.Name = "infoControl";
+            this.infoControl.Size = new System.Drawing.Size(289, 77);
+            this.infoControl.TabIndex = 0;
             // 
             // label1
             // 
@@ -81,14 +90,24 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "設定";
             // 
+            // valueFullWidthCheckBox
+            // 
+            this.valueFullWidthCheckBox.AutoSize = true;
+            this.valueFullWidthCheckBox.Location = new System.Drawing.Point(15, 40);
+            this.valueFullWidthCheckBox.Name = "valueFullWidthCheckBox";
+            this.valueFullWidthCheckBox.Size = new System.Drawing.Size(235, 16);
+            this.valueFullWidthCheckBox.TabIndex = 1;
+            this.valueFullWidthCheckBox.Text = "数字を全角数字で表示する（横幅を伸ばす）";
+            this.valueFullWidthCheckBox.UseVisualStyleBackColor = true;
+            // 
             // visibleValueCheckBox
             // 
             this.visibleValueCheckBox.AutoSize = true;
             this.visibleValueCheckBox.Location = new System.Drawing.Point(15, 18);
             this.visibleValueCheckBox.Name = "visibleValueCheckBox";
-            this.visibleValueCheckBox.Size = new System.Drawing.Size(110, 16);
+            this.visibleValueCheckBox.Size = new System.Drawing.Size(100, 16);
             this.visibleValueCheckBox.TabIndex = 0;
-            this.visibleValueCheckBox.Text = "数字をで表示する";
+            this.visibleValueCheckBox.Text = "数字を表示する";
             this.visibleValueCheckBox.UseVisualStyleBackColor = true;
             // 
             // cancelButton
@@ -114,25 +133,6 @@
             this.okButton.Text = "OK";
             this.okButton.UseVisualStyleBackColor = true;
             this.okButton.Click += new System.EventHandler(this.okButton_Click);
-            // 
-            // infoControl
-            // 
-            this.infoControl.AutoSize = true;
-            this.infoControl.Info = null;
-            this.infoControl.Location = new System.Drawing.Point(6, 18);
-            this.infoControl.Name = "infoControl";
-            this.infoControl.Size = new System.Drawing.Size(289, 77);
-            this.infoControl.TabIndex = 0;
-            // 
-            // valueFullWidthCheckBox
-            // 
-            this.valueFullWidthCheckBox.AutoSize = true;
-            this.valueFullWidthCheckBox.Location = new System.Drawing.Point(15, 40);
-            this.valueFullWidthCheckBox.Name = "valueFullWidthCheckBox";
-            this.valueFullWidthCheckBox.Size = new System.Drawing.Size(235, 16);
-            this.valueFullWidthCheckBox.TabIndex = 1;
-            this.valueFullWidthCheckBox.Text = "数字を全角数字で表示する（横幅を伸ばす）";
-            this.valueFullWidthCheckBox.UseVisualStyleBackColor = true;
             // 
             // GLEvaluationElementSettingDialog
             // 
