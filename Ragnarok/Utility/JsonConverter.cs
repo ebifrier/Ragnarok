@@ -51,12 +51,14 @@ namespace Ragnarok.Utility
             }
 
             // プロパティやフィールドの型を取得します。
-            var properties = type.GetProperties()
+            var flags = BindingFlags.Public | BindingFlags.NonPublic |
+                        BindingFlags.Instance | BindingFlags.Static;
+            var properties = type.GetProperties(flags)
                 .Where(_ => _.CanRead)
                 .Where(_ => _.CanWrite)
                 .Where(_ => !_.GetIndexParameters().Any());
             var propertyTypes = new List<Type>();
-            propertyTypes.AddRange(type.GetFields().Select(_ => _.FieldType));
+            propertyTypes.AddRange(type.GetFields(flags).Select(_ => _.FieldType));
             propertyTypes.AddRange(properties.Select(_ => _.PropertyType));
 
             return propertyTypes
@@ -73,11 +75,6 @@ namespace Ragnarok.Utility
             if (type.HasElementType)
             {
                 return FilterType(type.GetElementType());
-            }
-            else if (type.IsNested)
-            {
-                return type.GetNestedTypes()
-                    .SelectMany(_ => FilterType(_)).ToArray();
             }
             else if (type.IsGenericType)
             {
@@ -103,13 +100,15 @@ namespace Ragnarok.Utility
         /// </summary>
         private List<MemberInfo> GetMemberList(Type type)
         {
-            var properties = type.GetProperties()
+            var flags = BindingFlags.Public | BindingFlags.NonPublic |
+                        BindingFlags.Instance | BindingFlags.Static;
+            var properties = type.GetProperties(flags)
                 .Where(_ => _.CanRead)
                 .Where(_ => _.CanWrite)
                 .Where(_ => !_.GetIndexParameters().Any());
 
             var members = new List<MemberInfo>();
-            members.AddRange(type.GetFields());
+            members.AddRange(type.GetFields(flags));
             members.AddRange(properties);
             return members;
         }

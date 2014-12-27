@@ -125,7 +125,7 @@ namespace Ragnarok.Forms.Controls
         /// </summary>
         private IEnumerable<Tuple<string, string, string>> GetInfoItems()
         {
-            if (Info.PixivId != 0)
+            if (Info.PixivId > 0)
             {
                 yield return Tuple.Create("pixiv", Info.PixivId.ToString(), info.PixivUrl);
             }
