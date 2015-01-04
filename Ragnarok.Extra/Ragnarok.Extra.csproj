@@ -246,8 +246,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="FlintSharp\Particle.png" />
-    <Content Include="ikpFlac.dll" />
-    <Content Include="ikpMP3.dll" />
+    <Content Include="ikpFlac.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ikpMP3.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <None Include="Ragnarok.Extra.snk" />

@@ -164,7 +164,10 @@ namespace Live2DSharp.Framework
                 LoadPose(MakeHomePath(root.PoseFile));
             }
 
-            this.modelMatrix.SetupLayout(root.Layout);
+            if (root.Layout != null)
+            {
+                this.modelMatrix.SetupLayout(root.Layout);
+            }
 
             this.live2DModel.PremultipliedAlpha = false;
             this.live2DModel.saveParam();
@@ -303,6 +306,15 @@ namespace Live2DSharp.Framework
         }
 
         /// <summary>
+        /// モデルの管理用オブジェクトを取得します。
+        /// </summary>
+        public L2DModelManager ModelManager
+        {
+            get;
+            internal set;
+        }
+
+        /// <summary>
         /// 顔の向く方向を設定します。
         /// </summary>
         public void SetTarget(double x, double y)
@@ -395,6 +407,11 @@ namespace Live2DSharp.Framework
                 this.physics.UpdateParam(this.live2DModel, elapsed);
             }
 
+            if (this.eyeBlink != null)
+            {
+                this.eyeBlink.UpdateParam(this.live2DModel, elapsed);
+            }
+
             // リップシンクの設定
             if (true) //this.useLipSync)
             {
@@ -423,7 +440,14 @@ namespace Live2DSharp.Framework
                 this.motionManager.ReservePriority = (int)priority;
             }
 
-            var motionData = this.root.Motions[group][no];
+            List<L2DMotionData> motionDatas;
+            if (!this.root.Motions.TryGetValue(group, out motionDatas) ||
+                no >= motionDatas.Count())
+            {
+                return -1;
+            }
+
+            var motionData = motionDatas[no];
             var name = string.Format("{0}_{1}", group, no);
             var autoDelete = false;
             AMotion motion;
@@ -449,12 +473,24 @@ namespace Live2DSharp.Framework
                 motion, autoDelete, (int)priority);
         }
 
-        private virtual void OnPlayEffect(string path)
+        /// <summary>
+        /// SEの再生を行います。
+        /// </summary>
+        protected virtual void OnPlayEffect(string path)
         {
-            //WMPLib.WindowsMediaPlayer wplayer = new WMPLib.WindowsMediaPlayer();
+            if (ModelManager == null)
+            {
+                return;
+            }
 
-            //wplayer.URL = path;
-            //wplayer.controls.play();
+            var soundManager = ModelManager.SoundManager;
+            if (soundManager == null)
+            {
+                return;
+            }
+
+            path = Path.GetFullPath(path);
+            soundManager.PlayEffectSound(path, 1.0);
         }
 
         /// <summary>
@@ -462,8 +498,9 @@ namespace Live2DSharp.Framework
         /// </summary>
         public int StartRandomMotion(string group, Priority priority)
         {
-            var motionDatas = this.root.Motions[group];
-            if (!motionDatas.Any())
+            List<L2DMotionData> motionDatas;
+            if (!this.root.Motions.TryGetValue(group, out motionDatas) ||
+                !motionDatas.Any())
             {
                 return -1;
             }

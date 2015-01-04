@@ -25,13 +25,9 @@ namespace Live2DSharp.Framework
             Opening,   // 開いていく途中
         };
 
-        private EyeState eyeState;// 現在の状態
-        private long nextBlinkTime ;// 次回眼パチする時刻（msec）
-		private long stateStartTime ;// 現在のstateが開始した時刻
-			
-		// 左右の目のパラメータ
-		private string eyeID_L;
-		private string eyeID_R;
+        private EyeState eyeState; // 現在の状態
+        private TimeSpan nextBlinkTime; // 次回眼パチする時刻（sec）
+		private double stateTime; // 現在のstateが始まってから経過した時刻
 
         /// <summary>
         /// コンストラクタ
@@ -41,23 +37,41 @@ namespace Live2DSharp.Framework
             // 妥当と思われる値で初期化
             this.eyeState = EyeState.First;
 
-            BlinkIntervalMillis = 4000;// 瞬きの間隔
+            BlinkInterval = TimeSpan.FromMilliseconds(4000);
 
-            ClosingMotionMillis = 100;// 眼が閉じるまでの時間
-            ClosedMotionMillis = 50;// 閉じたままでいる時間
-            OpeningMotionMillis = 150;// 眼が開くまでの時間
+            ClosingMotionSpan = TimeSpan.FromMilliseconds(200);
+            ClosedMotionSpan = TimeSpan.FromMilliseconds(50);
+            OpeningMotionSpan = TimeSpan.FromMilliseconds(250);
 
             CloseIfZero = true;
 
             // 左右の目のパラメータ
-            eyeID_L = "PARAM_EYE_L_OPEN";
-            eyeID_R = "PARAM_EYE_R_OPEN";
+            LeftEyeId = "PARAM_EYE_L_OPEN";
+            RightEyeId = "PARAM_EYE_R_OPEN";
+        }
+
+        /// <summary>
+        /// 左眼のパラメータ名を取得または設定します。
+        /// </summary>
+        public string LeftEyeId
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 右眼のパラメータ名を取得または設定します。
+        /// </summary>
+        public string RightEyeId
+        {
+            get;
+            set;
         }
 
         /// <summary>
         /// 瞬きの間隔を取得または設定します。
         /// </summary>
-        public int BlinkIntervalMillis
+        public TimeSpan BlinkInterval
         {
             get;
             set;
@@ -66,7 +80,7 @@ namespace Live2DSharp.Framework
         /// <summary>
         /// 眼が閉じるまでの時間を取得または設定します。
         /// </summary>
-        public int ClosingMotionMillis
+        public TimeSpan ClosingMotionSpan
         {
             get;
             set;
@@ -75,7 +89,7 @@ namespace Live2DSharp.Framework
         /// <summary>
         /// 眼が閉じたままでいる時間を取得または設定します。
         /// </summary>
-        public int ClosedMotionMillis
+        public TimeSpan ClosedMotionSpan
         {
             get;
             set;
@@ -84,7 +98,7 @@ namespace Live2DSharp.Framework
         /// <summary>
         /// 眼が開くまでの時間を取得または設定します。
         /// </summary>
-        public int OpeningMotionMillis
+        public TimeSpan OpeningMotionSpan
         {
             get;
             set;
@@ -106,70 +120,76 @@ namespace Live2DSharp.Framework
         /// <summary>
         /// 次回の眼パチの時刻を決める。ざっくり
         /// </summary>
-		private long CalcNextBlink()
+		private TimeSpan CalcNextBlink()
 		{
-			var time = Environment.TickCount;
+            var s = BlinkInterval.TotalSeconds;
             var r = MathEx.RandDouble();
 
-            return (time + (long)(r * (2 * BlinkIntervalMillis - 1)));
+            return TimeSpan.FromSeconds(r * (2 * s - 1));
 		}
 		
 		/// <summary>
         /// モデルのパラメータを更新
 		/// </summary>
-        public void SetParam(ALive2DModel model)
+        public void UpdateParam(ALive2DModel model, TimeSpan elapsed)
         {
-            long time = Environment.TickCount;
             double eyeParamValue;// 設定する値
             double t = 0;
 
+            this.stateTime += elapsed.TotalSeconds;
+
             switch (this.eyeState)
             {
-                case EyeState.Closing:
-                    // 閉じるまでの割合を0..1に直す
-                    // (BlinkMotionMillisの半分の時間で閉じる)
-                    t = (time - stateStartTime) / (double)ClosingMotionMillis;
-                    if (t >= 1)
-                    {
-                        t = 1;
-                        this.eyeState = EyeState.Closed;// 次から開き始める
-                        this.stateStartTime = time;
-                    }
-                    eyeParamValue = 1 - t;
-                    break;
-                case EyeState.Closed:
-                    t = (time - stateStartTime) / (double)ClosedMotionMillis;
-                    if (t >= 1)
-                    {
-                        this.eyeState = EyeState.Opening;// 次から開き始める
-                        this.stateStartTime = time;
-                    }
-                    eyeParamValue = 0;// 閉じた状態
-                    break;
-                case EyeState.Opening:
-                    t = (time - stateStartTime) / (double)OpeningMotionMillis;
-                    if (t >= 1)
-                    {
-                        t = 1;
-                        this.eyeState = EyeState.Interval;// 次から開き始める
-                        this.nextBlinkTime = CalcNextBlink();// 次回のまばたきのタイミングを始める時刻
-                    }
-                    eyeParamValue = t;
-                    break;
-                case EyeState.Interval:
-                    // まばたき開始時刻なら
-                    if (this.nextBlinkTime < time)
-                    {
-                        this.eyeState = EyeState.Closing;
-                        this.stateStartTime = time;
-                    }
-                    eyeParamValue = 1;// 開いた状態
-                    break;
                 case EyeState.First:
                 default:
                     this.eyeState = EyeState.Interval;
-                    this.nextBlinkTime = CalcNextBlink();// 次回のまばたきのタイミングを始める時刻
-                    eyeParamValue = 1;// 開いた状態
+                    this.nextBlinkTime = CalcNextBlink(); // 次回のまばたきのタイミングを始める時刻
+                    this.stateTime = 0;
+                    eyeParamValue = 1; // 開いた状態
+                    break;
+
+                case EyeState.Interval:
+                    // まばたき開始時刻なら
+                    if (this.stateTime > this.nextBlinkTime.TotalSeconds)
+                    {
+                        this.eyeState = EyeState.Closing;
+                        this.stateTime = 0;
+                    }
+                    eyeParamValue = 1; // 開いた状態
+                    break;
+
+                case EyeState.Closing:
+                    // 閉じるまでの割合を0..1に直す
+                    t = this.stateTime / ClosingMotionSpan.TotalSeconds;
+                    if (t >= 1)
+                    {
+                        t = 1;
+                        this.eyeState = EyeState.Closed; // 次から開き始める
+                        this.stateTime = 0;
+                    }
+                    eyeParamValue = 1 - t;
+                    break;
+
+                case EyeState.Closed:
+                    t = this.stateTime / ClosedMotionSpan.TotalSeconds;
+                    if (t >= 1)
+                    {
+                        this.eyeState = EyeState.Opening; // 次から開き始める
+                        this.stateTime = 0;
+                    }
+                    eyeParamValue = 0;// 閉じた状態
+                    break;
+
+                case EyeState.Opening:
+                    t = this.stateTime / OpeningMotionSpan.TotalSeconds;
+                    if (t >= 1)
+                    {
+                        t = 1;
+                        this.eyeState = EyeState.Interval; // 次から開き始める
+                        this.nextBlinkTime = CalcNextBlink();
+                        this.stateTime = 0;
+                    }
+                    eyeParamValue = t;
                     break;
             }
 
@@ -179,8 +199,8 @@ namespace Live2DSharp.Framework
             }
 
             // ---- 値を設定 ----
-            model.setParamFloat(eyeID_L, (float)eyeParamValue, 1.0f);
-            model.setParamFloat(eyeID_R, (float)eyeParamValue, 1.0f);
+            model.setParamFloat(LeftEyeId, (float)eyeParamValue, 1.0f);
+            model.setParamFloat(RightEyeId, (float)eyeParamValue, 1.0f);
         }
     }
 }

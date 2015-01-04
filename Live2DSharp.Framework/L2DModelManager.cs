@@ -9,6 +9,7 @@ using Live2DSharp;
 using Live2DSharp.Framework;
 
 using Ragnarok;
+using Ragnarok.Extra.Effect;
 using Ragnarok.ObjectModel;
 using Ragnarok.Utility;
 
@@ -65,6 +66,15 @@ namespace Live2DSharp.Framework
         }
 
         /// <summary>
+        /// SE再生用のオブジェクトを取得または設定します。
+        /// </summary>
+        public IEffectSoundManager SoundManager
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// モデルの追加を行います。
         /// </summary>
         public void AddModel(L2DModel model)
@@ -76,6 +86,8 @@ namespace Live2DSharp.Framework
 
             using (LazyLock())
             {
+                model.ModelManager = this;
+
                 this.models.Add(model);
             }
         }
@@ -171,6 +183,22 @@ namespace Live2DSharp.Framework
         }
 
         /// <summary>
+        /// モデル行列の更新を行います。
+        /// </summary>
+        public void UpdateModelMatrix(Matrix44d projection)
+        {
+            if (projection == null)
+            {
+                throw new ArgumentNullException("projection");
+            }
+
+            using (LazyLock())
+            {
+                this.models.ForEach(_ => _.UpdateMatrix(projection));
+            }
+        }
+
+        /// <summary>
         /// 顔を向ける座標値を設定します。
         /// </summary>
         public void SetTarget(double x, double y)
@@ -226,6 +254,8 @@ namespace Live2DSharp.Framework
                 {
                     DrawProfileCocos2D.preDraw();
 
+                    gl.PushAttrib(OpenGL.GL_ALL_ATTRIB_BITS);
+
                     //gl.MatrixMode(OpenGL.GL_PROJECTION);
                     //gl.PushMatrix();
                     //gl.MatrixMode(OpenGL.GL_MODELVIEW);
@@ -239,6 +269,8 @@ namespace Live2DSharp.Framework
                     //gl.MatrixMode(OpenGL.GL_PROJECTION);
                     //gl.PopMatrix();
                     //gl.MatrixMode(OpenGL.GL_MODELVIEW);
+
+                    gl.PopAttrib();
 
                     DrawProfileCocos2D.postDraw();
                 }
