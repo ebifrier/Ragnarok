@@ -61,10 +61,8 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.Web.Extensions" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="L2DExpressionData.cs" />
@@ -88,6 +86,10 @@
     <ProjectReference Include="..\Live2DSharp\Live2DSharp.vcxproj">
       <Project>{85a76dc9-5688-46ba-910c-044513bf474f}</Project>
       <Name>Live2DSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Ragnarok.Extra\Ragnarok.Extra.csproj">
+      <Project>{8ebdc79a-607b-4b56-a298-1471cd6753db}</Project>
+      <Name>Ragnarok.Extra</Name>
     </ProjectReference>
     <ProjectReference Include="..\Ragnarok\Ragnarok.csproj">
       <Project>{a348968a-dd91-47b4-9420-c7d370a2be92}</Project>

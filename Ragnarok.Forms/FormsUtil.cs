@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Forms;
+
+using Ragnarok.Utility;
 
 namespace Ragnarok.Forms
 {
@@ -206,6 +209,38 @@ namespace Ragnarok.Forms
                         "CollectionChangedの呼び出しに失敗しました。");
                 }
             }*/
+        }
+
+        /// <summary>
+        /// 変換を行います。
+        /// </summary>
+        public static Pointd ToPointd(this PointF p)
+        {
+            return new Pointd(p.X, p.Y);
+        }
+
+        /// <summary>
+        /// 変換を行います。
+        /// </summary>
+        public static Pointd ToPointd(this Point p)
+        {
+            return new Pointd(p.X, p.Y);
+        }
+
+        /// <summary>
+        /// 変換を行います。
+        /// </summary>
+        public static PointF ToPointF(this Pointd p)
+        {
+            return new PointF(Convert.ToSingle(p.X), Convert.ToSingle(p.Y));
+        }
+
+        /// <summary>
+        /// 変換を行います。
+        /// </summary>
+        public static Point ToPoint(this Pointd p)
+        {
+            return new Point(Convert.ToInt32(p.X), Convert.ToInt32(p.Y));
         }
     }
 }
