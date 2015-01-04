@@ -58,6 +58,7 @@ namespace Ragnarok.Forms.Shogi.View
         private Board board;
         private IEffectManager effectManager;
         private AutoPlay autoPlay;
+        private Board oldBoard;
 
         /// <summary>
         /// コンストラクタ
@@ -472,10 +473,12 @@ namespace Ragnarok.Forms.Shogi.View
             // 局面変更時は自動再生を自動で止めるようになっているので、
             // this.autoPlayフィールドを変更した後に局面を変えると、
             // すぐに止まってしまいます。
+            this.oldBoard = Board;
             Board = autoPlay.Board;
 
             autoPlay.ShogiElement = this;
             this.autoPlay = autoPlay;
+
             AutoPlayState = AutoPlayState.Playing;
         }
 
@@ -495,10 +498,13 @@ namespace Ragnarok.Forms.Shogi.View
             }
 
             // コントロールは消去しておきます。
-            this.autoPlay.ShogiElement = null;
-
             var autoPlay = this.autoPlay;
+            this.autoPlay.ShogiElement = null;
             this.autoPlay = null;
+
+            Board = this.oldBoard;
+            this.oldBoard = null;
+
             AutoPlayState = AutoPlayState.None;
 
             // Boardが変更されるとAutoPlayはすべてクリアされます。

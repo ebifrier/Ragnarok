@@ -53,7 +53,7 @@ namespace Ragnarok.Forms.Shogi
 
         private readonly List<BoardMove> moveList;
         private int moveIndex;
-        private DateTime prevTime = DateTime.Now;
+        private IEnumerator<bool> enumerator;
 
         /// <summary>
         /// 再生完了時や途中停止時に呼ばれるイベントです。
@@ -61,9 +61,9 @@ namespace Ragnarok.Forms.Shogi
         public event EventHandler Stopped;
 
         /// <summary>
-        /// 自動更新に使われる列挙子を取得または設定します。
+        /// 自動更新に使われる列挙子のファクトリを取得または設定します。
         /// </summary>
-        public IEnumerator<bool> UpdateEnumerator
+        public Func<IEnumerable<bool>> UpdateEnumeratorFactory
         {
             get;
             set;
@@ -80,6 +80,15 @@ namespace Ragnarok.Forms.Shogi
 
         /// <summary>
         /// 開始局面を取得または設定します。
+        /// </summary>
+        public Board StartBoard
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// 現在の局面を取得または設定します。
         /// </summary>
         public Board Board
         {
@@ -366,23 +375,29 @@ namespace Ragnarok.Forms.Shogi
         /// </summary>
         public bool Update(TimeSpan elapsed)
         {
-            if (UpdateEnumerator == null)
+            if (this.enumerator == null)
             {
-                return false;
+                var enumerable = UpdateEnumeratorFactory();
+                if (enumerable == null)
+                {
+                    return false;
+                }
+
+                this.enumerator = enumerable.GetEnumerator();
             }
 
             // コルーチンを進めます。
-            if (!UpdateEnumerator.MoveNext())
+            if (!this.enumerator.MoveNext())
             {
                 //RaiseStopped();
 
-                UpdateEnumerator = null;
+                this.enumerator = null;
                 return false;
             }
 
             // 時間はここで進めます。
             Position += elapsed;
-            return UpdateEnumerator.Current;
+            return this.enumerator.Current;
         }
 
         /// <summary>
@@ -411,6 +426,12 @@ namespace Ragnarok.Forms.Shogi
                 ShogiElement.AutoPlayOpacity = 0.0;
             }
 
+            Board = StartBoard.Clone();
+            Position = TimeSpan.Zero;
+            BasePosition = TimeSpan.Zero;
+            this.enumerator = null;
+            this.moveIndex = 0;
+
             RaiseStopped();
         }
 
@@ -419,7 +440,7 @@ namespace Ragnarok.Forms.Shogi
         /// </summary>
         public bool Validate()
         {
-            if (Board == null || !Board.Validate())
+            if (StartBoard == null || !StartBoard.Validate())
             {
                 return false;
             }
@@ -431,7 +452,7 @@ namespace Ragnarok.Forms.Shogi
                     return false;
                 }
 
-                return Board.CanMoveList(this.moveList);
+                return StartBoard.CanMoveList(this.moveList);
             }
 
             return true;
@@ -442,8 +463,14 @@ namespace Ragnarok.Forms.Shogi
         /// </summary>
         private AutoPlay(Board board)
         {
-            UpdateEnumerator = GetUpdateEnumerator().GetEnumerator();
-            Board = board;
+            if (board == null)
+            {
+                throw new ArgumentNullException("board");
+            }
+
+            UpdateEnumeratorFactory = () => GetUpdateEnumerator();
+            StartBoard = board;
+            Board = board.Clone();
             Interval = DefaultInterval;
             EffectFadeInterval = DefaultEffectFadeInterval;
             BeginningInterval = TimeSpan.Zero;
