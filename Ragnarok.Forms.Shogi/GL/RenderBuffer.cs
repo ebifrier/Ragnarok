@@ -83,6 +83,29 @@ namespace Ragnarok.Forms.Shogi.GL
         }
 
         /// <summary>
+        /// 描画用リストを追加します。
+        /// </summary>
+        public void AddRenderAction(Action<OpenGL> renderAction, double zorder)
+        {
+            if (renderAction == null)
+            {
+                throw new ArgumentNullException("renderAction");
+            }
+
+            lock (this.syncObject)
+            {
+                // ZOrder値に下駄をはかせます。
+                var data = new RenderData
+                {
+                    RenderAction = renderAction,
+                    ZOrder = BaseZOrder + zorder,
+                };
+
+                this.dataList.Add(data);
+            }
+        }
+
+        /// <summary>
         /// 描画オブジェクトを追加します。
         /// </summary>
         private void AddRenderInternal(RenderData data)

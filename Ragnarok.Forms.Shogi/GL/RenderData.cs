@@ -17,6 +17,15 @@ namespace Ragnarok.Forms.Shogi.GL
     public sealed class RenderData
     {
         /// <summary>
+        /// 描画用のメソッドを取得または設定します。
+        /// </summary>
+        public Action<OpenGL> RenderAction
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// 描画用のテクスチャを取得します。
         /// </summary>
         public Texture Texture
@@ -78,25 +87,34 @@ namespace Ragnarok.Forms.Shogi.GL
         /// </summary>
         public void Render(OpenGL gl)
         {
-            if (Mesh == null)
+            if (RenderAction != null)
             {
-                return;
+                gl.PushMatrix();
+                RenderAction(gl);
+                gl.PopMatrix();
             }
+            else
+            {
+                if (Mesh == null)
+                {
+                    return;
+                }
 
-            gl.Color(Color.R, Color.G, Color.B, Color.A);
-            SetBlend(gl);
+                gl.Color(Color.R, Color.G, Color.B, Color.A);
+                SetBlend(gl);
 
-            BindTexture(gl);
+                BindTexture(gl);
 
-            // 座標系の設定
-            gl.PushMatrix();
-            SetMatrix(gl);
-            gl.Translate(0, 0, ZOrder);
+                // 座標系の設定
+                gl.PushMatrix();
+                SetMatrix(gl);
+                //gl.Translate(0, 0, ZOrder);
 
-            SetMesh(gl);
-            gl.PopMatrix();
+                SetMesh(gl);
+                gl.PopMatrix();
 
-            //UnbindTexture(gl);
+                //UnbindTexture(gl);
+            }
         }
 
         /// <summary>
@@ -148,7 +166,6 @@ namespace Ragnarok.Forms.Shogi.GL
             switch (Blend)
             {
                 case BlendType.Diffuse:
-                    // 色が濁る。もともとそういうもの？ :TODO
                     gl.BlendFunc(OpenGL.GL_SRC_ALPHA, OpenGL.GL_ONE_MINUS_SRC_ALPHA);
                     break;
                 case BlendType.Emissive:
