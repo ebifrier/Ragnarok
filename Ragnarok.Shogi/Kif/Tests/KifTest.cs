@@ -79,12 +79,12 @@ namespace Ragnarok.Shogi.Kif.Tests
             var pathList = TestUtil.LoadPathList("file.list");
 
             //var path = @"E:\Dropbox\NicoNico\shogi\test_kif\1600-1979\kif\18720111その他大矢小野有105.KIF";
-            foreach (var path in TestUtil.FileList("*.kif", pathList))
+            /*foreach (var path in TestUtil.FileList("*.kif", pathList))
             {
                 Console.WriteLine(path);
 
                 TestKif(path);
-            }
+            }*/
         }
 
         /// <summary>
@@ -145,6 +145,91 @@ namespace Ragnarok.Shogi.Kif.Tests
                 node = node.NextNode;
                 Assert.AreEqual(TimeSpan.Parse(durations[i]), node.Duration);
                 Assert.AreEqual(TimeSpan.Parse(totalDurations[i]), node.TotalDuration);
+            }
+        }
+
+        /// <summary>
+        /// 81Dojoの棋譜読み込みテスト
+        /// </summary>
+        [Test()]
+        public void Duration81DojoTest()
+        {
+            var content =
+                "#KIF version=2.0 encoding=UTF-8\n" +
+                "開始日時：2014/01/01\n" +
+                "場所：81Dojo (ver.2014/1/1)\n" +
+                "持ち時間：5分+30秒\n" +
+                "手合割：平手\n" +
+                "先手：test-san1\n" +
+                "後手：test-san2\n" +
+                "手数----指手---------消費時間--\n" +
+                "   1 ７六歩(77)   ( 0:5/)\n" +
+                "   2 ３四歩(33)   ( 0:1/)\n" +
+                "   3 ２六歩(27)   ( 0:3/)\n" +
+                "   4 ５四歩(53)   ( 0:1/)\n" +
+                "   5 ４八銀(39)   ( 0:3/)\n" +
+                "   6 ８四歩(83)   ( 0:4/)\n";
+
+            var durations = new int[]
+            {
+                5, 1, 3, 1, 3, 4
+            };
+            var totalDurations = new int[]
+            {
+                5, 1, 8, 2, 11, 6
+            };
+
+            // 棋譜の読み込み
+            var kifu = KifuReader.LoadFrom(content);
+            Assert.NotNull(kifu);
+            Assert.AreEqual(6, kifu.MoveList.Count());
+
+            var node = kifu.RootNode;
+            for (var i = 0; i < durations.Count(); ++i)
+            {
+                node = node.NextNode;
+                Assert.AreEqual(TimeSpan.FromSeconds(durations[i]), node.Duration);
+                Assert.AreEqual(TimeSpan.FromSeconds(totalDurations[i]), node.TotalDuration);
+            }
+        }
+
+        /// <summary>
+        /// うさぴょんの棋譜読み込みテスト
+        /// </summary>
+        [Test()]
+        public void DurationUsapyonTest()
+        {
+            var content =
+                "先手：あなた\n" +
+                "後手：うさぴょんLv2\n" +
+                "手合い割り：平手\n" +
+                "  1: ▲７六歩         6s\n" +
+                "  2: △８四歩         1s\n" +
+                "  3: ▲５八金右       3s\n" +
+                "  4: △３四歩         1s\n" +
+                "  5: ▲６八金寄       3s\n" +
+                "  6: △５二王        10s\n";
+
+            var durations = new int[]
+            {
+                6, 1, 3, 1, 3, 10
+            };
+            var totalDurations = new int[]
+            {
+                6, 1, 9, 2, 12, 12
+            };
+
+            // 棋譜の読み込み
+            var kifu = KifuReader.LoadFrom(content);
+            Assert.NotNull(kifu);
+            Assert.AreEqual(6, kifu.MoveList.Count());
+
+            var node = kifu.RootNode;
+            for (var i = 0; i < durations.Count(); ++i)
+            {
+                node = node.NextNode;
+                Assert.AreEqual(TimeSpan.FromSeconds(durations[i]), node.Duration);
+                Assert.AreEqual(TimeSpan.FromSeconds(totalDurations[i]), node.TotalDuration);
             }
         }
     }

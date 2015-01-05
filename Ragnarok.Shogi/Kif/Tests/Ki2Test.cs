@@ -81,12 +81,28 @@ namespace Ragnarok.Shogi.Kif.Tests
             var pathList = TestUtil.LoadPathList("file.list");
 
             //var path = @"E:/Dropbox/NicoNico/bin/kifuexpl/棋譜データベース/2005\20051017順位戦森下三浦無108.KI2";
-            foreach (var path in TestUtil.FileList("*.ki2", pathList))
+            /*foreach (var path in TestUtil.FileList("*.ki2", pathList))
             {
                 Console.WriteLine(path);
 
                 TestKif(path);
-            }
+            }*/
+        }
+
+        /// <summary>
+        /// 改行のみの行がない棋譜の読み込みテスト
+        /// </summary>
+        [Test()]
+        public void NoNewlineTest()
+        {
+            var text =
+                "先手：谷川浩司\n" +
+                "後手：田中寅彦\n" +
+                "▲７六歩";
+
+            var kifu = KifuReader.LoadFrom(text);
+            Assert.NotNull(kifu);
+            Assert.AreEqual(1, kifu.MoveList.Count());
         }
 
         /// <summary>

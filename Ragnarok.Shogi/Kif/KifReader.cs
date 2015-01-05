@@ -25,7 +25,7 @@ namespace Ragnarok.Shogi.Kif
         /// </example>
         private static readonly Regex MoveLineRegex = new Regex(
             string.Format(
-                @"^\s*(\d+)\s*[:]?\s*(.*?(?:{0}|打|[(]\d\d[)]))(\s+[(]\s*([\d:]+)\s*\/\s*([\d:]+)\s*[)])?\s*([\+])?\s*$",
+                @"^\s*(\d+)\s*[:]?\s*(.*?(?:{0}|打|[(]\d\d[)])?)(\s+[(]?\s*([\s\d:/sS]+)\s*[)]?)?\s*([\+])?\s*$",
                 KifUtil.SpecialMoveText),
             RegexOptions.Compiled);
 
@@ -33,7 +33,7 @@ namespace Ragnarok.Shogi.Kif
         /// 変化行の正規表現
         /// </summary>
         private static readonly Regex BeginVariationLineRegex = new Regex(
-            @"^\s*変化：(\d+)手");
+            @"^\s*変化\s*：\s*(\d+)手");
 
         private TextReader reader;
         private string currentLine;
@@ -145,6 +145,13 @@ namespace Ragnarok.Shogi.Kif
                 }
 
                 return true;
+            }
+
+            // ヘッダが正しく読めない場合、
+            // 区切りなしに指し手行に入っている可能性があります。
+            if (MoveLineRegex.IsMatch(line))
+            {
+                this.isKif = true;
             }
 
             return false;
@@ -446,7 +453,7 @@ namespace Ragnarok.Shogi.Kif
             }
 
             var moveCount = int.Parse(m.Groups[1].Value);
-            var hasVariation = m.Groups[6].Success;
+            var hasVariation = m.Groups[5].Success;
 
             // 指し手'３六歩(37)'のような形式でパースします。
             var moveText = m.Groups[2].Value;
@@ -478,26 +485,35 @@ namespace Ragnarok.Shogi.Kif
             };
         }
 
+        private static readonly string TimeFormat =
+            @"(?:(\d+)\s*\:\s*)?(\d+)\s*\:\s*(\d+)";
+        private static readonly Regex DurationRegex1 = new Regex(
+            string.Format(@"{0}\s*(?:/\s*{0})?", TimeFormat),
+            RegexOptions.Compiled);
+        private static readonly Regex DurationRegex2 = new Regex(
+            @"(\d+)\s*[sS]?",
+            RegexOptions.Compiled);
+
         /// <summary>
         /// 着手時間を取得します。
         /// </summary>
         private TimeSpan ParseDuration(string input)
         {
-            var values = input.Split(
-                new string[] { ":" },
-                StringSplitOptions.RemoveEmptyEntries)
-                .Select(_ => int.Parse(_))
-                .ToList();
-
-            if (values.Count() == 2)
+            var m = DurationRegex1.Match(input);
+            if (m.Success)
             {
-                return TimeSpan.FromSeconds(
-                    values[0] * 60 + values[1]);
+                var hourStr = m.Groups[1].Success ? m.Groups[1].Value : "0";
+                return new TimeSpan(
+                    int.Parse(hourStr),
+                    int.Parse(m.Groups[2].Value),
+                    int.Parse(m.Groups[3].Value));
             }
-            else if (values.Count() == 3)
+
+            m = DurationRegex2.Match(input);
+            if (m.Success)
             {
                 return TimeSpan.FromSeconds(
-                    values[0] * 3600 + values[1] * 60 + values[2]);
+                    int.Parse(m.Groups[1].Value));
             }
 
             return TimeSpan.Zero;
@@ -516,10 +532,10 @@ namespace Ragnarok.Shogi.Kif
                 this.lineNumber = 0;
                 this.startBoard = null;
 
-                // ヘッダを３行読めれば、kif or ki2 or bod 形式の
+                // ヘッダを1行読めれば、kif or ki2 or bod 形式の
                 // どれかのファイルとします。
                 var parser = new BodParser();
-                for (var i = 0; i < 3; ++i)
+                for (var i = 0; i < 1; ++i)
                 {
                     var line = ReadNextLine();
 
