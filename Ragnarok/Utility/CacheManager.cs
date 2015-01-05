@@ -253,7 +253,7 @@ namespace Ragnarok.Utility
                     "オブジェクトサイズが負数です。");
             }
 
-            lock(this.syncRoot)
+            lock (this.syncRoot)
             {
                 LinkedListNode<CacheData> node;
                 if (this.dic.TryGetValue(key, out node))

@@ -281,6 +281,7 @@
     <Compile Include="Utility\GCObserver.cs" />
     <Compile Include="Utility\ImageSetInfo.cs" />
     <Compile Include="Utility\InfoBase.cs" />
+    <Compile Include="Utility\IntConverter.cs" />
     <Compile Include="Utility\JsonUtil.cs" />
     <Compile Include="Utility\JsonConverter.cs" />
     <Compile Include="Utility\LabelDescriptionAttribute.cs" />

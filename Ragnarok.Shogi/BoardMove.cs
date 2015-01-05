@@ -174,8 +174,8 @@ namespace Ragnarok.Shogi
                 return string.Format(
                     "{0}{1}{2}{3}打",
                     Stringizer.ToString(BWType),
-                    StringConverter.ConvertInt(NumberType.Big, DstSquare.File),
-                    StringConverter.ConvertInt(NumberType.Kanji, DstSquare.Rank),
+                    IntConverter.Convert(NumberType.Big, DstSquare.File),
+                    IntConverter.Convert(NumberType.Kanji, DstSquare.Rank),
                     Stringizer.ToString(DropPieceType));
             }
             else if (HasSameSquareAsPrev)
@@ -193,8 +193,8 @@ namespace Ragnarok.Shogi
                 return string.Format(
                     "{0}{1}{2}{3}{4}({5}{6})",
                     Stringizer.ToString(BWType),
-                    StringConverter.ConvertInt(NumberType.Big, DstSquare.File),
-                    StringConverter.ConvertInt(NumberType.Kanji, DstSquare.Rank),
+                    IntConverter.Convert(NumberType.Big, DstSquare.File),
+                    IntConverter.Convert(NumberType.Kanji, DstSquare.Rank),
                     MovePiece,
                     Stringizer.ToString(ActionType),
                     SrcSquare.File,

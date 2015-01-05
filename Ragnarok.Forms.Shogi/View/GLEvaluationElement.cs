@@ -398,7 +398,7 @@ namespace Ragnarok.Forms.Shogi.View
 
             var text = (
                 IsValueFullWidth ?
-                Ragnarok.Utility.StringConverter.ConvertInt(NumberType.Big, value) :
+                IntConverter.Convert(NumberType.Big, value) :
                 value.ToString());
             var textTexture = GL.TextureCache.GetTextTexture(
                 gl, text, ValueFont);

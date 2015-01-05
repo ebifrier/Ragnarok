@@ -134,7 +134,7 @@ namespace Ragnarok.Shogi.Kif
             }
 
             sb.Append("|");
-            sb.Append(StringConverter.ConvertInt(NumberType.Kanji, rank));
+            sb.Append(IntConverter.Convert(NumberType.Kanji, rank));
 
             return sb.ToString();
         }
@@ -156,7 +156,7 @@ namespace Ragnarok.Shogi.Kif
                     KifUtil.PieceToChar(obj.Piece),
                     (obj.Count >= 10 ? "十" : ""),
                     (obj.Count == 10 || obj.Count == 1 ? "" :
-                        StringConverter.ConvertInt(NumberType.Kanji, obj.Count % 10)));
+                        IntConverter.Convert(NumberType.Kanji, obj.Count % 10)));
 
             var array = list.ToArray();
             return (array.Any() ? string.Join("", array) : "なし");

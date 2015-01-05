@@ -516,7 +516,7 @@ namespace Ragnarok.Forms.Shogi.View
                     w,
                     totalBounds.Height);
                 bounds.Inflate(0, -2.5f);
-                var str = Ragnarok.Utility.StringConverter.ConvertInt(
+                var str = IntConverter.Convert(
                     NumberType.Big,
                     ViewSide == BWType.Black ? 10 - n : n);
                 AddRenderText(
@@ -540,7 +540,7 @@ namespace Ragnarok.Forms.Shogi.View
                     totalBounds.Width,
                     w);
                 bounds.Inflate(-1.5f, 0);
-                var str = Ragnarok.Utility.StringConverter.ConvertInt(
+                var str = IntConverter.Convert(
                     NumberType.Kanji,
                     ViewSide == BWType.Black ? n : 10 - n);
                 AddRenderText(
@@ -730,8 +730,7 @@ namespace Ragnarok.Forms.Shogi.View
             // 必要なら持ち駒の数も描画します。
             if (count >= 2)
             {
-                var text = Ragnarok.Utility.StringConverter.ConvertInt(
-                    NumberType.Big, count);
+                var text = IntConverter.Convert(NumberType.Big, count);
                 bounds = new RectangleF(
                     cpos.X - s.Width * 0.1f, cpos.Y - s.Height * 0.6f,
                     s.Width * 0.8f, s.Height * 0.5f);

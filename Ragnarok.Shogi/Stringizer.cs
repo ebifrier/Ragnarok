@@ -217,16 +217,16 @@ namespace Ragnarok.Shogi
                 if (style == MoveTextStyle.Simple)
                 {
                     result.Insert(0,
-                        StringConverter.ConvertInt(NumberType.Normal, move.File));
+                        IntConverter.Convert(NumberType.Normal, move.File));
                     result.Insert(1,
-                        StringConverter.ConvertInt(NumberType.Normal, move.Rank));
+                        IntConverter.Convert(NumberType.Normal, move.Rank));
                 }
                 else
                 {
                     result.Insert(0,
-                        StringConverter.ConvertInt(NumberType.Big, move.File));
+                        IntConverter.Convert(NumberType.Big, move.File));
                     result.Insert(1,
-                        StringConverter.ConvertInt(NumberType.Kanji, move.Rank));
+                        IntConverter.Convert(NumberType.Kanji, move.Rank));
                 }
             }
 
@@ -260,7 +260,7 @@ namespace Ragnarok.Shogi
                     text);
             }
 
-            var n = StringConverter.ConvertInt(NumberType.Grade, skillLevel.Grade);
+            var n = IntConverter.Convert(NumberType.Grade, skillLevel.Grade);
             switch (skillLevel.Kind)
             {
                 case SkillKind.Kyu:
