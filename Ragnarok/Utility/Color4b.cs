@@ -45,7 +45,7 @@ namespace Ragnarok.Utility
         /// <summary>
         /// 色のRGB成分から新たな色を作成します。
         /// </summary>
-        public static Color4b FromRgb(int r, int g, int b)
+        public static Color4b FromArgb(int r, int g, int b)
         {
             return new Color4b
             {
@@ -190,13 +190,25 @@ namespace Ragnarok.Utility
         /// <summary>
         /// 色に係数を掛け、新たな色を作成します。
         /// </summary>
-        public static Color4b Multiply(Color4b Color4b, float coefficient)
+        public static Color4b Multiply(Color4b color, double coefficient)
         {
             return Color4b.FromArgb(
-                MathEx.Between(0, 255, (int)(Color4b.A * coefficient)),
-                MathEx.Between(0, 255, (int)(Color4b.R * coefficient)),
-                MathEx.Between(0, 255, (int)(Color4b.G * coefficient)),
-                MathEx.Between(0, 255, (int)(Color4b.B * coefficient)));
+                MathEx.Between(0, 255, (int)(color.A * coefficient)),
+                MathEx.Between(0, 255, (int)(color.R * coefficient)),
+                MathEx.Between(0, 255, (int)(color.G * coefficient)),
+                MathEx.Between(0, 255, (int)(color.B * coefficient)));
+        }
+
+        /// <summary>
+        /// 色同士を掛け合わせ、新たな色を作成します。
+        /// </summary>
+        public static Color4b Multiply(Color4b color1, Color4b color2)
+        {
+            return Color4b.FromArgb(
+                Math.Min(255, (color1.A * color2.A + 255) >> 8),
+                Math.Min(255, (color1.R * color2.R + 255) >> 8),
+                Math.Min(255, (color1.G * color2.G + 255) >> 8),
+                Math.Min(255, (color1.B * color2.B + 255) >> 8));
         }
 
         /// <summary>
@@ -218,9 +230,25 @@ namespace Ragnarok.Utility
         /// <summary>
         /// 色に係数を掛け、新たな色を作成します。
         /// </summary>
-        public static Color4b operator *(Color4b Color4b, float coefficient)
+        public static Color4b operator *(Color4b color, double coefficient)
         {
-            return Color4b.Multiply(Color4b, coefficient);
+            return Color4b.Multiply(color, coefficient);
+        }
+
+        /// <summary>
+        /// 色に係数を掛け、新たな色を作成します。
+        /// </summary>
+        public static Color4b operator *(double coefficient, Color4b color)
+        {
+            return Color4b.Multiply(color, coefficient);
+        }
+
+        /// <summary>
+        /// 色同士の積算を行い、新たな色を作成します。
+        /// </summary>
+        public static Color4b operator *(Color4b color1, Color4b color2)
+        {
+            return Color4b.Multiply(color1, color2);
         }
 
         /// <summary>

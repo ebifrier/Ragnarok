@@ -79,37 +79,6 @@ namespace Ragnarok.Forms.Tests
                 }
             }
         }
-
-        /// <summary>
-        /// Color.Parseのテストを行います。
-        /// </summary>
-        [Test]
-        public void ParseTest()
-        {
-            Assert.AreEqual(Color4bs.Blue, Color4b.Parse("Blue"));
-            Assert.AreEqual(Color4bs.Blue, Color4b.Parse("blue"));
-            Assert.AreEqual(Color4bs.Blue, Color4b.Parse(" blue "));
-            Assert.AreEqual(Color4bs.Blue, Color4b.Parse(" blUe"));
-            Assert.AreEqual(Color4bs.Blue, Color4b.Parse("BLUE"));
-
-            var color = Color4b.FromValue(0xFFCCBBAA);
-            Assert.AreEqual(Color4bs.Black, Color4b.Parse("#FF000000"));
-            Assert.AreEqual(Color4bs.YellowGreen, Color4b.Parse("#FF9ACD32"));
-            Assert.AreEqual(Color4bs.YellowGreen, Color4b.Parse("#9ACD32"));
-            Assert.AreEqual(color, Color4b.Parse("#FFCCBBAA"));
-            Assert.AreEqual(color, Color4b.Parse("#CCBBAA"));
-            Assert.AreEqual(color, Color4b.Parse("#FCBA"));
-            Assert.AreEqual(color, Color4b.Parse("#CBA"));
-            Assert.AreEqual(color, Color4b.Parse(" #CBA "));
-
-            Assert.Catch<FormatException>(() => Color4b.Parse(" bl Ue"));
-            Assert.Catch<FormatException>(() => Color4b.Parse(" blxUe"));
-            Assert.Catch<FormatException>(() => Color4b.Parse(" blUex"));
-
-            Assert.Catch<FormatException>(() => Color4b.Parse("#0xFFCCBBAA"));
-            Assert.Catch<FormatException>(() => Color4b.Parse("# C B A"));
-            Assert.Catch<FormatException>(() => Color4b.Parse("#d0C0BcA"));
-        }
     }
 }
 #endif
