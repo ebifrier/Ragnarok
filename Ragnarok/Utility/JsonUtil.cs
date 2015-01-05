@@ -14,22 +14,6 @@ namespace Ragnarok.Utility
     /// </summary>
     public static class JsonUtil
     {
-        public static T LoadJson<T>(string filepath)
-        {
-            if (string.IsNullOrEmpty(filepath))
-            {
-                throw new ArgumentNullException("filepath");
-            }
-
-            var content = File.ReadAllText(filepath);
-            using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(content)))
-            {
-                var serial = new JavaScriptSerializer();
-                serial.RegisterConverters(new[] { new JsonConverter<T>() });
-                return (T)serial.Deserialize<T>(content);
-            }
-        }
-
         /// <summary>
         /// オブジェクトをJSON形式にシリアライズします。
         /// </summary>
@@ -50,7 +34,8 @@ namespace Ragnarok.Utility
             catch (Exception ex)
             {
                 Log.ErrorException(ex,
-                    "Jsonへのシリアライズに失敗しました。");
+                    "'{0}'({1}): Jsonへのシリアライズに失敗しました。",
+                    value, typeof(T));
 
                 return null;
             }
@@ -85,7 +70,8 @@ namespace Ragnarok.Utility
             catch (Exception ex)
             {
                 Log.ErrorException(ex,
-                    "Jsonへのデシリアライズに失敗しました。");
+                    "'{0}': Jsonから'{1}'型へのデシリアライズに失敗しました。",
+                    text, typeof(T));
 
                 return default(T);
             }
@@ -108,7 +94,8 @@ namespace Ragnarok.Utility
             catch (Exception ex)
             {
                 Log.ErrorException(ex,
-                    "Jsonへのシリアライズに失敗しました。");
+                    "'{0}'({1}): Jsonへのシリアライズに失敗しました。",
+                    value, typeof(T));
             }
         }
 
@@ -124,18 +111,15 @@ namespace Ragnarok.Utility
 
             try
             {
-                using (var stream = new FileStream(filepath, FileMode.Open))
-                using (var reader = new StreamReader(stream, Encoding.UTF8))
-                {
-                    var text = reader.ReadToEnd();
+                var text = File.ReadAllText(filepath, Encoding.UTF8);
 
-                    return Deserialize<T>(text);
-                }
+                return Deserialize<T>(text);
             }
             catch (Exception ex)
             {
                 Log.ErrorException(ex,
-                    "Jsonからのデシリアライズに失敗しました。");
+                    "'{0}': Jsonから'{1}'型へのデシリアライズに失敗しました。",
+                    filepath, typeof(T));
 
                 return default(T);
             }
