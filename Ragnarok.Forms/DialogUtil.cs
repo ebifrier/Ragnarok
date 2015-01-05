@@ -28,8 +28,7 @@ namespace Ragnarok.Forms
             // control.LocationはScreen.FromHandle後に変わってしまう
             // ことがあるので、先に値だけ取得しておきます。
             var pos = control.Location;
-            var screen = Screen.FromHandle(control.Handle);
-            var bounds = screen.Bounds;
+            var bounds = Screen.GetBounds(control);
 
             var left = Math.Max(pos.X, bounds.Left);
             var right = left + control.Width;
