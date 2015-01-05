@@ -129,8 +129,20 @@ namespace Ragnarok.Forms.Shogi.GL
                 throw new ArgumentException("count");
             }
 
-            var key = new AnimationTextureKey(imageUri, count);
-            return this.cache.GetOrCreate(key);
+            try
+            {
+                var key = new AnimationTextureKey(imageUri, count);
+
+                return this.cache.GetOrCreate(key);
+            }
+            catch (Exception ex)
+            {
+                Util.ThrowIfFatal(ex);
+                Log.ErrorException(ex,
+                    "テクスチャの読み込みに失敗しました。");
+
+                return null;
+            }
         }
 
         /// <summary>

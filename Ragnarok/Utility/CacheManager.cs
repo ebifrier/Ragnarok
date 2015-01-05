@@ -341,7 +341,7 @@ namespace Ragnarok.Utility
                     // 新たに作成します。
                     var value = Create(key);
 
-                    // キャッシュに追加します。
+                    // 作成に成功したらキャッシュに追加します。
                     Add(key, value);
                     return value;
                 }

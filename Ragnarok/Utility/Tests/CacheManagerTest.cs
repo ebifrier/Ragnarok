@@ -18,7 +18,7 @@ namespace Ragnarok.Utility.Tests
 
         public virtual long ObjectSize
         {
-            get{return this.size;}
+            get { return this.size; }
         }
     }
 
@@ -32,6 +32,19 @@ namespace Ragnarok.Utility.Tests
         public override long ObjectSize
         {
             get { return MathEx.RandInt(1, 10000); }
+        }
+    }
+
+    internal sealed class ExceptionObject : ICachable
+    {
+        public ExceptionObject()
+        {
+            throw new InvalidOperationException();
+        }
+
+        public long ObjectSize
+        {
+            get { return 1; }
         }
     }
 
@@ -110,6 +123,19 @@ namespace Ragnarok.Utility.Tests
 
             // ObjectSizeが負数になるようなオブジェクトを作成した場合
             Assert.Catch(() => manager.GetOrCreate(-100));
+        }
+
+        internal ExceptionObject CreateExceptionObject(int key)
+        {
+            return new ExceptionObject();
+        }
+
+        [Test()]
+        public void ExceptionTest()
+        {
+            var manager = new CacheManager<int, ExceptionObject>(CreateExceptionObject, 100);
+
+            manager.GetOrCreate(100);
         }
     }
 }

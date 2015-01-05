@@ -129,8 +129,20 @@ namespace Ragnarok.Forms.Shogi.GL
                 throw new ArgumentNullException("textureFont");
             }
 
-            var key = new TextTextureKey(text, textureFont);
-            return this.cache.GetOrCreate(key);
+            try
+            {
+                var key = new TextTextureKey(text, textureFont);
+
+                return this.cache.GetOrCreate(key);
+            }
+            catch (Exception ex)
+            {
+                Util.ThrowIfFatal(ex);
+                Log.ErrorException(ex,
+                    "文字列テクスチャの作成に失敗しました。");
+
+                return null;
+            }
         }
 
         /// <summary>
