@@ -28,3 +28,5 @@ Ragnarok.Forms.Shogi/obj/
 Live2DSharp.Framework/obj/
 *.user
 *.suo
+*.sdf
+*.userprefs
