@@ -93,6 +93,7 @@ namespace Ragnarok.Forms.Shogi.View
             IsEnableServerValue = true;
             IsVisibleValue = true;
             IsValueFullWidth = true;
+            MaxValue = 9999;
 
             LocalTransform = new Matrix44d();
             LocalTransform.Translate(-0.5, -0.5, 0.0);
@@ -182,6 +183,15 @@ namespace Ragnarok.Forms.Shogi.View
         }
 
         /// <summary>
+        /// 表示する値の最大値を取得または設定します。
+        /// </summary>
+        public int MaxValue
+        {
+            get { return GetValue<int>("MaxValue"); }
+            set { SetValue("MaxValue", value); }
+        }
+
+        /// <summary>
         /// プログラムから設定可能な評価値を取得または設定します。
         /// </summary>
         public int ProgrammableValue
@@ -235,6 +245,7 @@ namespace Ragnarok.Forms.Shogi.View
         /// <summary>
         /// 実際に使われる評価値を取得します。
         /// </summary>
+        [DependOnProperty("MaxValue")]
         [DependOnProperty("ProgrammableValue")]
         [DependOnProperty("UserValue")]
         [DependOnProperty("ServerValue")]
@@ -321,18 +332,22 @@ namespace Ragnarok.Forms.Shogi.View
         /// </summary>
         private void UpdateCurrentValue()
         {
+            var value = 0;
+
             switch (EvaluationMode)
             {
                 case EvaluationMode.Programmable:
-                    CurrentValue = ProgrammableValue;
+                    value = ProgrammableValue;
                     break;
                 case EvaluationMode.User:
-                    CurrentValue = UserValue;
+                    value = UserValue;
                     break;
                 case EvaluationMode.Server:
-                    CurrentValue = ServerValue;
+                    value = ServerValue;
                     break;
             }
+
+            CurrentValue = Math.Min(MaxValue, value);
         }
 
         /// <summary>
