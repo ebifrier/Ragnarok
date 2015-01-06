@@ -87,7 +87,7 @@ namespace Ragnarok.Shogi.Sfen
 
             if (sfen.Length < 4)
             {
-                throw new ArgumentException("sfen");
+                return null;
             }
 
             var dropPieceType = SfenUtil.SfenToPieceType(sfen[0]);
