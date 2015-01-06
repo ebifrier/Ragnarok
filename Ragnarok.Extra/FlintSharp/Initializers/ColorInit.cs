@@ -39,6 +39,8 @@ using FlintSharp.Initializers;
 using FlintSharp.Particles;
 using FlintSharp.Zones;
 
+using Ragnarok.Utility;
+
 namespace FlintSharp.Initializers
 {
     /// <summary>
@@ -46,11 +48,11 @@ namespace FlintSharp.Initializers
     /// </summary>
     public class ColorInit : Initializer
     {
-        private uint m_min;
-        private uint m_max;
+        private Color4b m_min;
+        private Color4b m_max;
 
         public ColorInit()
-            : this(0xFFFFFFFF, 0xFFFFFFFF)
+            : this(Color4bs.White, Color4bs.White)
         {
         }
 
@@ -66,7 +68,7 @@ namespace FlintSharp.Initializers
         /// </summary>
         /// <param name="color1">the 32bit (ARGB) color at one end of the color range to use.</param>
         /// <param name="color2">the 32bit (ARGB) color at the other end of the color range to use.</param>
-        public ColorInit(uint color1, uint color2)
+        public ColorInit(Color4b color1, Color4b color2)
         {
             m_min = color1;
             m_max = color2;
@@ -76,7 +78,7 @@ namespace FlintSharp.Initializers
 		/// The minimum color value for particles initialised by 
 		/// this initializer. Should be between 0 and 1.
         /// </summary>
-        public uint MinColor
+        public Color4b MinColor
         {
             get { return m_min; }
             set { m_min = value; }
@@ -86,7 +88,7 @@ namespace FlintSharp.Initializers
 		/// The maximum color value for particles initialised by 
 		/// this initializer. Should be between 0 and 1.
         /// </summary>
-        public uint MaxColor
+        public Color4b MaxColor
         {
             get { return m_max; }
             set { m_max = value; }
@@ -97,7 +99,7 @@ namespace FlintSharp.Initializers
 		/// When writing this sets both maxColor and minColor to the 
 		/// same color.
         /// </summary>
-        public uint Color
+        public Color4b Color
         {
             get { return m_min == m_max ? m_min : Utils.InterpolateColors(m_max, m_min, 0.5f); }
             set { m_max = m_min = value; }

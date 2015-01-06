@@ -41,6 +41,8 @@ using FlintSharp.Initializers;
 using FlintSharp.Particles;
 using FlintSharp.Zones;
 
+using Ragnarok.Utility;
+
 namespace FlintSharp.Initializers
 {
     /// <summary>
@@ -137,13 +139,13 @@ namespace FlintSharp.Initializers
         public override void Initialize(Emitter emitter, Particle particle)
         {
             double alpha;
-
             if (m_max == m_min)
                 alpha = m_min;
             else
                 alpha = Utils.RandomDouble(m_min, m_max);
 
-            particle.Color = (uint)((particle.Color & 0xFFFFFF) | ((uint)Math.Round(alpha * 255) << 24));
+            int a = (int)(alpha * 255.9);
+            particle.Color = Color4b.FromArgb(a, particle.Color);
         }
     }
 }

@@ -41,6 +41,8 @@ using FlintSharp.Initializers;
 using FlintSharp.Particles;
 using FlintSharp.Zones;
 
+using Ragnarok.Utility;
+
 namespace FlintSharp.Behaviours
 {
     /// <summary>
@@ -48,24 +50,12 @@ namespace FlintSharp.Behaviours
     /// </summary>
     public class TargetColor : Behaviour
     {
-        private uint m_red;
-        private uint m_green;
-        private uint m_blue;
-        private uint m_alpha;
+        private Color4b m_color;
         private double m_rate;
 
         public TargetColor()
-            : this(0xFFFFFFFF)
+            : this(Color4bs.White)
         {
-        }
-
-        public TargetColor(uint targetColor)
-        {
-            m_red = (targetColor >> 16) & 0xFF;
-            m_green = (targetColor >> 8) & 0xFF;
-            m_blue = (targetColor) & 0xFF;
-            m_alpha = (targetColor >> 24) & 0xFF;
-            m_rate = 0.1f;
         }
 
         /// <summary>
@@ -78,28 +68,46 @@ namespace FlintSharp.Behaviours
         /// <param name="targetColor">The target color. This is a 32 bit color of the form 0xAARRGGBB.</param>
         /// <param name="rate">Adjusts how quickly the particle reaches the target color.
         /// Larger numbers cause it to approach the target color more quickly.</param>
-        public TargetColor(uint targetColor, double rate)
+        public TargetColor(Color4b targetColor, double rate)
         {
-            m_red = (targetColor >> 16) & 0xFF;
-            m_green = (targetColor >> 8) & 0xFF;
-            m_blue = (targetColor) & 0xFF;
-            m_alpha = (targetColor >> 24) & 0xFF;
+            m_color = targetColor;
             m_rate = rate;
         }
 
         /// <summary>
-        /// The target color. This is a 32 bit color of the form 0xAARRGGBB.
+        /// The constructor creates a TargetColor action for use by 
+        /// an emitter. To add a TargetColor to all particles created by an emitter, use the
+        /// emitter's addAction method.
+        /// 
+        /// @see org.flintparticles.emitters.Emitter#addAction()
         /// </summary>
-        public uint Color
+        /// <param name="targetColor">The target color. This is a 32 bit color of the form 0xAARRGGBB.</param>
+        /// <param name="rate">Adjusts how quickly the particle reaches the target color.
+        /// Larger numbers cause it to approach the target color more quickly.</param>
+        [CLSCompliant(false)]
+        public TargetColor(uint targetColor, double rate)
+            : this(Color4b.FromValue(targetColor), rate)
         {
-            get { return (m_alpha << 24) | (m_red << 16) | (m_green << 8) | m_blue; }
-            set
-            {
-                m_red = (value >> 16) & 0xFF;
-                m_green = (value >> 8) & 0xFF;
-                m_blue = (value) & 0xFF;
-                m_alpha = (value >> 24) & 0xFF;
-            }
+        }
+
+        public TargetColor(Color4b targetColor)
+            : this(targetColor, 0.1)
+        {
+        }
+
+        [CLSCompliant(false)]
+        public TargetColor(uint targetColor)
+            : this(Color4b.FromValue(targetColor))
+        {
+        }
+
+        /// <summary>
+        /// The target color.
+        /// </summary>
+        public Color4b Color
+        {
+            get { return m_color; }
+            set { m_color = value; }
         }
 
         /// <summary>
@@ -122,38 +130,16 @@ namespace FlintSharp.Behaviours
         /// <param name="elapsedTime">The duration of the frame - used for time based updates.</param>
         public override void Update(Emitter emitter, Particle particle, double elapsedTime)
         {
-            ColorDouble color = new ColorDouble(particle.Color);
+            double ratio = m_rate * elapsedTime;
 
-            double inv = m_rate * elapsedTime;
-            double ratio = 1 - inv;
+            particle.Color = Utils.InterpolateColors(m_color, particle.Color, ratio);
 
-            color.Red = (uint)(color.Red * ratio + m_red * inv);
-            color.Green = (uint)(color.Green * ratio + m_green * inv);
-            color.Blue = (uint)(color.Blue * ratio + m_blue * inv);
-            color.Alpha = (uint)(color.Alpha * ratio + m_alpha * inv);
+            /*color.Red = (int)(pcolor.R * ratio + m_color.R * inv);
+            color.Green = (int)(pcolor.G * ratio + m_color.G * inv);
+            color.Blue = (int)(pcolor.B * ratio + m_color.B * inv);
+            color.Alpha = (int)(pcolor.A * ratio + m_color.A * inv);
 
-            particle.Color = color.Color;
-        }
-    }
-
-    public class ColorDouble
-    {
-        public double Red;
-        public double Green;
-        public double Blue;
-        public double Alpha;
-
-        public ColorDouble(uint color)
-        {
-            Red = (color >> 16) & 0xFF;
-            Green = (color >> 8) & 0xFF;
-            Blue = (color) & 0xFF;
-            Alpha = (color >> 24) & 0xFF;
-        }
-
-        public uint Color
-        {
-            get { return (uint)((uint)Math.Round(Alpha) << 24) | ((uint)Math.Round(Red) << 16) | ((uint)Math.Round(Green) << 8) | (uint)Math.Round(Blue); }
+            particle.Color = color.Color;*/
         }
     }
 }

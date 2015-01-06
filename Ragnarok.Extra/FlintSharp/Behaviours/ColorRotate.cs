@@ -39,6 +39,8 @@ using FlintSharp.Initializers;
 using FlintSharp.Particles;
 using FlintSharp.Zones;
 
+using Ragnarok.Utility;
+
 namespace FlintSharp.Behaviours
 {
     /// <summary>
@@ -47,8 +49,8 @@ namespace FlintSharp.Behaviours
     /// </summary>
     public class ColorRotate : Behaviour
     {
-        private uint m_startColor;
-        private uint m_endColor;
+        //private Color4b m_startColor;
+        //private Color4b m_endColor;
         private int m_intensityStart;
         private int m_intensityEnd;
 
@@ -117,10 +119,10 @@ namespace FlintSharp.Behaviours
             if (m_colorIndex > 360)
                 m_colorIndex = 0;
 
-            m_startColor = Utils.RotateHue((int)m_colorIndex, m_intensityStart);
-            m_endColor = Utils.RotateHue((int)m_colorIndex, m_intensityEnd);
+            Color4b startColor = Utils.RotateHue((int)m_colorIndex, m_intensityStart);
+            Color4b endColor = Utils.RotateHue((int)m_colorIndex, m_intensityEnd);
 
-            particle.Color = Utils.InterpolateColors(m_startColor, m_endColor, particle.Energy);
+            particle.Color = Utils.InterpolateColors(startColor, endColor, particle.Energy);
         }
     }
 }

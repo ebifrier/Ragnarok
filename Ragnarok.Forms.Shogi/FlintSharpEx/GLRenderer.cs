@@ -115,7 +115,6 @@ namespace Ragnarok.Forms.Shogi.FlintSharpEx
 
                 for (var i = 0; i < (data.IsDoubleParticle ? 2 : 1); ++i)
                 {
-                    var thisOpacity = ((particle.Color >> 24) & 0xFF);
                     var color = Color.White;
 
                     // 二重パーティクルの場合は、画像を２回描画します。
@@ -124,17 +123,17 @@ namespace Ragnarok.Forms.Shogi.FlintSharpEx
                         // 二重パーティクル前段の白いエフェクト
                         // 頂点カラーは不透明な白
                         color = Color.FromArgb(
-                            (byte)(thisOpacity * inheritedOpacity * 0.7),
+                            (byte)(particle.Color.A * inheritedOpacity * 0.7),
                             Color.White);
                     }
                     else
                     {
                         // 通常のテクスチャ描画
                         color = Color.FromArgb(
-                            (byte)(inheritedOpacity * thisOpacity),
-                            (byte)((particle.Color >> 16) & 0xFF),
-                            (byte)((particle.Color >> 8) & 0xFF),
-                            (byte)((particle.Color >> 0) & 0xFF));
+                            (byte)(particle.Color.A * inheritedOpacity),
+                            particle.Color.R,
+                            particle.Color.G,
+                            particle.Color.B);
                     }
 
                     var m = ShogiObject.Transform;

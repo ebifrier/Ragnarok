@@ -42,6 +42,8 @@ using FlintSharp.Initializers;
 using FlintSharp.Particles;
 using FlintSharp.Zones;
 
+using Ragnarok.Utility;
+
 namespace FlintSharp.Initializers
 {
     /// <summary>
@@ -49,8 +51,8 @@ namespace FlintSharp.Initializers
     /// </summary>
     public class ColorRotateInit : Initializer
     {
-        private uint m_min;
-        private uint m_max;
+        private Color4b m_min;
+        private Color4b m_max;
         private int m_intensityStart;
         private int m_intensityEnd;
 
@@ -85,7 +87,7 @@ namespace FlintSharp.Initializers
         /// The minimum color value for particles initialised by 
         /// this initializer. Should be between 0 and 1.
         /// </summary>
-        public uint MinColor
+        public Color4b MinColor
         {
             get { return m_min; }
             set { m_min = value; }
@@ -95,7 +97,7 @@ namespace FlintSharp.Initializers
         /// The maximum color value for particles initialised by 
         /// this initializer. Should be between 0 and 1.
         /// </summary>
-        public uint MaxColor
+        public Color4b MaxColor
         {
             get { return m_max; }
             set { m_max = value; }
@@ -126,7 +128,7 @@ namespace FlintSharp.Initializers
         /// When writing this sets both maxColor and minColor to the 
         /// same color.
         /// </summary>
-        public uint Color
+        public Color4b Color
         {
             get { return m_min == m_max ? m_min : Utils.InterpolateColors(m_max, m_min, 0.5f); }
             set { m_max = m_min = value; }

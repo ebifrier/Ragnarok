@@ -41,6 +41,8 @@ using FlintSharp.Initializers;
 using FlintSharp.Particles;
 using FlintSharp.Zones;
 
+using Ragnarok.Utility;
+
 namespace FlintSharp.Particles
 {
     /// <summary>
@@ -66,7 +68,7 @@ namespace FlintSharp.Particles
         private double m_velocityY = 0;
         private double m_rotation = 0;
         private double m_angularVelocity = 0;
-        private uint m_color = 0xFFFFFFFF;
+        private Color4b m_color = Color4bs.White;
         private double m_scale = 1;
         private double m_lifetime = 0;
         private double m_age = 0;
@@ -98,7 +100,7 @@ namespace FlintSharp.Particles
             m_velocityY = 0;
             m_rotation = 0;
             m_angularVelocity = 0;
-            m_color = 0xFFFFFFFF;
+            m_color = Color4bs.White;
             m_scale = 1;
             m_lifetime = 0;
             m_age = 0;
@@ -205,7 +207,7 @@ namespace FlintSharp.Particles
         /// <summary>
         /// The 32bit ARGB color of the particle. The initial value is 0xFFFFFFFF (white).
         /// </summary>
-        public uint Color
+        public Color4b Color
         {
             get { return m_color; }
             set { m_color = value; }

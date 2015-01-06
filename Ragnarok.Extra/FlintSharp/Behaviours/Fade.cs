@@ -41,6 +41,8 @@ using FlintSharp.Initializers;
 using FlintSharp.Particles;
 using FlintSharp.Zones;
 
+using Ragnarok.Utility;
+
 namespace FlintSharp.Behaviours
 {
     /// <summary>
@@ -132,9 +134,9 @@ namespace FlintSharp.Behaviours
         public override void Update(Emitter emitter, Particle particle, double elapsedTime)
         {
             double alpha = m_endAlpha + m_diffAlpha * particle.Energy;
-            alpha = Math.Max(0.0, Math.Min(1.0, alpha));
+            int a = Math.Max(0, Math.Min(255, (int)(alpha * 256)));
 
-            particle.Color = (uint)((particle.Color & 0xFFFFFF) | ((uint)Math.Round(alpha * 255) << 24));
+            particle.Color = Color4b.FromArgb(a, particle.Color);
         }
     }
 }

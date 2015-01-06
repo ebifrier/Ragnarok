@@ -29,6 +29,7 @@
  * THE SOFTWARE.
  */
 
+using System;
 using System.Windows.Media;
 
 using FlintSharp.Behaviours;
@@ -41,6 +42,8 @@ using FlintSharp.Initializers;
 using FlintSharp.Particles;
 using FlintSharp.Zones;
 
+using Ragnarok.Utility;
+
 namespace FlintSharp.Behaviours
 {
     /// <summary>
@@ -49,12 +52,25 @@ namespace FlintSharp.Behaviours
     /// </summary>
     public class ColorChange : Behaviour
     {
-        private uint m_startColor;
-        private uint m_endColor;
+        private Color4b m_startColor;
+        private Color4b m_endColor;
 
         public ColorChange()
-            : this(0xFF000000, 0xFFFFFFFF)
+            : this(Color4bs.Black, Color4bs.White)
         {
+        }
+
+        /// <summary>
+        /// The constructor creates a ColorChange action for use by 
+        /// an emitter. To add a ColorChange to all particles created by an emitter, use the
+        /// emitter's addAction method.
+        /// 
+        /// @see org.flintparticles.emitters.Emitter#addAction()
+        /// </summary>
+        public ColorChange(Color4b startColor, Color4b endColor)
+        {
+            m_startColor = startColor;
+            m_endColor = endColor;
         }
 
         /// <summary>
@@ -66,16 +82,17 @@ namespace FlintSharp.Behaviours
         /// </summary>
         /// <param name="startColor">The 32bit (ARGB) color of the particle at the beginning of its life.</param>
         /// <param name="endColor">The 32bit (ARGB) color of the particle at the end of its life.</param>
+        [CLSCompliant(false)]
         public ColorChange(uint startColor, uint endColor)
         {
-            m_startColor = startColor;
-            m_endColor = endColor;
+            m_startColor = Color4b.FromValue(startColor);
+            m_endColor = Color4b.FromValue(endColor);
         }
 
         /// <summary>
         /// The color of the particle at the beginning of its life.
         /// </summary>
-        public uint StartColor
+        public Color4b StartColor
         {
             get { return m_startColor; }
             set { m_startColor = value; }
@@ -84,7 +101,7 @@ namespace FlintSharp.Behaviours
         /// <summary>
         /// The color of the particle at the end of its life.
         /// </summary>
-        public uint EndColor
+        public Color4b EndColor
         {
             get { return m_endColor; }
             set { m_endColor = value; }
