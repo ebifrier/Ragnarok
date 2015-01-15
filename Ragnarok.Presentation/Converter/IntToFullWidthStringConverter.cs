@@ -26,7 +26,7 @@ namespace Ragnarok.Presentation.Converter
             {
                 var ivalue = (int)value;
 
-                return StringConverter.ConvertInt(NumberType.Big, ivalue);
+                return IntConverter.Convert(NumberType.Big, ivalue);
             }
             catch (InvalidCastException ex)
             {

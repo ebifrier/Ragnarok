@@ -7,6 +7,7 @@ using System.Windows.Media.Media3D;
 
 using FlintSharp.Particles;
 using FlintSharp.Renderers;
+using Ragnarok.Utility;
 
 namespace Ragnarok.Presentation.Extra.FlintSharpEx
 {
@@ -82,13 +83,9 @@ namespace Ragnarok.Presentation.Extra.FlintSharpEx
         /// uint型の色形式をColorに変換します。
         /// </summary>
         [CLSCompliant(false)]
-        public static Color ToColor(uint value)
+        public static Color ToColor(Color4b value)
         {
-            return Color.FromArgb(
-                (byte)((value >> 24) & 0xFF),
-                (byte)((value >> 16) & 0xFF),
-                (byte)((value >> 8) & 0xFF),
-                (byte)((value >> 0) & 0xFF));
+            return Color.FromArgb(value.A, value.R, value.G, value.B);
         }
 
         /// <summary>
@@ -108,7 +105,7 @@ namespace Ragnarok.Presentation.Extra.FlintSharpEx
 
                 if (data.Brush != null)
                 {
-                    var opacity = (double)((particle.Color >> 24) & 0xFF) / 255.0;
+                    var opacity = particle.Color.A / 255.0;
 
                     data.Brush.Opacity = EffectObject.InheritedOpacity * opacity;
                 }
