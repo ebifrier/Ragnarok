@@ -97,6 +97,26 @@ namespace Ragnarok.Forms.Shogi
         }
 
         /// <summary>
+        /// 局面のコピーに対して指し手を動かすかどうかを取得します。
+        /// </summary>
+        public bool IsCloneBoard
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// 重要な自動再生かどうかを取得または設定します。
+        /// </summary>
+        /// <remarks>
+        /// 真の場合は、GUIのマウス押下で自動再生をキャンセルしません。
+        /// </remarks>
+        public bool IsImportant
+        {
+            get { return !IsCloneBoard; }
+        }
+
+        /// <summary>
         /// 自動再生の種類を取得します。
         /// </summary>
         public AutoPlayType AutoPlayType
@@ -145,18 +165,6 @@ namespace Ragnarok.Forms.Shogi
         /// 終了までの時間を取得または設定します。
         /// </summary>
         public TimeSpan EndingInterval
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// 重要な自動再生かどうかを取得または設定します。
-        /// </summary>
-        /// <remarks>
-        /// 真の場合は、GUIのマウス押下で自動再生をキャンセルしません。
-        /// </remarks>
-        public bool IsImportant
         {
             get;
             set;
@@ -461,7 +469,7 @@ namespace Ragnarok.Forms.Shogi
         /// <summary>
         /// 共通コンストラクタ
         /// </summary>
-        private AutoPlay(Board board)
+        private AutoPlay(Board board, bool isCloneBoard)
         {
             if (board == null)
             {
@@ -470,7 +478,8 @@ namespace Ragnarok.Forms.Shogi
 
             UpdateEnumeratorFactory = () => GetUpdateEnumerator();
             StartBoard = board;
-            Board = board.Clone();
+            Board = (isCloneBoard ? board.Clone() : board);
+            IsCloneBoard = isCloneBoard;
             Interval = DefaultInterval;
             EffectFadeInterval = DefaultEffectFadeInterval;
             BeginningInterval = TimeSpan.Zero;
@@ -483,8 +492,9 @@ namespace Ragnarok.Forms.Shogi
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public AutoPlay(Board board, IEnumerable<BoardMove> moveList)
-            : this(board)
+        public AutoPlay(Board board, bool isCloneBoard,
+                        IEnumerable<BoardMove> moveList)
+            : this(board, isCloneBoard)
         {
             if (moveList == null)
             {
@@ -500,9 +510,9 @@ namespace Ragnarok.Forms.Shogi
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public AutoPlay(Board board, AutoPlayType autoPlayType,
-                        int maxMoveCount = -1)
-            : this(board)
+        public AutoPlay(Board board, bool isCloneBoard,
+                        AutoPlayType autoPlayType, int maxMoveCount = -1)
+            : this(board, isCloneBoard)
         {
             if (autoPlayType != AutoPlayType.Undo &&
                 autoPlayType != AutoPlayType.Redo)

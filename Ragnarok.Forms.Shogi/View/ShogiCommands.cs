@@ -96,7 +96,8 @@ namespace Ragnarok.Forms.Shogi.View
 
             try
             {
-                var autoPlay = new AutoPlay(element.Board, AutoPlayType.Undo)
+                var autoPlay = new AutoPlay(
+                    element.Board, true, AutoPlayType.Undo)
                 {
                     IsUseEffect = false,
                 };
@@ -184,7 +185,8 @@ namespace Ragnarok.Forms.Shogi.View
 
             try
             {
-                var autoPlay = new AutoPlay(element.Board, AutoPlayType.Redo)
+                var autoPlay = new AutoPlay(
+                    element.Board, true, AutoPlayType.Redo)
                 {
                     IsUseEffect = false,
                 };
