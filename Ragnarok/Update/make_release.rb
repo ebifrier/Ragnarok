@@ -209,7 +209,7 @@ class AppData
   #
   # プロジェクトのリビルドを行います。
   #
-  def build(solution_path, constants)
+  def build(solution_path, constants, options)
     # ディレクトリが存在したら削除します。
     if File.exists?(@outdir_path)
       deleteall(@outdir_path)
@@ -220,7 +220,8 @@ class AppData
     build_command =
       "msbuild /nologo \"#{solution_path}\" /t:Rebuild " +
       "/p:DefineConstants=\"#{constants}\" " +
-      "/p:OutputPath=\"#{@outdir_path}\" /p:Configuration=Release"
+      "/p:OutputPath=\"#{@outdir_path}\" /p:Configuration=Release " +
+      (options ? options : "")
     
     puts build_command
     system(path_command + " && " + build_command)
