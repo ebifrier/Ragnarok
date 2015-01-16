@@ -34,11 +34,11 @@ namespace Ragnarok.Utility
 #endif
 
         /// <summary>
-        /// x64システム化どうか取得します。
+        /// OSが64bitかどうか取得します。
         /// </summary>
-        public static bool IsX64
+        public static bool Is64BitOS
         {
-            get { return (Marshal.SizeOf(typeof(IntPtr)) == 8); }
+            get { return Environment.Is64BitOperatingSystem; }
         }
 
         /// <summary>
