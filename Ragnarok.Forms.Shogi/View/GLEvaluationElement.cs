@@ -347,7 +347,7 @@ namespace Ragnarok.Forms.Shogi.View
                     break;
             }
 
-            CurrentValue = Math.Min(MaxValue, value);
+            CurrentValue = MathEx.Between(-MaxValue, MaxValue, value);
         }
 
         /// <summary>
