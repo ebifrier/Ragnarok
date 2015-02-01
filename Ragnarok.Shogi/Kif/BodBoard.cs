@@ -26,7 +26,7 @@ namespace Ragnarok.Shogi.Kif
 
             var parser = new BodParser();
             var lines = text.Split(
-                new char[]{'\n', '\r'},
+                new char[] { '\n', '\r' },
                 StringSplitOptions.RemoveEmptyEntries);
 
             foreach (var line in lines)
