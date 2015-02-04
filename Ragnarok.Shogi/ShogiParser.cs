@@ -204,18 +204,58 @@ namespace Ragnarok.Shogi
             {"王将", HangameSkill.King},
             };*/
 
-        /// <summary>
-        /// 投了の判定を行うためのテーブルです。
-        /// </summary>
-        private static readonly List<string> ResignTable = new List<string>
+        private static readonly Dictionary<string, SpecialMoveType> SpecialMoveTable =
+            new Dictionary<string, SpecialMoveType>()
         {
-            "投了", "頭領", "等量", "棟梁",
-            "とうりょう", "とーりょー", "とーりょ",
-            "負けました", "まけました",
-            "ありません",
-            "参りました", "まいりました",
-            "降参", "こうさん",
-            "TORYO", "RESIGN",
+            {"投了", SpecialMoveType.Resign},
+            {"統領", SpecialMoveType.Resign},
+            {"等量", SpecialMoveType.Resign},
+            {"頭領", SpecialMoveType.Resign},
+            {"棟梁", SpecialMoveType.Resign},
+            {"とうりょう", SpecialMoveType.Resign},
+            {"りざいん", SpecialMoveType.Resign},
+            {"TORYO", SpecialMoveType.Resign},
+            {"RESIGN", SpecialMoveType.Resign},
+
+            {"時間切れ", SpecialMoveType.TimeUp},
+            {"時間ぎれ", SpecialMoveType.TimeUp},
+            {"時間きれ", SpecialMoveType.TimeUp},
+            {"時間切", SpecialMoveType.TimeUp},
+            {"じかんぎれ", SpecialMoveType.TimeUp},
+            {"じかんきれ", SpecialMoveType.TimeUp},
+            {"TIMEUP", SpecialMoveType.TimeUp},
+            {"TIME_UP", SpecialMoveType.TimeUp},
+
+            {"持将棋", SpecialMoveType.Jishogi},
+            {"じしょうぎ", SpecialMoveType.Jishogi},
+            {"JISHOGI", SpecialMoveType.Jishogi},
+
+            {"千日手", SpecialMoveType.Sennichite},
+            {"せんにちて", SpecialMoveType.Sennichite},
+            {"SENNICHITE", SpecialMoveType.Sennichite},
+            
+            {"王手の千日手", SpecialMoveType.OuteSennichite},
+            {"王手のせんにちて", SpecialMoveType.OuteSennichite},
+            {"おうての千日手", SpecialMoveType.OuteSennichite},
+            {"おうてのせんにちて", SpecialMoveType.OuteSennichite},
+            {"王手千日手", SpecialMoveType.OuteSennichite},
+            {"王手せんにちて", SpecialMoveType.OuteSennichite},
+            {"おうて千日手", SpecialMoveType.OuteSennichite},
+            {"おうてせんにちて", SpecialMoveType.OuteSennichite},
+            {"OUTESENNICHITE", SpecialMoveType.OuteSennichite},
+            {"OUTE_SENNICHITE", SpecialMoveType.OuteSennichite},
+
+            {"中断", SpecialMoveType.Interrupt},
+            {"ちゅうだん", SpecialMoveType.Interrupt},
+            {"INTERRPUT", SpecialMoveType.Interrupt},
+
+            {"反則", SpecialMoveType.IllegalMove},
+            {"反則手", SpecialMoveType.IllegalMove},
+            {"ILLEGALMOVE", SpecialMoveType.IllegalMove},
+            {"ILLEGAL_MOVE", SpecialMoveType.IllegalMove},
+
+            {"エラー", SpecialMoveType.Error},
+            {"ERROR", SpecialMoveType.Error},
         };
 
         /// <summary>
@@ -705,13 +745,28 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
-        /// 投了用の正規表現オブジェクトを作成します。
+        /// 投了などの特殊な指し手を取得します。
         /// </summary>
-        private static Regex CreateResignRegex()
+        private static SpecialMoveType GetSpecialMoveType(string text)
+        {
+            SpecialMoveType smoveType;
+            if (SpecialMoveTable.TryGetValue(text, out smoveType))
+            {
+                return smoveType;
+            }
+
+            return SpecialMoveType.None;
+        }
+
+        /// <summary>
+        /// 投了などの特殊な指し手用の正規表現オブジェクトを作成します。
+        /// </summary>
+        private static Regex CreateSpecialMoveRegex()
         {
             var pattern = string.Format(
-                @"^(あ(､|、|っ))?\s*({0})",
-                ConvertToRegexPattern(ResignTable));
+                @"^(あ(､|、|っ)?\s*)?({0})?({1})",
+                ConvertToRegexPattern(BWTypeTable),
+                ConvertToRegexPattern(SpecialMoveTable));
 
             return new Regex(pattern, RegexOptions.Compiled);
         }
@@ -832,18 +887,28 @@ namespace Ragnarok.Shogi
             // 文字列を正規化します。
             if (isNormalizeText)
             {
-                text = StringNormalizer.NormalizeText(text);
+                //text = StringNormalizer.NormalizeText(text);
             }
 
-            // 投了の判断を行います。
-            var m = resignRegex.Match(text);
+            // 投了などの特殊な指し手の判断を行います。
+            var m = SpecialMoveRegex.Match(text);
             if (m.Success)
             {
-                move.SpecialMoveType = SpecialMoveType.Resign;
+                // 手番が指定されていればそれを取得します。
+                move.BWType = GetBWType(m.Groups[3].Value);
+
+                // 投了などの指し手の種類を取得します。
+                var smoveType = GetSpecialMoveType(m.Groups[4].Value);
+                if (smoveType == SpecialMoveType.None)
+                {
+                    return null;
+                }
+
+                move.SpecialMoveType = smoveType;
             }
             else
             {
-                m = moveRegex.Match(text);
+                m = MoveRegex.Match(text);
                 if (!m.Success)
                 {
                     return null;
@@ -972,7 +1037,7 @@ namespace Ragnarok.Shogi
             //
             //text = StringNormalizer.NormalizeText(
             //    text, NormalizeTextOption.Number);
-            var m = playerRegex.Match(text);
+            var m = PlayerRegex.Match(text);
             if (!m.Success)
             {
                 return null;
@@ -1032,7 +1097,7 @@ namespace Ragnarok.Shogi
             while (true)
             {
                 // マッチする文字列がある間、棋力の検索をします。
-                var m = skillLevelRegex.Match(normalized, index);
+                var m = SkillLevelRegex.Match(normalized, index);
                 if (!m.Success)
                 {
                     break;
@@ -1066,10 +1131,10 @@ namespace Ragnarok.Shogi
             return skillLevel;
         }
 
-        private static readonly Regex resignRegex;
-        private static readonly Regex moveRegex;
-        private static readonly Regex playerRegex;
-        private static readonly Regex skillLevelRegex;
+        private static readonly Regex SpecialMoveRegex;
+        private static readonly Regex MoveRegex;
+        private static readonly Regex PlayerRegex;
+        private static readonly Regex SkillLevelRegex;
 
         /// <summary>
         /// 静的コンストラクタ
@@ -1079,10 +1144,10 @@ namespace Ragnarok.Shogi
             ModifyAndSetPieceTable();
             ModifyAndSetActionTable();
 
-            resignRegex = CreateResignRegex();
-            moveRegex = CreateMoveRegex();
-            playerRegex = CreatePlayerRegex();
-            skillLevelRegex = CreateSkillLevelRegex();
+            SpecialMoveRegex = CreateSpecialMoveRegex();
+            MoveRegex = CreateMoveRegex();
+            PlayerRegex = CreatePlayerRegex();
+            SkillLevelRegex = CreateSkillLevelRegex();
         }
     }
 }

@@ -21,7 +21,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 特になし
         /// </summary>
-        [LabelDescription(Label = "無")]
+        [LabelDescription(Label = "なし")]
         None,
         /// <summary>
         /// 中断

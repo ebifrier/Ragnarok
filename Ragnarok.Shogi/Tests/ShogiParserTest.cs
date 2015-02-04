@@ -238,6 +238,58 @@ namespace Ragnarok.Shogi.Tests
                ShogiParser.ParseMove("99dou kinghidarisagaru", true));
         }
 
+        /// <summary>
+        /// 投了や中断などの特殊な指し手のパーステストを行います。
+        /// </summary>
+        [Test()]
+        public void ParseSpecialMoveTest()
+        {
+            Assert.AreEqual(
+                new Move
+                {
+                    SpecialMoveType = SpecialMoveType.Resign,
+                },
+                ShogiParser.ParseMove("投了", true));
+            Assert.AreEqual(
+                new Move
+                {
+                    SpecialMoveType = SpecialMoveType.Interrupt,
+                    BWType = BWType.Black,
+                },
+                ShogiParser.ParseMove("▲中断", true));
+            Assert.AreEqual(
+                new Move
+                {
+                    SpecialMoveType = SpecialMoveType.Sennichite,
+                    BWType = BWType.White,
+                },
+                ShogiParser.ParseMove("△千日手", true));
+            Assert.AreEqual(
+                new Move
+                {
+                    SpecialMoveType = SpecialMoveType.TimeUp,
+                    BWType = BWType.Black,
+                },
+                ShogiParser.ParseMove("▼時間切れ", true));
+            Assert.AreEqual(
+                new Move
+                {
+                    SpecialMoveType = SpecialMoveType.Resign,
+                    BWType = BWType.White,
+                },
+                ShogiParser.ParseMove("▽とうりょう", true));
+            Assert.AreEqual(
+                new Move
+                {
+                    SpecialMoveType = SpecialMoveType.Jishogi,
+                },
+                ShogiParser.ParseMove("持将棋X", false));
+
+            Assert.Null(ShogiParser.ParseMove("不明", true));
+            Assert.Null(ShogiParser.ParseMove("投 了", true));
+            Assert.Null(ShogiParser.ParseMove("▲投了A", true));
+        }
+
         private void AssertPlayer(ShogiPlayer expected, ShogiPlayer actual)
         {
             Assert.AreEqual(expected.Nickname, actual.Nickname);
