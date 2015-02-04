@@ -84,9 +84,38 @@ namespace Ragnarok.Shogi.Kif
         }
 
         /// <summary>
+        /// コメント行のパースを行います。
+        /// </summary>
+        /// <returns>
+        /// コメント行である場合はコメント内容（""も含みます）を
+        /// そうでない場合はnullを返します。
+        /// </returns>
+        public static string ParseCommentLine(string line)
+        {
+            if (line == null)
+            {
+                throw new ArgumentNullException("line");
+            }
+
+            // 空行もコメント行として考える
+            if (string.IsNullOrEmpty(line))
+            {
+                return string.Empty;
+            }
+
+            if (line[0] != '#' && line[0] != '*')
+            {
+                // コメントにあらず
+                return null;
+            }
+
+            return line.TrimStart(' ', '　', '\t', '*', '#');
+        }
+
+        /// <summary>
         /// 特殊な指し手をパースします。
         /// </summary>
-        public static BoardMove ParseSpecialMove(string line)
+        public static Move ParseSpecialMove(string line)
         {
             var m = SpecialMoveRegex.Match(line);
             if (!m.Success)
@@ -124,7 +153,10 @@ namespace Ragnarok.Shogi.Kif
                         m.Value + ": 対応していない特殊な指し手です。");
             }
 
-            return BoardMove.CreateSpecialMove(BWType.None, smoveType);
+            return new Move
+            {
+                SpecialMoveType = smoveType,
+            };
         }
 
         /// <summary>

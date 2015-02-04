@@ -69,6 +69,33 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
+        /// この手のコメントを取得または設定します。
+        /// </summary>
+        public string Comment
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 解析された評価値を取得または設定します。
+        /// </summary>
+        public int? EvaluationValue
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 解析された変化を取得または設定します。
+        /// </summary>
+        public List<BoardMove> Variation
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// 一手前の指し手ノードを取得します。
         /// </summary>
         public MoveNode ParentNode
@@ -116,6 +143,26 @@ namespace Ragnarok.Shogi
 
                 MakeString(sb, 0);
                 return sb.ToString();
+            }
+        }
+
+        /// <summary>
+        /// コメント行の追加を行います。
+        /// </summary>
+        public void AddComment(string comment)
+        {
+            if (string.IsNullOrEmpty(comment))
+            {
+                return;
+            }
+
+            if (string.IsNullOrEmpty(Comment))
+            {
+                Comment = comment;
+            }
+            else
+            {
+                Comment += '\n' + comment;
             }
         }
 

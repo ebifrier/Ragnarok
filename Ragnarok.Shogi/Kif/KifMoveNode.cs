@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Ragnarok.Shogi
 {
@@ -55,6 +56,33 @@ namespace Ragnarok.Shogi
         {
             get { return (int)Duration.TotalSeconds; }
             set { Duration = TimeSpan.FromSeconds(value); }
+        }
+
+        /// <summary>
+        /// コメント行を取得または設定します。
+        /// </summary>
+        public string Comment
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 解析された評価値を取得または設定します。
+        /// </summary>
+        public int? EvaluationValue
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 解析された変化を取得または設定します。
+        /// </summary>
+        public List<BoardMove> AnalyzedVariation
+        {
+            get;
+            set;
         }
 
         /// <summary>
@@ -127,6 +155,37 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
+        /// 解析された変化を示す正規表現です。
+        /// </summary>
+        private static readonly Regex KifAnalyzedVariationRegex = new Regex(
+            @"(\d+) (\w+)");
+
+        /// <summary>
+        /// コメント文字列を追加します。
+        /// </summary>
+        public void AddComment(string comment)
+        {
+            if (string.IsNullOrEmpty(comment))
+            {
+                return;
+            }
+
+            var m = KifAnalyzedVariationRegex.Match(comment);
+            if (m.Success)
+            {
+                // 解析された変化や評価値を設定します。
+            }
+            else if (string.IsNullOrEmpty(Comment))
+            {
+                Comment = comment;
+            }
+            else
+            {
+                Comment += "\n" + comment;
+            }
+        }
+
+        /// <summary>
         /// KifMoveNodeからMoveNodeへ構造を変換します。
         /// </summary>
         public MoveNode ConvertToMoveNode(Board board, out Exception error)
@@ -166,6 +225,7 @@ namespace Ragnarok.Shogi
                     Move = bmove,
                     MoveCount = node.MoveCount,
                     Duration = node.Duration,
+                    Comment = node.Comment,
                 };
 
                 // 次の指し手とその変化を変換します。

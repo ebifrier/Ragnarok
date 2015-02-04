@@ -93,9 +93,21 @@ namespace Ragnarok.Shogi.Kif.Tests
         [Test()]
         public void VariationTest()
         {
-            var path = @"E:\Dropbox\NicoNico\shogi\test_kif\variation.kif_";
+            var text = SampleKif.VariationKif;
 
-            TestKif(path);
+            // 棋譜の読み込み
+            var kifu = KifuReader.LoadFrom(text);
+            Assert.NotNull(kifu);
+
+            // 手数を取得
+            var countObj = GetMoveCount(text);
+            Assert.NotNull(countObj);
+
+            var count = countObj.Value + (kifu.Error != null ? -2 : -1);
+            Assert.LessOrEqual(count, kifu.MoveList.Count());
+
+            // 入出力テストを行います。
+            TestUtil.ReadWriteTest(kifu, KifuFormat.Kif, count);
         }
 
         /// <summary>
