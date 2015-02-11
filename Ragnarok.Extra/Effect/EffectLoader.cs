@@ -79,8 +79,8 @@ namespace Ragnarok.Extra.Effect
                 Log.ErrorException(ex,
                     "'{0}': エフェクトの読み込みに失敗しました。", basePath);
 
-                //return null;
-                throw ex;
+                return null;
+                //throw ex;
             }
         }
 
