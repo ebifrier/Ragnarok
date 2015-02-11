@@ -9,10 +9,13 @@ require 'fileutils'
 require 'image_size'
 require 'digest/md5'
 require 'rexml/document'
-require 'zipruby'
+require 'zip'
+
+$LocalImagePath = "E:/HP/garnet-alice.net/common/images"
 
 #$HtmlImagePath = "http://garnet-alice.net/common/images/"
-$HtmlImagePath = "E:/HP/garnet-alice.net/common/images"
+#$HtmlImagePath = "E:/HP/garnet-alice.net/common/images"
+$HtmlImagePath = "/assets/img/thumbnail/"
 
 #
 # ファイル又はディレクトリを削除するメソッドを作成
@@ -49,7 +52,7 @@ end
 def select_thumbnail(rdata)
   return rdata.thumbnail if rdata.thumbnail != nil
   
-  image_path = File.join($HtmlImagePath, "*")
+  image_path = File.join($LocalImagePath, "*")
   filelist = Dir.glob(image_path).
     map do |path| File.basename(path) end.
     sort
@@ -69,9 +72,16 @@ def select_thumbnail(rdata)
 end
 
 #
+# ローカルのサムネイルのフルパスを取得します。
+#
+def local_thumbnail_fullpath(filename)
+  File.join($LocalImagePath, filename)
+end
+
+#
 # サーバー上のサムネイルのフルパスを取得します。
 #
-def make_thumbnail_fullpath(filename)
+def remote_thumbnail_fullpath(filename)
   File.join($HtmlImagePath, filename)
 end
 
@@ -79,8 +89,8 @@ end
 # 画像のサイズを取得します。
 #
 def get_image_size(filename)
-  image_path = make_thumbnail_fullpath(filename)
-  
+  image_path = local_thumbnail_fullpath(filename)
+
   File::open(image_path, "rb") do |f|
     return ImageSize.new(f.read)
   end
@@ -116,14 +126,17 @@ class ReleaseData
         # infoのタイプ名です。
         text = "(" + pair[0] + ") "
 
-        if pair[0] == "本体"
+        case pair[0]
+        when "本体" then
           new_node.add_element("span", {"class" => "main"}).add_text(text)
-        elsif pair[0] == "将棋"
+        when "将棋" then
           new_node.add_element("span", {"class" => "shogi"}).add_text(text)
+        when "バグ" then
+          new_node.add_element("span", {"class" => "bugfix"}).add_text(text)
         else
           new_node.add_element("span", {"class" => "unknown"}).add_text(text)
         end
-        
+
         new_node.add_text(pair[1])
       end
       root.add_element(new_node)
@@ -216,7 +229,7 @@ class AppData
     end
     
     # ビルドコマンドを実行します。
-    path_command = "call \"%VS100COMNTOOLS%vsvars32.bat\""
+    path_command = "call \"%VS120COMNTOOLS%vsvars32.bat\""
     build_command =
       "msbuild /nologo \"#{solution_path}\" /t:Rebuild " +
       "/p:DefineConstants=\"#{constants}\" " +
@@ -291,44 +304,49 @@ class AppData
 
     convert_template(tmpl_path, @versioninfo_path)
   end
+  
+  def contains_class(klass)
+    "contains(concat(' ',@class,' '), ' #{klass} ')"
+  end
 
   #
   # リリース情報(html)を出力します。
   #
   def make_release_note()
-    tmpl_path = File.join(@template_path, "release_note_tmpl.html")
+    #tmpl_path = File.join(@template_path, "release_note_tmpl.html")
+    tmpl_path = File.join(@template_path, "history.html.erb.tmpl")
 
     # release_note.html のテンプレートファイルを読み込みます。
     fp = File.open(tmpl_path, "r")
     doc = REXML::Document.new(fp)
     
-    top = doc.elements["//body"]
-    rnote_templ = top.elements["//div[@class=\"versioninfo\"]"]
+    top = doc.elements["//*[#{contains_class('history-root')}]"]
+    rnote_templ = top.elements["//*[#{contains_class('history')}]"]
     
     # delete_allは実体を消すためコピーが必要になります。
-    rnote_templ = rnote_templ.deep_clone
+    rnote_clone = rnote_templ.deep_clone
     top.elements.delete_all("*")
     
     @release_list.each_with_index do |rdata, i|
       break if i >= 3
-      note_node = rnote_templ.deep_clone
+      note_node = rnote_clone.deep_clone
       
       if i == 0 and rdata.version != @version
         raise StandardError, 'Release version isn\'t matched (history.xml)'
       end
       
       # header
-      node = note_node.elements["//*[@class=\"version\"]"]
-      node.text = "更新履歴　#{@title} #{rdata.version}"
+      node = note_node.elements["//*[#{contains_class('history-version')}]"]
+      node.text = rdata.version
       
       # thumbnail
-      node = note_node.elements["//*[@class=\"thumbnail\"]"]
+      node = note_node.elements["//*[#{contains_class('history-thumbnail')}]"]
       filename = select_thumbnail(rdata)
       image_size = get_image_size(filename)
       attrs = {
-        'src' => make_thumbnail_fullpath(filename),
+        'src' => remote_thumbnail_fullpath(File.basename(filename)),
         'alt' => '更新情報',
-        'border' => '0',
+        'class' => 'history-image',
         'width' => image_size.width,
         'height' => image_size.height,
       }
@@ -336,11 +354,11 @@ class AppData
       select_thumbnail(rdata)
       
       # date
-      node = note_node.elements["//*[@class=\"date\"]"]
-      node.text = (rdata.date ? "更新日: " + rdata.date : " ")
+      node = note_node.elements["//*[#{contains_class('history-date')}]"]
+      node.text = (rdata.date ? rdata.date : " ")
       
       # content
-      node = note_node.elements["//*[@class=\"content\"]"]
+      node = note_node.elements["//*[#{contains_class('history-content')}]"]
       node.add_element(rdata.html_content)
       
       top.add_element(note_node)
