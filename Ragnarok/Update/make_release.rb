@@ -100,14 +100,22 @@ end
 # 各リリース情報を保持します。
 #
 class ReleaseData
-  attr_accessor :version, :thumbnail, :date, :content
+  attr_accessor :appdata, :version, :thumbnail, :date, :content
 
-  def initialize(node)
+  def initialize(appdata, node)
+    @appdata = appdata
+
     @version = node["version"]
-
     @thumbnail = node["thumbnail"]
     @date = node["date"]
     @content = node["content"]
+  end
+  
+  #
+  # _で区切られたバージョン情報を取得します。
+  #
+  def version_()
+    @version.gsub(".", "_")
   end
 
   # infoタグをhtml表示用に変換したcontentを取得します。
@@ -144,6 +152,10 @@ class ReleaseData
     
     root
   end
+  
+  def download()
+    "http://garnet-alice.net/cgi-bin/dlmagic/dlmagic.php?url=http://garnet-alice.net/programs/#{@appdata.html_dir}/download/#{@appdata.title}_#{@appdata.latest_version_}.zip"
+  end
 end
 
 #
@@ -152,18 +164,23 @@ end
 # dist_path上にビルドファイル、zip、更新ファイルなどを作成します。
 #
 class AppData
-  attr_accessor :html_dir, :dist_path, :title, :version, :release_list
+  attr_accessor :html_dir, :dist_path, :title, :latest_version, :release_list
   attr_accessor :outdir_name, :outdir_path, :zip_name, :zip_path
   attr_accessor :versioninfo_path, :releasenote_path, :template_path
   
   def initialize(html_dir, dist_path, assemblyinfo_path, history_path)
     @html_dir = html_dir
     @title = load_title(assemblyinfo_path)
-    @version = load_version(assemblyinfo_path)
+    @latest_version = load_version(assemblyinfo_path)
     @release_list = load_history(history_path) if history_path != nil
 
+    # バージョンチェック
+    if @release_list.empty? || @release_list[0].version != @latest_version
+      raise StandardError, 'Release version isn\'t matched (history.xml)'
+    end
+
     @dist_path = dist_path
-    @outdir_name = "#{@title}_#{version_}"
+    @outdir_name = "#{@title}_#{latest_version_}"
     @outdir_path = File.join(dist_path, outdir_name)
     @zip_name = outdir_name + ".zip"
     @zip_path = File.join(dist_path, zip_name)
@@ -173,11 +190,8 @@ class AppData
     @template_path = File.dirname(__FILE__)
   end
 
-  #
-  # _で区切られたバージョン情報を取得します。
-  #
-  def version_()
-    @version.gsub(".", "_")
+  def latest_version_()
+    @latest_version.gsub(".", "_")
   end
 
   #
@@ -187,7 +201,7 @@ class AppData
     str = File.open(assemblyinfo_path).read
   
     if /\[assembly: AssemblyTitle\("(.+)"\)\]/ =~ str then
-      version = $1
+      @latest_version = $1
     else
       puts "Not found client's assembly title."
       exit(-1)
@@ -201,7 +215,7 @@ class AppData
     str = File.open(assemblyinfo_path).read
   
     if /\[assembly: AssemblyVersion\("([\d\.]+)"\)\]/ =~ str then
-      version = $1
+      @latest_version = $1
     else
       puts "Not found client's assembly version."
       exit(-1)
@@ -215,7 +229,7 @@ class AppData
     history = YAML.load_file(history_path)
 
     history.map do |node|
-      ReleaseData.new(node)
+      ReleaseData.new(self, node)
     end
   end
   
@@ -238,25 +252,6 @@ class AppData
     
     puts build_command
     system(path_command + " && " + build_command)
-  end
-  
-  #
-  # templateファイルを置き換えます。
-  #
-  def convert_template(input_path, output_path)
-    data = File.open(input_path).read
-    data = data.gsub("${DIRNAME}", @html_dir)
-    data = data.gsub("${VERSION}", @version)
-    data = data.gsub("${_VERSION}", version_)
-    data = data.gsub("${ZIP_FILE}", @zip_name)
-    data = data.gsub("${MD5}", compute_md5(@zip_name))
-    data = data.gsub("${PUB_DATE}", Time.now.to_s)
-    data = data.gsub("${RAND}", rand(100000).to_s)
-    
-    File.open(output_path, "w") do |f|
-      f.write(data)
-      printf("wrote %s\n", output_path)
-    end
   end
   
   #
@@ -297,50 +292,29 @@ class AppData
   end
   
   #
-  # versioninfo.xmlを更新します。
+  # templateファイルを置き換えます。
   #
-  def make_versioninfo()
-    tmpl_path = File.join(@template_path, "versioninfo_tmpl.xml")
-
-    convert_template(tmpl_path, @versioninfo_path)
+  def convert_template_base(data)
+    data = data.gsub("${TITLE}", @title)
+    data = data.gsub("${DIRNAME}", @html_dir)
+    data = data.gsub("${LATEST_VERSION}", @latest_version)
+    data = data.gsub("${LATEST_VERSION_}", latest_version_)
+    data = data.gsub("${ZIP_FILE}", @zip_name)
+    data = data.gsub("${MD5}", compute_md5(@zip_name))
+    data = data.gsub("${PUB_DATE}", Time.now.to_s)
+    data = data.gsub("${RAND}", rand(100000).to_s)
   end
   
-  def contains_class(klass)
-    "contains(concat(' ',@class,' '), ' #{klass} ')"
-  end
-
   #
-  # リリース情報(html)を出力します。
+  # templateファイルを置き換えます。
   #
-  def make_release_note()
-    #tmpl_path = File.join(@template_path, "release_note_tmpl.html")
-    tmpl_path = File.join(@template_path, "history.html.erb.tmpl")
-
-    # release_note.html のテンプレートファイルを読み込みます。
-    fp = File.open(tmpl_path, "r")
-    doc = REXML::Document.new(fp)
-    
-    top = doc.elements["//*[#{contains_class('history-root')}]"]
-    rnote_templ = top.elements["//*[#{contains_class('history')}]"]
-    
-    # delete_allは実体を消すためコピーが必要になります。
-    rnote_clone = rnote_templ.deep_clone
-    top.elements.delete_all("*")
-    
-    @release_list.each_with_index do |rdata, i|
-      break if i >= 3
-      note_node = rnote_clone.deep_clone
-      
-      if i == 0 and rdata.version != @version
-        raise StandardError, 'Release version isn\'t matched (history.xml)'
-      end
-      
-      # header
-      node = note_node.elements["//*[#{contains_class('history-version')}]"]
-      node.text = rdata.version
-      
-      # thumbnail
-      node = note_node.elements["//*[#{contains_class('history-thumbnail')}]"]
+  def convert_template_with(data, rdata)
+    data = data.gsub("${VERSION}", rdata.version)
+    data = data.gsub("${VERSION_}", rdata.version_)
+    data = data.gsub("${DATE}", rdata.date)
+    data = data.gsub("${DOWNLOAD}", rdata.download)
+    data = data.gsub("${CONTENT}", rdata.html_content.to_s)
+    data = data.gsub("${THUMBNAIL_TAG}") do
       filename = select_thumbnail(rdata)
       image_size = get_image_size(filename)
       attrs = {
@@ -350,22 +324,60 @@ class AppData
         'width' => image_size.width,
         'height' => image_size.height,
       }
-      node.add_element("img", attrs)
-      select_thumbnail(rdata)
-      
-      # date
-      node = note_node.elements["//*[#{contains_class('history-date')}]"]
-      node.text = (rdata.date ? rdata.date : " ")
-      
-      # content
-      node = note_node.elements["//*[#{contains_class('history-content')}]"]
-      node.add_element(rdata.html_content)
-      
-      top.add_element(note_node)
+      node = REXML::Element.new("img")
+      node.add_attributes(attrs)
+      node.to_s
     end
+
+    convert_template_base(data)
+  end
+  
+  #
+  # versioninfo.xmlを更新します。
+  #
+  def make_versioninfo()
+    tmpl_path = File.join(@template_path, "versioninfo_tmpl.xml")
+
+    data = File.open(tmpl_path).read
+    data = convert_template_base(data)
     
-    File.open(@releasenote_path, "w") do |f|
-      doc.write(f, -1, false, true)
+    File.open(@versioninfo_path, "w") do |f|
+      f.write(data)
+      printf("versioninfo wrote %s\n", @versioninfo_path)
+    end
+  end
+
+  #
+  # リリース情報(html)を出力します。
+  #
+  def generate_ragnarokmarkup(replace_file)
+    # history用のテンプレートファイルを読み込みます。
+    #tmpl_path = File.join(@template_path, "release_note_tmpl.html")
+    
+    
+    # 置換対象ファイルを開きます。
+    data = File.open(replace_file, "r").read
+
+    data = data.gsub("${RECENT_HISTORY}") do
+      tmpl_path = File.join(@template_path, "recent_history.html.slim.rag")
+      template = File.open(tmpl_path, "r").read
+      convert_template_with(template, @release_list[0])
+    end
+
+    data = data.gsub("${HISTORY_ALL}") do
+      tmpl_path = File.join(@template_path, "history.html.erb.rag")
+      template = File.open(tmpl_path, "r").read
+      @release_list.map do |rdata|
+        convert_template_with(template, rdata)
+      end .join("\n")
+    end
+
+    data = convert_template_with(data, @release_list[0])
+    
+    output_file = replace_file.sub(/[.][^.]+\z/, "")
+    File.open(output_file, "w") do |f|
+      f.puts data
+      puts "generated #{output_file}"
     end
   end
 end
