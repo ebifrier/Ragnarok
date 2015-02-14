@@ -33,9 +33,13 @@ namespace Ragnarok.Utility
         /// </summary>
         Symbol = 0x08,
         /// <summary>
+        /// 十・百・千など桁を示す漢字の変換を行います。
+        /// </summary>
+        KanjiDigit = 0x10,
+        /// <summary>
         /// 全変換を行います。
         /// </summary>
-        All = (Number | Alphabet | Kana | Symbol)
+        All = (Number | Alphabet | Kana | Symbol | KanjiDigit)
     }
 
     /// <summary>
@@ -63,7 +67,8 @@ namespace Ragnarok.Utility
 
             if ((option & NormalizeTextOption.Number) != 0)
             {
-                text = NormalizeNumber(text);
+                var kanjiDigit = option.HasFlag(NormalizeTextOption.KanjiDigit);
+                text = NormalizeNumber(text, kanjiDigit);
             }
 
             if ((option & NormalizeTextOption.Alphabet) != 0)
@@ -151,7 +156,7 @@ namespace Ragnarok.Utility
         /// <summary>
         /// 含まれる漢数字などを半角数字に直します。
         /// </summary>
-        public static string NormalizeNumber(string text)
+        public static string NormalizeNumber(string text, bool normalizeKanjiDigit)
         {
             var result = new StringBuilder();
             long? allNum = null;
@@ -168,13 +173,13 @@ namespace Ragnarok.Utility
             {
                 long n = 0;
 
-                if (ketaTable1.TryGetValue(c, out n))
+                if (normalizeKanjiDigit && ketaTable1.TryGetValue(c, out n))
                 {
                     // 十、百、千のどれかなら
                     allNum = (allNum ?? 0) + ((prevNum ?? 1) * n);
                     prevNum = null;
                 }
-                else if (ketaTable2.TryGetValue(c, out n))
+                else if (normalizeKanjiDigit && ketaTable2.TryGetValue(c, out n))
                 {
                     // 万、億、などなら
                     allNum = ((allNum ?? 1) + (prevNum ?? 0)) * n;

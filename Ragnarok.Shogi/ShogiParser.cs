@@ -214,6 +214,9 @@ namespace Ragnarok.Shogi
             {"棟梁", SpecialMoveType.Resign},
             {"とうりょう", SpecialMoveType.Resign},
             {"りざいん", SpecialMoveType.Resign},
+            {"まけました", SpecialMoveType.Resign},
+            {"負けました", SpecialMoveType.Resign},
+            {"ありません", SpecialMoveType.Resign},
             {"TORYO", SpecialMoveType.Resign},
             {"RESIGN", SpecialMoveType.Resign},
 
@@ -764,7 +767,7 @@ namespace Ragnarok.Shogi
         private static Regex CreateSpecialMoveRegex()
         {
             var pattern = string.Format(
-                @"^(あ(､|、|っ)?\s*)?({0})?({1})",
+                @"^(あ(､|、|っ)?)?({0})?({1})",
                 ConvertToRegexPattern(BWTypeTable),
                 ConvertToRegexPattern(SpecialMoveTable));
 
@@ -887,7 +890,9 @@ namespace Ragnarok.Shogi
             // 文字列を正規化します。
             if (isNormalizeText)
             {
-                //text = StringNormalizer.NormalizeText(text);
+                text = StringNormalizer.NormalizeText(
+                    text,
+                    NormalizeTextOption.All & ~NormalizeTextOption.KanjiDigit);
             }
 
             // 投了などの特殊な指し手の判断を行います。

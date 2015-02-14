@@ -38,7 +38,7 @@ namespace Ragnarok.Shogi
     /// </summary>
     public class MoveStatistics : NotifyObject
     {
-        private int defaultSkillPoint = 1;
+        private int defaultSkillPoint = 10;
         private readonly Dictionary<SkillLevel, int> skillPointTable =
             new Dictionary<SkillLevel, int>();
         private readonly Dictionary<ShogiPlayer, RegistereredMove> moveDatas =

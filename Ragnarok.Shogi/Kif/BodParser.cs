@@ -282,7 +282,7 @@ namespace Ragnarok.Shogi.Kif
             if (handPieceText.Length > 1)
             {
                 var numText = handPieceText.Substring(1);
-                var normalized = StringNormalizer.NormalizeNumber(numText);
+                var normalized = StringNormalizer.NormalizeNumber(numText, true);
                 
                 count = int.Parse(normalized);
             }
