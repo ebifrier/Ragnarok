@@ -312,16 +312,25 @@ namespace Ragnarok
         }
 
         /// <summary>
-        /// TimeSpanのミリ秒部分を０にします。
+        /// TimeSpanのミリ秒部分を<paramref name="millis"/> / 1000 にします。
         /// </summary>
-        public static TimeSpan MillisecondsToZero(this TimeSpan self)
+        public static TimeSpan MillisecondsTo(this TimeSpan self, int millis)
         {
             if (self == TimeSpan.MinValue || self == TimeSpan.MaxValue)
             {
                 return self;
             }
 
-            return TimeSpan.FromSeconds(Math.Floor(self.TotalSeconds));
+            return TimeSpan.FromSeconds(
+                Math.Floor(self.TotalSeconds) + ((double)millis / 1000.0));
+        }
+
+        /// <summary>
+        /// TimeSpanのミリ秒部分を０にします。
+        /// </summary>
+        public static TimeSpan MillisecondsToZero(this TimeSpan self)
+        {
+            return MillisecondsTo(self, 0);
         }
 
         /// <summary>
