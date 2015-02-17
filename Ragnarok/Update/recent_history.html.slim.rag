@@ -1,8 +1,0 @@
-.history.row
-  .col-xs-12.col-sm-3'>
-    .history-thumbnail
-      | ${THUMBNAIL_TAG}
-    / .history-date
-    /   | 更新日 ${DATE}
-  .history-content.col-xs-12.col-sm-9
-    | ${CONTENT}
