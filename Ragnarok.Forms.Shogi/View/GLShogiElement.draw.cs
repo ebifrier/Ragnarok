@@ -165,16 +165,16 @@ namespace Ragnarok.Forms.Shogi.View
                 SquareSize.Height * Board.BoardSize);
 
             // 駒台のサイズ / 2
-            w2 = 120 / 2;
+            w2 = 130 / 2;
             h2 = 170 / 2;
 
             // index=0が駒箱の駒となります。
             this.pieceBoxBounds[0] = new RectangleF(
-                320 - 235 - w2, 360 - 5 - h2 * 2, w2 * 2, h2 * 2);
+                320 - 243 - w2, 360 - 5 - h2 * 2, w2 * 2, h2 * 2);
             this.pieceBoxBounds[1] = new RectangleF(
-                320 + 235 - w2, 360 - 5 - h2 * 2, w2 * 2, h2 * 2);
+                320 + 243- w2, 360 - 5 - h2 * 2, w2 * 2, h2 * 2);
             this.pieceBoxBounds[2] = new RectangleF(
-                320 - 235 - w2, 5, w2 * 2, h2 * 2);
+                320 - 243 - w2, 5, w2 * 2, h2 * 2);
         }
 
         /// <summary>
