@@ -368,6 +368,15 @@ namespace Ragnarok.Extra.Effect
             m.Translate(CenterPoint.X, CenterPoint.Y, CenterPoint.Z);
 
             Transform = m;
+
+            Util.SafeCall(() => OnTransformUpdated());
+        }
+
+        /// <summary>
+        /// Transformの更新時に呼ばれます。
+        /// </summary>
+        protected virtual void OnTransformUpdated()
+        {
         }
         #endregion
 
