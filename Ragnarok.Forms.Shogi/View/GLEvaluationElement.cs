@@ -76,6 +76,7 @@ namespace Ragnarok.Forms.Shogi.View
 
         private ContextMenuStrip contextMenu;
         private float imageHeight;
+        private float valueHeight;
         private float valueTop;
 
         /// <summary>
@@ -84,7 +85,8 @@ namespace Ragnarok.Forms.Shogi.View
         public GLEvaluationElement()
         {
             this.imageHeight = 135.0f / 145.0f;
-            this.valueTop = this.imageHeight - 0.04f;
+            this.valueHeight = 0.1f;
+            this.valueTop = this.imageHeight / 2 - this.valueHeight + 0.04f;
             this.contextMenu = CreateContextMenu();
 
             // 評価値モードはデフォルトでは何でも許可します。
@@ -94,9 +96,6 @@ namespace Ragnarok.Forms.Shogi.View
             IsVisibleValue = true;
             IsValueFullWidth = true;
             MaxValue = 9999;
-
-            LocalTransform = new Matrix44d();
-            LocalTransform.Translate(-0.5, -0.5, 0.0);
 
             ValueFont = new GL.TextTextureFont
             {
@@ -393,7 +392,7 @@ namespace Ragnarok.Forms.Shogi.View
             }
 
             // 描画領域はこのクラスの外側で指定します。
-            var bounds = new RectangleF(0.0f, 0.0f, 1.0f, this.imageHeight);
+            var bounds = new RectangleF(-0.5f, -this.imageHeight / 2, 1.0f, this.imageHeight);
 
             // 描画領域を設定します。
             var texture = GL.TextureCache.GetTexture(gl, new Uri(imagePath));
@@ -430,7 +429,7 @@ namespace Ragnarok.Forms.Shogi.View
                 // 拡大します。拡大は縦横比を保存した状態で行います。
 
                 // フォントの描画サイズを全体の高さからの割合で指定。
-                var eh = 1.0f - this.valueTop;
+                var eh = this.valueHeight;
                 var ew = eh * texture.OriginalWidth / texture.OriginalHeight; 
 
                 // 文字幅がエレメントサイズを超えていたら、
@@ -443,14 +442,14 @@ namespace Ragnarok.Forms.Shogi.View
 
                 // 評価値の背景描画
                 var bounds = new RectangleF(
-                    0.0f, this.valueTop, 1.0f, 1.0f - this.valueTop);
+                    -0.5f, this.valueTop, 1.0f, this.valueHeight);
                 renderBuffer.AddRender(
                     BlendType.Diffuse, Color.FromArgb(128, Color.Black),
                     bounds, Transform, 1.0);
 
                 // 評価値の描画
                 bounds = new RectangleF(
-                    1.0f - Margin - ew, this.valueTop, ew, eh);
+                    0.5f - Margin - ew, this.valueTop, ew, eh);
                 renderBuffer.AddRender(
                     texture, BlendType.Diffuse,
                     bounds, Transform, 1.0);
