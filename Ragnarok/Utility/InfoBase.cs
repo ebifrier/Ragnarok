@@ -33,6 +33,16 @@ namespace Ragnarok.Utility
         }
 
         /// <summary>
+        /// 情報表示形式のIDを取得します。
+        /// </summary>
+        [DataMember(Name = "typeId")]
+        public string TypeId
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// タイトルを取得または設定します。
         /// </summary>
         [DataMember(Name = "title")]
