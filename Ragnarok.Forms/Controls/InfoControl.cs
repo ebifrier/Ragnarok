@@ -30,9 +30,8 @@ namespace Ragnarok.Forms.Controls
             {
                 this.itemNameLabel1,
                 this.itemNameLabel2,
-                this.itemNameLabel3,
             };
-            this.itemValueLabels = new Label[3];
+            this.itemValueLabels = new Label[2];
         }
 
         /// <summary>
@@ -86,7 +85,7 @@ namespace Ragnarok.Forms.Controls
                 }
 
                 var infoItems = GetInfoItems().ToList();
-                for (var i = 0; i < 3; ++i)
+                for (var i = 0; i < this.itemNameLabels.Count(); ++i)
                 {
                     // 前に作ったラベルは消しておきます。
                     if (this.itemValueLabels[i] != null)
