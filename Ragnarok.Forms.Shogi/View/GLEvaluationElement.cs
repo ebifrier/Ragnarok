@@ -74,6 +74,8 @@ namespace Ragnarok.Forms.Shogi.View
         }
         #endregion
 
+        private readonly GLEvaluationElementManager manager =
+            new GLEvaluationElementManager();
         private ContextMenuStrip contextMenu;
         private float imageHeight;
         private float valueHeight;
@@ -85,7 +87,7 @@ namespace Ragnarok.Forms.Shogi.View
         public GLEvaluationElement()
         {
             this.imageHeight = 135.0f / 145.0f;
-            this.valueHeight = 0.1f;
+            this.valueHeight = 0.12f;
             this.valueTop = this.imageHeight / 2 - this.valueHeight + 0.04f;
             this.contextMenu = CreateContextMenu();
 
@@ -104,6 +106,12 @@ namespace Ragnarok.Forms.Shogi.View
                 EdgeLength = 0.5,
             };
 
+            this.AddPropertyChangedHandler(
+                "ImageSet",
+                (_, __) => this.manager.SetImageSet(ImageSet));
+            this.AddPropertyChangedHandler(
+                "ImageSetList",
+                (_, __) => this.manager.SetImageSetList(ImageSetList));
             this.AddPropertyChangedHandler(
                 "EvaluationMode",
                 (_, __) => EvaluationModeUpdated());
@@ -252,7 +260,7 @@ namespace Ragnarok.Forms.Shogi.View
         public int CurrentValue
         {
             get { return GetValue<int>("CurrentValue"); }
-            set { SetValue("CurrentValue", value); }
+            private set { SetValue("CurrentValue", value); }
         }
 
         /// <summary>
@@ -304,6 +312,14 @@ namespace Ragnarok.Forms.Shogi.View
         }
 
         /// <summary>
+        /// 評価値とリンクする絵を描画する内部型の設定を行います。
+        /// </summary>
+        public void AddInternalType(string name, Type internalType)
+        {
+            this.manager.AddInternalType(name, internalType);
+        }
+
+        /// <summary>
         /// 評価値モードが変わった時に呼ばれます。
         /// </summary>
         public void EvaluationModeUpdated()
@@ -348,7 +364,7 @@ namespace Ragnarok.Forms.Shogi.View
 
             CurrentValue = MathEx.Between(-MaxValue, MaxValue, value);
         }
-
+        
         /// <summary>
         /// 毎フレーム呼ばれる更新用メソッドです。
         /// </summary>
@@ -359,8 +375,12 @@ namespace Ragnarok.Forms.Shogi.View
 
             if (IsVisible)
             {
-                // 評価値画像の描画を行います。
-                AddRenderImage(renderBuffer);
+                // 評価値画像などの描画を行います。
+                var internalObj = this.manager.InternalObj;
+                if (internalObj != null)
+                {
+                    internalObj.AddRender(OpenGL, Transform, renderBuffer);
+                }
 
                 // 評価値を表示する場合は、数字の描画を行います。
                 if (IsVisibleValue)
@@ -370,7 +390,7 @@ namespace Ragnarok.Forms.Shogi.View
             }
         }
 
-        /// <summary>
+        /*/// <summary>
         /// 評価値画像を描画リストに加えます。
         /// </summary>
         private void AddRenderImage(GL.RenderBuffer renderBuffer)
@@ -401,7 +421,7 @@ namespace Ragnarok.Forms.Shogi.View
                 renderBuffer.AddRender(
                     texture, BlendType.Diffuse, bounds, Transform, 0.0);
             }
-        }
+        }*/
 
         /// <summary>
         /// 評価値を数字として描画リストに加えます。
@@ -419,7 +439,7 @@ namespace Ragnarok.Forms.Shogi.View
             var texture = textTexture.Texture;
 
             if (texture != null && texture.IsAvailable)
-            {                
+            {
                 var Margin = 0.02f;
 
                 // 描画領域はテクスチャサイズの割合から決定します。

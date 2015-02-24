@@ -89,12 +89,14 @@
       <DependentUpon>GLContainer.cs</DependentUpon>
     </Compile>
     <Compile Include="View\GLEvaluationElement.cs" />
+    <Compile Include="View\GLEvaluationElementManager.cs" />
     <Compile Include="View\GLEvaluationElementSettingDialog.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="View\GLEvaluationElementSettingDialog.Designer.cs">
       <DependentUpon>GLEvaluationElementSettingDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="View\GLEvaluationElementInternal.cs" />
     <Compile Include="View\GLShogiElement.cs" />
     <Compile Include="View\GLElement.cs" />
     <Compile Include="View\MovingPiece.cs" />
