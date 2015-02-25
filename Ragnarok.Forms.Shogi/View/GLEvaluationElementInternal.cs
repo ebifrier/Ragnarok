@@ -17,7 +17,7 @@ namespace Ragnarok.Forms.Shogi.View
     /// <summary>
     /// 評価値画像の領域にオブジェクトを描画するための基本クラスです。
     /// </summary>
-    public abstract class GLEvaluationElementInternal : NotifyObject
+    public abstract class GLEvaluationElementInternal : GLElement
     {
         /// <summary>
         /// 設定されたImageSetを取得します。
@@ -44,46 +44,49 @@ namespace Ragnarok.Forms.Shogi.View
         {
             ImageSet = imageSet;
         }
-        
-        /// <summary>
-        /// 評価値画像を描画リストに加えます。
-        /// </summary>
-        public abstract void AddRender(OpenGL gl, Matrix44d transform,
-                                       GL.RenderBuffer renderBuffer);
     }
 
-    public sealed class GLEvaluationElement_Image : GLEvaluationElementInternal
+    /// <summary>
+    /// 評価値画像の描画を行います。
+    /// </summary>
+    public sealed class GLEvaluationElementImage : GLEvaluationElementInternal
     {
         /// <summary>
         /// 評価値画像を描画リストに加えます。
         /// </summary>
-        public override void AddRender(OpenGL gl, Matrix44d transform,
-                                       GL.RenderBuffer renderBuffer)
+        protected override void OnEnterFrame(EnterFrameEventArgs e)
         {
-            var imageSet = ImageSet;
-            if (imageSet == null)
-            {
-                // 評価値画像のセットがない場合は、何も表示しません。
-                return;
-            }
+            base.OnEnterFrame(e);
+            var renderBuffer = (GL.RenderBuffer)e.StateObject;
+            var gl = OpenGL;
 
-            var imagePath = imageSet.GetSelectedImagePath(CurrentValue);
-            if (string.IsNullOrEmpty(imagePath))
+            if (IsVisible)
             {
-                // 評価値画像がない場合も、何もしません。
-                return;
-            }
+                var imageSet = ImageSet;
+                if (imageSet == null)
+                {
+                    // 評価値画像のセットがない場合は、何も表示しません。
+                    return;
+                }
 
-            // 描画領域はこのクラスの外側で指定します。
-            var bounds = new RectangleF(-0.5f, -0.5f, 1.0f, 1.0f);
+                var imagePath = imageSet.GetSelectedImagePath(CurrentValue);
+                if (string.IsNullOrEmpty(imagePath))
+                {
+                    // 評価値画像がない場合も、何もしません。
+                    return;
+                }
 
-            // 描画領域を設定します。
-            var texture = GL.TextureCache.GetTexture(gl, new Uri(imagePath));
-            if (texture != null && texture.IsAvailable)
-            {
-                //transform.Multiply(Transform);
-                renderBuffer.AddRender(
-                    texture, BlendType.Diffuse, bounds, transform, 0.0);
+                // 描画領域を設定します。
+                var texture = GL.TextureCache.GetTexture(gl, new Uri(imagePath));
+                if (texture != null && texture.IsAvailable)
+                {
+                    // 描画領域はこのクラスの外側で指定します。
+                    var rate = (float)texture.OriginalHeight / texture.OriginalWidth;
+                    var bounds = new RectangleF(-0.5f, 0.5f - rate, 1.0f, rate);
+
+                    renderBuffer.AddRender(
+                        texture, BlendType.Diffuse, bounds, Transform, 0.0);
+                }
             }
         }
     }

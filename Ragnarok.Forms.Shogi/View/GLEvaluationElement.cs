@@ -77,7 +77,6 @@ namespace Ragnarok.Forms.Shogi.View
         private readonly GLEvaluationElementManager manager =
             new GLEvaluationElementManager();
         private ContextMenuStrip contextMenu;
-        private float imageHeight;
         private float valueHeight;
         private float valueTop;
 
@@ -86,9 +85,8 @@ namespace Ragnarok.Forms.Shogi.View
         /// </summary>
         public GLEvaluationElement()
         {
-            this.imageHeight = 135.0f / 145.0f;
             this.valueHeight = 0.12f;
-            this.valueTop = this.imageHeight / 2 - this.valueHeight + 0.04f;
+            this.valueTop = 0.5f - this.valueHeight + 0.04f;
             this.contextMenu = CreateContextMenu();
 
             // 評価値モードはデフォルトでは何でも許可します。
@@ -96,7 +94,7 @@ namespace Ragnarok.Forms.Shogi.View
             IsEnableUserValue = true;
             IsEnableServerValue = true;
             IsVisibleValue = true;
-            IsValueFullWidth = true;
+            IsValueFullWidth = false;
             MaxValue = 9999;
 
             ValueFont = new GL.TextTextureFont
@@ -106,12 +104,15 @@ namespace Ragnarok.Forms.Shogi.View
                 EdgeLength = 0.5,
             };
 
-            this.AddPropertyChangedHandler(
-                "ImageSet",
-                (_, __) => this.manager.SetImageSet(ImageSet));
+            // 内部描画オブジェクトの初期化
+            AddInternalType("image", typeof(GLEvaluationElementImage));
+
             this.AddPropertyChangedHandler(
                 "ImageSetList",
                 (_, __) => this.manager.SetImageSetList(ImageSetList));
+            this.AddPropertyChangedHandler(
+                "ImageSet",
+                (_, __) => ImageSetUpdated());
             this.AddPropertyChangedHandler(
                 "EvaluationMode",
                 (_, __) => EvaluationModeUpdated());
@@ -133,7 +134,7 @@ namespace Ragnarok.Forms.Shogi.View
             // 評価値の設定ダイアログ
             var item1 = new ToolStripMenuItem
             {
-                Text = "評価値の設定",
+                Text = "設定",
             };
             item1.Click += (_, __) =>
                 OpenEvaluationSettingDialog.Execute(this);
@@ -145,7 +146,7 @@ namespace Ragnarok.Forms.Shogi.View
             // 各項目の設定
             var item2 = new ToolStripMenuItem
             {
-                Text = "数字を表示する",
+                Text = "値を表示する",
                 CheckOnClick = true,
                 Checked = true,
             };
@@ -159,7 +160,7 @@ namespace Ragnarok.Forms.Shogi.View
             // 各項目の設定
             var item3 = new ToolStripMenuItem
             {
-                Text = "数字を全角文字で表示する",
+                Text = "値を全角文字で表示する",
                 CheckOnClick = true,
                 Checked = IsValueFullWidth,
             };
@@ -319,10 +320,30 @@ namespace Ragnarok.Forms.Shogi.View
             this.manager.AddInternalType(name, internalType);
         }
 
+        private void ImageSetUpdated()
+        {
+            var prev = this.manager.InternalObj;
+            this.manager.SetImageSet(ImageSet);
+            var next = this.manager.InternalObj;
+
+            if (!ReferenceEquals(prev, next))
+            {
+                if (prev != null)
+                {
+                    Children.Remove(prev);
+                }
+
+                if (next != null)
+                {
+                    Children.Add(next);
+                }
+            }
+        }
+
         /// <summary>
         /// 評価値モードが変わった時に呼ばれます。
         /// </summary>
-        public void EvaluationModeUpdated()
+        private void EvaluationModeUpdated()
         {
             // 設定された評価値モードが正しいかどうかを確認します。
             if (EvaluationMode == EvaluationMode.User && !IsEnableUserValue)
@@ -373,20 +394,16 @@ namespace Ragnarok.Forms.Shogi.View
             base.OnEnterFrame(e);
             var renderBuffer = (GL.RenderBuffer)e.StateObject;
 
-            if (IsVisible)
+            // 評価値の更新を行います。
+            if (this.manager.InternalObj != null)
             {
-                // 評価値画像などの描画を行います。
-                var internalObj = this.manager.InternalObj;
-                if (internalObj != null)
-                {
-                    internalObj.AddRender(OpenGL, Transform, renderBuffer);
-                }
+                this.manager.InternalObj.CurrentValue = CurrentValue;
+            }
 
-                // 評価値を表示する場合は、数字の描画を行います。
-                if (IsVisibleValue)
-                {
-                    AddRenderValue(renderBuffer, CurrentValue);
-                }
+            // 評価値を表示する場合は、数字の描画を行います。
+            if (IsVisible && IsVisibleValue)
+            {
+                AddRenderValue(renderBuffer, CurrentValue);
             }
         }
 
@@ -481,7 +498,7 @@ namespace Ragnarok.Forms.Shogi.View
             if (e.Button == MouseButtons.Right)
             {
                 var p = ClientToLocal(e.Location);
-                var r = new RectangleF(0, 0, 1, 1);
+                var r = new RectangleF(-0.5f, -0.5f, 1.0f, 1.0f);
                 if (r.Contains(p))
                 {
                     // 右クリックメニューを開きます。

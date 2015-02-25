@@ -584,6 +584,12 @@ namespace Ragnarok.Extra.Effect
             }
 
             Parent = parent;
+            OnParentAdded(parent);
+        }
+
+        protected virtual void OnParentAdded(EffectObject parent)
+        {
+            // 何もしません。
         }
 
         /// <summary>
@@ -597,10 +603,13 @@ namespace Ragnarok.Extra.Effect
                     "EntityObjectに親が設定されていません。");
             }
 
+            OnParentRemoved(parent);
             Parent = null;
+        }
 
-            // 終了処理を行います。
-            Terminate();
+        protected virtual void OnParentRemoved(EffectObject parent)
+        {
+            // 何もしません。
         }
 
         /// <summary>
@@ -691,6 +700,7 @@ namespace Ragnarok.Extra.Effect
                 child.DoEnterFrame(elapsedTime, state);
                 if (child.RemoveMe)
                 {
+                    child.Terminate();
                     Children.RemoveAt(i);
                 }
                 else
@@ -732,11 +742,12 @@ namespace Ragnarok.Extra.Effect
         {
             for (var i = 0; i < Children.Count; )
             {
-                var entity = Children[i];
+                var child = Children[i];
 
-                entity.DoRender();
-                if (entity.RemoveMe)
+                child.DoRender();
+                if (child.RemoveMe)
                 {
+                    child.Terminate();
                     Children.RemoveAt(i);
                 }
                 else

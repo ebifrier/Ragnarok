@@ -46,7 +46,7 @@ namespace Ragnarok.Forms.Shogi.View
             if (!typeof(GLEvaluationElementInternal).IsAssignableFrom(type))
             {
                 throw new ArgumentException(
-                    "'type'はGLEvaluationElement_Internalを継承した" +
+                    "'type'はGLEvaluationElementInternalを継承した" +
                     "クラスである必要があります。");
             }
 

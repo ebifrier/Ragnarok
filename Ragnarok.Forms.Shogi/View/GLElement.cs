@@ -40,6 +40,8 @@ namespace Ragnarok.Forms.Shogi.View
             if (container != null)
             {
                 OnOpenGLInitialized(EventArgs.Empty);
+
+                ForeachChildren(_ => _.InitializeOpenGL(GLContainer));
             }
         }
 
@@ -76,8 +78,20 @@ namespace Ragnarok.Forms.Shogi.View
         /// </summary>
         public bool IsVisible
         {
-            get { return GetValue<bool>("IsVisible"); }
-            set { SetValue("IsVisible", value); }
+            get
+            {
+                var parent = Parent as GLElement;
+                if (parent != null)
+                {
+                    return parent.IsVisible;
+                }
+
+                return GetValue<bool>("IsVisible");
+            }
+            set
+            {
+                SetValue("IsVisible", value);
+            }
         }
 
         /// <summary>
@@ -109,6 +123,34 @@ namespace Ragnarok.Forms.Shogi.View
                 (float)(np.X * m[1, 0] + np.Y * m[1, 1] + m[1, 3]));
         }
 
+        protected override void OnParentAdded(EffectObject parent)
+        {
+            base.OnParentAdded(parent);
+
+            var glParent = parent as GLEvaluationElement;
+            if (glParent != null && glParent.GLContainer != null)
+            {
+                InitializeOpenGL(glParent.GLContainer);
+            }
+        }
+
+        protected override void OnParentRemoved(EffectObject parent)
+        {
+            base.OnParentRemoved(parent);
+
+            GLContainer = null;
+        }
+
+        /// <summary>
+        /// GLElement型の子要素にのみアクションを適用します。
+        /// </summary>
+        private void ForeachChildren(Action<GLElement> action)
+        {
+            Children.OfType<GLElement>()
+                .Where(_ => _ != null)
+                .ForEach(_ => action(_));
+        }
+
         /// <summary>
         /// OpenGLの初期化後に呼ばれます。
         /// </summary>
@@ -121,6 +163,7 @@ namespace Ragnarok.Forms.Shogi.View
         /// </summary>
         public virtual void OnMouseDown(MouseEventArgs e)
         {
+            ForeachChildren(_ => _.OnMouseDown(e));
         }
 
         /// <summary>
@@ -128,6 +171,7 @@ namespace Ragnarok.Forms.Shogi.View
         /// </summary>
         public virtual void OnMouseMove(MouseEventArgs e)
         {
+            ForeachChildren(_ => _.OnMouseMove(e));
         }
 
         /// <summary>
@@ -135,6 +179,7 @@ namespace Ragnarok.Forms.Shogi.View
         /// </summary>
         public virtual void OnMouseUp(MouseEventArgs e)
         {
+            ForeachChildren(_ => _.OnMouseUp(e));
         }
     }
 }

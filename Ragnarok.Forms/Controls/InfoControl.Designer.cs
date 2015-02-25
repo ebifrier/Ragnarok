@@ -57,7 +57,7 @@
             this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 6F));
             this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel.Size = new System.Drawing.Size(266, 91);
+            this.tableLayoutPanel.Size = new System.Drawing.Size(202, 91);
             this.tableLayoutPanel.TabIndex = 0;
             // 
             // nameLabel
@@ -96,7 +96,7 @@
             this.nameValueLabel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.nameValueLabel.Location = new System.Drawing.Point(98, 0);
             this.nameValueLabel.Name = "nameValueLabel";
-            this.nameValueLabel.Size = new System.Drawing.Size(165, 24);
+            this.nameValueLabel.Size = new System.Drawing.Size(101, 24);
             this.nameValueLabel.TabIndex = 5;
             this.nameValueLabel.Text = "名前 or 作者名";
             this.nameValueLabel.UseMnemonic = false;
@@ -105,10 +105,9 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.AutoSize = true;
             this.Controls.Add(this.tableLayoutPanel);
             this.Name = "InfoControl";
-            this.Size = new System.Drawing.Size(266, 91);
+            this.Size = new System.Drawing.Size(202, 91);
             this.tableLayoutPanel.ResumeLayout(false);
             this.tableLayoutPanel.PerformLayout();
             this.ResumeLayout(false);

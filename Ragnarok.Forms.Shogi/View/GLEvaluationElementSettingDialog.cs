@@ -84,8 +84,6 @@ namespace Ragnarok.Forms.Shogi.View
             this.targetElement.ImageSet = this.oldImageSet;
             this.targetElement.IsVisibleValue = this.oldIsVisibleValue;
             this.targetElement.IsValueFullWidth = this.oldIsValueFullWidth;
-
-            DialogResult = DialogResult.Cancel;
         }
     }
 }
