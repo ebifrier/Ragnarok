@@ -8,9 +8,11 @@ namespace Ragnarok.Utility
 {
     public static class GCObserver
     {
+#if !MONO
         private static object SyncRoot = new object();
         private static Thread thread;
         private static volatile bool observing;
+#endif
 
         /// <summary>
         /// GCの監視を開始します。

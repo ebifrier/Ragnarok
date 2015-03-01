@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<project name="Ragnarok" default="build">
+<project name="Ragnarok.Forms.Shogi" default="build">
   <property name="project.name" value="${project::get-name()}" />
   <property name="output.dir" value="../bin" />
   <property name="output" value="${output.dir}/${project.name}.dll" />
@@ -8,6 +8,7 @@
 
   <property name="define" value="CLR4_0;CLR_GE_2_0;CLR_GE_3_0;CLR_GE_3_5;CLR_GE_4_0;MONO" />
   <property name="debug" value="true" overwrite="false" />
+  <property name="unsafe" value="true" overwrite="true" />
   <property name="optimize" value="true" overwrite="false" />
 
   <target name="clean">
@@ -33,23 +34,19 @@
     </copy>
     <csc target="library" output="${output}" debug="${debug}"
 	 define="${define}" optimize="${optimize}" warninglevel="4"
-	 keyfile="${project.name}.snk">
+	 unsafe="true"> <!-- keyfile="${project.name}.snk">-->
       <sources>
 	<include name="**/*.cs" />
       </sources>
       <references>
-	<include name="System.Data.dll" />
-	<include name="System.Runtime.Serialization.dll" />
-        <include name="System.Security.dll" />
-	<include name="System.Web.dll" />
-	<include name="System.Web.Extensions.dll" />
-        <include name="System.Xml.Linq.dll" />
-	<include name="System.Xaml.dll" />
-	<include name="WindowsBase.dll" />
-	<include name="Mono.Posix.dll" />
-	<include name="${lib}/System.Data.SQLite.dll" />
-	<include name="${lib}/NLog.dll" />
-	<include name="${lib}/protobuf-net.dll" />
+	<include name="System.Drawing.dll" />
+        <include name="System.Xaml.dll" />
+        <include name="System.Windows.Forms.dll" />
+        <include name="${lib}/OpenTK.dll" />
+        <include name="${lib}/OpenTK.GLControl.dll" />
+	<include name="${output.dir}/Ragnarok.dll" />
+	<include name="${output.dir}/Ragnarok.Forms.dll" />
+	<include name="${output.dir}/Ragnarok.Shogi.dll" />
       </references>
     </csc>
   </target>

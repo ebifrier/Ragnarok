@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<project name="Ragnarok" default="build">
+<project name="Ragnarok.Forms" default="build">
   <property name="project.name" value="${project::get-name()}" />
   <property name="output.dir" value="../bin" />
   <property name="output" value="${output.dir}/${project.name}.dll" />
@@ -38,18 +38,10 @@
 	<include name="**/*.cs" />
       </sources>
       <references>
-	<include name="System.Data.dll" />
-	<include name="System.Runtime.Serialization.dll" />
-        <include name="System.Security.dll" />
-	<include name="System.Web.dll" />
-	<include name="System.Web.Extensions.dll" />
-        <include name="System.Xml.Linq.dll" />
-	<include name="System.Xaml.dll" />
-	<include name="WindowsBase.dll" />
-	<include name="Mono.Posix.dll" />
-	<include name="${lib}/System.Data.SQLite.dll" />
-	<include name="${lib}/NLog.dll" />
-	<include name="${lib}/protobuf-net.dll" />
+	<include name="System.Drawing.dll" />
+        <include name="System.Xaml.dll" />
+        <include name="System.Windows.Forms.dll" />
+	<include name="${output.dir}/Ragnarok.dll" />
       </references>
     </csc>
   </target>
