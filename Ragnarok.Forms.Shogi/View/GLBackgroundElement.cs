@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SharpGL;
+using OpenTK;
 
 using Ragnarok.Extra.Effect;
 using Ragnarok.Extra.Effect.Animation;
@@ -70,10 +70,6 @@ namespace Ragnarok.Forms.Shogi.View
             }
 
             var shogi = effect as ShogiObject;
-            if (shogi != null)
-            {
-                shogi.OpenGL = OpenGL;
-            }
 
             // 古い背景エフェクトの廃棄
             if (this.nextBg != null)
@@ -137,7 +133,7 @@ namespace Ragnarok.Forms.Shogi.View
         protected override void OnEnterFrame(EnterFrameEventArgs e)
         {
             base.OnEnterFrame(e);
-            var renderBuffer = (GL.RenderBuffer)e.StateObject;
+            var renderBuffer = (GLUtil.RenderBuffer)e.StateObject;
 
             if (this.prevBg != null)
             {

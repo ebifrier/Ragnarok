@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using SharpGL;
+using OpenTK;
 
 using Ragnarok;
 using Ragnarok.Extra.Effect;
@@ -97,7 +97,7 @@ namespace Ragnarok.Forms.Shogi.View
             IsValueFullWidth = false;
             MaxValue = 9999;
 
-            ValueFont = new GL.TextTextureFont
+            ValueFont = new GLUtil.TextTextureFont
             {
                 Color = Color.White,
                 EdgeColor = Color.LightGray,
@@ -285,9 +285,9 @@ namespace Ragnarok.Forms.Shogi.View
         /// <summary>
         /// 評価値の数字を描画するためのフォントを取得または設定します。
         /// </summary>
-        public GL.TextTextureFont ValueFont
+        public GLUtil.TextTextureFont ValueFont
         {
-            get { return GetValue<GL.TextTextureFont>("ValueFont"); }
+            get { return GetValue<GLUtil.TextTextureFont>("ValueFont"); }
             set { SetValue("ValueFont", value); }
         }
 
@@ -392,7 +392,7 @@ namespace Ragnarok.Forms.Shogi.View
         protected override void OnEnterFrame(EnterFrameEventArgs e)
         {
             base.OnEnterFrame(e);
-            var renderBuffer = (GL.RenderBuffer)e.StateObject;
+            var renderBuffer = (GLUtil.RenderBuffer)e.StateObject;
 
             // 評価値の更新を行います。
             if (this.manager.InternalObj != null)
@@ -443,16 +443,14 @@ namespace Ragnarok.Forms.Shogi.View
         /// <summary>
         /// 評価値を数字として描画リストに加えます。
         /// </summary>
-        private void AddRenderValue(GL.RenderBuffer renderBuffer, int value)
+        private void AddRenderValue(GLUtil.RenderBuffer renderBuffer, int value)
         {
-            var gl = OpenGL;
-
             var text = (
                 IsValueFullWidth ?
                 IntConverter.Convert(NumberType.Big, value) :
                 value.ToString());
-            var textTexture = GL.TextureCache.GetTextTexture(
-                gl, text, ValueFont);
+            var textTexture = GLUtil.TextureCache.GetTextTexture(
+                text, ValueFont);
             var texture = textTexture.Texture;
 
             if (texture != null && texture.IsAvailable)

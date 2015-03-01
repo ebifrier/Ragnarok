@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SharpGL;
+using OpenTK;
+using OpenTK.Graphics;
+using OpenTK.Graphics.OpenGL;
 
-namespace Ragnarok.Forms.Shogi.GL
+namespace Ragnarok.Forms.Shogi.GLUtil
 {
     /// <summary>
     /// OpenGL用のテクスチャを廃棄するためクラスです。
@@ -18,29 +20,29 @@ namespace Ragnarok.Forms.Shogi.GL
     public sealed class TextureDisposer
     {
         private readonly static object syncInstance = new object();
-        private readonly static Dictionary<OpenGL, TextureDisposer> instanceDic =
-            new Dictionary<OpenGL, TextureDisposer>();
+        private readonly static Dictionary<IGraphicsContext, TextureDisposer> instanceDic =
+            new Dictionary<IGraphicsContext, TextureDisposer>();
 
         /// <summary>
         /// シングルトンインスタンスを取得します。
         /// </summary>
-        public static TextureDisposer GetInstance(OpenGL gl)
+        public static TextureDisposer GetInstance(IGraphicsContext context)
         {
-            if (gl == null)
+            if (context == null)
             {
-                throw new ArgumentNullException("gl");
+                throw new ArgumentNullException("context");
             }
 
             lock(syncInstance)
             {
                 TextureDisposer instance;
-                if (instanceDic.TryGetValue(gl, out instance))
+                if (instanceDic.TryGetValue(context, out instance))
                 {
                     return instance;
                 }
 
-                instance = new TextureDisposer(gl);
-                instanceDic.Add(gl, instance);
+                instance = new TextureDisposer(context);
+                instanceDic.Add(context, instance);
                 return instance;
             }
         }
@@ -48,9 +50,9 @@ namespace Ragnarok.Forms.Shogi.GL
         /// <summary>
         /// 削除するテクスチャを登録します。
         /// </summary>
-        public static void AddDeleteTexture(OpenGL gl, uint textureName)
+        public static void AddDeleteTexture(IGraphicsContext context, uint textureName)
         {
-            var instance = GetInstance(gl);
+            var instance = GetInstance(context);
 
             instance.AddDeleteTexture(textureName);
         }
@@ -58,9 +60,9 @@ namespace Ragnarok.Forms.Shogi.GL
         /// <summary>
         /// 登録されたテクスチャを削除します。
         /// </summary>
-        public static void Update(OpenGL gl)
+        public static void Update(IGraphicsContext context)
         {
-            var instance = GetInstance(gl);
+            var instance = GetInstance(context);
 
             instance.Update();
         }
@@ -71,15 +73,15 @@ namespace Ragnarok.Forms.Shogi.GL
         /// <summary>
         /// private コンストラクタ
         /// </summary>
-        private TextureDisposer(OpenGL gl)
+        private TextureDisposer(IGraphicsContext context)
         {
-            OpenGL = gl;
+            Context = context;
         }
 
         /// <summary>
         /// OpenGL用のオブジェクトを取得します。
         /// </summary>
-        public OpenGL OpenGL
+        public IGraphicsContext Context
         {
             get;
             private set;
@@ -115,7 +117,7 @@ namespace Ragnarok.Forms.Shogi.GL
             }
 
             // テクスチャをまとめて削除します。
-            OpenGL.DeleteTextures(textureNames.Count(), textureNames);
+            GL.DeleteTextures(textureNames.Count(), textureNames);
         }
     }
 }

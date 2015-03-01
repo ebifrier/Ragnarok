@@ -7,7 +7,7 @@ using System.Windows;
 using FlintSharp;
 using FlintSharp.Particles;
 using FlintSharp.Renderers;
-using SharpGL;
+using OpenTK;
 
 using Ragnarok.Extra.Effect;
 using Ragnarok.Utility;
@@ -50,7 +50,7 @@ namespace Ragnarok.Forms.Shogi.FlintSharpEx
         /// <remarks>
         /// ちょっと変ですが、毎フレームごとにRenderParticlesが呼ばれる前に設定します。
         /// </remarks>
-        public GL.RenderBuffer RenderBuffer
+        public GLUtil.RenderBuffer RenderBuffer
         {
             get;
             set;
@@ -99,7 +99,6 @@ namespace Ragnarok.Forms.Shogi.FlintSharpEx
                     "RenderBufferが設定されていません。");
             }
 
-            var gl = ShogiObject.OpenGL;
             var inheritedOpacity = ShogiObject.InheritedOpacity;
 
             foreach (var particle in particles)
@@ -111,7 +110,7 @@ namespace Ragnarok.Forms.Shogi.FlintSharpEx
                 }
 
                 // とりあえず必要なデータの作成を行います。
-                data.Initialize(gl);
+                data.Initialize();
 
                 for (var i = 0; i < (data.IsDoubleParticle ? 2 : 1); ++i)
                 {

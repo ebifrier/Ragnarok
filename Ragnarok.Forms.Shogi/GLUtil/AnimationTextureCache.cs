@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows;
-using SharpGL;
+using OpenTK;
+using OpenTK.Graphics;
 
 using Ragnarok.Forms.Draw;
 using Ragnarok.Utility;
 
-namespace Ragnarok.Forms.Shogi.GL
+namespace Ragnarok.Forms.Shogi.GLUtil
 {
     /// <summary>
     /// アニメーションテクスチャのキーとして使うオブジェクトです。
@@ -86,20 +87,24 @@ namespace Ragnarok.Forms.Shogi.GL
     /// <remarks>
     /// エフェクトはアニメーションするため、画像が横に連なって保存されています。
     /// </remarks>
-    [CLSCompliant(false)]
     public sealed class AnimationTextureCache
     {
         private readonly CacheManager<AnimationTextureKey, AnimationTexture> cache;
-        private readonly OpenGL gl;
+        private readonly IGraphicsContext context;
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public AnimationTextureCache(OpenGL gl, long capacity)
+        public AnimationTextureCache(IGraphicsContext context, long capacity)
         {
+            if (context == null)
+            {
+                throw new ArgumentNullException("context");
+            }
+
             this.cache = new CacheManager<AnimationTextureKey, AnimationTexture>(
                 CreateAnimationTexture, capacity);
-            this.gl = gl;
+            this.context = context;
         }
 
         /// <summary>
@@ -108,7 +113,7 @@ namespace Ragnarok.Forms.Shogi.GL
         private AnimationTexture CreateAnimationTexture(AnimationTextureKey key)
         {
             var imagePath = key.ImageUri.LocalPath;
-            var animTexture = new AnimationTexture(this.gl);
+            var animTexture = new AnimationTexture();
 
             animTexture.Load(imagePath, key.Count);
             return animTexture;
@@ -119,6 +124,12 @@ namespace Ragnarok.Forms.Shogi.GL
         /// </summary>
         public AnimationTexture GetAnimationTexture(Uri imageUri, int count)
         {
+            if (this.context != GraphicsContext.CurrentContext)
+            {
+                throw new GLException(
+                    "OpenGLコンテキストが正しく設定れていません＞＜");
+            }
+
             if (imageUri == null)
             {
                 throw new ArgumentNullException("imageUri");

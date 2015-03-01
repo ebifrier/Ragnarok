@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows;
-using SharpGL;
+using OpenTK;
+using OpenTK.Graphics;
 
 using Ragnarok.Forms.Draw;
 using Ragnarok.Utility;
 
-namespace Ragnarok.Forms.Shogi.GL
+namespace Ragnarok.Forms.Shogi.GLUtil
 {
     /// <summary>
     /// 文字列用テクスチャのキャッシュキーとして使うオブジェクトです。
@@ -85,16 +86,21 @@ namespace Ragnarok.Forms.Shogi.GL
     public sealed class TextTextureCache
     {
         private readonly CacheManager<TextTextureKey, TextTexture> cache;
-        private readonly OpenGL gl;
+        private readonly IGraphicsContext context;
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public TextTextureCache(OpenGL gl, long capacity)
+        public TextTextureCache(IGraphicsContext context, long capacity)
         {
+            if (context == null)
+            {
+                throw new ArgumentNullException("context");
+            }
+
             this.cache = new CacheManager<TextTextureKey, TextTexture>(
                 CreateTextTexture, capacity);
-            this.gl = gl;
+            this.context = context;
         }
 
         /// <summary>
@@ -102,7 +108,7 @@ namespace Ragnarok.Forms.Shogi.GL
         /// </summary>
         private TextTexture CreateTextTexture(TextTextureKey key)
         {
-            var textTexture = new TextTexture(this.gl)
+            var textTexture = new TextTexture()
             {
                 Text = key.Text,
                 TextureFont = key.TextureFont,
@@ -119,6 +125,12 @@ namespace Ragnarok.Forms.Shogi.GL
         public TextTexture GetTextTexture(string text,
                                           TextTextureFont textureFont)
         {
+            if (this.context != GraphicsContext.CurrentContext)
+            {
+                throw new GLException(
+                    "OpenGLコンテキストが正しく設定れていません＞＜");
+            }
+
             if (string.IsNullOrEmpty(text))
             {
                 throw new ArgumentNullException("text");

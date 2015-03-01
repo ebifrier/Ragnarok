@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using SharpGL;
+using OpenTK;
 
 using Ragnarok;
 using Ragnarok.Extra.Effect;
@@ -12,7 +12,7 @@ using Ragnarok.Utility;
 
 namespace Ragnarok.Forms.Shogi.View
 {
-    using GL = Ragnarok.Forms.Shogi.GL;
+    using GL = Ragnarok.Forms.Shogi.GLUtil;
 
     /// <summary>
     /// 評価値画像の領域にオブジェクトを描画するための基本クラスです。
@@ -58,7 +58,6 @@ namespace Ragnarok.Forms.Shogi.View
         {
             base.OnEnterFrame(e);
             var renderBuffer = (GL.RenderBuffer)e.StateObject;
-            var gl = OpenGL;
 
             if (IsVisible)
             {
@@ -77,7 +76,7 @@ namespace Ragnarok.Forms.Shogi.View
                 }
 
                 // 描画領域を設定します。
-                var texture = GL.TextureCache.GetTexture(gl, new Uri(imagePath));
+                var texture = GL.TextureCache.GetTexture(new Uri(imagePath));
                 if (texture != null && texture.IsAvailable)
                 {
                     // 描画領域はこのクラスの外側で指定します。

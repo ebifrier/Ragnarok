@@ -6,8 +6,8 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using SharpGL;
-using SharpGL.WinForms;
+using OpenTK;
+using OpenTK.Graphics.OpenGL;
 
 using Ragnarok.Extra.Effect;
 using Ragnarok.ObjectModel;
@@ -17,17 +17,20 @@ namespace Ragnarok.Forms.Shogi.View
     /// <summary>
     /// GLElementを管理するためのクラスです。
     /// </summary>
+    /// <remarks>
+    /// デザインモード時にOpenGL系の関数を呼ぶと、VS自体が落ちます。
+    /// </remarks>
     /// <see cref="GLElement"/>
-    [CLSCompliant(false)]
-    public partial class GLContainer : OpenGLControl
+    public partial class GLContainer : GLControl
     {
         private readonly NotifyCollection<GLElement> glElements =
             new NotifyCollection<GLElement>();
-        private readonly GL.RenderBuffer renderBuffer = new GL.RenderBuffer();
+        private readonly GLUtil.RenderBuffer renderBuffer = new GLUtil.RenderBuffer();
         private Color clearColor = Color.Transparent;
         private int screenWidth = 640;
         private int screenHeight = 360;
         private bool glInitialized;
+        private bool isDesignModeCache;
 
         /// <summary>
         /// コンストラクタ
@@ -37,27 +40,25 @@ namespace Ragnarok.Forms.Shogi.View
             InitializeComponent();
 
             this.glElements.CollectionChanged += glElements_CollectionChanged;
-
-            OpenGLInitialized += GLContainer_OpenGLInitialized;
-            Resized += GLContainer_Resized;
-            OpenGLDraw += GLContainer_OpenGLDraw;
         }
 
         /// <summary>
         /// OpenGLの初期設定を行います。
         /// </summary>
-        void GLContainer_OpenGLInitialized(object sender, EventArgs e)
+        protected override void OnLoad(EventArgs e)
         {
-            var gl = OpenGL;
+ 	        base.OnLoad(e);
 
-            gl.Enable(OpenGL.GL_TEXTURE_2D);
-            gl.Enable(OpenGL.GL_BLEND);
-            gl.Enable(OpenGL.GL_DEPTH_TEST);
-            gl.DepthFunc(OpenGL.GL_LEQUAL);
-            //gl.ClearDepth(1.0);
-            gl.Enable(OpenGL.GL_CULL_FACE);
-            gl.CullFace(OpenGL.GL_BACK);
-            gl.Hint(OpenGL.GL_PERSPECTIVE_CORRECTION_HINT, OpenGL.GL_NICEST);
+            if (IsDesignMode)
+            {
+                return;
+            }
+
+            GL.Enable(EnableCap.Texture2D);
+            GL.Enable(EnableCap.Blend);
+            GL.Enable(EnableCap.CullFace);
+            GL.CullFace(CullFaceMode.Back);
+            GL.Hint(HintTarget.PerspectiveCorrectionHint, HintMode.Nicest);
 
             // 背景色の更新
             UpdateClearColor();
@@ -66,6 +67,9 @@ namespace Ragnarok.Forms.Shogi.View
                 .Where(_ => _ != null)
                 .ForEach(_ => _.InitializeOpenGL(this));
             this.glInitialized = true;
+
+            // Viewportを更新しておきます。
+            UpdateViewport();
         }
 
         /// <summary>
@@ -73,7 +77,7 @@ namespace Ragnarok.Forms.Shogi.View
         /// </summary>
         void glElements_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            if (!this.glInitialized)
+            if (IsDesignMode || !this.glInitialized)
             {
                 // 未初期化の時は初期化時に同じ処理が行われます。
                 return;
@@ -109,18 +113,42 @@ namespace Ragnarok.Forms.Shogi.View
         /// </summary>
         protected override void OnHandleDestroyed(EventArgs e)
         {
+            if (IsDesignMode)
+            {
+                base.OnHandleDestroyed(e);
+                return;
+            }
+
             GLElements
                 .Where(_ => _ != null)
                 .ForEach(_ => _.Terminate());
             GLElements.Clear();
 
             // このOpenGLに登録されているすべてのテクスチャを削除します。
-            if (OpenGL != null)
+            if (this.glInitialized)
             {
-                GL.Texture.DeleteAll(OpenGL);
+                GLUtil.Texture.DeleteAll(Context);
             }
 
             base.OnHandleDestroyed(e);
+        }
+
+        /// <summary>
+        /// デザインモード時かどうかを取得します。
+        /// </summary>
+        private bool IsDesignMode
+        {
+            get
+            {
+                // Note: the DesignMode property may be incorrect when nesting controls.
+                // We use LicenseManager.UsageMode as a workaround (this only works in
+                // the constructor).
+                this.isDesignModeCache =
+                    this.isDesignModeCache || DesignMode ||
+                    LicenseManager.UsageMode == LicenseUsageMode.Designtime;
+
+                return this.isDesignModeCache;
+            }
         }
 
         /// <summary>
@@ -134,7 +162,7 @@ namespace Ragnarok.Forms.Shogi.View
         /// <summary>
         /// 描画用のオブジェクトを取得します。
         /// </summary>
-        public GL.RenderBuffer RenderBuffer
+        public GLUtil.RenderBuffer RenderBuffer
         {
             get { return this.renderBuffer; }
         }
@@ -160,9 +188,12 @@ namespace Ragnarok.Forms.Shogi.View
         /// </summary>
         private void UpdateClearColor()
         {
-            var gl = OpenGL;
+            if (IsDesignMode)
+            {
+                return;
+            }
 
-            gl.ClearColor(
+            GL.ClearColor(
                 MathEx.Between(0.0f, 1.0f, this.clearColor.R / 255.0f),
                 MathEx.Between(0.0f, 1.0f, this.clearColor.G / 255.0f),
                 MathEx.Between(0.0f, 1.0f, this.clearColor.B / 255.0f),
@@ -180,7 +211,7 @@ namespace Ragnarok.Forms.Shogi.View
                 if (this.screenWidth != value)
                 {
                     this.screenWidth = value;
-                    UpdateProjectionMatrix();
+                    UpdateViewport();
                 }
             }
         }
@@ -196,7 +227,7 @@ namespace Ragnarok.Forms.Shogi.View
                 if (this.screenHeight != value)
                 {
                     this.screenHeight = value;
-                    UpdateProjectionMatrix();
+                    UpdateViewport();
                 }
             }
         }
@@ -204,43 +235,37 @@ namespace Ragnarok.Forms.Shogi.View
         /// <summary>
         /// 投影行列の更新を行います。
         /// </summary>
-        private void UpdateProjectionMatrix()
+        private void UpdateViewport()
         {
-            var gl = OpenGL;
+            if (IsDesignMode || Context == null)
+            {
+                return;
+            }
 
-            gl.MatrixMode(OpenGL.GL_PROJECTION);
-            gl.LoadIdentity();
-            gl.Ortho(0, ScreenWidth, ScreenHeight, 0, -1000, +1000);
+            GL.Viewport(0, 0, Width, Height);
 
-            gl.MatrixMode(OpenGL.GL_MODELVIEW);
-            gl.LoadIdentity();
+            GL.MatrixMode(MatrixMode.Projection);
+            GL.LoadIdentity();
+            GL.Ortho(0, ScreenWidth, ScreenHeight, 0, -1000, +1000);
+
+            GL.MatrixMode(MatrixMode.Modelview);
+            GL.LoadIdentity();
         }
 
         /// <summary>
         /// コントロールのリサイズ時に呼ばれます。
         /// </summary>
-        void GLContainer_Resized(object sender, EventArgs e)
+        protected override void OnResize(EventArgs e)
         {
-            UpdateProjectionMatrix();
-        }
+            base.OnResize(e);
 
-        /// <summary>
-        /// 描画処理を行います。
-        /// </summary>
-        void GLContainer_OpenGLDraw(object sender, RenderEventArgs e)
-        {
-            var gl = OpenGL;
-            
-            gl.Clear(OpenGL.GL_COLOR_BUFFER_BIT | OpenGL.GL_DEPTH_BUFFER_BIT);
-            gl.LoadIdentity();
+            if (IsDesignMode)
+            {
+                return;
+            }
 
-            this.renderBuffer.Render(gl);
-
-            GLElements
-                .Where(_ => _ != null)
-                .ForEach(_ => _.DoRender());
-
-            gl.Flush();
+            MakeCurrent();
+            UpdateViewport();
         }
 
         /// <summary>
@@ -248,6 +273,13 @@ namespace Ragnarok.Forms.Shogi.View
         /// </summary>
         public void DoEnterFrame(TimeSpan elapsedTime)
         {
+            if (IsDesignMode)
+            {
+                return;
+            }
+
+            MakeCurrent();
+
             this.renderBuffer.Clear();
 
             GLElements
@@ -259,7 +291,31 @@ namespace Ragnarok.Forms.Shogi.View
                     _.DoEnterFrame(elapsedTime, this.renderBuffer);
                 });
 
-            GL.TextureDisposer.Update(OpenGL);
+            GLUtil.TextureDisposer.Update(Context);
+        }
+
+        /// <summary>
+        /// 描画処理を行います。
+        /// </summary>
+        public void DoRender()
+        {
+            if (IsDesignMode)
+            {
+                return;
+            }
+
+            MakeCurrent();
+
+            GL.Clear(ClearBufferMask.ColorBufferBit);
+            GL.LoadIdentity();
+
+            this.renderBuffer.Render();
+
+            GLElements
+                .Where(_ => _ != null)
+                .ForEach(_ => _.DoRender());
+
+            SwapBuffers();
         }
 
         #region イベント伝達
@@ -268,6 +324,11 @@ namespace Ragnarok.Forms.Shogi.View
         /// </summary>
         protected override void OnPaintBackground(PaintEventArgs e)
         {
+            if (IsDesignMode)
+            {
+                base.OnPaintBackground(e);
+                return;
+            }
         }
 
         /// <summary>
@@ -275,6 +336,12 @@ namespace Ragnarok.Forms.Shogi.View
         /// </summary>
         protected override void OnPaint(PaintEventArgs e)
         {
+            if (IsDesignMode)
+            {
+                base.OnPaint(e);
+                return;
+            }
+
             //DoRender();
         }
 

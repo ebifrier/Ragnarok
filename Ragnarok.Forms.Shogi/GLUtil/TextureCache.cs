@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows;
-using SharpGL;
+using OpenTK;
+using OpenTK.Graphics;
 
 using Ragnarok.Forms.Draw;
 using Ragnarok.Utility;
 
-namespace Ragnarok.Forms.Shogi.GL
+namespace Ragnarok.Forms.Shogi.GLUtil
 {
     /// <summary>
     /// 画像オブジェクトをキャッシュします。
@@ -25,30 +26,30 @@ namespace Ragnarok.Forms.Shogi.GL
         public readonly static long TextTextureCacheCapacity = 20L * 1024 * 1024; // 20MB
 
         private readonly static object AnimationTextureSyncRoot = new object();
-        private readonly static Dictionary<OpenGL, AnimationTextureCache>
+        private readonly static Dictionary<IGraphicsContext, AnimationTextureCache>
             AnimationTextureCacheDic =
-            new Dictionary<OpenGL, AnimationTextureCache>();
+            new Dictionary<IGraphicsContext, AnimationTextureCache>();
 
         private readonly static object TextTextureSyncRoot = new object();
-        private readonly static Dictionary<OpenGL, TextTextureCache>
+        private readonly static Dictionary<IGraphicsContext, TextTextureCache>
             TextTextureCacheDic =
-            new Dictionary<OpenGL, TextTextureCache>();
+            new Dictionary<IGraphicsContext, TextTextureCache>();
 
         /// <summary>
         /// OpenGLオブジェクトに対応するテクスチャのキャッシュを取得します。
         /// </summary>
-        private static AnimationTextureCache GetAnimationTextureCache(OpenGL gl)
+        private static AnimationTextureCache GetAnimationTextureCache(IGraphicsContext context)
         {
             lock (AnimationTextureSyncRoot)
             {
                 AnimationTextureCache cache;
-                if (AnimationTextureCacheDic.TryGetValue(gl, out cache))
+                if (AnimationTextureCacheDic.TryGetValue(context, out cache))
                 {
                     return cache;
                 }
 
-                cache = new AnimationTextureCache(gl, AnimationTextureCacheCapacity);
-                AnimationTextureCacheDic.Add(gl, cache);
+                cache = new AnimationTextureCache(context, AnimationTextureCacheCapacity);
+                AnimationTextureCacheDic.Add(context, cache);
                 return cache;
             }
         }
@@ -56,18 +57,18 @@ namespace Ragnarok.Forms.Shogi.GL
         /// <summary>
         /// OpenGLオブジェクトに対応する文字列テクスチャのキャッシュを取得します。
         /// </summary>
-        private static TextTextureCache GetTextTextureCache(OpenGL gl)
+        private static TextTextureCache GetTextTextureCache(IGraphicsContext context)
         {
-            lock(TextTextureSyncRoot)
+            lock (TextTextureSyncRoot)
             {
                 TextTextureCache cache;
-                if (TextTextureCacheDic.TryGetValue(gl, out cache))
+                if (TextTextureCacheDic.TryGetValue(context, out cache))
                 {
                     return cache;
                 }
 
-                cache = new TextTextureCache(gl, TextTextureCacheCapacity);
-                TextTextureCacheDic.Add(gl, cache);
+                cache = new TextTextureCache(context, TextTextureCacheCapacity);
+                TextTextureCacheDic.Add(context, cache);
                 return cache;
             }
         }
@@ -75,9 +76,9 @@ namespace Ragnarok.Forms.Shogi.GL
         /// <summary>
         /// テクスチャをキャッシュから探し、もしなければ読み込みます。
         /// </summary>
-        public static Texture GetTexture(OpenGL gl, Uri imageUri)
+        public static Texture GetTexture(Uri imageUri)
         {
-            var animTexture = GetAnimationTexture(gl, imageUri, 1);
+            var animTexture = GetAnimationTexture(imageUri, 1);
             if (animTexture == null || animTexture.TextureList.Count() != 1)
             {
                 return null;
@@ -89,12 +90,13 @@ namespace Ragnarok.Forms.Shogi.GL
         /// <summary>
         /// アニメーション用テクスチャをキャッシュから探し、もしなければ読み込みます。
         /// </summary>
-        public static AnimationTexture GetAnimationTexture(OpenGL gl, Uri imageUri,
+        public static AnimationTexture GetAnimationTexture(Uri imageUri,
                                                            int count)
         {
-            if (gl == null)
+            var context = GraphicsContext.CurrentContext;
+            if (context == null)
             {
-                throw new ArgumentNullException("gl");
+                throw new ArgumentNullException("context");
             }
 
             if (imageUri == null)
@@ -107,19 +109,20 @@ namespace Ragnarok.Forms.Shogi.GL
                 throw new ArgumentException("count");
             }
 
-            var cache = GetAnimationTextureCache(gl);
+            var cache = GetAnimationTextureCache(context);
             return cache.GetAnimationTexture(imageUri, count);
         }
 
         /// <summary>
         /// 指定のフォントで指定の文字列を描画するためのテクスチャを取得します。
         /// </summary>
-        public static TextTexture GetTextTexture(OpenGL gl, string text,
+        public static TextTexture GetTextTexture(string text,
                                                  TextTextureFont font)
         {
-            if (gl == null)
+            var context = GraphicsContext.CurrentContext;
+            if (context == null)
             {
-                throw new ArgumentNullException("gl");
+                throw new ArgumentNullException("context");
             }
 
             if (text == null)
@@ -132,7 +135,7 @@ namespace Ragnarok.Forms.Shogi.GL
                 throw new ArgumentNullException("font");
             }
 
-            var cache = GetTextTextureCache(gl);
+            var cache = GetTextTextureCache(context);
             return cache.GetTextTexture(text, font);
         }
     }

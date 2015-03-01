@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using SharpGL;
+using OpenTK;
+using OpenTK.Graphics.OpenGL;
 
 using Ragnarok.Extra.Effect;
 using Ragnarok.Utility;
 
-namespace Ragnarok.Forms.Shogi.GL
+namespace Ragnarok.Forms.Shogi.GLUtil
 {
     /// <summary>
     /// 描画用のデータをまとめて持ちます。
@@ -19,7 +20,7 @@ namespace Ragnarok.Forms.Shogi.GL
         /// <summary>
         /// 描画用のメソッドを取得または設定します。
         /// </summary>
-        public Action<OpenGL> RenderAction
+        public Action RenderAction
         {
             get;
             set;
@@ -85,13 +86,13 @@ namespace Ragnarok.Forms.Shogi.GL
         /// <summary>
         /// オブジェクトの描画を行います。
         /// </summary>
-        public void Render(OpenGL gl)
+        public void Render()
         {
             if (RenderAction != null)
             {
-                gl.PushMatrix();
-                RenderAction(gl);
-                gl.PopMatrix();
+                GL.PushMatrix();
+                RenderAction();
+                GL.PopMatrix();
             }
             else
             {
@@ -100,18 +101,18 @@ namespace Ragnarok.Forms.Shogi.GL
                     return;
                 }
 
-                gl.Color(Color.R, Color.G, Color.B, Color.A);
-                SetBlend(gl);
+                GL.Color4(Color.R, Color.G, Color.B, Color.A);
+                SetBlend();
 
-                BindTexture(gl);
+                BindTexture();
 
                 // 座標系の設定
-                gl.PushMatrix();
-                SetMatrix(gl);
+                GL.PushMatrix();
+                SetMatrix();
                 //gl.Translate(0, 0, ZOrder);
 
-                SetMesh(gl);
-                gl.PopMatrix();
+                SetMesh();
+                GL.PopMatrix();
 
                 //UnbindTexture(gl);
             }
@@ -120,22 +121,22 @@ namespace Ragnarok.Forms.Shogi.GL
         /// <summary>
         /// 変換行列の設定を行います。
         /// </summary>
-        private void SetMatrix(OpenGL gl)
+        private void SetMatrix()
         {
             if (Transform == null)
             {
-                gl.LoadIdentity();
+                GL.LoadIdentity();
             }
             else
             {
-                gl.LoadMatrix(Transform.AsColumnMajorArray);
+                GL.LoadMatrix(Transform.AsColumnMajorArray);
             }
         }
 
         /// <summary>
         /// テクスチャのバインドを行います。
         /// </summary>
-        private void BindTexture(OpenGL gl)
+        private void BindTexture()
         {
             if (Texture != null && Texture.TextureName != 0)
             {
@@ -143,14 +144,14 @@ namespace Ragnarok.Forms.Shogi.GL
             }
             else
             {
-                gl.BindTexture(OpenGL.GL_TEXTURE_2D, 0);
+                GL.BindTexture(TextureTarget.Texture2D, 0);
             }
         }
 
         /// <summary>
         /// テクスチャのアンバインドを行います。
         /// </summary>
-        private void UnbindTexture(OpenGL gl)
+        private void UnbindTexture()
         {
             if (Texture != null)
             {
@@ -161,15 +162,15 @@ namespace Ragnarok.Forms.Shogi.GL
         /// <summary>
         /// 描画のブレンド方法を指定します。
         /// </summary>
-        private void SetBlend(OpenGL gl)
+        private void SetBlend()
         {
             switch (Blend)
             {
                 case BlendType.Diffuse:
-                    gl.BlendFunc(OpenGL.GL_SRC_ALPHA, OpenGL.GL_ONE_MINUS_SRC_ALPHA);
+                    GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
                     break;
                 case BlendType.Emissive:
-                    gl.BlendFunc(OpenGL.GL_SRC_ALPHA, OpenGL.GL_ONE);
+                    GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.One);
                     break;
             }
         }
@@ -177,9 +178,9 @@ namespace Ragnarok.Forms.Shogi.GL
         /// <summary>
         /// メッシュの設定を行います。
         /// </summary>
-        private void SetMesh(OpenGL gl)
+        private void SetMesh()
         {
-            gl.Begin(OpenGL.GL_TRIANGLES);
+            GL.Begin(PrimitiveType.Triangles);
 
             for (int i = 0; i < Mesh.IndexArray.Count(); ++i)
             {
@@ -187,14 +188,14 @@ namespace Ragnarok.Forms.Shogi.GL
 
                 // UVの設定
                 var uv = Mesh.TextureUVArray[index];
-                gl.TexCoord(uv.X, uv.Y);
+                GL.TexCoord2(uv.X, uv.Y);
 
                 // 頂点座標の設定
                 var pos = Mesh.VertexArray[index];
-                gl.Vertex(pos.X, pos.Y, pos.Z);
+                GL.Vertex3(pos.X, pos.Y, pos.Z);
             }
 
-            gl.End();
+            GL.End();
         }
     }
 }

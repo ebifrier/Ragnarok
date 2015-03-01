@@ -4,39 +4,30 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
-using SharpGL;
+using OpenTK;
 
 using Ragnarok.Forms.Draw;
 using Ragnarok.Utility;
 
-namespace Ragnarok.Forms.Shogi.GL
+namespace Ragnarok.Forms.Shogi.GLUtil
 {
     /// <summary>
     /// アニメーション用の分割されたテクスチャを管理します。
     /// </summary>
-    [CLSCompliant(false)]
     public class AnimationTexture : ICachable
     {
-        private readonly OpenGL gl;
-
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public AnimationTexture(OpenGL gl)
+        public AnimationTexture()
         {
-            if (gl == null)
-            {
-                throw new ArgumentNullException("gl");
-            }
-
             TextureList = new List<Texture>();
-            this.gl = gl;
         }
 
         /// <summary>
         /// テクスチャのリストを取得します。
         /// </summary>
-        public List<GL.Texture> TextureList
+        public List<GLUtil.Texture> TextureList
         {
             get;
             private set;
@@ -103,11 +94,11 @@ namespace Ragnarok.Forms.Shogi.GL
 
             try
             {
-                List<GL.Texture> list = null;
+                List<GLUtil.Texture> list = null;
                 if (count == 1)
                 {
                     // 画像一枚をテクスチャに直します。
-                    list = new List<GL.Texture>
+                    list = new List<GLUtil.Texture>
                     {
                         LoadTexture(image)
                     };
@@ -139,9 +130,9 @@ namespace Ragnarok.Forms.Shogi.GL
         /// <summary>
         /// ビットマップからテクスチャを読み込みます。
         /// </summary>
-        private GL.Texture LoadTexture(Bitmap bitmap)
+        private GLUtil.Texture LoadTexture(Bitmap bitmap)
         {
-            var tex = new GL.Texture(this.gl);
+            var tex = new GLUtil.Texture();
             if (!tex.Create(bitmap))
             {
                 throw new RagnarokException(

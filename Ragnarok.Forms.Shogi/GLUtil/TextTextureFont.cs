@@ -7,7 +7,7 @@ using System.Drawing.Text;
 using System.Linq;
 using System.Text;
 
-namespace Ragnarok.Forms.Shogi.GL
+namespace Ragnarok.Forms.Shogi.GLUtil
 {
     public sealed class TextTextureFont : IEquatable<TextTextureFont>
     {

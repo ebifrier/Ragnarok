@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-
-using SharpGL;
+using OpenTK;
 
 using Ragnarok.Extra.Effect;
 using Ragnarok.Utility;
 
-namespace Ragnarok.Forms.Shogi.GL
+namespace Ragnarok.Forms.Shogi.GLUtil
 {
     /// <summary>
     /// オブジェクトの描画順序をzorder順にするためのクラスです。
@@ -40,8 +39,7 @@ namespace Ragnarok.Forms.Shogi.GL
         /// <summary>
         /// 登録されたデータをまとめて描画します。
         /// </summary>
-        [CLSCompliant(false)]
-        public void Render(OpenGL gl)
+        public void Render()
         {
             lock(this.syncObject)
             {
@@ -50,7 +48,7 @@ namespace Ragnarok.Forms.Shogi.GL
                     orderby data.ZOrder
                     select data;
 
-                list.ForEach(_ => _.Render(gl));
+                list.ForEach(_ => _.Render());
             }
         }
 
@@ -85,7 +83,7 @@ namespace Ragnarok.Forms.Shogi.GL
         /// <summary>
         /// 描画用リストを追加します。
         /// </summary>
-        public void AddRenderAction(Action<OpenGL> renderAction, double zorder)
+        public void AddRenderAction(Action renderAction, double zorder)
         {
             if (renderAction == null)
             {
@@ -217,7 +215,7 @@ namespace Ragnarok.Forms.Shogi.GL
         /// <summary>
         /// 描画オブジェクトを追加します。
         /// </summary>
-        public void AddRender(GL.Texture texture, BlendType blend,
+        public void AddRender(GLUtil.Texture texture, BlendType blend,
                               RectangleF bounds, Matrix44d transform,
                               double zorder, double opacity = 1.0)
         {
@@ -236,7 +234,7 @@ namespace Ragnarok.Forms.Shogi.GL
         /// <summary>
         /// 描画オブジェクトを追加します。
         /// </summary>
-        public void AddRender(GL.Texture texture, BlendType blend,
+        public void AddRender(GLUtil.Texture texture, BlendType blend,
                               RectangleF bounds, Matrix44d transform,
                               Mesh mesh, double zorder,
                               double opacity = 1.0)

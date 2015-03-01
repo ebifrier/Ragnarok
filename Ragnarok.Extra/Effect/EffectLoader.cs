@@ -59,7 +59,7 @@ namespace Ragnarok.Extra.Effect
                 {
                     var settings = new XamlXmlReaderSettings
                     {
-                        BaseUri = new Uri(path, UriKind.Absolute),
+                        BaseUri = new Uri(path), //, UriKind.Absolute),
                         CloseInput = false,
                     };
                     var reader = new XamlXmlReader(stream, settings);

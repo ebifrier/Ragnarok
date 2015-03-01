@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using OpenTK.Graphics;
+using OpenTK.Graphics.OpenGL;
 
 using FlintSharp;
-using SharpGL;
 
 namespace Ragnarok.Forms.Shogi.FlintSharpEx
 {
@@ -13,16 +14,23 @@ namespace Ragnarok.Forms.Shogi.FlintSharpEx
     /// </summary>
     internal sealed class GLImageData : IImageData
     {
-        private static readonly Dictionary<OpenGL, GL.Texture> particleDic =
-            new Dictionary<OpenGL, GL.Texture>();
+        private static readonly Dictionary<IGraphicsContext, GLUtil.Texture> particleDic =
+            new Dictionary<IGraphicsContext, GLUtil.Texture>();
 
         /// <summary>
         /// パーティクル用のテクスチャを取得します。
         /// </summary>
-        private static GL.Texture GetParticleTexture(OpenGL gl)
+        private static GLUtil.Texture GetParticleTexture()
         {
-            GL.Texture texture;
-            if (particleDic.TryGetValue(gl, out texture))
+            var context = GraphicsContext.CurrentContext;
+            if (context == null)
+            {
+                throw new GLUtil.GLException(
+                    "OpenGLコンテキストが設定されていません。");
+            }
+
+            GLUtil.Texture texture;
+            if (particleDic.TryGetValue(context, out texture))
             {
                 return texture;
             }
@@ -34,24 +42,24 @@ namespace Ragnarok.Forms.Shogi.FlintSharpEx
                     "リソース画像'particle'の読み込みに失敗しました。");
             }
 
-            texture = new GL.Texture(gl);
+            texture = new GLUtil.Texture();
             if (!texture.Create(bitmap))
             {
                 texture.Destroy();
                 return null;
             }
 
-            particleDic.Add(gl, texture);
+            particleDic.Add(context, texture);
             return texture;
         }
 
         /// <summary>
         /// テクスチャの初期化を行います。
         /// </summary>
-        public void Initialize(OpenGL gl)
+        public void Initialize()
         {
             // 初期化済みなら再初期化を行いません。
-            if (Texture != null && OpenGL == gl)
+            if (Texture != null)
             {
                 return;
             }
@@ -59,7 +67,7 @@ namespace Ragnarok.Forms.Shogi.FlintSharpEx
             if (ImageUri != null)
             {
                 // 通常画像
-                var texture = GL.TextureCache.GetTexture(gl, ImageUri);
+                var texture = GLUtil.TextureCache.GetTexture(ImageUri);
                 if (texture == null)
                 {
                     // うーん、どうしよう。
@@ -67,13 +75,11 @@ namespace Ragnarok.Forms.Shogi.FlintSharpEx
                 }
 
                 Texture = texture;
-                OpenGL = gl;
             }
             else if (IsParticle)
             {
                 // パーティクル
-                Texture = GetParticleTexture(gl);
-                OpenGL = gl;
+                Texture = GetParticleTexture();
             }
             else
             {
@@ -128,7 +134,7 @@ namespace Ragnarok.Forms.Shogi.FlintSharpEx
         /// <summary>
         /// 対象となるOpenGLオブジェクトを取得します。
         /// </summary>
-        public OpenGL OpenGL
+        public GL OpenGL
         {
             get;
             private set;
@@ -137,7 +143,7 @@ namespace Ragnarok.Forms.Shogi.FlintSharpEx
         /// <summary>
         /// テクスチャを取得します。
         /// </summary>
-        public GL.Texture Texture
+        public GLUtil.Texture Texture
         {
             get;
             private set;

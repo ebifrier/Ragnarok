@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            ((System.ComponentModel.ISupportInitialize)(this)).BeginInit();
             this.SuspendLayout();
             // 
             // GLContainer
@@ -36,9 +35,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Name = "GLContainer";
-            this.OpenGLVersion = SharpGL.Version.OpenGLVersion.OpenGL1_4;
-            this.RenderContextType = SharpGL.RenderContextType.NativeWindow;
-            ((System.ComponentModel.ISupportInitialize)(this)).EndInit();
+            this.Size = new System.Drawing.Size(311, 221);
             this.ResumeLayout(false);
 
         }

@@ -7,8 +7,8 @@ using System.Text;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Forms;
+using OpenTK;
 
-using SharpGL;
 using Ragnarok;
 using Ragnarok.Shogi;
 using Ragnarok.Utility;
@@ -26,14 +26,14 @@ namespace Ragnarok.Forms.Shogi.View
     {
         private readonly RectangleF[] pieceBoxBounds = new RectangleF[3];
         private Dictionary<BoardPiece, Mesh> pieceMeshDic;
-        private GL.Texture boardTexture;
-        private GL.Texture pieceTexture;
-        private GL.Texture pieceBoxTexture;
+        private GLUtil.Texture boardTexture;
+        private GLUtil.Texture pieceTexture;
+        private GLUtil.Texture pieceBoxTexture;
 
         /// <summary>
         /// 対局者名の描画用のフォントです。
         /// </summary>
-        private readonly GL.TextTextureFont nameFont = new GL.TextTextureFont
+        private readonly GLUtil.TextTextureFont nameFont = new GLUtil.TextTextureFont
         {
             Color = Color.Black,
             EdgeColor = Color.White,
@@ -43,7 +43,7 @@ namespace Ragnarok.Forms.Shogi.View
         /// <summary>
         /// 思考時間などの時間描画用フォントです。
         /// </summary>
-        private readonly GL.TextTextureFont timeFont = new GL.TextTextureFont
+        private readonly GLUtil.TextTextureFont timeFont = new GLUtil.TextTextureFont
         {
             Color = Color.White,
             EdgeColor = Color.White,
@@ -53,7 +53,7 @@ namespace Ragnarok.Forms.Shogi.View
         /// <summary>
         /// 盤の符号を描画するためのフォントです。
         /// </summary>
-        private readonly GL.TextTextureFont boardSignFont = new GL.TextTextureFont
+        private readonly GLUtil.TextTextureFont boardSignFont = new GLUtil.TextTextureFont
         {
             Color = Color.Black,
             EdgeColor = Color.White,
@@ -63,9 +63,9 @@ namespace Ragnarok.Forms.Shogi.View
         /// <summary>
         /// 持ち駒の数を描画するためのフォントです。
         /// </summary>
-        private readonly GL.TextTextureFont pieceCountFont = new GL.TextTextureFont
+        private readonly GLUtil.TextTextureFont pieceCountFont = new GLUtil.TextTextureFont
         {
-            Font = new Font(GL.TextTextureFont.DefaultFont, FontStyle.Bold),
+            Font = new Font(GLUtil.TextTextureFont.DefaultFont, FontStyle.Bold),
             Color = Color.Black,
             EdgeColor = Color.FromArgb(192, Color.White),
             EdgeLength = 6.0,
@@ -130,11 +130,10 @@ namespace Ragnarok.Forms.Shogi.View
         public override void OnOpenGLInitialized(EventArgs e)
         {
             base.OnOpenGLInitialized(e);
-            var gl = OpenGL;
 
-            this.boardTexture = new GL.Texture(gl);
-            this.pieceTexture = new GL.Texture(gl);
-            this.pieceBoxTexture = new GL.Texture(gl);
+            this.boardTexture = new GLUtil.Texture();
+            this.pieceTexture = new GLUtil.Texture();
+            this.pieceBoxTexture = new GLUtil.Texture();
 
             // イベントハンドラの設定後にテクスチャの実体化を行います。
             BoardBitmapUpdated(this, null);
@@ -255,7 +254,7 @@ namespace Ragnarok.Forms.Shogi.View
         /// <summary>
         /// テクスチャを読み込みます。
         /// </summary>
-        private void LoadTexture(GL.Texture texture, Bitmap bitmap)
+        private void LoadTexture(GLUtil.Texture texture, Bitmap bitmap)
         {
             if (bitmap != null)
             {
@@ -456,7 +455,7 @@ namespace Ragnarok.Forms.Shogi.View
         protected override void OnEnterFrame(EnterFrameEventArgs e)
         {
             base.OnEnterFrame(e);
-            var renderBuffer = (GL.RenderBuffer)e.StateObject;
+            var renderBuffer = (GLUtil.RenderBuffer)e.StateObject;
 
             // 自動再生の更新を行います。
             if (this.autoPlay != null)
@@ -492,7 +491,7 @@ namespace Ragnarok.Forms.Shogi.View
         /// <summary>
         /// 盤の描画を行います。
         /// </summary>
-        private void AddRenderBoard(GL.RenderBuffer renderBuffer)
+        private void AddRenderBoard(GLUtil.RenderBuffer renderBuffer)
         {
             // 盤
             renderBuffer.AddRender(
@@ -553,7 +552,7 @@ namespace Ragnarok.Forms.Shogi.View
         /// indexに対応した駒台を描画します。
         /// </summary>
         /// <param name="index">0なら駒箱、1なら先手用、2なら後手用の駒台となります。</param>
-        private void AddRenderPieceBox(GL.RenderBuffer renderBuffer, int index)
+        private void AddRenderPieceBox(GLUtil.RenderBuffer renderBuffer, int index)
         {
             // テクスチャがないときは帰ります。
             if (this.pieceTexture == null || this.pieceTexture.TextureName == 0)
@@ -645,7 +644,7 @@ namespace Ragnarok.Forms.Shogi.View
         /// <summary>
         /// 盤上の全ての駒を描画します。
         /// </summary>
-        private void AddRenderPieceAll(GL.RenderBuffer renderBuffer)
+        private void AddRenderPieceAll(GLUtil.RenderBuffer renderBuffer)
         {
             if (this.pieceTexture == null || !this.pieceTexture.IsAvailable)
             {
@@ -704,7 +703,7 @@ namespace Ragnarok.Forms.Shogi.View
         /// <summary>
         /// 駒の描画を行います。
         /// </summary>
-        private void AddRenderPiece(GL.RenderBuffer renderBuffer, BoardPiece piece,
+        private void AddRenderPiece(GLUtil.RenderBuffer renderBuffer, BoardPiece piece,
                                     int count, PointF cpos, double zorder)
         {
             if (this.pieceTexture == null || !this.pieceTexture.IsAvailable)
@@ -768,7 +767,7 @@ namespace Ragnarok.Forms.Shogi.View
         /// <summary>
         /// 自動再生用のエフェクト描画を行います。
         /// </summary>
-        private void AddRenderAutoPlayEffect(GL.RenderBuffer renderBuffer)
+        private void AddRenderAutoPlayEffect(GLUtil.RenderBuffer renderBuffer)
         {
             if (AutoPlayState != AutoPlayState.Playing)
             {
@@ -791,8 +790,8 @@ namespace Ragnarok.Forms.Shogi.View
         /// <summary>
         /// 文字列の描画を行います。
         /// </summary>
-        private void AddRenderText(GL.RenderBuffer renderBuffer, string text,
-                                   GL.TextTextureFont font, RectangleF bounds,
+        private void AddRenderText(GLUtil.RenderBuffer renderBuffer, string text,
+                                   GLUtil.TextTextureFont font, RectangleF bounds,
                                    double zorder, double opacity = 1.0)
         {
             if (string.IsNullOrEmpty(text))
@@ -800,8 +799,7 @@ namespace Ragnarok.Forms.Shogi.View
                 return;
             }
 
-            var textTexture = GL.TextureCache.GetTextTexture(
-                OpenGL, text, font);
+            var textTexture = GLUtil.TextureCache.GetTextTexture(text, font);
             if (textTexture == null || textTexture.Texture == null)
             {
                 // エラーだけどどうしようか。

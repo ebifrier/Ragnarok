@@ -2,13 +2,17 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
-using SharpGL;
+using OpenTK;
+using OpenTK.Graphics;
+using OpenTK.Graphics.OpenGL;
 
 using Ragnarok.Forms.Draw;
 using Ragnarok.Utility;
 
-namespace Ragnarok.Forms.Shogi.GL
+namespace Ragnarok.Forms.Shogi.GLUtil
 {
+    using Imaging = System.Drawing.Imaging;
+
     /// <summary>
     /// OpenGL用のテクスチャを管理します。
     /// </summary>
@@ -50,19 +54,14 @@ namespace Ragnarok.Forms.Shogi.GL
         }
 
         /// <summary>
-        /// 指定のOpenGLオブジェクトを持つテクスチャをすべて削除します。
+        /// 現在のコンテキストが持つテクスチャをすべて削除します。
         /// </summary>
         /// <remarks>
         /// OpenGLの終了時に呼ばれます。
         /// </remarks>
-        [CLSCompliant(false)]
-        public static void DeleteAll(OpenGL gl)
+        public static void DeleteAll(IGraphicsContext context)
         {
-            if (gl == null)
-            {
-                throw new ArgumentNullException("gl");
-            }
-
+            //var context = context;
             lock (textureListSync)
             {
                 for (int index = 0; index < textureList.Count; )
@@ -75,7 +74,7 @@ namespace Ragnarok.Forms.Shogi.GL
                         continue;
                     }
 
-                    if (texture.OpenGL == gl)
+                    if (texture.Context == context)
                     {
                         // テクスチャを削除
                         texture.Destroy();
@@ -90,22 +89,22 @@ namespace Ragnarok.Forms.Shogi.GL
             }
         }
 
-        private readonly OpenGL gl;
-        private uint[] glTextureArray = new uint[1];
+        private readonly IGraphicsContext context;
+        private uint glTexture;
         private bool disposed;
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        [CLSCompliant(false)]
-        public Texture(OpenGL gl)
+        public Texture()
         {
-            if (gl == null)
+            this.context = GraphicsContext.CurrentContext;
+            if (this.context == null)
             {
-                throw new ArgumentNullException("gl");
+                throw new GLException(
+                    "OpenGLコンテキストが設定されていません＞＜");
             }
 
-            this.gl = gl;
             AddTexture(this);
         }
 
@@ -137,8 +136,8 @@ namespace Ragnarok.Forms.Shogi.GL
                 {
                     if (TextureName != 0)
                     {
-                        TextureDisposer.AddDeleteTexture(gl, TextureName);
-                        this.glTextureArray[0] = 0;
+                        TextureDisposer.AddDeleteTexture(this.context, TextureName);
+                        this.glTexture = 0;
                     }
 
                     RemoveTexture(this);
@@ -157,12 +156,11 @@ namespace Ragnarok.Forms.Shogi.GL
         }
 
         /// <summary>
-        /// テクスチャ名(ID)を取得します。
+        /// テクスチャ名のコンテキストを取得します。
         /// </summary>
-        [CLSCompliant(false)]
-        public OpenGL OpenGL
+        public IGraphicsContext Context
         {
-            get { return this.gl; }
+            get { return this.context; }
         }
 
         /// <summary>
@@ -171,7 +169,7 @@ namespace Ragnarok.Forms.Shogi.GL
         [CLSCompliant(false)]
         public uint TextureName
         {
-            get { return glTextureArray[0]; }
+            get { return this.glTexture; }
         }
 
         /// <summary>
@@ -245,6 +243,18 @@ namespace Ragnarok.Forms.Shogi.GL
         }
 
         /// <summary>
+        /// コンテキストの確認を行います。
+        /// </summary>
+        private void ValidateContext()
+        {
+            if (this.context != GraphicsContext.CurrentContext)
+            {
+                throw new GLException(
+                    "OpenGLコンテキストが正しく設定れていません＞＜");
+            }
+        }
+
+        /// <summary>
         /// テクスチャに関する属性を保存します。
         /// </summary>
         public virtual void Push()
@@ -254,8 +264,9 @@ namespace Ragnarok.Forms.Shogi.GL
                 throw new InvalidOperationException(
                     "テクスチャの作成が完了していません。");
             }
-          
-            gl.PushAttrib(SharpGL.Enumerations.AttributeMask.Texture);
+
+            ValidateContext();
+            GL.PushAttrib(AttribMask.TextureBit);
             Bind();
         }
 
@@ -269,8 +280,9 @@ namespace Ragnarok.Forms.Shogi.GL
                 throw new InvalidOperationException(
                     "テクスチャの作成が完了していません。");
             }
-          
-            gl.PopAttrib();
+
+            ValidateContext();
+            GL.PopAttrib();
         }
 
         /// <summary>
@@ -284,7 +296,8 @@ namespace Ragnarok.Forms.Shogi.GL
                     "テクスチャの作成が完了していません。");
             }
 
-            gl.BindTexture(OpenGL.GL_TEXTURE_2D, TextureName);
+            ValidateContext();
+            GL.BindTexture(TextureTarget.Texture2D, TextureName);
         }
         
         /// <summary>
@@ -292,7 +305,7 @@ namespace Ragnarok.Forms.Shogi.GL
         /// </summary>
         public void Unbind()
         {
-            gl.BindTexture(OpenGL.GL_TEXTURE_2D, 0);
+            GL.BindTexture(TextureTarget.Texture2D, 0);
         }
 
         /// <summary>
@@ -308,14 +321,15 @@ namespace Ragnarok.Forms.Shogi.GL
         private bool CreateInternal(Bitmap image, Size originalSize,
                                     bool toPremultipliedAlpha)
         {
-            var textureArray = new uint[1];
-            
-            gl.GenTextures(1, textureArray);
+            uint texture = 0;
+
+            GL.GenTextures(1, out texture);
 
             //  Lock the image bits (so that we can pass them to OGL).
             var bitmapData = image.LockBits(
                 new Rectangle(0, 0, image.Width, image.Height),
-                ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+                ImageLockMode.ReadOnly,
+                Imaging.PixelFormat.Format32bppArgb);
 
             try
             {
@@ -324,18 +338,19 @@ namespace Ragnarok.Forms.Shogi.GL
                     MakePremutipliedAlpha(bitmapData);
                 }
 
-                gl.BindTexture(OpenGL.GL_TEXTURE_2D, textureArray[0]);
+                GL.BindTexture(TextureTarget.Texture2D, texture);
 
                 //  テクスチャデータをセットします。
-#if false
-                gl.TexImage2D(
-                    OpenGL.GL_TEXTURE_2D, 0, (int)OpenGL.GL_RGBA,
+#if true
+                GL.TexImage2D(
+                    TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba,
                     image.Width, image.Height, 0,
-                    OpenGL.GL_BGRA, OpenGL.GL_UNSIGNED_BYTE,
+                    OpenTK.Graphics.OpenGL.PixelFormat.Bgra,
+                    PixelType.UnsignedByte,
                     bitmapData.Scan0);
 #else
-                gl.Build2DMipmaps(
-                    OpenGL.GL_TEXTURE_2D, (int)OpenGL.GL_RGBA,
+                GL.Build2DMipmaps(
+                    TextureTarget.Texture2D, (int)OpenGL.GL_RGBA,
                     image.Width, image.Height,
                     OpenGL.GL_BGRA, OpenGL.GL_UNSIGNED_BYTE,
                     bitmapData.Scan0);
@@ -346,22 +361,27 @@ namespace Ragnarok.Forms.Shogi.GL
                 image.UnlockBits(bitmapData);
             }
 
-            gl.TexParameter(OpenGL.GL_TEXTURE_2D, OpenGL.GL_TEXTURE_WRAP_S, OpenGL.GL_CLAMP_TO_EDGE);
-            gl.TexParameter(OpenGL.GL_TEXTURE_2D, OpenGL.GL_TEXTURE_WRAP_T, OpenGL.GL_CLAMP_TO_EDGE);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Clamp);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Clamp);
 
-#if false
-            gl.TexParameter(OpenGL.GL_TEXTURE_2D, OpenGL.GL_TEXTURE_MIN_FILTER, OpenGL.GL_LINEAR);
-            gl.TexParameter(OpenGL.GL_TEXTURE_2D, OpenGL.GL_TEXTURE_MAG_FILTER, OpenGL.GL_LINEAR);
-#else
-            gl.TexParameter(OpenGL.GL_TEXTURE_2D, OpenGL.GL_TEXTURE_MIN_FILTER, OpenGL.GL_LINEAR_MIPMAP_LINEAR);
-            gl.TexParameter(OpenGL.GL_TEXTURE_2D, OpenGL.GL_TEXTURE_MAG_FILTER, OpenGL.GL_LINEAR);
-#endif
-            gl.BindTexture(OpenGL.GL_TEXTURE_2D, 0);
+            if (Misc.HasExtension("GL_SGIS_generate_mipmap"))
+            {
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.LinearMipmapLinear);
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
+                GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
+            }
+            else
+            {
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
+            }
+
+            GL.BindTexture(TextureTarget.Texture2D, 0);
             
             // テクスチャの作成に成功したら、古いテクスチャを削除します。
             Destroy();
 
-            this.glTextureArray = textureArray;
+            this.glTexture = texture;
             Width = image.Width;
             Height = image.Height;
             OriginalWidth = originalSize.Width;
@@ -375,7 +395,7 @@ namespace Ragnarok.Forms.Shogi.GL
         /// </summary>
         private void MakePremutipliedAlpha(BitmapData data)
         {
-            if (data.PixelFormat != PixelFormat.Format32bppArgb)
+            if (data.PixelFormat != Imaging.PixelFormat.Format32bppArgb)
             {
                 throw new InvalidOperationException(
                     "対応していないピクセルフォーマットです。");
@@ -409,8 +429,10 @@ namespace Ragnarok.Forms.Shogi.GL
                 throw new ArgumentNullException("image");
             }
 
+            ValidateContext();
+
             int[] textureMaxSize = { 0 };
-            gl.GetInteger(OpenGL.GL_MAX_TEXTURE_SIZE, textureMaxSize);
+            GL.GetInteger(GetPName.MaxTextureSize, textureMaxSize);
 
             // 2のn乗値の中から、元の画像サイズを超えない範囲で
             // 一番大きな値を探します。
@@ -477,11 +499,13 @@ namespace Ragnarok.Forms.Shogi.GL
         /// テクスチャを削除します。
         /// </summary>
         public void Destroy()
-        {          
-            if (this.glTextureArray[0] != 0)
+        {
+            ValidateContext();
+
+            if (this.glTexture != 0)
             {
-                gl.DeleteTextures(1, this.glTextureArray);
-                this.glTextureArray[0] = 0;
+                GL.DeleteTextures(1, ref this.glTexture);
+                this.glTexture = 0;
             }
             
             Width = 0;

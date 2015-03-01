@@ -7,8 +7,8 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Markup;
+using OpenTK;
 
-using SharpGL;
 using Ragnarok.Extra.Effect;
 
 namespace Ragnarok.Forms.Shogi.Effect
@@ -32,7 +32,6 @@ namespace Ragnarok.Forms.Shogi.Effect
     public class ShogiObject : VisualEffect
     {
         private readonly FlintSharpEx.GLRenderer renderer;
-        private OpenGL gl;
         private bool needToUpdateTexture;
 
         /// <summary>
@@ -53,40 +52,6 @@ namespace Ragnarok.Forms.Shogi.Effect
 
         #region 基本プロパティ
         /// <summary>
-        /// OpenGLのコンテキストを取得します。
-        /// </summary>
-        [CLSCompliant(false)]
-        public OpenGL OpenGL
-        {
-            get
-            {
-                if (this.gl != null)
-                {
-                    return this.gl;
-                }
-
-                var shogiParent = Parent as ShogiObject;
-                if (shogiParent != null)
-                {
-                    return shogiParent.OpenGL;
-                }
-
-                var glElement = Parent as View.GLElement;
-                if (glElement != null)
-                {
-                    return glElement.OpenGL;
-                }
-
-                throw new InvalidOperationException(
-                    "OpenGL用のコンテキストを設定してください。");
-            }
-            set
-            {
-                this.gl = value;
-            }
-        }
-
-        /// <summary>
         /// 頂点カラーを取得または設定します。
         /// </summary>
         public Color Color
@@ -98,9 +63,9 @@ namespace Ragnarok.Forms.Shogi.Effect
         /// <summary>
         /// 描画するテクスチャを取得または設定します。
         /// </summary>
-        public GL.Texture Texture
+        public GLUtil.Texture Texture
         {
-            get { return GetValue<GL.Texture>("Texture"); }
+            get { return GetValue<GLUtil.Texture>("Texture"); }
             set { SetValue("Texture", value); }
         }
         #endregion
@@ -116,8 +81,7 @@ namespace Ragnarok.Forms.Shogi.Effect
                 return;
             }
 
-            var animTexture = GL.TextureCache.GetAnimationTexture(
-                OpenGL,
+            var animTexture = GLUtil.TextureCache.GetAnimationTexture(
                 MakeContentUri(ImageUri),
                 AnimationImageCount);
             if (animTexture == null)
@@ -142,7 +106,7 @@ namespace Ragnarok.Forms.Shogi.Effect
         protected override void OnEnterFrame(EnterFrameEventArgs e)
         {
             // パーティクルの更新前にRenderBufferを設定します。
-            var renderBuffer = (GL.RenderBuffer)e.StateObject;
+            var renderBuffer = (GLUtil.RenderBuffer)e.StateObject;
             this.renderer.RenderBuffer = renderBuffer;
 
             base.OnEnterFrame(e);

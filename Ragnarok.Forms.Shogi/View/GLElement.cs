@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using SharpGL;
+using OpenTK;
 
 using Ragnarok.ObjectModel;
 using Ragnarok.Extra.Effect;
@@ -53,24 +53,6 @@ namespace Ragnarok.Forms.Shogi.View
         {
             get { return GetValue<GLContainer>("GLContainer"); }
             private set { SetValue("GLContainer", value); }
-        }
-
-        /// <summary>
-        /// OpenGLオブジェクトを取得または設定します。
-        /// </summary>
-        [CLSCompliant(false)]
-        [DependOnProperty("GLContainer")]
-        public OpenGL OpenGL
-        {
-            get
-            {
-                if (GLContainer == null)
-                {
-                    return null;
-                }
-
-                return GLContainer.OpenGL;
-            }
         }
 
         /// <summary>

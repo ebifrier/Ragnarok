@@ -6,18 +6,17 @@ using System.Drawing.Imaging;
 using System.Drawing.Text;
 using System.Linq;
 using System.Text;
-using SharpGL;
+using OpenTK;
 
 using Ragnarok.Utility;
 
-namespace Ragnarok.Forms.Shogi.GL
+namespace Ragnarok.Forms.Shogi.GLUtil
 {
     /// <summary>
     /// 文字列用のテクスチャクラスです。
     /// </summary>
     public class TextTexture : ICachable
     {
-        private readonly OpenGL gl;
         private readonly Texture texture;
 
         private string text = string.Empty;
@@ -30,16 +29,9 @@ namespace Ragnarok.Forms.Shogi.GL
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        [CLSCompliant(false)]
-        public TextTexture(OpenGL gl)
+        public TextTexture()
         {
-            if (gl == null)
-            {
-                throw new ArgumentNullException("gl");
-            }
-
-            this.gl = gl;
-            this.texture = new Texture(gl);
+            this.texture = new Texture();
         }
 
         /// <summary>
