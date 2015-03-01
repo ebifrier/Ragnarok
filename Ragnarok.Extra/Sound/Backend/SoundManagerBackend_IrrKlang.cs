@@ -15,7 +15,7 @@ namespace Ragnarok.Extra.Sound.Backend
     /// 使用dllが正しく初期化できない場合、
     /// このクラスを使った時点で例外が発生します。
     /// </remarks>
-    internal sealed class SoundManagerBackend
+    internal sealed class SoundManagerBackend_IrrKlang : ISoundManagerBackend
     {
         private readonly ISoundEngine engine;
 
@@ -117,7 +117,7 @@ namespace Ragnarok.Extra.Sound.Backend
         /// <summary>
         /// SEを再生します。
         /// </summary>
-        public SoundObjectBackend PlaySE(string filename, double volume)
+        public ISoundObjectBackend Play(string filename, double volume)
         {
             if (engine == null)
             {
@@ -148,13 +148,13 @@ namespace Ragnarok.Extra.Sound.Backend
             sound.Volume = MathEx.Between(0.0f, 1.0f, (float)(engine.SoundVolume * volume));
             sound.Paused = false;
 
-            return new SoundObjectBackend(sound);
+            return new SoundObjectBackend_IrrKlang(sound);
         }
 
         /// <summary>
         /// 音声プレイヤーオブジェクトを初期化します。
         /// </summary>
-        public SoundManagerBackend()
+        public SoundManagerBackend_IrrKlang()
         {
             engine = new ISoundEngine();
         }

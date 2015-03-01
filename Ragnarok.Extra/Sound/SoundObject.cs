@@ -11,7 +11,7 @@ namespace Ragnarok.Extra.Sound
     /// </summary>
     public class SoundObject : MarshalByRefObject
     {
-        private Backend.SoundObjectBackend bsound;
+        private Backend.ISoundObjectBackend bsound;
 
         /// <summary>
         /// サウンド停止時に呼ばれるイベントです。
@@ -58,7 +58,7 @@ namespace Ragnarok.Extra.Sound
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        internal SoundObject(Backend.SoundObjectBackend bsound)
+        internal SoundObject(Backend.ISoundObjectBackend bsound)
         {
             if (bsound == null)
             {

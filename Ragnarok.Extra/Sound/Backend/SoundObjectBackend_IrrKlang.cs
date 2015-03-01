@@ -15,7 +15,8 @@ namespace Ragnarok.Extra.Sound.Backend
     /// 使用dllが正しく初期化できない場合、
     /// このクラスを使った時点で例外が発生します。
     /// </remarks>
-    internal sealed class SoundObjectBackend : ISoundStopEventReceiver
+    internal sealed class SoundObjectBackend_IrrKlang :
+        ISoundObjectBackend, ISoundStopEventReceiver
     {
         private ISound sound;
 
@@ -60,8 +61,9 @@ namespace Ragnarok.Extra.Sound.Backend
         /// <summary>
         /// 再生が停止した時に呼ばれます。
         /// </summary>
-        public void OnSoundStopped(ISound sound, StopEventCause cause,
-                                   object userData)
+        void ISoundStopEventReceiver.OnSoundStopped(ISound sound,
+                                                    StopEventCause cause,
+                                                    object userData)
         {
             var handler = Interlocked.Exchange(ref Stopped, null);
 
@@ -91,7 +93,7 @@ namespace Ragnarok.Extra.Sound.Backend
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public SoundObjectBackend(ISound sound)
+        public SoundObjectBackend_IrrKlang(ISound sound)
         {
             if (sound == null)
             {

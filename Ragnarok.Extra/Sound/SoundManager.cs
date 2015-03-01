@@ -15,7 +15,7 @@ namespace Ragnarok.Extra.Sound
         private readonly object SyncRoot = new object();
         private readonly Dictionary<string, DateTime> lastPlayedTime =
             new Dictionary<string, DateTime>();
-        private readonly Backend.SoundManagerBackend backend = null;
+        private readonly Backend.ISoundManagerBackend backend = null;
 
         private TimeSpan playInterval = TimeSpan.FromSeconds(2);
         private string defaultPath = string.Empty;
@@ -201,7 +201,7 @@ namespace Ragnarok.Extra.Sound
                     return null;
                 }
 
-                var bsound = this.backend.PlaySE(fullpath, volume);
+                var bsound = this.backend.Play(fullpath, volume);
                 if (bsound == null)
                 {
                     return null;
@@ -269,7 +269,12 @@ namespace Ragnarok.Extra.Sound
         {
             try
             {
-                this.backend = new Backend.SoundManagerBackend();
+                this.backend = 
+#if !MONO
+                    new Backend.SoundManagerBackend_IrrKlang();
+#else
+                    new Backend.SoundManagerBackend_Dummy();
+#endif
             }
             catch (Exception ex)
             {
