@@ -1,19 +1,20 @@
 <?xml version="1.0"?>
 
-<project name="Ragnarok.Extra" default="build">
+<project name="Ragnarok.Shogi" default="build">
   <property name="project.name" value="${project::get-name()}" />
   <property name="output.dir" value="../bin" />
   <property name="output" value="${output.dir}/${project.name}.dll" />
   <property name="lib" value="../externals/mono" />
+  <property name="ragnarok.build" value="../Ragnarok/default.build" />
 
-  <property name="define" value="CLR4_0;CLR_GE_2_0;CLR_GE_3_0;CLR_GE_3_5;CLR_GE_4_0;MONO" />
+  <property name="define" value="__LINUX__;MONO" />
   <property name="debug" value="true" overwrite="false" />
   <property name="optimize" value="true" overwrite="false" />
 
   <target name="clean">
+    <nant buildfile="${ragnarok.build}" target="clean" />
     <delete failonerror="false">
       <fileset>
-	<include name="${output.dir}/*.dll" />
 	<include name="${output.dir}/${project.name}.dll*" />
       </fileset>
     </delete>
@@ -21,16 +22,16 @@
 
   <target name="rebuild">
     <call target="clean" />
-    <call target="build" />
+    <nant buildfile="${ragnarok.build}" target="rebuild" />
+    <call target="core" />
   </target>
 
   <target name="build">
-    <mkdir dir="${output.dir}" />
-    <copy todir="${output.dir}">
-      <fileset>
-	<include name="${lib}/*.dll" />
-      </fileset>
-    </copy>
+    <nant buildfile="${ragnarok.build}" target="build" />
+    <call target="core" />
+  </target>
+
+  <target name="core">
     <csc target="library" output="${output}" debug="${debug}"
 	 define="${define}" optimize="${optimize}" warninglevel="4"
 	 keyfile="${project.name}.snk">
@@ -38,11 +39,8 @@
 	<include name="**/*.cs" />
       </sources>
       <references>
-	<include name="System.Drawing.dll" />
-        <include name="System.Xml.dll" />
-        <include name="System.Xaml.dll" />
-	<include name="WindowsBase.dll" />
-	<include name="Mono.Posix.dll" />
+	<include name="System.Runtime.Serialization.dll" />
+	<include name="${lib}/protobuf-net.dll" />
 	<include name="${output.dir}/Ragnarok.dll" />
       </references>
     </csc>

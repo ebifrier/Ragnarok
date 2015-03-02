@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+
+<project name="Ragnarok" default="build">
+  <property name="debug" value="true" overwrite="false" />
+  <property name="optimize" value="true" overwrite="false" />
+
+  <target name="clean">
+    <nant target="clean">
+      <buildfiles>
+	<include name="Ragnarok/default.build" />
+	<include name="Ragnarok.Extra/default.build" />
+	<include name="Ragnarok.Shogi/default.build" />
+	<include name="Ragnarok.Forms/default.build" />
+	<include name="Ragnarok.Forms.Shogi/default.build" />
+      </buildfiles>
+    </nant>
+  </target>
+
+  <target name="build">
+    <nant target="build">
+      <buildfiles>
+	<include name="Ragnarok/default.build" />
+	<include name="Ragnarok.Extra/default.build" />
+	<include name="Ragnarok.Shogi/default.build" />
+	<include name="Ragnarok.Forms/default.build" />
+	<include name="Ragnarok.Forms.Shogi/default.build" />
+      </buildfiles>
+    </nant>
+  </target>
+
+  <target name="rebuild">
+    <call target="clean" />
+    <call target="build" />
+  </target>
+</project>

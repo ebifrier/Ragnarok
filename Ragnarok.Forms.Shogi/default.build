@@ -32,19 +32,29 @@
 	<include name="${lib}/*.dll" />
       </fileset>
     </copy>
+    <resgen usesourcepath="true">
+      <resources>
+	<include name="Properties/Resources.resx" />
+      </resources>
+    </resgen>
     <csc target="library" output="${output}" debug="${debug}"
 	 define="${define}" optimize="${optimize}" warninglevel="4"
 	 unsafe="true"> <!-- keyfile="${project.name}.snk">-->
       <sources>
 	<include name="**/*.cs" />
       </sources>
+      <resources dynamicprefix="true">
+	<include name="Properties/Resources.resx" />
+      </resources>
       <references>
 	<include name="System.Drawing.dll" />
-        <include name="System.Xaml.dll" />
         <include name="System.Windows.Forms.dll" />
+        <include name="System.Xaml.dll" />
+        <include name="WindowsBase.dll" />
         <include name="${lib}/OpenTK.dll" />
         <include name="${lib}/OpenTK.GLControl.dll" />
 	<include name="${output.dir}/Ragnarok.dll" />
+	<include name="${output.dir}/Ragnarok.Extra.dll" />
 	<include name="${output.dir}/Ragnarok.Forms.dll" />
 	<include name="${output.dir}/Ragnarok.Shogi.dll" />
       </references>

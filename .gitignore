@@ -1,32 +1,14 @@
+# Ignore directories
 obj/
 bin/
 Debug/
 Release/
-CommentGetter/bin/
-CommentGetter/obj/
-Ragnarok.Extra/bin/
-Ragnarok.Extra/obj/
-Ragnarok.NicoNico.Test/obj/
-Ragnarok.Presentation.Extra/obj/
-Ragnarok.Presentation.Shogi/obj/
-Ragnarok.Presentation/obj/
-Ragnarok/obj/
-Ragnarok/bin/
-Ragnarok.Shogi/obj/
-Ragnarok.UpdatePack/obj/
-Ragnarok.UpdatePack/bin/
-Ragnarok.Shogi/bin/
-Ragnarok.Presentation/bin/
-Ragnarok.Presentation.Shogi/bin/
-Ragnarok.Presentation.Extra/bin/
-Ragnarok.NicoNico.Test/bin/
-Ragnarok.Forms/obj/
-Ragnarok.Forms/bin/
-Ragnarok.Forms.Shogi/bin/
-Ragnarok.Forms.Shogi/obj/
+
+# Ignore extensions
 *.old
-Live2DSharp.Framework/obj/
 *.user
 *.suo
 *.sdf
 *.userprefs
+*~
+
