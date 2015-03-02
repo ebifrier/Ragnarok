@@ -38,6 +38,7 @@ using System.Windows.Markup;
 [assembly: XmlnsDefinition("http://schemas.garnet-alice.net/ragnarok/xaml", "Ragnarok.Utility.AssemblyUtility")]
 [assembly: XmlnsDefinition("http://schemas.garnet-alice.net/ragnarok/xaml", "Ragnarok.Xaml")]
 
+#if !MONO
 [assembly: XmlnsDefinition("http://schemas.garnet-alice.net/ragnarok/xaml/presentation", "Ragnarok")]
 [assembly: XmlnsDefinition("http://schemas.garnet-alice.net/ragnarok/xaml/presentation", "Ragnarok.Net")]
 [assembly: XmlnsDefinition("http://schemas.garnet-alice.net/ragnarok/xaml/presentation", "Ragnarok.Net.CookieGetter")]
@@ -51,6 +52,7 @@ using System.Windows.Markup;
 [assembly: XmlnsDefinition("http://schemas.garnet-alice.net/ragnarok/xaml/presentation", "Ragnarok.Utility")]
 [assembly: XmlnsDefinition("http://schemas.garnet-alice.net/ragnarok/xaml/presentation", "Ragnarok.Utility.AssemblyUtility")]
 [assembly: XmlnsDefinition("http://schemas.garnet-alice.net/ragnarok/xaml/presentation", "Ragnarok.Xaml")]
+#endif
 
 
 // アセンブリのバージョン情報は、以下の 4 つの値で構成されています:

@@ -62,7 +62,9 @@ namespace Ragnarok.Extra.Effect
                         BaseUri = new Uri(path), //, UriKind.Absolute),
                         CloseInput = false,
                     };
-                    var reader = new XamlXmlReader(stream, settings);
+					var context = new XamlSchemaContext(GetReferenceAssemblies());
+
+					var reader = new XamlXmlReader(stream, context, settings);
                     var obj = XamlServices.Load(reader);
 
                     var result = obj as EffectObject; 
@@ -82,6 +84,20 @@ namespace Ragnarok.Extra.Effect
                 return null;
                 //throw ex;
             }
+        }
+
+        /// <summary>
+        /// WindowsBaseは同じnamespaceに対する関連付けが複数あるため、
+        /// そのままLoadを呼ぶと同名のnamespaceが登録されたという外を投げられます。
+        /// </summary>
+        private static IEnumerable<Assembly> GetReferenceAssemblies()
+        {
+            return
+                from asm in AppDomain.CurrentDomain.GetAssemblies ()
+                let name = asm.FullName
+                where !string.IsNullOrEmpty (name)
+                where !name.Contains ("WindowsBase")
+                select asm;
         }
 
         /// <summary>

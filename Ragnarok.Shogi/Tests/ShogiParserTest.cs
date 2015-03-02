@@ -329,11 +329,11 @@ namespace Ragnarok.Shogi.Tests
                 player1,
                 ShogiParser.ParsePlayer("てすと 急急"));
 
-            var player2 = new ShogiPlayer()
+			/*var player2 = new ShogiPlayer()
             {
                 Nickname = "三級",
             };
-            /*AssertPlayer(
+            AssertPlayer(
                 player2,
                 ShogiParser.ParsePlayer("三級"));*/
             /*AssertPlayer(

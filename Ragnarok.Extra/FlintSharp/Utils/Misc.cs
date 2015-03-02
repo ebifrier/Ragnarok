@@ -110,10 +110,10 @@ namespace FlintSharp
         /// Use vector to caluculate the distance.
         /// Vector: L = P1 - P0
         /// 
-        /// 線分上で点Cと直交する点をP = P0 + t * Lとすると、
-        /// (P - C)・L = 0
-        ///   (P0 - C + t * L)・L = 0
-        ///   t * |L|^2 = - (P0 - C)・L
+        /// ?????????_C???????????_??P = P0 + t * L?????????A
+        /// (P - C)?EL = 0
+        ///   (P0 - C + t * L)?EL = 0
+        ///   t * |L|^2 = - (P0 - C)?EL
         /// 
         /// distance = |P - C|
         ///          = |(P0 - C) + t * L|

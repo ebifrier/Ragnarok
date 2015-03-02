@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if !MONO
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -160,3 +161,4 @@ namespace Ragnarok.Extra.Sound.Backend
         }
     }
 }
+#endif

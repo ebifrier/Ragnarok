@@ -43,11 +43,7 @@ namespace Ragnarok.Net
         /// </summary>
         public static string EncodeHtmlText(string text)
         {
-#if !MONO
             return WebUtility.HtmlEncode(text);
-#else
-            return HttpUtility.HtmlDecode(text);
-#endif
         }
 
         /// <summary>
@@ -55,11 +51,7 @@ namespace Ragnarok.Net
         /// </summary>
         public static string DecodeHtmlText(string text)
         {
-#if !MONO
-            return WebUtility.HtmlDecode(text);
-#else
-            return HttpUtility.HtmlDecode(text);
-#endif
+			return WebUtility.HtmlDecode(text);
         }
 
         /// <summary>

@@ -30,7 +30,6 @@
  */
 
 using System.Windows;
-using System.Windows.Media;
 
 using FlintSharp.Behaviours;
 using FlintSharp.Activities;

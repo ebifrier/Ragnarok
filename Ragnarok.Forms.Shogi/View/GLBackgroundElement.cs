@@ -69,8 +69,6 @@ namespace Ragnarok.Forms.Shogi.View
                 return;
             }
 
-            var shogi = effect as ShogiObject;
-
             // 古い背景エフェクトの廃棄
             if (this.nextBg != null)
             {
