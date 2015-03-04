@@ -67,6 +67,15 @@ namespace FlintSharp.Initializers
         }
 
         /// <summary>
+        /// Gets the emitter this object was added.
+        /// </summary>
+        public Emitter Emitter
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
 		/// The getDefaultPriority method is used to order the execution of initializers.
 		/// It is called within the emitter's addInitializer method when the user doesn't
 		/// manually set a priority. It need not be called directly by the user.
@@ -86,6 +95,7 @@ namespace FlintSharp.Initializers
         /// <param name="emitter">The Emitter that the Initializer was added to.</param>
         public virtual void AddedToEmitter(Emitter emitter)
         {
+            Emitter = emitter;
         }
 
         /// <summary>
@@ -96,6 +106,7 @@ namespace FlintSharp.Initializers
         /// <param name="emitter">The Emitter that the Initializer was removed from.</param>
         public virtual void RemovedFromEmitter(Emitter emitter)
         {
+            Emitter = null;
         }
 
         /// <summary>

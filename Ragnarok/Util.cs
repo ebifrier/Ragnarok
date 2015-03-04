@@ -584,6 +584,22 @@ namespace Ragnarok
         }
 
         /// <summary>
+        /// パスセパレータなどを標準化します。
+        /// </summary>
+        public static string NormalizePath(this string path)
+        {
+            if (string.IsNullOrEmpty(path))
+            {
+                return path;
+            }
+
+            // Normalize separator
+            path = path.Replace('/', Path.DirectorySeparatorChar);
+            path = path.Replace('\\', Path.DirectorySeparatorChar);
+            return path;
+        }
+
+        /// <summary>
         /// 空の一時ファイルを作成し、そのファイル名を返します。
         /// </summary>
         public static string GetTempFileName()

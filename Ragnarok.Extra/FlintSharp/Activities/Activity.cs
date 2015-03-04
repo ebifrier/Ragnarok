@@ -66,6 +66,15 @@ namespace FlintSharp.Activities
         }
 
         /// <summary>
+        /// Gets the emitter this object was added.
+        /// </summary>
+        public Emitter Emitter
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
         /// The getDefaultPriority method is used to order the execution of activities.
         /// It is called within the emitter's addActivity method when the user doesn't
         /// manually set a priority. It need not be called directly by the user.
@@ -86,6 +95,7 @@ namespace FlintSharp.Activities
         /// <param name="emitter">The Emitter that the Activity was added to.</param>
         public virtual void AddedToEmitter(Emitter emitter)
         {
+            Emitter = emitter;
         }
 
         /// <summary>
@@ -96,6 +106,7 @@ namespace FlintSharp.Activities
         /// <param name="emitter">The Emitter that the Activity was removed from.</param>
         public virtual void RemovedFromEmitter(Emitter emitter)
         {
+            Emitter = null;
         }
 
         /// <summary>

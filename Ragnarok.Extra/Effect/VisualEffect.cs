@@ -51,6 +51,16 @@ namespace Ragnarok.Extra.Effect
             StartSoundVolume = 1.0;
         }
 
+        /// <summary>
+        /// BasePathが変更された時に呼ばれます。
+        /// </summary>
+        protected override void OnBasePathChanged(string basePath)
+        {
+            base.OnBasePathChanged(basePath);
+
+            ParticleEmitters.ForEach(_ => _.BasePath = basePath);
+        }
+
         #region パーティクル
         /// <summary>
         /// パーティクルのレンダラーを取得または設定します。

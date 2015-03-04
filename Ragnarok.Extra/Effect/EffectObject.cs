@@ -70,6 +70,8 @@ namespace Ragnarok.Extra.Effect
                 OnDataContextChanged(true);
                 UpdateInheritedOpacity();
             });
+            this.AddPropertyChangedHandler("BasePath", (_, __) =>
+                OnBasePathChanged(BasePath));
             this.AddPropertyChangedHandler("DataContext", (_, __) =>
                 OnDataContextChanged(false));
             this.AddPropertyChangedHandler("Opacity", (_, __) =>
@@ -108,11 +110,15 @@ namespace Ragnarok.Extra.Effect
         public string BasePath
         {
             get { return GetValue<string>("BasePath"); }
-            set
-            {
-                SetValue("BasePath", value);
-                Children.ForEach(_ => _.BasePath = value);
-            }
+            set { SetValue("BasePath", value); }
+        }
+
+        /// <summary>
+        /// BasePathが変更された時に呼ばれます。
+        /// </summary>
+        protected virtual void OnBasePathChanged(string basePath)
+        {
+            Children.ForEach(_ => _.BasePath = basePath);
         }
 
         /// <summary>

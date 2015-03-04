@@ -46,6 +46,8 @@ using FlintSharp.Initializers;
 using FlintSharp.Particles;
 using FlintSharp.Zones;
 
+using Ragnarok;
+
 namespace FlintSharp.Initializers
 {
     /// <summary>
@@ -58,10 +60,9 @@ namespace FlintSharp.Initializers
 	/// many particles can share the same DisplayObject because it is
     /// only indirectly used to display the particle.
 	/// </summary>
-    public class SharedImage : Initializer, IUriContext
+    public class SharedImage : Initializer
     {
         private MaterialType m_materialType;
-        private Uri m_baseUri;
         private string m_imagePath;
 
         public SharedImage()
@@ -77,15 +78,6 @@ namespace FlintSharp.Initializers
         public SharedImage(string imagePath)
         {
             m_imagePath = imagePath;
-        }
-
-        /// <summary>
-        /// Base Uri of the image.
-        /// </summary>
-        public Uri BaseUri
-        {
-            get { return m_baseUri; }
-            set { m_baseUri = value; }
         }
 
         /// <summary>
@@ -108,15 +100,17 @@ namespace FlintSharp.Initializers
 
         public string GetNormalizedImagePath()
         {
-            var path = (
-                BaseUri == null ?
-                m_imagePath :
-                Path.Combine(BaseUri.OriginalString, m_imagePath));
+            if (m_imagePath == null)
+            {
+                return string.Empty;
+            }
 
-            // Normalize separator
-            path = path.Replace('/', Path.DirectorySeparatorChar);
-            path = path.Replace('\\', Path.DirectorySeparatorChar);
-            return path;
+            var path = (
+                Emitter == null || string.IsNullOrEmpty(Emitter.BasePath) ?
+                m_imagePath :
+                Path.Combine(Emitter.BasePath, m_imagePath));
+
+            return path.NormalizePath();
         }
 
         /// <summary>
