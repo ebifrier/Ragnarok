@@ -127,6 +127,11 @@ namespace Ragnarok.Utility
     /// <summary>
     /// 簡単な数式を計算します。
     /// </summary>
+    /// <remarks>
+    /// 関数の引数は通常','で区切られますが、
+    /// カンマ記号が使えない特殊な環境で使うことも考え
+    /// カンマ以外にも'#'で引数を区切ることができます。
+    /// </remarks>
     public class Calculator
     {
         private static Calculator defaultValue;

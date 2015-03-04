@@ -137,7 +137,7 @@ namespace Ragnarok.Utility.Tests
         {
             var manager = new CacheManager<int, ExceptionObject>(CreateExceptionObject, 100);
 
-            manager.GetOrCreate(100);
+            Assert.Catch(typeof(InvalidOperationException), () => manager.GetOrCreate(100));
         }
     }
 }

@@ -55,6 +55,13 @@ namespace Ragnarok.Utility.Tests
                 typeof(RagnarokException),
                 () => Calculator.Default.Run("f()"));
         }
+
+        [Test()]
+        public void OtherSeparatorTest()
+        {
+            Assert.AreEqual(Calculator.Default.Run("max(1# 4)"), 4.0);
+            Assert.AreEqual(Calculator.Default.Run("min(3# 2# 10)"), 2.0);
+        }
     }
 }
 #endif
