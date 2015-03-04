@@ -56,11 +56,19 @@ namespace FlintSharp.Zones
         private Bitmap m_bitmap;
         private string m_text = string.Empty;
         private Font m_font;
-        private FontFamily m_fontFamily = new FontFamily("ÇlÇr ÉSÉVÉbÉN");
+        private FontFamily m_fontFamily;
         private FontStyle m_fontStyle = FontStyle.Regular;
         private double m_fontSize = 12.0;
         private bool m_textChanged = true;
         private bool m_fontChanged = true;
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        public TextZone()
+        {
+            this.m_fontFamily = System.Drawing.FontFamily.GenericSansSerif;
+        }
 
         /// <summary>
         /// A text string to be drawn.
@@ -100,7 +108,7 @@ namespace FlintSharp.Zones
 
         /// <summary>
         /// A horizontal offset to apply to the pixels in the BitmapData object 
-		/// to reposition the zone
+        /// to reposition the zone
         /// </summary>
         public double OffsetX
         {
