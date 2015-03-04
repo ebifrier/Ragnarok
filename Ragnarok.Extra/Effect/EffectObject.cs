@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Windows.Markup;
 
@@ -33,7 +34,7 @@ namespace Ragnarok.Extra.Effect
     /// </remarks>
     [RuntimeNameProperty("Name")]
     [ContentProperty("Children")]
-    public class EffectObject : NotifyObject, IFrameObject, IUriContext
+    public class EffectObject : NotifyObject, IFrameObject
     {
         private readonly ReentrancyLock dataContextSync = new ReentrancyLock();
         private int startTick = 0;
@@ -104,13 +105,14 @@ namespace Ragnarok.Extra.Effect
         /// <summary>
         /// イメージの基本パスを取得または設定します。
         /// </summary>
-        /// <remarks>
-        /// XAML読み込み時に自動的に設定されます。
-        /// </remarks>
-        public Uri BaseUri
+        public string BasePath
         {
-            get { return GetValue<Uri>("BaseUri"); }
-            set { SetValue("BaseUri", value); }
+            get { return GetValue<string>("BasePath"); }
+            set
+            {
+                SetValue("BasePath", value);
+                Children.ForEach(_ => _.BasePath = value);
+            }
         }
 
         /// <summary>
@@ -436,18 +438,19 @@ namespace Ragnarok.Extra.Effect
         #endregion
 
         /// <summary>
-        /// コンテンツのURIを作成します。
+        /// コンテンツのPathを作成します。
         /// </summary>
-        public Uri MakeContentUri(string relativeUri)
+        public string MakeContentPath(string relativePath)
         {
-            if (BaseUri != null)
-            {
-                return new Uri(BaseUri, relativeUri);
-            }
-            else
-            {
-                return new Uri(relativeUri, UriKind.Relative);
-            }
+            var path = (
+                BasePath == null ?
+                relativePath :
+                Path.Combine(BasePath, relativePath));
+
+            // Normalize separator
+            path = path.Replace('/', Path.DirectorySeparatorChar);
+            path = path.Replace('\\', Path.DirectorySeparatorChar);
+            return path;
         }
 
         /// <summary>

@@ -64,10 +64,10 @@ namespace Ragnarok.Forms.Shogi.FlintSharpEx
                 return;
             }
 
-            if (ImageUri != null)
+            if (!string.IsNullOrEmpty(ImagePath))
             {
                 // 通常画像
-                var texture = GLUtil.TextureCache.GetTexture(ImageUri);
+                var texture = GLUtil.TextureCache.GetTexture(ImagePath);
                 if (texture == null)
                 {
                     // うーん、どうしよう。
@@ -107,7 +107,7 @@ namespace Ragnarok.Forms.Shogi.FlintSharpEx
         /// <summary>
         /// 画像データのURIを取得または設定します。
         /// </summary>
-        public Uri ImageUri
+        public string ImagePath
         {
             get;
             set;

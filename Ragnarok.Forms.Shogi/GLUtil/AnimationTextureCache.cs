@@ -19,16 +19,16 @@ namespace Ragnarok.Forms.Shogi.GLUtil
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public AnimationTextureKey(Uri imageUri, int count)
+        public AnimationTextureKey(string imagePath, int count)
         {
-            ImageUri = imageUri;
+            ImagePath = imagePath;
             Count = count;
         }
 
         /// <summary>
         /// 画像URIを取得します。
         /// </summary>
-        public Uri ImageUri
+        public string ImagePath
         {
             get;
             private set;
@@ -68,7 +68,7 @@ namespace Ragnarok.Forms.Shogi.GLUtil
             }
 
             return (
-                ImageUri == other.ImageUri &&
+                ImagePath == other.ImagePath &&
                 Count == other.Count);
         }
 
@@ -77,7 +77,7 @@ namespace Ragnarok.Forms.Shogi.GLUtil
         /// </summary>
         public override int GetHashCode()
         {
-            return (ImageUri.GetHashCode() ^ Count.GetHashCode());
+            return (ImagePath.GetHashCode() ^ Count.GetHashCode());
         }
     }
 
@@ -112,17 +112,17 @@ namespace Ragnarok.Forms.Shogi.GLUtil
         /// </summary>
         private AnimationTexture CreateAnimationTexture(AnimationTextureKey key)
         {
-            var imagePath = key.ImageUri.LocalPath;
             var animTexture = new AnimationTexture();
 
-            animTexture.Load(imagePath, key.Count);
+            animTexture.Load(key.ImagePath, key.Count);
             return animTexture;
         }
 
         /// <summary>
         /// 画像をキャッシュから探し、もしなければ読み込みます。
         /// </summary>
-        public AnimationTexture GetAnimationTexture(Uri imageUri, int count)
+        public AnimationTexture GetAnimationTexture(string imagePath,
+                                                    int count)
         {
             if (this.context != GraphicsContext.CurrentContext)
             {
@@ -130,9 +130,9 @@ namespace Ragnarok.Forms.Shogi.GLUtil
                     "OpenGLコンテキストが正しく設定れていません＞＜");
             }
 
-            if (imageUri == null)
+            if (string.IsNullOrEmpty(imagePath))
             {
-                throw new ArgumentNullException("imageUri");
+                throw new ArgumentNullException("imagePath");
             }
 
             if (count <= 0)
@@ -142,7 +142,7 @@ namespace Ragnarok.Forms.Shogi.GLUtil
 
             try
             {
-                var key = new AnimationTextureKey(imageUri, count);
+                var key = new AnimationTextureKey(imagePath, count);
 
                 return this.cache.GetOrCreate(key);
             }
@@ -150,7 +150,8 @@ namespace Ragnarok.Forms.Shogi.GLUtil
             {
                 Util.ThrowIfFatal(ex);
                 Log.ErrorException(ex,
-                    "テクスチャの読み込みに失敗しました。");
+                    "'{0}' テクスチャの読み込みに失敗しました。",
+                    imagePath);
 
                 return null;
             }

@@ -222,9 +222,9 @@ namespace Ragnarok.Extra.Effect
                 return false;
             }
 
-            var uri = MakeContentUri(soundPath);
+            var path = MakeContentPath(soundPath);
             var sound = soundManager.PlayEffectSound(
-                uri.LocalPath,
+                path,
                 (isPlay ? StartSoundVolume : 0.0));
             if (sound == null)
             {

@@ -13,7 +13,7 @@ namespace FlintSharp
         /// <summary>
         /// 通常のイメージを読み込みます。
         /// </summary>
-        IImageData LoadImage(Uri imageUri, MaterialType materialType);
+        IImageData LoadImage(string imagePath, MaterialType materialType);
 
         /// <summary>
         /// パーティクル用のイメージを読み込みます。

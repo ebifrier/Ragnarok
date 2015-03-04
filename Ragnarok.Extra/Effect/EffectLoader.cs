@@ -62,7 +62,7 @@ namespace Ragnarok.Extra.Effect
                         BaseUri = new Uri(path), //, UriKind.Absolute),
                         CloseInput = false,
                     };
-					var context = new XamlSchemaContext(GetReferenceAssemblies());
+                    var context = new XamlSchemaContext(GetReferenceAssemblies());
 
 					var reader = new XamlXmlReader(stream, context, settings);
                     var obj = XamlServices.Load(reader);
@@ -70,6 +70,7 @@ namespace Ragnarok.Extra.Effect
                     var result = obj as EffectObject; 
                     if (result != null)
                     {
+                        result.BasePath = Path.GetDirectoryName(path);
                         //result.Name = param.Name;
                     }
 

@@ -22,16 +22,16 @@ namespace Ragnarok.Forms.Shogi.FlintSharpEx
         /// <summary>
         /// 画像データを読み込みます。
         /// </summary>
-        public IImageData LoadImage(Uri imageUri, MaterialType materialType)
+        public IImageData LoadImage(string imagePath, MaterialType materialType)
         {
-            if (imageUri == null)
+            if (string.IsNullOrEmpty(imagePath))
             {
-                throw new ArgumentNullException("imageUri");
+                throw new ArgumentException("imagePath");
             }
 
             return new GLImageData
             {
-                ImageUri = imageUri,
+                ImagePath = imagePath,
                 MaterialType = materialType,
             };
         }

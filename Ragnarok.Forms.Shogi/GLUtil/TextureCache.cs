@@ -76,9 +76,9 @@ namespace Ragnarok.Forms.Shogi.GLUtil
         /// <summary>
         /// テクスチャをキャッシュから探し、もしなければ読み込みます。
         /// </summary>
-        public static Texture GetTexture(Uri imageUri)
+        public static Texture GetTexture(string imagePath)
         {
-            var animTexture = GetAnimationTexture(imageUri, 1);
+            var animTexture = GetAnimationTexture(imagePath, 1);
             if (animTexture == null || animTexture.TextureList.Count() != 1)
             {
                 return null;
@@ -90,7 +90,7 @@ namespace Ragnarok.Forms.Shogi.GLUtil
         /// <summary>
         /// アニメーション用テクスチャをキャッシュから探し、もしなければ読み込みます。
         /// </summary>
-        public static AnimationTexture GetAnimationTexture(Uri imageUri,
+        public static AnimationTexture GetAnimationTexture(string imagePath,
                                                            int count)
         {
             var context = GraphicsContext.CurrentContext;
@@ -99,9 +99,9 @@ namespace Ragnarok.Forms.Shogi.GLUtil
                 throw new ArgumentNullException("context");
             }
 
-            if (imageUri == null)
+            if (string.IsNullOrEmpty(imagePath))
             {
-                throw new ArgumentNullException("imageUri");
+                throw new ArgumentNullException("imagePath");
             }
 
             if (count <= 0)
@@ -110,7 +110,7 @@ namespace Ragnarok.Forms.Shogi.GLUtil
             }
 
             var cache = GetAnimationTextureCache(context);
-            return cache.GetAnimationTexture(imageUri, count);
+            return cache.GetAnimationTexture(imagePath, count);
         }
 
         /// <summary>

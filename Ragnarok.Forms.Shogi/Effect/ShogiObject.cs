@@ -82,7 +82,7 @@ namespace Ragnarok.Forms.Shogi.Effect
             }
 
             var animTexture = GLUtil.TextureCache.GetAnimationTexture(
-                MakeContentUri(ImageUri),
+                MakeContentPath(ImageUri),
                 AnimationImageCount);
             if (animTexture == null)
             {

@@ -76,7 +76,7 @@ namespace Ragnarok.Forms.Shogi.View
                 }
 
                 // 描画領域を設定します。
-                var texture = GL.TextureCache.GetTexture(new Uri(imagePath));
+                var texture = GL.TextureCache.GetTexture(imagePath);
                 if (texture != null && texture.IsAvailable)
                 {
                     // 描画領域はこのクラスの外側で指定します。
