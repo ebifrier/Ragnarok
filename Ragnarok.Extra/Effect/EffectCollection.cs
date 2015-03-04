@@ -10,7 +10,7 @@ namespace Ragnarok.Extra.Effect
     /// </summary>
     public class EffectCollection :
         IList<EffectObject>, ICollection<EffectObject>, IEnumerable<EffectObject>,
-        /*IList, ICollection,*/ IEnumerable
+        IList, ICollection, IEnumerable
     {
         private readonly List<EffectObject> implList = new List<EffectObject>();
         private readonly EffectObject parent;
@@ -73,6 +73,12 @@ namespace Ragnarok.Extra.Effect
             set { this.implList[index] = value; }
         }
 
+        object IList.this[int index]
+        {
+            get { return this.implList[index]; }
+            set { this.implList[index] = (EffectObject)value; }
+        }
+
         /// <summary>
         /// すべての要素を削除します。
         /// </summary>
@@ -90,6 +96,11 @@ namespace Ragnarok.Extra.Effect
         public bool Contains(EffectObject element)
         {
             return this.implList.Contains(element);
+        }
+
+        bool IList.Contains(object element)
+        {
+            return Contains((EffectObject)element);
         }
 
         /// <summary>
@@ -135,12 +146,22 @@ namespace Ragnarok.Extra.Effect
             return this.implList.IndexOf(element);
         }
 
+        int IList.IndexOf(object element)
+        {
+            return IndexOf((EffectObject)element);
+        }
+
         /// <summary>
         /// 指定されたインデックス位置に要素を挿入します。
         /// </summary>
         public void Insert(int index, EffectObject element)
         {
             this.implList.Insert(index, element);
+        }
+
+        void IList.Insert(int index, object element)
+        {
+            Insert(index, (EffectObject)element);
         }
 
         /// <summary>
@@ -157,6 +178,11 @@ namespace Ragnarok.Extra.Effect
             }
 
             return false;
+        }
+
+        void IList.Remove(object element)
+        {
+            Remove((EffectObject)element);
         }
 
         /// <summary>
@@ -182,6 +208,12 @@ namespace Ragnarok.Extra.Effect
 
             this.implList.Add(element);
             element.ParentAdded(this.parent);
+        }
+
+        int IList.Add(object element)
+        {
+            Add((EffectObject)element);
+            return (Count - 1);
         }
 
         /// <summary>
