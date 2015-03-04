@@ -32,6 +32,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Windows;
 using System.Windows.Markup;
 
@@ -61,7 +62,7 @@ namespace FlintSharp.Initializers
     {
         private MaterialType m_materialType;
         private Uri m_baseUri;
-        private Uri m_imageUri;
+        private string m_imagePath;
 
         public SharedImage()
         {
@@ -73,9 +74,9 @@ namespace FlintSharp.Initializers
         /// an emitter, use the emitter's addInitializer method.
         /// </summary>
         /// <param name="uri"></param>
-        public SharedImage(Uri uri)
+        public SharedImage(string imagePath)
         {
-            m_imageUri = uri;
+            m_imagePath = imagePath;
         }
 
         /// <summary>
@@ -88,12 +89,12 @@ namespace FlintSharp.Initializers
         }
 
         /// <summary>
-        /// The image Uri.
+        /// The image path.
         /// </summary>
-        public Uri ImageUri
+        public string ImagePath
         {
-            get { return m_imageUri; }
-            set { m_imageUri = value; }
+            get { return m_imagePath; }
+            set { m_imagePath = value; }
         }
 
         /// <summary>
@@ -103,6 +104,19 @@ namespace FlintSharp.Initializers
         {
             get { return m_materialType; }
             set { m_materialType = value; }
+        }
+
+        public string GetNormalizedImagePath()
+        {
+            var path = (
+                BaseUri == null ?
+                m_imagePath :
+                Path.Combine(BaseUri.OriginalString, m_imagePath));
+
+            // Normalize separator
+            path = path.Replace('/', Path.DirectorySeparatorChar);
+            path = path.Replace('\\', Path.DirectorySeparatorChar);
+            return path;
         }
 
         /// <summary>
@@ -120,16 +134,12 @@ namespace FlintSharp.Initializers
                     "Utils.ImageLoader isnt't initialized.");
             }
 
-            var uri =
-                (m_imageUri.IsAbsoluteUri
-                ? m_imageUri
-                : new Uri(m_baseUri, m_imageUri));
-
-            var data = Utils.ImageLoader.LoadImage(uri, m_materialType);
+            var path = GetNormalizedImagePath();
+            var data = Utils.ImageLoader.LoadImage(path, m_materialType);
             if (data == null)
             {
                 Ragnarok.Log.Error(
-                    "{0}: イメージの読み込みに失敗しました。", uri);
+                    "{0}: ?C???[?W???????????????s?????????B", path);
                 return;
             }
 
