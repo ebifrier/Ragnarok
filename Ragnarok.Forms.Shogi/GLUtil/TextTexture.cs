@@ -270,9 +270,12 @@ namespace Ragnarok.Forms.Shogi.GLUtil
 
                 // GraphicsPathの場合、描画原点が０にならないことがあるため
                 // 矩形領域の左上を原点として描画しています。
+                // また、MONOだとAddStrinのgoriginパラメータは使えません。 
+                g.TranslateTransform(-bounds.Left, -bounds.Top);
+
                 path.AddString(
                     Text, Font.FontFamily, (int)Font.Style, Font.SizeInPoints,
-                    new Point(-bounds.Left, -bounds.Top), null);
+                    new Point(0, 0), null);
 
                 if (EdgeLength > 0.0)
                 {
