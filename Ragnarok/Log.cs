@@ -33,6 +33,14 @@ namespace Ragnarok
 
             if (ex != null)
             {
+#if MONO
+                // MONOだとアプリ終了時に防ぐのが難しいエラーが出る。
+                if (ex.Message ==
+                    "A null reference or invalid value was found [GDI+ status: InvalidParameter]")
+                {
+                    return;
+                }
+#endif
                 Log.FatalException(ex,
                     "未処理の例外が発生しました。");
             }
@@ -40,7 +48,7 @@ namespace Ragnarok
             {
                 Log.Fatal(
                     "未処理の例外が発生しました。");
-            }            
+            }
         }
 
         /// <summary>
