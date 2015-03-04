@@ -76,10 +76,10 @@ namespace Ragnarok.Shogi.Kif.Tests
         [Test()]
         public void Test()
         {
-            var pathList = TestUtil.LoadPathList("file.list");
+            /*var pathList = TestUtil.LoadPathList("file.list");
 
             //var path = @"E:\Dropbox\NicoNico\shogi\test_kif\1600-1979\kif\18720111その他大矢小野有105.KIF";
-            /*foreach (var path in TestUtil.FileList("*.kif", pathList))
+            foreach (var path in TestUtil.FileList("*.kif", pathList))
             {
                 Console.WriteLine(path);
 

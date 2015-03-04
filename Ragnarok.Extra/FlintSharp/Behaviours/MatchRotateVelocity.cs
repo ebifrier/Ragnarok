@@ -134,7 +134,6 @@ namespace FlintSharp.Behaviours
             Particle other;
             int i;
             int len = particles.Count;
-            double dx;
             double dy;
             double vel = 0;
             int count = 0;
@@ -144,7 +143,7 @@ namespace FlintSharp.Behaviours
             {
                 other = particles[i];
 
-                if ((dx = particle.X - other.X) > m_min)
+                if (particle.X - other.X > m_min)
                     break;
 
                 dy = other.Y - particle.Y;
@@ -161,7 +160,7 @@ namespace FlintSharp.Behaviours
             {
                 other = particles[i];
 
-                if ((dx = other.X - particle.X) > m_min)
+                if (other.X - particle.X > m_min)
                     break;
 
                 dy = other.Y - particle.Y;

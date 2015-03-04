@@ -168,8 +168,8 @@ namespace Ragnarok.NicoNico.Live.Detail
                                                 int communityLevel)
         {
             var arenaInfo = GetArenaInfo(playerStatus);
-            var arenaAddrNum = NicoString.GetMessageServerNumber(
-                arenaInfo.Address);
+            /*var arenaAddrNum = NicoString.GetMessageServerNumber(
+                arenaInfo.Address);*/
 
             return new[] { arenaInfo };
         }
