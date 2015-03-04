@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using NUnit.Framework;
 
+#pragma warning disable 219
+
 namespace Ragnarok.Utility.Tests
 {
     internal class CacheObject : ICachable

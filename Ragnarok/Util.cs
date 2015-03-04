@@ -484,6 +484,25 @@ namespace Ragnarok
         }
 
         /// <summary>
+        /// 前後にある特定の文字列を削除します。
+        /// </summary>
+        public static string RemoveQuote(this string text, params char[] quotes)
+        {
+            if (string.IsNullOrEmpty(text))
+            {
+                return text;
+            }
+
+            if (!quotes.Any())
+            {
+                quotes = new char[] {'\'', '\"'};
+            }
+
+            var trimmedText = text.TrimStart(quotes);
+            return trimmedText.TrimEnd(quotes);
+        }
+
+        /// <summary>
         /// 指定のパスのファイルをバイト列として読み込みます。
         /// </summary>
         public static byte[] ReadFile(string filepath)

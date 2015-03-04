@@ -227,13 +227,13 @@ namespace Ragnarok.Shogi
         /// </summary>
         /// <remarks>
         /// フォーマットは
-        /// 34,55,67,...
-        /// のように筋段の組が','を区切りとして並んでいます。
+        /// 34 55 67,...
+        /// のように筋段の組が' 'を区切りとして並んでいます。
         /// </remarks>
         public override string ToString()
         {
             return string.Join(
-                ",",
+                " ",
                 this.implList.Select(_ => _.ToString()).ToArray());
         }
 
@@ -251,7 +251,7 @@ namespace Ragnarok.Shogi
             }
 
             var list = source.Split(
-                new char[] { ',' },
+                new char[] { ' ' },
                 StringSplitOptions.RemoveEmptyEntries);
             if (list == null || !list.Any())
             {

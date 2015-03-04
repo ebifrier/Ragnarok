@@ -25,11 +25,12 @@ namespace Ragnarok.Forms.Shogi.Xaml
         }
 
         /// <summary>
-        /// コンストラクタ
+        /// メッシュを作成するマス一覧を取得または設定します。
         /// </summary>
-        public SquareMeshExtension(SquareCollection squares)
+        public string SquaresText
         {
-            Squares = squares;
+            get;
+            set;
         }
 
         /// <summary>
@@ -60,6 +61,18 @@ namespace Ragnarok.Forms.Shogi.Xaml
         {
             if (Squares == null)
             {
+                if (SquaresText == null)
+                {
+                    throw new InvalidOperationException(
+                        "SquareText and Squares are null.");
+                }
+
+                var trimmedText = SquaresText.RemoveQuote();
+                Squares = SquareCollection.Parse(trimmedText);
+            }
+
+            if (Squares == null)
+            {
                 throw new InvalidOperationException(
                     "Squaresが設定されていません。");
             }
@@ -71,7 +84,7 @@ namespace Ragnarok.Forms.Shogi.Xaml
         /// 単純な四角形のジオメトリを作成します。
         /// </summary>
         public static Mesh CreateCellMesh(IEnumerable<Square> squares,
-                                                double widen = 0.0)
+                                          double widen = 0.0)
         {
             var points = new List<Point3d>();
             var texCoords = new List<Pointd>();

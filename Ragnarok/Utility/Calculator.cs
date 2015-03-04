@@ -296,7 +296,7 @@ namespace Ragnarok.Utility
         {
             var sDelim = Scanners.IsWhitespaces().Many_();
             var OPs = Terms.GetOperatorsInstance(
-                "+", "-", "**", "*", "/", "%", "(", ")", ",");
+                "+", "-", "**", "*", "/", "%", "(", ")", ",", "#");
 
             var lToken = OPs.Lexer | Lexers.LexDecimal() | Lexers.LexWord();
             var lexeme = Lexers.Lexeme(sDelim, lToken).FollowedBy(Parsers.Eof());
@@ -325,7 +325,7 @@ namespace Ragnarok.Utility
 
             var pLParen = OPs.GetParser("(");
             var pRParen = OPs.GetParser(")");
-            var pComma = OPs.GetParser(",");
+            var pComma = OPs.GetParser(new string[] { ",", "#" });
 
             var lazyExpr = new Grammar[1];
             var pLazyExpr = Parsers.Lazy<double>(() => lazyExpr[0]);

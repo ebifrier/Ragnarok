@@ -65,7 +65,7 @@ namespace Ragnarok.Xaml
         /// </summary>
         public override object ProvideValue(IServiceProvider service)
         {
-            return calculator.Run(Expression);
+            return calculator.Run(Expression.RemoveQuote());
         }
     }
 
@@ -127,7 +127,7 @@ namespace Ragnarok.Xaml
         /// </summary>
         public override object ProvideValue(IServiceProvider service)
         {
-            var value = calculator.Run(Expression);
+            var value = calculator.Run(Expression.RemoveQuote());
 
             switch (Mode)
             {                    
@@ -199,7 +199,7 @@ namespace Ragnarok.Xaml
         /// </summary>
         public override object ProvideValue(IServiceProvider service)
         {
-            var value = calculator.Run(Expression);
+            var value = calculator.Run(Expression.RemoveQuote());
 
             switch (Mode)
             {
