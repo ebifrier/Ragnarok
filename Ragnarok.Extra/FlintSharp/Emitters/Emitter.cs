@@ -86,6 +86,7 @@ namespace FlintSharp.Emitters
         private SortedCollection<Activity> m_activities = null;
         private ICounter m_counter = null;
 
+        private string m_basePath = string.Empty;
         private TimeSpan m_waitTime = TimeSpan.Zero;
         private double m_x = 0;
         private double m_y = 0;
@@ -134,6 +135,15 @@ namespace FlintSharp.Emitters
             m_initializers = new SortedCollection<Initializer>(this);
             m_activities = new SortedCollection<Activity>(this);
             m_counter = new ZeroCounter();
+        }
+
+        /// <summary>
+        /// Base path of the emitter.
+        /// </summary>
+        public string BasePath
+        {
+            get { return m_basePath; }
+            set { m_basePath = value; }
         }
 
         /// <summary>
