@@ -188,11 +188,17 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// KifMoveNodeからMoveNodeへ構造を変換します。
         /// </summary>
-        public MoveNode ConvertToMoveNode(Board board, out Exception error)
+        public MoveNode ConvertToMoveNode(Board board, KifMoveNode head,
+                                          out Exception error)
         {
-            var root = new MoveNode();
             var errors = new List<Exception>();
-
+            var root =  new MoveNode
+            {
+                MoveCount = head.MoveCount,
+                Duration = head.Duration,
+                Comment = head.Comment,
+            };
+            // これでrootの子要素に指し手ツリーが設定されます。
             ConvertToMoveNode(board, root, errors);
 
             error = (
@@ -205,6 +211,7 @@ namespace Ragnarok.Shogi
 
         /// <summary>
         /// KifMoveNodeからMoveNodeへ構造を変換します。
+        /// 結果は<paramref name="root"/>以下に設定されます。
         /// </summary>
         private void ConvertToMoveNode(Board board, MoveNode root,
                                        List<Exception> errors)

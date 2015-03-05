@@ -98,13 +98,11 @@ namespace Ragnarok.Shogi.Kif.Tests
             // 棋譜の読み込み
             var kifu = KifuReader.LoadFrom(text);
             Assert.NotNull(kifu);
+            Assert.Null(kifu.Error);
 
-            // 手数を取得
-            var countObj = GetMoveCount(text);
-            Assert.NotNull(countObj);
-
-            var count = countObj.Value + (kifu.Error != null ? -2 : -1);
-            Assert.LessOrEqual(count, kifu.MoveList.Count());
+            // 手数を確認
+            var count = 133;
+            Assert.AreEqual(count, kifu.MoveList.Count());
 
             // 入出力テストを行います。
             TestUtil.ReadWriteTest(kifu, KifuFormat.Kif, count);
@@ -158,6 +156,100 @@ namespace Ragnarok.Shogi.Kif.Tests
                 Assert.AreEqual(TimeSpan.Parse(durations[i]), node.Duration);
                 Assert.AreEqual(TimeSpan.Parse(totalDurations[i]), node.TotalDuration);
             }
+        }
+
+        /// <summary>
+        /// コメントが含まれる棋譜のテスト
+        /// </summary>
+        [Test()]
+        public void CommentTest()
+        {
+            var content =
+                "# ----  サンプル棋譜ファイル  ----\n" +
+                "手合割：平手\n" +
+                "手数----指手---------消費時間--\n" +
+                "*今王将戦は因縁の師弟対決となりました。\n" +
+                "*受けの気風の師匠に対して、弟子の平方は完全な攻め将棋。\n" +
+                "   1 ７六歩(77)   (00:00:01 / 00:00:01)\n" +
+                "*最初はオーソドックスに\n" +
+                "   2 ３四歩(33)   (00:00:01 / 00:00:01)\n" +
+                "   3 ２六歩(27)   (00:00:02 / 00:00:01)\n" +
+                "   4 ８四歩(83)   (00:00:03 / 00:00:01)\n" +
+                "*よくある進行になりました。\n" +
+                "   5 ２五歩(26)   (00:00:03 / 00:00:01)\n" +
+                "   6 ８五歩(84)   (00:00:04 / 00:00:01)\n" +
+                "   7 ２四歩(25)   (00:00:04 / 00:00:01)\n" +
+                "   8 同　歩(23)   (00:00:05 / 00:00:01)\n" +
+                "   9 同　飛(28)   (00:00:05 / 00:00:01)\n" +
+                "  10 ８六歩(85)   (00:00:05 / 00:00:01)\n" +
+                "  11 同　歩(87)   (00:00:05 / 00:00:01)\n" +
+                "  12 同　飛(82)   (00:00:06 / 00:00:01)\n" +
+                "*お互い金を上がらずにここまで来ました。しかもノータイム。\n" +
+                "*これは先手側不利と言われている展開ですが、果たしてどうなるでしょうか。\n" +
+                "  13 ３四飛(24)   (00:00:01 / 00:00:01)\n" +
+                "*先手は横歩を取りましたね。\n" +
+                "  14 ７六飛(86)   (00:00:01 / 00:00:01)\n" +
+                "*後手も横歩を取りましたが、これは大丈夫なのでしょうか？\n" +
+                "*嫌な変化が見ているような気もしますが。\n";
+
+            // 棋譜の読み込み
+            var kifu = KifuReader.LoadFrom(content);
+            Assert.NotNull(kifu);
+            Assert.AreEqual(14, kifu.MoveList.Count());
+
+            // コメント一覧
+            var comments = new string[15];
+            comments[0] =
+                "今王将戦は因縁の師弟対決となりました。\n" +
+                "受けの気風の師匠に対して、弟子の平方は完全な攻め将棋。";
+            comments[1] =
+                "最初はオーソドックスに";
+            comments[4] = 
+                "よくある進行になりました。";
+            comments[12] =
+                "お互い金を上がらずにここまで来ました。しかもノータイム。\n" +
+                "これは先手側不利と言われている展開ですが、果たしてどうなるでしょうか。";
+            comments[13] =
+                "先手は横歩を取りましたね。";
+            comments[14] =
+                "後手も横歩を取りましたが、これは大丈夫なのでしょうか？\n" +
+                "嫌な変化が見ているような気もしますが。";
+
+            for (var node = kifu.RootNode; node != null; node = node.NextNode)
+            {
+                Assert.AreEqual(comments[node.MoveCount], node.Comment);
+            }
+
+            // 入出力テストを行います。
+            TestUtil.ReadWriteTest(kifu, KifuFormat.Kif, 14);
+        }
+
+        /// <summary>
+        /// コメントが含まれる棋譜のテスト2
+        /// </summary>
+        [Test()]
+        public void CommentTest2()
+        {
+            var text = SampleKif.CommentKif;
+
+            // 棋譜の読み込み
+            var kifu = KifuReader.LoadFrom(text);
+            Assert.NotNull(kifu);
+            Assert.Null(kifu.Error);
+
+            // 手数の確認
+            var count = 134;
+            Assert.AreEqual(count, kifu.MoveList.Count());
+
+            // コメントの確認
+            var commentList = SampleKif.GetCommentList(SampleKif.CommentKif);
+            for (var node = kifu.RootNode; node != null; node = node.NextNode)
+            {
+                Assert.AreEqual(commentList[node.MoveCount], node.Comment);
+            }
+
+            // 入出力テストを行います。
+            TestUtil.ReadWriteTest(kifu, KifuFormat.Kif, count);
         }
 
         /// <summary>

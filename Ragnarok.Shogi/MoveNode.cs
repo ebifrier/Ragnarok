@@ -257,7 +257,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// ノード全体を比較します。
         /// </summary>
-        public bool NodeEquals(MoveNode other)
+        public bool NodeEquals(MoveNode other, bool compareComment)
         {
             if (ReferenceEquals(other, null))
             {
@@ -284,9 +284,14 @@ namespace Ragnarok.Shogi
                 return false;
             }
 
+            if (compareComment && Comment != other.Comment)
+            {
+                return false;
+            }
+
             for (var i = 0; i < NextNodeCount; ++i)
             {
-                if (!NextNodes[i].NodeEquals(other.NextNodes[i]))
+                if (!NextNodes[i].NodeEquals(other.NextNodes[i], compareComment))
                 {
                     return false;
                 }

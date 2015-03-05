@@ -89,7 +89,15 @@ namespace Ragnarok.Shogi.Kif
             // とりあえず指し手を書きます。
             if (node.Move != null)
             {
-                writer.WriteLine(MakeLineKif(node, hasVariation));
+                WriteMakeKif(writer, node, hasVariation);
+            }
+
+            // ついでにコメント行も出力します。
+            // 先頭ノードは指し手がありませんが
+            // コメントは存在することがあります。
+            if (!string.IsNullOrEmpty(node.Comment))
+            {
+                WriteCommentKif(writer, node);
             }
 
             // 次の指し手があればそれも出力します。
@@ -110,21 +118,37 @@ namespace Ragnarok.Shogi.Kif
         }
 
         /// <summary>
-        /// 指し手行、１行分を作成します。
+        /// 指し手行を出力します。
         /// </summary>
-        private string MakeLineKif(MoveNode node, bool hasVariation)
+        private void WriteMakeKif(TextWriter writer, MoveNode node, bool hasVariation)
         {
             // 半角文字相当の文字数で空白の数を計算します。
             var moveText = node.Move.ToString();
             var hanLen = moveText.HankakuLength();
 
-            return string.Format(@"{0,4} {1}{2} ({3:mm\:ss}/{4:hh\:mm\:ss}){5}",
+            writer.WriteLine(
+                @"{0,4} {1}{2} ({3:mm\:ss}/{4:hh\:mm\:ss}){5}",
                 node.MoveCount,
                 moveText,
                 new string(' ', Math.Max(0, 14 - hanLen)),
                 node.Duration,
                 node.TotalDuration,
                 (hasVariation ? "+" : ""));
+        }
+
+        /// <summary>
+        /// コメント行を出力します。
+        /// </summary>
+        private void WriteCommentKif(TextWriter writer, MoveNode node)
+        {
+            var commentList = node.Comment.Split(
+                new char[] { '\n' },
+                StringSplitOptions.RemoveEmptyEntries);
+
+            foreach (var comment in commentList)
+            {
+                writer.WriteLine("* {0}", comment);
+            }
         }
         #endregion
 

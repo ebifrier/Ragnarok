@@ -71,6 +71,7 @@ namespace Ragnarok.Shogi
                 throw new ArgumentNullException("root");
             }
 
+            // 先頭ノードの手はnullのため、次のノードから手を取得します。
             for (var node = root.NextNode; node != null; node = node.NextNode)
             {
                 yield return node.Move;

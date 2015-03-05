@@ -76,7 +76,7 @@ namespace Ragnarok.Shogi.Csa.Tests
         [Test()]
         public void Test()
         {
-            var pathList = TestUtil.LoadPathList(PathListFile);
+            /*var pathList = TestUtil.LoadPathList(PathListFile);
 
             //var path = @"E:/Dropbox/NicoNico/bin/kifuexpl/database/1600-1979/csa/16190816その他大橋本因無114.csa";
             foreach (var path in TestUtil.FileList("*.csa", pathList))
@@ -84,7 +84,7 @@ namespace Ragnarok.Shogi.Csa.Tests
                 Console.WriteLine(path);
 
                 TestCsaFile(path);
-            }
+            }*/
         }
     }
 }

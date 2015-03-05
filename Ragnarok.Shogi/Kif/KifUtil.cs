@@ -9,6 +9,39 @@ namespace Ragnarok.Shogi.Kif
     using File;
 
     /// <summary>
+    /// 棋譜コメントに関するデータを扱います。
+    /// </summary>
+    public sealed class KifCommentData
+    {
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public KifCommentData(string comment, bool isMoveComment)
+        {
+            Comment = comment;
+            IsMoveComment = isMoveComment;
+        }
+
+        /// <summary>
+        /// コメントを取得または設定します。
+        /// </summary>
+        public string Comment
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 棋譜ファイルではなく指し手に関わるコメントかどうかを取得または設定します。
+        /// </summary>
+        public bool IsMoveComment
+        {
+            get;
+            set;
+        }
+    }
+
+    /// <summary>
     /// kifやbod形式で扱う便利クラスです。
     /// </summary>
     public static class KifUtil
@@ -90,7 +123,7 @@ namespace Ragnarok.Shogi.Kif
         /// コメント行である場合はコメント内容（""も含みます）を
         /// そうでない場合はnullを返します。
         /// </returns>
-        public static string ParseCommentLine(string line)
+        public static KifCommentData ParseCommentLine(string line)
         {
             if (line == null)
             {
@@ -100,7 +133,7 @@ namespace Ragnarok.Shogi.Kif
             // 空行もコメント行として考える
             if (string.IsNullOrEmpty(line))
             {
-                return string.Empty;
+                return new KifCommentData(string.Empty, false);
             }
 
             if (line[0] != '#' && line[0] != '*')
@@ -109,7 +142,9 @@ namespace Ragnarok.Shogi.Kif
                 return null;
             }
 
-            return line.TrimStart(' ', '　', '\t', '*', '#');
+            return new KifCommentData(
+                line.TrimStart(' ', '　', '\t', '*', '#'),
+                line[0] == '*');
         }
 
         /// <summary>

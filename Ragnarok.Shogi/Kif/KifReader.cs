@@ -51,7 +51,8 @@ namespace Ragnarok.Shogi.Kif
             this.currentLine = this.reader.ReadLine();
             if (this.currentLine != null)
             {
-                this.currentLine = this.currentLine.Trim();
+                // 最後の空白文字や改行文字は削除します。
+                this.currentLine = this.currentLine.TrimEnd('\n', '\r');
             }
 
             this.lineNumber += 1;
@@ -78,18 +79,31 @@ namespace Ragnarok.Shogi.Kif
         /// コメント行は複数行に渡ることがあるため、
         /// コメント行がある間はずっとコメントを追加し続けます。
         /// </remarks>
-        private void ReadCommentLines(KifMoveNode node)
+        private void ReadCommentLines(KifMoveNode node, bool forceOneLine)
         {
+            var alreadyRead = false;
+
             while (this.currentLine != null)
             {
-                var comment = KifUtil.ParseCommentLine(this.currentLine);
-                if (comment == null)
+                var commentData = KifUtil.ParseCommentLine(this.currentLine);
+                if (commentData == null)
                 {
+                    if (forceOneLine && !alreadyRead)
+                    {
+                        ReadNextLine();
+                    }
+
                     break;
                 }
 
-                node.AddComment(comment);
+                // 必要なコメントのみ棋譜から取り出します。
+                if (commentData.IsMoveComment)
+                {
+                    node.AddComment(commentData.Comment);
+                }
+
                 ReadNextLine();
+                alreadyRead = true;
             }
         }
         #endregion
@@ -123,7 +137,7 @@ namespace Ragnarok.Shogi.Kif
         /// ヘッダー行をパースします。
         /// </summary>
         private bool ParseHeaderLine(string line, BodParser parser,
-                                     KifuHeader header = null)
+                                     KifuHeader header = null, KifMoveNode head = null)
         {
             if (line == null)
             {
@@ -131,11 +145,15 @@ namespace Ragnarok.Shogi.Kif
                 return false;
             }
 
-            var comment = KifUtil.ParseCommentLine(line);
-            if (comment != null)
+            var commentData = KifUtil.ParseCommentLine(line);
+            if (commentData != null)
             {
                 // コメントはパース結果に含めます。
-                // TODO
+                if (head != null && commentData.IsMoveComment)
+                {
+                    head.AddComment(commentData.Comment);
+                }
+
                 return true;
             }
 
@@ -189,12 +207,12 @@ namespace Ragnarok.Shogi.Kif
         /// <remarks>
         /// 開始局面の設定も行います。
         /// </remarks>
-        private KifuHeader ParseHeader()
+        private KifuHeader ParseHeader(KifMoveNode head)
         {
             var header = new KifuHeader();
             var parser = new BodParser();
 
-            while (ParseHeaderLine(this.currentLine, parser, header))
+            while (ParseHeaderLine(this.currentLine, parser, header, head))
             {
                 ReadNextLine();
             }
@@ -214,55 +232,24 @@ namespace Ragnarok.Shogi.Kif
         /// <summary>
         /// ki2形式のファイルを読み込みます。
         /// </summary>
-        private KifuObject LoadKi2(KifuHeader header, Board startBoard)
+        private KifuObject LoadKi2(KifuHeader header, Board startBoard, KifMoveNode head)
         {
-            var knodeList = ParseMoveLinesKi2();
-            var board = startBoard.Clone();
-            var root = new MoveNode();
-            var prev = root;
-
-            Exception error = null;
-            knodeList.ForEachWithIndex((knode, i) =>
+            var knodeList = ParseMoveLinesKi2().ToList();
+            var last = head;
+            foreach (var knode in knodeList)
             {
-                var node = knode.ConvertToMoveNode(board, out error);
-                if (node == null)
-                {
-                    error = new FileFormatException(
-                        string.Format(
-                            "{0}手目の'{1}'を正しく処理できませんでした。",
-                            i + 1, knode.Move));
-                }
-
-                prev.AddNext(node);
-                prev = node;
-            });
-
-            return new KifuObject(header, startBoard, root, error);
-
-#if false
-            var moveList = ParseMoveLinesKi2().ToList();
-            var bmoveList = board.ConvertMove(moveList);
-            
-            Exception error = null;
-            if (moveList.Count() != bmoveList.Count())
-            {
-                if (moveList.Count() - 1 != bmoveList.Count())
-                {
-                    error = new FileFormatException(
-                        string.Format(
-                            "{0}手目の'{1}'を正しく処理できませんでした。",
-                            bmoveList.Count() + 1,
-                            moveList[bmoveList.Count()]));
-                }
-                else
-                {
-                    error = new FileFormatException(
-                        "最終手が反則で終わっています。");
-                }
+                last.Next = knode;
+                last = knode;
             }
 
-            return new KifuObject(header, board, bmoveList, error);
-#endif
+            // KifNodeMoveのツリーをNodeMoveのツリーに直します。
+            // 変換時にエラーが出た場合は、それまでの指し手を変換します。
+            var board = startBoard.Clone();
+            Exception error = null;
+            var root = head.Next.ConvertToMoveNode(board, head, out error);
+            root.Regulalize();
+
+            return new KifuObject(header, startBoard, root, error);
         }
 
         /// <summary>
@@ -329,13 +316,13 @@ namespace Ragnarok.Shogi.Kif
         /// <summary>
         /// kif形式の指し手を読み込みます。
         /// </summary>
-        private KifuObject LoadKif(KifuHeader header, Board board)
+        private KifuObject LoadKif(KifuHeader header, Board board, KifMoveNode head_)
         {
             var head = ParseNodeKif(board, false);
-            Exception error;
 
             // KifMoveNodeからMoveNodeへ変換します。
-            var root = head.ConvertToMoveNode(board, out error);
+            Exception error;
+            var root = head.ConvertToMoveNode(board, head_, out error);
             root.Regulalize();
 
             return new KifuObject(header, board, root, error);
@@ -455,7 +442,7 @@ namespace Ragnarok.Shogi.Kif
                     }
 
                     // 複数のコメント行を読み込みます。
-                    ReadCommentLines(head);
+                    ReadCommentLines(head, true);
                 }
             }
 
@@ -470,8 +457,8 @@ namespace Ragnarok.Shogi.Kif
 
                 ReadNextLine();
 
-                // 複数のコメント行を読み込みます。
-                ReadCommentLines(node);
+                // 指し手の後に続く複数のコメント行を読み込みます。
+                ReadCommentLines(node, false);
 
                 // 指し手はリンクリストで保存します。
                 last.Next = node;
@@ -497,11 +484,6 @@ namespace Ragnarok.Shogi.Kif
 
             // 指し手'３六歩(37)'のような形式でパースします。
             var moveText = m.Groups[2].Value;
-            /*if (KifUtil.SpecialMoveRegex.IsMatch(moveText))
-            {
-                return null;
-            }*/
-
             var move = ShogiParser.ParseMove(moveText, false);
             if (move == null || !move.Validate())
             {
@@ -615,7 +597,8 @@ namespace Ragnarok.Shogi.Kif
 
             // ヘッダーや局面の読み取り
             ReadNextLine();
-            var header = ParseHeader();
+            var head = new KifMoveNode();
+            var header = ParseHeader(head);
             var board = this.startBoard;
 
             // 指し手の読み取りに入ります。
@@ -627,12 +610,12 @@ namespace Ragnarok.Shogi.Kif
             else if (this.isKif)
             {
                 // kif形式
-                return LoadKif(header, board);
+                return LoadKif(header, board, head);
             }
             else
             {
                 // ki2形式
-                return LoadKi2(header, board);
+                return LoadKi2(header, board, head);
             }
         }
     }

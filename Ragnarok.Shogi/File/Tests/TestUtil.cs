@@ -116,7 +116,7 @@ namespace Ragnarok.Shogi.File.Tests
             kifu1.MoveList.ForEach(_ => board1.DoMove(_));
 
             Assert.True(Board.BoardEquals(kifu0.StartBoard, kifu1.StartBoard));
-            Assert.True(kifu0.RootNode.NodeEquals(kifu1.RootNode));
+            Assert.True(kifu0.RootNode.NodeEquals(kifu1.RootNode, true));
             Assert.True(Board.BoardEquals(board0, board1));
 
             // ヘッダ要素を比較します。
