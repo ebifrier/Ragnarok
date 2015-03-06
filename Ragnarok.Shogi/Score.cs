@@ -159,7 +159,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        private Score(BWType turn, string text, int value)
+        public Score(BWType turn, string text = "", int value = 0)
         {
             ScoreType = ScoreType.Value;
             Turn = turn;
@@ -170,7 +170,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        private Score(BWType turn, string text, int mate, bool isMateWin)
+        public Score(BWType turn, string text, int mate, bool isMateWin)
         {
             ScoreType = ScoreType.Mate;
             Turn = turn;
