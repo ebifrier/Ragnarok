@@ -174,8 +174,8 @@ namespace Ragnarok.Forms.Bindings
                 // 値の変更後、プロパティ値変更イベントを送ります。
                 SetSourcePropertyValue(newValue);
 
-                FirePropertyChanged(newValue, this.oldValue);
                 this.oldValue = newValue;
+                FirePropertyChanged(newValue, this.oldValue);
             }
         }
 
@@ -197,7 +197,9 @@ namespace Ragnarok.Forms.Bindings
                 if (result == null) return;
 
                 // 新しい値の取得
-                var newValue = GetSourcePropertyValue();
+                var sourceValue = GetSourcePropertyValue();
+                var newValue = sourceValue;
+
                 if (Binding.Converter != null)
                 {
                     newValue = Binding.Converter.Convert(
@@ -225,8 +227,9 @@ namespace Ragnarok.Forms.Bindings
                 // 値の変更後、プロパティ値変更イベントを送ります。
                 SetTargetPropertyValue(newValue);
 
-                FirePropertyChanged(newValue, this.oldValue);
-                this.oldValue = newValue;
+                // oldValueにはsource側のオリジナルデータを設定します。
+                this.oldValue = sourceValue;
+                FirePropertyChanged(newValue, this.oldValue);                
             }
         }
         #endregion

@@ -89,6 +89,7 @@
     </Compile>
     <Compile Include="Converter\EnumToBooleanConverter.cs" />
     <Compile Include="Converter\IValueConverter.cs" />
+    <Compile Include="Converter\NegValueConverter.cs" />
     <Compile Include="Converter\ValueToDecimalConverter.cs" />
     <Compile Include="Converter\ValueToIntConverter.cs" />
     <Compile Include="DialogUtil.cs" />
