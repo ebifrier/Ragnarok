@@ -48,6 +48,7 @@
             // 
             // yesButton
             // 
+            this.yesButton.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.yesButton.Location = new System.Drawing.Point(21, 10);
             this.yesButton.Margin = new System.Windows.Forms.Padding(2);
             this.yesButton.Name = "yesButton";
@@ -55,7 +56,6 @@
             this.yesButton.TabIndex = 1;
             this.yesButton.Text = "はい";
             this.yesButton.UseVisualStyleBackColor = true;
-            this.yesButton.Click += new System.EventHandler(this.yesButton_Click);
             // 
             // panel1
             // 
@@ -70,6 +70,7 @@
             // 
             // cancelButton
             // 
+            this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.cancelButton.Location = new System.Drawing.Point(101, 10);
             this.cancelButton.Margin = new System.Windows.Forms.Padding(2);
             this.cancelButton.Name = "cancelButton";
@@ -77,12 +78,13 @@
             this.cancelButton.TabIndex = 2;
             this.cancelButton.Text = "いいえ";
             this.cancelButton.UseVisualStyleBackColor = true;
-            this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
             // 
             // PromoteDialog
             // 
+            this.AcceptButton = this.yesButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.CancelButton = this.cancelButton;
             this.ClientSize = new System.Drawing.Size(184, 114);
             this.ControlBox = false;
             this.Controls.Add(this.panel1);
@@ -90,7 +92,6 @@
             this.Name = "PromoteDialog";
             this.ShowInTaskbar = false;
             this.Text = "成り／成らず";
-            this.Load += new System.EventHandler(this.PromoteDialog_Load);
             this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();

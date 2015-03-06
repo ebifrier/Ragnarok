@@ -68,6 +68,16 @@ namespace Ragnarok.Forms.Shogi.View
             this.infoControl.Info = this.targetElement.ImageSet;
         }
 
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            if (e.CloseReason == CloseReason.UserClosing)
+            {
+                cancelButton_Click(this, e);
+            }
+
+            base.OnFormClosing(e);
+        }
+
         /// <summary>
         /// OKボタンが押された場合
         /// </summary>

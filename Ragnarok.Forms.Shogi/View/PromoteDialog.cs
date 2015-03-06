@@ -20,20 +20,5 @@ namespace Ragnarok.Forms.Shogi.View
         {
             InitializeComponent();
         }
-
-        private void PromoteDialog_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void yesButton_Click(object sender, EventArgs e)
-        {
-            DialogResult = DialogResult.OK;
-        }
-
-        private void cancelButton_Click(object sender, EventArgs e)
-        {
-            DialogResult = DialogResult.Cancel;
-        }
     }
 }
