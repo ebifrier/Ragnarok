@@ -147,7 +147,7 @@ namespace Ragnarok.Shogi.Kif
 
             foreach (var comment in commentList)
             {
-                writer.WriteLine("* {0}", comment);
+                writer.WriteLine("*{0}", comment);
             }
         }
         #endregion
