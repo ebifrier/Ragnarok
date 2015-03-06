@@ -10,6 +10,7 @@ using Ragnarok;
 using Ragnarok.Extra.Effect;
 using Ragnarok.Forms.Input;
 using Ragnarok.ObjectModel;
+using Ragnarok.Shogi;
 using Ragnarok.Utility;
 
 namespace Ragnarok.Forms.Shogi.View
@@ -77,6 +78,7 @@ namespace Ragnarok.Forms.Shogi.View
         private readonly GLEvaluationElementManager manager =
             new GLEvaluationElementManager();
         private ContextMenuStrip contextMenu;
+        private Score currentScore;
         private float valueHeight;
         private float valueTop;
 
@@ -91,8 +93,8 @@ namespace Ragnarok.Forms.Shogi.View
 
             // 評価値モードはデフォルトでは何でも許可します。
             EvaluationMode = EvaluationMode.Programmable;
-            IsEnableUserValue = true;
-            IsEnableServerValue = true;
+            IsEnableUserScore = true;
+            IsEnableServerScore = true;
             IsVisibleValue = true;
             IsValueFullWidth = false;
             MaxValue = 9999;
@@ -117,11 +119,11 @@ namespace Ragnarok.Forms.Shogi.View
                 "EvaluationMode",
                 (_, __) => EvaluationModeUpdated());
 
-            // CurrentValueの場合はDependOnProperty属性で指定している
+            // CurrentScoreの場合はDependOnProperty属性で指定している
             // プロパティが変わった時に、これが呼ばれます。
             this.AddPropertyChangedHandler(
-                "CurrentValue",
-                (_, __) => UpdateCurrentValue());
+                "CurrentScore",
+                (_, __) => UpdateCurrentScore());
         }
 
         /// <summary>
@@ -202,10 +204,10 @@ namespace Ragnarok.Forms.Shogi.View
         /// <summary>
         /// プログラムから設定可能な評価値を取得または設定します。
         /// </summary>
-        public int ProgrammableValue
+        public Score ProgrammableScore
         {
-            get { return GetValue<int>("ProgrammableValue"); }
-            set { SetValue("ProgrammableValue", value); }
+            get { return GetValue<Score>("ProgrammableScore"); }
+            set { SetValue("ProgrammableScore", value); }
         }
 
         /// <summary>
@@ -214,19 +216,19 @@ namespace Ragnarok.Forms.Shogi.View
         /// <remarks>
         /// 主に設定ダイアログで使われます。
         /// </remarks>
-        public bool IsEnableUserValue
+        public bool IsEnableUserScore
         {
-            get { return GetValue<bool>("IsEnableUserValue"); }
-            set { SetValue("IsEnableUserValue", value); }
+            get { return GetValue<bool>("IsEnableUserScore"); }
+            set { SetValue("IsEnableUserScore", value); }
         }
 
         /// <summary>
         /// ユーザーからの手入力値を取得または設定します。
         /// </summary>
-        public int UserValue
+        public Score UserScore
         {
-            get { return GetValue<int>("UserValue"); }
-            set { SetValue("UserValue", value); }
+            get { return GetValue<Score>("UserScore"); }
+            set { SetValue("UserScore", value); }
         }
 
         /// <summary>
@@ -235,33 +237,42 @@ namespace Ragnarok.Forms.Shogi.View
         /// <remarks>
         /// 主に設定ダイアログで使われます。
         /// </remarks>
-        public bool IsEnableServerValue
+        public bool IsEnableServerScore
         {
-            get { return GetValue<bool>("IsEnableServerValue"); }
+            get { return GetValue<bool>("IsEnableServerScore"); }
             set { SetValue("isEnableServerValue", value); }
         }
 
         /// <summary>
         /// 評価値サーバーの評価値を取得または設定します。
         /// </summary>
-        public int ServerValue
+        public Score ServerScore
         {
-            get { return GetValue<int>("ServerValue"); }
-            set { SetValue("ServerValue", value); }
+            get { return GetValue<Score>("ServerScore"); }
+            set { SetValue("ServerScore", value); }
         }
 
         /// <summary>
         /// 実際に使われる評価値を取得します。
         /// </summary>
+        /// <remarks>
+        /// CurrentScoreのPropertyChangedが呼ばれるのは
+        /// 関連プロパティが変更されたときのみです。
+        /// 
+        /// CurrentScoreへの直接的な代入では
+        /// CurrentScoreのPropertyChangedが呼ばれないようにします。
+        /// そうしないと、PropertyChangedでCurrentScoreを再設定
+        /// することによる無限ループが発生します。
+        /// </remarks>
         [DependOnProperty("MaxValue")]
-        [DependOnProperty("ProgrammableValue")]
-        [DependOnProperty("UserValue")]
-        [DependOnProperty("ServerValue")]
+        [DependOnProperty("ProgrammableScore")]
+        [DependOnProperty("UserScore")]
+        [DependOnProperty("ServerScore")]
         [DependOnProperty("EvaluationMode")]
-        public int CurrentValue
+        public Score CurrentScore
         {
-            get { return GetValue<int>("CurrentValue"); }
-            private set { SetValue("CurrentValue", value); }
+            get { return this.currentScore; }
+            private set { this.currentScore = value; }
         }
 
         /// <summary>
@@ -320,6 +331,9 @@ namespace Ragnarok.Forms.Shogi.View
             this.manager.AddInternalType(name, internalType);
         }
 
+        /// <summary>
+        /// 表示セットが更新されたときに呼ばれます。
+        /// </summary>
         private void ImageSetUpdated()
         {
             var prev = this.manager.InternalObj;
@@ -346,7 +360,7 @@ namespace Ragnarok.Forms.Shogi.View
         private void EvaluationModeUpdated()
         {
             // 設定された評価値モードが正しいかどうかを確認します。
-            if (EvaluationMode == EvaluationMode.User && !IsEnableUserValue)
+            if (EvaluationMode == EvaluationMode.User && !IsEnableUserScore)
             {
                 EvaluationMode = EvaluationMode.Programmable;
 
@@ -354,7 +368,7 @@ namespace Ragnarok.Forms.Shogi.View
                     "EvaluationMode=Userは許可されていない値です。");
             }
 
-            if (EvaluationMode == EvaluationMode.Server && !IsEnableServerValue)
+            if (EvaluationMode == EvaluationMode.Server && !IsEnableServerScore)
             {
                 EvaluationMode = EvaluationMode.Programmable;
 
@@ -366,24 +380,28 @@ namespace Ragnarok.Forms.Shogi.View
         /// <summary>
         /// 現在の評価値を評価値モードに合わせた値に更新します。
         /// </summary>
-        private void UpdateCurrentValue()
+        private void UpdateCurrentScore()
         {
-            var value = 0;
+            Score score = null;
 
             switch (EvaluationMode)
             {
                 case EvaluationMode.Programmable:
-                    value = ProgrammableValue;
+                    score = ProgrammableScore;
                     break;
                 case EvaluationMode.User:
-                    value = UserValue;
+                    score = UserScore;
                     break;
                 case EvaluationMode.Server:
-                    value = ServerValue;
+                    score = ServerScore;
+                    break;
+                default:
+                    
                     break;
             }
 
-            CurrentValue = MathEx.Between(-MaxValue, MaxValue, value);
+            score = score ?? new Score();
+            CurrentScore = score; // MathEx.Between(-MaxValue, MaxValue, value);
         }
         
         /// <summary>
@@ -397,61 +415,31 @@ namespace Ragnarok.Forms.Shogi.View
             // 評価値の更新を行います。
             if (this.manager.InternalObj != null)
             {
-                this.manager.InternalObj.CurrentValue = CurrentValue;
+                this.manager.InternalObj.CurrentScore = CurrentScore;
             }
 
             // 評価値を表示する場合は、数字の描画を行います。
             if (IsVisible && IsVisibleValue)
             {
-                AddRenderValue(renderBuffer, CurrentValue);
+                AddRenderValue(renderBuffer, CurrentScore);
             }
         }
-
-        /*/// <summary>
-        /// 評価値画像を描画リストに加えます。
-        /// </summary>
-        private void AddRenderImage(GL.RenderBuffer renderBuffer)
-        {
-            var gl = OpenGL;
-
-            var imageSet = ImageSet;
-            if (imageSet == null)
-            {
-                // 評価値画像のセットがない場合は、何も表示しません。
-                return;
-            }
-
-            var imagePath = imageSet.GetSelectedImagePath(CurrentValue);
-            if (string.IsNullOrEmpty(imagePath))
-            {
-                // 評価値画像がない場合も、何もしません。
-                return;
-            }
-
-            // 描画領域はこのクラスの外側で指定します。
-            var bounds = new RectangleF(-0.5f, -this.imageHeight / 2, 1.0f, this.imageHeight);
-
-            // 描画領域を設定します。
-            var texture = GL.TextureCache.GetTexture(gl, new Uri(imagePath));
-            if (texture != null && texture.IsAvailable)
-            {
-                renderBuffer.AddRender(
-                    texture, BlendType.Diffuse, bounds, Transform, 0.0);
-            }
-        }*/
 
         /// <summary>
         /// 評価値を数字として描画リストに加えます。
         /// </summary>
-        private void AddRenderValue(GLUtil.RenderBuffer renderBuffer, int value)
+        private void AddRenderValue(GLUtil.RenderBuffer renderBuffer, Score score)
         {
-            var text = (
-                IsValueFullWidth ?
-                IntConverter.Convert(NumberType.Big, value) :
-                value.ToString());
             var textTexture = GLUtil.TextureCache.GetTextTexture(
-                text, ValueFont);
+                score.Value.ToString(),
+                ValueFont);
             var texture = textTexture.Texture;
+
+            var textTexture2 = GLUtil.TextureCache.GetTextTexture(
+                score.Turn == BWType.Black ? "先手" :
+                score.Turn == BWType.White ? "後手" : "",
+                ValueFont);
+            var texture2 = textTexture2.Texture;
 
             if (texture != null && texture.IsAvailable)
             {
@@ -480,6 +468,13 @@ namespace Ragnarok.Forms.Shogi.View
                     -0.5f, this.valueTop, 1.0f, this.valueHeight);
                 renderBuffer.AddRender(
                     BlendType.Diffuse, Color.FromArgb(128, Color.Black),
+                    bounds, Transform, 1.0);
+
+                // 先手後手の描画
+                bounds = new RectangleF(
+                    -0.5f + Margin, this.valueTop, eh * texture2.OriginalWidth / texture2.OriginalHeight, eh);
+                renderBuffer.AddRender(
+                    texture2, BlendType.Diffuse,
                     bounds, Transform, 1.0);
 
                 // 評価値の描画

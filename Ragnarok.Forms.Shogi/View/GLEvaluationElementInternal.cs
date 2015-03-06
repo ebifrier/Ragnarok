@@ -8,6 +8,7 @@ using OpenTK;
 using Ragnarok;
 using Ragnarok.Extra.Effect;
 using Ragnarok.ObjectModel;
+using Ragnarok.Shogi;
 using Ragnarok.Utility;
 
 namespace Ragnarok.Forms.Shogi.View
@@ -31,10 +32,10 @@ namespace Ragnarok.Forms.Shogi.View
         /// <summary>
         /// 評価値を取得します。
         /// </summary>
-        public int CurrentValue
+        public Score CurrentScore
         {
-            get { return GetValue<int>("CurrentValue"); }
-            internal set { SetValue("CurrentValue", value); }
+            get { return GetValue<Score>("CurrentScore"); }
+            internal set { SetValue("CurrentScore", value); }
         }
 
         /// <summary>
@@ -68,7 +69,8 @@ namespace Ragnarok.Forms.Shogi.View
                     return;
                 }
 
-                var imagePath = imageSet.GetSelectedImagePath(CurrentValue);
+                var value = CurrentScore.Value;
+                var imagePath = imageSet.GetSelectedImagePath(value);
                 if (string.IsNullOrEmpty(imagePath))
                 {
                     // 評価値画像がない場合も、何もしません。

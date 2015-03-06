@@ -85,6 +85,7 @@
     <Compile Include="Kif\Tests\SampleKif.cs" />
     <Compile Include="Kif\Tests\SampleKif_Variation.cs" />
     <Compile Include="Kif\Tests\SampleKif_Comment.cs" />
+    <Compile Include="Score.cs" />
     <Compile Include="SquareCollection.cs" />
     <Compile Include="SquareConverter.cs" />
     <Compile Include="Csa\CsaBoard.cs" />
@@ -137,6 +138,7 @@
     <Compile Include="Tests\BoardTest.cs" />
     <Compile Include="Tests\ConvertMoveTest.cs" />
     <Compile Include="Tests\MoveTest.cs" />
+    <Compile Include="Tests\ScoreTest.cs" />
     <Compile Include="Tests\ShogiParserTest.cs" />
     <Compile Include="KifuWriter.cs" />
     <Compile Include="Tests\MoveStatisticsTest.cs" />

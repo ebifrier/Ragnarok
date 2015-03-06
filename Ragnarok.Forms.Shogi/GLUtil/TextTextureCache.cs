@@ -131,7 +131,7 @@ namespace Ragnarok.Forms.Shogi.GLUtil
                     "OpenGLコンテキストが正しく設定れていません＞＜");
             }
 
-            if (string.IsNullOrEmpty(text))
+            if (text == null)
             {
                 throw new ArgumentNullException("text");
             }
