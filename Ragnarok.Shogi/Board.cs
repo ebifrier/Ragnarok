@@ -892,6 +892,13 @@ namespace Ragnarok.Shogi
                 return false;
             }
 
+            // 打ち歩詰のチェックを行います。
+            if (move.DropPieceType == PieceType.Hu &&
+                IsDropPawnMate(move.BWType, move.DstSquare))
+            {
+                return false;
+            }
+
             if (!EnumEx.HasFlag(flags, MoveFlags.CheckOnly))
             {
                 // 駒を盤面に置き、持ち駒から駒を減らします。
@@ -927,6 +934,31 @@ namespace Ragnarok.Shogi
 
                 return false;
             }
+        }
+
+        /// <summary>
+        /// 打ち歩詰のチェックを行います。
+        /// </summary>
+        private bool IsDropPawnMate(BWType bwType, Square square)
+        {
+            var newPiece = new BoardPiece(
+                PieceType.Hu, false, bwType);
+            var oldPiece = this[square];
+
+            // 打ち歩詰の判定には、実際に歩を打ってみるのが簡単なため、
+            // 必要なプロパティのみ更新し、詰まされているか調べます。
+            this[square] = newPiece;
+            DecCapturedPieceCount(PieceType.Hu, bwType);
+            Turn = Turn.Flip();
+
+            // 打ち歩詰かどうか確認します。
+            var mated = IsCheckMated();
+
+            this[square] = oldPiece;
+            IncCapturedPieceCount(PieceType.Hu, bwType);
+            Turn = Turn.Flip();
+
+            return mated;
         }
 
         /// <summary>
