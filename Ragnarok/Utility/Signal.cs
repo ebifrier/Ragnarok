@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 
-#if MONO
+#if MONO && USE_SIGNAL
 using Mono.Unix;
 using Mono.Unix.Native;
 #endif
@@ -58,7 +58,7 @@ namespace Ragnarok.Utility
             }
         }
 
-#if MONO
+#if MONO && USE_SIGNAL
         private static Thread signalThread;
 
         /// <summary>

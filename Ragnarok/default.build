@@ -13,8 +13,8 @@
   <target name="clean">
     <delete failonerror="false">
       <fileset>
-	<include name="${output.dir}/*.dll" />
-	<include name="${output.dir}/${project.name}.dll*" />
+        <include name="${output.dir}/*.dll" />
+        <include name="${output.dir}/${project.name}.dll*" />
       </fileset>
     </delete>
   </target>
