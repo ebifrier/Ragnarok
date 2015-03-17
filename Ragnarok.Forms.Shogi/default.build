@@ -57,7 +57,6 @@
 	<include name="${output.dir}/Ragnarok.dll" />
 	<include name="${output.dir}/Ragnarok.Extra.dll" />
 	<include name="${output.dir}/Ragnarok.Forms.dll" />
-	<include name="${output.dir}/Ragnarok.Forms.Shogi.dll" />
 	<include name="${output.dir}/Ragnarok.Shogi.dll" />
       </references>
     </csc>
