@@ -32,11 +32,11 @@
 	<include name="${lib}/*.dll" />
       </fileset>
     </copy>
-    <resgen usesourcepath="true">
+    <!--<resgen usesourcepath="true">
       <resources>
 	<include name="Properties/Resources.resx" />
       </resources>
-    </resgen>
+    </resgen>-->
     <csc target="library" output="${output}" debug="${debug}"
 	 define="${define}" optimize="${optimize}" warninglevel="4"
 	 unsafe="true"> <!-- keyfile="${project.name}.snk">-->
@@ -45,6 +45,7 @@
       </sources>
       <resources dynamicprefix="true">
 	<include name="Properties/Resources.resx" />
+	<include name="Resources/Image/*.png" />
       </resources>
       <references>
 	<include name="System.Drawing.dll" />
@@ -56,6 +57,7 @@
 	<include name="${output.dir}/Ragnarok.dll" />
 	<include name="${output.dir}/Ragnarok.Extra.dll" />
 	<include name="${output.dir}/Ragnarok.Forms.dll" />
+	<include name="${output.dir}/Ragnarok.Forms.Shogi.dll" />
 	<include name="${output.dir}/Ragnarok.Shogi.dll" />
       </references>
     </csc>

@@ -40,6 +40,7 @@
       </sources>
       <references>
 	<include name="System.Runtime.Serialization.dll" />
+	<include name="System.Xaml.dll" />
 	<include name="${lib}/protobuf-net.dll" />
 	<include name="${output.dir}/Ragnarok.dll" />
       </references>
