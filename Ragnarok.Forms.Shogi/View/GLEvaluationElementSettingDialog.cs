@@ -79,14 +79,6 @@ namespace Ragnarok.Forms.Shogi.View
         }
 
         /// <summary>
-        /// OKボタンが押された場合
-        /// </summary>
-        private void okButton_Click(object sender, EventArgs e)
-        {
-            DialogResult = DialogResult.OK;
-        }
-
-        /// <summary>
         /// キャンセルボタンが押された場合
         /// </summary>
         private void cancelButton_Click(object sender, EventArgs e)
