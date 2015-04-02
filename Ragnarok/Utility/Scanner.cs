@@ -178,9 +178,11 @@ namespace Ragnarok.Utility
         }
 
         /// <summary>
-        /// 文字列を解析します。
+        /// 次の文字列を先読みし、解析したものを返します。
         /// </summary>
         /// <remarks>
+        /// ここで先読みされた文字列が、次のParseTextでも使われます。
+        /// 
         /// 先頭に"がある場合は、次の"までをまとめて取得します。
         /// </remarks>
         public string PeekText()
@@ -221,9 +223,12 @@ namespace Ragnarok.Utility
         }
 
         /// <summary>
-        /// 文字列を解析します。
+        /// 文字列を読み込み、その読み込んだ文字列を取得します。
         /// </summary>
         /// <remarks>
+        /// 前にPeekTextした場合は、そこで先読みした文字列を取得します。
+        /// そうでない場合は、新規に文字列の解析を行います。
+        /// 
         /// 先頭に"がある場合は、次の"までをまとめて取得します。
         /// </remarks>
         public string ParseText()
