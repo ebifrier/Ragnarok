@@ -165,6 +165,9 @@ namespace Ragnarok.Shogi
             Turn = turn;
             Text = text;
             Value = value;
+            Name = (
+                turn == BWType.Black ? "先手" :
+                turn == BWType.White ? "後手" : "");
         }
 
         /// <summary>
@@ -178,6 +181,9 @@ namespace Ragnarok.Shogi
             Mate = mate;
             IsMateWin = isMateWin;
             Value = (isMateWin ? MateScore : -MateScore);
+            Name = (
+                turn == BWType.Black ? "先手" :
+                turn == BWType.White ? "後手" : "");
         }
 
         /// <summary>
@@ -243,6 +249,15 @@ namespace Ragnarok.Shogi
         {
             get;
             private set;
+        }
+
+        /// <summary>
+        /// この評価値の表示名を取得または設定します。
+        /// </summary>
+        public string Name
+        {
+            get;
+            set;
         }
 
         /// <summary>

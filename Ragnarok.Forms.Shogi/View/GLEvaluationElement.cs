@@ -431,14 +431,11 @@ namespace Ragnarok.Forms.Shogi.View
         private void AddRenderValue(GLUtil.RenderBuffer renderBuffer, Score score)
         {
             var textTexture = GLUtil.TextureCache.GetTextTexture(
-                score.Value.ToString(),
-                ValueFont);
+                score.Value.ToString(), ValueFont);
             var texture = textTexture.Texture;
 
             var textTexture2 = GLUtil.TextureCache.GetTextTexture(
-                score.Turn == BWType.Black ? "先手" :
-                score.Turn == BWType.White ? "後手" : "",
-                ValueFont);
+                score.Name ?? string.Empty, ValueFont);
             var texture2 = textTexture2.Texture;
 
             if (texture != null && texture.IsAvailable)
