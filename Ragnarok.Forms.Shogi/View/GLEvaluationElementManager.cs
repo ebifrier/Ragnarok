@@ -17,7 +17,8 @@ namespace Ragnarok.Forms.Shogi.View
             new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
         private List<GLEvaluationElementInternal> internalObjList =
             new List<GLEvaluationElementInternal>();
-        private ImageSetInfo imageSet;
+        private List<ImageSetInfo> imageSetList =
+            new List<ImageSetInfo>();
 
         /// <summary>
         /// 選択されている内部オブジェクトを取得します。
@@ -26,6 +27,88 @@ namespace Ragnarok.Forms.Shogi.View
         {
             get { return GetValue<GLEvaluationElementInternal>("InternalObj"); }
             private set { SetValue("InternalObj", value); }
+        }
+
+        /// <summary>
+        /// ImageSetListを取得または設定します。
+        /// </summary>
+        public List<ImageSetInfo> ImageSetList
+        {
+            get
+            {
+                return this.imageSetList;
+            }
+            set
+            {
+                using (LazyLock())
+                {
+                    this.internalObjList = value
+                        .Select(_ => CreateInternal(_))
+                        .Where(_ => _ != null)
+                        .ToList();
+                    this.imageSetList = value;
+
+                    // デフォルト値に設定しておきます。
+                    InternalObj = this.internalObjList.FirstOrDefault();
+                }
+            }
+        }
+
+        /// <summary>
+        /// 表示する評価値画像のセットを取得または設定します。
+        /// </summary>
+        [DependOnProperty("InternalObj")]
+        public ImageSetInfo ImageSet
+        {
+            get
+            {
+                using (LazyLock())
+                {
+                    if (InternalObj == null)
+                    {
+                        return null;
+                    }
+
+                    return InternalObj.ImageSet;
+                }
+            }
+            set
+            {
+                using (LazyLock())
+                {
+                    InternalObj = this.internalObjList.FirstOrDefault(_ =>
+                        _.ImageSet == value);
+                    if (InternalObj == null)
+                    {
+                        // 見つからない場合は、最初の要素を使います。
+                        InternalObj = this.internalObjList.FirstOrDefault();
+                    }
+
+                    this.RaisePropertyChanged("ImageSet");
+                }
+            }
+        }
+
+        /// <summary>
+        /// 評価値セットのタイトルを取得または設定します。
+        /// </summary>
+        [DependOnProperty("ImageSet")]
+        public string ImageSetTitle
+        {
+            get
+            {
+                return (ImageSet != null ? ImageSet.Title : string.Empty);
+            }
+            set
+            {
+                var imageSet = ImageSetList.FirstOrDefault(_ => _.Title == value);
+                if (imageSet != null)
+                {
+                    // 合致するタイトルが見つかった場合のみ、
+                    // 評価値セットを更新します。
+                    ImageSet = imageSet;
+                }
+            }
         }
 
         /// <summary>
@@ -74,58 +157,38 @@ namespace Ragnarok.Forms.Shogi.View
         }
 
         /// <summary>
-        /// ImageSetを設定し、内部オブジェクトをそれと同期します。
+        /// 評価値画像などを描画する内部オブジェクトを作成します。
         /// </summary>
-        public void SetImageSet(ImageSetInfo imageSet)
+        private GLEvaluationElementInternal CreateInternal(ImageSetInfo imageSet)
         {
-            using (LazyLock())
+            try
             {
-                InternalObj = this.internalObjList.FirstOrDefault(_ =>
-                    _.ImageSet == imageSet);
-                this.imageSet = imageSet;
-            }
-        }
-
-        /// <summary>
-        /// ImageSetListを設定し、内部オブジェクトをそれと同期します。
-        /// </summary>
-        public void SetImageSetList(IEnumerable<ImageSetInfo> imageSetList)
-        {
-            using (LazyLock())
-            {
-                this.internalObjList = imageSetList.Select(_ =>
+                if (imageSet == null)
                 {
-                    try
-                    {
-                        if (_ == null)
-                        {
-                            return null;
-                        }
+                    return null;
+                }
 
-                        var internalType = FindInternalType(_.TypeId);
-                        if (internalType == null)
-                        {
-                            return null;
-                        }
+                var internalType = FindInternalType(imageSet.TypeId);
+                if (internalType == null)
+                {
+                    return null;
+                }
 
-                        var obj = Activator.CreateInstance(internalType) as
-                            GLEvaluationElementInternal;
-                        if (obj == null)
-                        {
-                            return null;
-                        }
+                // internalType型を実体化します。
+                var obj = Activator.CreateInstance(internalType) as
+                    GLEvaluationElementInternal;
+                if (obj == null)
+                {
+                    return null;
+                }
 
-                        obj.Initialize(_);
-                        return obj;
-                    }
-                    catch (Exception ex)
-                    {
-                        Util.ThrowIfFatal(ex);
-                        return null;
-                    }
-                }).Where(_ => _ != null).ToList();
-
-                SetImageSet(this.imageSet);
+                obj.Initialize(imageSet);
+                return obj;
+            }
+            catch (Exception ex)
+            {
+                Util.ThrowIfFatal(ex);
+                return null;
             }
         }
     }

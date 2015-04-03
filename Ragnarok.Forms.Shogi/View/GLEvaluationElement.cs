@@ -78,6 +78,7 @@ namespace Ragnarok.Forms.Shogi.View
         private readonly GLEvaluationElementManager manager =
             new GLEvaluationElementManager();
         private ContextMenuStrip contextMenu;
+        private GLEvaluationElementInternal prevInternal;
         private Score currentScore;
         private float valueHeight;
         private float valueTop;
@@ -116,21 +117,20 @@ namespace Ragnarok.Forms.Shogi.View
             // 内部描画オブジェクトの初期化
             AddInternalType("image", typeof(GLEvaluationElementImage));
 
-            this.AddPropertyChangedHandler(
-                "ImageSetList",
-                (_, __) => this.manager.SetImageSetList(ImageSetList));
-            this.AddPropertyChangedHandler(
-                "ImageSet",
-                (_, __) => ImageSetUpdated());
-            this.AddPropertyChangedHandler(
-                "EvaluationMode",
-                (_, __) => EvaluationModeUpdated());
-
             // CurrentScoreの場合はDependOnProperty属性で指定している
             // プロパティが変わった時に、これが呼ばれます。
             this.AddPropertyChangedHandler(
                 "CurrentScore",
                 (_, __) => UpdateCurrentScore());
+            this.AddPropertyChangedHandler(
+                "EvaluationMode",
+                (_, __) => EvaluationModeUpdated());
+
+            // this.manager
+            this.manager.AddPropertyChangedHandler(
+                "InternalObj",
+                (_, __) => InternalObjUpdated());
+            this.AddDependModel(this.manager);
         }
 
         /// <summary>
@@ -165,20 +165,6 @@ namespace Ragnarok.Forms.Shogi.View
                 "IsVisibleValue",
                 (_, __) => item2.Checked = IsVisibleValue);
             contextMenu.Items.Add(item2);
-
-            // 各項目の設定
-            var item3 = new ToolStripMenuItem
-            {
-                Text = "値を全角文字で表示する",
-                CheckOnClick = true,
-                Checked = IsValueFullWidth,
-            };
-            item3.Click += (_, __) =>
-                IsValueFullWidth = item3.Checked;
-            this.AddPropertyChangedHandler(
-                "IsValueFullWidth",
-                (_, __) => item3.Checked = IsValueFullWidth);
-            contextMenu.Items.Add(item3);
 
             return contextMenu;
         }
@@ -319,24 +305,36 @@ namespace Ragnarok.Forms.Shogi.View
         }
 
         /// <summary>
-        /// 表示する評価値画像のセットを取得または設定します。
-        /// </summary>
-        public ImageSetInfo ImageSet
-        {
-            get { return GetValue<ImageSetInfo>("ImageSet"); }
-            set { SetValue("ImageSet", value); }
-        }
-
-        /// <summary>
         /// 表示する評価値画像セットのリストを取得または設定します。
         /// </summary>
         /// <remarks>
         /// 付属の設定ダイアログから評価値画像セットを選択することができます。
         /// </remarks>
+        [DependOnProperty(typeof(GLEvaluationElementManager), "ImageSetList")]
         public List<ImageSetInfo> ImageSetList
         {
-            get { return GetValue<List<ImageSetInfo>>("ImageSetList"); }
-            set { SetValue("ImageSetList", value); }
+            get { return this.manager.ImageSetList; }
+            set { this.manager.ImageSetList = value; }
+        }
+
+        /// <summary>
+        /// 表示する評価値画像のセットを取得または設定します。
+        /// </summary>
+        [DependOnProperty(typeof(GLEvaluationElementManager), "ImageSet")]
+        public ImageSetInfo ImageSet
+        {
+            get { return this.manager.ImageSet; }
+            set { this.manager.ImageSet = value; }
+        }
+
+        /// <summary>
+        /// 表示する評価値画像のタイトルを取得または設定します。
+        /// </summary>
+        [DependOnProperty(typeof(GLEvaluationElementManager), "ImageSetTitle")]
+        public string ImageSetTitle
+        {
+            get { return this.manager.ImageSetTitle; }
+            set { this.manager.ImageSetTitle = value; }
         }
 
         /// <summary>
@@ -348,25 +346,26 @@ namespace Ragnarok.Forms.Shogi.View
         }
 
         /// <summary>
-        /// 表示セットが更新されたときに呼ばれます。
+        /// 表示セットが更新されたときに呼ばれ、
+        /// 表示オブジェクトの切り替えを行います。
         /// </summary>
-        private void ImageSetUpdated()
+        private void InternalObjUpdated()
         {
-            var prev = this.manager.InternalObj;
-            this.manager.SetImageSet(ImageSet);
             var next = this.manager.InternalObj;
 
-            if (!ReferenceEquals(prev, next))
+            if (!ReferenceEquals(this.prevInternal, next))
             {
-                if (prev != null)
+                if (this.prevInternal != null)
                 {
-                    Children.Remove(prev);
+                    Children.Remove(this.prevInternal);
                 }
 
                 if (next != null)
                 {
                     Children.Add(next);
                 }
+
+                this.prevInternal = next;
             }
         }
 
@@ -412,7 +411,6 @@ namespace Ragnarok.Forms.Shogi.View
                     score = ServerScore;
                     break;
                 default:
-                    
                     break;
             }
 
