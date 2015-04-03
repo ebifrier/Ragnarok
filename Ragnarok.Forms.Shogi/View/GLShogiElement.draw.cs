@@ -48,6 +48,7 @@ namespace Ragnarok.Forms.Shogi.View
             Color = Color.White,
             EdgeColor = Color.White,
             EdgeLength = 0.0,
+            IsStretchSize = true,
         };
 
         /// <summary>
@@ -58,6 +59,7 @@ namespace Ragnarok.Forms.Shogi.View
             Color = Color.Black,
             EdgeColor = Color.White,
             EdgeLength = 0.0,
+            IsStretchSize = true,
         };
 
         /// <summary>
@@ -69,6 +71,7 @@ namespace Ragnarok.Forms.Shogi.View
             Color = Color.Black,
             EdgeColor = Color.FromArgb(255, Color.White),
             EdgeLength = 8.0,
+            IsStretchSize = true,
         };
 
         #region 初期化

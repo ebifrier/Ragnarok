@@ -11,11 +11,12 @@ namespace Ragnarok.Forms.Shogi.GLUtil
 {
     public sealed class TextTextureFont : IEquatable<TextTextureFont>
     {
-        public static Font DefaultFont = new Font(FontFamily.GenericSansSerif, 40);
+        public static Font DefaultFont = new Font(FontFamily.GenericSansSerif, 20);
         private Font font = (Font)DefaultFont.Clone();
         private Color color = Color.White;
         private Color edgeColor = Color.Black;
         private double edgeLength = 1.0;
+        private bool isStretchSize;
 
         /// <summary>
         /// 描画するフォントを取得または設定します。
@@ -62,6 +63,16 @@ namespace Ragnarok.Forms.Shogi.GLUtil
         }
 
         /// <summary>
+        /// 外側の空白を削除し、ビットマップいっぱいに文字を
+        /// 描画するかどうかを取得または設定します。
+        /// </summary>
+        public bool IsStretchSize
+        {
+            get { return this.isStretchSize; }
+            set { this.isStretchSize = value; }
+        }
+
+        /// <summary>
         /// オブジェクトが同じものか比較します。
         /// </summary>
         public override bool Equals(object obj)
@@ -89,7 +100,8 @@ namespace Ragnarok.Forms.Shogi.GLUtil
                 Font == other.Font &&
                 Color == other.Color &&
                 EdgeColor == other.EdgeColor &&
-                EdgeLength == other.EdgeLength);
+                EdgeLength == other.EdgeLength &&
+                IsStretchSize == other.IsStretchSize);
         }
 
         /// <summary>
@@ -117,7 +129,8 @@ namespace Ragnarok.Forms.Shogi.GLUtil
                 Font.GetHashCode() ^
                 Color.GetHashCode() ^
                 EdgeColor.GetHashCode() ^
-                EdgeLength.GetHashCode());
+                EdgeLength.GetHashCode() ^
+                IsStretchSize.GetHashCode());
         }
     }
 }

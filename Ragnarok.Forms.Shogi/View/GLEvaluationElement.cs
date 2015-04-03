@@ -104,6 +104,13 @@ namespace Ragnarok.Forms.Shogi.View
                 Color = Color.White,
                 EdgeColor = Color.LightGray,
                 EdgeLength = 0.5,
+                IsStretchSize = true,
+            };
+            NameFont = new GLUtil.TextTextureFont
+            {
+                Color = Color.White,
+                EdgeColor = Color.LightGray,
+                EdgeLength = 0.5,
             };
 
             // 内部描画オブジェクトの初期化
@@ -303,6 +310,15 @@ namespace Ragnarok.Forms.Shogi.View
         }
 
         /// <summary>
+        /// 評価値の名前を描画するためのフォントを取得または設定します。
+        /// </summary>
+        public GLUtil.TextTextureFont NameFont
+        {
+            get { return GetValue<GLUtil.TextTextureFont>("NameFont"); }
+            set { SetValue("NameFont", value); }
+        }
+
+        /// <summary>
         /// 表示する評価値画像のセットを取得または設定します。
         /// </summary>
         public ImageSetInfo ImageSet
@@ -435,7 +451,7 @@ namespace Ragnarok.Forms.Shogi.View
             var texture = textTexture.Texture;
 
             var textTexture2 = GLUtil.TextureCache.GetTextTexture(
-                score.Name ?? string.Empty, ValueFont);
+                score.Name ?? string.Empty, NameFont);
             var texture2 = textTexture2.Texture;
 
             if (texture != null && texture.IsAvailable)
@@ -467,9 +483,9 @@ namespace Ragnarok.Forms.Shogi.View
                     BlendType.Diffuse, Color.FromArgb(128, Color.Black),
                     bounds, Transform, 1.0);
 
-                // 先手後手の描画
+                // 先手後手の描画 (左側のマージンはつけません)
                 bounds = new RectangleF(
-                    -0.5f + Margin, this.valueTop, eh * texture2.OriginalWidth / texture2.OriginalHeight, eh);
+                    -0.5f, this.valueTop, eh * texture2.OriginalWidth / texture2.OriginalHeight, eh);
                 renderBuffer.AddRender(
                     texture2, BlendType.Diffuse,
                     bounds, Transform, 1.0);

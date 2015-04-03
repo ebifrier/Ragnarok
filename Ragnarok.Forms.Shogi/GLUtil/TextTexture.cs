@@ -24,6 +24,7 @@ namespace Ragnarok.Forms.Shogi.GLUtil
         private Color color = Color.White;
         private Color edgeColor = Color.Black;
         private double edgeLength = 1.0;
+        private bool isStretchSize = false;
         private bool updated = true;
 
         /// <summary>
@@ -125,6 +126,23 @@ namespace Ragnarok.Forms.Shogi.GLUtil
         }
 
         /// <summary>
+        /// 外側の空白を削除し、ビットマップいっぱいに文字を
+        /// 描画するかどうかを取得または設定します。
+        /// </summary>
+        public bool IsStretchSize
+        {
+            get { return this.isStretchSize; }
+            set
+            {
+                if (this.isStretchSize != value)
+                {
+                    this.isStretchSize = value;
+                    this.updated = true;
+                }
+            }
+        }
+
+        /// <summary>
         /// テクスチャ用のフォントデータを取得または設定します。
         /// </summary>
         public TextTextureFont TextureFont
@@ -137,6 +155,7 @@ namespace Ragnarok.Forms.Shogi.GLUtil
                     Color = Color,
                     EdgeColor = EdgeColor,
                     EdgeLength = EdgeLength,
+                    IsStretchSize = IsStretchSize,
                 };
             }
             set
@@ -150,6 +169,7 @@ namespace Ragnarok.Forms.Shogi.GLUtil
                 Color = value.Color;
                 EdgeColor = value.EdgeColor;
                 EdgeLength = value.EdgeLength;
+                isStretchSize = value.IsStretchSize;
             }
         }
 
@@ -218,7 +238,7 @@ namespace Ragnarok.Forms.Shogi.GLUtil
                 // StringFormat.GenericTypographicを指定すると
                 // ビットマップから不要な空白が取り除かれます。
                 path.AddString(
-                    Text, Font.FontFamily, (int)Font.Style, Font.SizeInPoints,
+                    Text, Font.FontFamily, (int)Font.Style, Font.Height,
                     new Point(0, 0), null);
                 RectangleF bounds;
 
@@ -242,11 +262,22 @@ namespace Ragnarok.Forms.Shogi.GLUtil
                     bounds = path.GetBounds(new Matrix());
                 }
 
-                return new Rectangle(
-                    (int)Math.Floor(bounds.Left),
-                    (int)Math.Floor(bounds.Top),
-                    (int)Math.Ceiling(bounds.Width + 2),
-                    (int)Math.Ceiling(bounds.Height + 2));
+                if (IsStretchSize)
+                {
+                    return new Rectangle(
+                        (int)Math.Floor(bounds.Left),
+                        (int)Math.Floor(bounds.Top),
+                        (int)Math.Ceiling(bounds.Width + 2),
+                        (int)Math.Ceiling(bounds.Height + 2));
+                }
+                else
+                {
+                    return new Rectangle(
+                        (int)Math.Floor(bounds.Left),
+                        (int)Math.Floor(bounds.Top),
+                        (int)Math.Ceiling(Math.Max(bounds.Width, bounds.Right) + 2),
+                        (int)Math.Ceiling(Math.Max(bounds.Height, bounds.Bottom) + 2));
+                }
             }
         }
 
@@ -269,12 +300,15 @@ namespace Ragnarok.Forms.Shogi.GLUtil
                 //g.PixelOffsetMode = PixelOffsetMode.HighQuality;
 
                 // GraphicsPathの場合、描画原点が０にならないことがあるため
-                // 矩形領域の左上を原点として描画しています。
+                // ストレッチする場合は、矩形領域の左上を原点として描画しています。
                 // また、MONOだとAddStrinのgoriginパラメータは使えません。 
-                g.TranslateTransform(-bounds.Left, -bounds.Top);
+                if (IsStretchSize)
+                {
+                    g.TranslateTransform(-bounds.Left, -bounds.Top);
+                }
 
                 path.AddString(
-                    Text, Font.FontFamily, (int)Font.Style, Font.SizeInPoints,
+                    Text, Font.FontFamily, (int)Font.Style, Font.Height,
                     new Point(0, 0), null);
 
                 if (EdgeLength > 0.0)
