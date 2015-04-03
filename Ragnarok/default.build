@@ -2,7 +2,7 @@
 
 <project name="Ragnarok" default="build">
   <property name="project.name" value="${project::get-name()}" />
-  <property name="output.dir" value="../bin" />
+  <property name="output.dir" value="../bin" unless="${property::exists('output.dir')}" />
   <property name="output" value="${output.dir}/${project.name}.dll" />
   <property name="lib" value="../externals/mono" />
 
