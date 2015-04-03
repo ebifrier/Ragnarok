@@ -29,6 +29,7 @@ namespace Ragnarok.Shogi
         /// 詰みの時の評価値を取得します。
         /// </summary>
         public static readonly int MateScore = 99999;
+        private string name;
 
         /// <summary>
         /// 通常の評価値をパースします。
@@ -165,9 +166,6 @@ namespace Ragnarok.Shogi
             Turn = turn;
             Text = text;
             Value = value;
-            Name = (
-                turn == BWType.Black ? "先手" :
-                turn == BWType.White ? "後手" : "");
         }
 
         /// <summary>
@@ -181,9 +179,6 @@ namespace Ragnarok.Shogi
             Mate = mate;
             IsMateWin = isMateWin;
             Value = (isMateWin ? MateScore : -MateScore);
-            Name = (
-                turn == BWType.Black ? "先手" :
-                turn == BWType.White ? "後手" : "");
         }
 
         /// <summary>
@@ -256,8 +251,18 @@ namespace Ragnarok.Shogi
         /// </summary>
         public string Name
         {
-            get;
-            set;
+            get
+            {
+                if (this.name != null)
+                {
+                    return this.name;
+                }
+
+                return (
+                    Turn == BWType.Black ? "先手" :
+                    Turn == BWType.White ? "後手" : "");
+            }
+            set { this.name = value; }
         }
 
         /// <summary>
