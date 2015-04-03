@@ -20,7 +20,7 @@ namespace Ragnarok.Forms.Shogi.GLUtil
         private readonly Texture texture;
 
         private string text = string.Empty;
-        private Font font = new Font(FontFamily.GenericSansSerif, 40);
+        private Font font = (Font)TextTextureFont.DefaultFont.Clone();
         private Color color = Color.White;
         private Color edgeColor = Color.Black;
         private double edgeLength = 1.0;
