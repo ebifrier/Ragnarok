@@ -11,7 +11,7 @@ namespace Ragnarok.Forms.Shogi.GLUtil
 {
     public sealed class TextTextureFont : IEquatable<TextTextureFont>
     {
-        public static Font DefaultFont = new Font(FontFamily.GenericSansSerif, 30);
+        public static Font DefaultFont = new Font(FontFamily.GenericSansSerif, 26);
         private Font font = (Font)DefaultFont.Clone();
         private Color color = Color.White;
         private Color edgeColor = Color.Black;

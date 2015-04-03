@@ -111,7 +111,7 @@ namespace Ragnarok.Forms.Shogi.View
             {
                 Color = Color.White,
                 EdgeColor = Color.LightGray,
-                EdgeLength = 0.5,
+                EdgeLength = 1,
             };
 
             // 内部描画オブジェクトの初期化
