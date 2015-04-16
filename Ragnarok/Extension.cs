@@ -218,6 +218,38 @@ namespace Ragnarok
         }
 
         /// <summary>
+        /// Listクラスをリサイズします。
+        /// </summary>
+        public static void Resize<T>(this List<T> list, int size, T value)
+        {
+            int curSize = list.Count;
+
+            if (size < curSize)
+            {
+                list.RemoveRange(size, curSize - size);
+            }
+            else if (size > curSize)
+            {
+                if (size > list.Capacity)
+                {
+                    // 最適化
+                    list.Capacity = size;
+                }
+
+                list.AddRange(Enumerable.Repeat(value, size - curSize));
+            }
+        }
+
+        /// <summary>
+        /// Listクラスをリサイズします。
+        /// </summary>
+        public static void Resize<T>(this List<T> list, int size)
+            where T : new()
+        {
+            Resize(list, size, new T());
+        }
+
+        /// <summary>
         /// イベントハンドラを呼び出します。
         /// </summary>
         public static void RaiseEvent(this EventHandler handler, object sender,
