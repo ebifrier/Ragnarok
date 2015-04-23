@@ -20,6 +20,7 @@ namespace Ragnarok.Net
         static WebUtil()
         {
             DefaultTimeout = -1;
+            IsConvertPostParamSpaceToPlus = false;
             
             // セキュリティ証明をパスします。
             ServicePointManager.ServerCertificateValidationCallback +=
@@ -33,6 +34,15 @@ namespace Ragnarok.Net
         /// 単位はミリセカンドで、負数の場合はシステムのデフォルト値を使います。
         /// </remarks>
         public static int DefaultTimeout
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// POSTパラメータの半角空白を+記号に置き換えるかどうかを取得または設定します。
+        /// </summary>
+        public static bool IsConvertPostParamSpaceToPlus
         {
             get;
             set;
@@ -86,14 +96,18 @@ namespace Ragnarok.Net
 
             var enDataStrs = param.Select((pair) =>
                 {
-                    var str = string.Format("{0}=", pair.Key);
+                    string value = string.Empty;
 
                     if (pair.Value != null)
                     {
-                        str += Uri.EscapeDataString(pair.Value.ToString());
+                        value = Uri.EscapeDataString(pair.Value.ToString());
+                        if (!string.IsNullOrEmpty(value) && IsConvertPostParamSpaceToPlus)
+                        {
+                            value = value.Replace("%20", "+");
+                        }
                     }
 
-                    return str;
+                    return string.Format("{0}={1}", pair.Key, value);
                 });
 
             var enDataStr = string.Join("&", enDataStrs.ToArray());

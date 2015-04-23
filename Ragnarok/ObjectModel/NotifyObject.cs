@@ -136,6 +136,17 @@ namespace Ragnarok.ObjectModel
         }
 
         /// <summary>
+        /// 指定の名前のプロパティが含まれているか調べます。
+        /// </summary>
+        protected bool Contains(string name)
+        {
+            using (LazyLock())
+            {
+                return this.propDic.ContainsKey(name);
+            }
+        }
+
+        /// <summary>
         /// 内部辞書に保持されたプロパティ値を取得します。
         /// </summary>
         protected T GetValue<T>(string name)
