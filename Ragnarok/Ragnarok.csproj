@@ -300,6 +300,7 @@
     <Compile Include="Utility\StackTraceUtil.cs" />
     <Compile Include="Utility\StringConverter.cs" />
     <Compile Include="Utility\StringNormalizer.cs" />
+    <Compile Include="Utility\StringUtility.cs" />
     <Compile Include="Utility\Tests\CalclatorTest.cs" />
     <Compile Include="Utility\Tests\Color4bTest.cs" />
     <Compile Include="Utility\Tests\Matrix44dTest.cs" />
@@ -307,6 +308,7 @@
     <Compile Include="Utility\Tests\PointdTest.cs" />
     <Compile Include="Utility\Tests\Point3dTest.cs" />
     <Compile Include="Utility\Tests\ScannerTest.cs" />
+    <Compile Include="Utility\Tests\StringUtilityTest.cs" />
     <Compile Include="Utility\Tests\TypeSerializerTest.cs" />
     <Compile Include="Utility\Tests\StringNormalizerTest.cs" />
     <Compile Include="Tests\UtilTest.cs" />
