@@ -33,7 +33,7 @@ namespace Ragnarok.Forms.Shogi.GLUtil
                 throw new ArgumentNullException("context");
             }
 
-            lock(syncInstance)
+            lock (syncInstance)
             {
                 TextureDisposer instance;
                 if (instanceDic.TryGetValue(context, out instance))

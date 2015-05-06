@@ -12,3 +12,4 @@ Release/
 *.userprefs
 *~
 
+externals/net/tmp/
