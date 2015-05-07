@@ -70,7 +70,9 @@ namespace Ragnarok.Net
         public static string EncodeHtml(string text)
         {
             text = EncodeHtmlText(text);
-            text = text.Replace(" ", "&nbsp;"); // 空白文字・半角スペース
+            text = (IsConvertPostParamSpaceToPlus ?
+                text.Replace(" ", "+") :
+                text.Replace(" ", "&nbsp;")); // 空白文字・半角スペース
             return text;
         }
 
@@ -80,8 +82,39 @@ namespace Ragnarok.Net
         public static string DecodeHtml(string text)
         {
             text = DecodeHtmlText(text);
-            text = text.Replace("&nbsp;", " "); // 空白文字・半角スペース
+            text = (IsConvertPostParamSpaceToPlus ?
+                text.Replace("+", " ") :
+                text.Replace("&nbsp;", " ")); // 空白文字・半角スペース
             return text;
+        }
+
+        /// <summary>
+        /// 与えられたパラメータをエンコードします。
+        /// </summary>
+        public static string EncodeParam(Dictionary<string, object> param)
+        {
+            if (param == null)
+            {
+                return null;
+            }
+
+            var enDataStrs = param.Select((pair) =>
+            {
+                string value = string.Empty;
+
+                if (pair.Value != null)
+                {
+                    value = Uri.EscapeDataString(pair.Value.ToString());
+                    if (!string.IsNullOrEmpty(value) && IsConvertPostParamSpaceToPlus)
+                    {
+                        value = value.Replace("%20", "+");
+                    }
+                }
+
+                return string.Format("{0}={1}", pair.Key, value);
+            });
+
+            return string.Join("&", enDataStrs.ToArray());
         }
 
         /// <summary>
@@ -94,24 +127,9 @@ namespace Ragnarok.Net
                 return null;
             }
 
-            var enDataStrs = param.Select((pair) =>
-                {
-                    string value = string.Empty;
+            var encoded = EncodeParam(param);
 
-                    if (pair.Value != null)
-                    {
-                        value = Uri.EscapeDataString(pair.Value.ToString());
-                        if (!string.IsNullOrEmpty(value) && IsConvertPostParamSpaceToPlus)
-                        {
-                            value = value.Replace("%20", "+");
-                        }
-                    }
-
-                    return string.Format("{0}={1}", pair.Key, value);
-                });
-
-            var enDataStr = string.Join("&", enDataStrs.ToArray());
-            return Encoding.UTF8.GetBytes(enDataStr);
+            return Encoding.UTF8.GetBytes(encoded);
         }
 
         /// <summary>
