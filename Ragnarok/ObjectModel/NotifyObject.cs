@@ -136,6 +136,17 @@ namespace Ragnarok.ObjectModel
         }
 
         /// <summary>
+        /// オブジェクトに登録されたプロパティデータを取得します。
+        /// </summary>
+        public Dictionary<string, object> GetPropertyData()
+        {
+            using (LazyLock())
+            {
+                return new Dictionary<string, object>(this.propDic);
+            }
+        }
+
+        /// <summary>
         /// 指定の名前のプロパティが含まれているか調べます。
         /// </summary>
         protected bool Contains(string name)

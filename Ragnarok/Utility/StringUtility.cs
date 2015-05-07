@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
+using Ragnarok.ObjectModel;
+
 namespace Ragnarok.Utility
 {
     /// <summary>
@@ -26,10 +28,10 @@ namespace Ragnarok.Utility
             {
                 var regex = new Regex(
                     @"#[{]" + pair.Key + "([^}]*)[}]");
-                Console.WriteLine(regex);
+                //Console.WriteLine(regex);
 
                 replacedFormat = regex.Replace(replacedFormat, "{" + index + "$1}");
-                Console.WriteLine(replacedFormat);
+                //Console.WriteLine(replacedFormat);
 
                 // 配列として使う値一覧を取得します。
                 return pair.Value;
@@ -54,6 +56,25 @@ namespace Ragnarok.Utility
             var dic = obj.GetType().GetProperties()
                 .ToDictionary(p => p.Name, p => p.GetValue(obj, null));
             return NamedFormat(format, dic);
+        }
+
+        /// <summary>
+        /// 匿名クラスのインスタンスを渡します。
+        /// </summary>
+        /// <remarks>
+        /// NotifyObjectはオブジェクト内にプロパティを辞書としてもっているため、
+        /// このクラスでは直接その辞書を使って文字列のフォーマットを行います。
+        /// </remarks>
+        public static string NamedFormat(string format, NotifyObject obj)
+        {
+            if (string.IsNullOrEmpty(format) || obj == null)
+            {
+                return string.Format(format, obj);
+            }
+
+            // プロパティ名とプロパティ値をセットにした辞書を使い、
+            // それを使って文字列埋め込みを行います。
+            return NamedFormat(format, obj.GetPropertyData());
         }
     }
 }
