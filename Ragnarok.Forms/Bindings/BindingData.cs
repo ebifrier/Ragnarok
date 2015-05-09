@@ -185,13 +185,8 @@ namespace Ragnarok.Forms.Bindings
         /// <remarks>
         /// ターゲットコントロールの値を変更します。
         /// </remarks>
-        private void OnSourceValueChanged(object sender, PropertyChangedEventArgs e)
+        private void OnSourceValueChanged(object sender, EventArgs e)
         {
-            if (e.PropertyName != Binding.DataSourcePropertyName)
-            {
-                return;
-            }
-
             using (var result = this.recurceLock.Lock())
             {
                 if (result == null) return;
@@ -266,12 +261,22 @@ namespace Ragnarok.Forms.Bindings
         /// </summary>
         public void Bind()
         {
-            BindDataSource(Binding.DataSource, Binding.DataSourcePropertyName);
-            BindBindableTarget(Binding.BindableTarget, Binding.BindingPropertyName);
+            if (IsHandleToTarget(true))
+            {
+                // Source -> Targetへの通知が有効でない場合は何も設定しません。
+                BindHandler(Binding.DataSource, Binding.DataSourcePropertyName,
+                    new EventHandler((_, __) => OnSourceValueChanged(_, __)));
+            }
+
+            if (IsHandleToSource(true))
+            {
+                // Source -> Targetへの通知が有効でない場合は何も設定しません。
+                BindHandler(Binding.BindableTarget, Binding.BindingPropertyName,
+                    new EventHandler((_, __) => OnTargetValueChanged(_, __)));
+            }
 
             // 初期化時は、ソースからコントロールへ値を反映します。
-            OnSourceValueChanged(this,
-                new PropertyChangedEventArgs(Binding.DataSourcePropertyName));
+            OnSourceValueChanged(this, EventArgs.Empty);
 
             var component = Binding.BindableTarget as Component;
             if (component != null)
@@ -283,7 +288,7 @@ namespace Ragnarok.Forms.Bindings
             Binding.IsBinding = true;
         }
 
-        /// <summary>
+        /*/// <summary>
         /// ソースデータをバインディングします。
         /// </summary>
         private void BindDataSource(object dataSource, string propertyName)
@@ -375,6 +380,65 @@ namespace Ragnarok.Forms.Bindings
 
                 propertyObj.PropertyChanged += handler;
                 Unbound += (_, __) => propertyObj.PropertyChanged -= handler;
+                return;
+            }
+        }*/
+
+        /// <summary>
+        /// 実際のバインディング処理を行い、失敗であれば偽を返します。
+        /// </summary>
+        private void BindHandler(object target, string propertyName,
+                                 EventHandler handler)
+        {
+            // targetがComponent型の場合は、'PropertyName'+Changed
+            // という名前のイベントでプロパティの変更を把握します。
+            var component = target as Component;
+            if (component != null)
+            {
+                // 名前が"PropertyName + Changed"のイベントを検索します。
+                var eventName = propertyName + "Changed";
+                var ev = component.GetType().GetEvent(eventName);
+                if (ev != null)
+                {
+                    ev.AddEventHandler(component, handler);
+                    Unbound += (_, __) => ev.RemoveEventHandler(component, handler);
+                    return;
+                }
+                else if (propertyName == "SelectedItem")
+                {
+                    // プロパティ名がSelectedItemの場合はイベントがないことがあるので、
+                    // SelectedIndexChangedを代りに探してみます。
+                    ev = component.GetType().GetEvent("SelectedIndexChanged");
+                    if (ev != null)
+                    {
+                        ev.AddEventHandler(component, handler);
+                        Unbound += (_, __) => ev.RemoveEventHandler(component, handler);
+                        return;
+                    }
+                }
+
+                throw new InvalidOperationException(
+                    string.Format(
+                        "'{0}': 指定のプロパティかその変更イベントが" +
+                        "コントロールに存在しません。",
+                        propertyName));
+            }
+
+            // TargetがINotifyPropertyChangedの場合は
+            // PropertyChangedイベントでプロパティの変更を把握します。
+            var propertyObj = target as INotifyPropertyChanged;
+            if (propertyObj != null)
+            {
+                var handler2 = new PropertyChangedEventHandler((sender, e) =>
+                {
+                    if (e.PropertyName == propertyName)
+                    {
+                        handler(sender, e);
+                    }
+                });
+
+                propertyObj.PropertyChanged += handler2;
+                Unbound += (_, __) => propertyObj.PropertyChanged -= handler2;
                 return;
             }
         }
