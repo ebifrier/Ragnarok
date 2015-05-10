@@ -44,11 +44,11 @@ namespace Ragnarok.Forms.Shogi.View
         /// 評価値コントロール用のダイアログを表示します。
         /// </summary>
         public static readonly ICommand OpenEvaluationSettingDialog =
-            new RelayCommand<GLEvaluationElement>(
-                ExecuteOpenDialog);
+            new RelayCommand(ExecuteOpenDialog);
 
-        private static void ExecuteOpenDialog(GLEvaluationElement element)
+        private static void ExecuteOpenDialog(object sender, ExecutedRelayEventArgs e)
         {
+            var element = e.Parameter as GLEvaluationElement;
             if (element == null)
             {
                 throw new ArgumentNullException("element");

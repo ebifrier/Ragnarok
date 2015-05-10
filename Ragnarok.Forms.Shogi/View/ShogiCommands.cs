@@ -60,11 +60,11 @@ namespace Ragnarok.Forms.Shogi.View
         /// Undo操作を行います。
         /// </summary>
         public static readonly ICommand Undo =
-            new RelayCommand<GLShogiElement>(
-                ExecuteUndo, CanExecuteUndo);
+            new RelayCommand(ExecuteUndo, CanExecuteUndo);
 
-        private static void ExecuteUndo(GLShogiElement element)
+        private static void ExecuteUndo(object sender, ExecutedRelayEventArgs e)
         {
+            var element = e.Parameter as GLShogiElement;
             if (element == null)
             {
                 throw new ArgumentNullException("element");
@@ -117,11 +117,12 @@ namespace Ragnarok.Forms.Shogi.View
         /// 局面を初期局面に設定します。
         /// </summary>
         public static readonly ICommand GotoFirstState =
-            new RelayCommand<GLShogiElement>(
+            new RelayCommand(
                 ExecuteGotoFirstState, CanExecuteUndo);
 
-        private static void ExecuteGotoFirstState(GLShogiElement element)
+        private static void ExecuteGotoFirstState(object sender, ExecutedRelayEventArgs e)
         {
+            var element = e.Parameter as GLShogiElement;
             if (element == null)
             {
                 throw new ArgumentNullException("element");
@@ -145,11 +146,12 @@ namespace Ragnarok.Forms.Shogi.View
         /// Redo操作を実行します。
         /// </summary>
         public static readonly ICommand Redo =
-            new RelayCommand<GLShogiElement>(
+            new RelayCommand(
                 ExecuteRedo, CanExecuteRedo);
 
-        private static void ExecuteRedo(GLShogiElement element)
+        private static void ExecuteRedo(object sender, ExecutedRelayEventArgs e)
         {
+            var element = e.Parameter as GLShogiElement;
             if (element == null)
             {
                 throw new ArgumentNullException("element");
@@ -173,11 +175,12 @@ namespace Ragnarok.Forms.Shogi.View
         /// 局面を連続して進めます。
         /// </summary>
         public static readonly ICommand RedoContinue =
-            new RelayCommand<GLShogiElement>(
+            new RelayCommand(
                 ExecuteRedoContinue, CanExecuteRedo);
 
-        private static void ExecuteRedoContinue(GLShogiElement element)
+        private static void ExecuteRedoContinue(object sender, ExecutedRelayEventArgs e)
         {
+            var element = e.Parameter as GLShogiElement;
             if (element == null)
             {
                 throw new ArgumentNullException("element");
@@ -207,11 +210,12 @@ namespace Ragnarok.Forms.Shogi.View
         /// 局面を最終局面に設定します。
         /// </summary>
         public static readonly ICommand GotoLastState =
-            new RelayCommand<GLShogiElement>(
+            new RelayCommand(
                 ExecuteGotoLastState, CanExecuteRedo);
 
-        private static void ExecuteGotoLastState(GLShogiElement element)
+        private static void ExecuteGotoLastState(object sender, ExecutedRelayEventArgs e)
         {
+            var element = e.Parameter as GLShogiElement;
             if (element == null)
             {
                 throw new ArgumentNullException("element");
