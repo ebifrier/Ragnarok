@@ -477,7 +477,7 @@ namespace Ragnarok.Forms.Shogi.View
 
             autoPlay.ShogiElement = this;
             this.autoPlay = autoPlay;
-
+            
             AutoPlayState = AutoPlayState.Playing;
         }
 

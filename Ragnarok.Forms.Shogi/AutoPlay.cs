@@ -194,7 +194,7 @@ namespace Ragnarok.Forms.Shogi
         public int MaxMoveCount
         {
             get;
-            private set;
+            set;
         }
         
         /// <summary>
