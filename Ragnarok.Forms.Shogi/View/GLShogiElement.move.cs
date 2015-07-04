@@ -546,6 +546,11 @@ namespace Ragnarok.Forms.Shogi.View
         /// </summary>
         private Square PointToSquare(System.Drawing.Point pos)
         {
+            if (!BoardSquareBounds.Contains(pos))
+            {
+                return null;
+            }
+
             // とりあえず設定します。
             var file = (int)((pos.X - BoardSquareBounds.Left) / SquareSize.Width);
             var rank = (int)((pos.Y - BoardSquareBounds.Top) / SquareSize.Height);
@@ -556,21 +561,6 @@ namespace Ragnarok.Forms.Shogi.View
             {
                 return null;
             }
-
-            /*// 各セルの幅と高さを取得します。
-            var gridX = pos.X % this.SquareSize.Width;
-            var gridY = pos.Y % this.SquareSize.Height;
-
-            // セルの端ぎりぎりならそのセルにいると判定しません。
-            if (gridX < SquareSize.Width * 0.1 || SquareSize.Width * 0.9 < gridX)
-            {
-                return null;
-            }
-
-            if (gridY < SquareSize.Height * 0.1 || SquareSize.Height * 0.9 < gridY)
-            {
-                return null;
-            }*/
 
             return (ViewSide == BWType.White ? square.Flip() : square);
         }
