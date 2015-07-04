@@ -24,18 +24,23 @@ namespace Ragnarok.Utility
 
             // string.Format に渡すフォーマット作成
             // ついでに string.Format に渡す配列も作成
-            var values = args.Select((pair, index) =>
-            {
-                var regex = new Regex(
-                    @"#[{]" + pair.Key + "([^}]*)[}]");
-                //Console.WriteLine(regex);
+            var values = args
+                .Where(_ => !string.IsNullOrEmpty(_.Key))
+                .OrderByDescending(_ => _.Key.Length) // argsを変数名順に並びかえます。
+                .Select((pair, index) =>
+                {
+                    var regex = new Regex(
+                        @"#[{]" + pair.Key + "([^}]*)[}]");
+                    //Console.WriteLine(regex);
 
-                replacedFormat = regex.Replace(replacedFormat, "{" + index + "$1}");
-                //Console.WriteLine(replacedFormat);
+                    // フォーマットを置き換えながら巡回します。
+                    replacedFormat = regex.Replace(replacedFormat, "{" + index + "$1}");
+                    //Console.WriteLine(replacedFormat);
 
-                // 配列として使う値一覧を取得します。
-                return pair.Value;
-            }).ToArray();
+                    // 配列として使う値一覧を取得します。
+                    return pair.Value;
+                })
+                .ToArray();
 
             // 整形は string.Format にまかせる
             return string.Format(replacedFormat, values);

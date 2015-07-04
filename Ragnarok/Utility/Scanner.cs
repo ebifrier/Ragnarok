@@ -187,7 +187,10 @@ namespace Ragnarok.Utility
         /// </remarks>
         public string PeekText()
         {
-            CheckEof();
+            if (IsEof)
+            {
+                return null;
+            }
 
             string result;
 
