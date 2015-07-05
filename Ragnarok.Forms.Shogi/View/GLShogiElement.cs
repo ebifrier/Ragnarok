@@ -497,8 +497,9 @@ namespace Ragnarok.Forms.Shogi.View
             }
 
             // コントロールは消去しておきます。
+            // autoPlay.ShogiElementをnullに設定すると後のStopが
+            // 上手く動かないため、ここでは設定しません。
             var autoPlay = this.autoPlay;
-            this.autoPlay.ShogiElement = null;
             this.autoPlay = null;
 
             Board = this.oldBoard;
