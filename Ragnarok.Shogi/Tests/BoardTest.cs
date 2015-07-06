@@ -177,6 +177,58 @@ namespace Ragnarok.Shogi.Tests
                 .ToList();
             Assert.AreEqual(2, list.Count());
         }
+
+        [Test()]
+        public void FlipPiecesTest()
+        {
+            var bod1 =
+                "後手の持駒：飛　桂　香　歩三　\n" +
+                "  ９ ８ ７ ６ ５ ４ ３ ２ １\n" +
+                "+---------------------------+\n" +
+                "|v香 ・ 龍 ・ ・ ・ ・ ・ ・|一\n" +
+                "| ・ ・ ・ ・v玉 ・ ・ ・ ・|二\n" +
+                "| ・ 香v歩 ・v金 ・v桂 ・ ・|三\n" +
+                "| ・ 歩v銀v銀v金 ・ ・ 銀 ・|四\n" +
+                "| 歩 ・ ・ ・ ・ 歩 歩 ・ ・|五\n" +
+                "| 香 ・ 歩 ・ 馬 ・ ・ ・v歩|六\n" +
+                "|v歩 ・ 桂 金 ・ ・ ・ ・ ・|七\n" +
+                "| ・ 玉 銀 金 ・ ・ 馬 ・ ・|八\n" +
+                "| ・ ・ ・ ・ ・ ・ ・ ・ ・|九\n" +
+                "+---------------------------+\n" +
+                "先手の持駒：桂　歩七　";
+            var bod2 =
+                "後手の持駒：桂　歩七　\n" +
+                "  ９ ８ ７ ６ ５ ４ ３ ２ １\n" +
+                "+---------------------------+\n" +
+                "| ・ ・ ・ ・ ・ ・ ・ ・ ・|一\n" +
+                "| ・ ・v馬 ・ ・v金v銀v玉 ・|二\n" +
+                "| ・ ・ ・ ・ ・v金v桂 ・ 歩|三\n" +
+                "| 歩 ・ ・ ・v馬 ・v歩 ・v香|四\n" +
+                "| ・ ・v歩v歩 ・ ・ ・ ・v歩|五\n" +
+                "| ・v銀 ・ ・ 金 銀 銀v歩 ・|六\n" +
+                "| ・ ・ 桂 ・ 金 ・ 歩v香 ・|七\n" +
+                "| ・ ・ ・ ・ 玉 ・ ・ ・ ・|八\n" +
+                "| ・ ・ ・ ・ ・ ・v龍 ・ 香|九\n" +
+                "+---------------------------+\n" +
+                "先手の持駒：飛　桂　香　歩三　";
+
+            var kifu1 = KifuReader.LoadFrom(bod1);
+            Assert.NotNull(kifu1);
+
+            var board1 = kifu1.CreateBoard();
+            Assert.NotNull(board1);
+            Assert.True(board1.Validate());
+
+            var kifu2 = KifuReader.LoadFrom(bod2);
+            Assert.NotNull(kifu2);
+
+            var board2 = kifu2.CreateBoard();
+            Assert.NotNull(board2);
+            Assert.True(board2.Validate());
+
+            board1.FlipPieces();
+            Assert.True(board1.BoardEquals(board2));
+        }
     }
 }
 #endif

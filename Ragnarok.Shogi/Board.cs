@@ -1233,6 +1233,51 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
+        /// 盤上の駒や持ち駒の先手・後手をすべて入れ替えます。
+        /// </summary>
+        public void FlipPieces()
+        {
+            // すべての駒の先後を入れ替えます。
+            Board.AllSquares()
+                .Where(_ => this[_] != null)
+                .ForEach(_ => this[_].BWType = this[_].BWType.Flip());
+
+            // 各駒の位置を入れ替えます。
+            for (var rank = 1; rank <= Board.BoardSize / 2 + 1; ++rank)
+            {
+                // ５段目は途中の列まで交換します。
+                var fileMax = Board.BoardSize / (rank == 5 ? 2 : 1);
+                for (var file = 1; file <= fileMax; ++file)
+                {
+                    var sq1 = new Square(file, rank);
+                    var sq2 = sq1.Flip();
+
+                    var p = this[sq1];
+                    this[sq1] = this[sq2];
+                    this[sq2] = p;
+                }
+            }
+
+            // 持ち駒の先後を入れ替えます。(数を設定し直します)
+            var result =
+                from bwType in new BWType[] { BWType.Black, BWType.White }
+                let countList = (
+                    from type in EnumEx.GetValues<PieceType>()
+                    let count = GetCapturedPieceCount(type, bwType)
+                    select new { PieceType = type, Count = count }
+                    ).ToList()
+                select new { BWType = bwType, CountList = countList };
+
+            result.ToList().ForEach(_ =>
+            {
+                var flipped = _.BWType.Flip();
+
+                _.CountList.ForEach(__ =>
+                    SetCapturedPieceCount(__.PieceType, flipped, __.Count));
+            });
+        }
+
+        /// <summary>
         /// オブジェクトの妥当性を検証します。
         /// </summary>
         public bool Validate()
