@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
@@ -171,7 +172,16 @@ namespace Ragnarok.Presentation.Extra.Effect
         public static readonly DependencyProperty BaseUriProperty =
             DependencyProperty.Register(
                 "BaseUri", typeof(Uri), typeof(EffectObject),
-                new UIPropertyMetadata(null));
+                new UIPropertyMetadata(null, OnBaseUriChanged));
+
+        static void OnBaseUriChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var self = (EffectObject)d;
+            var uri = (Uri)e.NewValue;
+            var path = (uri != null ? Path.GetDirectoryName(uri.LocalPath) : string.Empty);
+
+            self.Emitters.ForEach(_ => _.BasePath = path);
+        }
 
         /// <summary>
         /// イメージの基本パスを取得または設定します。

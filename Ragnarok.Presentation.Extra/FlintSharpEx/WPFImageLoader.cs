@@ -89,10 +89,10 @@ namespace Ragnarok.Presentation.Extra.FlintSharpEx
         /// <summary>
         /// 通常のイメージを読み込みます。
         /// </summary>
-        [CLSCompliant(false)]
-        public IImageData LoadImage(Uri imageUri, MaterialType materialType)
+        public IImageData LoadImage(string imagePath, MaterialType materialType)
         {
-            var image = GetImage(imageUri);
+            var uri = new Uri(imagePath);
+            var image = GetImage(uri);
             var brush = new ImageBrush()
             {
                 ImageSource = image,
@@ -125,7 +125,6 @@ namespace Ragnarok.Presentation.Extra.FlintSharpEx
         /// <summary>
         /// パーティクル用の画像を読み込みます。
         /// </summary>
-        [CLSCompliant(false)]
         public IImageData LoadParticleImage(bool isSingle, MaterialType materialType)
         {
             BitmapImage image = GetParticleImage();

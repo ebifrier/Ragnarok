@@ -252,6 +252,7 @@ namespace Ragnarok.Presentation.Extra.Effect
                     var effect = (EffectObject)resource["Effect"];
                     if (effect != null)
                     {
+                        effect.BaseUri = context.BaseUri;
                         effect.Name = Name;
                     }
 
