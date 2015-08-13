@@ -528,7 +528,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 駒の最大数を調べます。
         /// </summary>
-        public int GetMaxPieceCount(PieceType pieceType)
+        public static int GetMaxPieceCount(PieceType pieceType)
         {
             return MaxPieceCountList[(int)pieceType];
         }
