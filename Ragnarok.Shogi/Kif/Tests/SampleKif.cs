@@ -11,7 +11,7 @@ namespace Ragnarok.Shogi.Kif.Tests
         /// <summary>
         /// 指し手ごとの棋譜コメントを取得します。
         /// </summary>
-        public static List<string> GetCommentList(string kif)
+        public static List<List<string>> GetCommentList(string kif)
         {
             var lines = kif
                 .Split(new char[] { '\n' })
@@ -19,20 +19,20 @@ namespace Ragnarok.Shogi.Kif.Tests
                 .Skip(1)
                 .Select(_ => _.FirstOrDefault() == '*' ? _.Substring(1) : null);
 
-            var commentList = new List<string>();
-            var comment = string.Empty;
+            var commentList = new List<List<string>>();
+            var comments = new List<string>();
             foreach (var line in lines)
             {
                 if (line != null)
                 {
                     // コメント行
-                    comment = (comment.Any() ? comment + "\n" + line : line);
+                    comments.Add(line);
                 }
                 else
                 {
                     // コメントではなく、指し手行
-                    commentList.Add(comment == string.Empty ? null : comment);
-                    comment = string.Empty;
+                    commentList.Add(comments);
+                    comments = new List<string>();
                 }
             }
 

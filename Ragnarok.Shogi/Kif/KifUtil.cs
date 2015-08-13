@@ -143,7 +143,7 @@ namespace Ragnarok.Shogi.Kif
             }
 
             return new KifCommentData(
-                line.TrimStart(' ', '　', '\t', '*', '#'),
+                line.Substring(1).TrimStart(' ', '　', '\t'),
                 line[0] == '*');
         }
 

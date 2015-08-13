@@ -82,6 +82,7 @@
     <Compile Include="BWType.cs" />
     <Compile Include="CapturedPiece.cs" />
     <Compile Include="CapturedPieceBox.cs" />
+    <Compile Include="Kif\Tests\SampleKif_Value.cs" />
     <Compile Include="Kif\Tests\SampleKif.cs" />
     <Compile Include="Kif\Tests\SampleKif_Variation.cs" />
     <Compile Include="Kif\Tests\SampleKif_Comment.cs" />

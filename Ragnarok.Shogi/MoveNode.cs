@@ -5,6 +5,27 @@ using System.Text;
 
 namespace Ragnarok.Shogi
 {
+    public sealed class MoveNodeInfoData
+    {
+        /// <summary>
+        /// 解析された評価値を取得または設定します。
+        /// </summary>
+        public int Value
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 解析された変化を取得または設定します。
+        /// </summary>
+        public List<BoardMove> Variation
+        {
+            get;
+            set;
+        }
+    }
+
     /// <summary>
     /// 変化を木構造で表すためのクラス
     /// </summary>
@@ -69,27 +90,30 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
-        /// この手のコメントを取得または設定します。
+        /// 複数の変化データを管理します。
         /// </summary>
-        public string Comment
+        public List<MoveNodeInfoData> InfoDataList
         {
             get;
             set;
         }
 
         /// <summary>
-        /// 解析された評価値を取得または設定します。
+        /// このノードの評価値を取得します。
         /// </summary>
-        public int? EvaluationValue
+        public int? Value
         {
-            get;
-            set;
+            get
+            {
+                return (InfoDataList != null && InfoDataList.Any() ?
+                    InfoDataList.First().Value : (int?)null);
+            }
         }
 
         /// <summary>
-        /// 解析された変化を取得または設定します。
+        /// この手のコメント行ごとに取得します。
         /// </summary>
-        public List<BoardMove> Variation
+        public List<string> CommentList
         {
             get;
             set;
@@ -156,14 +180,7 @@ namespace Ragnarok.Shogi
                 return;
             }
 
-            if (string.IsNullOrEmpty(Comment))
-            {
-                Comment = comment;
-            }
-            else
-            {
-                Comment += '\n' + comment;
-            }
+            CommentList.Add(comment);
         }
 
         /// <summary>
@@ -284,7 +301,7 @@ namespace Ragnarok.Shogi
                 return false;
             }
 
-            if (compareComment && Comment != other.Comment)
+            if (compareComment && !CommentList.SequenceEqual(other.CommentList))
             {
                 return false;
             }
@@ -306,6 +323,8 @@ namespace Ragnarok.Shogi
         public MoveNode()
         {
             NextNodes = new List<MoveNode>();
+            InfoDataList = new List<MoveNodeInfoData>();
+            CommentList = new List<string>();
         }
     }
 }

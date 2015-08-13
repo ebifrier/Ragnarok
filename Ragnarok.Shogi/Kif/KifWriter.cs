@@ -62,7 +62,8 @@ namespace Ragnarok.Shogi.Kif
         {
             var moveList = KifuObject.Convert2List(node);
             var lineList = board.ConvertMove(moveList, false)
-                .Select(_ => _.ToString())
+                .Where(_ => _ != null && _.Validate())
+                .Select(_ => Stringizer.ToString(_, MoveTextStyle.Normal))
                 .TakeBy(6)
                 .Select(_ => string.Join("　", _.ToArray()));
 
@@ -79,7 +80,7 @@ namespace Ragnarok.Shogi.Kif
         /// 変化の分岐を含めて出力します。
         /// </summary>
         private void WriteMoveNodeKif(TextWriter writer, MoveNode node,
-                                      bool hasVariation)
+                                      Board board, bool hasVariation)
         {
             if (node == null)
             {
@@ -89,16 +90,19 @@ namespace Ragnarok.Shogi.Kif
             // とりあえず指し手を書きます。
             if (node.Move != null)
             {
-                WriteMakeKif(writer, node, hasVariation);
+                WriteMakeKif(writer, node, board, hasVariation);
+
+                if (!board.DoMove(node.Move))
+                {
+                    Log.Error("{0}の指し手が正しくありません。", node.Move);
+                    return;
+                }
             }
 
             // ついでにコメント行も出力します。
             // 先頭ノードは指し手がありませんが
             // コメントは存在することがあります。
-            if (!string.IsNullOrEmpty(node.Comment))
-            {
-                WriteCommentKif(writer, node);
-            }
+            WriteCommentKif(writer, node);
 
             // 次の指し手があればそれも出力します。
             for (var i = 0; i < node.NextNodes.Count(); ++i)
@@ -113,21 +117,34 @@ namespace Ragnarok.Shogi.Kif
                     writer.WriteLine("変化：{0}手", child.MoveCount);
                 }
 
-                WriteMoveNodeKif(writer, child, hasVariationNext);
+                WriteMoveNodeKif(writer, child, board, hasVariationNext);
+            }
+
+            if (node.Move != null)
+            {
+                board.Undo();
             }
         }
 
         /// <summary>
         /// 指し手行を出力します。
         /// </summary>
-        private void WriteMakeKif(TextWriter writer, MoveNode node, bool hasVariation)
+        private void WriteMakeKif(TextWriter writer, MoveNode node,
+                                  Board board, bool hasVariation)
         {
+            var move = board.ConvertMove(node.Move, true);
+            if (move == null || !move.Validate())
+            {
+                Log.Error("指し手'{0}'を出力できませんでした。", node.Move);
+                return;
+            }
+
             // 半角文字相当の文字数で空白の数を計算します。
-            var moveText = node.Move.ToString();
+            var moveText = Stringizer.ToString(move, MoveTextStyle.KifFile);
             var hanLen = moveText.HankakuLength();
 
             writer.WriteLine(
-                @"{0,4} {1}{2} ({3:mm\:ss}/{4:hh\:mm\:ss}){5}",
+                @"{0,4} {1}{2} ({3:mm\:ss} / {4:hh\:mm\:ss}){5}",
                 node.MoveCount,
                 moveText,
                 new string(' ', Math.Max(0, 14 - hanLen)),
@@ -141,11 +158,20 @@ namespace Ragnarok.Shogi.Kif
         /// </summary>
         private void WriteCommentKif(TextWriter writer, MoveNode node)
         {
-            var commentList = node.Comment.Split(
-                new char[] { '\n' },
-                StringSplitOptions.RemoveEmptyEntries);
+            foreach (var infoData in node.InfoDataList)
+            {
+                if (infoData == null || infoData.Variation == null)
+                {
+                    continue;
+                }
 
-            foreach (var comment in commentList)
+                writer.WriteLine("**{0} {1}",
+                    infoData.Value,
+                    string.Join("",
+                        infoData.Variation.Select(_ => _.ToString())));
+            }
+
+            foreach (var comment in node.CommentList)
             {
                 writer.WriteLine("*{0}", comment);
             }
@@ -162,7 +188,7 @@ namespace Ragnarok.Shogi.Kif
 
             if (IsKif)
             {
-                WriteMoveNodeKif(writer, kifu.RootNode, false);
+                WriteMoveNodeKif(writer, kifu.RootNode, kifu.StartBoard, false);
             }
             else
             {

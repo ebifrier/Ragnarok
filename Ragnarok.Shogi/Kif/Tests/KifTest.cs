@@ -16,6 +16,34 @@ namespace Ragnarok.Shogi.Kif.Tests
     internal sealed class KifTest
     {
         /// <summary>
+        /// 空白文字を文字列から取り除きます。
+        /// </summary>
+        public static string RemoveSpace(string text)
+        {
+            return text
+                .Replace("\n", "")
+                .Replace("\r", "")
+                .Replace("\t", "")
+                .Replace(" ", "")
+                .Replace("　", "");
+        }
+
+        /// <summary>
+        /// 文字列を空白を考慮に入れずに比較します。
+        /// </summary>
+        public static void CompareWithoutSpace(string expected, string actual)
+        {
+            if (expected == null || actual == null)
+            {
+                Assert.True(ReferenceEquals(expected, actual));
+            }
+            else
+            {
+                Assert.AreEqual(RemoveSpace(expected), RemoveSpace(actual));
+            }
+        }
+
+        /// <summary>
         /// 棋譜から手数を取得します。
         /// </summary>
         public static int? GetMoveCount(string text)
@@ -93,19 +121,21 @@ namespace Ragnarok.Shogi.Kif.Tests
         [Test()]
         public void VariationTest()
         {
-            var text = SampleKif.VariationKif;
-
             // 棋譜の読み込み
-            var kifu = KifuReader.LoadFrom(text);
+            var kifu = KifuReader.LoadFrom(SampleKif.VariationKif);
             Assert.NotNull(kifu);
             Assert.Null(kifu.Error);
 
             // 手数を確認
-            var count = 133;
+            var count = 132;
             Assert.AreEqual(count, kifu.MoveList.Count());
 
             // 入出力テストを行います。
             TestUtil.ReadWriteTest(kifu, KifuFormat.Kif, count);
+
+            // 書き込みテスト
+            var kif = KifuWriter.WriteTo(kifu, KifuFormat.Kif);
+            CompareWithoutSpace(SampleKif.VariationKif, kif);
         }
 
         /// <summary>
@@ -115,23 +145,24 @@ namespace Ragnarok.Shogi.Kif.Tests
         public void DurationTest()
         {
             var content =
-                "手合割：平手\n" +
+                "# ----  棋譜ファイル  ----\n" +
                 "先手：人間\n" +
                 "後手：test\n" +
+                "手合割：平手\n" +
                 "手数----指手---------消費時間--\n" +
-                "   1 ７六歩(77)    (01:38 / 00:01:38)\n" +
-                "   2 ３四歩(33)    (00:01 / 00:00:01)\n" +
-                "   3 ２六歩(27)    (02:17 / 00:03:55)\n" +
-                "   4 ３三角(22)    (00:01 / 00:00:02)\n" +
-                "   5 同　角成(88)  (01:38 / 00:05:33)\n" +
-                "   6 同　桂(21)    (00:01 / 00:00:03)\n" +
-                "   7 ６八玉(59)    (02:19 / 00:07:52)\n" +
-                "   8 ４二飛(82)    (00:01 / 00:00:04)\n" +
-                "   9 ７八玉(68)    (01:26 / 00:09:18)\n" +
-                "  10 ６二玉(51)    (00:01 / 00:00:05)\n" +
-                "  11 ８八玉(78)    (01:10 / 00:10:28)\n" +
-                "  12 ７二玉(62)    (01:01 / 00:01:06)\n" +
-                "  13 ４八銀(39)    (01:40 / 00:12:08)";
+                "   1 ７六歩(77)     (01:38 / 00:01:38)\n" +
+                "   2 ３四歩(33)     (00:01 / 00:00:01)\n" +
+                "   3 ２六歩(27)     (02:17 / 00:03:55)\n" +
+                "   4 ３三角(22)     (00:01 / 00:00:02)\n" +
+                "   5 同　角成(88)   (01:38 / 00:05:33)\n" +
+                "   6 同　桂(21)     (00:01 / 00:00:03)\n" +
+                "   7 ６八玉(59)     (02:19 / 00:07:52)\n" +
+                "   8 ４二飛(82)     (00:01 / 00:00:04)\n" +
+                "   9 ７八玉(68)     (01:26 / 00:09:18)\n" +
+                "  10 ６二玉(51)     (00:01 / 00:00:05)\n" +
+                "  11 ８八玉(78)     (01:10 / 00:10:28)\n" +
+                "  12 ７二玉(62)     (01:01 / 00:01:06)\n" +
+                "  13 ４八銀(39)     (01:40 / 00:12:08)\n";
             var durations = new string[]
             {
                 "00:01:38", "00:00:01", "00:02:17", "00:00:01", "00:01:38",
@@ -156,6 +187,10 @@ namespace Ragnarok.Shogi.Kif.Tests
                 Assert.AreEqual(TimeSpan.Parse(durations[i]), node.Duration);
                 Assert.AreEqual(TimeSpan.Parse(totalDurations[i]), node.TotalDuration);
             }
+
+            // 書き込みテスト
+            var kif = KifuWriter.WriteTo(kifu, KifuFormat.Kif);
+            CompareWithoutSpace(content, kif);
         }
 
         /// <summary>
@@ -165,30 +200,30 @@ namespace Ragnarok.Shogi.Kif.Tests
         public void CommentTest()
         {
             var content =
-                "# ----  サンプル棋譜ファイル  ----\n" +
+                "# ----  棋譜ファイル  ----\n" +
                 "手合割：平手\n" +
                 "手数----指手---------消費時間--\n" +
                 "*今王将戦は因縁の師弟対決となりました。\n" +
                 "*受けの気風の師匠に対して、弟子の平方は完全な攻め将棋。\n" +
-                "   1 ７六歩(77)   (00:00:01 / 00:00:01)\n" +
+                "   1 ７六歩(77)     (00:01 / 00:00:01)\n" +
                 "*最初はオーソドックスに\n" +
-                "   2 ３四歩(33)   (00:00:01 / 00:00:01)\n" +
-                "   3 ２六歩(27)   (00:00:02 / 00:00:01)\n" +
-                "   4 ８四歩(83)   (00:00:03 / 00:00:01)\n" +
+                "   2 ３四歩(33)     (00:01 / 00:00:01)\n" +
+                "   3 ２六歩(27)     (00:02 / 00:00:03)\n" +
+                "   4 ８四歩(83)     (00:03 / 00:00:04)\n" +
                 "*よくある進行になりました。\n" +
-                "   5 ２五歩(26)   (00:00:03 / 00:00:01)\n" +
-                "   6 ８五歩(84)   (00:00:04 / 00:00:01)\n" +
-                "   7 ２四歩(25)   (00:00:04 / 00:00:01)\n" +
-                "   8 同　歩(23)   (00:00:05 / 00:00:01)\n" +
-                "   9 同　飛(28)   (00:00:05 / 00:00:01)\n" +
-                "  10 ８六歩(85)   (00:00:05 / 00:00:01)\n" +
-                "  11 同　歩(87)   (00:00:05 / 00:00:01)\n" +
-                "  12 同　飛(82)   (00:00:06 / 00:00:01)\n" +
+                "   5 ２五歩(26)     (00:03 / 00:00:06)\n" +
+                "   6 ８五歩(84)     (00:04 / 00:00:08)\n" +
+                "   7 ２四歩(25)     (00:04 / 00:00:10)\n" +
+                "   8 同　歩(23)     (00:05 / 00:00:13)\n" +
+                "   9 同　飛(28)     (00:05 / 00:00:15)\n" +
+                "  10 ８六歩(85)     (00:05 / 00:00:18)\n" +
+                "  11 同　歩(87)     (00:05 / 00:00:20)\n" +
+                "  12 同　飛(82)     (00:06 / 00:00:24)\n" +
                 "*お互い金を上がらずにここまで来ました。しかもノータイム。\n" +
                 "*これは先手側不利と言われている展開ですが、果たしてどうなるでしょうか。\n" +
-                "  13 ３四飛(24)   (00:00:01 / 00:00:01)\n" +
+                "  13 ３四飛(24)     (00:01 / 00:00:21)\n" +
                 "*先手は横歩を取りましたね。\n" +
-                "  14 ７六飛(86)   (00:00:01 / 00:00:01)\n" +
+                "  14 ７六飛(86)     (00:01 / 00:00:25)\n" +
                 "*後手も横歩を取りましたが、これは大丈夫なのでしょうか？\n" +
                 "*嫌な変化が見ているような気もしますが。\n";
 
@@ -198,30 +233,47 @@ namespace Ragnarok.Shogi.Kif.Tests
             Assert.AreEqual(14, kifu.MoveList.Count());
 
             // コメント一覧
-            var comments = new string[15];
-            comments[0] =
-                "今王将戦は因縁の師弟対決となりました。\n" +
-                "受けの気風の師匠に対して、弟子の平方は完全な攻め将棋。";
-            comments[1] =
-                "最初はオーソドックスに";
-            comments[4] = 
-                "よくある進行になりました。";
-            comments[12] =
-                "お互い金を上がらずにここまで来ました。しかもノータイム。\n" +
-                "これは先手側不利と言われている展開ですが、果たしてどうなるでしょうか。";
-            comments[13] =
-                "先手は横歩を取りましたね。";
-            comments[14] =
-                "後手も横歩を取りましたが、これは大丈夫なのでしょうか？\n" +
-                "嫌な変化が見ているような気もしますが。";
+            var comments = new List<string>[15];
+            comments[0] = new List<string> {
+                "今王将戦は因縁の師弟対決となりました。",
+                "受けの気風の師匠に対して、弟子の平方は完全な攻め将棋。",
+            };
+            comments[1] = new List<string> {
+                "最初はオーソドックスに"
+            };
+            comments[4] = new List<string> {
+                "よくある進行になりました。"
+            };
+            comments[12] = new List<string> {
+                "お互い金を上がらずにここまで来ました。しかもノータイム。",
+                "これは先手側不利と言われている展開ですが、果たしてどうなるでしょうか。",
+            };
+            comments[13] = new List<string> {
+                "先手は横歩を取りましたね。"
+            };
+            comments[14] = new List<string> {
+                "後手も横歩を取りましたが、これは大丈夫なのでしょうか？",
+                "嫌な変化が見ているような気もしますが。",
+            };
 
             for (var node = kifu.RootNode; node != null; node = node.NextNode)
             {
-                Assert.AreEqual(comments[node.MoveCount], node.Comment);
+                if (comments[node.MoveCount] == null)
+                {
+                    Assert.False(node.CommentList.Any());
+                }
+                else
+                {
+                    Assert.AreEqual(comments[node.MoveCount], node.CommentList);
+                }
             }
 
             // 入出力テストを行います。
             TestUtil.ReadWriteTest(kifu, KifuFormat.Kif, 14);
+
+            // 書き込みテスト
+            var kif = KifuWriter.WriteTo(kifu, KifuFormat.Kif);
+            CompareWithoutSpace(content, kif);
         }
 
         /// <summary>
@@ -245,11 +297,41 @@ namespace Ragnarok.Shogi.Kif.Tests
             var commentList = SampleKif.GetCommentList(SampleKif.CommentKif);
             for (var node = kifu.RootNode; node != null; node = node.NextNode)
             {
-                Assert.AreEqual(commentList[node.MoveCount], node.Comment);
+                if (commentList[node.MoveCount] == null)
+                {
+                    Assert.False(node.CommentList.Any());
+                }
+                else
+                {
+                    Assert.AreEqual(commentList[node.MoveCount], node.CommentList);
+                }
             }
 
             // 入出力テストを行います。
             TestUtil.ReadWriteTest(kifu, KifuFormat.Kif, count);
+        }
+
+        /// <summary>
+        /// コメントに変化や評価値が含まれる棋譜のテスト
+        /// </summary>
+        [Test()]
+        public void CommentVariationTest()
+        {
+            // 棋譜の読み込み
+            var kifu = KifuReader.LoadFrom(SampleKif.ValueKif);
+            Assert.NotNull(kifu);
+            Assert.Null(kifu.Error);
+
+            // 手数の確認
+            var count = 55;
+            Assert.AreEqual(count, kifu.MoveList.Count());
+
+            // 入出力テストを行います。
+            TestUtil.ReadWriteTest(kifu, KifuFormat.Kif, count);
+
+            // 書き込みテスト
+            var kif = KifuWriter.WriteTo(kifu, KifuFormat.Kif);
+            CompareWithoutSpace(SampleKif.ValueKif, kif);
         }
 
         /// <summary>

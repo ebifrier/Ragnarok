@@ -319,6 +319,7 @@ namespace Ragnarok.Shogi.Kif
         private KifuObject LoadKif(KifuHeader header, Board board, KifMoveNode head_)
         {
             var head = ParseNodeKif(board, false);
+            head.SetupInfoData(board);
 
             // KifMoveNodeからMoveNodeへ変換します。
             Exception error;
@@ -353,11 +354,15 @@ namespace Ragnarok.Shogi.Kif
 
                 if (!variationLineSet.Contains(variationNode.MoveCount))
                 {
-                    throw new FileFormatException(
+                    Log.Error(
+                        "{0}行目: {1}手目に対応する変化がありません。",
+                        this.lineNumber, variationNode.MoveCount);
+
+                    /*throw new FileFormatException(
                         this.lineNumber,
                         string.Format(
                             "{0}手目に対応する変化がありません。",
-                            variationNode.MoveCount));
+                            variationNode.MoveCount));*/
                 }
 
                 variationLineSet.Remove(variationNode.MoveCount);
