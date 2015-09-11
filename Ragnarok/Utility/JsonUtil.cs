@@ -7,6 +7,8 @@ using System.Text;
 using System.Runtime.Serialization.Json;
 using System.Web.Script.Serialization;
 
+using Newtonsoft.Json;
+
 namespace Ragnarok.Utility
 {
     /// <summary>
@@ -21,15 +23,7 @@ namespace Ragnarok.Utility
         {
             try
             {
-                var s = new DataContractJsonSerializer(typeof(T));
-
-                using (var stream = new MemoryStream())
-                {
-                    s.WriteObject(stream, value);
-
-                    stream.Flush();
-                    return Encoding.UTF8.GetString(stream.ToArray());
-                }
+                return JsonConvert.SerializeObject(value);
             }
             catch (Exception ex)
             {
@@ -53,19 +47,7 @@ namespace Ragnarok.Utility
 
             try
             {
-#if false
-                var bytes = Encoding.UTF8.GetBytes(text);
-                using (var stream = new MemoryStream(bytes))
-                {
-                    var s = new DataContractJsonSerializer(typeof(T));
-                    var obj = s.ReadObject(stream);
-                    return (T)obj;
-                }
-#else
-                var s = new JavaScriptSerializer();
-                s.RegisterConverters(new[] { new JsonConverter<T>() });
-                return (T)s.Deserialize<T>(text);
-#endif
+                return JsonConvert.DeserializeObject<T>(text);
             }
             catch (Exception ex)
             {
@@ -84,12 +66,9 @@ namespace Ragnarok.Utility
         {
             try
             {
-                var s = new DataContractJsonSerializer(typeof(T));
+                var text = Serialize(value);
 
-                using (var stream = new FileStream(filepath, FileMode.Create))
-                {
-                    s.WriteObject(stream, value);
-                }
+                File.WriteAllText(filepath, text);
             }
             catch (Exception ex)
             {
