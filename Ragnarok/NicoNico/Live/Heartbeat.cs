@@ -32,7 +32,7 @@ namespace Ragnarok.NicoNico.Live
         /// コンストラクタ
         /// </summary>
         private Heartbeat(long liveId, XmlNode node)
-            : base(node, "heartbeat", LiveUtil.LiveIdString(liveId))
+            : base(node, "heartbeat", NicoString.LiveIdString(liveId))
         {
             foreach (var childObj in RootNode.ChildNodes)
             {
@@ -62,7 +62,7 @@ namespace Ragnarok.NicoNico.Live
             var liveId = LiveUtil.GetLiveId(liveStr);
             if (liveId < 0)
             {
-                throw new NicoLiveException(LiveStatusCode.InvalidLiveId);
+                throw new NicoLiveException(NicoStatusCode.InvalidLiveId);
             }
 
             return Create(liveId, cc);
@@ -74,14 +74,14 @@ namespace Ragnarok.NicoNico.Live
         public static Heartbeat Create(long liveId, CookieContainer cc)
         {
             // 生放送ＩＤから放送情報を取得します。
-            var node = LiveUtil.GetXml(
+            var node = NicoUtil.GetXml(
                 NicoString.GetHeartbeatUrl(liveId),
                 cc);
             if (node == null)
             {
                 throw new NicoLiveException(
-                    LiveStatusCode.NetworkError,
-                    LiveUtil.LiveIdString(liveId));
+                    NicoStatusCode.NetworkError,
+                    NicoString.LiveIdString(liveId));
             }
 
             return CreateFromXml(liveId, node);

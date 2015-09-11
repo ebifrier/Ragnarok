@@ -10,6 +10,8 @@ using Ragnarok.Net;
 
 namespace Ragnarok.NicoNico.Live
 {
+    using Provider;
+
     /// <summary>
     /// 生放送ページの情報を保持します。
     /// </summary>
@@ -20,7 +22,7 @@ namespace Ragnarok.NicoNico.Live
     public class LiveInfo
     {
         /// <summary>
-        /// 生放送ＩＤを取得します。
+        /// 生放送IDを取得します。
         /// </summary>
         public long Id
         {
@@ -124,11 +126,11 @@ namespace Ragnarok.NicoNico.Live
             {
                 throw new NicoException(
                     "放送ページの取得に失敗しました。",
-                    LiveUtil.LiveIdString(liveId));
+                    NicoString.LiveIdString(liveId));
             }
 
             var text = Encoding.UTF8.GetString(responseData);
-            return CreateFromHtml(LiveUtil.LiveIdString(liveId), text);
+            return CreateFromHtml(NicoString.LiveIdString(liveId), text);
         }
 
         private static readonly Regex VideoInfoRegex = new Regex(
@@ -175,7 +177,7 @@ namespace Ragnarok.NicoNico.Live
                     "放送の提供元情報を取得できませんでした。",
                     idString);
             }
-            var provider = LiveUtil.ParseProvider(m.Groups[1].Value);
+            var provider = NicoUtil.ParseProvider(m.Groups[1].Value);
 
             m = VideoInfoRegex.Match(pageStr);
             if (!m.Success)

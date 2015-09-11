@@ -1081,7 +1081,7 @@ namespace Ragnarok.NicoNico.Live
             {
                 if (this.publishStatus == null)
                 {
-                    throw new NicoLiveException(LiveStatusCode.PermissionDenied);
+                    throw new NicoLiveException(NicoStatusCode.PermissionDenied);
                 }
                 
                 if (string.IsNullOrEmpty(this.publishStatus.Stream.Token))
@@ -1089,7 +1089,7 @@ namespace Ragnarok.NicoNico.Live
                     Log.Error(this,
                         "tokenがないため放送主コメントを送ることができません。");
 
-                    throw new NicoLiveException(LiveStatusCode.PermissionDenied);
+                    throw new NicoLiveException(NicoStatusCode.PermissionDenied);
                 }
 
                 // コメントを追加した後、コメント処理を行います。
@@ -1123,8 +1123,8 @@ namespace Ragnarok.NicoNico.Live
 
                 // 実際の投稿処理を行います。
                 WebUtil.RequestHttpAsync(
-                    NicoString.GetBroadcastCommentUrl(this.LiveId),
-                    NicoString.MakeBroadcastCommentData(
+                    NicoString.GetOwnerCommentUrl(this.LiveId),
+                    NicoString.MakeOwnerCommentData(
                         comment.Text,
                         comment.Mail,
                         comment.Name,
