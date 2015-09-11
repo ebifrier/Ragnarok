@@ -51,76 +51,6 @@ namespace Ragnarok.NicoNico.Live
     public static class LiveUtil
     {
         /// <summary>
-        /// 指定のURLをxmlとして取得します。
-        /// </summary>
-        public static XmlNode GetXml(string url, CookieContainer cc)
-        {
-            // 生放送ＩＤから放送情報を取得します。
-            var responseData = WebUtil.RequestHttp(url, null, cc);
-            if (responseData == null)
-            {
-                return null;
-            }
-
-            return GetXml(responseData);
-        }
-        
-        /// <summary>
-        /// 指定のデータをxmlとして取得します。
-        /// </summary>
-        public static XmlNode GetXml(byte[] data)
-        {
-            if (data == null)
-            {
-                return null;
-            }
-
-            // 生データから読み込まないとエンコーディングの不一致で
-            // エラーが返ってくる。
-            // 無幅空白が含まれてるせいらしいのだけど、よく分からない。
-            using (var stream = new MemoryStream(data))
-            {
-                var reader = XmlReader.Create(stream);
-                var doc = new XmlDocument();
-                doc.Load(reader);
-
-                return doc;
-            }
-        }
-
-        /// <summary>
-        /// 提供者を文字列から解析します。
-        /// </summary>
-        public static ProviderData ParseProvider(string providerStr)
-        {
-            if (string.IsNullOrEmpty(providerStr))
-            {
-                return null;
-            }
-
-            // 提供者を取得します。
-            if (providerStr.StartsWith("co", StringComparison.InvariantCultureIgnoreCase))
-            {
-                return new ProviderData(
-                    ProviderType.Community,
-                    StrUtil.ToInt(providerStr.Substring(2), -1));
-            }
-            else if (providerStr.StartsWith("ch", StringComparison.InvariantCultureIgnoreCase))
-            {
-                return new ProviderData(
-                    ProviderType.Channel,
-                    StrUtil.ToInt(providerStr.Substring(2), -1));
-            }
-            else if (providerStr.Equals("official", StringComparison.InvariantCultureIgnoreCase))
-            {
-                return new ProviderData(
-                    ProviderType.Official, -1);
-            }
-
-            return null;
-        }
-
-        /// <summary>
         /// 放送URLや他の文字列からlvXXXXを含む放送IDを取得します。
         /// </summary>
         /// <remarks>
@@ -133,14 +63,14 @@ namespace Ragnarok.NicoNico.Live
                 return -1;
             }
 
-            // lvXXXX が含まれていればその放送ＩＤをそのまま使います。
+            // lvXXXX が含まれていればその放送IDをそのまま使います。
             var m = Regex.Match(liveStr, "lv([0-9]+)");
             if (m.Success)
             {
                 return long.Parse(m.Groups[1].Value);
             }
 
-            // 一度放送ページを取得して、そこから放送ＩＤを探します。
+            // 一度放送ページを取得して、そこから放送IDを探します。
             // 放送URLはcoXXXXを含むURLのことがあります。
             var page = WebUtil.RequestHttpText(
                 liveStr,
@@ -160,36 +90,6 @@ namespace Ragnarok.NicoNico.Live
             }
 
             return long.Parse(m.Groups[1].Value);
-        }
-
-        /// <summary>
-        /// コミュニティＩＤを取得します。
-        /// </summary>
-        public static int GetCommunityId(string communityStr)
-        {
-            var m = Regex.Match(communityStr, "co([0-9]+)");
-            if (m.Success)
-            {
-                return int.Parse(m.Groups[1].Value);
-            }
-
-            return -1;
-        }
-
-        /// <summary>
-        /// IDからID文字列を作成します。
-        /// </summary>
-        public static string LiveIdString(long liveId)
-        {
-            return string.Format("lv{0}", liveId);
-        }
-
-        /// <summary>
-        /// IDからID文字列を作成します。
-        /// </summary>
-        public static string CommunityIdString(int communityId)
-        {
-            return string.Format("co{0}", communityId);
         }
 
         /// <summary>
@@ -273,7 +173,7 @@ namespace Ragnarok.NicoNico.Live
 
         private static readonly Regex CurrentLiveCommunityPageRegex = new Regex(
             @"<div class=""now_item cfix"">\s*" +
-            @"<h2><a href=""http://live.nicovideo.jp/watch/lv(\d+)\?ref=community""\s*" +
+            @"<h2><a href=""http://video.nicovideo.jp/watch/lv(\d+)\?ref=community""\s*" +
             @"class=""community"">");
 
         /// <summary>
@@ -323,10 +223,7 @@ namespace Ragnarok.NicoNico.Live
             @"<script type=""text/javascript""><!--" +
             @"\s*var Video = [{]" +
             @"\s*v:\s*'lv(\d+)',");
-        private static readonly Regex HarajukuNowOnAirRegex = new Regex(
-            @"<span class=""icon iconOnAir liveStatus"">" +
-            @"<span class=""dmy"">NOW ON AIR</span></span>");
-        private static readonly Regex QwatchNowOnAirRegex = new Regex(
+        private static readonly Regex NowOnAirRegex = new Regex(
             @"<div id=""flvplayer_container"">\s*" +
             @"<div class=""dummy_box""></div>");
 
@@ -348,8 +245,7 @@ namespace Ragnarok.NicoNico.Live
                     return null;
                 }
 
-                if (!HarajukuNowOnAirRegex.IsMatch(responseText) &&
-                    !QwatchNowOnAirRegex.IsMatch(responseText))
+                if (!NowOnAirRegex.IsMatch(responseText))
                 {
                     // 放送中ではありません。
                     return null;
@@ -525,7 +421,7 @@ namespace Ragnarok.NicoNico.Live
                     try
                     {
                         // ステータスがおかしければエラーとします。
-                        var v = PlayerStatus.CreateFromXml(liveId, GetXml(data));
+                        var v = PlayerStatus.CreateFromXml(liveId, NicoUtil.GetXml(data));
 
                         internalData.LiveStreamInfo.PlayerStatus = v;
                     }
@@ -554,7 +450,7 @@ namespace Ragnarok.NicoNico.Live
                     try
                     {
                         // publishstatusは放送主でないと取得できません。
-                        var v = PublishStatus.CreateFromXml(liveId, GetXml(data));
+                        var v = PublishStatus.CreateFromXml(liveId, NicoUtil.GetXml(data));
 
                         internalData.LiveStreamInfo.PublishStatus = v;
                     }

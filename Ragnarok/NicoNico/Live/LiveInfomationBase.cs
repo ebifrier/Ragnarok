@@ -61,7 +61,7 @@ namespace Ragnarok.NicoNico.Live
             if (root == null)
             {
                 throw new NicoLiveException(
-                    LiveStatusCode.XmlParseError, idString);
+                    NicoStatusCode.XmlParseError, idString);
             }
 
             // 放送情報が正しく取得できたか調べます。
@@ -69,7 +69,7 @@ namespace Ragnarok.NicoNico.Live
             if (status == null)
             {
                 throw new NicoLiveException(
-                    LiveStatusCode.XmlParseError, idString);
+                    NicoStatusCode.XmlParseError, idString);
             }
 
             // 放送情報の取得に失敗した場合、その理由を返します。
@@ -79,12 +79,12 @@ namespace Ragnarok.NicoNico.Live
                 if (code != null)
                 {
                     throw new NicoLiveException(
-                        LiveStatusCodeUtil.GetCode(code.InnerText), idString);
+                        NicoStatusCodeUtil.GetCode(code.InnerText), idString);
                 }
                 else
                 {
                     throw new NicoLiveException(
-                        LiveStatusCode.UnknownError, idString);
+                        NicoStatusCode.UnknownError, idString);
                 }
             }
 
