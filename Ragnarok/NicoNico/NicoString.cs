@@ -134,6 +134,24 @@ namespace Ragnarok.NicoNico
                 (int)Utility.TimeUtil.DateTimeToUnixTime(when));
         }
 
+        #region ID
+        /// <summary>
+        /// 生放送IDからID文字列を作成します。
+        /// </summary>
+        public static string LiveIdString(long liveId)
+        {
+            return string.Format("lv{0}", liveId);
+        }
+
+        /// <summary>
+        /// IDからID文字列を作成します。
+        /// </summary>
+        public static string CommunityIdString(int communityId)
+        {
+            return string.Format("co{0}", communityId);
+        }
+        #endregion
+
         #region 通常ページ
         /// <summary>
         /// マイページがあるURLを取得します。
@@ -182,6 +200,16 @@ namespace Ragnarok.NicoNico
             return string.Format(
                 "http://ch.nicovideo.jp/channel/ch{0}",
                 channelId);
+        }
+
+        /// <summary>
+        /// ニコ生の動画URLを取得します。
+        /// </summary>
+        public static string GetVideoUrl(string videoId)
+        {
+            return string.Format(
+                "http://www.nicovideo.jp/watch/{0}",
+                videoId);
         }
 
         /// <summary>
