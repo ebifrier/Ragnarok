@@ -299,7 +299,6 @@
     <Compile Include="Utility\InfoBase.cs" />
     <Compile Include="Utility\IntConverter.cs" />
     <Compile Include="Utility\JsonUtil.cs" />
-    <Compile Include="Utility\JsonConverter.cs" />
     <Compile Include="Utility\LabelDescriptionAttribute.cs" />
     <Compile Include="Utility\Matrix44d.cs" />
     <Compile Include="Utility\MemoryStreamExtensions.cs" />
