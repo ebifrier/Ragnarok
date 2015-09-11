@@ -93,6 +93,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\externals\net\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
@@ -193,10 +197,15 @@
     <Compile Include="Net\SendThread.cs" />
     <Compile Include="Net\WebUtil.cs" />
     <Compile Include="NicoNico\AccountInfo.cs" />
+    <Compile Include="NicoNico\Provider\ChannelToolException.cs" />
+    <Compile Include="NicoNico\Provider\ChannelToolUtil.cs" />
     <Compile Include="NicoNico\Comment.cs" />
     <Compile Include="NicoNico\CommentParser.cs" />
     <Compile Include="NicoNico\CommentStringizer.cs" />
     <Compile Include="NicoNico\Gender.cs" />
+    <Compile Include="NicoNico\Video\Tests\VideoUtilTest.cs" />
+    <Compile Include="NicoNico\XmlInfomationBase.cs" />
+    <Compile Include="NicoNico\NicoUtil.cs" />
     <Compile Include="NicoNico\Live\AlertClient.cs" />
     <Compile Include="NicoNico\Live\AlertInfo.cs" />
     <Compile Include="NicoNico\Live\ChatResultStatus.cs" />
@@ -204,10 +213,10 @@
     <Compile Include="NicoNico\Live\CommentClientEventArgs.cs" />
     <Compile Include="NicoNico\Live\CommentRoom.cs" />
     <Compile Include="NicoNico\Live\CommentRoomInfo.cs" />
-    <Compile Include="NicoNico\Live\CommunityData.cs" />
-    <Compile Include="NicoNico\Live\CommunityInfo.cs" />
-    <Compile Include="NicoNico\Live\CommunityLevelInfo.cs" />
-    <Compile Include="NicoNico\Live\CommunityLevelTable.cs" />
+    <Compile Include="NicoNico\Provider\CommunityData.cs" />
+    <Compile Include="NicoNico\Provider\CommunityInfo.cs" />
+    <Compile Include="NicoNico\Provider\CommunityLevelInfo.cs" />
+    <Compile Include="NicoNico\Provider\CommunityLevelTable.cs" />
     <Compile Include="NicoNico\Live\Detail\ChannelInfoCreator.cs" />
     <Compile Include="NicoNico\Live\Detail\LiveInfoCreator.cs" />
     <Compile Include="NicoNico\Live\Detail\OfficialLiveInfoCreator.cs" />
@@ -215,20 +224,27 @@
     <Compile Include="NicoNico\Live\LiveInfo.cs" />
     <Compile Include="NicoNico\Live\LiveInfomationBase.cs" />
     <Compile Include="NicoNico\Live\Detail\UserLiveCreator.cs" />
-    <Compile Include="NicoNico\Live\LiveStatusCode.cs" />
+    <Compile Include="NicoNico\NicoStatusCode.cs" />
     <Compile Include="NicoNico\Live\LiveUtil.cs" />
     <Compile Include="NicoNico\Live\NicoLiveException.cs" />
     <Compile Include="NicoNico\Live\PlayerStatus.cs" />
     <Compile Include="NicoNico\Live\PostComment.cs" />
-    <Compile Include="NicoNico\Live\ProviderType.cs" />
+    <Compile Include="NicoNico\Provider\NicoProviderException.cs" />
+    <Compile Include="NicoNico\Provider\ProviderType.cs" />
     <Compile Include="NicoNico\Live\PublishStatus.cs" />
-    <Compile Include="NicoNico\Live\StrUtil.cs" />
+    <Compile Include="NicoNico\StrUtil.cs" />
     <Compile Include="NicoNico\Login\CookieValidator.cs" />
     <Compile Include="NicoNico\Login\LoginData.cs" />
     <Compile Include="NicoNico\Login\Loginer.cs" />
     <Compile Include="NicoNico\NicoClient.cs" />
     <Compile Include="NicoNico\NicoException.cs" />
     <Compile Include="NicoNico\NicoString.cs" />
+    <Compile Include="NicoNico\Video\VideoData.cs" />
+    <Compile Include="NicoNico\Video\NicoVideoException.cs" />
+    <Compile Include="NicoNico\Video\SnapshotApi.cs" />
+    <Compile Include="NicoNico\Video\Tests\VideoDataTest.cs" />
+    <Compile Include="NicoNico\Video\VideoUtil.cs" />
+    <Compile Include="NicoNico\Video\Mylist.cs" />
     <Compile Include="NLog\RemoteSyslog.cs" />
     <Compile Include="NLog\RepeatedException.cs" />
     <Compile Include="NLog\Syslog.cs" />
@@ -332,8 +348,14 @@
     <None Include="Ragnarok.snk" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="NicoNico\Video\" />
+    <Content Include="x64\SQLite.Interop.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="x86\SQLite.Interop.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>
