@@ -116,7 +116,9 @@ namespace Ragnarok.NicoNico.Video
                     "jsonファイルの内容が正しくありません。");
             }
 
-            return result.values;
+            return result.values
+                .Where(_ => !string.IsNullOrEmpty(_.IdString))
+                .ToArray();
         }
     }
 }
