@@ -15,6 +15,8 @@ using Ragnarok.Net;
 
 namespace Ragnarok.NicoNico.Live
 {
+    using Provider;
+
     /// <summary>
     /// getplayerstatusを扱うクラスです。
     /// </summary>
@@ -112,7 +114,7 @@ namespace Ragnarok.NicoNico.Live
             /// <summary>
             /// 放送が所属するコミュニティの種別を取得します。
             /// </summary>
-            public Live.ProviderType ProviderType { get; private set; }
+            public ProviderType ProviderType { get; private set; }
 
             /// <summary>
             /// 放送が所属するコミュニティを取得します。
@@ -427,8 +429,8 @@ namespace Ragnarok.NicoNico.Live
 
             internal PressType(XmlNode node)
             {
-                this.DisplayLines = -1;
-                this.DisplayTime = -1;
+                DisplayLines = -1;
+                DisplayTime = -1;
             }
         }
 
@@ -790,7 +792,7 @@ namespace Ragnarok.NicoNico.Live
         /// コンストラクタ
         /// </summary>
         private PlayerStatus(long liveId, XmlNode node)
-            : base(node, "getplayerstatus", LiveUtil.LiveIdString(liveId))
+            : base(node, "getplayerstatus", NicoString.LiveIdString(liveId))
         {
             this.Stream = new StreamType();
             this.User = new UserType();
@@ -856,7 +858,7 @@ namespace Ragnarok.NicoNico.Live
             var liveId = LiveUtil.GetLiveId(liveStr);
             if (liveId < 0)
             {
-                throw new NicoLiveException(LiveStatusCode.InvalidLiveId);
+                throw new NicoLiveException(NicoStatusCode.InvalidLiveId);
             }
 
             return Create(liveId, cc);
@@ -868,14 +870,14 @@ namespace Ragnarok.NicoNico.Live
         public static PlayerStatus Create(long liveId, CookieContainer cc)
         {
             // 生放送ＩＤから放送情報を取得します。
-            var node = LiveUtil.GetXml(
+            var node = NicoUtil.GetXml(
                 NicoString.GetPlayerStatusUrl(liveId),
                 cc);
             if (node == null)
             {
                 throw new NicoLiveException(
-                    LiveStatusCode.NetworkError,
-                    LiveUtil.LiveIdString(liveId));
+                    NicoStatusCode.NetworkError,
+                    NicoString.LiveIdString(liveId));
             }
 
             return CreateFromXml(liveId, node);

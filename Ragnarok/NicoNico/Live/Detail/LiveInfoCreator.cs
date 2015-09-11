@@ -5,6 +5,8 @@ using System.Text;
 
 namespace Ragnarok.NicoNico.Live.Detail
 {
+    using Provider;
+
     /// <summary>
     /// 共通インターフェースです。
     /// </summary>

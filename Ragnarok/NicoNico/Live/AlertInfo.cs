@@ -134,13 +134,13 @@ namespace Ragnarok.NicoNico.Live
         /// </summary>
         public static AlertInfo Create()
         {
-            var node = LiveUtil.GetXml(
-                "http://live.nicovideo.jp/api/getalertinfo",
+            var node = NicoUtil.GetXml(
+                "http://video.nicovideo.jp/api/getalertinfo",
                 null);
 
             if (node == null)
             {
-                throw new NicoLiveException(LiveStatusCode.NetworkError);
+                throw new NicoLiveException(NicoStatusCode.NetworkError);
             }
 
             return new AlertInfo(node);

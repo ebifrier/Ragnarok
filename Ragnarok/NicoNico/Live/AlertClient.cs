@@ -10,6 +10,7 @@ using System.Xml;
 namespace Ragnarok.NicoNico.Live
 {
     using Ragnarok.Utility;
+    using Provider;
 
     /// <summary>
     /// 生放送のアラート情報を通知するときに使われます。
@@ -156,7 +157,7 @@ namespace Ragnarok.NicoNico.Live
 
             if (!socket.Connected)
             {
-                throw new NicoLiveException(LiveStatusCode.NetworkError);
+                throw new NicoLiveException(NicoStatusCode.NetworkError);
             }
 
             lock (SyncRoot)
@@ -316,7 +317,7 @@ namespace Ragnarok.NicoNico.Live
             }
 
             // 提供者を取得します。
-            var providerData = LiveUtil.ParseProvider(values[1]);
+            var providerData = NicoUtil.ParseProvider(values[1]);
             if (providerData == null)
             {
                 return;

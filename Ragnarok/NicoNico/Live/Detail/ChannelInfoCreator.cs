@@ -8,6 +8,8 @@ using System.Xml.XPath;
 
 namespace Ragnarok.NicoNico.Live.Detail
 {
+    using Provider;
+
     /// <summary>
     /// チャンネル生放送の各部屋に割り当てられた名前などを取得します。
     /// </summary>

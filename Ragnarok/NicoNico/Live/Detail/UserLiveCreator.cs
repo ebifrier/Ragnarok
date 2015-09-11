@@ -5,6 +5,8 @@ using System.Text;
 
 namespace Ragnarok.NicoNico.Live.Detail
 {
+    using Provider;
+
     /// <summary>
     /// ユーザー生放送の各ルームの接続情報を管理します。
     /// </summary>
