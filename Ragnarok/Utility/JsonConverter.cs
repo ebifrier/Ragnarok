@@ -133,7 +133,8 @@ namespace Ragnarok.Utility
                     member, typeof(DataMemberAttribute))
                     as DataMemberAttribute;
 
-                if (propertyAttr != null && dictionary.ContainsKey(propertyAttr.Name))
+                if (propertyAttr != null && !string.IsNullOrEmpty(propertyAttr.Name) &&
+                    dictionary.ContainsKey(propertyAttr.Name))
                 {
                     SetMemberValue(serializer, member, obj, dictionary[propertyAttr.Name]);
                 }
