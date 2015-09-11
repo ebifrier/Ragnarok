@@ -14,7 +14,7 @@ namespace Ragnarok.NicoNico.Video
     /// json形式のニコニコ検索APIの使用時に使います。
     /// </summary>
     [DataContract()]
-    internal sealed class NicoSearchDataJson
+    internal sealed class NicoSnapshotData
     {
         [DataMember()]
         public string dqnid;
@@ -27,9 +27,9 @@ namespace Ragnarok.NicoNico.Video
     }
 
     /// <summary>
-    /// ニコニコ検索APIによる高速・シンプルな動画検索を行います。
+    /// ニコニコスナップショットAPIによる高速・シンプルな動画検索を行います。
     /// </summary>
-    public static class NicoApiSearch
+    public static class SnapshotApi
     {
         /// <summary>
         /// このアプリの標準的なHTTPリクエストを作成します。
@@ -78,7 +78,7 @@ namespace Ragnarok.NicoNico.Video
         /// <remarks>
         /// http://search.nicovideo.jp/docs/api/snapshot.html
         /// </remarks>
-        public static VideoData[] Search(string keyword)
+        public static VideoData[] Search(string keyword, bool isKeyword = true)
         {
             var keywordQuery = "[\"title\", \"description\", \"tags\"]";
             var tagQuery = "[\"tags_exact\"]";
@@ -86,7 +86,7 @@ namespace Ragnarok.NicoNico.Video
             var json =
                 "{\"query\" : \"" + keyword + "\",\n" +
                 "\"service\" : [\"video\"],\n" +
-                "\"search\" : " + tagQuery + ",\n" +
+                "\"search\" : " + (isKeyword ? keywordQuery : tagQuery) + ",\n" +
                 "\"join\" : [\"cmsid\", \"title\", \"description\", \"start_time\", " +
                             "\"view_counter\", \"comment_counter\", " +
                             "\"mylist_counter\", \"tags\"],\n" +
@@ -104,12 +104,12 @@ namespace Ragnarok.NicoNico.Video
             // 結果となるJSONには複数の結果が含まれているため、
             // データの最初の一行分のみを抜き出します。
             var index = text.IndexOf('\n');
-            if (index >= 0)
+            if (index > 0)
             {
                 text = text.Substring(0, index);
             }
 
-            var result = JsonUtil.Deserialize<NicoSearchDataJson>(text);
+            var result = JsonUtil.Deserialize<NicoSnapshotData>(text);
             if (result == null || result.values == null)
             {
                 throw new FormatException(

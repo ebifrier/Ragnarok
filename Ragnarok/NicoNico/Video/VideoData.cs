@@ -26,7 +26,7 @@ namespace Ragnarok.NicoNico.Video
         public VideoData()
         {
             ThreadId = -1;
-            Tags = new List<string>();
+            TagList = new List<string>();
             StartTime = DateTime.MinValue;
             ViewCounter = -1;
             CommentCounter = -1;
@@ -40,11 +40,12 @@ namespace Ragnarok.NicoNico.Video
             : base(node, "nicovideo_thumb_response", videoId)
         {
             ThreadId = -1;
-            Tags = new List<string>();
+            TagList = new List<string>();
             StartTime = DateTime.MinValue;
             ViewCounter = -1;
             CommentCounter = -1;
             MylistCounter = -1;
+            IsVisible = true;
 
             var root = RootNode.SelectSingleNode("thumb");
             if (root == null)
@@ -82,7 +83,7 @@ namespace Ragnarok.NicoNico.Video
                         this.MylistCounter = StrUtil.ToInt(text, 0);
                         break;
                     case "tags":
-                        this.Tags = child.ChildNodes
+                        this.TagList = child.ChildNodes
                             .OfType<XmlNode>()
                             .Where(_ => _.Name == "tag")
                             .Select(_ => _.InnerText)
@@ -151,8 +152,7 @@ namespace Ragnarok.NicoNico.Video
         /// <summary>
         /// タグ一覧を取得します。
         /// </summary>
-        [DataMember(Name = "tags")]
-        public List<string> Tags
+        public List<string> TagList
         {
             get;
             set;
@@ -249,6 +249,12 @@ namespace Ragnarok.NicoNico.Video
         /// DataContractによるシリアライズ・デシリアライズ時に使います。
         /// </summary>
         [DataMember()]
+        private string tags;
+
+        /// <summary>
+        /// DataContractによるシリアライズ・デシリアライズ時に使います。
+        /// </summary>
+        [DataMember()]
         private string start_time;
 
         /// <summary>
@@ -262,6 +268,8 @@ namespace Ragnarok.NicoNico.Video
                 //2014-07-23 20:00:00
                 start_time = StartTime.ToString("yyyy-MM-dd hh:mm:ss");
             }
+
+            tags = string.Join(" ", TagList);
         }
 
         /// <summary>
@@ -281,6 +289,17 @@ namespace Ragnarok.NicoNico.Video
                 }
             }
 
+            if (tags != null)
+            {
+                TagList = tags.Split(new char[] { ' ' },
+                    StringSplitOptions.RemoveEmptyEntries)
+                    .ToList();
+            }
+            else
+            {
+                TagList = new List<string>();
+            }
+
             StartTime = date;
         }
 
@@ -292,11 +311,18 @@ namespace Ragnarok.NicoNico.Video
         /// 参考URL)
         /// http://dic.nicovideo.jp/a/%E3%83%8B%E3%82%B3%E3%83%8B%E3%82%B3%E5%8B%95%E7%94%BBapi
         /// </remarks>
-        public static VideoData CreateFromApi(string videoId)
+        public static VideoData CreateFromApi(string videoStr)
         {
+            if (string.IsNullOrEmpty(videoStr))
+            {
+                throw new ArgumentNullException("videoStr");
+            }
+
+            var videoId = VideoUtil.GetVideoId(videoStr);
             if (string.IsNullOrEmpty(videoId))
             {
-                throw new ArgumentNullException("videoId");
+                throw new NicoVideoException(
+                    string.Format("{0}: 不正な動画IDです。"));
             }
 
             var url = string.Format(
@@ -305,6 +331,183 @@ namespace Ragnarok.NicoNico.Video
             var node = NicoUtil.GetXml(url, null);
 
             return new VideoData(videoId, node);
+        }
+        #endregion
+
+        #region 動画ページから動画情報を作成
+        /// <summary>
+        /// 動画番号が含まれる文字列から情報を作成します。
+        /// </summary>
+        public static VideoData CreateFromPage(string videoStr, CookieContainer cc)
+        {
+            if (string.IsNullOrEmpty(videoStr))
+            {
+                throw new ArgumentNullException("videoStr");
+            }
+
+            if (cc == null)
+            {
+                throw new ArgumentNullException("cc");
+            }
+
+            var videoId = VideoUtil.GetVideoId(videoStr);
+            if (string.IsNullOrEmpty(videoId))
+            {
+                throw new NicoVideoException(
+                    string.Format("{0}: 不正な動画IDです。"));
+            }
+
+            // urlを取得します。
+            var responseData = WebUtil.RequestHttp(
+                NicoString.GetVideoUrl(videoId),
+                null,
+                cc);
+
+            // 失敗;; エラー時はレスポンスが空になります。
+            if (responseData == null)
+            {
+                throw new NicoVideoException(
+                    "放送ページの取得に失敗しました。",
+                    videoId);
+            }
+
+            var text = Encoding.UTF8.GetString(responseData);
+            return CreateFromPageHtml(text);
+        }
+
+        private static readonly Regex IdRegex = new Regex(
+            @"&quot;videoId&quot;:&quot;((sm|so)([0-9]+))&quot;,",
+            RegexOptions.IgnoreCase);
+        private static readonly Regex ThreadIdRegex = new Regex(
+            @"&quot;v&quot;:&quot;([0-9]+)&quot;,",
+            RegexOptions.IgnoreCase);
+        private static readonly Regex TitleRegex = new Regex(
+            @"<h2><span class=""videoHeaderTitle"" style=""font-size:[\d\.]+px"">(.*?)</span></h2>",
+            RegexOptions.IgnoreCase);
+        private static readonly Regex DescriptionRegex = new Regex(
+            @"<p class=""videoDescription description"">(.*?)</p>",
+            RegexOptions.IgnoreCase);
+        private static readonly Regex StartTimeRegex = new Regex(
+            @"&quot;postedAt&quot;:&quot;(.*?)&quot;,",
+            RegexOptions.IgnoreCase);
+        private static readonly Regex ViewCountRegex = new Regex(
+            @"<li class=""videoStatsView"">再生:<span class=""viewCount"">\s*([\d,]+)\s*</span></li>",
+            RegexOptions.IgnoreCase);
+        private static readonly Regex CommentCountRegex = new Regex(
+            @"<li class=""videoStatsComment"">コメント:<span class=""commentCount"">\s*([\d,]+)\s*</span></li>",
+            RegexOptions.IgnoreCase);
+        private static readonly Regex MylistCountRegex = new Regex(
+            @"<li class=""videoStatsMylist"">マイリスト:<span class=""mylistCount"">\s*([\d,]+)\s*</span></li>",
+            RegexOptions.IgnoreCase);
+        private static readonly Regex TagRegex = new Regex(
+            @"<a href=""/tag/[\w%#\$&\?\(\)~\.=\+\-]+"" data-playerscreenmode-change=""(\d)+"" class=""videoHeaderTagLink"">(.+?)</a>",
+            RegexOptions.IgnoreCase);
+
+        /// <summary>
+        /// 動画ページのhtmlから動画情報を作成します。
+        /// </summary>
+        public static VideoData CreateFromPageHtml(string pageStr)
+        {
+            var video = new VideoData();
+
+            if (string.IsNullOrEmpty(pageStr))
+            {
+                throw new NicoVideoException(
+                    "ページが空です。");
+            }
+
+            // 動画ID
+            var m = IdRegex.Match(pageStr);
+            if (!m.Success)
+            {
+                throw new NicoVideoException(
+                    "動画IDを取得できませんでした。");
+            }
+            video.IdString = m.Groups[1].Value;
+
+            // スレッドID(無い場合もある)
+            m = ThreadIdRegex.Match(pageStr);
+            if (m.Success)
+            {
+                video.ThreadId = long.Parse(m.Groups[1].Value);
+            }
+
+            // 動画タイトル
+            m = TitleRegex.Match(pageStr);
+            if (!m.Success)
+            {
+                throw new NicoVideoException(
+                    "動画タイトルを取得できませんでした。",
+                    video.IdString);
+            }
+            video.Title = m.Groups[1].Value;
+
+            // 動画詳細
+            m = DescriptionRegex.Match(pageStr);
+            if (!m.Success)
+            {
+                throw new NicoVideoException(
+                    "動画概要を取得できませんでした。",
+                    video.IdString);
+            }
+            video.Description = m.Groups[1].Value;
+
+            // 2015\/09\/04 11:45:00
+            m = StartTimeRegex.Match(pageStr);
+            if (!m.Success)
+            {
+                throw new NicoVideoException(
+                    "投稿時間の取得に失敗しました。",
+                    video.IdString);
+            }
+            video.StartTime = DateTime.ParseExact(
+                m.Groups[1].Value.Replace("\\", ""),
+                "yyyy/MM/dd HH:mm:ss", null);
+
+            // 再生数
+            m = ViewCountRegex.Match(pageStr);
+            if (!m.Success)
+            {
+                throw new NicoVideoException(
+                    "再生数の取得に失敗しました。",
+                    video.IdString);
+            }
+            video.ViewCounter = int.Parse(
+                m.Groups[1].Value,
+                NumberStyles.AllowThousands);
+
+            // コメント数
+            m = CommentCountRegex.Match(pageStr);
+            if (!m.Success)
+            {
+                throw new NicoVideoException(
+                    "コメント数の取得に失敗しました。",
+                    video.IdString);
+            }
+            video.CommentCounter = int.Parse(
+                m.Groups[1].Value,
+                NumberStyles.AllowThousands);
+
+            // マイリスト数
+            m = MylistCountRegex.Match(pageStr);
+            if (!m.Success)
+            {
+                throw new NicoVideoException(
+                    "マイリスト数の取得に失敗しました。",
+                    video.IdString);
+            }
+            video.MylistCounter = int.Parse(
+                m.Groups[1].Value,
+                NumberStyles.AllowThousands);
+
+            // タグを収集します。
+            var mc = TagRegex.Matches(pageStr);
+            video.TagList = mc.OfType<Match>()
+                .Where(_ => _.Success)
+                .Select(_ => _.Groups[2].Value)
+                .ToList();
+
+            return video;
         }
         #endregion
 
@@ -391,190 +594,6 @@ namespace Ragnarok.NicoNico.Video
                     return movie;
                 })
                 .ToList();
-        }
-        #endregion
-
-        #region 動画ページから動画情報を作成
-        /// <summary>
-        /// 動画番号が含まれる文字列から情報を作成します。
-        /// </summary>
-        public static VideoData CreateFromPage(string videoStr, CookieContainer cc)
-        {
-            if (string.IsNullOrEmpty(videoStr))
-            {
-                throw new ArgumentNullException("videoStr");
-            }
-
-            if (cc == null)
-            {
-                throw new ArgumentNullException("cc");
-            }
-
-            // smXXXXやsoXXXXが含まれていればその動画IDをそのまま使います。
-            var m = Regex.Match(videoStr, "(sm|so)([0-9]+)");
-            if (m.Success)
-            {
-                return CreateFromId(m.Groups[0].Value, cc);
-            }
-
-            // XXXX が含まれていればそのスレッドIDをそのまま使います。
-            m = Regex.Match(videoStr, "(^|/)([0-9]+)$");
-            if (m.Success)
-            {
-                return CreateFromId(m.Groups[2].Value, cc);
-            }
-
-            // 一度動画ページを取得して、そこから動画IDを探します。
-            var page = WebUtil.RequestHttpText(
-                videoStr,
-                null,
-                cc,
-                Encoding.UTF8);
-
-            return CreateFromPageHtml(page);
-        }
-
-        /// <summary>
-        /// Urlから動画情報を取得します。
-        /// </summary>
-        public static VideoData CreateFromId(string videoId, CookieContainer cc)
-        {
-            // urlを取得します。
-            var responseData = WebUtil.RequestHttp(
-                NicoString.GetVideoUrl(videoId),
-                null,
-                cc);
-
-            // 失敗;; エラー時はレスポンスが空になります。
-            if (responseData == null)
-            {
-                throw new NicoVideoException(
-                    "放送ページの取得に失敗しました。",
-                    videoId);
-            }
-
-            var text = Encoding.UTF8.GetString(responseData);
-            return CreateFromPageHtml(text);
-        }
-
-        private static readonly Regex IdRegex = new Regex(
-            @"&quot;videoId&quot;:&quot;((sm|so)([0-9]+))&quot;,",
-            RegexOptions.IgnoreCase);
-        private static readonly Regex ThreadIdRegex = new Regex(
-            @"&quot;v&quot;:&quot;([0-9]+)&quot;,",
-            RegexOptions.IgnoreCase);
-        private static readonly Regex TitleRegex = new Regex(
-            @"<h2><span class=""videoHeaderTitle"" style=""font-size:[\d\.]+px"">(.*?)</span></h2>",
-            RegexOptions.IgnoreCase);
-        private static readonly Regex DescriptionRegex = new Regex(
-            @"<p class=""videoDescription description"">(.*?)</p>",
-            RegexOptions.IgnoreCase);
-        private static readonly Regex ViewCountRegex = new Regex(
-            @"<li class=""videoStatsView"">再生:<span class=""viewCount"">\s*([\d,]+)\s*</span></li>",
-            RegexOptions.IgnoreCase);
-        private static readonly Regex CommentCountRegex = new Regex(
-            @"<li class=""videoStatsComment"">コメント:<span class=""commentCount"">\s*([\d,]+)\s*</span></li>",
-            RegexOptions.IgnoreCase);
-        private static readonly Regex MylistCountRegex = new Regex(
-            @"<li class=""videoStatsMylist"">マイリスト:<span class=""mylistCount"">\s*([\d,]+)\s*</span></li>",
-            RegexOptions.IgnoreCase);
-        private static readonly Regex TagRegex = new Regex(
-            @"<a href=""/tag/[\w%#\$&\?\(\)~\.=\+\-]+"" data-playerscreenmode-change=""(\d)+"" class=""videoHeaderTagLink"">(.+?)</a>",
-            RegexOptions.IgnoreCase);
-
-        /// <summary>
-        /// 動画ページのhtmlから動画情報を作成します。
-        /// </summary>
-        public static VideoData CreateFromPageHtml(string pageStr)
-        {
-            var video = new VideoData();
-
-            if (string.IsNullOrEmpty(pageStr))
-            {
-                throw new NicoVideoException(
-                    "ページが空です。");
-            }
-
-            // 動画ID
-            var m = IdRegex.Match(pageStr);
-            if (!m.Success)
-            {
-                throw new NicoVideoException(
-                    "動画IDを取得できませんでした。");
-            }
-            video.IdString = m.Groups[1].Value;
-
-            // スレッドID(無い場合もある)
-            m = ThreadIdRegex.Match(pageStr);
-            if (m.Success)
-            {
-                video.ThreadId = long.Parse(m.Groups[1].Value);
-            }
-
-            // 動画タイトル
-            m = TitleRegex.Match(pageStr);
-            if (!m.Success)
-            {
-                throw new NicoVideoException(
-                    "動画タイトルを取得できませんでした。",
-                    video.IdString);
-            }
-            video.Title = m.Groups[1].Value;
-
-            // 動画詳細
-            m = DescriptionRegex.Match(pageStr);
-            if (!m.Success)
-            {
-                throw new NicoVideoException(
-                    "動画概要を取得できませんでした。",
-                    video.IdString);
-            }
-            video.Description = m.Groups[1].Value;
-
-            // 再生数
-            m = ViewCountRegex.Match(pageStr);
-            if (!m.Success)
-            {
-                throw new NicoVideoException(
-                    "再生数の取得に失敗しました。",
-                    video.IdString);
-            }
-            video.ViewCounter = int.Parse(
-                m.Groups[1].Value,
-                NumberStyles.AllowThousands);
-
-            // コメント数
-            m = CommentCountRegex.Match(pageStr);
-            if (!m.Success)
-            {
-                throw new NicoVideoException(
-                    "コメント数の取得に失敗しました。",
-                    video.IdString);
-            }
-            video.CommentCounter = int.Parse(
-                m.Groups[1].Value,
-                NumberStyles.AllowThousands);
-
-            // マイリスト数
-            m = MylistCountRegex.Match(pageStr);
-            if (!m.Success)
-            {
-                throw new NicoVideoException(
-                    "マイリスト数の取得に失敗しました。",
-                    video.IdString);
-            }
-            video.MylistCounter = int.Parse(
-                m.Groups[1].Value,
-                NumberStyles.AllowThousands);
-
-            // タグを収集します。
-            var mc = TagRegex.Matches(pageStr);
-            video.Tags = mc.OfType<Match>()
-                .Where(_ => _.Success)
-                .Select(_ => _.Groups[2].Value)
-                .ToList();
-
-            return video;
         }
         #endregion
     }
