@@ -300,6 +300,7 @@ namespace Ragnarok.NicoNico.Video
                 TagList = new List<string>();
             }
 
+            IsVisible = true;
             StartTime = date;
         }
 
@@ -452,7 +453,7 @@ namespace Ragnarok.NicoNico.Video
             }
             video.Description = m.Groups[1].Value;
 
-            // 2015\/09\/04 11:45:00
+            // 投稿時間 (2015\/09\/04 11:45:00)
             m = StartTimeRegex.Match(pageStr);
             if (!m.Success)
             {
