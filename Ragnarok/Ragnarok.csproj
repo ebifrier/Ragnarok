@@ -343,6 +343,7 @@
   <ItemGroup>
     <None Include="NLog.config">
       <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <Resource Include="NLog\NLog.config" />
     <None Include="Ragnarok.snk" />
