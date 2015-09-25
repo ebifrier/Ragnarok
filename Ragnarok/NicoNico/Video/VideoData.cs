@@ -20,6 +20,9 @@ namespace Ragnarok.NicoNico.Video
     [DataContract()]
     public sealed class VideoData : XmlInfomationBase
     {
+        private List<string> taglist = new List<string>();
+        private string tags;
+
         /// <summary>
         /// コンストラクタ
         /// </summary>
@@ -46,6 +49,7 @@ namespace Ragnarok.NicoNico.Video
             CommentCounter = -1;
             MylistCounter = -1;
             IsVisible = true;
+            IsMemberOnly = false;
 
             var root = RootNode.SelectSingleNode("thumb");
             if (root == null)
@@ -89,6 +93,9 @@ namespace Ragnarok.NicoNico.Video
                             .Select(_ => _.InnerText)
                             .ToList();
                         break;
+                    case "embeddable":
+                        IsMemberOnly = (StrUtil.ToInt(text, 0) == 0);
+                        break;
                 }
             }
         }
@@ -110,7 +117,7 @@ namespace Ragnarok.NicoNico.Video
         public long ThreadId
         {
             get;
-            private set;
+            set;
         }
 
         /// <summary>
@@ -154,28 +161,61 @@ namespace Ragnarok.NicoNico.Video
         /// </summary>
         public List<string> TagList
         {
-            get;
-            set;
+            get { return this.taglist; }
+            set
+            {
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
+                this.tags = string.Join(" ", value);
+                this.taglist = value;
+            }
+        }
+
+        /// <summary>
+        /// タグを空白で区切った文字列を取得または設定します。
+        /// </summary>
+        [DataMember()]
+        public string Tags
+        {
+            get { return this.tags; }
+            set
+            {
+                if (value != null)
+                {
+                    TagList = value.Split(new char[] { ' ' },
+                        StringSplitOptions.RemoveEmptyEntries)
+                        .ToList();
+                }
+                else
+                {
+                    TagList = new List<string>();
+                }
+
+                this.tags = value;
+            }
         }
 
         /// <summary>
         /// 公開／非公開の状態を取得します。
         /// </summary>
         [DataMember(Name = "visible")]
-        public bool IsVisible
+        public bool? IsVisible
         {
             get;
-            private set;
+            set;
         }
 
         /// <summary>
         /// 会員限定・全員公開などの状態を取得します。
         /// </summary>
         [DataMember(Name = "memberonly")]
-        public bool IsMemberOnly
+        public bool? IsMemberOnly
         {
             get;
-            private set;
+            set;
         }
 
         /// <summary>
@@ -184,7 +224,7 @@ namespace Ragnarok.NicoNico.Video
         public DateTime StartTime
         {
             get;
-            private set;
+            set;
         }
 
         /// <summary>
@@ -249,12 +289,6 @@ namespace Ragnarok.NicoNico.Video
         /// DataContractによるシリアライズ・デシリアライズ時に使います。
         /// </summary>
         [DataMember()]
-        private string tags;
-
-        /// <summary>
-        /// DataContractによるシリアライズ・デシリアライズ時に使います。
-        /// </summary>
-        [DataMember()]
         private string start_time;
 
         /// <summary>
@@ -268,8 +302,6 @@ namespace Ragnarok.NicoNico.Video
                 //2014-07-23 20:00:00
                 start_time = StartTime.ToString("yyyy-MM-dd hh:mm:ss");
             }
-
-            tags = string.Join(" ", TagList);
         }
 
         /// <summary>
@@ -287,17 +319,6 @@ namespace Ragnarok.NicoNico.Video
                     // エラー時は適当な値を入れる。
                     date = DateTime.MinValue;
                 }
-            }
-
-            if (tags != null)
-            {
-                TagList = tags.Split(new char[] { ' ' },
-                    StringSplitOptions.RemoveEmptyEntries)
-                    .ToList();
-            }
-            else
-            {
-                TagList = new List<string>();
             }
 
             IsVisible = true;
@@ -508,6 +529,19 @@ namespace Ragnarok.NicoNico.Video
                 .Select(_ => _.Groups[2].Value)
                 .ToList();
 
+            // 表示状態などを調べます。
+            try
+            {
+                var test = VideoData.CreateFromApi(video.IdString);
+                video.IsVisible = true;
+                video.IsMemberOnly = test.IsMemberOnly;
+            }
+            catch(Exception)
+            {
+                video.IsVisible = false;
+                video.IsMemberOnly = false;
+            }
+
             return video;
         }
         #endregion
@@ -581,7 +615,7 @@ namespace Ragnarok.NicoNico.Video
         /// <summary>
         /// チャンネルツール上の探索結果から、動画情報を作成します。
         /// </summary>
-        public static List<VideoData> FromChannelToolSearchResults(string text)
+        public static IEnumerable<VideoData> FromChannelToolSearchResults(string text)
         {
             return SearchResultRegex.Matches(text)
                 .OfType<Match>()
@@ -593,8 +627,7 @@ namespace Ragnarok.NicoNico.Video
                         Log.Error("FromSearchResult Error");
                     }
                     return movie;
-                })
-                .ToList();
+                });
         }
         #endregion
     }
