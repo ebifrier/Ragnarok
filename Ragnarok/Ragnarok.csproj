@@ -197,8 +197,9 @@
     <Compile Include="Net\SendThread.cs" />
     <Compile Include="Net\WebUtil.cs" />
     <Compile Include="NicoNico\AccountInfo.cs" />
+    <Compile Include="NicoNico\Provider\ChannelLoginData.cs" />
     <Compile Include="NicoNico\Provider\ChannelToolException.cs" />
-    <Compile Include="NicoNico\Provider\ChannelToolUtil.cs" />
+    <Compile Include="NicoNico\Provider\ChannelTool.cs" />
     <Compile Include="NicoNico\Comment.cs" />
     <Compile Include="NicoNico\CommentParser.cs" />
     <Compile Include="NicoNico\CommentStringizer.cs" />

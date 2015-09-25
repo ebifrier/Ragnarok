@@ -29,7 +29,7 @@ namespace Ragnarok.NicoNico.Provider
     /// <summary>
     /// ニコニコチャンネルで動画編集や動画アップロードを行うためのクラスです。
     /// </summary>
-    public static class ChannelToolUtil
+    public static class ChannelTool
     {
         public readonly static string VideoUrl =
             @"http://chtool.nicovideo.jp/video/video.php";
@@ -88,7 +88,7 @@ namespace Ragnarok.NicoNico.Provider
                 @"https://secure.nicovideo.jp/secure/login?site=chtool",
                 param, cc, Encoding.UTF8);
 
-            //Save("login.html", text);
+            Save("login.html", text);
 
             // エラー表示用の文字列が表示されていればエラーとします。
             if (string.IsNullOrEmpty(text))
@@ -200,6 +200,8 @@ namespace Ragnarok.NicoNico.Provider
                     return null;
                 }
             }
+
+
             
             // 動画更新時に必要になる必須パラメータを設定します。
             var cparam = new Dictionary<string, object>(param);
@@ -309,16 +311,18 @@ namespace Ragnarok.NicoNico.Provider
         /// <summary>
         /// チャンネルページ上から動画の検索を行います。
         /// </summary>
-        public static List<VideoData> Search(CookieContainer cc, int channelId,
-                                             string keyword, int pageId = 1,
-                                             int limit = 20)
+        public static IEnumerable<VideoData> Search(CookieContainer cc,
+                                                    int channelId,
+                                                    string keyword, 
+                                                    int pageId = 1,
+                                                    int limit = 20)
         {
             if (cc == null)
             {
                 throw new ArgumentNullException("cc");
             }
 
-            var text = ChannelToolUtil.RequestSearch(
+            var text = ChannelTool.RequestSearch(
                 cc, channelId, keyword, pageId, limit);
             if (string.IsNullOrEmpty(text))
             {
@@ -326,6 +330,40 @@ namespace Ragnarok.NicoNico.Provider
             }
 
             return VideoData.FromChannelToolSearchResults(text);
+        }
+
+        /// <summary>
+        /// 指定の期間に表示されたすべての動画を取得します。
+        /// </summary>
+        public static IEnumerable<VideoData> SearchPeriod(CookieContainer cc,
+                                                          int channelId, 
+                                                          string keyword,
+                                                          DateTime? start,
+                                                          DateTime? end)
+        {
+            const int MaxCount = 20;
+            int pageId = 0;
+            int count = 0;
+
+            do
+            {
+                var movies = Search(cc, channelId, keyword, ++pageId, MaxCount);
+                foreach (var movie in movies)
+                {
+                    if (start != null && movie.StartTime < start.Value)
+                    {
+                        yield break;
+                    }
+
+                    if ((start == null || start.Value <= movie.StartTime) &&
+                        (end == null || movie.StartTime < end.Value))
+                    {
+                        yield return movie;
+                    }
+                }
+
+                count = movies.Count();
+            } while (count == MaxCount);
         }
     }
 }
