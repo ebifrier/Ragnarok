@@ -91,10 +91,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>set OUTDIR="E:\Dropbox\NicoNico\homepage\garnet-alice.net\programs\update"
-
-rem copy "$(TargetPath)" %25OUTDIR%25\
-rem copy "$(TargetPath).config" %25OUTDIR%25\</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
