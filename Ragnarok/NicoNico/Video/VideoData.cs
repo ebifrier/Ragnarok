@@ -34,6 +34,7 @@ namespace Ragnarok.NicoNico.Video
             ViewCounter = -1;
             CommentCounter = -1;
             MylistCounter = -1;
+            Timestamp = DateTime.MinValue;
         }
 
         /// <summary>
@@ -49,7 +50,7 @@ namespace Ragnarok.NicoNico.Video
             CommentCounter = -1;
             MylistCounter = -1;
             IsVisible = true;
-            IsMemberOnly = false;
+            Timestamp = Time;
 
             var root = RootNode.SelectSingleNode("thumb");
             if (root == null)
@@ -92,9 +93,6 @@ namespace Ragnarok.NicoNico.Video
                             .Where(_ => _.Name == "tag")
                             .Select(_ => _.InnerText)
                             .ToList();
-                        break;
-                    case "embeddable":
-                        IsMemberOnly = (StrUtil.ToInt(text, 0) == 0);
                         break;
                 }
             }
@@ -256,6 +254,16 @@ namespace Ragnarok.NicoNico.Video
             get;
             set;
         }
+
+        /// <summary>
+        /// データの取得時刻を取得します。
+        /// </summary>
+        [DataMember(Name = "timestamp")]
+        public DateTime Timestamp
+        {
+            get;
+            set;
+        }
         
         /// <summary>
         /// 公開までの残り時間を文字列で取得します。
@@ -300,7 +308,7 @@ namespace Ragnarok.NicoNico.Video
             if (StartTime != DateTime.MinValue)
             {
                 //2014-07-23 20:00:00
-                start_time = StartTime.ToString("yyyy-MM-dd hh:mm:ss");
+                start_time = StartTime.ToString("yyyy-MM-dd HH:mm:ss");
             }
         }
 
@@ -323,6 +331,7 @@ namespace Ragnarok.NicoNico.Video
 
             IsVisible = true;
             StartTime = date;
+            Timestamp = DateTime.Now;
         }
 
         #region ニコニコのgetthumbinfo APIから動画情報を作成
@@ -412,6 +421,12 @@ namespace Ragnarok.NicoNico.Video
         private static readonly Regex StartTimeRegex = new Regex(
             @"&quot;postedAt&quot;:&quot;(.*?)&quot;,",
             RegexOptions.IgnoreCase);
+        private static readonly Regex IsPublicRegex = new Regex(
+            @"&quot;is_public&quot;:(.+?),",
+            RegexOptions.IgnoreCase);
+        private static readonly Regex ThreadPublicRegex = new Regex(
+            @"&quot;threadPublic&quot;:&quot;([0-9]+)&quot;,",
+            RegexOptions.IgnoreCase);
         private static readonly Regex ViewCountRegex = new Regex(
             @"<li class=""videoStatsView"">再生:<span class=""viewCount"">\s*([\d,]+)\s*</span></li>",
             RegexOptions.IgnoreCase);
@@ -430,7 +445,10 @@ namespace Ragnarok.NicoNico.Video
         /// </summary>
         public static VideoData CreateFromPageHtml(string pageStr)
         {
-            var video = new VideoData();
+            var video = new VideoData
+            {
+                Timestamp = DateTime.Now
+            };
 
             if (string.IsNullOrEmpty(pageStr))
             {
@@ -529,18 +547,21 @@ namespace Ragnarok.NicoNico.Video
                 .Select(_ => _.Groups[2].Value)
                 .ToList();
 
-            // 表示状態などを調べます。
-            try
+            // 表示・非表示
+            m = IsPublicRegex.Match(pageStr);
+            if (!m.Success)
             {
-                var test = VideoData.CreateFromApi(video.IdString);
-                video.IsVisible = true;
-                video.IsMemberOnly = test.IsMemberOnly;
+                throw new NicoVideoException(
+                    "表示状態の取得に失敗しました。",
+                    video.IdString);
             }
-            catch(Exception)
-            {
-                video.IsVisible = false;
-                video.IsMemberOnly = false;
-            }
+            video.IsVisible = (m.Groups[1].Value == "true"); 
+
+            // メンバー限定 (チャンネル動画限定)
+            m = ThreadPublicRegex.Match(pageStr);
+            video.IsMemberOnly = (m.Success ?
+                int.Parse(m.Groups[1].Value) != 1 :
+                false);
 
             return video;
         }
@@ -552,7 +573,10 @@ namespace Ragnarok.NicoNico.Video
         /// </summary>
         private static VideoData FromChannelToolSearchResult(string text)
         {
-            var result = new VideoData();
+            var result = new VideoData
+            {
+                Timestamp = DateTime.Now,
+            };
 
             var regex = new Regex(
                 @"<li class=""video so[^>]+>\s*<div class=""video_left"">[\S\s]+?</div>\s*</li>");
