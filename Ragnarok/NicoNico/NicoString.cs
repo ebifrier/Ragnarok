@@ -280,26 +280,25 @@ namespace Ragnarok.NicoNico
         public static string GetHeartbeatUrl(long liveId)
         {
             return string.Format(
-                "http://watch.live.nicovideo.jp/api/heartbeat?v=lv{0}",
+                "http://watch.video.nicovideo.jp/api/heartbeat?v=lv{0}",
                 liveId);
         }
 
         /// <summary>
         /// 放送主コメントを投稿するためのURLを取得します。
         /// </summary>
-        public static string GetBroadcastCommentUrl(long liveId)
+        public static string GetOwnerCommentUrl(long liveId)
         {
             return string.Format(
-                "http://watch.live.nicovideo.jp/api/broadcast/lv{0}",
+                "http://watch.video.nicovideo.jp/api/broadcast/lv{0}",
                 liveId);
         }
 
         /// <summary>
         /// 放送主コメントを投稿するためのデータを取得します。
         /// </summary>
-        public static Dictionary<string, object>
-            MakeBroadcastCommentData(string body, string mail, string name,
-                                     string token)
+        public static Dictionary<string, object> MakeOwnerCommentData(
+            string body, string mail, string name, string token)
         {
             var postData = new Dictionary<string, object>();
 
