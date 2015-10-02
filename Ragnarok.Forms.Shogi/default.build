@@ -1,32 +1,16 @@
 <?xml version="1.0"?>
 
 <project name="Ragnarok.Forms.Shogi" default="build">
-  <property name="project.name" value="${project::get-name()}" />
-  <property name="output.dir" value="../bin" unless="${property::exists('output.dir')}" />
-  <property name="output" value="${output.dir}/${project.name}.dll" />
-  <property name="lib" value="../externals/mono" />
-
-  <property name="define" value="CLR4_0;CLR_GE_2_0;CLR_GE_3_0;CLR_GE_3_5;CLR_GE_4_0;MONO" />
-  <property name="debug" value="true" overwrite="false" />
+  <include buildfile="../common.build" failonerror="true" />
+  <property name="project.depends" value="../Ragnarok ../Ragnarok.Extra ../Ragnarok.Forms" />
   <property name="unsafe" value="true" overwrite="true" />
-  <property name="optimize" value="true" overwrite="false" />
 
   <target name="clean">
-    <delete failonerror="false">
-      <fileset>
-        <include name="${output.dir}/*.dll*" />
-        <include name="${output.dir}/${project.name}.dll*" />
-      </fileset>
-    </delete>
-  </target>
-
-  <target name="rebuild">
-    <call target="clean" />
-    <call target="build" />
+    <call target="clean-depends" />
   </target>
 
   <target name="build">
-    <mkdir dir="${output.dir}" />
+    <call target="build-depends" />
     <copy todir="${output.dir}">
       <fileset>
         <include name="${lib}/*.dll" />

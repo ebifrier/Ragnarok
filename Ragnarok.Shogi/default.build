@@ -1,37 +1,15 @@
 <?xml version="1.0"?>
 
 <project name="Ragnarok.Shogi" default="build">
-  <property name="project.name" value="${project::get-name()}" />
-  <property name="output.dir" value="../bin" unless="${property::exists('output.dir')}" />
-  <property name="output" value="${output.dir}/${project.name}.dll" />
-  <property name="lib" value="../externals/mono" />
-  <property name="ragnarok.build" value="../Ragnarok/default.build" />
-
-  <property name="define" value="__LINUX__;MONO" />
-  <property name="debug" value="true" overwrite="false" />
-  <property name="optimize" value="true" overwrite="false" />
+  <include buildfile="../common.build" failonerror="true" />
+  <property name="project.depends" value="../Ragnarok" />
 
   <target name="clean">
-    <nant buildfile="${ragnarok.build}" target="clean" />
-    <delete failonerror="false">
-      <fileset>
-	<include name="${output.dir}/${project.name}.dll*" />
-      </fileset>
-    </delete>
-  </target>
-
-  <target name="rebuild">
-    <call target="clean" />
-    <nant buildfile="${ragnarok.build}" target="rebuild" />
-    <call target="core" />
+    <call target="clean-depends" />
   </target>
 
   <target name="build">
-    <nant buildfile="${ragnarok.build}" target="build" />
-    <call target="core" />
-  </target>
-
-  <target name="core">
+    <call target="build-depends" />
     <csc target="library" output="${output}" debug="${debug}"
 	 define="${define}" optimize="${optimize}" warninglevel="4"
 	 keyfile="${project.name}.snk">

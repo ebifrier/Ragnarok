@@ -1,0 +1,41 @@
+<?xml version="1.0" ?>
+
+<project>
+  <property name="project.name" value="${project::get-name()}" />
+  <property name="output.dir" value="${project::get-base-directory()}/../bin" overwrite="false" />
+  <property name="output" value="${output.dir}/${project::get-name()}.dll" />
+
+  <property name="define.base"
+            value="CLR4_0;CLR_GE_2_0;CLR_GE_3_0;CLR_GE_3_5;CLR_GE_4_0;MONO" />
+  <property name="define" value="${define.base}" />
+
+  <property name="lib" value="../externals/mono" />
+  <property name="debug" value="true" overwrite="false" />
+  <property name="optimize" value="true" overwrite="false" />
+
+
+  <!-- 依存プロジェクトのclean操作を行います。 -->
+  <target name="clean-depends">
+    <foreach item="String" in="${project.depends}" delim=" " property="depend">
+      <nant buildfile="${depend}/default.build" target="clean" />
+    </foreach>
+    <delete failonerror="false">
+      <fileset>
+	<include name="${output}*" />
+      </fileset>
+    </delete>
+  </target>
+
+  <!-- 依存プロジェクトのbuild操作を行います。 -->
+  <target name="build-depends">
+    <echo message="output to '${output.dir}'" />
+    <mkdir dir="${output.dir}" />
+    <foreach item="String" in="${project.depends}" delim=" " property="depend">
+      <nant buildfile="${depend}/default.build" target="build" />
+    </foreach> 
+  </target>
+
+  <!-- 再ビルド -->
+  <target name="rebuild" depends="clean,build">
+  </target>
+</project>
