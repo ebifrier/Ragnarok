@@ -88,7 +88,7 @@ namespace Ragnarok.NicoNico.Provider
                 @"https://secure.nicovideo.jp/secure/login?site=chtool",
                 param, cc, Encoding.UTF8);
 
-            Save("login.html", text);
+            //Save("login.html", text);
 
             // エラー表示用の文字列が表示されていればエラーとします。
             if (string.IsNullOrEmpty(text))
@@ -201,8 +201,6 @@ namespace Ragnarok.NicoNico.Provider
                 }
             }
 
-
-            
             // 動画更新時に必要になる必須パラメータを設定します。
             var cparam = new Dictionary<string, object>(param);
             cparam["smile_ch_key"] = chKey;
