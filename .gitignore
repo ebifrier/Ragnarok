@@ -3,6 +3,7 @@ obj/
 bin/
 Debug/
 Release/
+packages/
 
 # Ignore extensions
 *.old
