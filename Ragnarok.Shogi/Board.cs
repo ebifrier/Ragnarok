@@ -1619,6 +1619,7 @@ namespace Ragnarok.Shogi
         }
         #endregion
 
+#if false
         /// <summary>
         /// 局面をシリアライズします。
         /// </summary>
@@ -1654,6 +1655,7 @@ namespace Ragnarok.Shogi
                 return null;
             }
         }
+#endif
 
         /// <summary>
         /// コンストラクタ

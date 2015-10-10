@@ -25,6 +25,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ragnarok.Forms", "Ragnarok.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ragnarok.Forms.Shogi", "Ragnarok.Forms.Shogi\Ragnarok.Forms.Shogi.csproj", "{FC94395F-6365-45A4-9D0B-278384E3CD50}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ragnarok.Net.ProtoBuf", "Ragnarok.Net.ProtoBuf\Ragnarok.Net.ProtoBuf.csproj", "{D4936BFC-BC3D-4BCA-A15C-2F5D173B7513}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -205,6 +207,18 @@ Global
 		{FC94395F-6365-45A4-9D0B-278384E3CD50}.Release|Win32.Build.0 = Release|x86
 		{FC94395F-6365-45A4-9D0B-278384E3CD50}.Release|x86.ActiveCfg = Release|x86
 		{FC94395F-6365-45A4-9D0B-278384E3CD50}.Release|x86.Build.0 = Release|x86
+		{D4936BFC-BC3D-4BCA-A15C-2F5D173B7513}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4936BFC-BC3D-4BCA-A15C-2F5D173B7513}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4936BFC-BC3D-4BCA-A15C-2F5D173B7513}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{D4936BFC-BC3D-4BCA-A15C-2F5D173B7513}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{D4936BFC-BC3D-4BCA-A15C-2F5D173B7513}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{D4936BFC-BC3D-4BCA-A15C-2F5D173B7513}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D4936BFC-BC3D-4BCA-A15C-2F5D173B7513}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4936BFC-BC3D-4BCA-A15C-2F5D173B7513}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D4936BFC-BC3D-4BCA-A15C-2F5D173B7513}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{D4936BFC-BC3D-4BCA-A15C-2F5D173B7513}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{D4936BFC-BC3D-4BCA-A15C-2F5D173B7513}.Release|Win32.ActiveCfg = Release|Any CPU
+		{D4936BFC-BC3D-4BCA-A15C-2F5D173B7513}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

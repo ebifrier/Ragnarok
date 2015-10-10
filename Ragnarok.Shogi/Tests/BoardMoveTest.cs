@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using NUnit.Framework;
 
-using Ragnarok.Net.ProtoBuf;
+using Ragnarok.Utility;
 
 namespace Ragnarok.Shogi.Tests
 {
@@ -65,10 +65,10 @@ namespace Ragnarok.Shogi.Tests
             var moveList = validMoveList.Concat(validDropList).Concat(specialMoveList);
             foreach (var bmove in moveList)
             {
-                var bytes = PbUtil.Serialize(bmove);
+                var bytes = JsonUtil.Serialize(bmove);
                 Assert.NotNull(bytes);
 
-                var newMove = PbUtil.Deserialize<BoardMove>(bytes);
+                var newMove = JsonUtil.Deserialize<BoardMove>(bytes);
                 Assert.NotNull(newMove);
                 Assert.True(newMove.Validate());
 
