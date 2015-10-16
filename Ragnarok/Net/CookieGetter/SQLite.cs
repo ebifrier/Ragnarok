@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.IO;
 using System.Net;
 using System.Text;
 using System.Threading;
-using System.Data.SQLite;
 
 namespace Ragnarok.Net.CookieGetter
 {
@@ -13,7 +13,39 @@ namespace Ragnarok.Net.CookieGetter
 	/// </summary>
     internal static class SQLite
 	{
-		private const string CONNECTIONSTRING_FORMAT = "Data Source={0}";
+        private const string SQLiteProviderName =
+#if !MONO
+            "System.Data.SQLite";
+#else
+            "Mono.Data.Sqlite";
+#endif
+
+        private static readonly object sqliteFactoryLock = new object();
+        private static DbProviderFactory sqliteFactory;
+
+        public static DbProviderFactory SQLiteFactory
+        {
+            get
+            {
+                lock (sqliteFactoryLock)
+                {
+                    if (sqliteFactory != null)
+                    {
+                        return sqliteFactory;
+                    }
+
+                    var factory = DbProviderFactories.GetFactory(SQLiteProviderName);
+                    if (factory == null)
+                    {
+                        throw new RagnarokException(
+                            "DbProviderFactories.GetFactoryに失敗しました。");
+                    }
+
+                    sqliteFactory = factory;
+                    return factory;
+                }
+            }
+        }
 
         public static List<List<object>> GetCookies(string path, string query)
         {
@@ -45,15 +77,16 @@ namespace Ragnarok.Net.CookieGetter
                 // 5ミリ秒
                 Thread.Sleep(5);
 
-                string connStr = string.Format(CONNECTIONSTRING_FORMAT, temp);
-                using (SQLiteConnection sqlConnection = new SQLiteConnection(connStr))
+                using (DbConnection sqlConnection = SQLiteFactory.CreateConnection())
                 {
+                    string connStr = string.Format("Data Source={0}", temp);
+                    sqlConnection.ConnectionString = connStr;
                     sqlConnection.Open();
 
-                    SQLiteCommand command = sqlConnection.CreateCommand();
+                    DbCommand command = sqlConnection.CreateCommand();
                     command.Connection = sqlConnection;
                     command.CommandText = query;
-                    SQLiteDataReader reader = command.ExecuteReader();
+                    DbDataReader reader = command.ExecuteReader();
 
                     List<List<object>> result = new List<List<object>>();
                     while (reader.Read())
