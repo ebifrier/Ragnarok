@@ -219,14 +219,18 @@ namespace Ragnarok.Net
         /// <exception cref="WebException" />
         public static byte[] RequestHttp(HttpWebRequest request)
         {
-            var response = (HttpWebResponse)request.GetResponse();
-            if (response == null)
+            // responseをCloseしないと、MONOでは次回のリクエストから
+            // タイムアウトするようになります。
+            using (var response = (HttpWebResponse)request.GetResponse())
             {
-                return null;
-            }
+                if (response == null)
+                {
+                    return null;
+                }
 
-            // レスポンスをすべて読み出します。
-            return Util.ReadToEnd(response.GetResponseStream());
+                // レスポンスをすべて読み出します。
+                return Util.ReadToEnd(response.GetResponseStream());
+            }
         }
 
         /// <summary>
