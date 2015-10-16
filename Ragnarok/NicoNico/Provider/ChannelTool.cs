@@ -88,7 +88,7 @@ namespace Ragnarok.NicoNico.Provider
                 @"https://secure.nicovideo.jp/secure/login?site=chtool",
                 param, cc, Encoding.UTF8);
 
-            Save("login.html", text);
+            //Save("login.html", text);
 
             // エラー表示用の文字列が表示されていればエラーとします。
             if (string.IsNullOrEmpty(text))
@@ -200,8 +200,6 @@ namespace Ragnarok.NicoNico.Provider
                     return null;
                 }
             }
-
-
             
             // 動画更新時に必要になる必須パラメータを設定します。
             var cparam = new Dictionary<string, object>(param);
@@ -238,6 +236,7 @@ namespace Ragnarok.NicoNico.Provider
             // デバッグ用にページを出力し、正しくsmile_ch_keyを取得できているか調べます。
             //Save("smile_ch_key.html", text);
 
+            // smile_ch_keyの取得を行います。
             var chKey = GetSmileChKey(cc, url);
             if (string.IsNullOrEmpty(chKey))
             {
@@ -276,6 +275,11 @@ namespace Ragnarok.NicoNico.Provider
         public static string RequestSearch(CookieContainer cc, int channelId, string keyword,
                                            int pageId = 1, int limit = 20)
         {
+            if (cc == null)
+            {
+                throw new ArgumentNullException("cc");
+            }
+
             var url = MakeVideoUrl(channelId);
 
             // Cookieを取るために、指定のサイトに事前にログインしておく。
@@ -305,6 +309,7 @@ namespace Ragnarok.NicoNico.Provider
             // パラメータはGET用のエンコードを行います。
             var encodedParam = WebUtil.EncodeParam(param);
             var searchUrl = string.Format("{0}&{1}", url, encodedParam);
+
             return WebUtil.RequestHttpText(searchUrl, null, cc, Encoding.UTF8);
         }
         
