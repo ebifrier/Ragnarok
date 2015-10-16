@@ -212,7 +212,7 @@ namespace Ragnarok
         /// <summary>
         /// Actionをエラー処理つきで呼び出します。
         /// </summary>
-        public static void SafeCall(Action caller)
+        public static void SafeCall(Action caller, bool logging = true)
         {
             try
             {
@@ -223,15 +223,18 @@ namespace Ragnarok
             }
             catch (Exception ex)
             {
-                Log.ErrorException(ex,
-                    "Actionの呼び出しに失敗しました。");
+                if (logging)
+                {
+                    Log.ErrorException(ex,
+                        "Actionの呼び出しに失敗しました。");
+                }
             }
         }
 
         /// <summary>
         /// Funcをエラー処理つきで呼び出します。
         /// </summary>
-        public static TResult SafeCall<TResult>(Func<TResult> caller)
+        public static TResult SafeCall<TResult>(Func<TResult> caller, bool logging = true)
         {
             try
             {
@@ -242,8 +245,11 @@ namespace Ragnarok
             }
             catch (Exception ex)
             {
-                Log.ErrorException(ex,
-                    "Funcの呼び出しに失敗しました。");
+                if (logging)
+                {
+                    Log.ErrorException(ex,
+                        "Funcの呼び出しに失敗しました。");
+                }
             }
 
             return default(TResult);

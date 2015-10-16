@@ -110,9 +110,6 @@
     <Reference Include="nunit.framework">
       <HintPath>..\externals\net\nunit.framework.dll</HintPath>
     </Reference>
-    <Reference Include="protobuf-net">
-      <HintPath>..\externals\net\protobuf-net.dll</HintPath>
-    </Reference>
     <Reference Include="System.Data.SQLite">
       <HintPath>..\externals\net\System.Data.SQLite.dll</HintPath>
     </Reference>
@@ -176,21 +173,6 @@
     <Compile Include="Net\CookieGetter\CookieUtil.cs" />
     <Compile Include="Net\NetEventArgs.cs" />
     <Compile Include="Net\NtpClient.cs" />
-    <Compile Include="Net\ProtoBuf\PbAck.cs" />
-    <Compile Include="Net\ProtoBuf\PbCheckVersion.cs" />
-    <Compile Include="Net\ProtoBuf\PbConnectionExtension.cs" />
-    <Compile Include="Net\ProtoBuf\PbErrorCode.cs" />
-    <Compile Include="Net\ProtoBuf\PbEventArgs.cs" />
-    <Compile Include="Net\ProtoBuf\PbPacketHeader.cs" />
-    <Compile Include="Net\ProtoBuf\PbProtocolVersion.cs" />
-    <Compile Include="Net\ProtoBuf\PbRequestData.cs" />
-    <Compile Include="Net\ProtoBuf\PbResponse.cs" />
-    <Compile Include="Net\ProtoBuf\PbSendData.cs" />
-    <Compile Include="Net\ProtoBuf\PbUtil.cs" />
-    <Compile Include="Net\ProtoBuf\PbConnection.cs" />
-    <Compile Include="Net\ProtoBuf\PbException.cs" />
-    <Compile Include="Net\ProtoBuf\Tests\PbAckTest.cs" />
-    <Compile Include="Net\ProtoBuf\PbKeepAlive.cs" />
     <Compile Include="Net\RagnarokNetException.cs" />
     <Compile Include="Net\SendData.cs" />
     <Compile Include="Net\SendThread.cs" />
