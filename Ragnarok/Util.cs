@@ -526,6 +526,10 @@ namespace Ragnarok
                 while ((size = stream.Read(buffer, 0, buffer.Length)) > 0)
                 {
                     result.Write(buffer, 0, size);
+#if MONO
+                    // MONOだとReadがタイムアウトするため
+                    if (size < buffer.Length) break;
+#endif
                 }
 
                 result.Flush();
