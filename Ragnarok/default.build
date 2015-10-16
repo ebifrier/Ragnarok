@@ -9,7 +9,9 @@
     <call target="clean-depends" />
     <delete failonerror="false">
       <fileset>
-        <include name="${output.dir}/*.dll" />
+        <include name="${output.dir}/Newtonsoft.Json.dll" />
+        <include name="${output.dir}/NLog.dll" />
+        <include name="${output.dir}/nunit.framework.dll" />
       </fileset>
     </delete>
   </target>
@@ -18,7 +20,9 @@
     <call target="build-depends" />
     <copy todir="${output.dir}">
       <fileset>
-	<include name="${lib}/*.dll" />
+	<include name="${lib}/Newtonsoft.Json.dll" />
+	<include name="${lib}/NLog.dll" />
+	<include name="${lib}/nunit.framework.dll" />
 	<include name="NLog.config" />
       </fileset>
     </copy>
@@ -37,11 +41,9 @@
 	<include name="System.Xaml.dll" />
 	<include name="WindowsBase.dll" />
 	<include name="Mono.Posix.dll" />
-	<include name="${lib}/nunit.framework.dll" />
-	<include name="${lib}/System.Data.SQLite.dll" />
-	<include name="${lib}/NLog.dll" />
-	<include name="${lib}/protobuf-net.dll" />
 	<include name="${lib}/Newtonsoft.Json.dll" />
+	<include name="${lib}/NLog.dll" />
+	<include name="${lib}/nunit.framework.dll" />
       </references>
     </csc>
   </target>

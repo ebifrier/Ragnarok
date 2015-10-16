@@ -8,13 +8,20 @@
 
   <target name="clean">
     <call target="clean-depends" />
+    <delete failonerror="false">
+      <fileset>
+        <include name="${output.dir}/OpenTK.dll" />
+        <include name="${output.dir}/OpenTK.GLControl.dll" />
+      </fileset>
+    </delete>
   </target>
 
   <target name="build">
     <call target="build-depends" />
     <copy todir="${output.dir}">
       <fileset>
-        <include name="${lib}/*.dll" />
+        <include name="${lib}/OpenTK.dll" />
+        <include name="${lib}/OpenTK.GLControl.dll" />
       </fileset>
     </copy>
     <csc target="library" output="${output}" debug="${debug}"
