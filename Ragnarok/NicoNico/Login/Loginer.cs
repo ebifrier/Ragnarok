@@ -108,10 +108,10 @@ namespace Ragnarok.NicoNico.Login
 
                 return cc;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                /*Log.ErrorMessage(ex,
-                    "クッキーの取得に失敗しました。");*/
+                Log.ErrorException(ex,
+                    "クッキーの取得に失敗しました。");
             }
 #endif
             return null;
