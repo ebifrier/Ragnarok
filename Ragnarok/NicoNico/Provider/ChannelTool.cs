@@ -200,7 +200,7 @@ namespace Ragnarok.NicoNico.Provider
                     return null;
                 }
             }
-            
+
             // 動画更新時に必要になる必須パラメータを設定します。
             var cparam = new Dictionary<string, object>(param);
             cparam["smile_ch_key"] = chKey;

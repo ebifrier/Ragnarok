@@ -1426,7 +1426,6 @@ namespace Ragnarok.Shogi
                     return false;
                 }*/
 
-                //private List<BoardMove> moveList = new List<BoardMove>();
                 return true;
             }
         }
@@ -1453,7 +1452,6 @@ namespace Ragnarok.Shogi
                     }
                 }
 
-                //private List<BoardMove> moveList = new List<BoardMove>();
                 return (hash ^
                     this.blackCapturedPieceBox.GetHashCode() ^
                     this.whiteCapturedPieceBox.GetHashCode() ^
@@ -1619,6 +1617,7 @@ namespace Ragnarok.Shogi
         }
         #endregion
 
+#if false
         /// <summary>
         /// 局面をシリアライズします。
         /// </summary>
@@ -1654,6 +1653,7 @@ namespace Ragnarok.Shogi
                 return null;
             }
         }
+#endif
 
         /// <summary>
         /// コンストラクタ

@@ -26,16 +26,15 @@ namespace Ragnarok.Utility
             // ついでに string.Format に渡す配列も作成
             var values = args
                 .Where(_ => !string.IsNullOrEmpty(_.Key))
-                .OrderByDescending(_ => _.Key.Length) // argsを変数名順に並びかえます。
+                .OrderByDescending(_ => _.Key.Length) // argsを変数名の文字数順に並びかえます。
                 .Select((pair, index) =>
                 {
-                    var regex = new Regex(
-                        @"#[{]" + pair.Key + "([^}]*)[}]");
-                    //Console.WriteLine(regex);
-
-                    // フォーマットを置き換えながら巡回します。
-                    replacedFormat = regex.Replace(replacedFormat, "{" + index + "$1}");
-                    //Console.WriteLine(replacedFormat);
+                    if (!pair.Key.All(_ => char.IsDigit(_)))
+                    {
+                        // フォーマットを置き換えながら巡回します。
+                        var regex = new Regex(@"#[{]" + pair.Key + "([^}]*)[}]");
+                        replacedFormat = regex.Replace(replacedFormat, "{" + index + "$1}");
+                    }
 
                     // 配列として使う値一覧を取得します。
                     return pair.Value;
@@ -59,6 +58,7 @@ namespace Ragnarok.Utility
             // プロパティ名とプロパティ値をセットにした辞書を作り、
             // それを使って文字列埋め込みを行います。
             var dic = obj.GetType().GetProperties()
+                .Where(_ => _.GetIndexParameters() == null || !_.GetIndexParameters().Any())
                 .ToDictionary(p => p.Name, p => p.GetValue(obj, null));
             return NamedFormat(format, dic);
         }
