@@ -2,6 +2,7 @@
 
 <project name="Ragnarok.Shogi" default="build">
   <include buildfile="../common.build" failonerror="true" />
+  <property name="define" value="${define.base} ${define.option}" />
   <property name="project.depends" value="../Ragnarok" />
 
   <target name="clean">
