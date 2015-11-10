@@ -34,7 +34,7 @@ namespace Ragnarok.NicoNico.Video
             ViewCounter = -1;
             CommentCounter = -1;
             MylistCounter = -1;
-            Timestamp = DateTime.MinValue;
+            Timestamp = DateTime.Now;
         }
 
         /// <summary>
@@ -78,6 +78,9 @@ namespace Ragnarok.NicoNico.Video
                     case "first_retrieve":
                         this.StartTime = DateTime.Parse(text);
                         break;
+                    case "thumbnail_url":
+                        this.ThumbnailUrl = text;
+                        break;
                     case "view_counter":
                         this.ViewCounter = StrUtil.ToInt(text, 0);
                         break;
@@ -101,7 +104,6 @@ namespace Ragnarok.NicoNico.Video
         /// <summary>
         /// soやsmから始まる動画のファイルIDを取得します。
         /// </summary>
-        [DataMember(Name = "cmsid")]
         public override string IdString
         {
             get;
@@ -109,9 +111,19 @@ namespace Ragnarok.NicoNico.Video
         }
 
         /// <summary>
+        /// 動画IDを取得します。(内容はIdStringと同じ)
+        /// </summary>
+        [DataMember(Name = "cmsid")]
+        public string Id
+        {
+            get { return IdString; }
+            private set { IdString = value; }
+        }
+
+        /// <summary>
         /// 動画URLに使われる数字のみのIDを取得します。
         /// </summary>
-        [DataMember(Name = "thread")]
+        [DataMember(Name = "thread_id")]
         public long ThreadId
         {
             get;
@@ -175,7 +187,7 @@ namespace Ragnarok.NicoNico.Video
         /// <summary>
         /// タグを空白で区切った文字列を取得または設定します。
         /// </summary>
-        [DataMember()]
+        [DataMember(Name = "tags")]
         public string Tags
         {
             get { return this.tags; }
@@ -199,7 +211,7 @@ namespace Ragnarok.NicoNico.Video
         /// <summary>
         /// 公開／非公開の状態を取得します。
         /// </summary>
-        [DataMember(Name = "visible")]
+        [DataMember()]
         public bool? IsVisible
         {
             get;
@@ -209,7 +221,7 @@ namespace Ragnarok.NicoNico.Video
         /// <summary>
         /// 会員限定・全員公開などの状態を取得します。
         /// </summary>
-        [DataMember(Name = "memberonly")]
+        [DataMember()]
         public bool? IsMemberOnly
         {
             get;
@@ -219,7 +231,18 @@ namespace Ragnarok.NicoNico.Video
         /// <summary>
         /// 動画の公開開始日時を取得します。
         /// </summary>
+        [DataMember(Name = "start_time")]
         public DateTime StartTime
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// サムネイルのURLを取得します。
+        /// </summary>
+        [DataMember(Name = "thumbnail_url")]
+        public string ThumbnailUrl
         {
             get;
             set;
@@ -256,9 +279,31 @@ namespace Ragnarok.NicoNico.Video
         }
 
         /// <summary>
+        /// 再生数などの情報をまとめて取得または設定します。
+        /// </summary>
+        public ViewCountData ViewData
+        {
+            get
+            {
+                return new ViewCountData(IdString, ViewCounter, CommentCounter, MylistCounter);
+            }
+            set
+            {
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+
+                ViewCounter = value.ViewCounter;
+                CommentCounter = value.CommentCounter;
+                MylistCounter = value.MylistCounter;
+            }
+        }
+
+        /// <summary>
         /// データの取得時刻を取得します。
         /// </summary>
-        [DataMember(Name = "timestamp")]
+        [DataMember()]
         public DateTime Timestamp
         {
             get;
@@ -294,43 +339,12 @@ namespace Ragnarok.NicoNico.Video
         }
 
         /// <summary>
-        /// DataContractによるシリアライズ・デシリアライズ時に使います。
-        /// </summary>
-        [DataMember()]
-        private string start_time;
-
-        /// <summary>
-        /// シリアライズ前に時刻のデータをオブジェクトに設定します。
-        /// </summary>
-        [OnSerializing()]
-        private void OnSerializing(StreamingContext context)
-        {
-            if (StartTime != DateTime.MinValue)
-            {
-                //2014-07-23 20:00:00
-                start_time = StartTime.ToString("yyyy-MM-dd HH:mm:ss");
-            }
-        }
-
-        /// <summary>
         /// デシリアライズ後に時刻などのデータをオブジェクトに格納します。
         /// </summary>
         [OnDeserialized()]
         private void OnDeserialized(StreamingContext context)
         {
-            DateTime date = DateTime.MinValue;
-
-            if (!string.IsNullOrEmpty(start_time))
-            {
-                if (!DateTime.TryParse(start_time, out date))
-                {
-                    // エラー時は適当な値を入れる。
-                    date = DateTime.MinValue;
-                }
-            }
-
             IsVisible = true;
-            StartTime = date;
             Timestamp = DateTime.Now;
         }
 
@@ -421,6 +435,9 @@ namespace Ragnarok.NicoNico.Video
         private static readonly Regex StartTimeRegex = new Regex(
             @"&quot;postedAt&quot;:&quot;(.*?)&quot;,",
             RegexOptions.IgnoreCase);
+        private static readonly Regex ThumbnailRegex = new Regex(
+           @"&quot;thumbnail&quot;:&quot;(.*?)&quot;,",
+           RegexOptions.IgnoreCase);
         private static readonly Regex IsPublicRegex = new Regex(
             @"&quot;is_public&quot;:(.+?),",
             RegexOptions.IgnoreCase);
@@ -503,6 +520,16 @@ namespace Ragnarok.NicoNico.Video
             video.StartTime = DateTime.ParseExact(
                 m.Groups[1].Value.Replace("\\", ""),
                 "yyyy/MM/dd HH:mm:ss", null);
+
+            // サムネイルURL
+            m = ThumbnailRegex.Match(pageStr);
+            if (!m.Success)
+            {
+                throw new NicoVideoException(
+                    "サムネイルURLの取得に失敗しました。",
+                    video.IdString);
+            }
+            video.ThumbnailUrl = m.Groups[1].Value.Replace("\\", "");
 
             // 再生数
             m = ViewCountRegex.Match(pageStr);

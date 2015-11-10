@@ -183,6 +183,7 @@
     <Compile Include="NicoNico\CommentStringizer.cs" />
     <Compile Include="NicoNico\Gender.cs" />
     <Compile Include="NicoNico\Video\Tests\VideoUtilTest.cs" />
+    <Compile Include="NicoNico\Video\ViewCountData.cs" />
     <Compile Include="NicoNico\XmlInfomationBase.cs" />
     <Compile Include="NicoNico\NicoUtil.cs" />
     <Compile Include="NicoNico\Live\AlertClient.cs" />

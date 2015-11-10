@@ -89,7 +89,7 @@ namespace Ragnarok.NicoNico.Video
                 "\"search\" : " + (isKeyword ? keywordQuery : tagQuery) + ",\n" +
                 "\"join\" : [\"cmsid\", \"title\", \"description\", \"start_time\", " +
                             "\"view_counter\", \"comment_counter\", " +
-                            "\"mylist_counter\", \"tags\"],\n" +
+                            "\"mylist_counter\", \"tags\", \"thumbnail_url\"],\n" +
                 "\"sort_by\" : \"start_time\",\n" +
                 "\"order\" : \"desc\",\n" +
                 "\"from\" : 0,\n" +
