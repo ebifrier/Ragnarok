@@ -40,11 +40,13 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="OpenTK">
-      <HintPath>..\..\..\develop\Ragnarok\externals\net\OpenTK.dll</HintPath>
+    <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+      <HintPath>..\packages\OpenTK.1.1.1589.5942\lib\NET40\OpenTK.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="OpenTK.GLControl">
-      <HintPath>..\..\..\develop\Ragnarok\externals\net\OpenTK.GLControl.dll</HintPath>
+    <Reference Include="OpenTK.GLControl, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+      <HintPath>..\packages\OpenTK.GLControl.1.1.1589.5942\lib\NET40\OpenTK.GLControl.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -128,6 +130,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
     <None Include="Resources\Image\ban.jpg" />
   </ItemGroup>
   <ItemGroup>
@@ -161,19 +164,19 @@
     <None Include="Resources\Image\particle.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\programs\develop\Ragnarok\Ragnarok.Extra\Ragnarok.Extra.csproj">
+    <ProjectReference Include="..\Ragnarok.Extra\Ragnarok.Extra.csproj">
       <Project>{8EBDC79A-607B-4B56-A298-1471CD6753DB}</Project>
       <Name>Ragnarok.Extra</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\programs\develop\Ragnarok\Ragnarok.Forms\Ragnarok.Forms.csproj">
+    <ProjectReference Include="..\Ragnarok.Forms\Ragnarok.Forms.csproj">
       <Project>{6B5362A1-22C7-4B5B-8582-24F3E2502214}</Project>
       <Name>Ragnarok.Forms</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\programs\develop\Ragnarok\Ragnarok.Shogi\Ragnarok.Shogi.csproj">
+    <ProjectReference Include="..\Ragnarok.Shogi\Ragnarok.Shogi.csproj">
       <Project>{38ABBDA5-B22F-41B7-A415-2A909D0A6A35}</Project>
       <Name>Ragnarok.Shogi</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\programs\develop\Ragnarok\Ragnarok\Ragnarok.csproj">
+    <ProjectReference Include="..\Ragnarok\Ragnarok.csproj">
       <Project>{A348968A-DD91-47B4-9420-C7D370A2BE92}</Project>
       <Name>Ragnarok</Name>
     </ProjectReference>

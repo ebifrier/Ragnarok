@@ -99,7 +99,7 @@ namespace Ragnarok.Shogi.File.Tests
         {
             // 棋譜の書き出し
             var wrote = KifuWriter.WriteTo(kifu0, format);
-            Assert.IsNotNullOrEmpty(wrote);
+            Assert.True(string.IsNullOrEmpty(wrote));
 
             // 棋譜の読み込み パート２
             var kifu1 = KifuReader.LoadFrom(wrote);
