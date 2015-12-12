@@ -1397,6 +1397,11 @@ namespace Ragnarok.Shogi
             using (LazyLock())
             using (other.LazyLock())
             {
+                if (GetBoardHash() != other.GetBoardHash())
+                {
+                    return false;
+                }
+
                 for (var rank = 1; rank < BoardSize; ++rank)
                 {
                     for (var file = 1; file < BoardSize; ++file)
