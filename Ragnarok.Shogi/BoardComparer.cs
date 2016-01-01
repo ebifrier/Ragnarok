@@ -36,7 +36,7 @@ namespace Ragnarok.Shogi
         /// </summary>
         public int GetHashCode(Board x)
         {
-            return x.GetBoardHash();
+            return (int)x.HashValue;
         }
     }
 }

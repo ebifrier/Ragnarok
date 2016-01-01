@@ -124,6 +124,10 @@ namespace Ragnarok.Shogi
                    select new Square(file, rank);
         }
 
+        private static long[,] zobrist = new long[81, 18 * 2];
+        private static long[] handZobrist = new long[18 * 2];
+        private static long[] turnZobrist = new long[3];
+
         /// <summary>
         /// [0,0]が盤面の11地点を示します。
         /// </summary>
@@ -132,8 +136,6 @@ namespace Ragnarok.Shogi
         private CapturedPieceBox blackCapturedPieceBox = new CapturedPieceBox(BWType.Black);
         [DataMember(Order = 2, IsRequired = true)]
         private CapturedPieceBox whiteCapturedPieceBox = new CapturedPieceBox(BWType.White);
-        [DataMember(Order = 3, IsRequired = true)]
-        private BWType viewSide = BWType.Black;
         [DataMember(Order = 4, IsRequired = true)]
         private BWType turn = BWType.Black;
         [DataMember(Order = 5, IsRequired = true)]
@@ -142,6 +144,64 @@ namespace Ragnarok.Shogi
         private List<BoardMove> moveList = new List<BoardMove>();
         //[DataMember(Order = 7, IsRequired = true)]
         private List<BoardMove> redoList = new List<BoardMove>();
+
+        /// <summary>
+        /// ハッシュ用のzobristを初期化します。
+        /// </summary>
+        private static void InitZobrist()
+        {
+            var random = new Random();
+
+            for (var piece = 0; piece < 18 * 2; ++piece)
+            {
+                for (var sqi = 0; sqi < SquareCount; ++sqi)
+                {
+                    zobrist[sqi, piece] = (long)(random.NextDouble() * 0xffffffffffffff);
+                }
+
+                handZobrist[piece] = (long)(random.NextDouble() * 0xffffffffffffff);
+            }
+
+            turnZobrist[(int)BWType.None] = 0;
+            turnZobrist[(int)BWType.Black] = 0;
+            turnZobrist[(int)BWType.White] = 1;
+        }
+
+        /// <summary>
+        /// Zobrist Hashingの値を計算します。
+        /// </summary>
+        private long CalcHashValue()
+        {
+            using (LazyLock())
+            {
+                var hashValue = 0L;
+
+                foreach (var sq in AllSquares())
+                {
+                    if (this[sq] == null) continue;
+
+                    hashValue += zobrist[sq.Index, this[sq].Index];
+                }
+
+                foreach (var bwType in new BWType[] { BWType.Black, BWType.White })
+                {
+                    foreach (var pieceType in EnumEx.GetValues<PieceType>())
+                    {
+                        if (pieceType == PieceType.None) continue;
+
+                        var piece = new BoardPiece(pieceType, bwType);
+                        var count = GetCapturedPieceCount(pieceType, bwType);
+                        while (count-- > 0)
+                        {
+                            hashValue += handZobrist[piece.Index];
+                        }
+                    }
+                }
+
+                hashValue ^= turnZobrist[(int)Turn];
+                return hashValue;
+            }
+        }
 
         /// <summary>
         /// プロパティ値の変更を通知します。
@@ -171,13 +231,8 @@ namespace Ragnarok.Shogi
         /// </summary>
         private void NotifyBoardChanging(BoardMove move, bool isUndo)
         {
-            var handler = BoardChanging;
-
-            if (handler != null)
-            {
-                Util.CallEvent(
-                    () => handler(this, new BoardChangedEventArgs(move, isUndo)));
-            }
+            BoardChanging.SafeRaiseEvent(
+                this, new BoardChangedEventArgs(move, isUndo));
         }
 
         /// <summary>
@@ -185,13 +240,8 @@ namespace Ragnarok.Shogi
         /// </summary>
         private void NotifyBoardChanged(BoardMove move, bool isUndo)
         {
-            var handler = BoardChanged;
-
-            if (handler != null)
-            {
-                Util.CallEvent(
-                    () => handler(this, new BoardChangedEventArgs(move, isUndo)));
-            }
+            BoardChanged.SafeRaiseEvent(
+                this, new BoardChangedEventArgs(move, isUndo));
 
             this.RaisePropertyChanged("MoveCount");
             this.RaisePropertyChanged("CanUndo");
@@ -217,7 +267,6 @@ namespace Ragnarok.Shogi
                 {
                     blackCapturedPieceBox = this.blackCapturedPieceBox.Clone(),
                     whiteCapturedPieceBox = this.whiteCapturedPieceBox.Clone(),
-                    viewSide = this.viewSide,
                     turn = this.turn,
                     prevMovedSquare = (
                         this.prevMovedSquare != null ?
@@ -423,6 +472,14 @@ namespace Ragnarok.Shogi
         {
             get { return this.prevMovedSquare; }
             set { SetValue("PrevMovedSquare", value, ref this.prevMovedSquare); }
+        }
+
+        /// <summary>
+        /// 局面のハッシュ値を取得します。
+        /// </summary>
+        public long HashValue
+        {
+            get { return /*this.hashValue*/CalcHashValue(); }
         }
 
         /// <summary>
@@ -1296,12 +1353,6 @@ namespace Ragnarok.Shogi
                     return false;
                 }
 
-                if (!Enum.IsDefined(typeof(BWType), this.viewSide) ||
-                    this.viewSide == BWType.None)
-                {
-                    return false;
-                }
-
                 if (!Enum.IsDefined(typeof(BWType), this.turn) ||
                     this.turn == BWType.None)
                 {
@@ -1321,17 +1372,10 @@ namespace Ragnarok.Shogi
                 }
 
                 // 盤上の各駒が正しいか調べます。
-                for (var rank = 1; rank <= BoardSize; ++rank)
+                var pieces = AllSquares().Select(_ => this[_]);
+                if (!pieces.All(_ => _ == null || _.Validate()))
                 {
-                    for (var file = 1; file <= BoardSize; ++file)
-                    {
-                        var piece = this[file, rank];
-
-                        if (piece != null && !piece.Validate())
-                        {
-                            return false;
-                        }
-                    }
+                    return false;
                 }
 
                 foreach (var bwType in new BWType[] { BWType.Black, BWType.White })
@@ -1397,17 +1441,14 @@ namespace Ragnarok.Shogi
             using (LazyLock())
             using (other.LazyLock())
             {
-                for (var rank = 1; rank < BoardSize; ++rank)
+                if (HashValue != other.HashValue)
                 {
-                    for (var file = 1; file < BoardSize; ++file)
-                    {
-                        var square = new Square(file, rank);
+                    return false;
+                }
 
-                        if (this[square] != other[square])
-                        {
-                            return false;
-                        }
-                    }
+                if (!AllSquares().All(_ => this[_] == other[_]))
+                {
+                    return false;
                 }
 
                 if (!this.blackCapturedPieceBox.Equals(other.blackCapturedPieceBox) ||
@@ -1427,37 +1468,6 @@ namespace Ragnarok.Shogi
                 }*/
 
                 return true;
-            }
-        }
-
-        /// <summary>
-        /// ハッシュ値を返します。
-        /// </summary>
-        public int GetBoardHash()
-        {
-            using (LazyLock())
-            {
-                var hash = 0;
-
-                for (var rank = 1; rank < BoardSize; ++rank)
-                {
-                    for (var file = 1; file < BoardSize; ++file)
-                    {
-                        var piece = this[file, rank];
-
-                        if (piece != null)
-                        {
-                            hash ^= piece.GetHashCode();
-                        }
-                    }
-                }
-
-                return (hash ^
-                    this.blackCapturedPieceBox.GetHashCode() ^
-                    this.whiteCapturedPieceBox.GetHashCode() ^
-                    this.turn.GetHashCode() ^
-                    (this.prevMovedSquare != null ?
-                        this.prevMovedSquare.GetHashCode() : 0));
             }
         }
 

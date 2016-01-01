@@ -88,6 +88,15 @@ namespace Ragnarok.Shogi
                     (_.MovePiece == piece) ||
                     (_.DropPieceType == piece.PieceType && !piece.IsPromoted));
         }
+
+        /// <summary>
+        /// 指定の局面で指せるすべての手を取得します。
+        /// </summary>
+        public IEnumerable<BoardMove> ListupMoves()
+        {
+            return Board.AllSquares()
+                .SelectMany(_ => ListupMoves(Turn, _));
+        }
         #endregion
 
         /// <summary>

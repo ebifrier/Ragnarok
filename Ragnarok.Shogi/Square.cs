@@ -35,6 +35,14 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
+        /// File-Rankを0～80までの整数にして取得します。
+        /// </summary>
+        public int Index
+        {
+            get { return ((File - 1) * 9 + (Rank - 1)); }
+        }
+
+        /// <summary>
         /// オブジェクトのコピーを作成します。
         /// </summary>
         public Square Clone()
@@ -168,8 +176,32 @@ namespace Ragnarok.Shogi
         /// </summary>
         public Square(int file, int rank)
         {
+            /*if (file < 1 || Board.BoardSize < file)
+            {
+                throw new ArgumentException("file");
+            }
+
+            if (rank < 1 || Board.BoardSize < rank)
+            {
+                throw new ArgumentException("rank");
+            }*/
+
             File = file;
             Rank = rank;
+        }
+
+        /// <summary>
+        /// 0～80までの整数を行と列に変換します。
+        /// </summary>
+        public Square(int index)
+        {
+            if (index < 0 || 81 <= index)
+            {
+                throw new ArgumentException("index");
+            }
+
+            File = (index % 9) + 1;
+            Rank = (index / 9) + 1;
         }
 
         /// <summary>
