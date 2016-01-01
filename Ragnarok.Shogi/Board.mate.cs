@@ -131,6 +131,22 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
+        /// 手番側の玉が王手されているか調べます。
+        /// </summary>
+        public bool IsChecked()
+        {
+            return IsChecked(Turn);
+        }
+
+        /// <summary>
+        /// 手番と反対側の玉が王手されているか調べます。
+        /// </summary>
+        public bool IsChecking()
+        {
+            return IsChecked(Turn.Flip());
+        }
+
+        /// <summary>
         /// <paramref name="square"/>に<paramref name="pieceType"/>を打ち、
         /// なお王手されているか確認します。
         /// </summary>
