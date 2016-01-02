@@ -158,7 +158,7 @@ namespace Ragnarok.Shogi
         /// 解析された変化を示す正規表現です。
         /// </summary>
         private static readonly Regex KifAnalyzedVariationRegex = new Regex(
-            @"\s*(\*|<analyze>)?\s*(?<value>\d+)\s*(.+)\s*(</analyze>)?\s*$");
+            @"^\s*(\*|<analyze>)\s*(?<value>\d+)\s*(.+)\s*(</analyze>)?\s*$");
 
         /// <summary>
         /// コメント文字列を追加します。
@@ -252,7 +252,9 @@ namespace Ragnarok.Shogi
                     break;
                 }
 
-                if (!cloned.DoMove(bmove))
+                // すごく重いため変化の時は打ち歩詰めの確認を行いません。
+                var flags = MoveFlags.DoMoveDefault & ~MoveFlags.CheckDropPawnMate;
+                if (!cloned.DoMove(bmove, flags))
                 {
                     break;
                 }

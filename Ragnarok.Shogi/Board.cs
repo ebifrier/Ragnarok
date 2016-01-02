@@ -34,20 +34,24 @@ namespace Ragnarok.Shogi
         /// </summary>
         CheckOnly = 0x0004,
         /// <summary>
+        /// 打ち歩詰めの確認を行います。
+        /// </summary>
+        CheckDropPawnMate = 0x0008,
+        /// <summary>
         /// 投了などの特殊な指し手を自動的に削除します。
         /// </summary>
-        AutoRemoveSpecialMove = 0x0008,
+        AutoRemoveSpecialMove = 0x0010,
 
         /// <summary>
         /// CanMoveメソッドのフラグデフォルト値です。
         /// </summary>
         CanMoveDefault = MoveFlags.CheckTurn | MoveFlags.CheckChecked |
-                         MoveFlags.CheckOnly,
+                         MoveFlags.CheckDropPawnMate | MoveFlags.CheckOnly,
         /// <summary>
         /// DoMoveメソッドのフラグデフォルト値です。
         /// </summary>
         DoMoveDefault = MoveFlags.CheckTurn | MoveFlags.CheckChecked |
-                        MoveFlags.AutoRemoveSpecialMove,
+                        MoveFlags.CheckDropPawnMate | MoveFlags.AutoRemoveSpecialMove,
     }
 
     /// <summary>
@@ -932,7 +936,8 @@ namespace Ragnarok.Shogi
             }
 
             // 打ち歩詰のチェックを行います。
-            if (move.DropPieceType == PieceType.Hu &&
+            if (EnumEx.HasFlag(flags, MoveFlags.CheckDropPawnMate) &&
+                move.DropPieceType == PieceType.Hu &&
                 IsDropPawnMate(move.BWType, move.DstSquare))
             {
                 return false;
@@ -980,6 +985,22 @@ namespace Ragnarok.Shogi
         /// </summary>
         private bool IsDropPawnMate(BWType bwType, Square square)
         {
+            // 歩の前に敵の玉がいるか確認します。
+            var rankDif = (bwType == BWType.Black ? -1 : +1);
+            var gyokuSq = new Square(square.File, square.Rank + rankDif);
+            if (!gyokuSq.Validate())
+            {
+                return false;
+            }
+
+            var gyoku = this[gyokuSq];
+            if (gyoku == null ||
+                gyoku.PieceType != PieceType.Gyoku ||
+                gyoku.BWType != bwType.Flip())
+            {
+                return false;
+            }
+
             var newPiece = new BoardPiece(
                 PieceType.Hu, false, bwType);
             var oldPiece = this[square];
