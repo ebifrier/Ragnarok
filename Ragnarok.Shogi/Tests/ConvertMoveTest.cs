@@ -42,7 +42,7 @@ namespace Ragnarok.Shogi.Tests
 
         private static void TestMove(Board board, string moveStr, bool makeMove = false)
         {
-            var move = ShogiParser.ParseMove(moveStr, true);
+            var move = ShogiParserEx.ParseMove(moveStr, true);
             Assert.NotNull(move);
             Assert.True(move.Validate());
 

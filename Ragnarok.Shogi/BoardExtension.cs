@@ -37,7 +37,7 @@ namespace Ragnarok.Shogi
 
                 // 与えられた文字列の指し手を順次パースします。
                 var move = ShogiParser.ParseMoveEx(
-                    text, false, true, ref parsedText);
+                    text, false, ref parsedText);
                 if (move == null)
                 {
                     break;

@@ -297,7 +297,7 @@ namespace Ragnarok.Shogi.Kif
             {
                 var parsedLine = string.Empty;
                 var move = ShogiParser.ParseMoveEx(
-                    line, false, false, ref parsedLine);
+                    line, false, ref parsedLine);
 
                 if (move == null)
                 {

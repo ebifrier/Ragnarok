@@ -88,6 +88,7 @@
     <Compile Include="Kif\Tests\SampleKif_Variation.cs" />
     <Compile Include="Kif\Tests\SampleKif_Comment.cs" />
     <Compile Include="Score.cs" />
+    <Compile Include="ShogiParser.cs" />
     <Compile Include="SquareCollection.cs" />
     <Compile Include="SquareConverter.cs" />
     <Compile Include="Csa\CsaBoard.cs" />
@@ -133,7 +134,7 @@
     <Compile Include="Sfen\SfenExtension.cs" />
     <Compile Include="ShogiException.cs" />
     <Compile Include="SampleMove.cs" />
-    <Compile Include="ShogiParser.cs" />
+    <Compile Include="ShogiParserEx.cs" />
     <Compile Include="SkillLevel.cs" />
     <Compile Include="Stringizer.cs" />
     <Compile Include="Tests\BoardCheckMateTest.cs" />
@@ -142,7 +143,7 @@
     <Compile Include="Tests\DropPawnMateTest.cs" />
     <Compile Include="Tests\MoveTest.cs" />
     <Compile Include="Tests\ScoreTest.cs" />
-    <Compile Include="Tests\ShogiParserTest.cs" />
+    <Compile Include="Tests\ShogiParserExTest.cs" />
     <Compile Include="KifuWriter.cs" />
     <Compile Include="Tests\MoveStatisticsTest.cs" />
     <Compile Include="Tests\BoardMoveTest.cs" />

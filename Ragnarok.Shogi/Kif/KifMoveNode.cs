@@ -240,8 +240,8 @@ namespace Ragnarok.Shogi
             while (true)
             {
                 var parsed = string.Empty;
-                var move = ShogiParser.ParseMoveEx(variationStr, false, false, ref parsed);
-                if (move == null || !move.Validate())
+                var move = ShogiParser.ParseMoveEx(variationStr, false, ref parsed);
+                if (move == null)
                 {
                     break;
                 }
