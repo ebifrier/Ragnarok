@@ -77,13 +77,16 @@ namespace Ragnarok.ObjectModel
                     // 配列オブジェクトを作っています。
                     propertyArray = this.updatedPropertyList
                         .Distinct().ToArray();
+
+                    this.updatedPropertyList.Clear();
                 }
-                
-                this.updatedPropertyList.Clear();
             }
 
-            // 実際に通知を出します。
-            NotifyPropertyChanged(model, propertyArray);
+            // 変更されたプロパティがあれば、変更通知を送ります。
+            if (propertyArray != null)
+            {
+                NotifyPropertyChanged(model, propertyArray);
+            }
 
             // イベントを発火します。
             var handler = Interlocked.Exchange(ref FiresOnExit, null);
@@ -99,12 +102,6 @@ namespace Ragnarok.ObjectModel
         private void NotifyPropertyChanged(ILazyModel model,
                                            IEnumerable<string> propertyList)
         {
-            // 変更されたプロパティがあれば、変更通知を送ります。
-            if (propertyList == null)
-            {
-                return;
-            }
-
             foreach (var propertyName in propertyList)
             {
                 model.NotifyPropertyChanged(

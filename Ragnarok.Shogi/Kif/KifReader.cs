@@ -319,6 +319,7 @@ namespace Ragnarok.Shogi.Kif
         private KifuObject LoadKif(KifuHeader header, Board board, KifMoveNode head_)
         {
             var head = ParseNodeKif(board, false);
+            head.SetupVariationInfo(board);
 
             // KifMoveNodeからMoveNodeへ変換します。
             Exception error;
@@ -370,7 +371,6 @@ namespace Ragnarok.Shogi.Kif
                 MergeVariation(head, variationNode);
             }
 
-            head.SetupVariationInfo(board);
             return head;
         }
 

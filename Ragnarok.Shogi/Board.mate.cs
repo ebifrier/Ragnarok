@@ -12,12 +12,13 @@ namespace Ragnarok.Shogi
         /// <paramref name="srcSquare"/>の駒を<paramref name="dstSquare"/>
         /// に動かすことが可能な指し手をすべて列挙します。
         /// </summary>
-        private IEnumerable<BoardMove> GetAvailableMove(BWType bwType,
+        private IEnumerable<BoardMove> GetAvailableMove(Piece target,
+                                                        BWType bwType,
                                                         Square srcSquare,
                                                         Square dstSquare)
         {
             var piece = this[srcSquare];
-            if (piece == null || piece.BWType != bwType)
+            if (piece == null || piece.Piece != target || piece.BWType != bwType)
             {
                 yield break;
             }
@@ -44,19 +45,15 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
-        /// 駒の種類にかかわりなく、指定の位置に着手可能な指し手をすべて列挙します。
+        /// 駒の種類と新しい位置から、可能な指し手をすべて検索します。
         /// </summary>
-        public IEnumerable<BoardMove> ListupMoves(BWType bwType, Square dstSquare)
+        public IEnumerable<BoardMove> ListupMoves(Piece piece, BWType bwType,
+                                                  Square dstSquare)
         {
             // 打てる駒をすべて列挙します。
-            foreach (var pieceType in EnumEx.GetValues<PieceType>())
+            if (!piece.IsPromoted && GetCapturedPieceCount(piece.PieceType, bwType) > 0)
             {
-                if (GetCapturedPieceCount(pieceType, bwType) <= 0)
-                {
-                    continue;
-                }
-
-                var move = BoardMove.CreateDrop(bwType, dstSquare, pieceType);
+                var move = BoardMove.CreateDrop(bwType, dstSquare, piece.PieceType);
 
                 // 駒打ちが可能なら、それも該当手となります。
                 if (CanMove(move, MoveFlags.CheckOnly))
@@ -68,7 +65,7 @@ namespace Ragnarok.Shogi
             // 移動による指し手をすべて列挙します。
             foreach (var srcSquare in Board.AllSquares())
             {
-                var moves = GetAvailableMove(bwType, srcSquare, dstSquare);
+                var moves = GetAvailableMove(piece, bwType, srcSquare, dstSquare);
 
                 foreach (var move in moves)
                 {
@@ -78,15 +75,16 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
-        /// 駒の種類と新しい位置から、可能な指し手をすべて検索します。
+        /// 駒の種類にかかわりなく、指定の位置に着手可能な指し手をすべて列挙します。
         /// </summary>
-        public IEnumerable<BoardMove> ListupMoves(Piece piece, BWType bwType,
-                                                  Square dstSquare)
+        public IEnumerable<BoardMove> ListupMoves(BWType bwType, Square dstSquare)
         {
-            return ListupMoves(bwType, dstSquare)
-                .Where(_ =>
-                    (_.MovePiece == piece) ||
-                    (_.DropPieceType == piece.PieceType && !piece.IsPromoted));
+            return
+                from type in EnumEx.GetValues<PieceType>()
+                where type != PieceType.None
+                from promoted in new bool[] { true, false }
+                from move in ListupMoves(new Piece(type, promoted), bwType, dstSquare)
+                select move;
         }
 
         /// <summary>
