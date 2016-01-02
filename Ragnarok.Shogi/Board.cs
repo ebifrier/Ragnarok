@@ -211,11 +211,6 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 局面に変更があったときに呼ばれます。
         /// </summary>
-        public virtual event EventHandler<BoardChangedEventArgs> BoardChanging;
-
-        /// <summary>
-        /// 局面に変更があったときに呼ばれます。
-        /// </summary>
         public virtual event EventHandler<BoardChangedEventArgs> BoardChanged;
 
         /// <summary>
@@ -224,15 +219,6 @@ namespace Ragnarok.Shogi
         public override void NotifyPropertyChanged(PropertyChangedEventArgs e)
         {
             Util.CallPropertyChanged(PropertyChanged, this, e);
-        }
-
-        /// <summary>
-        /// 局面の変更直前の通知を出します。
-        /// </summary>
-        private void NotifyBoardChanging(BoardMove move, bool isUndo)
-        {
-            BoardChanging.SafeRaiseEvent(
-                this, new BoardChangedEventArgs(move, isUndo));
         }
 
         /// <summary>
@@ -637,8 +623,6 @@ namespace Ragnarok.Shogi
 
                 var move = this.moveList.Last();
 
-                NotifyBoardChanging(move, true);
-
                 // 盤の各状態を意って戻した状態に設定します。
                 this.moveList.RemoveAt(this.moveList.Count - 1);
 
@@ -650,7 +634,7 @@ namespace Ragnarok.Shogi
                 // PrevMovedSquareの設定が上手くいかない。
                 DoUndo(move);
 
-                NotifyBoardChanged(move, true);
+                FiresOnExit += (_, __) => NotifyBoardChanged(move, true);
                 return move;
             }
         }
@@ -885,8 +869,6 @@ namespace Ragnarok.Shogi
         /// </summary>
         private void MoveDone(BoardMove move)
         {
-            NotifyBoardChanging(move, false);
-
             // 特殊な指し手の場合は手番などの入れ替えを行いません。
             // （投了後の局面から駒を移動するため）
             if (!move.IsSpecialMove)
@@ -910,7 +892,7 @@ namespace Ragnarok.Shogi
             }
 
             // 局面の変化を通知します。
-            NotifyBoardChanged(move, false);
+            FiresOnExit += (_, __) => NotifyBoardChanged(move, false);
         }
 
         /// <summary>

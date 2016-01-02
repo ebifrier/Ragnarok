@@ -88,6 +88,15 @@ namespace Ragnarok.ObjectModel
         public virtual event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>
+        /// LazyLockをExitするときに呼ばれるイベントです。
+        /// </summary>
+        public event EventHandler FiresOnExit
+        {
+            add { this.lazyModelObject.FiresOnExit += value; }
+            remove { this.lazyModelObject.FiresOnExit -= value; }
+        }
+
+        /// <summary>
         /// 依存モデルのリストです。
         /// </summary>
         List<object> IParentModel.DependModelList

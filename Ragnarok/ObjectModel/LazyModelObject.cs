@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
-using System.ComponentModel;
+using System.Threading;
 
 namespace Ragnarok.ObjectModel
 {
@@ -14,6 +15,11 @@ namespace Ragnarok.ObjectModel
         private readonly object SyncRoot = new object();
         private readonly List<string> updatedPropertyList = new List<string>();
         private int count;
+
+        /// <summary>
+        /// Exitするときに呼ばれるイベントです。
+        /// </summary>
+        public event EventHandler FiresOnExit;
 
         /// <summary>
         /// ロックします。
@@ -78,6 +84,13 @@ namespace Ragnarok.ObjectModel
 
             // 実際に通知を出します。
             NotifyPropertyChanged(model, propertyArray);
+
+            // イベントを発火します。
+            var handler = Interlocked.Exchange(ref FiresOnExit, null);
+            if (handler != null)
+            {
+                Util.SafeCall(() => handler(model, EventArgs.Empty));
+            }
         }
 
         /// <summary>
