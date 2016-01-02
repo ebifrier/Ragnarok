@@ -238,7 +238,7 @@ namespace Ragnarok.Shogi.Kif
             var last = head;
             foreach (var knode in knodeList)
             {
-                last.Next = knode;
+                last.NextNode = knode;
                 last = knode;
             }
 
@@ -246,7 +246,7 @@ namespace Ragnarok.Shogi.Kif
             // 変換時にエラーが出た場合は、それまでの指し手を変換します。
             var board = startBoard.Clone();
             Exception error = null;
-            var root = head.Next.ConvertToMoveNode(board, head, out error);
+            var root = head.NextNode.ConvertToMoveNode(board, head, out error);
             root.Regulalize();
 
             return new KifuObject(header, startBoard, root, error);
@@ -319,7 +319,6 @@ namespace Ragnarok.Shogi.Kif
         private KifuObject LoadKif(KifuHeader header, Board board, KifMoveNode head_)
         {
             var head = ParseNodeKif(board, false);
-            head.SetupInfoData(board);
 
             // KifMoveNodeからMoveNodeへ変換します。
             Exception error;
@@ -371,6 +370,7 @@ namespace Ragnarok.Shogi.Kif
                 MergeVariation(head, variationNode);
             }
 
+            head.SetupVariationInfo(board);
             return head;
         }
 
@@ -381,9 +381,9 @@ namespace Ragnarok.Shogi.Kif
         {
             var result = new HashSet<int>();
 
-            for (var node = head; node != null; node = node.Next)
+            for (var node = head; node != null; node = node.NextNode)
             {
-                if (node.HasVariation)
+                if (node.HasVariationNode)
                 {
                     result.Add(node.MoveCount);
                 }
@@ -399,16 +399,16 @@ namespace Ragnarok.Shogi.Kif
         {
             while (node.MoveCount != source.MoveCount)
             {
-                if (node.Next == null)
+                if (node.NextNode == null)
                 {
                     //throw 
                     return;
                 }
 
-                node = node.Next;
+                node = node.NextNode;
             }
 
-            for (var next = node; next != null; next = next.Variation)
+            for (var next = node; next != null; next = next.VariationNode)
             {
                 if (next == null)
                 {
@@ -419,7 +419,7 @@ namespace Ragnarok.Shogi.Kif
             }
 
             // 変化を追加します。
-            node.Variation = source;
+            node.VariationNode = source;
         }
 
         /// <summary>
@@ -466,11 +466,11 @@ namespace Ragnarok.Shogi.Kif
                 ReadCommentLines(node, false);
 
                 // 指し手はリンクリストで保存します。
-                last.Next = node;
+                last.NextNode = node;
                 last = node;
             }
 
-            return head.Next;
+            return head.NextNode;
         }
         
         /// <summary>
@@ -508,7 +508,7 @@ namespace Ragnarok.Shogi.Kif
                 MoveCount = moveCount,
                 Duration = duration,
                 LineNumber = this.lineNumber,
-                HasVariation = hasVariation,
+                HasVariationNode = hasVariation,
             };
         }
 

@@ -5,7 +5,10 @@ using System.Text;
 
 namespace Ragnarok.Shogi
 {
-    public sealed class MoveNodeInfoData
+    /// <summary>
+    /// 変化と評価値は１セットのため、まとめて管理しています。
+    /// </summary>
+    public sealed class VariationInfo
     {
         /// <summary>
         /// 解析された評価値を取得または設定します。
@@ -19,7 +22,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 解析された変化を取得または設定します。
         /// </summary>
-        public List<BoardMove> Variation
+        public List<BoardMove> MoveList
         {
             get;
             set;
@@ -90,9 +93,9 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
-        /// 複数の変化データを管理します。
+        /// ソフトが出力した変化とその評価値のリストを取得します。
         /// </summary>
-        public List<MoveNodeInfoData> InfoDataList
+        public List<VariationInfo> VariationInfoList
         {
             get;
             set;
@@ -105,8 +108,8 @@ namespace Ragnarok.Shogi
         {
             get
             {
-                return (InfoDataList != null && InfoDataList.Any() ?
-                    InfoDataList.First().Value : (int?)null);
+                return (VariationInfoList != null && VariationInfoList.Any() ?
+                    VariationInfoList.First().Value : (int?)null);
             }
         }
 
@@ -186,7 +189,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 次の指し手ノードを追加します。
         /// </summary>
-        public void AddNext(MoveNode node)
+        public void AddNextNode(MoveNode node)
         {
             if (node == null)
             {
@@ -250,7 +253,7 @@ namespace Ragnarok.Shogi
                         // 子の重複チェックはこの後行うので、
                         // ここで重複があっても構いません。
                         compNode.NextNodes.ForEach(_ => _.ParentNode = null);
-                        compNode.NextNodes.ForEach(_ => baseNode.AddNext(_));
+                        compNode.NextNodes.ForEach(_ => baseNode.AddNextNode(_));
 
                         NextNodes.RemoveAt(j);
                     }
@@ -323,7 +326,7 @@ namespace Ragnarok.Shogi
         public MoveNode()
         {
             NextNodes = new List<MoveNode>();
-            InfoDataList = new List<MoveNodeInfoData>();
+            VariationInfoList = new List<VariationInfo>();
             CommentList = new List<string>();
         }
     }

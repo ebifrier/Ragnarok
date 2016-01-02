@@ -100,7 +100,7 @@ namespace Ragnarok.Shogi
                     Move = move,
                 };
 
-                last.AddNext(node);
+                last.AddNextNode(node);
                 last = node;
             }
 

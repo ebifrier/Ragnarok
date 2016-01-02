@@ -18,7 +18,7 @@ namespace Ragnarok.Shogi
         /// </summary>
         public KifMoveNode()
         {
-            InfoDataList = new List<MoveNodeInfoData>();
+            VariationInfoList = new List<VariationInfo>();
             CommentList = new List<string>();
         }
 
@@ -70,7 +70,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// ノードに付随する評価値や変化などを取得または設定します。
         /// </summary>
-        public List<MoveNodeInfoData> InfoDataList
+        public List<VariationInfo> VariationInfoList
         {
             get;
             set;
@@ -88,7 +88,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 本譜における次の指し手を取得または設定します。
         /// </summary>
-        public KifMoveNode Next
+        public KifMoveNode NextNode
         {
             get;
             set;
@@ -97,7 +97,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 次の変化を取得します。
         /// </summary>
-        public KifMoveNode Variation
+        public KifMoveNode VariationNode
         {
             get;
             set;
@@ -106,7 +106,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 次の指し手に本譜以外の変化があるか調べます。
         /// </summary>
-        public bool HasVariation
+        public bool HasVariationNode
         {
             get;
             set;
@@ -140,17 +140,17 @@ namespace Ragnarok.Shogi
                     str, new string(' ', 8 - hanlen));
             }
 
-            if (Next != null)
+            if (NextNode != null)
             {
-                Next.MakeString(sb, nmoves + 1);
+                NextNode.MakeString(sb, nmoves + 1);
             }
 
-            if (Variation != null)
+            if (VariationNode != null)
             {
                 sb.AppendLine();
                 sb.Append(new string(' ', 11 * nmoves));
 
-                Variation.MakeString(sb, nmoves);
+                VariationNode.MakeString(sb, nmoves);
             }
         }
 
@@ -158,7 +158,7 @@ namespace Ragnarok.Shogi
         /// 解析された変化を示す正規表現です。
         /// </summary>
         private static readonly Regex KifAnalyzedVariationRegex = new Regex(
-            @"\*(\d+) (.+)$");
+            @"\s*(\*|<analyze>)?\s*(?<value>\d+)\s*(.+)\s*(</analyze>)?\s*$");
 
         /// <summary>
         /// コメント文字列を追加します。
@@ -176,14 +176,14 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// コメントから変化行を探します。
         /// </summary>
-        public void SetupInfoData(Board board)
+        public void SetupVariationInfo(Board board)
         {
             for (var i = 0; i < CommentList.Count(); )
             {
-                var infoData = ParseInfoData(CommentList[i], board);
-                if (infoData != null)
+                var variationInfo = ParseVariationInfo(CommentList[i], board);
+                if (variationInfo != null)
                 {
-                    InfoDataList.Add(infoData);
+                    VariationInfoList.Add(variationInfo);
                     CommentList.RemoveAt(i);
                 }
                 else
@@ -192,9 +192,9 @@ namespace Ragnarok.Shogi
                 }
             }
 
-            if (Variation != null)
+            if (VariationNode != null)
             {
-                Variation.SetupInfoData(board);
+                VariationNode.SetupVariationInfo(board);
             }
 
             if (Move != null && Move.Validate())
@@ -202,11 +202,13 @@ namespace Ragnarok.Shogi
                 var bmove = MakeMove(board, new List<Exception>());
                 if (bmove == null || !bmove.Validate())
                 {
+                    Log.Error("'{0}'が正しく着手できません。", bmove);
+                    return;
                 }
 
-                if (Next != null)
+                if (NextNode != null)
                 {
-                    Next.SetupInfoData(board);
+                    NextNode.SetupVariationInfo(board);
                 }
 
                 board.Undo();
@@ -216,7 +218,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 棋譜コメントから評価値や変化の取得します。
         /// </summary>
-        private MoveNodeInfoData ParseInfoData(string comment, Board board)
+        private VariationInfo ParseVariationInfo(string comment, Board board)
         {
             var m = KifAnalyzedVariationRegex.Match(comment);
             if (!m.Success)
@@ -226,7 +228,7 @@ namespace Ragnarok.Shogi
 
             // 評価値の取得を行います。
             int value;
-            if (!int.TryParse(m.Groups[1].Value, out value))
+            if (!int.TryParse(m.Groups["value"].Value, out value))
             {
                 return null;
             }
@@ -259,10 +261,10 @@ namespace Ragnarok.Shogi
                 variationStr = variationStr.Substring(parsed.Length);
             }
 
-            return new MoveNodeInfoData
+            return new VariationInfo
             {
                 Value = value,
-                Variation = variation,
+                MoveList = variation,
             };
         }
 
@@ -277,7 +279,7 @@ namespace Ragnarok.Shogi
             {
                 MoveCount = head.MoveCount,
                 Duration = head.Duration,
-                InfoDataList = head.InfoDataList,
+                VariationInfoList = head.VariationInfoList,
                 CommentList = head.CommentList,
             };
             // これでrootの子要素に指し手ツリーが設定されます。
@@ -298,7 +300,7 @@ namespace Ragnarok.Shogi
         private void ConvertToMoveNode(Board board, MoveNode root,
                                        List<Exception> errors)
         {
-            for (var node = this; node != null; node = node.Variation)
+            for (var node = this; node != null; node = node.VariationNode)
             {
                 // 指し手を実際に指してみます。
                 var bmove = node.MakeMove(board, errors);
@@ -312,17 +314,17 @@ namespace Ragnarok.Shogi
                     Move = bmove,
                     MoveCount = node.MoveCount,
                     Duration = node.Duration,
-                    InfoDataList = node.InfoDataList,
+                    VariationInfoList = node.VariationInfoList,
                     CommentList = node.CommentList,
                 };
 
                 // 次の指し手とその変化を変換します。
-                if (node.Next != null)
+                if (node.NextNode != null)
                 {
-                    node.Next.ConvertToMoveNode(board, moveNode, errors);
+                    node.NextNode.ConvertToMoveNode(board, moveNode, errors);
                 }
 
-                root.AddNext(moveNode);
+                root.AddNextNode(moveNode);
                 board.Undo();
             }
         }

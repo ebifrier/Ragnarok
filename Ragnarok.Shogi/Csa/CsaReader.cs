@@ -121,7 +121,7 @@ namespace Ragnarok.Shogi.Csa
                         Move = move,
                     };
 
-                    this.lastNode.AddNext(node);
+                    this.lastNode.AddNextNode(node);
                     this.lastNode = node;
                     return true;
 

@@ -158,17 +158,17 @@ namespace Ragnarok.Shogi.Kif
         /// </summary>
         private void WriteCommentKif(TextWriter writer, MoveNode node)
         {
-            foreach (var infoData in node.InfoDataList)
+            foreach (var variationInfo in node.VariationInfoList)
             {
-                if (infoData == null || infoData.Variation == null)
+                if (variationInfo == null || variationInfo.MoveList == null)
                 {
                     continue;
                 }
 
                 writer.WriteLine("**{0} {1}",
-                    infoData.Value,
+                    variationInfo.Value,
                     string.Join("",
-                        infoData.Variation.Select(_ => _.ToString())));
+                        variationInfo.MoveList.Select(_ => _.ToString())));
             }
 
             foreach (var comment in node.CommentList)
