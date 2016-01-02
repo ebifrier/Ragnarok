@@ -169,7 +169,7 @@ namespace Ragnarok.ObjectModel
         private void RaisePropertyChangedInternal(
             object sender, PropertyChangedEventArgs e)
         {
-#if DEBUG
+#if DEBUG && false
             this.VerifyProperty(sender, e);
 #endif
 
@@ -194,7 +194,7 @@ namespace Ragnarok.ObjectModel
         private void DependModel_PropertyChanged(object sender,
                                                         PropertyChangedEventArgs e)
         {
-#if DEBUG
+#if DEBUG && false
             this.VerifyProperty(sender, e);
 #endif
 
@@ -220,7 +220,7 @@ namespace Ragnarok.ObjectModel
         /// senderに指定のプロパティが存在するか調べます。
         /// </summary>
         private void VerifyProperty(object sender,
-                                    PropertyChangedEventArgs e)
+                                           PropertyChangedEventArgs e)
         {
             if (sender == null)
             {

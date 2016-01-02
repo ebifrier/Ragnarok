@@ -152,8 +152,6 @@ namespace Ragnarok.ObjectModel
                     return false;
                 }
 
-                this.RaisePropertyChanging(pair.Model, pair.Property.Name);
-
                 // プロパティ値を設定します。
                 pair.Property.SetValue(pair.Model, value, null);
 

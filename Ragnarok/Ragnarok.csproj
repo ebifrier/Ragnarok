@@ -245,7 +245,6 @@
     <Compile Include="ObjectModel\NotifyObject.cs" />
     <Compile Include="ObjectModel\NotifyCollection.cs" />
     <Compile Include="ObjectModel\DynamicDictionary.cs" />
-    <Compile Include="ObjectModel\ViewModelProxy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RagnarokException.cs" />
     <Compile Include="Tests\EnumExTest.cs" />

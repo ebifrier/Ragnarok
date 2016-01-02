@@ -51,20 +51,19 @@ namespace Ragnarok.ObjectModel
         }
 
         /// <summary>
-        /// プロパティ値の変更前に呼ばれるイベントです。
-        /// </summary>
-        /// <remarks>
-        /// このオブジェクトのthis[]やdynamic型として変更された
-        /// プロパティの場合にしか呼び出されません。
-        /// </remarks>
-        [field: NonSerialized]
-        public virtual event PropertyChangingEventHandler PropertyChanging;
-
-        /// <summary>
         /// プロパティ値の変更イベントです。
         /// </summary>
         [field: NonSerialized]
         public virtual event PropertyChangedEventHandler PropertyChanged;
+
+        /// <summary>
+        /// LazyLockをExitするときに呼ばれるイベントです。
+        /// </summary>
+        public event EventHandler FiresOnExit
+        {
+            add { this.lazyModelObject.FiresOnExit += value; }
+            remove { this.lazyModelObject.FiresOnExit -= value; }
+        }
 
         /// <summary>
         /// 依存モデルのリストです。
@@ -99,10 +98,12 @@ namespace Ragnarok.ObjectModel
         }
 
         /// <summary>
-        /// プロパティ変更前に呼ばれます。
+        /// プロパティの変更通知を出します。
         /// </summary>
-        protected virtual void OnPropertyChanging(PropertyChangingEventArgs e)
+        public virtual void NotifyPropertyChanged(PropertyChangedEventArgs e)
         {
+            Util.SafeCall(() => OnPropertyChanged(e));
+            Util.CallPropertyChanged(PropertyChanged, this, e);
         }
 
         /// <summary>
@@ -113,36 +114,25 @@ namespace Ragnarok.ObjectModel
         }
 
         /// <summary>
-        /// プロパティの変更前通知を出します。
+        /// オブジェクトに登録されたプロパティデータを取得します。
         /// </summary>
-        public virtual void NotifyPropertyChanging(object sender,
-                                                   PropertyChangingEventArgs e)
+        public Dictionary<string, object> GetPropertyData()
         {
-            Util.SafeCall(() => OnPropertyChanging(e));
-
-            var handler = PropertyChanging;
-            if (handler != null)
+            using (LazyLock())
             {
-                Util.CallEvent(() => handler(sender, e));
+                return new Dictionary<string, object>(this.propDic);
             }
         }
 
         /// <summary>
-        /// プロパティ値とその関連プロパティ値の変更前通知を出します。
+        /// 指定の名前のプロパティが含まれているか調べます。
         /// </summary>
-        public void RaisePropertyChanging(object sender, string propertyName)
+        protected bool Contains(string name)
         {
-            NotifyPropertyChanging(
-                sender, new PropertyChangingEventArgs(propertyName));
-        }
-
-        /// <summary>
-        /// プロパティの変更通知を出します。
-        /// </summary>
-        public virtual void NotifyPropertyChanged(PropertyChangedEventArgs e)
-        {
-            Util.SafeCall(() => OnPropertyChanged(e));
-            Util.CallPropertyChanged(PropertyChanged, this, e);
+            using (LazyLock())
+            {
+                return this.propDic.ContainsKey(name);
+            }
         }
 
         /// <summary>
@@ -175,8 +165,8 @@ namespace Ragnarok.ObjectModel
                 if (!this.propDic.TryGetValue(name, out current) ||
                     !Util.GenericEquals(current, value))
                 {
-                    this.RaisePropertyChanging(this, name);
                     this.propDic[name] = value;
+
                     this.RaisePropertyChanged(name);
                 }
             }
@@ -191,8 +181,8 @@ namespace Ragnarok.ObjectModel
             {
                 if (!Util.GenericEquals(property, value))
                 {
-                    this.RaisePropertyChanging(this, name);
                     property = value;
+
                     this.RaisePropertyChanged(name);
                 }
             }
