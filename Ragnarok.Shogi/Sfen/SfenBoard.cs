@@ -166,7 +166,7 @@ namespace Ragnarok.Shogi.Sfen
         /// <summary>
         /// 局面をSFEN形式に変換します。
         /// </summary>
-        public static string ToSfen(this Board board)
+        public static string BoardToSfen(Board board)
         {
             if (board == null)
             {

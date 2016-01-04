@@ -84,7 +84,7 @@ namespace Ragnarok.Shogi.Kif
         /// 
         /// 後手番
         /// </example>
-        public static string ToBod(this Board board)
+        public static string BoardToBod(Board board)
         {
             if (board == null || !board.Validate())
             {

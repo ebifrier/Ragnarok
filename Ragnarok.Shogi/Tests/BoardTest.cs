@@ -85,7 +85,7 @@ namespace Ragnarok.Shogi.Tests
             var sfen =
                 "l1+R6/4k4/1Lp1g1n2/1Pssg2S1/P4PP2/L1P1+B3p/p1NG5/1KSG2+B2/9" +
                 " " + turnCh + " N7Prnl3p 1";
-            var board = SfenBoard.Parse(sfen);
+            var board = Board.ParseSfen(sfen);
 
             Assert.NotNull(board);
             Assert.True(board.Validate());

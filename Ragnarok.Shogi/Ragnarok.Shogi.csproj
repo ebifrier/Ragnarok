@@ -71,6 +71,7 @@
   <ItemGroup>
     <Compile Include="Board.canmove.cs" />
     <Compile Include="Board.cs" />
+    <Compile Include="Board.ext.cs" />
     <Compile Include="Board.mate.cs" />
     <Compile Include="BoardComparer.cs" />
     <Compile Include="BoardExtension.cs" />

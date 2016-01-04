@@ -46,7 +46,7 @@ namespace Ragnarok.Shogi.Kif
         /// </summary>
         private void WriteBoard(TextWriter writer, Board board)
         {
-            writer.WriteLine(BodBoard.ToBod(board));
+            writer.WriteLine(board.ToBod());
 
             if (IsKif)
             {

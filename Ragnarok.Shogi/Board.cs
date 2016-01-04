@@ -128,8 +128,8 @@ namespace Ragnarok.Shogi
                    select new Square(file, rank);
         }
 
-        private static long[,,] zobrist = new long[81, 18, 2];
-        private static long[,] zobristHand = new long[18, 2];
+        private static long[,,] zobrist = new long[SquareCount, 9 * 2, 2];
+        private static long[,] zobristHand = new long[9 * 2, 2];
         private static long zobristTurn;
 
         /// <summary>
@@ -164,7 +164,8 @@ namespace Ragnarok.Shogi
         {
             var random = new Random();
 
-            for (var piece = 0; piece < 18; ++piece)
+            // 駒の成りと不成りも入れる
+            for (var piece = 0; piece < 9 * 2; ++piece)
             {
                 for (var sqi = 0; sqi < SquareCount; ++sqi)
                 {
@@ -512,7 +513,7 @@ namespace Ragnarok.Shogi
             {
                 using (LazyLock())
                 {
-                    return Kif.BodBoard.ToBod(this);
+                    return ToBod();
                 }
             }
         }

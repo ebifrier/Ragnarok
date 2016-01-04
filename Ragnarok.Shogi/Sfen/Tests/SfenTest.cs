@@ -17,46 +17,46 @@ namespace Ragnarok.Shogi.Sfen.Tests
             // 初期局面
             Assert.True(Board.BoardEquals(
                 new Board(),
-                SfenBoard.Parse(
+                Board.ParseSfen(
                     "lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL" +
                     " b - 1")));
 
             // 最後の数字はなくてもよい
             Assert.True(Board.BoardEquals(
                 new Board(),
-                SfenBoard.Parse(
+                Board.ParseSfen(
                     "lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL" +
                     " b -")));
 
             // 持ち駒はないとダメ
             Assert.Catch<SfenException>(() =>
-                SfenBoard.Parse(
+                Board.ParseSfen(
                     "lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b"));
 
             // 筋が少ない
             Assert.Catch<SfenException>(() =>
-                SfenBoard.Parse(
+                Board.ParseSfen(
                     "9/9/p/9/9/9/9/9/9 b -"));
 
             // 筋が多い
             Assert.Catch<SfenException>(() =>
-                SfenBoard.Parse(
+                Board.ParseSfen(
                     "9/9/p9/9/9/9/9/9/9 b -"));
 
             // 段が多い
             Assert.Catch<SfenException>(() =>
-                SfenBoard.Parse(
+                Board.ParseSfen(
                     "9/9/9/9/9/9/9/9/9/p b -"));
 
             // 段が少ないのは問題にしない
             Assert.True(Board.BoardEquals(
                 new Board(false),
-                SfenBoard.Parse("9/9/9/9/9/9/9/9 b -")));
+                Board.ParseSfen("9/9/9/9/9/9/9/9 b -")));
 
             // 成れない駒を成る
             Assert.True(Board.BoardEquals(
-                SfenBoard.Parse("9/9/9/9/9/9/9/G8/9 b -"),
-                SfenBoard.Parse("9/9/9/9/9/9/9/+G8/9 b -")));
+                Board.ParseSfen("9/9/9/9/9/9/9/G8/9 b -"),
+                Board.ParseSfen("9/9/9/9/9/9/9/+G8/9 b -")));
         }
 
         private List<BoardMove> MakeMoveList(string sfen)
@@ -106,7 +106,7 @@ namespace Ragnarok.Shogi.Sfen.Tests
 
 
             // 局面を直接読み込みます。
-            var board2 = SfenBoard.Parse(boardSfen);            
+            var board2 = Board.ParseSfen(boardSfen);            
 
             // 出力したSFEN形式の局面が同じかどうかの確認もします。
             // (最後の数字には意味がないため、意図的に削っています)

@@ -38,7 +38,7 @@ namespace Ragnarok.Shogi.Csa
         /// <summary>
         /// 局面をCSA形式に変換します。
         /// </summary>
-        public static string ToCsa(this Board board)
+        public static string BoardToCsa(Board board)
         {
             if (board == null)
             {
@@ -74,7 +74,7 @@ namespace Ragnarok.Shogi.Csa
 
                 return string.Format(
                     "{0}\n{1}{2}{3}",
-                    BoardToCsa(board),
+                    BoardToCsa2(board),
                     bhand, whand,
                     TurnToCsa(board.Turn));
             }
@@ -97,7 +97,7 @@ namespace Ragnarok.Shogi.Csa
         /// <summary>
         /// 局面をCSA形式に変換します。
         /// </summary>
-        private static string BoardToCsa(Board board)
+        private static string BoardToCsa2(Board board)
         {
             var lineList =
                 from rank in Enumerable.Range(1, Board.BoardSize)

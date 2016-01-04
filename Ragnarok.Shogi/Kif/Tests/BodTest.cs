@@ -16,7 +16,7 @@ namespace Ragnarok.Shogi.Kif.Tests
         /// </summary>
         public Board ParseBoard(string text)
         {
-            var board = BodBoard.Parse(text);
+            var board = Board.ParseBod(text);
             Assert.NotNull(board);
             Assert.True(board.Validate());
 

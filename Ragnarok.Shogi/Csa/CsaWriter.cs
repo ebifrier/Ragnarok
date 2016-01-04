@@ -51,7 +51,7 @@ namespace Ragnarok.Shogi.Csa
         /// </summary>
         private void WriteBoard(TextWriter writer, Board board)
         {
-            writer.WriteLine(CsaBoard.ToCsa(board));
+            writer.WriteLine(board.ToCsa());
         }
 
         /// <summary>

@@ -7,8 +7,6 @@ using NUnit.Framework;
 
 namespace Ragnarok.Shogi.Tests
 {
-    using Kif;
-
     /// <summary>
     /// 打ち歩詰のテストを行います。
     /// </summary>
@@ -34,7 +32,7 @@ namespace Ragnarok.Shogi.Tests
                 "+---------------------------+\n" +
                 "先手の持駒：桂　歩　\n" +
                 "手数＝130";
-            var board = BodBoard.Parse(bod);
+            var board = Board.ParseBod(bod);
 
             var move = BoardMove.CreateDrop(
                 BWType.Black,
@@ -68,7 +66,7 @@ namespace Ragnarok.Shogi.Tests
                 "先手の持駒：飛二　角　金　銀　桂二　香　歩十一　\n" +
                 "手数＝0\n" +
                 "後手番\n";
-            var board = BodBoard.Parse(bod);
+            var board = Board.ParseBod(bod);
 
             var move = BoardMove.CreateDrop(
                 BWType.White,

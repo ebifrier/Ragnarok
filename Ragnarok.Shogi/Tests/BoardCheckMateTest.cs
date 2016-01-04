@@ -7,9 +7,6 @@ using NUnit.Framework;
 
 namespace Ragnarok.Shogi.Tests
 {
-    using Kif;
-    using Sfen;
-
     /// <summary>
     /// 詰みや王手に関するテストを行います。
     /// </summary>
@@ -22,7 +19,7 @@ namespace Ragnarok.Shogi.Tests
         [Test()]
         public void BlackTest1()
         {
-            var board = BodBoard.Parse(
+            var board = Board.ParseBod(
                 "後手の持駒：飛　角　金二　歩二\n" +
                 "  ９ ８ ７ ６ ５ ４ ３ ２ １\n" +
                 "+---------------------------+\n" +
@@ -49,7 +46,7 @@ namespace Ragnarok.Shogi.Tests
         [Test()]
         public void BlackTest2()
         {
-            var board = BodBoard.Parse(
+            var board = Board.ParseBod(
                 "後手の持駒：飛　角　金二　銀　歩二\n" +
                 "  ９ ８ ７ ６ ５ ４ ３ ２ １\n" +
                 "+---------------------------+\n" +
@@ -76,7 +73,7 @@ namespace Ragnarok.Shogi.Tests
         [Test()]
         public void BlackTest3()
         {
-            var board = BodBoard.Parse(
+            var board = Board.ParseBod(
                 "後手の持駒：飛　金二　銀　歩二\n" +
                 "  ９ ８ ７ ６ ５ ４ ３ ２ １\n" +
                 "+---------------------------+\n" +
@@ -103,7 +100,7 @@ namespace Ragnarok.Shogi.Tests
         [Test()]
         public void WhiteTest1()
         {
-            var board = BodBoard.Parse(
+            var board = Board.ParseBod(
                 "後手の持駒：角　金二　銀　歩二\n" +
                 "  ９ ８ ７ ６ ５ ４ ３ ２ １\n" +
                 "+---------------------------+\n" +
@@ -131,7 +128,7 @@ namespace Ragnarok.Shogi.Tests
         [Test()]
         public void WhiteTest3()
         {
-            var board = BodBoard.Parse(
+            var board = Board.ParseBod(
                 "後手の持駒：銀　歩\n" +
                 "  ９ ８ ７ ６ ５ ４ ３ ２ １\n" +
                 "+---------------------------+\n" +
