@@ -9,8 +9,6 @@ using Ragnarok.Utility;
 
 namespace Ragnarok.Shogi.Tests
 {
-    using Sfen;
-
     [TestFixture()]
     internal sealed class BoardTest
     {

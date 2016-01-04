@@ -138,7 +138,7 @@
     <Compile Include="ShogiParserEx.cs" />
     <Compile Include="SkillLevel.cs" />
     <Compile Include="Stringizer.cs" />
-    <Compile Include="Tests\BoardCheckMateTest.cs" />
+    <Compile Include="Tests\CheckMatedTest.cs" />
     <Compile Include="Tests\BoardTest.cs" />
     <Compile Include="Tests\ConvertMoveTest.cs" />
     <Compile Include="Tests\PawnDropCheckMateTest.cs" />

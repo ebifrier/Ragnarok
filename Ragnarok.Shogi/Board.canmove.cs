@@ -289,11 +289,30 @@ namespace Ragnarok.Shogi
         {
             if (square == null || !square.Validate())
             {
-                yield break;
+                return new Square[0];
             }
 
             var piece = this[square];
             if (piece == null || piece.BWType != bwType)
+            {
+                return new Square[0];
+            }
+
+            return GetCanMoveRange(piece.Piece, square, bwType);
+        }
+
+        /// <summary>
+        /// <paramref name="square"/>にある駒が移動できる
+        /// 可能性のある位置をすべて列挙します。
+        /// </summary>
+        private IEnumerable<Square> GetCanMoveRange(Piece piece, Square square, BWType bwType)
+        {
+            if (square == null || !square.Validate())
+            {
+                yield break;
+            }
+
+            if (piece == null)
             {
                 yield break;
             }
@@ -380,13 +399,17 @@ namespace Ragnarok.Shogi
                     }
                 }
 
+                // 竜・馬の場合、近傍地点はすでに調査済みなので
+                // 成りか不成りかで調査範囲を変更します。
+                var range = (piece.IsPromoted ? 2 : 1);
+
                 // 飛車角は成り／不成りに関わらず調べる箇所があります。
                 switch (piece.PieceType)
                 {
                     case PieceType.Hisya:
                         for (var f = 1; f <= BoardSize; ++f)
                         {
-                            if (piece.IsPromoted && Math.Abs(file - f) <= 1)
+                            if (piece.IsPromoted && Math.Abs(file - f) < range)
                             {
                                 continue;
                             }
@@ -399,7 +422,7 @@ namespace Ragnarok.Shogi
                         }
                         for (var r = 1; r <= BoardSize; ++r)
                         {
-                            if (piece.IsPromoted && Math.Abs(rank - r) <= 1)
+                            if (piece.IsPromoted && Math.Abs(rank - r) < range)
                             {
                                 continue;
                             }
@@ -415,7 +438,7 @@ namespace Ragnarok.Shogi
                     case PieceType.Kaku:
                         for (var index = -BoardSize; index <= BoardSize; ++index)
                         {
-                            if (piece.IsPromoted && Math.Abs(index) <= 1)
+                            if (piece.IsPromoted && Math.Abs(index) < range)
                             {
                                 continue;
                             }
@@ -428,7 +451,7 @@ namespace Ragnarok.Shogi
                         }
                         for (var index = -BoardSize; index <= BoardSize; ++index)
                         {
-                            if (piece.IsPromoted && Math.Abs(index) <= 1)
+                            if (piece.IsPromoted && Math.Abs(index) < range)
                             {
                                 continue;
                             }

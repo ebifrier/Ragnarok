@@ -63,7 +63,8 @@ namespace Ragnarok.Shogi
             }
 
             // 移動による指し手をすべて列挙します。
-            foreach (var srcSquare in Board.AllSquares())
+            var srcRange = GetCanMoveRange(piece, dstSquare, bwType.Flip());
+            foreach (var srcSquare in srcRange)
             {
                 var moves = GetAvailableMove(piece, bwType, srcSquare, dstSquare);
 
@@ -159,7 +160,7 @@ namespace Ragnarok.Shogi
             }
 
             var move = BoardMove.CreateDrop(bwType, square, pieceType);
-            if (DoMove(move))
+            if (DoMove(move, MoveFlags.DoMoveDefault & ~MoveFlags.CheckPawnDropCheckMate))
             {
                 if (!IsChecked(bwType))
                 {
