@@ -288,7 +288,7 @@ namespace Ragnarok.Presentation.Shogi.View
             EndMove();
             UpdateIsPieceBoxVisible();
             UpdateIsLeaveTimeVisibleInternal();
-            UpdatePieceBoxBrush();
+            UpdateHandBoxBrush();
 
             SyncCapturedPieceObject(true);
         }
@@ -396,30 +396,30 @@ namespace Ragnarok.Presentation.Shogi.View
         /// <summary>
         /// 駒台画像を扱う依存プロパティです。
         /// </summary>
-        public static readonly DependencyProperty CapturedPieceBoxBrushProperty =
+        public static readonly DependencyProperty HandBoxBrushProperty =
             DependencyProperty.Register(
-                "CapturedPieceBoxBrush", typeof(Brush), typeof(ShogiUIElement3D),
+                "HandBoxBrush", typeof(Brush), typeof(ShogiUIElement3D),
                 new FrameworkPropertyMetadata(DefaultPieceBoxBrush));
 
         /// <summary>
         /// 駒台画像を取得または設定します。
         /// </summary>
-        public Brush CapturedPieceBoxBrush
+        public Brush HandBoxBrush
         {
-            get { return (Brush)GetValue(CapturedPieceBoxBrushProperty); }
-            set { SetValue(CapturedPieceBoxBrushProperty, value); }
+            get { return (Brush)GetValue(HandBoxBrushProperty); }
+            set { SetValue(HandBoxBrushProperty, value); }
         }
 
         /// <summary>
         /// 駒台画像が変更されたときに呼ばれます。
         /// </summary>
-        static void OnCapturedPieceBoxBrushChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        static void OnHandBoxBrushChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var self = (ShogiUIElement3D)d;
 
             if (self != null)
             {
-                self.UpdatePieceBoxBrush();
+                self.UpdateHandBoxBrush();
             }
         }
 
@@ -474,11 +474,11 @@ namespace Ragnarok.Presentation.Shogi.View
         /// <summary>
         /// 駒箱は局面編集モードでは表示させます。
         /// </summary>
-        private void UpdatePieceBoxBrush()
+        private void UpdateHandBoxBrush()
         {
             PieceBoxBrush = (
                 EditMode == EditMode.Editing ?
-                CapturedPieceBoxBrush :
+                HandBoxBrush :
                 null);
         }
 
@@ -979,7 +979,7 @@ namespace Ragnarok.Presentation.Shogi.View
                 }
 
                 // 先手・後手盤の駒台上の駒を更新します。
-                foreach (var capturedPieceList in this.capturedPieceObjectList)
+                foreach (var capturedPieceList in this.handObjectList)
                 {
                     if (capturedPieceList != null)
                     {
@@ -1015,7 +1015,7 @@ namespace Ragnarok.Presentation.Shogi.View
             Initialize();
 
             BanBrush = DefaultBanBrush.Clone();
-            CapturedPieceBoxBrush = DefaultPieceBoxBrush.Clone();
+            HandBoxBrush = DefaultPieceBoxBrush.Clone();
             PieceImage = DefaultPieceImage.Clone();
 
             Board = new Board();
@@ -1028,7 +1028,7 @@ namespace Ragnarok.Presentation.Shogi.View
         {
             try
             {
-                this.capturedPieceContainer = new Model3DGroup();
+                this.handContainer = new Model3DGroup();
                 this.pieceContainer = new Model3DGroup();
                 this.banEffectGroup = new Model3DGroup();
                 this.effectGroup = new Model3DGroup();
@@ -1060,7 +1060,7 @@ namespace Ragnarok.Presentation.Shogi.View
                 group.Children.Add(komadai1Geometry); // ←↑の駒台
                 group.Children.Add(komaboxGeometry);  // ←↓の駒箱
                 group.Children.Add(this.banEffectGroup); // 盤のエフェクト
-                group.Children.Add(this.capturedPieceContainer); // 取った駒
+                group.Children.Add(this.handContainer); // 取った駒
                 group.Children.Add(this.pieceContainer); // 駒
                 group.Children.Add(this.effectGroup); // 駒のエフェクト
                 group.Children.Add(autoPlayGeometry);
@@ -1156,7 +1156,7 @@ namespace Ragnarok.Presentation.Shogi.View
                 this.pieceObjectList.Clear();
             }
 
-            foreach (var capturedPieceList in this.capturedPieceObjectList)
+            foreach (var capturedPieceList in this.handObjectList)
             {
                 if (capturedPieceList != null)
                 {

@@ -149,7 +149,7 @@ namespace Ragnarok.Shogi.Kif
                 let obj = new
                 {
                     Piece = new Piece(pieceType, false),
-                    Count = board.GetCapturedPieceCount(pieceType, turn),
+                    Count = board.GetHandCount(pieceType, turn),
                 }
                 where obj.Count > 0
                 select string.Format("{0}{1}{2}　",

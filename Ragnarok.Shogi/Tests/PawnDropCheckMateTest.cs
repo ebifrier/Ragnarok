@@ -13,7 +13,7 @@ namespace Ragnarok.Shogi.Tests
     /// 打ち歩詰のテストを行います。
     /// </summary>
     [TestFixture]
-    internal sealed class DropPawnMateTest
+    internal sealed class PawnDropCheckMateTest
     {
         [Test]
         public void MateTest1()

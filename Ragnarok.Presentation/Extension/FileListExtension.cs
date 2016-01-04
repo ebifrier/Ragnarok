@@ -59,7 +59,6 @@ namespace Ragnarok.Presentation.Extension
         /// コンストラクタ
         /// </summary>
         public FileListExtension(string pattern, string assembly)
-            : this()
         {
             Assembly = assembly;
             Pattern = pattern;

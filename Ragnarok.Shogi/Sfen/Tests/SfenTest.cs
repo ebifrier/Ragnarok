@@ -55,7 +55,7 @@ namespace Ragnarok.Shogi.Sfen.Tests
 
             // 成れない駒を成る
             Assert.True(Board.BoardEquals(
-                new Board(false),
+                SfenBoard.Parse("9/9/9/9/9/9/9/G8/9 b -"),
                 SfenBoard.Parse("9/9/9/9/9/9/9/+G8/9 b -")));
         }
 

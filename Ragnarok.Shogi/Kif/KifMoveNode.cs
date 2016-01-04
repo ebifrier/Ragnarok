@@ -253,7 +253,7 @@ namespace Ragnarok.Shogi
                 }
 
                 // すごく重いため変化の時は打ち歩詰めの確認を行いません。
-                var flags = MoveFlags.DoMoveDefault & ~MoveFlags.CheckDropPawnMate;
+                var flags = MoveFlags.DoMoveDefault & ~MoveFlags.CheckPawnDropCheckMate;
                 if (!cloned.DoMove(bmove, flags))
                 {
                     break;

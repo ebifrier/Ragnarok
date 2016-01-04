@@ -146,6 +146,17 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
+        /// 駒のインデックスを取得します。
+        /// </summary>
+        public int Index
+        {
+            get
+            {
+                return ((int)PieceType + (IsPromoted ? 9 : 0));
+            }
+        }
+
+        /// <summary>
         /// オブジェクトのクローンを取得します。
         /// </summary>
         public Piece Clone()

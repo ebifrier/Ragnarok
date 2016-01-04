@@ -357,7 +357,7 @@ namespace Ragnarok.Forms.Shogi.View
                     return 0;
                 }
 
-                return Board.GetCapturedPieceCount(pieceType, bwType);
+                return Board.GetHandCount(pieceType, bwType);
             }
         }
 
@@ -380,7 +380,7 @@ namespace Ragnarok.Forms.Shogi.View
             else
             {
                 // 持ち駒の駒の数
-                Board.SetCapturedPieceCount(pieceType, bwType, count);
+                Board.SetHandCount(pieceType, bwType, count);
             }
         }
 

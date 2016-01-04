@@ -34,13 +34,13 @@ namespace Ragnarok.Presentation.Shogi.View
     public partial class ShogiUIElement3D : UIElement3D
     {
         private Model3DGroup pieceContainer;
-        private Model3DGroup capturedPieceContainer;        
+        private Model3DGroup handContainer;        
         private readonly List<PieceObject> pieceObjectList =
             new List<PieceObject>();
-        private readonly List<PieceObject>[] capturedPieceObjectList =
+        private readonly List<PieceObject>[] handObjectList =
             new List<PieceObject>[3];
 
-        private readonly Rect[] capturedPieceBoxBounds = new Rect[3];
+        private readonly Rect[] handBoxBounds = new Rect[3];
         private readonly int[] komaboxCount = new int[(int)PieceType.Hu + 1];
         private PieceObject movingPiece;
         private Window promoteDialog;
@@ -64,9 +64,9 @@ namespace Ragnarok.Presentation.Shogi.View
                 CellSize.Height * Board.BoardSize);
 
             // index=0が駒箱の駒となります。
-            this.capturedPieceBoxBounds[0] = WPFUtil.MakeRectXY(komaboxBounds);
-            this.capturedPieceBoxBounds[1] = WPFUtil.MakeRectXY(komadai0Bounds);
-            this.capturedPieceBoxBounds[2] = WPFUtil.MakeRectXY(komadai1Bounds);
+            this.handBoxBounds[0] = WPFUtil.MakeRectXY(komaboxBounds);
+            this.handBoxBounds[1] = WPFUtil.MakeRectXY(komadai0Bounds);
+            this.handBoxBounds[2] = WPFUtil.MakeRectXY(komadai1Bounds);
         }
 
         /// <summary>
@@ -459,7 +459,7 @@ namespace Ragnarok.Presentation.Shogi.View
             {
                 // 同じ筋に動かす場合は２歩の判定を行いません。
                 if ((srcSquare == null || dstSquare.File != srcSquare.File) &&
-                    (Board.IsDoublePawn(bwType, dstSquare)))
+                    (Board.DoesPawnExist(bwType, dstSquare.File)))
                 {
                     return;
                 }
@@ -813,7 +813,7 @@ namespace Ragnarok.Presentation.Shogi.View
             {
                 // 盤の反転を考慮して駒台の領域を調べます。
                 var viewIndex = GetCapturedPieceIndex(bwType, ViewSide);
-                if (this.capturedPieceBoxBounds[viewIndex].Contains(pos))
+                if (this.handBoxBounds[viewIndex].Contains(pos))
                 {
                     return bwType;
                 }
@@ -866,7 +866,7 @@ namespace Ragnarok.Presentation.Shogi.View
         public Vector3D CapturedPieceToPoint(PieceType pieceType, BWType bwType)
         {
             var index = GetCapturedPieceIndex(bwType, ViewSide);
-            var bounds = this.capturedPieceBoxBounds[index];
+            var bounds = this.handBoxBounds[index];
 
             // ○ 駒位置の計算方法
             // 駒台には駒を横に２つ並べます。また、両端と駒と駒の間には
@@ -917,7 +917,7 @@ namespace Ragnarok.Presentation.Shogi.View
         private PieceObject GetCapturedPieceObject(PieceType pieceType, BWType bwType)
         {
             var index = GetCapturedPieceIndex(bwType, BWType.Black);
-            var capturedPieceList = this.capturedPieceObjectList[index];
+            var capturedPieceList = this.handObjectList[index];
 
             return (
                 (int)pieceType < capturedPieceList.Count ?
@@ -956,7 +956,7 @@ namespace Ragnarok.Presentation.Shogi.View
         /// </summary>
         private void ClearCapturedPieceObjects()
         {
-            foreach (var list in this.capturedPieceObjectList)
+            foreach (var list in this.handObjectList)
             {
                 if (list != null)
                 {
@@ -966,7 +966,7 @@ namespace Ragnarok.Presentation.Shogi.View
                 }
             }
 
-            this.capturedPieceContainer.Children.Clear();
+            this.handContainer.Children.Clear();
         }
 
         /// <summary>
@@ -987,7 +987,7 @@ namespace Ragnarok.Presentation.Shogi.View
                     return 0;
                 }
 
-                return Board.GetCapturedPieceCount(pieceType, bwType);
+                return Board.GetHandCount(pieceType, bwType);
             }
         }
 
@@ -1010,7 +1010,7 @@ namespace Ragnarok.Presentation.Shogi.View
             else
             {
                 // 持ち駒の駒の数
-                Board.SetCapturedPieceCount(pieceType, bwType, count);
+                Board.SetHandCount(pieceType, bwType, count);
             }
 
             SyncCapturedPieceCount(pieceType, bwType);
@@ -1078,19 +1078,19 @@ namespace Ragnarok.Presentation.Shogi.View
                 if (EditMode != EditMode.Editing && bwType == BWType.None)
                 {
                     // 局面編集モード以外では、駒箱の駒は表示しません。
-                    this.capturedPieceObjectList[index] = new List<PieceObject>();
+                    this.handObjectList[index] = new List<PieceObject>();
                 }
                 else
                 {
-                    this.capturedPieceObjectList[index] =
+                    this.handObjectList[index] =
                         EnumEx.GetValues<PieceType>()
                             .Select(_ => CreateCapturedPieceObject(_, bwType))
                             .ToList();
 
                     // 駒台に表示します。
-                    this.capturedPieceObjectList[index]
+                    this.handObjectList[index]
                         .Where(_ => _.Piece.PieceType != PieceType.None)
-                        .ForEach(_ => this.capturedPieceContainer.Children.Add(_.ModelGroup));
+                        .ForEach(_ => this.handContainer.Children.Add(_.ModelGroup));
                 }
             });
         }

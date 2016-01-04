@@ -51,7 +51,7 @@ namespace Ragnarok.Shogi
                                                   Square dstSquare)
         {
             // 打てる駒をすべて列挙します。
-            if (!piece.IsPromoted && GetCapturedPieceCount(piece.PieceType, bwType) > 0)
+            if (!piece.IsPromoted && GetHandCount(piece.PieceType, bwType) > 0)
             {
                 var move = BoardMove.CreateDrop(bwType, dstSquare, piece.PieceType);
 
@@ -83,7 +83,8 @@ namespace Ragnarok.Shogi
                 from type in EnumEx.GetValues<PieceType>()
                 where type != PieceType.None
                 from promoted in new bool[] { true, false }
-                from move in ListupMoves(new Piece(type, promoted), bwType, dstSquare)
+                let piece = new Piece(type, promoted)
+                from move in ListupMoves(piece, bwType, dstSquare)
                 select move;
         }
 
@@ -256,7 +257,7 @@ namespace Ragnarok.Shogi
                 PieceType.Kei,
             };
             var dropPieceType = pieceList
-                .Where(_ => clone.GetCapturedPieceCount(_, Turn) > 0)
+                .Where(_ => clone.GetHandCount(_, Turn) > 0)
                 .FirstOrDefault();
             if (dropPieceType != PieceType.None &&
                 AllSquares().Any(_ => !clone.IsDropAndChecked(Turn, dropPieceType, _)))

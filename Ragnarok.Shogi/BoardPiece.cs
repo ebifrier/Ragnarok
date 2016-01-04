@@ -58,19 +58,6 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
-        /// 駒のインデックスを取得します。
-        /// </summary>
-        public int Index
-        {
-            get
-            {
-                return
-                    (((int)PieceType + (IsPromoted ? 9 : 0)) << 1) +
-                    ((int)BWType >> 1);
-            }
-        }
-
-        /// <summary>
         /// 符号なしの駒オブジェクトを取得します。(null対応版)
         /// </summary>
         public static Piece GetPiece(BoardPiece self)

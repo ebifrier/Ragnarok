@@ -108,7 +108,8 @@ namespace Ragnarok.Shogi.Sfen
                             "SFEN形式の駒'" + c + "'が正しくありません。");
                     }
 
-                    if (promoted)
+                    var type = piece.PieceType;
+                    if (promoted && type != PieceType.Gyoku && type != PieceType.Kin)
                     {
                         piece = new BoardPiece(piece.PieceType, promoted, piece.BWType);
                     }
@@ -153,7 +154,7 @@ namespace Ragnarok.Shogi.Sfen
                             "SFEN形式の持ち駒'" + c + "'が正しくありません。");
                     }
 
-                    board.SetCapturedPieceCount(
+                    board.SetHandCount(
                         piece.PieceType, piece.BWType, count);
                     count = 1;
                 }
@@ -253,7 +254,7 @@ namespace Ragnarok.Shogi.Sfen
                 let obj = new
                 {
                     Piece = new BoardPiece(pieceType, false, turn),
-                    Count = board.GetCapturedPieceCount(pieceType, turn),
+                    Count = board.GetHandCount(pieceType, turn),
                 }
                 where obj.Count > 0
                 select string.Format("{0}{1}",

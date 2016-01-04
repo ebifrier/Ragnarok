@@ -415,7 +415,7 @@ namespace Ragnarok.Forms.Shogi.View
             {
                 // 同じ筋に動かす場合は２歩の判定を行いません。
                 if ((srcSquare == null || dstSquare.File != srcSquare.File) &&
-                    (Board.IsDoublePawn(bwType, dstSquare)))
+                    (Board.DoesPawnExist(bwType, dstSquare.File)))
                 {
                     return;
                 }
@@ -525,7 +525,7 @@ namespace Ragnarok.Forms.Shogi.View
 
             // 歩の場合は二歩を警戒する必要があります。
             if (clone.Piece == Piece.Hu &&
-                Board.IsDoublePawn(clone.BWType, square))
+                Board.DoesPawnExist(clone.BWType, square.File))
             {
                 clone.IsPromoted = true;
             }

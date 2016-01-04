@@ -178,7 +178,7 @@ namespace Ragnarok.Shogi.Csa
             {
                 // 残りの駒をすべて手番側の持ち駒に設定します。
                 EnumEx.GetValues<PieceType>()
-                    .ForEach(_ => Board.SetCapturedPieceCount(
+                    .ForEach(_ => Board.SetHandCount(
                         _, bwType, this.board.GetLeavePieceCount(_)));
             }
             else
@@ -202,7 +202,7 @@ namespace Ragnarok.Shogi.Csa
             }
             else
             {
-                this.board.IncCapturedPieceCount(ps.Piece.PieceType, bwType);
+                this.board.IncHandCount(ps.Piece.PieceType, bwType);
             }
         }
         #endregion
