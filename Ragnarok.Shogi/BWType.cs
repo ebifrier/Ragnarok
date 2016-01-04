@@ -60,6 +60,14 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
+        /// 手番を0 or 1のインデックスに変換します。
+        /// </summary>
+        public static int GetIndex(this BWType self)
+        {
+            return (self != BWType.White ? 0 : 1);
+        }
+
+        /// <summary>
         /// 先手なら+1、後手なら-1を返します。
         /// </summary>
         public static int Sign(this BWType self)
