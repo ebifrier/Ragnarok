@@ -17,6 +17,9 @@ namespace Ragnarok.Shogi.Tests
     {
         private static Tuple<string, string[]>[] Mate1PlyList =
         {
+            CreateMate1Ply("l6nl/1PkB5/G3+B3p/pS1g3p1/6P2/PS7/1K1P4P/4G4/LNr1P3+r b 3P6pl2n2sg 1", "6b7a+"),
+            CreateMate1Ply("l1b4nl/1k1+P5/2n1+P4/p1ppp1G1p/1p3pP2/PsPPP3P/N1S6/K1S4+p1/L1b3r1L w PNS3GRp 1", "7i9g+"),
+            CreateMate1Ply("l8/9/2np1k1p1/ppp5s/3PL1B2/2PS1p3/PP7/1KG2r2p/LN4RL1 b PSB6p2ns3g 1", "3e5c+"),
             CreateMate1Ply("l5kn+B/1r4g2/2g1p2p1/p2P1Lp1p/3S1p3/P1P5P/1P2P1+s2/1K1+ps4/LNNb4L b 4PNSGpgr 1", "G*4a"),
             CreateMate1Ply("l7l/4n4/p2pppn2/2+R1b3p/k1P1s1S2/+b2P1PP2/4PG2P/4K4/LP5NL b 3PG3pn2s2gr 1", "G*8e"),
             CreateMate1Ply("l8/2g3s2/n2p5/pPP2kSp1/3PP1pBN/P6Sp/2N3P2/2G5r/L4GKL1 b 3PLNSG4pbr 1", "G*5d"),

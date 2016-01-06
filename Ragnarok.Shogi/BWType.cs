@@ -25,14 +25,14 @@ namespace Ragnarok.Shogi
         /// 先手です。
         /// </summary>
         [EnumMember()]
-        [LabelDescription(Label = "先手番")]
+        [LabelDescription(Label = "先手")]
         Black = 1,
 
         /// <summary>
         /// 後手です。
         /// </summary>
         [EnumMember()]
-        [LabelDescription(Label = "後手番")]
+        [LabelDescription(Label = "後手")]
         White = 2,
     }
 
