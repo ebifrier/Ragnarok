@@ -36,23 +36,18 @@ namespace Ragnarok.Shogi.Kif.Tests
         /// <summary>
         /// 棋譜の読み込み＆書き込みテストを行います。
         /// </summary>
-        private static void TestKif(string path)
+        private static void TestKif(string text)
         {
-            var text = string.Empty;
-            using (var reader = new StreamReader(path, KifuObject.DefaultEncoding))
-            {
-                text = reader.ReadToEnd();
-            }
-
             // 棋譜の読み込み
             var kifu = KifuReader.LoadFrom(text);
             Assert.NotNull(kifu);
 
             // 手数を取得
             var countObj = GetMoveCount(text);
-            Assert.NotNull(countObj);
+            //Assert.NotNull(countObj);
 
-            var count = countObj.Value + (kifu.Error != null ? -1 : 0);
+            var count = (countObj.HasValue ? countObj.Value : kifu.MoveList.Count()) +
+                        (kifu.Error != null ? -1 : 0);
             Assert.LessOrEqual(count, kifu.MoveList.Count());
 
             // 入出力テストを行います。
@@ -85,6 +80,12 @@ namespace Ragnarok.Shogi.Kif.Tests
             {
                 Console.WriteLine(path);
 
+                var text = string.Empty;
+                using (var reader = new StreamReader(path, KifuObject.DefaultEncoding))
+                {
+                    text = reader.ReadToEnd();
+                }
+
                 TestKif(path);
             }*/
         }
@@ -103,6 +104,8 @@ namespace Ragnarok.Shogi.Kif.Tests
             var kifu = KifuReader.LoadFrom(text);
             Assert.NotNull(kifu);
             Assert.AreEqual(1, kifu.MoveList.Count());
+
+            TestKif(text);
         }
 
         /// <summary>

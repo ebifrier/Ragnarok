@@ -239,38 +239,61 @@ namespace Ragnarok.Shogi
         /// </summary>
         public void Regulalize(int moveCount = 0)
         {
-            // 変化の重複を削除します。
-            for (var i = 0; i < NextNodes.Count(); ++i)
+            RegulalizeStatic(this, moveCount);
+        }
+
+        /// <summary>
+        /// ノード全体を正規化し、変化の重複などをなくします。
+        /// </summary>
+        private static void RegulalizeStatic(MoveNode node, int moveCount)
+        {
+            while (node != null)
             {
-                for (var j = i + 1; j < NextNodes.Count(); )
+                // 変化の重複を削除します。
+                for (var i = 0; i < node.NextNodes.Count(); ++i)
                 {
-                    var baseNode = NextNodes[i];
-                    var compNode = NextNodes[j];
-
-                    if (baseNode.Move == compNode.Move)
+                    for (var j = i + 1; j < node.NextNodes.Count(); )
                     {
-                        // もし同じ指し手の変化があれば、子の指し手をマージします。
-                        // 子の重複チェックはこの後行うので、
-                        // ここで重複があっても構いません。
-                        compNode.NextNodes.ForEach(_ => _.ParentNode = null);
-                        compNode.NextNodes.ForEach(_ => baseNode.AddNextNode(_));
+                        var baseNode = node.NextNodes[i];
+                        var compNode = node.NextNodes[j];
 
-                        NextNodes.RemoveAt(j);
-                    }
-                    else
-                    {
-                        ++j;
+                        if (baseNode.Move == compNode.Move)
+                        {
+                            // もし同じ指し手の変化があれば、子の指し手をマージします。
+                            // 子の重複チェックはこの後行うので、
+                            // ここで重複があっても構いません。
+                            compNode.NextNodes.ForEach(_ => _.ParentNode = null);
+                            compNode.NextNodes.ForEach(_ => baseNode.AddNextNode(_));
+
+                            node.NextNodes.RemoveAt(j);
+                        }
+                        else
+                        {
+                            ++j;
+                        }
                     }
                 }
-            }
 
-            // 手数の再設定
-            MoveCount = moveCount;
+                // 手数の再設定
+                node.MoveCount = moveCount;
 
-            // 子ノードに関してもチェックを行います。
-            foreach (var node in NextNodes)
-            {
-                node.Regulalize(moveCount + 1);
+                if (node.NextNodeCount == 1)
+                {
+                    // 手数が長くなったときスタックオーバーフローになるため、
+                    // 子ノードが一つの場合はループ内で回します。
+                    node = node.NextNode;
+                    moveCount += 1;
+                }
+                else
+                {
+                    // 子ノードに関してもチェックを行います。
+                    foreach (var child in node.NextNodes)
+                    {
+                        RegulalizeStatic(child, moveCount + 1);
+                    }
+
+                    return;
+                }
             }
         }
 

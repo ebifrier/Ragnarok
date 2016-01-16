@@ -232,40 +232,47 @@ namespace Ragnarok.Shogi.Kif
         /// <summary>
         /// ki2形式のファイルを読み込みます。
         /// </summary>
-        private KifuObject LoadKi2(KifuHeader header, Board startBoard, KifMoveNode head)
+        private KifuObject LoadKi2(KifuHeader header, Board startBoard, KifMoveNode head_)
         {
-            var knodeList = ParseMoveLinesKi2().ToList();
-            var last = head;
-            foreach (var knode in knodeList)
+            Exception error;
+            var cloned = startBoard.Clone();            
+            var nodeList = ParseMoveLinesKi2(cloned, out error);
+            var root = new MoveNode
             {
-                last.NextNode = knode;
-                last = knode;
+                CommentList = head_.CommentList,
+                VariationInfoList = head_.VariationInfoList,
+            };
+            var last = root;
+
+            foreach (var node in nodeList)
+            {
+                last.AddNextNode(node);
+                last = node;
             }
 
-            // KifNodeMoveのツリーをNodeMoveのツリーに直します。
-            // 変換時にエラーが出た場合は、それまでの指し手を変換します。
-            var board = startBoard.Clone();
-            Exception error = null;
-            var root = head.NextNode.ConvertToMoveNode(board, head, out error);
             root.Regulalize();
-
             return new KifuObject(header, startBoard, root, error);
         }
 
         /// <summary>
         /// Ki2形式の複数の指し手をパースします。
         /// </summary>
-        private IEnumerable<KifMoveNode> ParseMoveLinesKi2()
+        private IEnumerable<MoveNode> ParseMoveLinesKi2(Board board, out Exception error)
         {
-            while (this.currentLine != null)
+            var nodes = new List<MoveNode>();
+
+            error = null;
+            while (this.currentLine != null && error == null)
             {
                 var smove = KifUtil.ParseSpecialMove(this.currentLine);
                 if (smove != null)
                 {
-                    yield return new KifMoveNode
+                    nodes.Add(new MoveNode
                     {
-                        Move = smove,
-                    };
+                        Move = BoardMove.CreateSpecialMove(
+                            smove.BWType,
+                            smove.SpecialMoveType)
+                    });
                 }
 
                 var c = this.currentLine[0];
@@ -275,40 +282,65 @@ namespace Ragnarok.Shogi.Kif
                     continue;
                 }
 
-                var list = ParseMoveLineKi2(this.currentLine);
+                var list = ParseMoveLineKi2(board, this.currentLine, ref error);
                 foreach (var move in list)
                 {
-                    yield return new KifMoveNode
+                    nodes.Add(new MoveNode
                     {
                         Move = move,
-                    };
+                    });
                 }
 
                 ReadNextLine();
             }
+
+            return nodes;
         }
 
         /// <summary>
         /// 指し手行をパースします。
         /// </summary>
-        private IEnumerable<Move> ParseMoveLineKi2(string line)
+        private IEnumerable<BoardMove> ParseMoveLineKi2(Board board, string line,
+                                                        ref Exception error)
         {
+            var moves = new List<BoardMove>();
+
             while (!Util.IsWhiteSpaceOnly(line))
             {
                 var parsedLine = string.Empty;
-                var move = ShogiParser.ParseMoveEx(
+                var lmove = ShogiParser.ParseMoveEx(
                     line, false, ref parsedLine);
 
-                if (move == null)
+                if (lmove == null || !lmove.Validate())
                 {
-                    throw new FileFormatException(
+                    error = new FileFormatException(
                         this.lineNumber,
                         "ki2形式の指し手が正しく読み込めません。");
+                    break;
+                }
+
+                var move = board.ConvertMove(lmove);
+                if (move == null || !move.Validate())
+                {
+                    error = new FileFormatException(
+                        this.lineNumber,
+                        lmove + ": 指し手の変換に失敗しました。");
+                    break;
+                }
+
+                if (!board.DoMove(move, MoveFlags.DoMoveDefault & ~MoveFlags.CheckPawnDropCheckMate))
+                {
+                    error = new FileFormatException(
+                        this.lineNumber,
+                        move + ": 指し手の着手に失敗しました。");
+                    break;
                 }
 
                 line = line.Substring(parsedLine.Length);
-                yield return move;
+                moves.Add(move);
             }
+
+            return moves;
         }
         #endregion
 
@@ -344,7 +376,7 @@ namespace Ragnarok.Shogi.Kif
 
             // 以下、変化リストをパースします。
             var variationLineSet = MakeVariationLineSet(head);
-            while(variationLineSet.Any())
+            while (variationLineSet.Any())
             {
                 var variationNode = ParseNodeKif(board, true);
                 if (variationNode == null)
