@@ -67,17 +67,13 @@ namespace Ragnarok.Net
         /// <summary>
         /// ntpのサーバーリストです。
         /// </summary>
-        /// <remarks>
-        /// DNS検索に異様に時間がかかることがあるため、
-        /// ここではIPアドレスを直接指定しています。
-        /// </remarks>
-        private static readonly IPAddress[] NtpServerList =
+        private static readonly string[] NtpServerList =
         {
-            IPAddress.Parse("131.107.1.10"), // time-nw.nist.gov
-            IPAddress.Parse("130.69.251.23"), // ntp.nc.u-tokyo.ac.jp
-            IPAddress.Parse("129.6.15.28"), // time-a.nist.gov
-            IPAddress.Parse("129.6.15.29"), // time-b.nist.gov
-            IPAddress.Parse("192.43.244.18"), // time.nist.gov
+            "ntp.nict.jp",
+            "jp.pool.ntp.org",
+            "ntp1.jst.mfeed.ad.jp",
+            "ntp3.jst.mfeed.ad.jp",
+            "ntp4.jst.mfeed.ad.jp",
         };
 
         /// <summary>
@@ -175,14 +171,18 @@ namespace Ragnarok.Net
         /// </summary>
         private static NtpClockInfo GetNetworkClockInfo()
         {
-            foreach (var address in NtpServerList)
+            var count = NtpServerList.Count();
+            var start = MathEx.RandInt(0, count);
+
+            // サーバー不可を分散するため、開始サーバーはランダムに選択します。
+            for (var i = start; i < start + count; ++i)
             {
                 try
                 {
-                    // 存在したNTPサーバーから時刻を取得します。
-                    var endPoint = new IPEndPoint(address, 123);
+                    var host = NtpServerList[i % count];
 
-                    return GetNetworkClockInfo(endPoint);
+                    // 存在したNTPサーバーから時刻を取得します。
+                    return GetNetworkClockInfo(host, 123);
                 }
                 catch (Exception)
                 {
@@ -197,22 +197,22 @@ namespace Ragnarok.Net
         }
 
         /// <summary>
-        /// <paramref name="endPoint"/> から現在時刻を取得します。
+        /// <paramref name="host"/> から現在時刻を取得します。
         /// </summary>
-        private static NtpClockInfo GetNetworkClockInfo(IPEndPoint endPoint)
+        private static NtpClockInfo GetNetworkClockInfo(string host, int port)
         {
             var socket = new Socket(
                 AddressFamily.InterNetwork,
                 SocketType.Dgram,
                 ProtocolType.Udp)
             {
-                SendTimeout = 1000,
-                ReceiveTimeout = 1000,
+                SendTimeout = 2000,
+                ReceiveTimeout = 2000,
             };
 
             using (new Utility.ActionOnDispose(socket.Close))
             {
-                socket.Connect(endPoint);
+                socket.Connect(host, port);
 
                 var ntpData = new byte[48]; // RFC 2030
                 ntpData[0] = 0x1B;
