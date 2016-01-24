@@ -38,7 +38,7 @@ namespace Ragnarok.Forms
 
             Util.SetPropertyChangedCaller(CallPropertyChanged);
             Util.SetColletionChangedCaller(CallCollectionChanged);
-            Util.SetEventCaller(UIProcess);
+            Util.SetEventCaller(_ => UIProcess(_, false));
         }
 
         /// <summary>
@@ -67,9 +67,9 @@ namespace Ragnarok.Forms
         /// <summary>
         /// UIThread上でメソッドを実行します。
         /// </summary>
-        public static void UIProcess(Action func)
+        public static void UIProcess(Action func, bool isAlwaysQueue=false)
         {
-            if (Synchronizer.InvokeRequired)
+            if (isAlwaysQueue || Synchronizer.InvokeRequired)
             {
                 Synchronizer.BeginInvoke(func);
             }
