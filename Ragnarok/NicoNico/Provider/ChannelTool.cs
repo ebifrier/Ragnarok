@@ -223,7 +223,7 @@ namespace Ragnarok.NicoNico.Provider
         /// </summary>
         public static string RequestSmileChKey(CookieContainer cc, string url)
         {
-            Log.Debug("Get smile_ch_key try...");
+            Log.Debug("get smile_ch_key try...");
 
             // smile_ch_keyを取得するために動画ページにアクセスします。
             var text = WebUtil.RequestHttpText(url, null, cc, Encoding.UTF8);
@@ -244,6 +244,7 @@ namespace Ragnarok.NicoNico.Provider
                     "smile_ch_keyの取得に失敗しました。");
             }
 
+            Log.Debug("smile_ch_key is '{0}'.", chKey);
             return chKey;
         }
 
@@ -335,40 +336,6 @@ namespace Ragnarok.NicoNico.Provider
             }
 
             return VideoData.FromChannelToolSearchResults(text);
-        }
-
-        /// <summary>
-        /// 指定の期間に表示されたすべての動画を取得します。
-        /// </summary>
-        public static IEnumerable<VideoData> SearchPeriod(CookieContainer cc,
-                                                          int channelId, 
-                                                          string keyword,
-                                                          DateTime? start,
-                                                          DateTime? end)
-        {
-            const int MaxCount = 20;
-            int pageId = 0;
-            int count = 0;
-
-            do
-            {
-                var movies = Search(cc, channelId, keyword, ++pageId, MaxCount);
-                foreach (var movie in movies)
-                {
-                    if (start != null && movie.StartTime < start.Value)
-                    {
-                        yield break;
-                    }
-
-                    if ((start == null || start.Value <= movie.StartTime) &&
-                        (end == null || movie.StartTime < end.Value))
-                    {
-                        yield return movie;
-                    }
-                }
-
-                count = movies.Count();
-            } while (count == MaxCount);
         }
     }
 }

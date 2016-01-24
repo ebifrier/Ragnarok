@@ -18,7 +18,7 @@ namespace Ragnarok.NicoNico.Login
         /// <summary>
         /// ニコニコに直接ログインします。
         /// </summary>
-        public static CookieContainer DirectLogin(string mail,
+        public static CookieContainer LoginDirect(string mail,
                                                   string password)
         {
             if (string.IsNullOrEmpty(mail) ||
@@ -65,7 +65,6 @@ namespace Ragnarok.NicoNico.Login
         public static CookieContainer LoginWithBrowser(BrowserType browser,
                                                        bool validate)
         {
-#if !RGN_NOT_USE_COOKIEGETTERSHARP
             try
             {
                 var enumType = typeof(Ragnarok.Net.CookieGetter.BrowserType);
@@ -113,7 +112,7 @@ namespace Ragnarok.NicoNico.Login
                 Log.ErrorException(ex,
                     "クッキーの取得に失敗しました。");
             }
-#endif
+
             return null;
         }
 
@@ -136,7 +135,7 @@ namespace Ragnarok.NicoNico.Login
                 {
                     case LoginMethod.Direct:
                         // 直接ログインします。
-                        cc = DirectLogin(
+                        cc = LoginDirect(
                             loginData.Mail,
                             loginData.Password);
                         break;
