@@ -82,8 +82,12 @@ namespace Ragnarok.Shogi
                 }
                 else
                 {
-                    throw new ShogiException(
-                        trimmedText + ": 詰み手数が正しくありません。");
+                    //throw new ShogiException(
+                    //    trimmedText + ": メイト手数が正しくありません。");
+
+                    // 本来は先頭に+/-が必要ですが、そうなっていないソフトも多いので
+                    // ここでは現状に合わせてエラーにはしないことにします。
+                    return new Score(turn, trimmedText, 0, true);
                 }
             }
 
