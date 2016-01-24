@@ -229,7 +229,10 @@ namespace Ragnarok.Net
                 }
 
                 // レスポンスをすべて読み出します。
-                return Util.ReadToEnd(response.GetResponseStream());
+                using (var stream = response.GetResponseStream())
+                {
+                    return Util.ReadToEnd(stream);
+                }
             }
         }
 
