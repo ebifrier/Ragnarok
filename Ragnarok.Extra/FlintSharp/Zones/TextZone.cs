@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 
 using FlintSharp.Behaviours;
 using FlintSharp.Activities;
@@ -58,7 +59,7 @@ namespace FlintSharp.Zones
         private Font m_font;
         private FontFamily m_fontFamily;
         private FontStyle m_fontStyle = FontStyle.Regular;
-        private double m_fontSize = 12.0;
+        private double m_fontSize = 10.0;
         private bool m_textChanged = true;
         private bool m_fontChanged = true;
 
@@ -67,7 +68,7 @@ namespace FlintSharp.Zones
         /// </summary>
         public TextZone()
         {
-            this.m_fontFamily = System.Drawing.FontFamily.GenericSansSerif;
+            m_fontFamily = System.Drawing.FontFamily.GenericSansSerif;
         }
 
         /// <summary>
@@ -176,21 +177,28 @@ namespace FlintSharp.Zones
             SizeF size = MeasureString();
             Bitmap bitmap = new Bitmap(
                 (int)Math.Ceiling(size.Width) + 1,
-                (int)Math.Ceiling(size.Height) + 1);
+                (int)Math.Ceiling(size.Height) + 1,
+                PixelFormat.Format24bppRgb);
 
             using (Graphics g = Graphics.FromImage(bitmap))
             {
                 // For speed
-                g.SmoothingMode = SmoothingMode.AntiAlias;
+                g.SmoothingMode = SmoothingMode.None;
+#if !MONO
                 g.InterpolationMode = InterpolationMode.Low;
                 g.CompositingQuality = CompositingQuality.Default;
+#else
+                g.InterpolationMode = InterpolationMode.Invalid;
+                g.CompositingQuality = CompositingQuality.Invalid;
+#endif
 
                 // This line makes DrawString fail.
                 //g.CompositingMode = CompositingMode.SourceCopy;
 
-                g.DrawString(Text, Font, Brushes.White, new PointF(0, 0));
-                return bitmap;
+                g.DrawString(Text, Font, Brushes.White, new PointF(0, 0), null);
             }
+
+            return bitmap;
         }
 
         /// <summary>
@@ -219,7 +227,7 @@ namespace FlintSharp.Zones
                 {
                     Color c = bitmap.GetPixel(x, y);
 
-                    if (c.R == 255)
+                    if (c.R > 90)
                         validPoints.Add(new Point(x, y));
                 }
             }
@@ -266,7 +274,7 @@ namespace FlintSharp.Zones
                 return false;
 
             Color c = m_bitmap.GetPixel(newX, newY);
-            return (c.R == 255);
+            return (c.R > 90);
         }
 
         private System.Windows.Point CalcPoint(int index, double rx, double ry)
