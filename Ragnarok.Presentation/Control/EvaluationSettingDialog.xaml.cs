@@ -22,7 +22,7 @@ namespace Ragnarok.Presentation.Control
     /// </summary>
     public partial class EvaluationSettingDialog : Window
     {
-        private ViewModelProxy model;
+        //private ViewModelProxy model;
         private EvaluationControl control;
 
         /// <summary>
@@ -40,10 +40,10 @@ namespace Ragnarok.Presentation.Control
                     RagnarokCommands.Cancel,
                     ExecuteCancel));
 
-            this.model = new ViewModelProxy(control);
+            //this.model = new ViewModelProxy(control);
             this.control = control;
 
-            DataContext = model;
+            //DataContext = model;
         }
 
         /// <summary>
@@ -71,7 +71,7 @@ namespace Ragnarok.Presentation.Control
         {
             try
             {
-                this.model.RollbackViewModel();
+                //this.model.RollbackViewModel();
             }
             catch (Exception ex)
             {
