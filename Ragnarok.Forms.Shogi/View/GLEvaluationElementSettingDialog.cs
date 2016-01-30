@@ -19,6 +19,7 @@ namespace Ragnarok.Forms.Shogi.View
     {
         private B.BindingsCollection bindings;
         private GLEvaluationElement targetElement;
+        private bool processed;
 
         private ImageSetInfo oldImageSet;
         private bool oldIsVisibleValue;
@@ -58,6 +59,18 @@ namespace Ragnarok.Forms.Shogi.View
             this.bindings.Add(
                 this.valueFullWidthCheckBox, "Checked",
                 element, "IsValueFullWidth");
+
+            Log.Info("GLEvaluationElementSettingDialog initialized");
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+
+            if (DialogResult != DialogResult.OK)
+            {
+                cancelButton_Click(null, null);
+            }
         }
 
         /// <summary>
@@ -68,14 +81,15 @@ namespace Ragnarok.Forms.Shogi.View
             this.infoControl.Info = this.targetElement.ImageSet;
         }
 
-        protected override void OnFormClosing(FormClosingEventArgs e)
+        /// <summary>
+        /// OKボタンが押された場合
+        /// </summary>
+        private void okButton_Click(object sender, EventArgs e)
         {
-            if (e.CloseReason == CloseReason.UserClosing)
-            {
-                cancelButton_Click(this, e);
-            }
+            if (this.processed) return;
+            Log.Info("GLEvaluationElementSettingDialog OK");
 
-            base.OnFormClosing(e);
+            this.processed = true;
         }
 
         /// <summary>
@@ -83,9 +97,14 @@ namespace Ragnarok.Forms.Shogi.View
         /// </summary>
         private void cancelButton_Click(object sender, EventArgs e)
         {
+            if (this.processed) return;
+            Log.Info("GLEvaluationElementSettingDialog Cancel");
+
             this.targetElement.ImageSet = this.oldImageSet;
             this.targetElement.IsVisibleValue = this.oldIsVisibleValue;
             this.targetElement.IsValueFullWidth = this.oldIsValueFullWidth;
+
+            this.processed = true;
         }
     }
 }
