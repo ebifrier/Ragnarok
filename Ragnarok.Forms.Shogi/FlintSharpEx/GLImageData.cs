@@ -105,6 +105,15 @@ namespace Ragnarok.Forms.Shogi.FlintSharpEx
         }
 
         /// <summary>
+        /// パーティクルを二重に描画するかどうかを取得または設定します。
+        /// </summary>
+        public bool IsDoubleParticle
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// 画像データのURIを取得または設定します。
         /// </summary>
         public string ImagePath
@@ -117,15 +126,6 @@ namespace Ragnarok.Forms.Shogi.FlintSharpEx
         /// 描画方法を取得または設定します。
         /// </summary>
         public MaterialType MaterialType
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// パーティクルを二重に描画するかどうかを取得または設定します。
-        /// </summary>
-        public bool IsDoubleParticle
         {
             get;
             set;
