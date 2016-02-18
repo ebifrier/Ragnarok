@@ -56,6 +56,27 @@ namespace Ragnarok.NicoNico
         }
 
         /// <summary>
+        /// 文字列を数値に変換します。
+        /// </summary>
+        public static long ToLong(string value, long defaultValue)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                return defaultValue;
+            }
+
+            long result;
+            if (long.TryParse(value, out result))
+            {
+                return result;
+            }
+            else
+            {
+                return defaultValue;
+            }
+        }
+
+        /// <summary>
         /// Unix時間形式の文字列をDateTimeに変換します。
         /// </summary>
         public static DateTime ToDateTime(string value)

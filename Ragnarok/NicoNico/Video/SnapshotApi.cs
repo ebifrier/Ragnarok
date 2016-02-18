@@ -88,8 +88,8 @@ namespace Ragnarok.NicoNico.Video
                 "\"service\" : [\"video\"],\n" +
                 "\"search\" : " + (isKeyword ? keywordQuery : tagQuery) + ",\n" +
                 "\"join\" : [\"cmsid\", \"title\", \"description\", \"start_time\", " +
-                            "\"view_counter\", \"comment_counter\", " +
-                            "\"mylist_counter\", \"tags\", \"thumbnail_url\"],\n" +
+                            "\"length_seconds\", \"tags\", \"thumbnail_url\"," +
+                            "\"view_counter\", \"comment_counter\", \"mylist_counter\"],\n" +
                 "\"sort_by\" : \"start_time\",\n" +
                 "\"order\" : \"desc\",\n" +
                 "\"from\" : 0,\n" +

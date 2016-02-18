@@ -75,11 +75,18 @@ namespace Ragnarok.NicoNico.Video
                     case "description":
                         this.Description = text;
                         break;
+                    case "thumbnail_url":
+                        this.ThumbnailUrl = text;
+                        break;
                     case "first_retrieve":
                         this.StartTime = DateTime.Parse(text);
                         break;
-                    case "thumbnail_url":
-                        this.ThumbnailUrl = text;
+                    case "length":
+                        var values = text.Split(':');
+                        this.Length = new TimeSpan(
+                            0,
+                            int.Parse(values[0]),
+                            int.Parse(values[1]));
                         break;
                     case "view_counter":
                         this.ViewCounter = StrUtil.ToInt(text, 0);
@@ -209,20 +216,10 @@ namespace Ragnarok.NicoNico.Video
         }
 
         /// <summary>
-        /// 公開／非公開の状態を取得します。
+        /// サムネイルのURLを取得します。
         /// </summary>
-        [DataMember()]
-        public bool? IsVisible
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// 会員限定・全員公開などの状態を取得します。
-        /// </summary>
-        [DataMember()]
-        public bool? IsMemberOnly
+        [DataMember(Name = "thumbnail_url")]
+        public string ThumbnailUrl
         {
             get;
             set;
@@ -239,13 +236,22 @@ namespace Ragnarok.NicoNico.Video
         }
 
         /// <summary>
-        /// サムネイルのURLを取得します。
+        /// 動画尺を取得します。
         /// </summary>
-        [DataMember(Name = "thumbnail_url")]
-        public string ThumbnailUrl
+        public TimeSpan Length
         {
             get;
             set;
+        }
+
+        /// <summary>
+        /// 動画尺の秒数を取得します。
+        /// </summary>
+        [DataMember(Name = "length_seconds")]
+        public int LengthSeconds
+        {
+            get { return (int)Math.Floor(Length.TotalSeconds); }
+            set { Length = TimeSpan.FromSeconds(value); }
         }
 
         /// <summary>
@@ -279,6 +285,36 @@ namespace Ragnarok.NicoNico.Video
         }
 
         /// <summary>
+        /// 公開／非公開の状態を取得します。
+        /// </summary>
+        [DataMember()]
+        public bool? IsVisible
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 会員限定・全員公開などの状態を取得します。
+        /// </summary>
+        [DataMember()]
+        public bool? IsMemberOnly
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// データの取得時刻を取得します。
+        /// </summary>
+        [DataMember()]
+        public DateTime Timestamp
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// 再生数などの情報をまとめて取得または設定します。
         /// </summary>
         public ViewCountData ViewData
@@ -298,16 +334,6 @@ namespace Ragnarok.NicoNico.Video
                 CommentCounter = value.CommentCounter;
                 MylistCounter = value.MylistCounter;
             }
-        }
-
-        /// <summary>
-        /// データの取得時刻を取得します。
-        /// </summary>
-        [DataMember()]
-        public DateTime Timestamp
-        {
-            get;
-            set;
         }
         
         /// <summary>
@@ -432,17 +458,14 @@ namespace Ragnarok.NicoNico.Video
         private static readonly Regex DescriptionRegex = new Regex(
             @"<p class=""videoDescription description"">(.*?)</p>",
             RegexOptions.IgnoreCase);
-        private static readonly Regex StartTimeRegex = new Regex(
-            @"&quot;postedAt&quot;:&quot;(.*?)&quot;,",
-            RegexOptions.IgnoreCase);
         private static readonly Regex ThumbnailRegex = new Regex(
            @"&quot;thumbnail&quot;:&quot;(.*?)&quot;,",
            RegexOptions.IgnoreCase);
-        private static readonly Regex IsPublicRegex = new Regex(
-            @"&quot;is_public&quot;:(.+?),",
+        private static readonly Regex StartTimeRegex = new Regex(
+            @"&quot;postedAt&quot;:&quot;(.*?)&quot;,",
             RegexOptions.IgnoreCase);
-        private static readonly Regex ThreadPublicRegex = new Regex(
-            @"&quot;threadPublic&quot;:&quot;([0-9]+)&quot;,",
+        private static readonly Regex LengthRegex = new Regex(
+            @"&quot;length&quot;:([0-9]+?),",
             RegexOptions.IgnoreCase);
         private static readonly Regex ViewCountRegex = new Regex(
             @"<li class=""videoStatsView"">再生:<span class=""viewCount"">\s*([\d,]+)\s*</span></li>",
@@ -455,6 +478,12 @@ namespace Ragnarok.NicoNico.Video
             RegexOptions.IgnoreCase);
         private static readonly Regex TagRegex = new Regex(
             @"<a href=""/tag/[\w%#\$&\?\(\)~\.=\+\-]+"" data-playerscreenmode-change=""(\d)+"" class=""videoHeaderTagLink"">(.+?)</a>",
+            RegexOptions.IgnoreCase);
+        private static readonly Regex IsPublicRegex = new Regex(
+            @"&quot;is_public&quot;:(.+?),",
+            RegexOptions.IgnoreCase);
+        private static readonly Regex ThreadPublicRegex = new Regex(
+            @"&quot;threadPublic&quot;:&quot;([0-9]+)&quot;,",
             RegexOptions.IgnoreCase);
 
         /// <summary>
@@ -509,6 +538,16 @@ namespace Ragnarok.NicoNico.Video
             }
             video.Description = m.Groups[1].Value;
 
+            // サムネイルURL
+            m = ThumbnailRegex.Match(pageStr);
+            if (!m.Success)
+            {
+                throw new NicoVideoException(
+                    "サムネイルURLの取得に失敗しました。",
+                    video.IdString);
+            }
+            video.ThumbnailUrl = m.Groups[1].Value.Replace("\\", "");
+
             // 投稿時間 (2015\/09\/04 11:45:00)
             m = StartTimeRegex.Match(pageStr);
             if (!m.Success)
@@ -520,16 +559,16 @@ namespace Ragnarok.NicoNico.Video
             video.StartTime = DateTime.ParseExact(
                 m.Groups[1].Value.Replace("\\", ""),
                 "yyyy/MM/dd HH:mm:ss", null);
-
-            // サムネイルURL
-            m = ThumbnailRegex.Match(pageStr);
+            
+            // 動画尺 (2290)
+            m = LengthRegex.Match(pageStr);
             if (!m.Success)
             {
                 throw new NicoVideoException(
-                    "サムネイルURLの取得に失敗しました。",
+                    "動画尺の取得に失敗しました。",
                     video.IdString);
             }
-            video.ThumbnailUrl = m.Groups[1].Value.Replace("\\", "");
+            video.LengthSeconds = int.Parse(m.Groups[1].Value);
 
             // 再生数
             m = ViewCountRegex.Match(pageStr);
