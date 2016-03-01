@@ -7,6 +7,47 @@ using System.Windows.Input;
 namespace Ragnarok.Presentation.Command
 {
     /// <summary>
+    /// <seeref name="RelayCommand"/>の実行時に使うイベント引数です。
+    /// </summary>
+    public class ExecuteRelayEventArgs : EventArgs
+    {
+        /// <summary>
+        /// コマンドを取得します。
+        /// </summary>
+        public ICommand Command
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// コマンドパラメーターを取得します。
+        /// </summary>
+        public object Parameter
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public ExecuteRelayEventArgs(ICommand command)
+        {
+            Command = command;
+        }
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public ExecuteRelayEventArgs(ICommand command, object parameter)
+            : this(command)
+        {
+            Parameter = parameter;
+        }
+    }
+
+    /// <summary>
     /// <seeref name="RelayCommand"/>の実行可否を調べるためのイベント引数です。
     /// </summary>
     public class CanExecuteRelayEventArgs : EventArgs
@@ -62,7 +103,7 @@ namespace Ragnarok.Presentation.Command
     /// </summary>
     public class RelayCommand : ICommand
     {
-        private readonly Action execute;
+        private readonly EventHandler<ExecuteRelayEventArgs> execute;
         private readonly EventHandler<CanExecuteRelayEventArgs> canExecute;
 
         /// <summary>
@@ -77,11 +118,12 @@ namespace Ragnarok.Presentation.Command
         /// <summary>
         /// コマンドを実行します。
         /// </summary>
-        public void Execute()
+        public void Execute(object parameter = null)
         {
             try
             {
-                this.execute();
+                var e = new ExecuteRelayEventArgs(this, parameter);
+                this.execute(this, e);
             }
             finally
             {
@@ -91,89 +133,13 @@ namespace Ragnarok.Presentation.Command
 
         void ICommand.Execute(object parameter)
         {
-            Execute();
+            Execute(parameter);
         }
 
         /// <summary>
         /// コマンドの実行可能状態を調べます。
         /// </summary>
-        public bool CanExecute()
-        {
-            if (this.canExecute == null)
-            {
-                return true;
-            }
-
-            var e = new CanExecuteRelayEventArgs(this);
-            this.canExecute(this, e);
-            return e.CanExecute;
-        }
-
-        bool ICommand.CanExecute(object parameter)
-        {
-            return CanExecute();
-        }
-
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        public RelayCommand(Action execute,
-                            EventHandler<CanExecuteRelayEventArgs> canExecute)
-        {
-            if (execute == null)
-            {
-                throw new ArgumentNullException("execute");
-            }
-
-            this.execute = execute;
-            this.canExecute = canExecute;
-        }
-
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        public RelayCommand(Action execute)
-            : this(execute, null)
-        {
-        }
-    }
-
-    /// <summary>
-    /// コマンドをデリゲートで実行するようなクラスです。(パラメータ有り)
-    /// </summary>
-    public class RelayCommand<T> : ICommand
-    {
-        private readonly Action<T> execute;
-        private readonly EventHandler<CanExecuteRelayEventArgs> canExecute;
-
-        /// <summary>
-        /// コマンドの実行可能状態の変更を調べるイベントを追加または削除します。
-        /// </summary>
-        public event EventHandler CanExecuteChanged
-        {
-            add { CommandManager.RequerySuggested += value; }
-            remove { CommandManager.RequerySuggested -= value; }
-        }
-
-        /// <summary>
-        /// コマンドを実行します。
-        /// </summary>
-        public void Execute(object parameter)
-        {
-            try
-            {
-                this.execute((T)parameter);
-            }
-            finally
-            {
-                WPFUtil.InvalidateCommand();
-            }
-        }
-
-        /// <summary>
-        /// コマンドの実行可能状態を調べます。
-        /// </summary>
-        public bool CanExecute(object parameter)
+        public bool CanExecute(object parameter = null)
         {
             if (this.canExecute == null)
             {
@@ -185,10 +151,15 @@ namespace Ragnarok.Presentation.Command
             return e.CanExecute;
         }
 
+        bool ICommand.CanExecute(object parameter)
+        {
+            return CanExecute(parameter);
+        }
+
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public RelayCommand(Action<T> execute,
+        public RelayCommand(EventHandler<ExecuteRelayEventArgs> execute,
                             EventHandler<CanExecuteRelayEventArgs> canExecute)
         {
             if (execute == null)
@@ -203,7 +174,7 @@ namespace Ragnarok.Presentation.Command
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public RelayCommand(Action<T> execute)
+        public RelayCommand(EventHandler<ExecuteRelayEventArgs> execute)
             : this(execute, null)
         {
         }

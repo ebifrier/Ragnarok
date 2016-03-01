@@ -124,7 +124,7 @@ namespace Ragnarok.Presentation.Control
         /// <summary>
         /// 色選択を行います。
         /// </summary>
-        private void SelectColor()
+        private void SelectColor(object sender, ExecuteRelayEventArgs e)
         {
             try
             {
