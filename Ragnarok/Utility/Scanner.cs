@@ -41,6 +41,27 @@ namespace Ragnarok.Utility
     /// </summary>
     public class Scanner
     {
+        private static readonly string WordRegexPattern = @"\G\s*(\w+)(\s+|$)";
+        private static readonly string QuotedTextRegexPattern = @"\G\s*""((\""|[^""])*?)""";
+        private static readonly string TextRegexPattern = @"\G\s*(.+?)";
+        private static readonly string IntRegexPattern = @"\G\s*((\+|\-)?[0-9]+)";
+        private static readonly string DoubleRegexPattern = @"\G\s*((\+|\-)?[0-9]+([.][0-9.]+)?)";
+
+        private static readonly Regex WordRegex = new Regex(
+            WordRegexPattern, RegexOptions.Compiled);
+        private static readonly Regex CommaQuotedTextRegex = CreateRegexWithDelimiters(
+            QuotedTextRegexPattern, RegexOptions.Compiled, ",");
+        private static readonly Regex CommaTextRegex = CreateRegexWithDelimiters(
+            TextRegexPattern, RegexOptions.Compiled, ",");
+        private static readonly Regex CommaIntRegex = CreateRegexWithDelimiters(
+            IntRegexPattern, RegexOptions.Compiled, ",");
+        private static readonly Regex CommaDoubleRegex = CreateRegexWithDelimiters(
+            DoubleRegexPattern, RegexOptions.Compiled, ",");
+
+        private Regex quotedTextRegex;
+        private Regex textRegex;        
+        private Regex intRegex;
+        private Regex doubleRegex;
         private string[] delimiters = { "," };
         private readonly string text;
         private string peek;
@@ -71,6 +92,27 @@ namespace Ragnarok.Utility
         }
 
         /// <summary>
+        /// 最後にデリミタを付加した、正規表現おぶじぇくとを作成します。
+        /// </summary>
+        private static Regex CreateRegexWithDelimiters(string pattern,
+                                                       RegexOptions options,
+                                                       params string[] delimiters)
+        {
+            var escapedDelimiters =
+                string.Join(
+                    "|",
+                    delimiters.Select(_ => Regex.Escape(_))
+                    .ToArray());
+
+            var newPattern = string.Format(
+                @"{0}\s*(({1})\s*|$)",
+                pattern,
+                escapedDelimiters);
+
+            return new Regex(newPattern, options);
+        }
+
+        /// <summary>
         /// 区切り文字を設定します。
         /// </summary>
         public void SetDelimiters(params string[] delimiters)
@@ -81,6 +123,25 @@ namespace Ragnarok.Utility
             }
 
             this.delimiters = delimiters;
+
+            if (delimiters.Count() == 1 && delimiters[0] == ",")
+            {
+                this.quotedTextRegex = CommaQuotedTextRegex;
+                this.textRegex = CommaTextRegex;
+                this.intRegex = CommaIntRegex;
+                this.doubleRegex = CommaDoubleRegex;
+            }
+            else
+            {
+                this.quotedTextRegex = CreateRegexWithDelimiters(
+                    QuotedTextRegexPattern, RegexOptions.None, delimiters);
+                this.textRegex = CreateRegexWithDelimiters(
+                    TextRegexPattern, RegexOptions.None, delimiters);
+                this.intRegex = CreateRegexWithDelimiters(
+                    IntRegexPattern, RegexOptions.None, delimiters);
+                this.doubleRegex = CreateRegexWithDelimiters(
+                    DoubleRegexPattern, RegexOptions.None, delimiters);
+            }
         }
 
         /// <summary>
@@ -96,34 +157,13 @@ namespace Ragnarok.Utility
         }
 
         /// <summary>
-        /// 最後にデリミタを付加した、正規表現おぶじぇくとを作成します。
-        /// </summary>
-        private Regex CreateRegexWithDelimiters(string pattern)
-        {
-            var escapedDelimiters =
-                string.Join(
-                    "|",
-                    this.delimiters.Select(_ => Regex.Escape(_))
-                    .ToArray());
-
-            var newPattern = string.Format(
-                @"{0}\s*(({1})\s*|$)",
-                pattern,
-                escapedDelimiters);
-
-            return new Regex(newPattern);
-        }
-
-        /// <summary>
         /// 整数をパースします。
         /// </summary>
         public int ParseInt()
         {
             CheckEof();
 
-            var re = CreateRegexWithDelimiters(
-                @"\G\s*((\+|\-)?[0-9]+)");
-            var m = re.Match(this.text, this.index);
+            var m = this.intRegex.Match(this.text, this.index);
             if (!m.Success)
             {
                 throw new ParseException(
@@ -142,9 +182,7 @@ namespace Ragnarok.Utility
         {
             CheckEof();
 
-            var re = CreateRegexWithDelimiters(
-                @"\G\s*((\+|\-)?[0-9]+([.][0-9.]+)?)");
-            var m = re.Match(this.text, this.index);
+            var m = this.doubleRegex.Match(this.text, this.index);
             if (!m.Success)
             {
                 throw new ParseException(
@@ -163,10 +201,7 @@ namespace Ragnarok.Utility
         {
             CheckEof();
 
-            var re = new Regex(
-                @"\G\s*(\w+)(\s+|$)");
-            var m = re.Match(this.text, this.index);
-
+            var m = WordRegex.Match(this.text, this.index);
             if (!m.Success)
             {
                 throw new ParseException(
@@ -194,9 +229,7 @@ namespace Ragnarok.Utility
 
             string result;
 
-            var re = CreateRegexWithDelimiters(
-                @"\G\s*""((\""|[^""])*?)""");
-            var m = re.Match(this.text, this.index);
+            var m = this.quotedTextRegex.Match(this.text, this.index);
             if (m.Success)
             {
                 // ""で囲まれた文字列の場合は、
@@ -207,10 +240,7 @@ namespace Ragnarok.Utility
             }
             else
             {
-                re = CreateRegexWithDelimiters(
-                    @"\G\s*(.+?)");
-                m = re.Match(this.text, this.index);
-
+                m = this.textRegex.Match(this.text, this.index);
                 if (!m.Success)
                 {
                     throw new ParseException(
@@ -252,6 +282,7 @@ namespace Ragnarok.Utility
                 throw new ArgumentNullException("text");
             }
 
+            SetDelimiters(",");
             this.text = text;
             this.index = 0;
         }
