@@ -133,7 +133,7 @@ namespace Ragnarok
         }
 
         /// <summary>
-        /// 値の大きい方を返します。
+        /// 時間間隔の絶対値を返します。
         /// </summary>
         public static TimeSpan Abs(TimeSpan x)
         {
