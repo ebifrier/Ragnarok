@@ -39,7 +39,7 @@
                      HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                      VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                      Text="{Binding Text, RelativeSource={RelativeSource TemplatedParent}}"
-                     TextAlignment="Right"
+                     TextAlignment="{TemplateBinding HorizontalContentAlignment}"
                      />
 
             <RepeatButton Grid.Row="0" Grid.Column="1"

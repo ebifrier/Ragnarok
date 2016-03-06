@@ -126,7 +126,7 @@ namespace Ragnarok.Presentation.Control
             DependencyProperty.Register(
                 "Maximum", typeof(decimal), typeof(NumericUpDown),
                 new FrameworkPropertyMetadata(
-                    (decimal)100, OnMaximumChanged, OnCoerceMaximum));
+                    (decimal)int.MaxValue, OnMaximumChanged, OnCoerceMaximum));
 
         /// <summary>
         /// テキストボックス上で数値を変更可能かどうかを取得または設定します。
@@ -285,7 +285,7 @@ namespace Ragnarok.Presentation.Control
                                            DependencyPropertyChangedEventArgs e)
         {
             var self = (NumericUpDown)d;
-
+            
             self.SyncValueAndText(self.Value);
 
             // 値変更イベントを発生させます。
