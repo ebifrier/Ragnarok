@@ -43,7 +43,7 @@ namespace Ragnarok.Utility
     {
         private static readonly string WordRegexPattern = @"\G\s*(\w+)(\s+|$)";
         private static readonly string QuotedTextRegexPattern = @"\G\s*""((\""|[^""])*?)""";
-        private static readonly string TextRegexPattern = @"\G\s*(.+?)";
+        private static readonly string TextRegexPattern = @"\G\s*(.*?)";
         private static readonly string IntRegexPattern = @"\G\s*((\+|\-)?[0-9]+)";
         private static readonly string DoubleRegexPattern = @"\G\s*((\+|\-)?[0-9]+([.][0-9.]+)?)";
 
