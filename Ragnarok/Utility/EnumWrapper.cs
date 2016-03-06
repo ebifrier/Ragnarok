@@ -24,7 +24,16 @@ namespace Ragnarok.Utility
         /// </summary>
         public string Label
         {
-            get { return EnumEx.GetLabel(Value); }
+            get
+            {
+                var label = EnumEx.GetLabel(Value);
+                if (!string.IsNullOrEmpty(label))
+                {
+                    return label;
+                }
+
+                return Value.ToString();
+            }
         }
 
         /// <summary>
