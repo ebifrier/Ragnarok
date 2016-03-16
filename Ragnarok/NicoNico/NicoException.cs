@@ -11,45 +11,9 @@ namespace Ragnarok.NicoNico
     public class NicoException : RagnarokException
     {
         /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        public NicoException(string message)
-            : base(message)
-        {
-        }
-
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        public NicoException(string message, Exception innerException)
-            : base(message, innerException)
-        {
-        }
-
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        public NicoException(string errorCode, string id)
-            : base(id + ": " + errorCode)
-        {
-            ErrorCode = errorCode;
-            Id = id;
-        }
-
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        public NicoException(string errorCode, string id, Exception innerException)
-            : base(id + ": " + errorCode, innerException)
-        {
-            ErrorCode = errorCode;
-            Id = id;
-        }
-
-        /// <summary>
         /// エラーコードを取得します。
         /// </summary>
-        public string ErrorCode
+        public NicoStatusCode ErrorCode
         {
             get;
             private set;
@@ -62,6 +26,84 @@ namespace Ragnarok.NicoNico
         {
             get;
             private set;
+        }
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public NicoException(string message)
+            : base(message)
+        {
+            ErrorCode = NicoStatusCode.UnknownError;
+        }
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public NicoException(string message, Exception innerException)
+            : base(message, innerException)
+        {
+            ErrorCode = NicoStatusCode.UnknownError;
+        }
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public NicoException(string message, string id)
+            : base(id + ": " + message)
+        {
+            ErrorCode = NicoStatusCode.UnknownError;
+            Id = id;
+        }
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public NicoException(string message, string id,
+                             Exception innerException)
+            : base(id + ": " + message, innerException)
+        {
+            ErrorCode = NicoStatusCode.UnknownError;
+            Id = id;
+        }
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public NicoException(NicoStatusCode code)
+            : base(code.GetDescription())
+        {
+            ErrorCode = code;
+        }
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public NicoException(NicoStatusCode code, Exception innerException)
+            : base(code.GetDescription(), innerException)
+        {
+            ErrorCode = code;
+        }
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public NicoException(NicoStatusCode code, string id)
+            : base(id + ": " + code.GetDescription())
+        {
+            ErrorCode = code;
+            Id = id;
+        }
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public NicoException(NicoStatusCode code, string id,
+                             Exception innerException)
+            : base(id + ": " + code.GetDescription(), innerException)
+        {
+            ErrorCode = code;
+            Id = id;
         }
     }
 }

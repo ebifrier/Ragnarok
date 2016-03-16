@@ -11,21 +11,11 @@ namespace Ragnarok.NicoNico.Live
     public class NicoLiveException : NicoException
     {
         /// <summary>
-        /// エラーコードを取得します。
-        /// </summary>
-        public NicoStatusCode ErrorCode
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
         /// コンストラクタ
         /// </summary>
         public NicoLiveException(string message)
             : base(message)
         {
-            ErrorCode = NicoStatusCode.UnknownError;
         }
 
         /// <summary>
@@ -34,14 +24,13 @@ namespace Ragnarok.NicoNico.Live
         public NicoLiveException(string message, Exception innerException)
             : base(message, innerException)
         {
-            ErrorCode = NicoStatusCode.UnknownError;
         }
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
         public NicoLiveException(string message, string id)
-            : base(id + ": " + message)
+            : base(message, id)
         {
         }
 
@@ -50,7 +39,7 @@ namespace Ragnarok.NicoNico.Live
         /// </summary>
         public NicoLiveException(string message, string id,
                                  Exception innerException)
-            : base(id + ": " + message, innerException)
+            : base(message, id, innerException)
         {
         }
 
@@ -58,27 +47,24 @@ namespace Ragnarok.NicoNico.Live
         /// コンストラクタ
         /// </summary>
         public NicoLiveException(NicoStatusCode code)
-            : base(NicoStatusCodeUtil.GetDescription(code))
+            : base(code)
         {
-            this.ErrorCode = code;
         }
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
         public NicoLiveException(NicoStatusCode code, Exception innerException)
-            : base(NicoStatusCodeUtil.GetDescription(code), innerException)
+            : base(code, innerException)
         {
-            this.ErrorCode = code;
         }
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
         public NicoLiveException(NicoStatusCode code, string id)
-            : base(id + ": " + NicoStatusCodeUtil.GetDescription(code))
+            : base(code, id)
         {
-            this.ErrorCode = code;
         }
 
         /// <summary>
@@ -86,10 +72,8 @@ namespace Ragnarok.NicoNico.Live
         /// </summary>
         public NicoLiveException(NicoStatusCode code, string id,
                                  Exception innerException)
-            : base(id + ": " + NicoStatusCodeUtil.GetDescription(code),
-                   innerException)
+            : base(code, id, innerException)
         {
-            this.ErrorCode = code;
         }
     }
 }

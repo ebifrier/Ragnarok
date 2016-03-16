@@ -11,21 +11,11 @@ namespace Ragnarok.NicoNico.Provider
     public class NicoProviderException : NicoException
     {
         /// <summary>
-        /// エラーコードを取得します。
-        /// </summary>
-        public NicoStatusCode ErrorCode
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
         /// コンストラクタ
         /// </summary>
         public NicoProviderException(string message)
             : base(message)
         {
-            ErrorCode = NicoStatusCode.UnknownError;
         }
 
         /// <summary>
@@ -34,14 +24,13 @@ namespace Ragnarok.NicoNico.Provider
         public NicoProviderException(string message, Exception innerException)
             : base(message, innerException)
         {
-            ErrorCode = NicoStatusCode.UnknownError;
         }
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
         public NicoProviderException(string message, string id)
-            : base(id + ": " + message)
+            : base(message, id)
         {
         }
 
@@ -50,7 +39,7 @@ namespace Ragnarok.NicoNico.Provider
         /// </summary>
         public NicoProviderException(string message, string id,
                                      Exception innerException)
-            : base(id + ": " + message, innerException)
+            : base(message, id, innerException)
         {
         }
 
@@ -58,27 +47,24 @@ namespace Ragnarok.NicoNico.Provider
         /// コンストラクタ
         /// </summary>
         public NicoProviderException(NicoStatusCode code)
-            : base(code.GetDescription())
+            : base(code)
         {
-            this.ErrorCode = code;
         }
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
         public NicoProviderException(NicoStatusCode code, Exception innerException)
-            : base(code.GetDescription(), innerException)
+            : base(code, innerException)
         {
-            this.ErrorCode = code;
         }
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
         public NicoProviderException(NicoStatusCode code, string id)
-            : base(id + ": " + code.GetDescription())
+            : base(code, id)
         {
-            this.ErrorCode = code;
         }
 
         /// <summary>
@@ -86,10 +72,8 @@ namespace Ragnarok.NicoNico.Provider
         /// </summary>
         public NicoProviderException(NicoStatusCode code, string id,
                                      Exception innerException)
-            : base(id + ": " + code.GetDescription(),
-                   innerException)
+            : base(code, id, innerException)
         {
-            this.ErrorCode = code;
         }
     }
 }

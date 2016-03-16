@@ -101,6 +101,11 @@ namespace Ragnarok.NicoNico
         [LabelDescription("スロットがありません。")]
         NotExistSlot,
         /// <summary>
+        /// 削除されました。
+        /// </summary>
+        [LabelDescription("削除されました。")]
+        Deleted,
+        /// <summary>
         /// ユーザーにより削除されました。
         /// </summary>
         [LabelDescription("ユーザーにより削除されました。")]
@@ -140,8 +145,10 @@ namespace Ragnarok.NicoNico
             switch (code.ToUpper())
             {
                 case "NOTLOGIN":
+                case "NOT_LOGIN":
                     return NicoStatusCode.NotLogin;
                 case "NOTFOUND":
+                case "NOT_FOUND":
                     return NicoStatusCode.NotFound;
                 case "CLOSED":
                     return NicoStatusCode.AlreadyClosed;
@@ -161,6 +168,8 @@ namespace Ragnarok.NicoNico
                     return NicoStatusCode.NotFoundSlot;
                 case "NOTEXIST_SLOT":
                     return NicoStatusCode.NotExistSlot;
+                case "DELETED":
+                    return NicoStatusCode.Deleted;
                 case "DELETEDBYUSER":
                     return NicoStatusCode.DeletedByUser;
                 case "DELETEDBYVISOR":

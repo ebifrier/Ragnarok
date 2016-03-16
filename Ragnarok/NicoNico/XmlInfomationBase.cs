@@ -79,7 +79,7 @@ namespace Ragnarok.NicoNico
                 if (code != null)
                 {
                     throw new NicoException(
-                        code.InnerText, idString);
+                        NicoStatusCodeUtil.GetCode(code.InnerText), idString);
                 }
                 else
                 {
