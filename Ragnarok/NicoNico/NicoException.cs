@@ -29,17 +29,39 @@ namespace Ragnarok.NicoNico
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public NicoException(string message, string id)
-            : base(id + ": " + message)
+        public NicoException(string errorCode, string id)
+            : base(id + ": " + errorCode)
         {
+            ErrorCode = errorCode;
+            Id = id;
         }
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public NicoException(string message, string id, Exception innerException)
-            : base(id + ": " + message, innerException)
+        public NicoException(string errorCode, string id, Exception innerException)
+            : base(id + ": " + errorCode, innerException)
         {
+            ErrorCode = errorCode;
+            Id = id;
+        }
+
+        /// <summary>
+        /// エラーコードを取得します。
+        /// </summary>
+        public string ErrorCode
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// 対象となったIDを取得します。
+        /// </summary>
+        public string Id
+        {
+            get;
+            private set;
         }
     }
 }
