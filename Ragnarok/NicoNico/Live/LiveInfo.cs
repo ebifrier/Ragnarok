@@ -22,23 +22,12 @@ namespace Ragnarok.NicoNico.Live
     public class LiveInfo
     {
         /// <summary>
-        /// 生放送IDを取得します。
-        /// </summary>
-        public long Id
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
         /// 生放送ID文字列を取得します。(lvXXXX)
         /// </summary>
-        public string IdString
+        public string Id
         {
-            get
-            {
-                return string.Format("lv{0}", Id);
-            }
+            get;
+            set;
         }
 
         /// <summary>
@@ -141,7 +130,7 @@ namespace Ragnarok.NicoNico.Live
             @"\s*-->\s*</script>",
             RegexOptions.IgnoreCase);
         private static readonly Regex IdRegex = new Regex(
-            @"id:\s+'lv([0-9]+)',",
+            @"id:\s+'(lv[0-9]+)',",
             RegexOptions.IgnoreCase);
         private static readonly Regex TitleRegex = new Regex(
             @"title:\s+'((.|\')*)',",
@@ -196,7 +185,7 @@ namespace Ragnarok.NicoNico.Live
                     "生放送IDを取得できませんでした。",
                     idString);
             }
-            live.Id = int.Parse(m.Groups[1].Value);
+            live.Id = m.Groups[1].Value;
 
             m = TitleRegex.Match(infoStr);
             if (!m.Success)
@@ -257,7 +246,7 @@ namespace Ragnarok.NicoNico.Live
             {
                 throw new NicoLiveException(
                     "累計来場者数の取得に失敗しました。",
-                    live.IdString);
+                    live.Id);
             }
             live.TotalVisitors = int.Parse(
                 m.Groups[1].Value,
@@ -269,7 +258,7 @@ namespace Ragnarok.NicoNico.Live
             {
                 throw new NicoLiveException(
                     "コミュニティレベルの取得に失敗しました。",
-                    live.IdString);
+                    live.Id);
             }
             live.CommunityLevel = int.Parse(
                 m.Groups[1].Value,
