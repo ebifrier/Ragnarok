@@ -14,7 +14,7 @@ namespace Ragnarok.NicoNico.Video
     using Utility;
 
     /// <summary>
-    /// 動画検索時の結果を保持するための簡易クラスです。
+    /// 動画検索時の結果を保持するクラスです。
     /// </summary>
     [Serializable()]
     [DataContract()]
@@ -28,7 +28,6 @@ namespace Ragnarok.NicoNico.Video
         /// </summary>
         public VideoData()
         {
-            ThreadId = -1;
             TagList = new List<string>();
             StartTime = DateTime.MinValue;
             ViewCounter = -1;
@@ -43,7 +42,6 @@ namespace Ragnarok.NicoNico.Video
         private VideoData(string videoId, XmlNode node)
             : base(node, "nicovideo_thumb_response", videoId)
         {
-            ThreadId = -1;
             TagList = new List<string>();
             StartTime = DateTime.MinValue;
             ViewCounter = -1;
@@ -131,26 +129,10 @@ namespace Ragnarok.NicoNico.Video
         /// 動画URLに使われる数字のみのIDを取得します。
         /// </summary>
         [DataMember(Name = "thread_id")]
-        public long ThreadId
+        public string ThreadId
         {
             get;
             set;
-        }
-
-        /// <summary>
-        /// 動画URLに使われる数字のみのIDを取得します。
-        /// </summary>
-        public string ThreadIdString
-        {
-            get
-            {
-                if (ThreadId < 0)
-                {
-                    return null;
-                }
-
-                return string.Format("{0}", ThreadId);
-            }
         }
 
         /// <summary>
@@ -515,7 +497,8 @@ namespace Ragnarok.NicoNico.Video
             m = ThreadIdRegex.Match(pageStr);
             if (m.Success)
             {
-                video.ThreadId = long.Parse(m.Groups[1].Value);
+                var value = long.Parse(m.Groups[1].Value);
+                video.ThreadId = value.ToString();
             }
 
             // 動画タイトル
@@ -630,94 +613,6 @@ namespace Ragnarok.NicoNico.Video
                 false);
 
             return video;
-        }
-        #endregion
-
-        #region チャンネルツールの検索結果から動画情報を作成
-        /// <summary>
-        /// チャンネルツール上の探索結果から、動画情報を作成します。
-        /// </summary>
-        private static VideoData FromChannelToolSearchResult(string text)
-        {
-            var result = new VideoData
-            {
-                Timestamp = DateTime.Now,
-            };
-
-            var regex = new Regex(
-                @"<li class=""video so[^>]+>\s*<div class=""video_left"">[\S\s]+?</div>\s*</li>");
-            var m = regex.Match(text);
-            if (!m.Success)
-            {
-                return null;
-            }
-
-            // 動画ID
-            var idRegex = new Regex(@"<var class=""video_id""\s*title=""動画ID"">(so\d+)</var>");
-            m = idRegex.Match(text);
-            if (!m.Success)
-            {
-                return null;
-            }
-            result.IdString = m.Groups[1].Value;
-
-            // スレッドID
-            var threadRegex = new Regex(@"<var class=""thread_id""\s*title=""スレッドID"">(\d+)</var>");
-            m = threadRegex.Match(text);
-            if (!m.Success)
-            {
-                return null;
-            }
-            result.ThreadId = int.Parse(m.Groups[1].Value);
-
-            // 動画タイトル
-            var titleRegex = new Regex(@"<h6 class=""video_title"" title=""([^""]*)"">");
-            m = titleRegex.Match(text);
-            if (!m.Success)
-            {
-                return null;
-            }
-            result.Title = m.Groups[1].Value;
-
-            // 動画の公開日時
-            var dateRegex = new Regex(@">([\d\s\-:]+) 公開</time>");
-            m = dateRegex.Match(text);
-            if (!m.Success)
-            {
-                return null;
-            }
-            result.StartTime = DateTime.Parse(m.Groups[1].Value);
-
-            // 表示／非表示
-            var hidden = "<span class=\"label hide_flag hide_flag_1\">非公開</span>";
-            result.IsVisible = !text.Contains(hidden);
-
-            // 会員限定／全員公開
-            var memberOnly = "<span class=\"label permission_4\">会員限定</span>";
-            result.IsMemberOnly = text.Contains(memberOnly);
-
-            return result;
-        }
-
-        private static readonly Regex SearchResultRegex = new Regex(
-            @"<li class=""video so[^>]+>\s*<div class=""video_left"">[\S\s]+?</div>\s*</li>");
-
-        /// <summary>
-        /// チャンネルツール上の探索結果から、動画情報を作成します。
-        /// </summary>
-        public static IEnumerable<VideoData> FromChannelToolSearchResults(string text)
-        {
-            return SearchResultRegex.Matches(text)
-                .OfType<Match>()
-                .Select(_ =>
-                {
-                    var movie = FromChannelToolSearchResult(_.Value);
-                    if (movie == null)
-                    {
-                        Log.Error("FromSearchResult Error");
-                    }
-                    return movie;
-                });
         }
         #endregion
     }

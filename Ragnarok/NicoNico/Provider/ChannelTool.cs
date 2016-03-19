@@ -317,11 +317,11 @@ namespace Ragnarok.NicoNico.Provider
         /// <summary>
         /// チャンネルページ上から動画の検索を行います。
         /// </summary>
-        public static IEnumerable<VideoData> Search(CookieContainer cc,
-                                                    int channelId,
-                                                    string keyword, 
-                                                    int pageId = 1,
-                                                    int limit = 20)
+        public static IEnumerable<ChannelVideoData> Search(CookieContainer cc,
+                                                           int channelId,
+                                                           string keyword, 
+                                                           int pageId = 1,
+                                                           int limit = 20)
         {
             if (cc == null)
             {
@@ -332,10 +332,10 @@ namespace Ragnarok.NicoNico.Provider
                 cc, channelId, keyword, pageId, limit);
             if (string.IsNullOrEmpty(text))
             {
-                return new List<VideoData>();
+                return new List<ChannelVideoData>();
             }
 
-            return VideoData.FromChannelToolSearchResults(text);
+            return ChannelVideoData.FromSearchResults(text);
         }
     }
 }
