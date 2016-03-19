@@ -39,6 +39,12 @@ namespace Ragnarok.NicoNico
         [LabelDescription("ネットワーク障害により通信できません。")]
         NetworkError,
 
+
+        /// <summary>
+        /// ビジー状態です。
+        /// </summary>
+        [LabelDescription("ビジー状態です。")]
+        Busy,
         /// <summary>
         /// ログインしていません。
         /// </summary>
@@ -144,6 +150,8 @@ namespace Ragnarok.NicoNico
 
             switch (code.ToUpper())
             {
+                case "BUSY":
+                    return NicoStatusCode.Busy;
                 case "NOTLOGIN":
                 case "NOT_LOGIN":
                     return NicoStatusCode.NotLogin;
@@ -182,7 +190,7 @@ namespace Ragnarok.NicoNico
                 case "UNKNOWN_ERROR":
                     return NicoStatusCode.UnknownError;
                 default:
-                    Log.Error("Unknown error code: {0}", code);
+                    Log.Error("Unknown error: code={0}", code);
                     return NicoStatusCode.UnknownError;
             }
         }
