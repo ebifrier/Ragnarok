@@ -183,7 +183,9 @@
     <Compile Include="NicoNico\CommentParser.cs" />
     <Compile Include="NicoNico\CommentStringizer.cs" />
     <Compile Include="NicoNico\Gender.cs" />
+    <Compile Include="NicoNico\Provider\ChannelUploadedVideoData.cs" />
     <Compile Include="NicoNico\Provider\ChannelVideoData.cs" />
+    <Compile Include="NicoNico\Provider\Tests\ChannelToolTest.cs" />
     <Compile Include="NicoNico\Video\Tests\VideoUtilTest.cs" />
     <Compile Include="NicoNico\Video\ViewCountData.cs" />
     <Compile Include="NicoNico\XmlInfomationBase.cs" />

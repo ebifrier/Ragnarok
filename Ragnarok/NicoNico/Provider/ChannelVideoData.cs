@@ -7,7 +7,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 
-namespace Ragnarok.NicoNico.Video
+namespace Ragnarok.NicoNico.Provider
 {
     using Net;
     using Utility;
@@ -28,21 +28,12 @@ namespace Ragnarok.NicoNico.Video
         }
 
         /// <summary>
-        /// soやsmから始まる動画のファイルIDを取得します。
-        /// </summary>
-        public string IdString
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
         /// 動画IDを取得します。(内容はIdStringと同じ)
         /// </summary>
         public string Id
         {
-            get { return IdString; }
-            private set { IdString = value; }
+            get;
+            private set;
         }
 
         /// <summary>
@@ -164,7 +155,7 @@ namespace Ragnarok.NicoNico.Video
             {
                 return null;
             }
-            result.IdString = m.Groups[1].Value;
+            result.Id = m.Groups[1].Value;
 
             // スレッドID
             m = ThreadRegex.Match(text);
