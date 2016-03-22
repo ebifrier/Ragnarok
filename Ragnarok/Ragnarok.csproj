@@ -283,6 +283,7 @@
     <Compile Include="Utility\IntConverter.cs" />
     <Compile Include="Utility\JsonUtil.cs" />
     <Compile Include="Utility\LabelDescriptionAttribute.cs" />
+    <Compile Include="Utility\LimitedConcurrencyLevelTaskScheduler.cs" />
     <Compile Include="Utility\Matrix44d.cs" />
     <Compile Include="Utility\MemoryStreamExtensions.cs" />
     <Compile Include="Utility\MethodUtil.cs" />
