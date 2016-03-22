@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Reflection;
 
 namespace Ragnarok
@@ -474,6 +475,19 @@ namespace Ragnarok
                 // 全角文字であると仮定します。
                 return false;
             }
+        }
+
+        /// <summary>
+        /// 空白文字をすべて削除します。
+        /// </summary>
+        public static string RemoveWhitespace(this string text)
+        {
+            if (string.IsNullOrEmpty(text))
+            {
+                return text;
+            }
+
+            return Regex.Replace(text, @"\s+", "");
         }
 
         /// <summary>
