@@ -32,12 +32,14 @@ namespace Ragnarok.NicoNico.Provider
     /// </summary>
     public static class ChannelTool
     {
+        public readonly static string BaseUrl =
+            @"http://chtool.nicovideo.jp/";
         public readonly static string UploadedVideosUrl =
-            @"http://chtool.nicovideo.jp/video/uploaded_videos";
+            BaseUrl + @"video/uploaded_videos";
         public readonly static string VideoUrl =
-            @"http://chtool.nicovideo.jp/video/video.php";
+            BaseUrl + @"video/video.php";
         public readonly static string VideoEditUrl =
-            @"http://chtool.nicovideo.jp/video/video_edit.php";
+            BaseUrl + @"video/video_edit.php";
 
         /// <summary>
         /// 動画編集用のサイトURLを作成します。
@@ -120,12 +122,10 @@ namespace Ragnarok.NicoNico.Provider
         public static string GetOrRequestSmileChKey(CookieContainer cc,
                                                     int channelId)
         {
-            var url = MakeVideoUrl(channelId);
-
-            var chKey = GetSmileChKey(cc, url);
+            var chKey = GetSmileChKey(cc, channelId);
             if (string.IsNullOrEmpty(chKey))
             {
-                chKey = RequestSmileChKey(cc, url);
+                chKey = RequestSmileChKey(cc, channelId);
             }
 
             return chKey;
@@ -134,11 +134,12 @@ namespace Ragnarok.NicoNico.Provider
         /// <summary>
         /// smile_ch_keyをネット上から取得します。
         /// </summary>
-        private static string RequestSmileChKey(CookieContainer cc, string url)
+        private static string RequestSmileChKey(CookieContainer cc, int channelId)
         {
             Log.Debug("get smile_ch_key try...");
 
             // smile_ch_keyを取得するために動画ページにアクセスします。
+            var url = MakeVideoUrl(channelId);
             var text = WebUtil.RequestHttpText(url, null, cc, Encoding.UTF8);
             if (string.IsNullOrEmpty(text))
             {
@@ -150,7 +151,7 @@ namespace Ragnarok.NicoNico.Provider
             //Save("smile_ch_key.html", text);
 
             // smile_ch_keyの取得を行います。
-            var chKey = GetSmileChKey(cc, url);
+            var chKey = GetSmileChKey(cc, channelId);
             if (string.IsNullOrEmpty(chKey))
             {
                 throw new ChannelToolException(
@@ -164,9 +165,10 @@ namespace Ragnarok.NicoNico.Provider
         /// <summary>
         /// smile_ch_keyを<paramref name="cc"/>から探します。
         /// </summary>
-        private static string GetSmileChKey(CookieContainer cc, string url)
+        private static string GetSmileChKey(CookieContainer cc, int channelId)
         {
             // CookieContainerからsmile_ch_keyの情報を抜き出します。
+            var url = MakeVideoUrl(channelId);
             var collection = cc.GetCookies(new Uri(url));
             if (collection == null)
             {
@@ -261,25 +263,25 @@ namespace Ragnarok.NicoNico.Provider
             // 0: 誰でも編集できる
             // 1: チャンネル会員のみが編集できる
             // 2: ユーザーによるタグ編集を禁止する
-            param["tag_edit_flag"] = 0;
+            param["tag_edit_flag"] = 1;
 
             // 1: 誰でも視聴可能
             // 4: チャンネル会員のみ視聴可能
-            param["permission"] = 4; // 固定値？
+            param["permission"] = (int)DistributeRange.MemberOnly;
 
-            param["title_url"] = "";
+            //param["title_url"] = "";
             param["post_by_mobile"] = "";
-            param["ppv_permission"] = 1;
+            //param["ppv_permission"] = 1;
             param["ppv_type"] = 0;
             param["ad_flag"] = 1;
-            param["comment"] = "allow";
+            //param["comment"] = "allow";
             param["display_flag"] = 0; // コメントの表示方法 (0:通常、1:動画の裏)
 
             param["retrieval_flag"] = 1; // 動画検索結果に表示させる
             param["uad_maintenance"] = 0; // ニコニ広告で宣伝させる
             param["uad_flag"] = 0;
             param["homeland_flag"] = 0; // 公開地域を日本国内のみに限定する
-            param["commons_materials"] = "1"; // 使用したニコニコモンズ作品
+            //param["commons_materials"] = "1"; // 使用したニコニコモンズ作品
 
             // NG関連の指定
             param["deny_mobile"] = 0;
@@ -294,6 +296,7 @@ namespace Ragnarok.NicoNico.Provider
             param["ng_dolce"] = 0;
             param["ng_sun"] = 0;
             param["ng_xboxone"] = 0;
+            param["ng_nicobox"] = 0;
 
             param["ignore_nicodic"] = 0; // 大百科の記事を表示させない
             param["out_flag"] = 0; // niconico外部プレイヤー で再生させない
@@ -307,13 +310,13 @@ namespace Ragnarok.NicoNico.Provider
             param["countries"] = ""; // 用途不明
             param["nicolanguage_code"] = ""; // 用途不明
 
-            param["licensed_music[0][artist]"] = "";
+            /*param["licensed_music[0][artist]"] = "";
             param["licensed_music[0][title]"] = "";
             param["licensed_music[0][rightsController]"] = "";
             param["licensed_music[0][opus_code]"] = "";
             param["licensed_music[0][lyricist]"] = "";
             param["licensed_music[0][composer]"] = "";
-            param["licensed_music[0][uid]"] = "";
+            param["licensed_music[0][uid]"] = "";*/
 
             return param;
         }
@@ -321,25 +324,37 @@ namespace Ragnarok.NicoNico.Provider
         /// <summary>
         /// 動画情報の編集リクエストを発行します。
         /// </summary>
-        public static string RequestEdit(int channelId, int movieId,
+        public static string RequestEdit(int channelId, string videoId,
                                          Dictionary<string, object> param,
                                          CookieContainer cc)
         {
-            var chKey = GetOrRequestSmileChKey(cc, channelId);
+            if (string.IsNullOrEmpty(videoId) || !videoId.StartsWith("so"))
+            {
+                return null;
+            }
+            var fileId = int.Parse(videoId.Substring(2));
+
+            // smile_ch_keyは過去のオペレーションで削除されていることがあるため、
+            // 必ず新規に取得します。
+            var chKey = RequestSmileChKey(cc, channelId);
             if (string.IsNullOrEmpty(chKey))
             {
                 return null;
             }
+
+            // 詳細編集前に専用のクッキーを仕込んでおく。
+            // これをやらないとエラーになって処理が失敗する。
+            cc.Add(new Uri(BaseUrl), new Cookie("smile_ch_key", chKey));
 
             // 動画更新時に必要になる必須パラメータを設定します。
             var cparam = new Dictionary<string, object>(param);
             cparam["smile_ch_key"] = chKey;
             cparam["mode"] = "edit";
             cparam["channel_id"] = channelId;
-            cparam["fileid"] = movieId;
+            cparam["fileid"] = fileId;
 
             // 実際に動画情報の更新リクエストを発行します。
-            var url = MakeVideoEditUrl(channelId, movieId);
+            var url = MakeVideoEditUrl(channelId, fileId);
             var result = WebUtil.RequestHttpText(url, cparam, cc, Encoding.UTF8);
             if (string.IsNullOrEmpty(result))
             {
