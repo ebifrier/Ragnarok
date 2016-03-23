@@ -227,7 +227,8 @@ namespace Ragnarok.NicoNico.Provider
         {
             var content = m.Groups["content"].Value;
             var status = (
-                content.Contains(@"<p class=""info"">処理順番待ち</p>") ?
+                content.Contains(@"<p class=""info"">") ||
+                content.Contains(@"<p class=""info strong"">") ?
                 UploadedVideoStatus.Uploading :
                 UploadedVideoStatus.Success);
 
