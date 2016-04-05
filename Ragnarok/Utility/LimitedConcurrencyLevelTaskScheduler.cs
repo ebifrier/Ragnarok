@@ -77,54 +77,65 @@ namespace Ragnarok.Utility
         /// </summary>
         private void NotifyThreadPoolOfPendingWork()
         {
-            ThreadPool.UnsafeQueueUserWorkItem(_ =>
+            ThreadPool.UnsafeQueueUserWorkItem(ExecuteTask, null);
+        }
+
+        private void ExecuteTask(object state)
+        {
+            // このスレッド上でタスクが処理中なことを示します。
+            currentThreadIsProcessingItems = true;
+
+            try
             {
-                // このスレッド上でタスクを処理中なことを示します。
-                currentThreadIsProcessingItems = true;
-
-                try
+                while (true)
                 {
-                    while (true)
+                    Task item;
+                    lock (this.tasks)
                     {
-                        Task item;
-                        lock (this.tasks)
+                        if (this.tasks.Count == 0)
                         {
-                            if (this.tasks.Count == 0)
-                            {
-                                --this.delegatesQueuedOrRunning;
-                                break;
-                            }
-
-                            // 次のタスクを取得
-                            item = this.tasks.First.Value;
-                            this.tasks.RemoveFirst();
+                            --this.delegatesQueuedOrRunning;
+                            break;
                         }
 
-                        base.TryExecuteTask(item);
+                        // 次のタスクを取得
+                        item = this.tasks.First.Value;
+                        this.tasks.RemoveFirst();
                     }
+
+                    TryExecuteTask(item);
                 }
-                finally
-                {
-                    currentThreadIsProcessingItems = false;
-                }
-            }, null);
+            }
+            finally
+            {
+                currentThreadIsProcessingItems = false;
+            }
         }
+
+        /*private void OnTaskFault(AggregateException exception)
+        {
+            Log.ErrorException(exception,
+                "{0}", "Taskでエラーが発生しました。");
+        }*/
 
         /// <summary>
         /// このスレッドで指定のタスクを実行できるか試みます。
         /// </summary>
         protected sealed override bool TryExecuteTaskInline(Task task, bool taskWasPreviouslyQueued)
         {
-            if (!currentThreadIsProcessingItems) return false;
+            if (!currentThreadIsProcessingItems)
+            {
+                return false;
+            }
 
             // タスクが既に登録済みであればキューから削除します。
             if (taskWasPreviouslyQueued)
             {
-                return (TryDequeue(task) ? base.TryExecuteTask(task) : false);
+                return (TryDequeue(task) ? TryExecuteTask(task) : false);
             }
             else
             {
-                return base.TryExecuteTask(task);
+                return TryExecuteTask(task);
             }
         }
 
