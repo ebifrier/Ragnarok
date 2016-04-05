@@ -16,19 +16,6 @@ namespace Ragnarok.Shogi.Kif.Tests
     internal sealed class KifTest
     {
         /// <summary>
-        /// 空白文字を文字列から取り除きます。
-        /// </summary>
-        public static string RemoveSpace(string text)
-        {
-            return text
-                .Replace("\n", "")
-                .Replace("\r", "")
-                .Replace("\t", "")
-                .Replace(" ", "")
-                .Replace("　", "");
-        }
-
-        /// <summary>
         /// 文字列を空白を考慮に入れずに比較します。
         /// </summary>
         public static void CompareWithoutSpace(string expected, string actual)
@@ -39,7 +26,7 @@ namespace Ragnarok.Shogi.Kif.Tests
             }
             else
             {
-                Assert.AreEqual(RemoveSpace(expected), RemoveSpace(actual));
+                Assert.AreEqual(expected.RemoveWhitespace(), actual.RemoveWhitespace());
             }
         }
 
@@ -83,36 +70,6 @@ namespace Ragnarok.Shogi.Kif.Tests
 
             // 入出力テストを行います。
             TestUtil.ReadWriteTest(kifu, KifuFormat.Kif, count);
-        }
-
-        /// <summary>
-        /// すべての棋譜のテストを行います。
-        /// </summary>
-#if false
-        [Test()]
-#endif
-        public void AllKifTest()
-        {
-            TestUtil.KifTest(
-                "file.list", "*.kif",
-                _ => TestKif(_));
-        }
-
-        /// <summary>
-        /// 正しく読み込めていない棋譜のテストを行います。
-        /// </summary>
-        [Test()]
-        public void Test()
-        {
-            /*var pathList = TestUtil.LoadPathList("file.list");
-
-            //var path = @"E:\Dropbox\NicoNico\shogi\test_kif\1600-1979\kif\18720111その他大矢小野有105.KIF";
-            foreach (var path in TestUtil.FileList("*.kif", pathList))
-            {
-                Console.WriteLine(path);
-
-                TestKif(path);
-            }*/
         }
 
         /// <summary>

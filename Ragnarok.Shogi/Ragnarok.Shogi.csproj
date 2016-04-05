@@ -78,10 +78,8 @@
     <Compile Include="BoardMove.cs" />
     <Compile Include="BoardPiece.cs" />
     <Compile Include="BoardType.cs" />
-    <Compile Include="Bonanza\Bonanza.cs" />
-    <Compile Include="Bonanza\BonanzaEventArgs.cs" />
-    <Compile Include="Bonanza\BonanzaException.cs" />
     <Compile Include="BWType.cs" />
+    <Compile Include="Csa\Tests\SampleCsa.cs" />
     <Compile Include="Hand.cs" />
     <Compile Include="HandBox.cs" />
     <Compile Include="Kif\Tests\SampleKif_Value.cs" />

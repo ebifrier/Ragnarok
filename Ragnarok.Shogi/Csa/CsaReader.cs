@@ -115,6 +115,7 @@ namespace Ragnarok.Shogi.Csa
                     return true;
 
                 case '+': case '-':
+                case '%':
                     var move = ParseMove(line);
                     var node = new MoveNode
                     {
@@ -131,9 +132,6 @@ namespace Ragnarok.Shogi.Csa
                     {
                         this.lastNode.DurationSeconds = seconds;
                     }
-                    return true;
-
-                case '%':
                     return true;
             }
 

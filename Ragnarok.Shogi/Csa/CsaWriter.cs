@@ -19,6 +19,7 @@ namespace Ragnarok.Shogi.Csa
         private void WriteHeader(TextWriter writer, KifuObject kifu)
         {
             writer.WriteLine("' ----  Ragnarok 棋譜ファイル  ----");
+            writer.WriteLine("V2.2");
 
             // 対局者名は別腹で行きます。
             var value = kifu.Header[KifuHeaderType.BlackName];
@@ -59,13 +60,14 @@ namespace Ragnarok.Shogi.Csa
         /// </summary>
         private void WriteMoveNode(TextWriter writer, MoveNode node)
         {
-            var csaList = KifuObject.Convert2List(node)
-                .Select(_ => _.ToCsa());
-
             // 各指し手行を出力します。
-            foreach (var csa in csaList)
+            for (node = node.NextNode; node != null; node = node.NextNode)
             {
-                writer.WriteLine(csa);
+                writer.WriteLine(node.Move.ToCsa());
+                if (!node.Move.IsSpecialMove)
+                {
+                    writer.WriteLine("T" + node.DurationSeconds);
+                }
             }
         }
 
