@@ -78,8 +78,10 @@ namespace Ragnarok.Shogi.Kif.Tests
         [Test()]
         public void VariationTest()
         {
+            var sample = SampleKif.Get("Kif_Variation.kif");
+
             // 棋譜の読み込み
-            var kifu = KifuReader.LoadFrom(SampleKif.VariationKif);
+            var kifu = KifuReader.LoadFrom(sample);
             Assert.NotNull(kifu);
             Assert.Null(kifu.Error);
 
@@ -92,7 +94,7 @@ namespace Ragnarok.Shogi.Kif.Tests
 
             // 書き込みテスト
             var kif = KifuWriter.WriteTo(kifu, KifuFormat.Kif);
-            CompareWithoutSpace(SampleKif.VariationKif, kif);
+            CompareWithoutSpace(sample, kif);
         }
 
         /// <summary>
@@ -239,10 +241,10 @@ namespace Ragnarok.Shogi.Kif.Tests
         [Test()]
         public void CommentTest2()
         {
-            var text = SampleKif.CommentKif;
+            var sample = SampleKif.Get("Kif_Comment.kif");
 
             // 棋譜の読み込み
-            var kifu = KifuReader.LoadFrom(text);
+            var kifu = KifuReader.LoadFrom(sample);
             Assert.NotNull(kifu);
             Assert.Null(kifu.Error);
 
@@ -251,7 +253,7 @@ namespace Ragnarok.Shogi.Kif.Tests
             Assert.AreEqual(count, kifu.MoveList.Count());
 
             // コメントの確認
-            var commentList = SampleKif.GetCommentList(SampleKif.CommentKif);
+            var commentList = SampleKif.GetCommentList(sample);
             for (var node = kifu.RootNode; node != null; node = node.NextNode)
             {
                 if (commentList[node.MoveCount] == null)
@@ -274,8 +276,10 @@ namespace Ragnarok.Shogi.Kif.Tests
         [Test()]
         public void CommentVariationTest()
         {
+            var sample = SampleKif.Get("Kif_Test1.kif");
+
             // 棋譜の読み込み
-            var kifu = KifuReader.LoadFrom(SampleKif.ValueKif);
+            var kifu = KifuReader.LoadFrom(sample);
             Assert.NotNull(kifu);
             Assert.Null(kifu.Error);
 
@@ -288,7 +292,7 @@ namespace Ragnarok.Shogi.Kif.Tests
 
             // 書き込みテスト
             var kif = KifuWriter.WriteTo(kifu, KifuFormat.Kif);
-            CompareWithoutSpace(SampleKif.ValueKif, kif);
+            CompareWithoutSpace(sample, kif);
         }
 
         /// <summary>

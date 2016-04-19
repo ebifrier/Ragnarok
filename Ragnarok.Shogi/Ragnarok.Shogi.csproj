@@ -79,13 +79,10 @@
     <Compile Include="BoardPiece.cs" />
     <Compile Include="BoardType.cs" />
     <Compile Include="BWType.cs" />
-    <Compile Include="Csa\Tests\SampleCsa.cs" />
+    <EmbeddedResource Include="Csa\Tests\SampleCsa.csa" />
     <Compile Include="Hand.cs" />
     <Compile Include="HandBox.cs" />
-    <Compile Include="Kif\Tests\SampleKif_Value.cs" />
     <Compile Include="Kif\Tests\SampleKif.cs" />
-    <Compile Include="Kif\Tests\SampleKif_Variation.cs" />
-    <Compile Include="Kif\Tests\SampleKif_Comment.cs" />
     <Compile Include="Score.cs" />
     <Compile Include="ShogiParser.cs" />
     <Compile Include="SquareCollection.cs" />
@@ -149,6 +146,14 @@
     <Compile Include="SquareCollectionConverter.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Kif\Tests\Sample\Ki2_Error.ki2" />
+    <EmbeddedResource Include="Kif\Tests\Sample\Ki2_Test1.KI2" />
+    <EmbeddedResource Include="Kif\Tests\Sample\Ki2_Test2.KI2" />
+    <EmbeddedResource Include="Kif\Tests\Sample\Ki2_Test3.KI2" />
+    <EmbeddedResource Include="Kif\Tests\Sample\Kif_Comment.kif" />
+    <EmbeddedResource Include="Kif\Tests\Sample\Kif_Test1.kif" />
+    <EmbeddedResource Include="Kif\Tests\Sample\Kif_Variation.kif" />
+    <EmbeddedResource Include="Kif\Tests\Sample\Ki2_Illegal.KI2" />
     <None Include="Ragnarok.Shogi.snk" />
   </ItemGroup>
   <ItemGroup>

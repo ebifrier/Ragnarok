@@ -6,7 +6,7 @@ using System.Text;
 namespace Ragnarok.Shogi
 {
     /// <summary>
-    /// 指してサンプルの各指し手とその評価値を保存します。
+    /// 指し手のサンプルとその各評価値を保存します。
     /// </summary>
     public sealed class SampleMoveData
     {

@@ -54,12 +54,40 @@ namespace Ragnarok.Shogi.Kif
             }
         }
 
+        /// <summary>
+        /// コメント行を出力します。
+        /// </summary>
+        private void WriteComment(TextWriter writer, MoveNode node)
+        {
+            foreach (var variationInfo in node.VariationInfoList)
+            {
+                if (variationInfo == null || variationInfo.MoveList == null)
+                {
+                    continue;
+                }
+
+                writer.WriteLine("**{0} {1}",
+                    variationInfo.Value,
+                    string.Join("",
+                        variationInfo.MoveList.Select(_ => _.ToString())));
+            }
+
+            foreach (var comment in node.CommentList)
+            {
+                writer.WriteLine("*{0}", comment);
+            }
+        }
+
         #region ki2
         /// <summary>
         /// ki2形式の指し手を出力します。
         /// </summary>
         private void WriteMoveNodeKi2(TextWriter writer, MoveNode node, Board board)
         {
+            // 先頭ノードは指し手がありませんが
+            // コメントは存在することがあります。
+            WriteComment(writer, node);
+
             var moveList = KifuObject.Convert2List(node);
             var lineList = board.ConvertMove(moveList, false)
                 .Where(_ => _ != null && _.Validate())
@@ -102,7 +130,7 @@ namespace Ragnarok.Shogi.Kif
             // ついでにコメント行も出力します。
             // 先頭ノードは指し手がありませんが
             // コメントは存在することがあります。
-            WriteCommentKif(writer, node);
+            WriteComment(writer, node);
 
             // 次の指し手があればそれも出力します。
             for (var i = 0; i < node.NextNodes.Count(); ++i)
@@ -151,30 +179,6 @@ namespace Ragnarok.Shogi.Kif
                 node.Duration,
                 node.TotalDuration,
                 (hasVariation ? "+" : ""));
-        }
-
-        /// <summary>
-        /// コメント行を出力します。
-        /// </summary>
-        private void WriteCommentKif(TextWriter writer, MoveNode node)
-        {
-            foreach (var variationInfo in node.VariationInfoList)
-            {
-                if (variationInfo == null || variationInfo.MoveList == null)
-                {
-                    continue;
-                }
-
-                writer.WriteLine("**{0} {1}",
-                    variationInfo.Value,
-                    string.Join("",
-                        variationInfo.MoveList.Select(_ => _.ToString())));
-            }
-
-            foreach (var comment in node.CommentList)
-            {
-                writer.WriteLine("*{0}", comment);
-            }
         }
         #endregion
 

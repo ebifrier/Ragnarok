@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using NUnit.Framework;
@@ -14,6 +15,21 @@ namespace Ragnarok.Shogi.Csa.Tests
     [TestFixture()]
     internal sealed class CsaTest
     {
+        /// <summary>
+        /// 指定の名前を持つ棋譜をリソースから読み込みます。
+        /// </summary>
+        public static string Get(string resourceName)
+        {
+            var asm = Assembly.GetExecutingAssembly();
+            var ns = typeof(CsaTest).Namespace + ".";
+
+            using (var stream = asm.GetManifestResourceStream(ns + resourceName))
+            using (var reader = new StreamReader(stream, KifuObject.DefaultEncoding))
+            {
+                return reader.ReadToEnd();
+            }
+        }
+
         private static string RemoteWasted(string csa, bool removeTime)
         {
             var initialBoard =
@@ -28,6 +44,7 @@ namespace Ragnarok.Shogi.Csa.Tests
                 "P9+KY+KE+GI+KI+OU+KI+GI+KE+KY";
 
             csa = csa.Replace(initialBoard, "PI");
+            csa = csa.Replace(initialBoard.Replace("\n", "\r\n"), "PI");
             csa = Regex.Replace(csa, @"^'.*$", "", RegexOptions.Multiline);
             if (removeTime)
             {
@@ -125,9 +142,10 @@ namespace Ragnarok.Shogi.Csa.Tests
                  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,
                  0, // 投了分
             };
+            var sample = Get("SampleCsa.csa");
 
             // 棋譜の読み込み
-            var kifu = KifuReader.LoadFrom(SampleCsa.Sample1);
+            var kifu = KifuReader.LoadFrom(sample);
             Assert.NotNull(kifu);
             Assert.AreEqual(timeSeconds.Count(), kifu.MoveList.Count());
 
@@ -141,7 +159,7 @@ namespace Ragnarok.Shogi.Csa.Tests
 
             // 書き込みテスト
             var kif = KifuWriter.WriteTo(kifu, KifuFormat.Csa);
-            CompareCsaKif(SampleCsa.Sample1, kif, false);
+            CompareCsaKif(sample, kif, false);
         }
     }
 }
