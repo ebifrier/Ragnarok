@@ -100,6 +100,9 @@ namespace Ragnarok.Shogi
             {"ILLEGALMOVE", SpecialMoveType.IllegalMove},
             {"ILLEGAL_MOVE", SpecialMoveType.IllegalMove},
 
+            {"封じ手", SpecialMoveType.SealedMove },
+            {"ふうじて", SpecialMoveType.SealedMove },
+
             {"エラー", SpecialMoveType.Error},
             {"ERROR", SpecialMoveType.Error},
         };

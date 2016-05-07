@@ -64,6 +64,11 @@ namespace Ragnarok.Shogi
         [LabelDescription(Label = "詰み")]
         CheckMate,
         /// <summary>
+        /// 封じ手
+        /// </summary>
+        [LabelDescription(Label = "封じ手")]
+        SealedMove,
+        /// <summary>
         /// エラー
         /// </summary>
         [LabelDescription(Label = "エラー")]
