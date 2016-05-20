@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 namespace Ragnarok.NicoNico.Provider
 {
     using Net;
+    using Utility;
     using Video;
 
     /// <summary>
@@ -25,6 +26,33 @@ namespace Ragnarok.NicoNico.Provider
         /// メンバーのみ視聴可能
         /// </summary>
         MemberOnly = 4,
+    }
+
+    /// <summary>
+    /// 検索の表示順を指定します。
+    /// </summary>
+    public enum SearchOrder
+    {
+        [LabelDescription(Description = "_fileid")]
+        BiggerFileId,
+        [LabelDescription(Description = "fileid")]
+        SmallerFileId,
+        [LabelDescription(Description = "title")]
+        Title,
+        [LabelDescription(Description = "_title")]
+        TitleReverse,
+        [LabelDescription(Description = "_insertdate")]
+        NewerInsertDate,
+        [LabelDescription(Description = "insertdate")]
+        OlderInsertDate,
+        [LabelDescription(Description = "_uploaddate")]
+        NewerUploadDate,
+        [LabelDescription(Description = "uploaddate")]
+        OlderUploadDate,
+        [LabelDescription(Description = "_visible_start_time")]
+        NewerVisibleStartTime,
+        [LabelDescription(Description = "visible_start_time")]
+        OlderVisibleStartTime,
     }
 
     /// <summary>
@@ -371,6 +399,7 @@ namespace Ragnarok.NicoNico.Provider
         /// チャンネルツール内でキーワードによる検索結果をhtmlで取得します。
         /// </summary>
         public static string RequestSearch(CookieContainer cc, int channelId, string keyword,
+                                           SearchOrder order = SearchOrder.NewerVisibleStartTime,
                                            int pageId = 1, int limit = 20)
         {
             if (cc == null)
@@ -395,7 +424,7 @@ namespace Ragnarok.NicoNico.Provider
             param["ppv_type"] = "all";
             param["hide_flag"] = "";
             param["permission"] = "1,2,3,4,5";
-            param["order"] = "_visible_start_time";
+            param["order"] = EnumEx.GetDescription(order);
             param["keyword"] = keyword;
 
             // パラメータはGET用のエンコードを行います。
@@ -411,7 +440,8 @@ namespace Ragnarok.NicoNico.Provider
         /// </summary>
         public static IEnumerable<ChannelVideoData> Search(CookieContainer cc,
                                                            int channelId,
-                                                           string keyword, 
+                                                           string keyword,
+                                                           SearchOrder order = SearchOrder.NewerVisibleStartTime,
                                                            int pageId = 1,
                                                            int limit = 20)
         {
@@ -421,7 +451,7 @@ namespace Ragnarok.NicoNico.Provider
             }
 
             var text = ChannelTool.RequestSearch(
-                cc, channelId, keyword, pageId, limit);
+                cc, channelId, keyword, order, pageId, limit);
             if (string.IsNullOrEmpty(text))
             {
                 return new List<ChannelVideoData>();

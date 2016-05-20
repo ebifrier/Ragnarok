@@ -200,15 +200,8 @@ namespace Ragnarok.NicoNico.Provider
         {
             return VideoRegex.Matches(text)
                 .OfType<Match>()
-                .Select(_ =>
-                {
-                    var movie = FromSearchResult(_.Value);
-                    if (movie == null)
-                    {
-                        Log.Error("FromSearchResult Error");
-                    }
-                    return movie;
-                });
+                .Select(_ => FromSearchResult(_.Value))
+                .Where(_ => _ != null);
         }
         #endregion
     }
