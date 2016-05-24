@@ -309,6 +309,14 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
+        /// 評価値の基準となる手番を入れ替えます。
+        /// </summary>
+        public void FlipTurn()
+        {
+            Turn = Turn.Flip();
+        }
+
+        /// <summary>
         /// 単項+演算子
         /// </summary>
         public static Score operator +(Score score)
