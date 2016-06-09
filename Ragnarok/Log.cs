@@ -63,9 +63,9 @@ namespace Ragnarok
 
                 // ロガーを作成する前に、必要なオブジェクトを
                 // 読み込んでおきます。
-                TargetFactory.AddTargetsFromAssembly(thisAsm, "");
+                /*TargetFactory.AddTargetsFromAssembly(thisAsm, "");
                 LayoutFactory.AddLayoutsFromAssembly(thisAsm, "");
-                LayoutRendererFactory.AddLayoutRenderersFromAssembly(thisAsm, "");
+                LayoutRendererFactory.AddLayoutRenderersFromAssembly(thisAsm, "");*/
 
                 // 実行ファイルと同じパスからappname.exe.nlogやNLog.configを検索します。
                 var configFileNames = new string[]
@@ -136,7 +136,7 @@ namespace Ragnarok
 
             if (logger != null)
             {
-                logger.FatalException(message, ex);
+                logger.Fatal(ex, message);
             }
         }
 
@@ -191,7 +191,7 @@ namespace Ragnarok
 
             if (logger != null)
             {
-                logger.ErrorException(message, ex);
+                logger.Error(ex, message);
             }
         }
 
