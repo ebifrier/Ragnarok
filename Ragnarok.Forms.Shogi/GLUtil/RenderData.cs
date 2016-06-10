@@ -180,7 +180,7 @@ namespace Ragnarok.Forms.Shogi.GLUtil
         /// </summary>
         private void SetMesh()
         {
-#if true
+#if false
             GL.Begin(PrimitiveType.Triangles);
 #else
             GL.Begin(BeginMode.Triangles);
