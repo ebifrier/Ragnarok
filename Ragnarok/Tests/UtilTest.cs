@@ -35,15 +35,18 @@ namespace Ragnarok.Tests
 
             try
             {
-                var lines = Util.ReadLines(filepath, Encoding.UTF8);
-                var en = lines.GetEnumerator();
-
-                foreach (var expected in FileContents)
+                using (var stream = new FileStream(filepath, FileMode.Open))
                 {
-                    Assert.IsTrue(en.MoveNext());
-                    Assert.AreEqual(expected, en.Current);
+                    var lines = Util.ReadLines(stream, Encoding.UTF8);
+                    var en = lines.GetEnumerator();
+
+                    foreach (var expected in FileContents)
+                    {
+                        Assert.IsTrue(en.MoveNext());
+                        Assert.AreEqual(expected, en.Current);
+                    }
+                    Assert.IsFalse(en.MoveNext());
                 }
-                Assert.IsFalse(en.MoveNext());
             }
             finally
             {

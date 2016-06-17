@@ -531,17 +531,6 @@ namespace Ragnarok
         }
 
         /// <summary>
-        /// 指定のパスのファイルをバイト列として読み込みます。
-        /// </summary>
-        public static byte[] ReadFile(string filepath)
-        {
-            using (var stream = new FileStream(filepath, FileMode.Open))
-            {
-                return ReadToEnd(stream);
-            }
-        }
-
-        /// <summary>
         /// ストリームの内容を読み出します。
         /// </summary>
         public static byte[] ReadToEnd(Stream stream)
@@ -566,17 +555,6 @@ namespace Ragnarok
         }
 
         /// <summary>
-        /// 指定のパスのファイルを文字列にして読み込みます。
-        /// </summary>
-        public static string ReadFile(string filepath, Encoding encoding)
-        {
-            using (var stream = new FileStream(filepath, FileMode.Open))
-            {
-                return ReadToEnd(stream, encoding);
-            }
-        }
-
-        /// <summary>
         /// ストリームの内容を指定のエンコーディングで読み出します。
         /// </summary>
         public static string ReadToEnd(Stream stream, Encoding encoding)
@@ -584,20 +562,6 @@ namespace Ragnarok
             using (var reader = new StreamReader(stream, encoding))
             {
                 return reader.ReadToEnd();
-            }
-        }
-
-        /// <summary>
-        /// ストリームの内容を行ごとに読み込みます。
-        /// </summary>
-        public static IEnumerable<string> ReadLines(string filepath, Encoding encoding)
-        {
-            using (var stream = new FileStream(filepath, FileMode.Open))
-            {
-                foreach (var line in ReadLines(stream, encoding))
-                {
-                    yield return line;
-                }
             }
         }
 
