@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
-using System.Windows;
 using OpenTK;
 using OpenTK.Graphics;
 
-using Ragnarok.Forms.Draw;
 using Ragnarok.Utility;
 
 namespace Ragnarok.Forms.Shogi.GLUtil

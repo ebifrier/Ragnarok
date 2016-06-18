@@ -2,11 +2,8 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-using OpenTK;
 
-using Ragnarok;
 using Ragnarok.Extra.Effect;
 using Ragnarok.Forms.Input;
 using Ragnarok.ObjectModel;

@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
-using Ragnarok.Forms;
 using Ragnarok.Forms.Input;
 
 namespace Ragnarok.Forms.Shogi.View

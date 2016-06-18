@@ -3,12 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Windows.Forms;
-using OpenTK;
 
 using Ragnarok.ObjectModel;
-using Ragnarok.Utility;
 using Ragnarok.Shogi;
 
 namespace Ragnarok.Forms.Shogi.View

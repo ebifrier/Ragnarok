@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using NUnit.Framework;
 
@@ -26,7 +25,7 @@ namespace Ragnarok.Shogi.File.Tests
                 return new HashSet<string>();
             }
 
-            return new HashSet<string>(Util.ReadLines(filepath, Encoding.UTF8));
+            return new HashSet<string>(System.IO.File.ReadAllLines(filepath, Encoding.UTF8));
         }
 
         /// <summary>
@@ -64,7 +63,6 @@ namespace Ragnarok.Shogi.File.Tests
             var fileList = FileList(extension).ToList();
 
             Parallel.ForEach(fileList,
-            //fileList.ForEach(
                 path =>
                 {
                     var line = path + "... ";

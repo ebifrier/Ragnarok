@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Linq;
-using System.Text;
-using OpenTK;
 
 using Ragnarok.Forms.Draw;
 using Ragnarok.Utility;
@@ -27,7 +24,7 @@ namespace Ragnarok.Forms.Shogi.GLUtil
         /// <summary>
         /// テクスチャのリストを取得します。
         /// </summary>
-        public List<GLUtil.Texture> TextureList
+        public List<Texture> TextureList
         {
             get;
             private set;
@@ -94,11 +91,11 @@ namespace Ragnarok.Forms.Shogi.GLUtil
 
             try
             {
-                List<GLUtil.Texture> list = null;
+                List<Texture> list = null;
                 if (count == 1)
                 {
                     // 画像一枚をテクスチャに直します。
-                    list = new List<GLUtil.Texture>
+                    list = new List<Texture>
                     {
                         LoadTexture(image)
                     };
@@ -130,9 +127,9 @@ namespace Ragnarok.Forms.Shogi.GLUtil
         /// <summary>
         /// ビットマップからテクスチャを読み込みます。
         /// </summary>
-        private GLUtil.Texture LoadTexture(Bitmap bitmap)
+        private Texture LoadTexture(Bitmap bitmap)
         {
-            var tex = new GLUtil.Texture();
+            var tex = new Texture();
             if (!tex.Create(bitmap))
             {
                 throw new RagnarokException(

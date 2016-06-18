@@ -2,14 +2,10 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Reflection;
 using System.Windows.Forms;
 
-using Ragnarok;
 using Ragnarok.Shogi;
 using Ragnarok.Utility;
-using Ragnarok.ObjectModel;
 
 namespace Ragnarok.Forms.Shogi.View
 {

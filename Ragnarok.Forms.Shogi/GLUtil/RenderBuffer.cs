@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using OpenTK;
 
 using Ragnarok.Extra.Effect;
 using Ragnarok.Utility;

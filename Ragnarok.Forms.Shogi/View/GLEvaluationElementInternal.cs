@@ -2,12 +2,8 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using OpenTK;
 
-using Ragnarok;
 using Ragnarok.Extra.Effect;
-using Ragnarok.ObjectModel;
 using Ragnarok.Shogi;
 using Ragnarok.Utility;
 

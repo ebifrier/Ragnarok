@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Windows;
 
 using FlintSharp;
-using Ragnarok.Extra.Effect;
 
 namespace Ragnarok.Forms.Shogi
 {
-    using Effect;
     using FlintSharpEx;
 
     /// <summary>

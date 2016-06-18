@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Windows;
 
 using Ragnarok.Shogi;
-using Ragnarok.Extra.Effect;
 
 namespace Ragnarok.Forms.Shogi
 {

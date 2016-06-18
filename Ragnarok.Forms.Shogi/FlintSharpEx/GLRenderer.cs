@@ -2,15 +2,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Windows;
 
 using FlintSharp;
 using FlintSharp.Particles;
 using FlintSharp.Renderers;
-using OpenTK;
 
 using Ragnarok.Extra.Effect;
-using Ragnarok.Utility;
 
 namespace Ragnarok.Forms.Shogi.FlintSharpEx
 {

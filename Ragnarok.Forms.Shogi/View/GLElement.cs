@@ -4,9 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using OpenTK;
 
-using Ragnarok.ObjectModel;
 using Ragnarok.Extra.Effect;
 
 namespace Ragnarok.Forms.Shogi.View

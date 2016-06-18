@@ -3,13 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Reflection;
-using System.Windows;
-using System.Windows.Forms;
-using OpenTK;
 
-using Ragnarok;
 using Ragnarok.Shogi;
 using Ragnarok.Utility;
 using Ragnarok.ObjectModel;

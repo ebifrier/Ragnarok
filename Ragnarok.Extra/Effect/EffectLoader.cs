@@ -43,12 +43,12 @@ namespace Ragnarok.Extra.Effect
                 byte[] bytes = null;
                 if (args == null || !args.Any())
                 {
-                    bytes = Util.ReadFile(path);
+                    bytes = File.ReadAllBytes(path);
                 }
                 else
                 {
                     // ファイル中の変数を置き換えます。
-                    var text = Util.ReadFile(path, Encoding.UTF8);
+                    var text = File.ReadAllText(path, Encoding.UTF8);
                     text = ReplaceTable(text, args);
 
                     bytes = Encoding.UTF8.GetBytes(text);
