@@ -18,17 +18,7 @@ namespace Ragnarok.Forms.Input
         public static void BindMenuCommand(Type type, IEnumerable<ToolStripItem> items,
                                            object parameter = null)
         {
-            if ((object)type == null)
-            {
-                throw new ArgumentNullException("type");
-            }
-
-            if (items == null)
-            {
-                return;
-            }
-
-            items.ForEach(_ => BindMenuCommand(type, _, parameter));
+            BindMenuCommand(new[] { type }, items, parameter);
         }
 
         /// <remarks>
@@ -37,17 +27,7 @@ namespace Ragnarok.Forms.Input
         public static void BindMenuCommand(Type type, IEnumerable<ToolStripItem> items,
                                            Func<object> parameterCallback)
         {
-            if ((object)type == null)
-            {
-                throw new ArgumentNullException("type");
-            }
-
-            if (items == null)
-            {
-                return;
-            }
-
-            items.ForEach(_ => BindMenuCommand(type, _, parameterCallback));
+            BindMenuCommand(new[] { type }, items, parameterCallback);
         }
 
         /// <summary>
@@ -56,7 +36,7 @@ namespace Ragnarok.Forms.Input
         public static void BindMenuCommand(Type type, ToolStripItem item,
                                            object parameter = null)
         {
-            BindMenuCommandInternal(type, item, () => parameter);
+            BindMenuCommand(new[] { type }, item, parameter);
         }
 
         /// <summary>
@@ -65,7 +45,65 @@ namespace Ragnarok.Forms.Input
         public static void BindMenuCommand(Type type, ToolStripItem item,
                                            Func<object> parameterCallback)
         {
-            BindMenuCommandInternal(type, item, parameterCallback);
+            BindMenuCommand(new[] { type }, item, parameterCallback);
+        }
+
+        /// <remarks>
+        /// コマンド名はTagで指定され、そのコマンドをアイテムに設定します。
+        /// </remarks>
+        public static void BindMenuCommand(IEnumerable<Type> types,
+                                           IEnumerable<ToolStripItem> items,
+                                           object parameter = null)
+        {
+            if ((object)types == null)
+            {
+                throw new ArgumentNullException("types");
+            }
+
+            if (items == null)
+            {
+                return;
+            }
+
+            items.ForEach(_ => BindMenuCommand(types, _, parameter));
+        }
+
+        /// <remarks>
+        /// コマンド名はTagで指定され、そのコマンドをアイテムに設定します。
+        /// </remarks>
+        public static void BindMenuCommand(IEnumerable<Type> types,
+                                           IEnumerable<ToolStripItem> items,
+                                           Func<object> parameterCallback)
+        {
+            if ((object)types == null)
+            {
+                throw new ArgumentNullException("types");
+            }
+
+            if (items == null)
+            {
+                return;
+            }
+
+            items.ForEach(_ => BindMenuCommand(types, _, parameterCallback));
+        }
+
+        /// <summary>
+        /// <paramref name="item"/>とその子メニューのコマンドバインディングを行います。
+        /// </summary>
+        public static void BindMenuCommand(IEnumerable<Type> types, ToolStripItem item,
+                                           object parameter = null)
+        {
+            BindMenuCommandInternal(types.ToArray(), item, () => parameter);
+        }
+
+        /// <summary>
+        /// <paramref name="item"/>とその子メニューのコマンドバインディングを行います。
+        /// </summary>
+        public static void BindMenuCommand(IEnumerable<Type> types, ToolStripItem item,
+                                           Func<object> parameterCallback)
+        {
+            BindMenuCommandInternal(types.ToArray(), item, parameterCallback);
         }
 
         /// <summary>
@@ -74,12 +112,12 @@ namespace Ragnarok.Forms.Input
         /// <remarks>
         /// コマンド名はitem.Tagで指定され、そのコマンドをアイテムに設定します。
         /// </remarks>
-        public static void BindMenuCommandInternal(Type type, ToolStripItem item,
+        public static void BindMenuCommandInternal(Type[] types, ToolStripItem item,
                                                    Func<object> parameterCallback)
         {
-            if ((object)type == null)
+            if (types == null || !types.Any())
             {
-                throw new ArgumentNullException("type");
+                throw new ArgumentNullException("types");
             }
 
             if (item == null)
@@ -88,14 +126,14 @@ namespace Ragnarok.Forms.Input
             }
 
             // まず自分のコマンドバインディングを行います。
-            BindMenuCommandThisItem(type, item, parameterCallback);
+            BindMenuCommandThisItem(types, item, parameterCallback);
 
             // DropDownItemの場合は、それが持つ子メニューも処理します。
             var dropDown = item as ToolStripDropDownItem;
             if (dropDown != null)
             {
                 var list = dropDown.DropDownItems.OfType<ToolStripItem>();
-                BindMenuCommand(type, list, parameterCallback);
+                BindMenuCommand(types, list, parameterCallback);
                 return;
             }
         }
@@ -103,7 +141,7 @@ namespace Ragnarok.Forms.Input
         /// <summary>
         /// <paramref name="item"/>のコマンドバインディングを行います。
         /// </summary>
-        private static void BindMenuCommandThisItem(Type type, ToolStripItem item,
+        private static void BindMenuCommandThisItem(Type[] types, ToolStripItem item,
                                                     Func<object> parameterCallback)
         {
             if (item == null)
@@ -117,7 +155,7 @@ namespace Ragnarok.Forms.Input
                 return;
             }
 
-            var command = GetCommand(type, tag);
+            var command = GetCommand(types, tag);
             if (command == null)
             {
                 return;
@@ -129,26 +167,31 @@ namespace Ragnarok.Forms.Input
         /// <summary>
         /// コマンド名から指定のコマンドを取得します。
         /// </summary>
-        private static ICommand GetCommand(Type type, string commandName)
+        private static ICommand GetCommand(Type[] types, string commandName)
         {
             var flags = BindingFlags.Public | BindingFlags.Static |
                         BindingFlags.GetField;
 
-            var field = type.GetField(commandName, flags);
-            if (field == null)
+            foreach (var type in types)
             {
-                throw new InvalidOperationException(
-                    commandName + ": 指定の名前のコマンドが存在しません。");
+                var field = type.GetField(commandName, flags);
+                if (field == null)
+                {
+                    continue;
+                }
+
+                var command = field.GetValue(null) as ICommand;
+                if (command == null)
+                {
+                    throw new InvalidOperationException(
+                        commandName + ": コマンドがICommandを継承していません。");
+                }
+
+                return command;
             }
 
-            var command = field.GetValue(null) as ICommand;
-            if (command == null)
-            {
-                throw new InvalidOperationException(
-                    commandName + ": コマンドがICommandを継承していません。");
-            }
-
-            return command;
+            throw new InvalidOperationException(
+                commandName + ": 指定の名前のコマンドが存在しません。");
         }
     }
 }
