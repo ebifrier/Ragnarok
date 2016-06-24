@@ -14,7 +14,7 @@ namespace Ragnarok.Forms.Shogi.GLUtil
         /// </summary>
         public TextTextureFont()
         {
-            FontFamilyName = DefaultFont.FontFamily.Name;
+            FontFamily = DefaultFont.FontFamily;
             FontStyle = DefaultFont.Style;
             Size = DefaultFont.SizeInPoints;
             Color = Color.White;
@@ -27,7 +27,7 @@ namespace Ragnarok.Forms.Shogi.GLUtil
         /// </summary>
         public Font Font
         {
-            get { return new Font(FontFamilyName, (float)Size, FontStyle); }
+            get { return new Font(FontFamily, (float)Size, FontStyle); }
             set
             {
                 if (value == null)
@@ -35,10 +35,19 @@ namespace Ragnarok.Forms.Shogi.GLUtil
                     throw new ArgumentNullException("value");
                 }
 
-                FontFamilyName = value.FontFamily.Name;
+                FontFamily = value.FontFamily;
                 FontStyle = value.Style;
                 Size = value.SizeInPoints;
             }
+        }
+
+        /// <summary>
+        /// フォントファミリーを取得または設定します。
+        /// </summary>
+        public FontFamily FontFamily
+        {
+            get;
+            set;
         }
 
         /// <summary>
@@ -46,8 +55,25 @@ namespace Ragnarok.Forms.Shogi.GLUtil
         /// </summary>
         public string FontFamilyName
         {
-            get;
-            set;
+            get { return FontFamily.Name; }
+            set
+            {
+                if (value == null)
+                {
+                    throw new ArgumentNullException("FontFamilyName");
+                }
+
+                // フォントファミリーを検索し、もしなければ無視します。
+                var family = FontFamily.Families
+                    .FirstOrDefault(_ => _.Name == value);
+                if (family == null)
+                {
+                    Log.Error($"{value}: フォントファミリーが見つかりません。");
+                    return;
+                }
+
+                FontFamily = family;
+            }
         }
 
         /// <summary>
