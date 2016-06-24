@@ -58,6 +58,7 @@
   <ItemGroup>
     <Compile Include="AutoPlay.cs" />
     <Compile Include="BoardPieceEventArgs.cs" />
+    <Compile Include="Effect\ShogiTextObject.cs" />
     <Compile Include="GLUtil\AnimationTexture.cs" />
     <Compile Include="GLUtil\GLException.cs" />
     <Compile Include="GLUtil\Misc.cs" />

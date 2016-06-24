@@ -1,18 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
-using System.Reflection;
-using System.Windows;
-using System.Windows.Forms;
-using System.Windows.Markup;
-using OpenTK;
 
 using Ragnarok.Extra.Effect;
 
 namespace Ragnarok.Forms.Shogi.Effect
 {
+    using GLUtil;
+
     /// <summary>
     /// エフェクト用のオブジェクトです。
     /// </summary>
@@ -63,9 +59,9 @@ namespace Ragnarok.Forms.Shogi.Effect
         /// <summary>
         /// 描画するテクスチャを取得または設定します。
         /// </summary>
-        public GLUtil.Texture Texture
+        public Texture Texture
         {
-            get { return GetValue<GLUtil.Texture>("Texture"); }
+            get { return GetValue<Texture>("Texture"); }
             set { SetValue("Texture", value); }
         }
         #endregion
@@ -81,10 +77,10 @@ namespace Ragnarok.Forms.Shogi.Effect
                 return;
             }
 
-            var animTexture = GLUtil.TextureCache.GetAnimationTexture(
+            var texture = TextureCache.GetAnimationTexture(
                 MakeContentPath(ImageUri),
                 AnimationImageCount);
-            if (animTexture == null)
+            if (texture == null)
             {
                 Texture = null;
                 return;
@@ -96,7 +92,7 @@ namespace Ragnarok.Forms.Shogi.Effect
                 Mesh = Mesh.CreateDefault(1, 1, 0, 0);
             }
 
-            var list = animTexture.TextureList;
+            var list = texture.TextureList;
             Texture = list[AnimationImageIndex % list.Count()];
         }
 
@@ -106,7 +102,7 @@ namespace Ragnarok.Forms.Shogi.Effect
         protected override void OnEnterFrame(EnterFrameEventArgs e)
         {
             // パーティクルの更新前にRenderBufferを設定します。
-            var renderBuffer = (GLUtil.RenderBuffer)e.StateObject;
+            var renderBuffer = (RenderBuffer)e.StateObject;
             this.renderer.RenderBuffer = renderBuffer;
 
             base.OnEnterFrame(e);

@@ -6,8 +6,6 @@ using FlintSharp;
 
 namespace Ragnarok.Forms.Shogi.FlintSharpEx
 {
-    using Effect;
-
     /// <summary>
     /// OpenGL用のイメージ読み込みクラスです。
     /// </summary>

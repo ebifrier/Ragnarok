@@ -7,19 +7,27 @@ namespace Ragnarok.Forms.Shogi.GLUtil
 {
     public sealed class TextTextureFont : IEquatable<TextTextureFont>
     {
-        public static Font DefaultFont = new Font(FontFamily.GenericSansSerif, 26);
-        private Font font = (Font)DefaultFont.Clone();
-        private Color color = Color.White;
-        private Color edgeColor = Color.Black;
-        private double edgeLength = 1.0;
-        private bool isStretchSize;
+        public static Font DefaultFont = new Font(FontFamily.GenericSansSerif, 40);
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public TextTextureFont()
+        {
+            FontFamilyName = DefaultFont.FontFamily.Name;
+            FontStyle = DefaultFont.Style;
+            Size = DefaultFont.SizeInPoints;
+            Color = Color.White;
+            EdgeColor = Color.Black;
+            EdgeLength = 1.0;
+        }
 
         /// <summary>
         /// 描画するフォントを取得または設定します。
         /// </summary>
         public Font Font
         {
-            get { return this.font; }
+            get { return new Font(FontFamilyName, (float)Size, FontStyle); }
             set
             {
                 if (value == null)
@@ -27,8 +35,37 @@ namespace Ragnarok.Forms.Shogi.GLUtil
                     throw new ArgumentNullException("value");
                 }
 
-                this.font = value;
+                FontFamilyName = value.FontFamily.Name;
+                FontStyle = value.Style;
+                Size = value.SizeInPoints;
             }
+        }
+
+        /// <summary>
+        /// フォントファミリー名を取得または設定します。
+        /// </summary>
+        public string FontFamilyName
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// フォントスタイルを取得または設定します。
+        /// </summary>
+        public FontStyle FontStyle
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// フォントサイズをemサイズ(Point数)で取得または設定します。
+        /// </summary>
+        public double Size
+        {
+            get;
+            set;
         }
 
         /// <summary>
@@ -36,8 +73,8 @@ namespace Ragnarok.Forms.Shogi.GLUtil
         /// </summary>
         public Color Color
         {
-            get { return this.color; }
-            set { this.color = value; }
+            get;
+            set;
         }
 
         /// <summary>
@@ -45,8 +82,8 @@ namespace Ragnarok.Forms.Shogi.GLUtil
         /// </summary>
         public Color EdgeColor
         {
-            get { return this.edgeColor; }
-            set { this.edgeColor = value; }
+            get;
+            set;
         }
 
         /// <summary>
@@ -54,8 +91,8 @@ namespace Ragnarok.Forms.Shogi.GLUtil
         /// </summary>
         public double EdgeLength
         {
-            get { return this.edgeLength; }
-            set { this.edgeLength = value; }
+            get;
+            set;
         }
 
         /// <summary>
@@ -64,8 +101,8 @@ namespace Ragnarok.Forms.Shogi.GLUtil
         /// </summary>
         public bool IsStretchSize
         {
-            get { return this.isStretchSize; }
-            set { this.isStretchSize = value; }
+            get;
+            set;
         }
 
         /// <summary>
@@ -93,7 +130,9 @@ namespace Ragnarok.Forms.Shogi.GLUtil
             }
 
             return (
-                Font == other.Font &&
+                FontFamilyName == other.FontFamilyName &&
+                FontStyle == other.FontStyle &&
+                Size == other.Size &&
                 Color == other.Color &&
                 EdgeColor == other.EdgeColor &&
                 EdgeLength == other.EdgeLength &&
@@ -122,7 +161,9 @@ namespace Ragnarok.Forms.Shogi.GLUtil
         public override int GetHashCode()
         {
             return (
-                Font.GetHashCode() ^
+                FontFamilyName.GetHashCode() ^
+                FontStyle.GetHashCode() ^
+                Size.GetHashCode() ^
                 Color.GetHashCode() ^
                 EdgeColor.GetHashCode() ^
                 EdgeLength.GetHashCode() ^
