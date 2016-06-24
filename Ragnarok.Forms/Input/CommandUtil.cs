@@ -12,6 +12,22 @@ namespace Ragnarok.Forms.Input
     /// </summary>
     public static class CommandUtil
     {
+        /// <summary>
+        /// もし実行可能であればコマンドを実行します。
+        /// </summary>
+        public static void ExecuteCommand(this ICommand command, object parameter = null)
+        {
+            if (command == null)
+            {
+                throw new ArgumentNullException("command");
+            }
+
+            if (command.CanExecute(parameter))
+            {
+                command.Execute(parameter);
+            }
+        }
+
         /// <remarks>
         /// コマンド名はTagで指定され、そのコマンドをアイテムに設定します。
         /// </remarks>
