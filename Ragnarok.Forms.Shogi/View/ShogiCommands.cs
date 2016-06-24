@@ -29,6 +29,13 @@ namespace Ragnarok.Forms.Shogi.View
                     "element.Boardがnullです。");
             }
 
+            // 編集可能でない場合は、Redo/Undoなども禁止します。
+            if (element.EditMode != EditMode.Normal)
+            {
+                e.CanExecute = false;
+                return;
+            }
+
             e.CanExecute = element.Board.CanUndo;
         }
 
@@ -47,6 +54,13 @@ namespace Ragnarok.Forms.Shogi.View
             {
                 throw new InvalidOperationException(
                     "element.Boardがnullです。");
+            }
+
+            // 編集可能でない場合は、Redo/Undoなども禁止します。
+            if (element.EditMode != EditMode.Normal)
+            {
+                e.CanExecute = false;
+                return;
             }
 
             e.CanExecute = element.Board.CanRedo;
