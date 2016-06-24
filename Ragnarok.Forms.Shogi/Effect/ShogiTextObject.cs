@@ -131,6 +131,12 @@ namespace Ragnarok.Forms.Shogi.Effect
                 return;
             }
 
+            // メッシュがない場合はデフォルトのメッシュで初期化します。
+            if (Mesh == null)
+            {
+                Mesh = Mesh.CreateDefault(1, 1, 0, 0);
+            }
+
             TextTexture = texture;
         }
 

@@ -284,7 +284,7 @@ namespace Ragnarok.Extra.Effect
 
             if (ParticleRenderer == null)
             {
-                return true;
+                return false;
             }
 
             return !ParticleRenderer.Emitters.All(_ => !_.Particles.Any());
