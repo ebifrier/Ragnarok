@@ -498,12 +498,16 @@ namespace Ragnarok.Forms.Shogi.View
         {
             if (e.Button == MouseButtons.Right)
             {
-                var p = ClientToLocal(e.Location);
-                var r = new RectangleF(-0.5f, -0.5f, 1.0f, 1.0f);
-                if (r.Contains(p))
+                // ダイアログを開くのはエレメントが見えているときだけ
+                if (IsVisible)
                 {
-                    // 右クリックメニューを開きます。
-                    this.contextMenu.Show(Cursor.Position);
+                    var p = ClientToLocal(e.Location);
+                    var r = new RectangleF(-0.5f, -0.5f, 1.0f, 1.0f);
+                    if (r.Contains(p))
+                    {
+                        // 右クリックメニューを開きます。
+                        this.contextMenu.Show(Cursor.Position);
+                    }
                 }
             }
 
