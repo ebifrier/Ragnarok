@@ -59,17 +59,17 @@ namespace Ragnarok.Shogi.Kif
         /// </summary>
         private void WriteComment(TextWriter writer, MoveNode node)
         {
-            foreach (var variationInfo in node.VariationInfoList)
+            foreach (var pvInfo in node.PVInfoList)
             {
-                if (variationInfo == null || variationInfo.MoveList == null)
+                if (pvInfo == null || pvInfo.MoveList == null)
                 {
                     continue;
                 }
 
                 writer.WriteLine("**{0} {1}",
-                    variationInfo.Value,
+                    pvInfo.Value,
                     string.Join("",
-                        variationInfo.MoveList.Select(_ => _.ToString())));
+                        pvInfo.MoveList.Select(_ => _.ToString())));
             }
 
             foreach (var comment in node.CommentList)

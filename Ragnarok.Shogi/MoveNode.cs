@@ -8,7 +8,7 @@ namespace Ragnarok.Shogi
     /// <summary>
     /// 変化と評価値は１セットのため、まとめて管理しています。
     /// </summary>
-    public sealed class VariationInfo
+    public sealed class PVInfo
     {
         /// <summary>
         /// 解析された評価値を取得または設定します。
@@ -95,7 +95,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// ソフトが出力した変化とその評価値のリストを取得します。
         /// </summary>
-        public List<VariationInfo> VariationInfoList
+        public List<PVInfo> PVInfoList
         {
             get;
             set;
@@ -108,8 +108,8 @@ namespace Ragnarok.Shogi
         {
             get
             {
-                return (VariationInfoList != null && VariationInfoList.Any() ?
-                    VariationInfoList.First().Value : (int?)null);
+                return (PVInfoList != null && PVInfoList.Any() ?
+                    PVInfoList.First().Value : (int?)null);
             }
         }
 
@@ -349,7 +349,7 @@ namespace Ragnarok.Shogi
         public MoveNode()
         {
             NextNodes = new List<MoveNode>();
-            VariationInfoList = new List<VariationInfo>();
+            PVInfoList = new List<PVInfo>();
             CommentList = new List<string>();
         }
     }

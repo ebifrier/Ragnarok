@@ -240,7 +240,7 @@ namespace Ragnarok.Shogi.Kif
             var root = new MoveNode
             {
                 CommentList = head_.CommentList,
-                VariationInfoList = head_.VariationInfoList,
+                PVInfoList = head_.PVInfoList,
             };
             var last = root;
 
@@ -351,7 +351,7 @@ namespace Ragnarok.Shogi.Kif
         private KifuObject LoadKif(KifuHeader header, Board board, KifMoveNode head_)
         {
             var head = ParseNodeKif(board, false);
-            head.SetupVariationInfo(board);
+            head.SetupPVInfo(board);
 
             // KifMoveNodeからMoveNodeへ変換します。
             Exception error;

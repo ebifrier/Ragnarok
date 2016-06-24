@@ -18,7 +18,7 @@ namespace Ragnarok.Shogi
         /// </summary>
         public KifMoveNode()
         {
-            VariationInfoList = new List<VariationInfo>();
+            PVInfoList = new List<PVInfo>();
             CommentList = new List<string>();
         }
 
@@ -70,7 +70,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// ノードに付随する評価値や変化などを取得または設定します。
         /// </summary>
-        public List<VariationInfo> VariationInfoList
+        public List<PVInfo> PVInfoList
         {
             get;
             set;
@@ -174,16 +174,16 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
-        /// コメントから変化行を探します。
+        /// コメントからPVを探します。
         /// </summary>
-        public void SetupVariationInfo(Board board)
+        public void SetupPVInfo(Board board)
         {
             for (var i = 0; i < CommentList.Count(); )
             {
-                var variationInfo = ParseVariationInfo(CommentList[i], board);
-                if (variationInfo != null)
+                var pvInfo = ParsePVInfo(CommentList[i], board);
+                if (pvInfo != null)
                 {
-                    VariationInfoList.Add(variationInfo);
+                    PVInfoList.Add(pvInfo);
                     CommentList.RemoveAt(i);
                 }
                 else
@@ -194,7 +194,7 @@ namespace Ragnarok.Shogi
 
             if (VariationNode != null)
             {
-                VariationNode.SetupVariationInfo(board);
+                VariationNode.SetupPVInfo(board);
             }
 
             if (Move != null && Move.Validate())
@@ -208,7 +208,7 @@ namespace Ragnarok.Shogi
 
                 if (NextNode != null)
                 {
-                    NextNode.SetupVariationInfo(board);
+                    NextNode.SetupPVInfo(board);
                 }
 
                 board.Undo();
@@ -218,7 +218,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 棋譜コメントから評価値や変化の取得します。
         /// </summary>
-        private VariationInfo ParseVariationInfo(string comment, Board board)
+        private PVInfo ParsePVInfo(string comment, Board board)
         {
             var m = KifAnalyzedVariationRegex.Match(comment);
             if (!m.Success)
@@ -263,7 +263,7 @@ namespace Ragnarok.Shogi
                 variationStr = variationStr.Substring(parsed.Length);
             }
 
-            return new VariationInfo
+            return new PVInfo
             {
                 Value = value,
                 MoveList = variation,
@@ -281,7 +281,7 @@ namespace Ragnarok.Shogi
             {
                 MoveCount = head.MoveCount,
                 Duration = head.Duration,
-                VariationInfoList = head.VariationInfoList,
+                PVInfoList = head.PVInfoList,
                 CommentList = head.CommentList,
             };
             // これでrootの子要素に指し手ツリーが設定されます。
@@ -316,7 +316,7 @@ namespace Ragnarok.Shogi
                     Move = bmove,
                     MoveCount = node.MoveCount,
                     Duration = node.Duration,
-                    VariationInfoList = node.VariationInfoList,
+                    PVInfoList = node.PVInfoList,
                     CommentList = node.CommentList,
                 };
 

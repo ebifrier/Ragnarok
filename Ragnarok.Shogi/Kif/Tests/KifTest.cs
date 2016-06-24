@@ -274,9 +274,9 @@ namespace Ragnarok.Shogi.Kif.Tests
         /// コメントに変化や評価値が含まれる棋譜のテスト
         /// </summary>
         [Test()]
-        public void CommentVariationTest()
+        public void PVCommentTest()
         {
-            var sample = SampleKif.Get("Kif_Test1.kif");
+            var sample = SampleKif.Get("Kif_PV.kif");
 
             // 棋譜の読み込み
             var kifu = KifuReader.LoadFrom(sample);
