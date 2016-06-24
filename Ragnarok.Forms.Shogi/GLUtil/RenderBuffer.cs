@@ -232,7 +232,7 @@ namespace Ragnarok.Forms.Shogi.GLUtil
         /// <summary>
         /// 描画オブジェクトを追加します。
         /// </summary>
-        public void AddRender(GLUtil.Texture texture, BlendType blend,
+        public void AddRender(Texture texture, BlendType blend,
                               RectangleF bounds, Matrix44d transform,
                               Mesh mesh, double zorder,
                               double opacity = 1.0)

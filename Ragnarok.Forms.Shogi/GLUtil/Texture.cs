@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Drawing.Drawing2D;
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 
-using Ragnarok.Forms.Draw;
 using Ragnarok.Utility;
 
 namespace Ragnarok.Forms.Shogi.GLUtil
@@ -434,14 +434,14 @@ namespace Ragnarok.Forms.Shogi.GLUtil
             int[] textureMaxSize = { 0 };
             GL.GetInteger(GetPName.MaxTextureSize, textureMaxSize);
 
-            // 2のn乗値の中から、元の画像サイズを超えない範囲で
-            // 一番大きな値を探します。
+            // 2のn乗値の中から、元の画像サイズを超えるような
+            // 一番小さな値を探します。
             int targetWidth = textureMaxSize[0];
             for (int size = 1; size <= textureMaxSize[0]; size *= 2)
             {
                 if (image.Width < size)
                 {
-                    targetWidth = size / 2;
+                    targetWidth = size;
                     break;
                 }
             }
@@ -451,7 +451,7 @@ namespace Ragnarok.Forms.Shogi.GLUtil
             {
                 if (image.Height < size)
                 {
-                    targetHeight = size / 2;
+                    targetHeight = size;
                     break;
                 }
             }
@@ -460,9 +460,12 @@ namespace Ragnarok.Forms.Shogi.GLUtil
             var result = false;
             if (image.Width != targetWidth || image.Height != targetHeight)
             {
-                using (var newImage = image.ResizeHighQuality(
-                    targetWidth, targetHeight))
+                using (var newImage = new Bitmap(targetWidth, targetHeight))
                 {
+                    DrawHighQuality(
+                        newImage, image,
+                        Math.Min(image.Width, newImage.Width),
+                        Math.Min(image.Height, newImage.Height));
                     result = CreateInternal(newImage, image.Size, toPremultipliedAlpha);
                 }
             }
@@ -477,6 +480,35 @@ namespace Ragnarok.Forms.Shogi.GLUtil
 
             GC.Collect();
             return result;
+        }
+
+        /// <summary>
+        /// 画像を綺麗に描画します。
+        /// </summary>
+        private static void DrawHighQuality(Bitmap dst, Bitmap src,
+                                            int width, int height)
+        {
+            if (dst == null)
+            {
+                throw new ArgumentNullException("dst");
+            }
+
+            if (src == null)
+            {
+                throw new ArgumentNullException("src");
+            }
+
+            using (Graphics g = Graphics.FromImage(dst))
+            {
+                g.SmoothingMode = SmoothingMode.HighQuality;
+                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                //g.PixelOffsetMode = PixelOffsetMode.HighQuality;
+
+                g.DrawImage(src,
+                    new Rectangle(0, 0, width, height), // dst
+                    new Rectangle(0, 0, src.Width, src.Height), // src
+                    GraphicsUnit.Pixel);
+            }
         }
 
         /// <summary>

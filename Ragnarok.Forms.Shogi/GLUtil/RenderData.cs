@@ -179,6 +179,16 @@ namespace Ragnarok.Forms.Shogi.GLUtil
         /// </summary>
         private void SetMesh()
         {
+            var tx = 1.0;
+            var ty = 1.0;
+
+            if (Texture != null)
+            {
+                tx = (double)Texture.OriginalWidth / Texture.Width;
+                ty = (double)Texture.OriginalHeight / Texture.Height;
+            }
+
+            // 困ったことにOpenTKのバージョンによって使える方が異なる
 #if false
             GL.Begin(PrimitiveType.Triangles);
 #else
@@ -191,7 +201,7 @@ namespace Ragnarok.Forms.Shogi.GLUtil
 
                 // UVの設定
                 var uv = Mesh.TextureUVArray[index];
-                GL.TexCoord2(uv.X, uv.Y);
+                GL.TexCoord2(uv.X * tx, uv.Y * ty);
 
                 // 頂点座標の設定
                 var pos = Mesh.VertexArray[index];
