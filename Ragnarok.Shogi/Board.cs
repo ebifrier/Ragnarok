@@ -971,29 +971,6 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
-        /// 指定の筋にすでに歩がいるかチェックします。
-        /// </summary>
-        public bool DoesPawnExist(BWType bwType, int file)
-        {
-            using (LazyLock())
-            {
-                for (var i = 0; i < BoardSize; ++i)
-                {
-                    var piece = this[file, i];
-
-                    if (piece != null &&
-                        piece.BWType == bwType &&
-                        piece.Piece == Piece.Hu)
-                    {
-                        return true;
-                    }
-                }
-
-                return false;
-            }
-        }
-
-        /// <summary>
         /// 打ち歩詰のチェックを行います。
         /// </summary>
         private bool IsPawnDropCheckMate(BWType bwType, Square square)
@@ -1056,7 +1033,7 @@ namespace Ragnarok.Shogi
                         return false;
                     case PieceType.Hu:
                         // 2歩のチェックを行います。
-                        if (DoesPawnExist(bwType, square.File))
+                        if (GetPawnCount(bwType, square.File) > 0)
                         {
                             return false;
                         }
@@ -1298,16 +1275,19 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
-        /// 指定の筋にある歩の数を取得します。
+        /// 指定の筋にある歩の数を確認します。
         /// </summary>
-        private int GetHuCountOfFile(int file, BWType bwType)
+        public int GetPawnCount(BWType bwType, int file)
         {
-            return Enumerable.Range(1, BoardSize)
-                .Select(_ => this[file, _])
-                .Where(_ => _ != null)
-                .Where(_ => _.Piece == Piece.Hu)
-                .Where(_ => _.BWType == bwType)
-                .Count();
+            using (LazyLock())
+            {
+                return Enumerable.Range(1, BoardSize)
+                    .Select(_ => this[file, _])
+                    .Where(_ => _ != null)
+                    .Where(_ => _.Piece == Piece.Hu)
+                    .Where(_ => _.BWType == bwType)
+                    .Count();
+            }
         }
 
         /// <summary>
@@ -1417,7 +1397,7 @@ namespace Ragnarok.Shogi
                     // ２歩の確認を行います。
                     for (var file = 1; file <= BoardSize; ++file)
                     {
-                        if (GetHuCountOfFile(file, bwType) > 1)
+                        if (GetPawnCount(bwType, file) > 1)
                         {
                             return false;
                         }
