@@ -45,10 +45,10 @@ namespace Ragnarok.Forms.Shogi
         /// <summary>
         /// エフェクト用のＺ座標です。
         /// </summary>
-        public const double PostEffectZ = 8.0;
+        public const double PostEffectZ = 9.0;
         /// <summary>
         /// エフェクト用のＺ座標です。
         /// </summary>
-        public const double PostEffectZ2 = 9.0;
+        public const double PostEffectZ2 = 10.0;
     }
 }
