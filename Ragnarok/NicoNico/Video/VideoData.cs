@@ -303,7 +303,7 @@ namespace Ragnarok.NicoNico.Video
         {
             get
             {
-                return new ViewCountData(IdString, ViewCounter, CommentCounter, MylistCounter);
+                return new ViewCountData(Id, ViewCounter, CommentCounter, MylistCounter);
             }
             set
             {
