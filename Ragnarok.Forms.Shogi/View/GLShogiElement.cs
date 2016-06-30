@@ -9,6 +9,8 @@ using Ragnarok.Shogi;
 
 namespace Ragnarok.Forms.Shogi.View
 {
+    using ViewModel;
+
     /// <summary>
     /// 将棋の盤面を表示するためのコントロールクラスです。
     /// </summary>
@@ -50,7 +52,6 @@ namespace Ragnarok.Forms.Shogi.View
             }
             .Apply(_ => _.Freeze());*/
 
-        private Board board;
         private IEffectManager effectManager;
         private AutoPlay autoPlay;
         private Board oldBoard;
@@ -60,10 +61,12 @@ namespace Ragnarok.Forms.Shogi.View
         /// </summary>
         public GLShogiElement()
         {
+            AddPropertyChangedHandler("Board", BoardUpdated);
             AddPropertyChangedHandler("ViewSide", ViewSideUpdated);
             AddPropertyChangedHandler("EditMode", EditModeUpdated);
+            MovedByGui += (_, e) => SetBoard(Board, e.Move);
 
-            Board = new Board();
+            BoardModel = new BoardViewModel(this);
             ViewSide = BWType.Black;
             EditMode = EditMode.Normal;
             AutoPlayState = AutoPlayState.None;
@@ -74,15 +77,7 @@ namespace Ragnarok.Forms.Shogi.View
             InManipulating = false;
 
             InitializeDraw();
-        }
-
-        /// <summary>
-        /// コマンドのバインディングを行います。
-        /// </summary>
-        public void InitializeBindings()
-        {
-            //ViewModel.ShogiCommands.Binding(this, element.CommandBindings);
-            //ViewModel.ShogiCommands.Binding(element.InputBindings);
+            this.AddDependModel(BoardModel);
         }
 
         /// <summary>
@@ -100,66 +95,48 @@ namespace Ragnarok.Forms.Shogi.View
             // 描画関係の終了処理
             TerminateDraw();
 
-            // Boardには駒が変化したときのハンドラを設定しているため
-            // 最後に必ずそのハンドラを削除する必要があります。
-            // しかしながら、ここで値をnullに設定してしまうと、
-            // Board依存プロパティに設定されたデータの方もnullクリア
-            // されてしまうため、ただ単にイベントを外すだけにします。
-            if (Board != null)
-            {
-                Board.BoardChanged -= OnBoardPieceChanged;
-            }
-
             base.OnTerminate();
         }
 
         #region イベント
         /// <summary>
-        /// 指し手が進む直前に呼ばれるイベントを追加または削除します。
+        /// GUIによって指し手が進んだ時に呼ばれるイベントを追加または削除します。
         /// </summary>
-        public event EventHandler<BoardPieceEventArgs> BoardPieceChanging;
+        public event EventHandler<BoardPieceEventArgs> MovedByGui;
 
         /// <summary>
-        /// 指し手が進んだ直後に呼ばれるイベントを追加または削除します。
+        /// GUIによって局面編集が行われた時に呼ばれるイベントを追加または削除します。
         /// </summary>
-        public event EventHandler<BoardPieceEventArgs> BoardPieceChanged;
+        public event EventHandler<BoardPieceEventArgs> BoardEdited;
         #endregion
 
         #region 基本プロパティ
         /// <summary>
+        /// 局面管理用のモデルオブジェクトを取得または設定します。
+        /// </summary>
+        public BoardViewModel BoardModel
+        {
+            get { return GetValue<BoardViewModel>("BoardModel"); }
+            private set { SetValue("BoardModel", value); }
+        }
+
+        /// <summary>
         /// 表示する局面を取得または設定します。
         /// </summary>
+        [DependOnProperty(typeof(BoardViewModel), "BoardModel")]
         public Board Board
         {
-            get { return this.board; }
-            set
-            {
-                if (this.board != value)
-                {
-                    EndMove();
-                    ClosePromoteDialog();
-                    StopAutoPlay();
+            get { return BoardModel.Board; }
+            set { BoardModel.Board = value; }
+        }
 
-                    if (this.board != null)
-                    {
-                        this.board.BoardChanged -= OnBoardPieceChanged;
-                        this.board.RemovePropertyChangedHandler("Turn", OnTurnChanged);
-                    }
+        private void BoardUpdated(object sender, PropertyChangedEventArgs e)
+        {
+            EndMove();
+            ClosePromoteDialog();
+            StopAutoPlay();
 
-                    this.board = value;
-
-                    if (this.board != null)
-                    {
-                        this.board.BoardChanged += OnBoardPieceChanged;
-                        this.board.AddPropertyChangedHandler("Turn", OnTurnChanged);
-                    }
-
-                    InitKomaboxPieceCount();
-                    InitEffect();
-
-                    this.RaisePropertyChanged("Board");
-                }
-            }
+            InitEffect();
         }
 
         /// <summary>
@@ -323,19 +300,6 @@ namespace Ragnarok.Forms.Shogi.View
 
         #region 駒台の操作
         /// <summary>
-        /// 現在の局面から、駒箱に入るべき駒数を調べます。
-        /// </summary>
-        private void InitKomaboxPieceCount()
-        {
-            foreach (var pieceType in EnumEx.GetValues<PieceType>())
-            {
-                var count = Board.GetLeavePieceCount(pieceType);
-
-                this.komaboxCount[(int)pieceType] = count;
-            }
-        }
-
-        /// <summary>
         /// 持ち駒や駒箱の駒の数を取得します。
         /// </summary>
         private int GetHandCount(PieceType pieceType, BWType bwType)
@@ -343,7 +307,7 @@ namespace Ragnarok.Forms.Shogi.View
             if (bwType == BWType.None)
             {
                 // 駒箱の駒の数
-                return this.komaboxCount[(int)pieceType];
+                return Board.GetLeavePieceCount(pieceType);
             }
             else
             {
@@ -368,12 +332,7 @@ namespace Ragnarok.Forms.Shogi.View
                 throw new ArgumentException("count");
             }
 
-            if (bwType == 0)
-            {
-                // 駒箱の駒の数
-                this.komaboxCount[(int)pieceType] = count;
-            }
-            else
+            if (bwType != BWType.None)
             {
                 // 持ち駒の駒の数
                 Board.SetHandCount(pieceType, bwType, count);
@@ -402,6 +361,37 @@ namespace Ragnarok.Forms.Shogi.View
         #endregion
 
         #region 盤とビューとの同期など
+        /// <summary>
+        /// 局面を設定したのち、必要なエフェクトなどを表示します。
+        /// </summary>
+        public void SetBoard(Board board, Move move, bool isUndo = false)
+        {
+            if (board == null)
+            {
+                throw new ArgumentNullException("board");
+            }
+
+            // 指し手が指定されていない場合は、局面をそのまま変更します。
+            if (move == null || !move.Validate())
+            {
+                Board = board;
+                return;
+            }
+            
+            EndMove();
+
+            if (!ReferenceEquals(this.board, board))
+            {
+                Board = board;
+            }
+
+            // 指し手が進んだときのエフェクトを追加します。
+            if (EffectManager != null)
+            {
+                EffectManager.Moved(move, isUndo);
+            }
+        }
+
         /// <summary>
         /// 盤面の駒が移動したときに呼ばれます。
         /// </summary>

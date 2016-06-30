@@ -101,10 +101,6 @@
       <Project>{8EBDC79A-607B-4B56-A298-1471CD6753DB}</Project>
       <Name>Ragnarok.Extra</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Ragnarok.Presentation\Ragnarok.Presentation.csproj">
-      <Project>{2E5515A8-7B34-44A2-9C50-F423C5F87798}</Project>
-      <Name>Ragnarok.Presentation</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="Ragnarok.Presentation.Extra.snk" />
