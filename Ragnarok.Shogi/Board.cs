@@ -62,7 +62,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 指された指し手を取得または設定します。
         /// </summary>
-        public BoardMove Move
+        public Move Move
         {
             get;
             set;
@@ -80,7 +80,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public BoardChangedEventArgs(BoardMove move, bool isUndo)
+        public BoardChangedEventArgs(Move move, bool isUndo)
         {
             Move = move;
             IsUndo = isUndo;
@@ -145,9 +145,9 @@ namespace Ragnarok.Shogi
         [DataMember(Order = 5, IsRequired = true)]
         private Square prevMovedSquare = null;
         //[DataMember(Order = 6, IsRequired = true)]
-        private List<BoardMove> moveList = new List<BoardMove>();
+        private List<Move> moveList = new List<Move>();
         //[DataMember(Order = 7, IsRequired = true)]
-        private List<BoardMove> redoList = new List<BoardMove>();
+        private List<Move> redoList = new List<Move>();
 
         /// <summary>
         /// 静的コンストラクタ
@@ -242,7 +242,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 局面の変更を通知します。
         /// </summary>
-        private void NotifyBoardChanged(BoardMove move, bool isUndo)
+        private void NotifyBoardChanged(Move move, bool isUndo)
         {
             BoardChanged.SafeRaiseEvent(
                 this, new BoardChangedEventArgs(move, isUndo));
@@ -302,13 +302,13 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 今までの指し手をすべて取得します。
         /// </summary>
-        public ReadOnlyCollection<BoardMove> MoveList
+        public ReadOnlyCollection<Move> MoveList
         {
             get
             {
                 using (LazyLock())
                 {
-                    return new ReadOnlyCollection<BoardMove>(this.moveList);
+                    return new ReadOnlyCollection<Move>(this.moveList);
                 }
             }
         }
@@ -316,13 +316,13 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// Redoできる指し手のリストを取得します。
         /// </summary>
-        public ReadOnlyCollection<BoardMove> RedoList
+        public ReadOnlyCollection<Move> RedoList
         {
             get
             {
                 using (LazyLock())
                 {
-                    return new ReadOnlyCollection<BoardMove>(this.redoList);
+                    return new ReadOnlyCollection<Move>(this.redoList);
                 }
             }
         }
@@ -386,7 +386,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 一番最後の指し手を取得します。
         /// </summary>
-        public BoardMove LastMove
+        public Move LastMove
         {
             get
             {
@@ -629,7 +629,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// １手戻します。
         /// </summary>
-        public BoardMove Undo()
+        public Move Undo()
         {
             using (LazyLock())
             {
@@ -659,7 +659,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// undo操作を実行します。
         /// </summary>
-        private void DoUndo(BoardMove move)
+        private void DoUndo(Move move)
         {
             if (move.IsSpecialMove)
             {
@@ -715,7 +715,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// １手戻したのを再び復活します。
         /// </summary>
-        public BoardMove Redo()
+        public Move Redo()
         {
             using (LazyLock())
             {
@@ -809,7 +809,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// その指し手が実際に実現できるか調べます。
         /// </summary>
-        public bool CanMove(BoardMove move, MoveFlags flags = MoveFlags.CanMoveDefault)
+        public bool CanMove(Move move, MoveFlags flags = MoveFlags.CanMoveDefault)
         {
             flags |= MoveFlags.CheckOnly;
 
@@ -819,7 +819,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// その指し手を実際に実行します。
         /// </summary>
-        public bool DoMove(BoardMove move, MoveFlags flags = MoveFlags.DoMoveDefault)
+        public bool DoMove(Move move, MoveFlags flags = MoveFlags.DoMoveDefault)
         {
             flags &= ~MoveFlags.CheckOnly;
 
@@ -829,7 +829,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 駒を動かすか、または駒が動かせるか調べます。
         /// </summary>
-        private bool CheckAndMakeMove(BoardMove move, MoveFlags flags)
+        private bool CheckAndMakeMove(Move move, MoveFlags flags)
         {
             if (move == null || !move.Validate())
             {
@@ -884,7 +884,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// １手指したときに呼ばれます。
         /// </summary>
-        private void MoveDone(BoardMove move)
+        private void MoveDone(Move move)
         {
             // 特殊な指し手の場合は手番などの入れ替えを行いません。
             // （投了後の局面から駒を移動するため）
@@ -915,7 +915,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 特殊な指し手の着手が行えるか調べ、必要なら実行します。
         /// </summary>
-        private bool CheckAndMakeSpecialMove(BoardMove move, MoveFlags flags)
+        private bool CheckAndMakeSpecialMove(Move move, MoveFlags flags)
         {
             if (!EnumEx.HasFlag(flags, MoveFlags.CheckOnly))
             {
@@ -928,7 +928,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 駒打ちの動作が行えるか調べ、必要なら実行します。
         /// </summary>
-        private bool CheckAndMakeDrop(BoardMove move, MoveFlags flags)
+        private bool CheckAndMakeDrop(Move move, MoveFlags flags)
         {
             if (GetHandCount(move.DropPieceType, move.BWType) <= 0)
             {
@@ -1059,7 +1059,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 駒の移動のみの動作を調べるか実際にそれを行います。
         /// </summary>
-        private bool CheckAndMakeMoveOnly(BoardMove move, MoveFlags flags)
+        private bool CheckAndMakeMoveOnly(Move move, MoveFlags flags)
         {
             // 駒の移動元に自分の駒がなければダメ
             var srcPiece = this[move.SrcSquare];
@@ -1134,7 +1134,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 駒を強制的に成る必要があるか調べます。
         /// </summary>
-        public static bool CanPromote(BoardMove move)
+        public static bool CanPromote(Move move)
         {
             if (move == null)
             {
@@ -1197,7 +1197,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 駒を強制的に成る必要があるか調べます。
         /// </summary>
-        public static bool IsPromoteForce(BoardMove move)
+        public static bool IsPromoteForce(Move move)
         {
             if (move == null)
             {
@@ -1544,7 +1544,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 指し手リストをバイト列に直します。
         /// </summary>
-        private byte[] SerializeMoveList(List<BoardMove> moveList)
+        private byte[] SerializeMoveList(List<Move> moveList)
         {
             var result = new byte[4 * moveList.Count()];
 
@@ -1564,15 +1564,15 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// バイト列から指し手リストを取得します。
         /// </summary>
-        private List<BoardMove> DeserializeMoveList(byte[] moveListBytes)
+        private List<Move> DeserializeMoveList(byte[] moveListBytes)
         {
             // 指し手が無い場合、配列はnullになります。
             if (moveListBytes == null)
             {
-                return new List<BoardMove>();
+                return new List<Move>();
             }
 
-            var result = new List<BoardMove>(moveListBytes.Count() / 4);
+            var result = new List<Move>(moveListBytes.Count() / 4);
             for (var i = 0; i < moveListBytes.Count(); i += 4)
             {
                 var bits = (
@@ -1581,7 +1581,7 @@ namespace Ragnarok.Shogi
                     (moveListBytes[i + 2] << 16) |
                     (moveListBytes[i + 3] << 24));
 
-                var boardMove = new BoardMove();
+                var boardMove = new Move();
                 boardMove.Deserialize((uint)bits);
 
                 result.Add(boardMove);

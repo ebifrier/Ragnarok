@@ -14,7 +14,7 @@ namespace Ragnarok.Forms.Shogi
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public BoardPieceEventArgs(Board board, BoardMove move)
+        public BoardPieceEventArgs(Board board, Move move)
         {
             Board = board;
             Move = move;
@@ -32,7 +32,7 @@ namespace Ragnarok.Forms.Shogi
         /// <summary>
         /// 実際に指される指し手を取得します。
         /// </summary>
-        public BoardMove Move
+        public Move Move
         {
             get;
             private set;

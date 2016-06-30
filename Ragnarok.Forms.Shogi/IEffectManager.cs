@@ -32,7 +32,7 @@ namespace Ragnarok.Forms.Shogi
         /// <summary>
         /// エフェクトを追加します。
         /// </summary>
-        void Moved(BoardMove move, bool isUndo);
+        void Moved(Move move, bool isUndo);
 
         /// <summary>
         /// 駒の移動を開始したときに呼ばれます。

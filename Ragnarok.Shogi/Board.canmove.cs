@@ -89,7 +89,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 実際に駒が動けるか確認します。
         /// </summary>
-        private bool CanMovePiece(BoardMove move)
+        private bool CanMovePiece(Move move)
         {
             var relFile = move.DstSquare.File - move.SrcSquare.File;
             var relRank = move.DstSquare.Rank - move.SrcSquare.Rank;

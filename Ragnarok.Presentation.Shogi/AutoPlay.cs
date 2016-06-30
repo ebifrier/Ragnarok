@@ -48,7 +48,7 @@ namespace Ragnarok.Presentation.Shogi
         public static readonly TimeSpan DefaultBackgroundFadeInterval =
             TimeSpan.FromSeconds(0.5);
 
-        private readonly List<BoardMove> moveList;
+        private readonly List<Move> moveList;
         private int moveIndex;
         private DateTime prevTime = DateTime.Now;
 
@@ -480,7 +480,7 @@ namespace Ragnarok.Presentation.Shogi
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public AutoPlay(Board board, IEnumerable<BoardMove> moveList)
+        public AutoPlay(Board board, IEnumerable<Move> moveList)
             : this(board)
         {
             if (moveList == null)
@@ -491,7 +491,7 @@ namespace Ragnarok.Presentation.Shogi
             AutoPlayType = AutoPlayType.Normal;
             MaxMoveCount = moveList.Count();
 
-            this.moveList = new List<BoardMove>(moveList);
+            this.moveList = new List<Move>(moveList);
         }
 
         /// <summary>

@@ -75,7 +75,7 @@
     <Compile Include="Board.mate.cs" />
     <Compile Include="BoardComparer.cs" />
     <Compile Include="BoardExtension.cs" />
-    <Compile Include="BoardMove.cs" />
+    <Compile Include="Move.cs" />
     <Compile Include="BoardPiece.cs" />
     <Compile Include="BoardType.cs" />
     <Compile Include="BWType.cs" />
@@ -113,7 +113,7 @@
     <Compile Include="Kif\KifMoveNode.cs" />
     <Compile Include="Kif\Tests\BodTest.cs" />
     <Compile Include="Kif\KifUtil.cs" />
-    <Compile Include="Move.cs" />
+    <Compile Include="LiteralMove.cs" />
     <Compile Include="MoveNode.cs" />
     <Compile Include="MovePointPair.cs" />
     <Compile Include="MoveStatistics.cs" />

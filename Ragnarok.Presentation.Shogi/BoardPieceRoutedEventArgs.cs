@@ -16,7 +16,7 @@ namespace Ragnarok.Presentation.Shogi
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public BoardPieceRoutedEventArgs(RoutedEvent ev, Board board, BoardMove move)
+        public BoardPieceRoutedEventArgs(RoutedEvent ev, Board board, Move move)
             : base(ev)
         {
             Board = board;
@@ -35,7 +35,7 @@ namespace Ragnarok.Presentation.Shogi
         /// <summary>
         /// 実際に指される指し手を取得します。
         /// </summary>
-        public BoardMove Move
+        public Move Move
         {
             get;
             private set;

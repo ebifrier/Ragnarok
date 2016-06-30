@@ -261,7 +261,7 @@ namespace Ragnarok.Forms.Shogi.View
         /// <summary>
         /// 指し手が実際に着手可能か確認します。
         /// </summary>
-        private bool CanMove(BoardMove move, MoveFlags flags = MoveFlags.DoMoveDefault)
+        private bool CanMove(Move move, MoveFlags flags = MoveFlags.DoMoveDefault)
         {
             var tmp = Board.Clone();
 
@@ -318,12 +318,12 @@ namespace Ragnarok.Forms.Shogi.View
         {
             var srcSquare = this.movingPiece.Square;
             var piece = this.movingPiece.BoardPiece;
-            BoardMove move = null;
+            Move move = null;
 
             if (srcSquare != null)
             {
                 // 駒の移動の場合
-                move = BoardMove.CreateMove(
+                move = Move.CreateMove(
                     piece.BWType, srcSquare, dstSquare, piece.Piece, false);
 
                 // 成／不成りのダイアログを出す前に着手可能か確認します。
@@ -348,7 +348,7 @@ namespace Ragnarok.Forms.Shogi.View
             else
             {
                 // 駒打ちの場合
-                move = BoardMove.CreateDrop(
+                move = Move.CreateDrop(
                     piece.BWType, dstSquare, piece.PieceType);
 
                 if (!CanMove(move))
@@ -365,7 +365,7 @@ namespace Ragnarok.Forms.Shogi.View
         /// <summary>
         /// 実際に指し手を進めます。
         /// </summary>
-        private void MakeMove(BoardMove move)
+        private void MakeMove(Move move)
         {
             if (move == null || !move.Validate())
             {

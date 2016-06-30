@@ -22,7 +22,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 指し手を取得します。
         /// </summary>
-        public Move Move
+        public LiteralMove Move
         {
             get;
             private set;

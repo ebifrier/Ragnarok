@@ -48,7 +48,7 @@ namespace Ragnarok.Forms.Shogi
         public static readonly TimeSpan DefaultEffectFadeInterval =
             TimeSpan.FromSeconds(0.5);
 
-        private readonly List<BoardMove> moveList;
+        private readonly List<Move> moveList;
         private int moveIndex;
         private IEnumerator<bool> enumerator;
 
@@ -490,7 +490,7 @@ namespace Ragnarok.Forms.Shogi
         /// コンストラクタ
         /// </summary>
         public AutoPlay(Board board, bool isCloneBoard,
-                        IEnumerable<BoardMove> moveList)
+                        IEnumerable<Move> moveList)
             : this(board, isCloneBoard)
         {
             if (moveList == null)
@@ -501,7 +501,7 @@ namespace Ragnarok.Forms.Shogi
             AutoPlayType = AutoPlayType.Normal;
             MaxMoveCount = moveList.Count();
 
-            this.moveList = new List<BoardMove>(moveList);
+            this.moveList = new List<Move>(moveList);
         }
 
         /// <summary>

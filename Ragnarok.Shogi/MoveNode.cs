@@ -22,7 +22,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 解析された変化を取得または設定します。
         /// </summary>
-        public List<BoardMove> MoveList
+        public List<Move> MoveList
         {
             get;
             set;
@@ -49,7 +49,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 指し手を取得または設定します。
         /// </summary>
-        public BoardMove Move
+        public Move Move
         {
             get;
             set;

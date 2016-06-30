@@ -175,7 +175,7 @@ namespace Ragnarok.Shogi
         /// 「同」と「○○」の間に空白を入れないと"kif for windows"では
         /// 正しく読み込めなくなります。
         /// </remarks>
-        public static string ToString(Move move,
+        public static string ToString(LiteralMove move,
                                       MoveTextStyle style = MoveTextStyle.Normal)
         {
             if (move == null)

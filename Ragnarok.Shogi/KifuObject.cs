@@ -46,7 +46,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 差し手リストを取得します。
         /// </summary>
-        public IEnumerable<BoardMove> MoveList
+        public IEnumerable<Move> MoveList
         {
             get;
             private set;
@@ -64,7 +64,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 指し手ツリーをリスト形式に変換します。
         /// </summary>
-        public static IEnumerable<BoardMove> Convert2List(MoveNode root)
+        public static IEnumerable<Move> Convert2List(MoveNode root)
         {
             if (root == null)
             {
@@ -81,7 +81,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 指し手リストをツリー形式に変換します。
         /// </summary>
-        public static MoveNode Convert2Node(IEnumerable<BoardMove> moveList,
+        public static MoveNode Convert2Node(IEnumerable<Move> moveList,
                                             int firstMoveCount)
         {
             if (moveList == null)
@@ -150,7 +150,7 @@ namespace Ragnarok.Shogi
             else
             {
                 // 開始局面でなくてもよい場合は、指し手を別に取得します。
-                var moveList = new List<BoardMove>();
+                var moveList = new List<Move>();
                 for (var move = board.Undo(); move != null; move = board.Undo())
                 {
                     moveList.Insert(0, move);
@@ -178,7 +178,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 変化リストを設定します。
         /// </summary>
-        public void SetMoveList(IEnumerable<BoardMove> moveList)
+        public void SetMoveList(IEnumerable<Move> moveList)
         {
             if (moveList == null)
             {
@@ -241,7 +241,7 @@ namespace Ragnarok.Shogi
                           Board startBoard,
                           Exception error = null)
         {
-            MoveList = new List<BoardMove>();
+            MoveList = new List<Move>();
             RootNode = new MoveNode();
             Error = error;
 
@@ -254,7 +254,7 @@ namespace Ragnarok.Shogi
         /// </summary>
         public KifuObject(KifuHeader header,
                          Board startBoard,
-                         IEnumerable<BoardMove> moveList,
+                         IEnumerable<Move> moveList,
                          Exception error = null)
         {
             Error = error;

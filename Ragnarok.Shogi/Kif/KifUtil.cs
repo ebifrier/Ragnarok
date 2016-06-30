@@ -150,7 +150,7 @@ namespace Ragnarok.Shogi.Kif
         /// <summary>
         /// 特殊な指し手をパースします。
         /// </summary>
-        public static Move ParseSpecialMove(string line)
+        public static LiteralMove ParseSpecialMove(string line)
         {
             var m = SpecialMoveRegex.Match(line);
             if (!m.Success)
@@ -188,7 +188,7 @@ namespace Ragnarok.Shogi.Kif
                         m.Value + ": 対応していない特殊な指し手です。");
             }
 
-            return new Move
+            return new LiteralMove
             {
                 SpecialMoveType = smoveType,
             };

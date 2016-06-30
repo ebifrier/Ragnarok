@@ -269,7 +269,7 @@ namespace Ragnarok.Shogi.Kif
                 {
                     nodes.Add(new MoveNode
                     {
-                        Move = BoardMove.CreateSpecialMove(
+                        Move = Move.CreateSpecialMove(
                             smove.BWType,
                             smove.SpecialMoveType)
                     });
@@ -300,10 +300,10 @@ namespace Ragnarok.Shogi.Kif
         /// <summary>
         /// 指し手行をパースします。
         /// </summary>
-        private IEnumerable<BoardMove> ParseMoveLineKi2(Board board, string line,
-                                                        ref Exception error)
+        private IEnumerable<Move> ParseMoveLineKi2(Board board, string line,
+                                                   ref Exception error)
         {
-            var moves = new List<BoardMove>();
+            var moves = new List<Move>();
 
             while (!Util.IsWhiteSpaceOnly(line))
             {
@@ -319,7 +319,7 @@ namespace Ragnarok.Shogi.Kif
                     break;
                 }
 
-                var move = board.ConvertMove(lmove);
+                var move = board.ConvertMoveFromLiteral(lmove);
                 if (move == null || !move.Validate())
                 {
                     error = new FileFormatException(
@@ -355,7 +355,7 @@ namespace Ragnarok.Shogi.Kif
 
             // KifMoveNodeからMoveNodeへ変換します。
             Exception error;
-            var root = head.ConvertToMoveNode(board, head_, out error);
+            var root = head.ConvertToMoveNode(head_, board, out error);
             root.Regulalize();
 
             return new KifuObject(header, board, root, error);
@@ -521,8 +521,8 @@ namespace Ragnarok.Shogi.Kif
 
             // 指し手'３六歩(37)'のような形式でパースします。
             var moveText = m.Groups[2].Value;
-            var move = ShogiParser.ParseMove(moveText, false);
-            if (move == null || !move.Validate())
+            var lmove = ShogiParser.ParseMove(moveText, false);
+            if (lmove == null || !lmove.Validate())
             {
                 throw new FileFormatException(
                     this.lineNumber,
@@ -536,7 +536,7 @@ namespace Ragnarok.Shogi.Kif
 
             return new KifMoveNode
             {
-                Move = move,
+                LiteralMove = lmove,
                 MoveCount = moveCount,
                 Duration = duration,
                 LineNumber = this.lineNumber,

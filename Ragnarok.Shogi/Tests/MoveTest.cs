@@ -26,7 +26,7 @@ namespace Ragnarok.Shogi.Tests
                 from rf in EnumEx.GetValues<RelFileType>()
                 from at in EnumEx.GetValues<ActionType>()
                 from same in new bool[] { false, true }
-                let move = new Move
+                let move = new LiteralMove
                 {
                     DstSquare = sq,
                     Piece = new Piece(pc, promoted),
@@ -43,7 +43,7 @@ namespace Ragnarok.Shogi.Tests
                 var text = JsonUtil.Serialize(move);
                 Assert.NotNull(text);
 
-                var newMove = JsonUtil.Deserialize<Move>(text);
+                var newMove = JsonUtil.Deserialize<LiteralMove>(text);
                 Assert.NotNull(newMove);
                 Assert.True(newMove.Validate());
 

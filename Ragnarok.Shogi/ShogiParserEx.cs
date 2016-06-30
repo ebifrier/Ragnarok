@@ -866,7 +866,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 指し手のパースを行います。
         /// </summary>
-        public static Move ParseMove(string text, bool isNeedEnd)
+        public static LiteralMove ParseMove(string text, bool isNeedEnd)
         {
             var tmp = string.Empty;
 
@@ -876,7 +876,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 差し手のパースを行います。
         /// </summary>
-        public static Move ParseMoveEx(string text, bool isNeedEnd,
+        public static LiteralMove ParseMoveEx(string text, bool isNeedEnd,
                                        bool isNormalizeText,
                                        ref string parsedText)
         {
@@ -885,7 +885,7 @@ namespace Ragnarok.Shogi
                 return null;
             }
 
-            var move = new Move()
+            var move = new LiteralMove()
             {
                 OriginalText = text.Trim(),
             };
