@@ -459,7 +459,7 @@ namespace Ragnarok.Presentation.Shogi.View
             {
                 // 同じ筋に動かす場合は２歩の判定を行いません。
                 if ((srcSquare == null || dstSquare.File != srcSquare.File) &&
-                    (Board.DoesPawnExist(bwType, dstSquare.File)))
+                    (Board.GetPawnCount(bwType, dstSquare.File) > 1))
                 {
                     return;
                 }
