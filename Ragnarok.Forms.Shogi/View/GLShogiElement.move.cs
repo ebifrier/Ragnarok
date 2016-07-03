@@ -373,8 +373,8 @@ namespace Ragnarok.Forms.Shogi.View
             }
 
             Board.DoMove(move);
-            MovedByGui.SafeRaiseEvent(
-                this, new BoardPieceEventArgs(Board, move));
+            BoardModel.FireBoardChanged(
+                this, new BoardChangedEventArgs(Board, move, false, true));
         }
 
         /// <summary>
@@ -454,8 +454,8 @@ namespace Ragnarok.Forms.Shogi.View
                     new BoardPiece(piece.PieceType, piece.IsPromoted, bwType);
             }
 
-            BoardEdited.SafeRaiseEvent(
-                this, new BoardPieceEventArgs(Board, null));
+            BoardModel.FireBoardChanged(
+                this, new BoardChangedEventArgs(Board, true));
         }
         #endregion
 

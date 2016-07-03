@@ -57,7 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AutoPlay.cs" />
-    <Compile Include="ViewModel\BoardViewModel.cs" />
+    <Compile Include="ViewModel\BoardModel.cs" />
     <Compile Include="BoardPieceEventArgs.cs" />
     <Compile Include="Effect\ShogiTextObject.cs" />
     <Compile Include="GLUtil\AnimationTexture.cs" />

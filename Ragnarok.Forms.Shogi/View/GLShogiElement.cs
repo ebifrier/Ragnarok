@@ -59,14 +59,13 @@ namespace Ragnarok.Forms.Shogi.View
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public GLShogiElement()
+        public GLShogiElement(BoardModel boardModel)
         {
             AddPropertyChangedHandler("Board", BoardUpdated);
             AddPropertyChangedHandler("ViewSide", ViewSideUpdated);
             AddPropertyChangedHandler("EditMode", EditModeUpdated);
-            MovedByGui += (_, e) => SetBoard(Board, e.Move);
 
-            BoardModel = new BoardViewModel(this);
+            BoardModel = boardModel;
             ViewSide = BWType.Black;
             EditMode = EditMode.Normal;
             AutoPlayState = AutoPlayState.None;
@@ -77,7 +76,14 @@ namespace Ragnarok.Forms.Shogi.View
             InManipulating = false;
 
             InitializeDraw();
-            this.AddDependModel(BoardModel);
+
+            if (boardModel != null)
+            {
+                boardModel.Shogi = this;
+                boardModel.BoardChanged += OnBoardChanged;
+
+                this.AddDependModel(BoardModel);
+            }
         }
 
         /// <summary>
@@ -98,32 +104,20 @@ namespace Ragnarok.Forms.Shogi.View
             base.OnTerminate();
         }
 
-        #region イベント
-        /// <summary>
-        /// GUIによって指し手が進んだ時に呼ばれるイベントを追加または削除します。
-        /// </summary>
-        public event EventHandler<BoardPieceEventArgs> MovedByGui;
-
-        /// <summary>
-        /// GUIによって局面編集が行われた時に呼ばれるイベントを追加または削除します。
-        /// </summary>
-        public event EventHandler<BoardPieceEventArgs> BoardEdited;
-        #endregion
-
         #region 基本プロパティ
         /// <summary>
         /// 局面管理用のモデルオブジェクトを取得または設定します。
         /// </summary>
-        public BoardViewModel BoardModel
+        public BoardModel BoardModel
         {
-            get { return GetValue<BoardViewModel>("BoardModel"); }
+            get { return GetValue<BoardModel>("BoardModel"); }
             private set { SetValue("BoardModel", value); }
         }
 
         /// <summary>
         /// 表示する局面を取得または設定します。
         /// </summary>
-        [DependOnProperty(typeof(BoardViewModel), "BoardModel")]
+        [DependOnProperty(typeof(BoardModel), "Board")]
         public Board Board
         {
             get { return BoardModel.Board; }
@@ -159,10 +153,11 @@ namespace Ragnarok.Forms.Shogi.View
         /// <summary>
         /// 編集モードを取得または設定します。
         /// </summary>
+        [DependOnProperty(typeof(BoardModel), "EditMode")]
         public EditMode EditMode
         {
-            get { return GetValue<EditMode>("EditMode"); }
-            set { SetValue("EditMode", value); }
+            get { return BoardModel.EditMode; }
+            set { BoardModel.EditMode = value; }
         }
 
         /// <summary>
@@ -178,10 +173,11 @@ namespace Ragnarok.Forms.Shogi.View
         /// <summary>
         /// 自動再生の状態を取得します。
         /// </summary>
+        [DependOnProperty(typeof(BoardModel), "AutoPlayState")]
         public AutoPlayState AutoPlayState
         {
-            get { return GetValue<AutoPlayState>("AutoPlayState"); }
-            private set { SetValue("AutoPlayState", value); }
+            get { return BoardModel.AutoPlayState; }
+            private set { BoardModel.AutoPlayState = value; }
         }
 
         /// <summary>
@@ -291,10 +287,11 @@ namespace Ragnarok.Forms.Shogi.View
         /// <summary>
         /// 駒が掴まれているなどするかどうかを取得します。
         /// </summary>
+        [DependOnProperty(typeof(BoardModel), "InManipulating")]
         public bool InManipulating
         {
-            get { return GetValue<bool>("InManipulating"); }
-            set { SetValue("InManipulating", value); }
+            get { return BoardModel.InManipulating; }
+            private set { BoardModel.InManipulating = value; }
         }
         #endregion
 
@@ -362,7 +359,22 @@ namespace Ragnarok.Forms.Shogi.View
 
         #region 盤とビューとの同期など
         /// <summary>
-        /// 局面を設定したのち、必要なエフェクトなどを表示します。
+        /// 局面変更時に呼ばれます。
+        /// </summary>
+        private void OnBoardChanged(object sender, BoardChangedEventArgs e)
+        {
+            // 指し手が進んだときのエフェクトを追加します。
+            if (EffectManager != null &&
+                e.Move != null)
+            {
+                EffectManager.Moved(e.Move, e.IsUndo);
+            }
+
+            FormsUtil.InvalidateCommand();
+        }
+
+        /// <summary>
+        /// 局面を設定します。
         /// </summary>
         public void SetBoard(Board board, Move move, bool isUndo = false)
         {
@@ -371,46 +383,15 @@ namespace Ragnarok.Forms.Shogi.View
                 throw new ArgumentNullException("board");
             }
 
-            // 指し手が指定されていない場合は、局面をそのまま変更します。
-            if (move == null || !move.Validate())
-            {
-                Board = board;
-                return;
-            }
-            
             EndMove();
 
-            if (!ReferenceEquals(this.board, board))
+            if (!ReferenceEquals(Board, board))
             {
                 Board = board;
             }
 
-            // 指し手が進んだときのエフェクトを追加します。
-            if (EffectManager != null)
-            {
-                EffectManager.Moved(move, isUndo);
-            }
-        }
-
-        /// <summary>
-        /// 盤面の駒が移動したときに呼ばれます。
-        /// </summary>
-        private void OnBoardPieceChanged(object sender, BoardChangedEventArgs e)
-        {
-            var move = e.Move;
-            if ((object)move == null || !move.Validate())
-            {
-                return;
-            }
-
-            // 一応
-            EndMove();
-
-            // 指し手が進んだときのエフェクトを追加します。
-            if (EffectManager != null)
-            {
-                EffectManager.Moved(move, e.IsUndo);
-            }
+            BoardModel.FireBoardChanged(
+                this, new BoardChangedEventArgs(board, move, isUndo, false));
         }
 
         /// <summary>

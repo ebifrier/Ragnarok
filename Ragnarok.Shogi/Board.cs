@@ -55,39 +55,6 @@ namespace Ragnarok.Shogi
     }
 
     /// <summary>
-    /// 局面が変わったときに使われます。
-    /// </summary>
-    public class BoardChangedEventArgs : EventArgs
-    {
-        /// <summary>
-        /// 指された指し手を取得または設定します。
-        /// </summary>
-        public Move Move
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// アンドゥしたかどうかを取得または設定します。
-        /// </summary>
-        public bool IsUndo
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        public BoardChangedEventArgs(Move move, bool isUndo)
-        {
-            Move = move;
-            IsUndo = isUndo;
-        }
-    }
-
-    /// <summary>
     /// 盤面を示すクラスです。
     /// </summary>
     [DataContract()]
@@ -227,11 +194,6 @@ namespace Ragnarok.Shogi
         public override event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>
-        /// 局面に変更があったときに呼ばれます。
-        /// </summary>
-        public virtual event EventHandler<BoardChangedEventArgs> BoardChanged;
-
-        /// <summary>
         /// プロパティ値の変更を通知します。
         /// </summary>
         public override void NotifyPropertyChanged(PropertyChangedEventArgs e)
@@ -244,9 +206,6 @@ namespace Ragnarok.Shogi
         /// </summary>
         private void NotifyBoardChanged(Move move, bool isUndo)
         {
-            BoardChanged.SafeRaiseEvent(
-                this, new BoardChangedEventArgs(move, isUndo));
-
             this.RaisePropertyChanged("MoveCount");
             this.RaisePropertyChanged("CanUndo");
             this.RaisePropertyChanged("CanRedo");
