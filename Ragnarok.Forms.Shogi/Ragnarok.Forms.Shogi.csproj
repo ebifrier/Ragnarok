@@ -56,9 +56,10 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AutoPlayBase.cs" />
     <Compile Include="AutoPlay.cs" />
     <Compile Include="ViewModel\BoardModel.cs" />
-    <Compile Include="BoardPieceEventArgs.cs" />
+    <Compile Include="BoardChangedEventArgs.cs" />
     <Compile Include="Effect\ShogiTextObject.cs" />
     <Compile Include="GLUtil\AnimationTexture.cs" />
     <Compile Include="GLUtil\GLException.cs" />
