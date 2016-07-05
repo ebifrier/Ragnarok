@@ -84,7 +84,7 @@ namespace Ragnarok.Forms.Shogi.View
 
             try
             {
-                element.Board.Undo();
+                element.BoardModel.Undo();
             }
             catch (Exception ex)
             {
@@ -108,12 +108,12 @@ namespace Ragnarok.Forms.Shogi.View
 
             try
             {
-                var autoPlay = new AutoPlay(
-                    element.Board, true, AutoPlayType.Undo)
+                var autoPlay = new DefaultAutoPlay(
+                    element.BoardModel, true, AutoPlayType.Undo)
                 {
                     IsUseEffect = false,
                 };
-                element.StartAutoPlay(autoPlay);
+                //TODO element.StartAutoPlay(autoPlay);
             }
             catch (Exception ex)
             {
@@ -171,7 +171,7 @@ namespace Ragnarok.Forms.Shogi.View
 
             try
             {
-                element.Board.Redo();
+                element.BoardModel.Redo();
             }
             catch(Exception ex)
             {
@@ -200,13 +200,13 @@ namespace Ragnarok.Forms.Shogi.View
 
             try
             {
-                var autoPlay = new AutoPlay(
-                    element.Board, true, AutoPlayType.Redo)
+                var autoPlay = new DefaultAutoPlay(
+                    element.BoardModel, true, AutoPlayType.Redo)
                 {
                     IsUseEffect = false,
                 };
 
-                element.StartAutoPlay(autoPlay);
+                //TODO element.StartAutoPlay(autoPlay);
             }
             catch (Exception ex)
             {

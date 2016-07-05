@@ -147,13 +147,12 @@ namespace Ragnarok.Forms.Shogi.View
         }
 
         /// <summary>
-        /// GUI側から駒の移動などができるかどうかを取得または設定します。
+        /// 自動再生中かどうかを取得または設定します。
         /// </summary>
-        [DependOnProperty(typeof(BoardModel), "CanMakeMoveByGui")]
-        public bool CanMakeMoveByGui
+        public bool IsAutoPlaying
         {
-            get { return BoardModel.CanMakeMoveByGui; }
-            set { BoardModel.CanMakeMoveByGui = value; }
+            get { return GetValue<bool>("IsAutoPlaying"); }
+            set { SetValue("IsAutoPlaying", value); }
         }
 
         /// <summary>

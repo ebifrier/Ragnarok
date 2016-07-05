@@ -124,7 +124,7 @@ namespace Ragnarok.Forms.Shogi.View
                 return false;
             }
 
-            if (!CanMakeMoveByGui)
+            if (IsAutoPlaying)
             {
                 return false;
             }

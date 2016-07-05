@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 
+using Ragnarok.Forms.Shogi.ViewModel;
 using Ragnarok.Shogi;
 
 namespace Ragnarok.Forms.Shogi
@@ -41,6 +41,15 @@ namespace Ragnarok.Forms.Shogi
         private int moveIndex;
 
         /// <summary>
+        /// 局面モデルを取得します。
+        /// </summary>
+        public BoardModel BoardModel
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
         /// 自動再生の種類を取得します。
         /// </summary>
         public AutoPlayType AutoPlayType
@@ -69,11 +78,11 @@ namespace Ragnarok.Forms.Shogi
         /// <summary>
         /// 指し手を一手だけ進めます。
         /// </summary>
-        private void DoMove()
+        protected override bool DoMove()
         {
-            if (!HasMove || Board == null)
+            if (!HasMove || BoardModel == null)
             {
-                return;
+                return false;
             }
 
             switch (AutoPlayType)
@@ -82,60 +91,20 @@ namespace Ragnarok.Forms.Shogi
                     var move = this.moveList[this.moveIndex++];
                     if (move != null)
                     {
-                        Board.DoMove(move);
+                        BoardModel.DoMove(move);
                     }
                     break;
                 case AutoPlayType.Undo:
                     this.moveIndex += 1;
-                    Board.Undo();
+                    BoardModel.Undo();
                     break;
                 case AutoPlayType.Redo:
                     this.moveIndex += 1;
-                    Board.Redo();
+                    BoardModel.Redo();
                     break;
             }
-        }
 
-        /// <summary>
-        /// 指し手を進めます。
-        /// </summary>
-        protected override IEnumerable<bool> DoMoveExecutor()
-        {
-            // 最初の指し手はすぐに表示します。
-            DoMove();
-
-            while (HasMove)
-            {
-                if (PositionFromBase > Interval)
-                {
-                    BasePosition += Interval;
-                    DoMove();
-                }
-
-                yield return true;
-            }
-
-            // 必要なら最後の指し手を動かした後に一手分だけ待ちます。
-            // エフェクトを表示するためです。
-            if (IsWaitForLastMove)
-            {
-                while (PositionFromBase < Interval)
-                {
-                    yield return true;
-                }
-
-                BasePosition += Interval;
-            }
-        }
-
-        /// <summary>
-        /// 自動再生の途中停止を行います。
-        /// </summary>
-        public override void Stop()
-        {
-            base.Stop();
-
-            this.moveIndex = 0;
+            return HasMove;
         }
 
         /// <summary>
@@ -143,11 +112,12 @@ namespace Ragnarok.Forms.Shogi
         /// </summary>
         public bool Validate()
         {
-            if (StartBoard == null || !StartBoard.Validate())
+            if (BoardModel == null || !BoardModel.Board.Validate())
             {
                 return false;
             }
 
+            var startBoard = BoardModel.Board.Clone(false);
             if (AutoPlayType == AutoPlayType.Normal)
             {
                 if (this.moveList == null)
@@ -155,26 +125,34 @@ namespace Ragnarok.Forms.Shogi
                     return false;
                 }
 
-                return StartBoard.CanMoveList(this.moveList);
+                return startBoard.CanMoveList(this.moveList);
             }
 
             return true;
         }
 
+        protected override void OnStopped()
+        {
+            base.OnStopped();
+
+            this.moveIndex = 0;
+        }
+
         /// <summary>
         /// 共通コンストラクタ
         /// </summary>
-        private DefaultAutoPlay(Board board, bool isImportant)
-            : base(board, isImportant)
+        private DefaultAutoPlay(BoardModel boardModel, bool isImportant)
+            : base(isImportant)
         {
+            BoardModel = boardModel;
         }
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public DefaultAutoPlay(Board board, bool isImportant,
+        public DefaultAutoPlay(BoardModel boardModel, bool isImportant,
                                IEnumerable<Move> moveList)
-            : this(board, isImportant)
+            : this(boardModel, isImportant)
         {
             if (moveList == null)
             {
@@ -190,9 +168,9 @@ namespace Ragnarok.Forms.Shogi
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public DefaultAutoPlay(Board board, bool isImportant,
+        public DefaultAutoPlay(BoardModel boardModel, bool isImportant,
                                AutoPlayType autoPlayType, int maxMoveCount = -1)
-            : this(board, isImportant)
+            : this(boardModel, isImportant)
         {
             if (autoPlayType != AutoPlayType.Undo &&
                 autoPlayType != AutoPlayType.Redo)
@@ -203,12 +181,7 @@ namespace Ragnarok.Forms.Shogi
             }
 
             AutoPlayType = autoPlayType;
-            MaxMoveCount = (
-                maxMoveCount >= 0 ?
-                maxMoveCount :
-                (autoPlayType == AutoPlayType.Undo ?
-                    board.CanUndoCount :
-                    board.CanRedoCount));
+            MaxMoveCount = maxMoveCount;
         }
     }
 }

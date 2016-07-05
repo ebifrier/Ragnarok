@@ -15,12 +15,7 @@ namespace Ragnarok.Forms.Shogi
         /// 自動再生を行う将棋エレメントを取得します。
         /// </summary>
         GLShogiElement ShogiElement { get; set; }
-
-        /// <summary>
-        /// 現在の局面を取得または設定します。
-        /// </summary>
-        Board Board { get; }
-
+        
         /// <summary>
         /// 重要な自動再生かどうかを取得または設定します。
         /// </summary>
@@ -79,24 +74,6 @@ namespace Ragnarok.Forms.Shogi
         {
             get;
             set;
-        }
-
-        /// <summary>
-        /// 開始局面を取得または設定します。
-        /// </summary>
-        public Board StartBoard
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
-        /// 現在の局面を取得または設定します。
-        /// </summary>
-        public Board Board
-        {
-            get;
-            private set;
         }
 
         /// <summary>
@@ -253,12 +230,41 @@ namespace Ragnarok.Forms.Shogi
             ShogiElement.AutoPlayOpacity = target;
         }
 
+        protected virtual bool DoMove()
+        {
+            return false;
+        }
+
         /// <summary>
         /// 指し手を進めます。
         /// </summary>
-        protected virtual IEnumerable<bool> DoMoveExecutor()
+        protected IEnumerable<bool> DoMoveExecutor()
         {
-            yield return false;
+            // 最初の指し手はすぐに表示します。
+            var hasMove = DoMove();
+
+            while (hasMove)
+            {
+                if (PositionFromBase > Interval)
+                {
+                    BasePosition += Interval;
+                    hasMove = DoMove();
+                }
+
+                yield return true;
+            }
+
+            // 必要なら最後の指し手を動かした後に一手分だけ待ちます。
+            // エフェクトを表示するためです。
+            if (IsWaitForLastMove)
+            {
+                while (PositionFromBase < Interval)
+                {
+                    yield return true;
+                }
+
+                BasePosition += Interval;
+            }
         }
 
         /// <summary>
@@ -307,13 +313,12 @@ namespace Ragnarok.Forms.Shogi
                 }
 
                 this.enumerator = enumerable.GetEnumerator();
+                OnStarted();
             }
 
             // コルーチンを進めます。
             if (!this.enumerator.MoveNext())
             {
-                //RaiseStopped();
-
                 this.enumerator = null;
                 return false;
             }
@@ -321,6 +326,17 @@ namespace Ragnarok.Forms.Shogi
             // 時間はここで進めます。
             Position += elapsed;
             return this.enumerator.Current;
+        }
+
+        /// <summary>
+        /// 自動再生の途中停止を行います。
+        /// </summary>
+        public void Stop()
+        {
+            this.enumerator = null;
+
+            OnStopped();
+            RaiseStopped();
         }
 
         /// <summary>
@@ -340,36 +356,37 @@ namespace Ragnarok.Forms.Shogi
         }
 
         /// <summary>
-        /// 自動再生の途中停止を行います。
+        /// 自動自動開始時に呼ばれます。
         /// </summary>
-        public virtual void Stop()
+        protected virtual void OnStarted()
+        {
+            if (ShogiElement != null)
+            {
+                ShogiElement.IsAutoPlaying = true;
+            }
+        }
+
+        /// <summary>
+        /// 自動再生の途中時を行います。
+        /// </summary>
+        protected virtual void OnStopped()
         {
             if (ShogiElement != null)
             {
                 ShogiElement.AutoPlayOpacity = 0.0;
+                ShogiElement.IsAutoPlaying = false;
             }
 
-            Board = StartBoard.Clone();
             Position = TimeSpan.Zero;
             BasePosition = TimeSpan.Zero;
-            this.enumerator = null;
-
-            RaiseStopped();
         }
 
         /// <summary>
         /// 共通コンストラクタ
         /// </summary>
-        public AutoPlayBase(Board board, bool isImportant)
+        public AutoPlayBase(bool isImportant)
         {
-            if (board == null)
-            {
-                throw new ArgumentNullException("board");
-            }
-
             UpdateEnumeratorFactory = () => GetUpdateEnumerator();
-            StartBoard = board;
-            Board = board;
             IsImportant = isImportant;
             Interval = DefaultInterval;
             EffectFadeInterval = DefaultEffectFadeInterval;

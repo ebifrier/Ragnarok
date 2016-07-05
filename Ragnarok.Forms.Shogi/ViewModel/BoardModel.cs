@@ -18,7 +18,6 @@ namespace Ragnarok.Forms.Shogi.ViewModel
         public BoardModel()
         {
             Board = new Board();
-            CanMakeMoveByGui = true;
             EditMode = EditMode.Normal;
         }
 
@@ -54,15 +53,6 @@ namespace Ragnarok.Forms.Shogi.ViewModel
         }
 
         /// <summary>
-        /// GUI側から駒の移動などができるかどうかを取得または設定します。
-        /// </summary>
-        public bool CanMakeMoveByGui
-        {
-            get { return GetValue<bool>("CanMakeMoveByGui"); }
-            set { SetValue("CanMakeMoveByGui", value); }
-        }
-
-        /// <summary>
         /// 編集モードを取得または設定します。
         /// </summary>
         public EditMode EditMode
@@ -70,15 +60,6 @@ namespace Ragnarok.Forms.Shogi.ViewModel
             get { return GetValue<EditMode>("EditMode"); }
             set { SetValue("EditMode", value); }
         }
-
-        /*/// <summary>
-        /// 自動再生の状態を取得します。
-        /// </summary>
-        public AutoPlayState AutoPlayState
-        {
-            get { return GetValue<AutoPlayState>("AutoPlayState"); }
-            internal set { SetValue("AutoPlayState", value); }
-        }*/
 
         /// <summary>
         /// 局面の駒を操作中かどうかを取得します。
@@ -97,9 +78,7 @@ namespace Ragnarok.Forms.Shogi.ViewModel
         {
             get
             {
-                return (
-                    CanMakeMoveByGui &&
-                    EditMode == EditMode.Normal);
+                return (EditMode == EditMode.Normal);
             }
         }
 
@@ -164,6 +143,34 @@ namespace Ragnarok.Forms.Shogi.ViewModel
 
                 FormsUtil.UIProcess(() =>
                     Shogi.SetBoard(Board, move, true));
+            }
+        }
+
+        /// <summary>
+        /// 将棋盤の局面を進めます。
+        /// </summary>
+        public void Redo()
+        {
+            if (Shogi == null)
+            {
+                return;
+            }
+
+            using (LazyLock())
+            {
+                if (!CanMove)
+                {
+                    return;
+                }
+
+                var move = Board.Redo();
+                if (move == null)
+                {
+                    return;
+                }
+
+                FormsUtil.UIProcess(() =>
+                    Shogi.SetBoard(Board, move, false));
             }
         }
     }
