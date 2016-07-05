@@ -57,7 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AutoPlayBase.cs" />
-    <Compile Include="AutoPlay.cs" />
+    <Compile Include="DefaultAutoPlay.cs" />
     <Compile Include="ViewModel\BoardModel.cs" />
     <Compile Include="BoardChangedEventArgs.cs" />
     <Compile Include="Effect\ShogiTextObject.cs" />
