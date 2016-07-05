@@ -222,7 +222,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// オブジェクトのコピーを作成します。
         /// </summary>
-        public Board Clone()
+        public Board Clone(bool cloneMoveList = true)
         {
             using (LazyLock())
             {
@@ -235,9 +235,19 @@ namespace Ragnarok.Shogi
                         this.prevMovedSquare != null ?
                         this.prevMovedSquare.Clone() :
                         null),
-                    moveList = this.moveList.Select(move => move.Clone()).ToList(),
-                    redoList = this.redoList.Select(move => move.Clone()).ToList(),
                 };
+
+                // 指し手リストもコピーする場合
+                if (cloneMoveList)
+                {
+                    cloned.moveList = this.moveList.Select(move => move.Clone()).ToList();
+                    cloned.redoList = this.redoList.Select(move => move.Clone()).ToList();
+                }
+                else
+                {
+                    cloned.moveList = new List<Move>();
+                    cloned.redoList = new List<Move>();
+                }
 
                 // 各位置に駒を設定します。
                 for (var rank = 1; rank <= BoardSize; ++rank)
