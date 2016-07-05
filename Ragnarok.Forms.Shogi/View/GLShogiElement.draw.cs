@@ -453,16 +453,7 @@ namespace Ragnarok.Forms.Shogi.View
         {
             base.OnEnterFrame(e);
             var renderBuffer = (GLUtil.RenderBuffer)e.StateObject;
-
-            // 自動再生の更新を行います。
-            if (this.autoPlay != null)
-            {
-                if (!this.autoPlay.Update(e.ElapsedTime))
-                {
-                    StopAutoPlay();
-                }
-            }
-
+            
             if (IsVisible)
             {
                 // 盤
@@ -478,7 +469,7 @@ namespace Ragnarok.Forms.Shogi.View
                 AddRenderPieceAll(renderBuffer);
 
                 // 自動再生時のエフェクトを描画します。
-                if (AutoPlayState == AutoPlayState.Playing)
+                if (AutoPlayOpacity > 0.0)
                 {
                     AddRenderAutoPlayEffect(renderBuffer);
                 }
@@ -766,12 +757,7 @@ namespace Ragnarok.Forms.Shogi.View
         /// </summary>
         private void AddRenderAutoPlayEffect(GLUtil.RenderBuffer renderBuffer)
         {
-            if (AutoPlayState != AutoPlayState.Playing)
-            {
-                return;
-            }
-
-            if (AutoPlayOpacity == 0.0)
+            if (AutoPlayOpacity <= 0.0)
             {
                 return;
             }

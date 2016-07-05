@@ -44,6 +44,21 @@ namespace Ragnarok.Forms.Shogi.View
         }
 
         /// <summary>
+        /// マウスボタンが押されたときに呼ばれるイベントです。
+        /// </summary>
+        public event EventHandler<MouseEventArgs> MouseDown;
+
+        /// <summary>
+        /// マウスが移動したときに呼ばれるイベントです。
+        /// </summary>
+        public event EventHandler<MouseEventArgs> MouseMove;
+
+        /// <summary>
+        /// マウスボタンが離されたときに呼ばれるイベントです。
+        /// </summary>
+        public event EventHandler<MouseEventArgs> MouseUp;
+
+        /// <summary>
         /// OpenGL用のコンテナオブジェクトを取得します。
         /// </summary>
         [CLSCompliant(false)]
@@ -144,6 +159,8 @@ namespace Ragnarok.Forms.Shogi.View
         public virtual void OnMouseDown(MouseEventArgs e)
         {
             ForeachChildren(_ => _.OnMouseDown(e));
+
+            MouseDown.SafeRaiseEvent(this, e);
         }
 
         /// <summary>
@@ -152,6 +169,8 @@ namespace Ragnarok.Forms.Shogi.View
         public virtual void OnMouseMove(MouseEventArgs e)
         {
             ForeachChildren(_ => _.OnMouseMove(e));
+
+            MouseMove.SafeRaiseEvent(this, e);
         }
 
         /// <summary>
@@ -160,6 +179,8 @@ namespace Ragnarok.Forms.Shogi.View
         public virtual void OnMouseUp(MouseEventArgs e)
         {
             ForeachChildren(_ => _.OnMouseUp(e));
+
+            MouseUp.SafeRaiseEvent(this, e);
         }
     }
 }

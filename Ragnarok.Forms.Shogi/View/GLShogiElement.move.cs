@@ -90,13 +90,6 @@ namespace Ragnarok.Forms.Shogi.View
         /// </summary>
         private void BeginMove(Point pos)
         {
-            // 自動再生中であれば、それを停止します。
-            if (this.autoPlay != null && !this.autoPlay.IsImportant)
-            {
-                StopAutoPlay();
-                return;
-            }
-
             // 駒検索
             var square = PointToSquare(pos);
             if (square != null && Board != null)
@@ -131,7 +124,7 @@ namespace Ragnarok.Forms.Shogi.View
                 return false;
             }
 
-            if (this.autoPlay != null)
+            if (!CanMakeMoveByGui)
             {
                 return false;
             }

@@ -18,6 +18,8 @@ namespace Ragnarok.Forms.Shogi.ViewModel
         public BoardModel()
         {
             Board = new Board();
+            CanMakeMoveByGui = true;
+            EditMode = EditMode.Normal;
         }
 
         /// <summary>
@@ -52,6 +54,15 @@ namespace Ragnarok.Forms.Shogi.ViewModel
         }
 
         /// <summary>
+        /// GUI側から駒の移動などができるかどうかを取得または設定します。
+        /// </summary>
+        public bool CanMakeMoveByGui
+        {
+            get { return GetValue<bool>("CanMakeMoveByGui"); }
+            set { SetValue("CanMakeMoveByGui", value); }
+        }
+
+        /// <summary>
         /// 編集モードを取得または設定します。
         /// </summary>
         public EditMode EditMode
@@ -60,14 +71,14 @@ namespace Ragnarok.Forms.Shogi.ViewModel
             set { SetValue("EditMode", value); }
         }
 
-        /// <summary>
+        /*/// <summary>
         /// 自動再生の状態を取得します。
         /// </summary>
         public AutoPlayState AutoPlayState
         {
             get { return GetValue<AutoPlayState>("AutoPlayState"); }
             internal set { SetValue("AutoPlayState", value); }
-        }
+        }*/
 
         /// <summary>
         /// 局面の駒を操作中かどうかを取得します。
@@ -78,15 +89,17 @@ namespace Ragnarok.Forms.Shogi.ViewModel
             internal set { SetValue("InManipulating", value); }
         }
 
-        [DependOnProperty("AutoPlayState")]
+        /// <summary>
+        /// 駒を動かすことができるかどうかを取得または設定します。
+        /// </summary>
         [DependOnProperty("EditMode")]
         public bool CanMove
         {
             get
             {
                 return (
-                  AutoPlayState == AutoPlayState.None &&
-                  EditMode == EditMode.Normal);
+                    CanMakeMoveByGui &&
+                    EditMode == EditMode.Normal);
             }
         }
 
@@ -95,6 +108,11 @@ namespace Ragnarok.Forms.Shogi.ViewModel
         /// </summary>
         public void SetBoard(Board board, Move move, bool isUndo = false)
         {
+            if (Shogi == null)
+            {
+                return;
+            }
+
             FormsUtil.UIProcess(() =>
                 Shogi.SetBoard(board, move, isUndo));
         }
@@ -104,6 +122,11 @@ namespace Ragnarok.Forms.Shogi.ViewModel
         /// </summary>
         public void DoMove(Move move, MoveFlags flags = MoveFlags.DoMoveDefault)
         {
+            if (Shogi == null)
+            {
+                return;
+            }
+
             using (LazyLock())
             {
                 if (!CanMove || !Board.DoMove(move, flags))
@@ -121,6 +144,11 @@ namespace Ragnarok.Forms.Shogi.ViewModel
         /// </summary>
         public void Undo()
         {
+            if (Shogi == null)
+            {
+                return;
+            }
+
             using (LazyLock())
             {
                 if (!CanMove)

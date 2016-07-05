@@ -53,8 +53,6 @@ namespace Ragnarok.Forms.Shogi.View
             .Apply(_ => _.Freeze());*/
 
         private IEffectManager effectManager;
-        private AutoPlay autoPlay;
-        private Board oldBoard;
 
         /// <summary>
         /// コンストラクタ
@@ -68,7 +66,6 @@ namespace Ragnarok.Forms.Shogi.View
             BoardModel = boardModel;
             ViewSide = BWType.Black;
             EditMode = EditMode.Normal;
-            AutoPlayState = AutoPlayState.None;
             BlackPlayerName = "▲先手";
             WhitePlayerName = "△後手";
             BlackTime = TimeSpan.Zero;
@@ -92,7 +89,6 @@ namespace Ragnarok.Forms.Shogi.View
         protected override void OnTerminate()
         {
             EndMove();
-            StopAutoPlay();
 
             // エフェクトマネージャへの参照と、マネージャが持つ
             // このオブジェクトへの参照を初期化します。
@@ -128,7 +124,7 @@ namespace Ragnarok.Forms.Shogi.View
         {
             EndMove();
             ClosePromoteDialog();
-            StopAutoPlay();
+            //StopAutoPlay();
 
             InitEffect();
         }
@@ -151,6 +147,16 @@ namespace Ragnarok.Forms.Shogi.View
         }
 
         /// <summary>
+        /// GUI側から駒の移動などができるかどうかを取得または設定します。
+        /// </summary>
+        [DependOnProperty(typeof(BoardModel), "CanMakeMoveByGui")]
+        public bool CanMakeMoveByGui
+        {
+            get { return BoardModel.CanMakeMoveByGui; }
+            set { BoardModel.CanMakeMoveByGui = value; }
+        }
+
+        /// <summary>
         /// 編集モードを取得または設定します。
         /// </summary>
         [DependOnProperty(typeof(BoardModel), "EditMode")]
@@ -168,16 +174,6 @@ namespace Ragnarok.Forms.Shogi.View
             EndMove();
 
             FormsUtil.InvalidateCommand();
-        }
-
-        /// <summary>
-        /// 自動再生の状態を取得します。
-        /// </summary>
-        [DependOnProperty(typeof(BoardModel), "AutoPlayState")]
-        public AutoPlayState AutoPlayState
-        {
-            get { return BoardModel.AutoPlayState; }
-            private set { BoardModel.AutoPlayState = value; }
         }
 
         /// <summary>
@@ -416,68 +412,6 @@ namespace Ragnarok.Forms.Shogi.View
             var bwType = (board != null ? board.Turn : BWType.Black);
 
             EffectManager.InitEffect(bwType);
-        }
-        #endregion
-
-        #region 自動再生
-        /// <summary>
-        /// 自動再生を開始します。
-        /// </summary>
-        public void StartAutoPlay(AutoPlay autoPlay)
-        {
-            if (autoPlay == null)
-            {
-                return;
-            }
-
-            if (AutoPlayState == AutoPlayState.Playing)
-            {
-                return;
-            }
-
-            // this.autoPlayを変える前に局面を変更します。
-            // 局面変更時は自動再生を自動で止めるようになっているので、
-            // this.autoPlayフィールドを変更した後に局面を変えると、
-            // すぐに止まってしまいます。
-            this.oldBoard = Board;
-            Board = autoPlay.Board;
-
-            autoPlay.ShogiElement = this;
-            this.autoPlay = autoPlay;
-            
-            AutoPlayState = AutoPlayState.Playing;
-        }
-
-        /// <summary>
-        /// 自動再生を終了します。
-        /// </summary>
-        public void StopAutoPlay()
-        {
-            AutoPlay_Ended();
-        }
-
-        private void AutoPlay_Ended()
-        {
-            if (this.autoPlay == null)
-            {
-                return;
-            }
-
-            // コントロールは消去しておきます。
-            // autoPlay.ShogiElementをnullに設定すると後のStopが
-            // 上手く動かないため、ここでは設定しません。
-            var autoPlay = this.autoPlay;
-            this.autoPlay = null;
-
-            Board = this.oldBoard;
-            this.oldBoard = null;
-
-            AutoPlayState = AutoPlayState.None;
-
-            // Boardが変更されるとAutoPlayはすべてクリアされます。
-            // Stopの中でBoardが変更されると少し面倒なことになるため、
-            // Stopメソッドはすべての状態が落ち着いた後に呼びます。
-            autoPlay.Stop();
         }
         #endregion
     }
