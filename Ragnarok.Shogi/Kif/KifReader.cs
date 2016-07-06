@@ -376,11 +376,18 @@ namespace Ragnarok.Shogi.Kif
 
             // 以下、変化リストをパースします。
             var variationLineSet = MakeVariationLineSet(head);
-            while (variationLineSet.Any())
+            if (this.currentLine == null)
+            {
+                ReadNextLine();
+            }
+
+            while (this.currentLine != null && variationLineSet.Any())
             {
                 var variationNode = ParseNodeKif(board, true);
                 if (variationNode == null)
                 {
+                    // 変化行がない場合は、とりあえず1行読み進めます。
+                    ReadNextLine();
                     continue;
                 }
 
