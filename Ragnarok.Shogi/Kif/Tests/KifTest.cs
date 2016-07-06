@@ -98,6 +98,34 @@ namespace Ragnarok.Shogi.Kif.Tests
         }
 
         /// <summary>
+        /// 誤った変化が含まれる棋譜のテスト
+        /// </summary>
+        /// <remarks>
+        /// 読み込み時に無限ループにならないか確認します。
+        /// </remarks>
+        [Test()]
+        public void VariationMissTest()
+        {
+            var sample = SampleKif.Get("Kif_VariationMiss.kif");
+
+            // 棋譜の読み込み
+            var kifu = KifuReader.LoadFrom(sample);
+            Assert.NotNull(kifu);
+            Assert.Null(kifu.Error);
+
+            // 手数を確認
+            var count = 143;
+            Assert.AreEqual(count, kifu.MoveList.Count());
+
+            // 入出力テストを行います。
+            TestUtil.ReadWriteTest(kifu, KifuFormat.Kif, count);
+
+            // 書き込みテスト
+            //var kif = KifuWriter.WriteTo(kifu, KifuFormat.Kif);
+            //CompareWithoutSpace(sample, kif);
+        }
+
+        /// <summary>
         /// 消費時間のテスト
         /// </summary>
         [Test()]
