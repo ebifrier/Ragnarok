@@ -58,7 +58,7 @@ namespace Ragnarok.Shogi
     /// 盤面を示すクラスです。
     /// </summary>
     [DataContract()]
-    public partial class Board : NotifyObject
+    public partial class Board
     {
         /// <summary>
         /// 各駒の最大駒数を保持します。
@@ -152,63 +152,37 @@ namespace Ragnarok.Shogi
         /// </summary>
         private long CalcHashValue()
         {
-            using (LazyLock())
+            var hashValue = 0L;
+
+            foreach (var sq in AllSquares())
             {
-                var hashValue = 0L;
+                var pc = this[sq];
+                if (pc == null) continue;
 
-                foreach (var sq in AllSquares())
+                hashValue += zobrist[sq.Index, pc.Piece.Index, pc.BWType.GetIndex()];
+            }
+
+            foreach (var bwType in new BWType[] { BWType.Black, BWType.White })
+            {
+                foreach (var pieceType in EnumEx.GetValues<PieceType>())
                 {
-                    var pc = this[sq];
-                    if (pc == null) continue;
+                    if (pieceType == PieceType.None) continue;
 
-                    hashValue += zobrist[sq.Index, pc.Piece.Index, pc.BWType.GetIndex()];
-                }
-
-                foreach (var bwType in new BWType[] { BWType.Black, BWType.White })
-                {
-                    foreach (var pieceType in EnumEx.GetValues<PieceType>())
+                    var piece = new Piece(pieceType);
+                    var count = GetHandCount(pieceType, bwType);
+                    while (count-- > 0)
                     {
-                        if (pieceType == PieceType.None) continue;
-
-                        var piece = new Piece(pieceType);
-                        var count = GetHandCount(pieceType, bwType);
-                        while (count-- > 0)
-                        {
-                            hashValue += zobristHand[piece.Index, bwType.GetIndex()];
-                        }
+                        hashValue += zobristHand[piece.Index, bwType.GetIndex()];
                     }
                 }
-
-                if (Turn == BWType.White)
-                {
-                    hashValue ^= zobristTurn;
-                }
-
-                return hashValue;
             }
-        }
 
-        /// <summary>
-        /// プロパティ値の変更を通知します。
-        /// </summary>
-        public override event PropertyChangedEventHandler PropertyChanged;
+            if (Turn == BWType.White)
+            {
+                hashValue ^= zobristTurn;
+            }
 
-        /// <summary>
-        /// プロパティ値の変更を通知します。
-        /// </summary>
-        public override void NotifyPropertyChanged(PropertyChangedEventArgs e)
-        {
-            Util.CallPropertyChanged(PropertyChanged, this, e);
-        }
-
-        /// <summary>
-        /// 局面の変更を通知します。
-        /// </summary>
-        private void NotifyBoardChanged(Move move, bool isUndo)
-        {
-            this.RaisePropertyChanged("MoveCount");
-            this.RaisePropertyChanged("CanUndo");
-            this.RaisePropertyChanged("CanRedo");
+            return hashValue;
         }
 
         /// <summary>
@@ -224,48 +198,45 @@ namespace Ragnarok.Shogi
         /// </summary>
         public Board Clone(bool cloneMoveList = true)
         {
-            using (LazyLock())
+            var cloned = new Board(false)
             {
-                var cloned = new Board(false)
-                {
-                    blackHandBox = this.blackHandBox.Clone(),
-                    whiteHandBox = this.whiteHandBox.Clone(),
-                    turn = this.turn,
-                    prevMovedSquare = (
+                blackHandBox = this.blackHandBox.Clone(),
+                whiteHandBox = this.whiteHandBox.Clone(),
+                turn = this.turn,
+                prevMovedSquare = (
                         this.prevMovedSquare != null ?
                         this.prevMovedSquare.Clone() :
                         null),
-                };
+            };
 
-                // 指し手リストもコピーする場合
-                if (cloneMoveList)
-                {
-                    cloned.moveList = this.moveList.Select(move => move.Clone()).ToList();
-                    cloned.redoList = this.redoList.Select(move => move.Clone()).ToList();
-                }
-                else
-                {
-                    cloned.moveList = new List<Move>();
-                    cloned.redoList = new List<Move>();
-                }
-
-                // 各位置に駒を設定します。
-                for (var rank = 1; rank <= BoardSize; ++rank)
-                {
-                    for (var file = 1; file <= BoardSize; ++file)
-                    {
-                        var square = new Square(file, rank);
-                        var piece = this[square];
-
-                        cloned[square] = (
-                            piece != null ?
-                            piece.Clone() :
-                            null);
-                    }
-                }
-
-                return cloned;
+            // 指し手リストもコピーする場合
+            if (cloneMoveList)
+            {
+                cloned.moveList = this.moveList.Select(move => move.Clone()).ToList();
+                cloned.redoList = this.redoList.Select(move => move.Clone()).ToList();
             }
+            else
+            {
+                cloned.moveList = new List<Move>();
+                cloned.redoList = new List<Move>();
+            }
+
+            // 各位置に駒を設定します。
+            for (var rank = 1; rank <= BoardSize; ++rank)
+            {
+                for (var file = 1; file <= BoardSize; ++file)
+                {
+                    var square = new Square(file, rank);
+                    var piece = this[square];
+
+                    cloned[square] = (
+                        piece != null ?
+                        piece.Clone() :
+                        null);
+                }
+            }
+
+            return cloned;
         }
 
         /// <summary>
@@ -275,10 +246,7 @@ namespace Ragnarok.Shogi
         {
             get
             {
-                using (LazyLock())
-                {
-                    return new ReadOnlyCollection<Move>(this.moveList);
-                }
+                return new ReadOnlyCollection<Move>(this.moveList);
             }
         }
 
@@ -289,10 +257,7 @@ namespace Ragnarok.Shogi
         {
             get
             {
-                using (LazyLock())
-                {
-                    return new ReadOnlyCollection<Move>(this.redoList);
-                }
+                return new ReadOnlyCollection<Move>(this.redoList);
             }
         }
 
@@ -303,10 +268,7 @@ namespace Ragnarok.Shogi
         {
             get
             {
-                using (LazyLock())
-                {
-                    return this.moveList.Any();
-                }
+                return this.moveList.Any();
             }
         }
 
@@ -317,10 +279,7 @@ namespace Ragnarok.Shogi
         {
             get
             {
-                using (LazyLock())
-                {
-                    return this.moveList.Count();
-                }
+                return this.moveList.Count();
             }
         }
 
@@ -331,10 +290,7 @@ namespace Ragnarok.Shogi
         {
             get
             {
-                using (LazyLock())
-                {
-                    return this.redoList.Any();
-                }
+                return this.redoList.Any();
             }
         }
 
@@ -345,10 +301,7 @@ namespace Ragnarok.Shogi
         {
             get
             {
-                using (LazyLock())
-                {
-                    return this.redoList.Count();
-                }
+                return this.redoList.Count();
             }
         }
 
@@ -359,27 +312,20 @@ namespace Ragnarok.Shogi
         {
             get
             {
-                using (LazyLock())
-                {
-                    var move = this.moveList.LastOrDefault();
+                var move = this.moveList.LastOrDefault();
 
-                    return (move != null ? move.Clone() : null);
-                }
+                return (move != null ? move.Clone() : null);
             }
         }
 
         /// <summary>
         /// 投了などの特殊な指し手があるかどうかを取得します。
         /// </summary>
-        [DependOnProperty("LastMove")]
         public bool HasSpecialMove
         {
             get
             {
-                using (LazyLock())
-                {
-                    return (LastMove != null && LastMove.IsSpecialMove);
-                }
+                return (LastMove != null && LastMove.IsSpecialMove);
             }
         }
 
@@ -397,11 +343,7 @@ namespace Ragnarok.Shogi
 
                 var rank = square.Rank - 1;
                 var file = BoardSize - square.File;
-
-                using (LazyLock())
-                {
-                    return this.board[rank * 9 + file];
-                }
+                return this.board[rank * 9 + file];
             }
             set
             {
@@ -412,11 +354,7 @@ namespace Ragnarok.Shogi
 
                 var rank = square.Rank - 1;
                 var file = BoardSize - square.File;
-
-                using (LazyLock())
-                {
-                    this.board[rank * 9 + file] = value;
-                }
+                this.board[rank * 9 + file] = value;
             }
         }
 
@@ -435,7 +373,7 @@ namespace Ragnarok.Shogi
         public BWType Turn
         {
             get { return this.turn; }
-            set { SetValue("Turn", value, ref this.turn); }
+            set { this.turn = value; }
         }
 
         /// <summary>
@@ -444,7 +382,7 @@ namespace Ragnarok.Shogi
         public Square PrevMovedSquare
         {
             get { return this.prevMovedSquare; }
-            set { SetValue("PrevMovedSquare", value, ref this.prevMovedSquare); }
+            set { this.prevMovedSquare = value; }
         }
 
         /// <summary>
@@ -462,10 +400,7 @@ namespace Ragnarok.Shogi
         {
             get
             {
-                using (LazyLock())
-                {
-                    return this.moveList.Count();
-                }
+                return this.moveList.Count();
             }
         }
 
@@ -480,10 +415,7 @@ namespace Ragnarok.Shogi
         {
             get
             {
-                using (LazyLock())
-                {
-                    return ToBod();
-                }
+                return ToBod();
             }
         }
 
@@ -507,12 +439,9 @@ namespace Ragnarok.Shogi
         /// </summary>
         public int GetHandCount(PieceType pieceType, BWType bwType)
         {
-            using (LazyLock())
-            {
-                var handBox = GetHandBox(bwType);
+            var handBox = GetHandBox(bwType);
 
-                return handBox.GetCount(pieceType);
-            }
+            return handBox.GetCount(pieceType);
         }
 
         /// <summary>
@@ -520,12 +449,9 @@ namespace Ragnarok.Shogi
         /// </summary>
         public void SetHandCount(PieceType pieceType, BWType bwType, int count)
         {
-            using (LazyLock())
-            {
-                var handBox = GetHandBox(bwType);
+            var handBox = GetHandBox(bwType);
 
-                handBox.SetCount(pieceType, count);
-            }
+            handBox.SetCount(pieceType, count);
         }
 
         /// <summary>
@@ -533,12 +459,9 @@ namespace Ragnarok.Shogi
         /// </summary>
         public void IncHandCount(PieceType pieceType, BWType bwType)
         {
-            using (LazyLock())
-            {
-                var handBox = GetHandBox(bwType);
+            var handBox = GetHandBox(bwType);
 
-                handBox.Increment(pieceType);
-            }
+            handBox.Increment(pieceType);
         }
 
         /// <summary>
@@ -546,12 +469,9 @@ namespace Ragnarok.Shogi
         /// </summary>
         public void DecHandCount(PieceType pieceType, BWType bwType)
         {
-            using (LazyLock())
-            {
-                var handBox = GetHandBox(bwType);
+            var handBox = GetHandBox(bwType);
 
-                handBox.Decrement(pieceType);
-            }
+            handBox.Decrement(pieceType);
         }
 
         /// <summary>
@@ -600,29 +520,25 @@ namespace Ragnarok.Shogi
         /// </summary>
         public Move Undo()
         {
-            using (LazyLock())
+            if (!this.moveList.Any())
             {
-                if (!this.moveList.Any())
-                {
-                    return null;
-                }
-
-                var move = this.moveList.Last();
-
-                // 盤の各状態を意って戻した状態に設定します。
-                this.moveList.RemoveAt(this.moveList.Count - 1);
-
-                // リドゥリストの最後に追加します。
-                // 再現するときは最後の要素から使います。
-                this.redoList.Add(move);
-
-                // this.moveListからmoveから取り除かれた状態じゃないと
-                // PrevMovedSquareの設定が上手くいかない。
-                DoUndo(move);
-
-                FiresOnExit += (_, __) => NotifyBoardChanged(move, true);
-                return move;
+                return null;
             }
+
+            var move = this.moveList.Last();
+
+            // 盤の各状態を意って戻した状態に設定します。
+            this.moveList.RemoveAt(this.moveList.Count - 1);
+
+            // リドゥリストの最後に追加します。
+            // 再現するときは最後の要素から使います。
+            this.redoList.Add(move);
+
+            // this.moveListからmoveから取り除かれた状態じゃないと
+            // PrevMovedSquareの設定が上手くいかない。
+            DoUndo(move);
+
+            return move;
         }
 
         /// <summary>
@@ -686,25 +602,22 @@ namespace Ragnarok.Shogi
         /// </summary>
         public Move Redo()
         {
-            using (LazyLock())
+            var move = this.redoList.LastOrDefault();
+            if (move == null)
             {
-                var move = this.redoList.LastOrDefault();
-                if (move == null)
-                {
-                    return null;
-                }
-                
-                if (!CheckAndMakeMove(move, MoveFlags.CheckTurn))
-                {
-                    // リドゥに失敗したら、どうすればいいんだ・・・
-                    Log.Error("{0}: リドゥ操作に失敗しました。", move);
-
-                    this.redoList.Clear();
-                    return null;
-                }
-
-                return move;
+                return null;
             }
+
+            if (!CheckAndMakeMove(move, MoveFlags.CheckTurn))
+            {
+                // リドゥに失敗したら、どうすればいいんだ・・・
+                Log.Error("{0}: リドゥ操作に失敗しました。", move);
+
+                this.redoList.Clear();
+                return null;
+            }
+
+            return move;
         }
 
         /// <summary>
@@ -712,11 +625,8 @@ namespace Ragnarok.Shogi
         /// </summary>
         public void UndoAll()
         {
-            using (LazyLock())
+            while (Undo() != null)
             {
-                while (Undo() != null)
-                {
-                }
             }
         }
 
@@ -725,13 +635,8 @@ namespace Ragnarok.Shogi
         /// </summary>
         public void ClearUndoList()
         {
-            using (LazyLock())
-            {
-                this.moveList.Clear();
-                PrevMovedSquare = null;
-
-                this.RaisePropertyChanged("CanUndo");
-            }
+            this.moveList.Clear();
+            PrevMovedSquare = null;
         }
 
         /// <summary>
@@ -739,11 +644,8 @@ namespace Ragnarok.Shogi
         /// </summary>
         public void RedoAll()
         {
-            using (LazyLock())
+            while (Redo() != null)
             {
-                while (Redo() != null)
-                {
-                }
             }
         }
 
@@ -752,12 +654,7 @@ namespace Ragnarok.Shogi
         /// </summary>
         public void ClearRedoList()
         {
-            using (LazyLock())
-            {
-                this.redoList.Clear();
-
-                this.RaisePropertyChanged("CanRedo");
-            }
+            this.redoList.Clear();
         }
 
         /// <summary>
@@ -765,13 +662,10 @@ namespace Ragnarok.Shogi
         /// </summary>
         public void RemoveSpecialMove()
         {
-            using (LazyLock())
+            if (HasSpecialMove)
             {
-                if (HasSpecialMove)
-                {
-                    Undo();
-                    ClearRedoList();
-                }
+                Undo();
+                ClearRedoList();
             }
         }
 
@@ -824,7 +718,6 @@ namespace Ragnarok.Shogi
                 }
             }
 
-            using (LazyLock())
             {
                 // 手番があわなければ失敗とします。
                 if (EnumEx.HasFlag(flags, MoveFlags.CheckTurn))
@@ -876,9 +769,6 @@ namespace Ragnarok.Shogi
             {
                 this.redoList.Clear();
             }
-
-            // 局面の変化を通知します。
-            FiresOnExit += (_, __) => NotifyBoardChanged(move, false);
         }
 
         /// <summary>
@@ -985,44 +875,42 @@ namespace Ragnarok.Shogi
         /// </summary>
         public bool CanDrop(BWType bwType, Square square, PieceType pieceType)
         {
-            using (LazyLock())
+            if (this[square] != null)
             {
-                if (this[square] != null)
-                {
-                    return false;
-                }
-
-                var rank =
-                    (bwType == BWType.Black
-                    ? square.Rank
-                    : (BoardSize + 1) - square.Rank);
-                switch (pieceType)
-                {
-                    case PieceType.None: // これは打てない
-                        return false;
-                    case PieceType.Hu:
-                        // 2歩のチェックを行います。
-                        if (GetPawnCount(bwType, square.File) > 0)
-                        {
-                            return false;
-                        }
-                        goto case PieceType.Kyo;
-                    case PieceType.Kyo:
-                        if (rank == 1)
-                        {
-                            return false;
-                        }
-                        break;
-                    case PieceType.Kei:
-                        if (rank < 3) // 1,2はダメ
-                        {
-                            return false;
-                        }
-                        break;
-                }
-
-                return true;
+                return false;
             }
+
+            var rank =
+                (bwType == BWType.Black
+                ? square.Rank
+                : (BoardSize + 1) - square.Rank);
+
+            switch (pieceType)
+            {
+                case PieceType.None: // これは打てない
+                    return false;
+                case PieceType.Hu:
+                    // 2歩のチェックを行います。
+                    if (GetPawnCount(bwType, square.File) > 0)
+                    {
+                        return false;
+                    }
+                    goto case PieceType.Kyo;
+                case PieceType.Kyo:
+                    if (rank == 1)
+                    {
+                        return false;
+                    }
+                    break;
+                case PieceType.Kei:
+                    if (rank < 3) // 1,2はダメ
+                    {
+                        return false;
+                    }
+                    break;
+            }
+
+            return true;
         }
 
         /// <summary>
@@ -1248,15 +1136,12 @@ namespace Ragnarok.Shogi
         /// </summary>
         public int GetPawnCount(BWType bwType, int file)
         {
-            using (LazyLock())
-            {
-                return Enumerable.Range(1, BoardSize)
-                    .Select(_ => this[file, _])
-                    .Where(_ => _ != null)
-                    .Where(_ => _.Piece == Piece.Hu)
-                    .Where(_ => _.BWType == bwType)
-                    .Count();
-            }
+            return Enumerable.Range(1, BoardSize)
+                .Select(_ => this[file, _])
+                .Where(_ => _ != null)
+                .Where(_ => _.Piece == Piece.Hu)
+                .Where(_ => _.BWType == bwType)
+                .Count();
         }
 
         /// <summary>
@@ -1309,79 +1194,76 @@ namespace Ragnarok.Shogi
         /// </summary>
         public bool Validate()
         {
-            using (LazyLock())
+            if (this.blackHandBox == null ||
+                !this.blackHandBox.Validate())
             {
-                if (this.blackHandBox == null ||
-                    !this.blackHandBox.Validate())
-                {
-                    return false;
-                }
-
-                if (this.whiteHandBox == null ||
-                    !this.whiteHandBox.Validate())
-                {
-                    return false;
-                }
-
-                if (!Enum.IsDefined(typeof(BWType), this.turn) ||
-                    this.turn == BWType.None)
-                {
-                    return false;
-                }
-
-                if (this.prevMovedSquare != null &&
-                    !this.prevMovedSquare.Validate())
-                {
-                    return false;
-                }
-
-                if (this.moveList == null ||
-                    this.moveList.Any(move => !move.Validate()))
-                {
-                    return false;
-                }
-
-                // 盤上の各駒が正しいか調べます。
-                var pieces = AllSquares().Select(_ => this[_]);
-                if (!pieces.All(_ => _ == null || _.Validate()))
-                {
-                    return false;
-                }
-
-                foreach (var bwType in new BWType[] { BWType.Black, BWType.White })
-                {
-                    // 局面上の駒の数を確認します。
-                    foreach (var pieceType in EnumEx.GetValues<PieceType>())
-                    {
-                        if (pieceType == PieceType.None) continue;
-
-                        var count = GetTotalPieceCount(pieceType);
-                        var maxCount = GetMaxPieceCount(pieceType);
-                        if (count > maxCount)
-                        {
-                            return false;
-                        }
-                    }
-
-                    // ２歩の確認を行います。
-                    for (var file = 1; file <= BoardSize; ++file)
-                    {
-                        if (GetPawnCount(bwType, file) > 1)
-                        {
-                            return false;
-                        }
-                    }
-                }
-
-                // 玉の数をカウントします。
-                if (GetGyokuCount(BWType.Black) > 1 ||
-                    GetGyokuCount(BWType.White) > 1)
-                {
-                    return false;
-                }
-
-                return true;
+                return false;
             }
+
+            if (this.whiteHandBox == null ||
+                !this.whiteHandBox.Validate())
+            {
+                return false;
+            }
+
+            if (!Enum.IsDefined(typeof(BWType), this.turn) ||
+                this.turn == BWType.None)
+            {
+                return false;
+            }
+
+            if (this.prevMovedSquare != null &&
+                !this.prevMovedSquare.Validate())
+            {
+                return false;
+            }
+
+            if (this.moveList == null ||
+                this.moveList.Any(move => !move.Validate()))
+            {
+                return false;
+            }
+
+            // 盤上の各駒が正しいか調べます。
+            var pieces = AllSquares().Select(_ => this[_]);
+            if (!pieces.All(_ => _ == null || _.Validate()))
+            {
+                return false;
+            }
+
+            foreach (var bwType in new BWType[] { BWType.Black, BWType.White })
+            {
+                // 局面上の駒の数を確認します。
+                foreach (var pieceType in EnumEx.GetValues<PieceType>())
+                {
+                    if (pieceType == PieceType.None) continue;
+
+                    var count = GetTotalPieceCount(pieceType);
+                    var maxCount = GetMaxPieceCount(pieceType);
+                    if (count > maxCount)
+                    {
+                        return false;
+                    }
+                }
+
+                // ２歩の確認を行います。
+                for (var file = 1; file <= BoardSize; ++file)
+                {
+                    if (GetPawnCount(bwType, file) > 1)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            // 玉の数をカウントします。
+            if (GetGyokuCount(BWType.Black) > 1 ||
+                GetGyokuCount(BWType.White) > 1)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         /// <summary>
@@ -1408,37 +1290,33 @@ namespace Ragnarok.Shogi
                 return false;
             }
 
-            using (LazyLock())
-            using (other.LazyLock())
+            if (HashValue != other.HashValue)
             {
-                if (HashValue != other.HashValue)
-                {
-                    return false;
-                }
-
-                if (!AllSquares().All(_ => this[_] == other[_]))
-                {
-                    return false;
-                }
-
-                if (!this.blackHandBox.Equals(other.blackHandBox) ||
-                    !this.whiteHandBox.Equals(other.whiteHandBox))
-                {
-                    return false;
-                }
-
-                if (this.turn != other.turn)
-                {
-                    return false;
-                }
-
-                /*if (this.prevMovedSquare != other.prevMovedSquare)
-                {
-                    return false;
-                }*/
-
-                return true;
+                return false;
             }
+
+            if (!AllSquares().All(_ => this[_] == other[_]))
+            {
+                return false;
+            }
+
+            if (!this.blackHandBox.Equals(other.blackHandBox) ||
+                !this.whiteHandBox.Equals(other.whiteHandBox))
+            {
+                return false;
+            }
+
+            if (this.turn != other.turn)
+            {
+                return false;
+            }
+
+            /*if (this.prevMovedSquare != other.prevMovedSquare)
+            {
+                return false;
+            }*/
+
+            return true;
         }
 
         #region Serialize
@@ -1565,14 +1443,11 @@ namespace Ragnarok.Shogi
         [OnSerializing()]
         private void OnBeforeSerialize(StreamingContext context)
         {
-            using (LazyLock())
-            {
-                this.serializeBoard = SerializePieces();
+            this.serializeBoard = SerializePieces();
 
-                // 指し手のシリアライズを行います。
-                this.moveListBytes = SerializeMoveList(this.moveList);
-                this.redoListBytes = SerializeMoveList(this.redoList);
-            }
+            // 指し手のシリアライズを行います。
+            this.moveListBytes = SerializeMoveList(this.moveList);
+            this.redoListBytes = SerializeMoveList(this.redoList);
         }
 
         /// <summary>

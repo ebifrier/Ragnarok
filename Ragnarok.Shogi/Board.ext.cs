@@ -27,10 +27,7 @@ namespace Ragnarok.Shogi
         /// </summary>
         public string ToCsa()
         {
-            using (LazyLock())
-            {
-                return CsaBoard.BoardToCsa(this);
-            }
+            return CsaBoard.BoardToCsa(this);
         }
 
         /// <summary>
@@ -46,10 +43,7 @@ namespace Ragnarok.Shogi
         /// </summary>
         public string ToBod()
         {
-            using (LazyLock())
-            {
-                return BodBoard.BoardToBod(this);
-            }
+            return BodBoard.BoardToBod(this);
         }
 
         /// <summary>
@@ -65,10 +59,7 @@ namespace Ragnarok.Shogi
         /// </summary>
         public string ToSfen()
         {
-            using (LazyLock())
-            {
-                return SfenBoard.BoardToSfen(this);
-            }
+            return SfenBoard.BoardToSfen(this);
         }
     }
 }
