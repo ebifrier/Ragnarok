@@ -17,7 +17,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 投票された指し手を取得します。
         /// </summary>
-        public Move Move
+        public LiteralMove Move
         {
             get;
             set;
@@ -43,7 +43,7 @@ namespace Ragnarok.Shogi
             new Dictionary<SkillLevel, int>();
         private readonly Dictionary<ShogiPlayer, RegistereredMove> moveDatas =
             new Dictionary<ShogiPlayer, RegistereredMove>();
-        private Move opponentMove;
+        private LiteralMove opponentMove;
 
         /// <summary>
         /// デフォルトの得票ポイントを取得または設定します。
@@ -57,7 +57,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 対局相手の指し手を取得または設定します。
         /// </summary>
-        public Move OpponentMove
+        public LiteralMove OpponentMove
         {
             get { return this.opponentMove; }
             set { SetValue("OpponentMove", value, ref this.opponentMove); }
@@ -97,7 +97,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 直前の相手の手を考慮して、与えられた指し手を修正します。
         /// </summary>
-        private Move ModifyMove(Move move)
+        private LiteralMove ModifyMove(LiteralMove move)
         {
             /*if (move == null || !move.Validate())
             {
@@ -162,7 +162,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 指し手に投票します。
         /// </summary>
-        public void Vote(ShogiPlayer player, Move move, DateTime timestamp)
+        public void Vote(ShogiPlayer player, LiteralMove move, DateTime timestamp)
         {
             if (move == null || player == null)
             {

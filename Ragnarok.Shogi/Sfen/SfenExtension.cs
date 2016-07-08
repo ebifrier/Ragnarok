@@ -27,7 +27,7 @@ namespace Ragnarok.Shogi.Sfen
         /// 持ち駒を打つときは "[駒の種類(大文字)]*[打った場所]" となります。
         /// 金を５二に打つ場合はG*5bとなります
         /// </remarks>
-        public static string ToSfen(this BoardMove move)
+        public static string ToSfen(this Move move)
         {
             if (move == null)
             {
@@ -73,7 +73,7 @@ namespace Ragnarok.Shogi.Sfen
         /// <summary>
         /// SFEN形式の指し手を、指し手に変換します。
         /// </summary>
-        public static BoardMove SfenToMove(this Board board, string sfen)
+        public static Move SfenToMove(this Board board, string sfen)
         {
             if (board == null)
             {
@@ -104,7 +104,7 @@ namespace Ragnarok.Shogi.Sfen
                 var dstFile = (sfen[2] - '1') + 1;
                 var dstRank = (sfen[3] - 'a') + 1;
 
-                return BoardMove.CreateDrop(
+                return Move.CreateDrop(
                     board.Turn, new Square(dstFile, dstRank), dropPieceType);
             }
             else
@@ -129,7 +129,7 @@ namespace Ragnarok.Shogi.Sfen
                 }
 
                 var promote = (sfen.Length > 4 && sfen[4] == '+');
-                return BoardMove.CreateMove(
+                return Move.CreateMove(
                     board.Turn,
                     new Square(srcFile, srcRank),
                     new Square(dstFile, dstRank),
@@ -142,7 +142,7 @@ namespace Ragnarok.Shogi.Sfen
         /// <summary>
         /// 連続したSFEN形式の指し手を、連続した指し手に変換します。
         /// </summary>
-        public static IEnumerable<BoardMove> SfenToMoveList(this Board board,
+        public static IEnumerable<Move> SfenToMoveList(this Board board,
                                                             IEnumerable<string> sfenList)
         {
             if (board == null)

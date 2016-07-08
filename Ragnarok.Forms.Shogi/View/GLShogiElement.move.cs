@@ -14,7 +14,6 @@ namespace Ragnarok.Forms.Shogi.View
     /// </summary>
     public partial class GLShogiElement
     {
-        private readonly int[] komaboxCount = new int[(int)PieceType.Hu + 1];
         private MovingPiece movingPiece;
         private PromoteDialog promoteDialog;
 
@@ -91,13 +90,6 @@ namespace Ragnarok.Forms.Shogi.View
         /// </summary>
         private void BeginMove(Point pos)
         {
-            // 自動再生中であれば、それを停止します。
-            if (this.autoPlay != null && !this.autoPlay.IsImportant)
-            {
-                StopAutoPlay();
-                return;
-            }
-
             // 駒検索
             var square = PointToSquare(pos);
             if (square != null && Board != null)
@@ -132,7 +124,7 @@ namespace Ragnarok.Forms.Shogi.View
                 return false;
             }
 
-            if (this.autoPlay != null)
+            if (IsAutoPlaying)
             {
                 return false;
             }
@@ -261,7 +253,7 @@ namespace Ragnarok.Forms.Shogi.View
         /// <summary>
         /// 指し手が実際に着手可能か確認します。
         /// </summary>
-        private bool CanMove(BoardMove move, MoveFlags flags = MoveFlags.DoMoveDefault)
+        private bool CanMove(Move move, MoveFlags flags = MoveFlags.DoMoveDefault)
         {
             var tmp = Board.Clone();
 
@@ -304,6 +296,7 @@ namespace Ragnarok.Forms.Shogi.View
             }
             else
             {
+                // 局面編集不可のとき
                 EndMove();
             }
         }
@@ -318,12 +311,12 @@ namespace Ragnarok.Forms.Shogi.View
         {
             var srcSquare = this.movingPiece.Square;
             var piece = this.movingPiece.BoardPiece;
-            BoardMove move = null;
+            Move move = null;
 
             if (srcSquare != null)
             {
                 // 駒の移動の場合
-                move = BoardMove.CreateMove(
+                move = Move.CreateMove(
                     piece.BWType, srcSquare, dstSquare, piece.Piece, false);
 
                 // 成／不成りのダイアログを出す前に着手可能か確認します。
@@ -348,7 +341,7 @@ namespace Ragnarok.Forms.Shogi.View
             else
             {
                 // 駒打ちの場合
-                move = BoardMove.CreateDrop(
+                move = Move.CreateDrop(
                     piece.BWType, dstSquare, piece.PieceType);
 
                 if (!CanMove(move))
@@ -365,18 +358,16 @@ namespace Ragnarok.Forms.Shogi.View
         /// <summary>
         /// 実際に指し手を進めます。
         /// </summary>
-        private void MakeMove(BoardMove move)
+        private void MakeMove(Move move)
         {
             if (move == null || !move.Validate())
             {
                 return;
             }
 
-            BoardPieceChanging.SafeRaiseEvent(this,
-                new BoardPieceEventArgs(Board.Clone(), move));
             Board.DoMove(move);
-            BoardPieceChanged.SafeRaiseEvent(this,
-                new BoardPieceEventArgs(Board.Clone(), move));
+            BoardModel.FireBoardChanged(
+                this, new BoardChangedEventArgs(Board, move, false, true));
         }
 
         /// <summary>
@@ -398,7 +389,7 @@ namespace Ragnarok.Forms.Shogi.View
                 throw new ArgumentException("DoMoveEditing");
             }
 
-            // 駒箱から持ってきた場合は先手番の駒として置きます。
+            // 駒箱から持ってきた場合は先手側の駒として置きます。
             var bwType = (
                 piece.BWType == BWType.None ?
                 ViewSide : piece.BWType);
@@ -455,6 +446,9 @@ namespace Ragnarok.Forms.Shogi.View
                 Board[dstSquare] =
                     new BoardPiece(piece.PieceType, piece.IsPromoted, bwType);
             }
+
+            BoardModel.FireBoardChanged(
+                this, new BoardChangedEventArgs(Board, true));
         }
         #endregion
 
@@ -592,7 +586,7 @@ namespace Ragnarok.Forms.Shogi.View
         /// <summary>
         /// 手番を内部インデックスに変換します。(局面の反転を考慮します)
         /// </summary>
-        private static int GetPieceBoxIndex(BWType bwType, BWType viewSide)
+        private static int GetViewIndex(BWType bwType, BWType viewSide)
         {
             if (bwType == BWType.None)
             {
@@ -616,7 +610,7 @@ namespace Ragnarok.Forms.Shogi.View
             foreach (var boxType in EnumEx.GetValues<BWType>())
             {
                 // 盤の反転を考慮して駒台の領域を調べます。
-                var viewIndex = GetPieceBoxIndex(boxType, ViewSide);
+                var viewIndex = GetViewIndex(boxType, ViewSide);
                 if (this.pieceBoxBounds[viewIndex].Contains(pos))
                 {
                     return boxType;
@@ -629,7 +623,7 @@ namespace Ragnarok.Forms.Shogi.View
         /// <summary>
         /// 指定の座標値に駒台上の駒があればそれを取得します。
         /// </summary>
-        private BoardPiece PointToHandPiece(System.Drawing.Point pos)
+        private BoardPiece PointToHandPiece(Point pos)
         {
             var boxTypeN = PointToPieceBoxType(pos);
             if (boxTypeN == null)
@@ -669,8 +663,8 @@ namespace Ragnarok.Forms.Shogi.View
         /// </summary>
         public PointF HandPieceToPoint(PieceType pieceType, BWType bwType)
         {
-            var index = GetPieceBoxIndex(bwType, ViewSide);
-            var bounds = this.pieceBoxBounds[index];
+            var viewIndex = GetViewIndex(bwType, ViewSide);
+            var bounds = this.pieceBoxBounds[viewIndex];
 
             // ○ 駒位置の計算方法
             // 駒台には駒を横に２つ並べます。また、両端と駒と駒の間には

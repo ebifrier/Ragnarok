@@ -36,7 +36,7 @@ namespace Ragnarok.Shogi.Tests
                 where tookPiece == null || tookPiece.Validate()
                 where (dst.Rank % 2) == 1 && (dst.File % 3) == 1
                 where (src.Rank % 2) == 1 && (src.File % 3) == 1
-                let bmove = BoardMove.CreateMove(
+                let bmove = Move.CreateMove(
                     turn, src, dst,
                     pcPiece, promote,
                     tookPiece)
@@ -48,7 +48,7 @@ namespace Ragnarok.Shogi.Tests
                 from dst in Board.AllSquares()
                 from pc in EnumEx.GetValues<PieceType>()
                 where pc != PieceType.None
-                let bmove = BoardMove.CreateDrop(turn, dst, pc)
+                let bmove = Move.CreateDrop(turn, dst, pc)
                 where bmove.Validate()
                 select bmove;
 
@@ -56,7 +56,7 @@ namespace Ragnarok.Shogi.Tests
                 from turn in new BWType[] { BWType.Black, BWType.White }
                 from special in EnumEx.GetValues<SpecialMoveType>()
                 where special != SpecialMoveType.None
-                let bmove = BoardMove.CreateSpecialMove(turn, special)
+                let bmove = Move.CreateSpecialMove(turn, special)
                 where bmove.Validate()
                 select bmove;
 
@@ -68,7 +68,7 @@ namespace Ragnarok.Shogi.Tests
                 var bytes = JsonUtil.Serialize(bmove);
                 Assert.NotNull(bytes);
 
-                var newMove = JsonUtil.Deserialize<BoardMove>(bytes);
+                var newMove = JsonUtil.Deserialize<Move>(bytes);
                 Assert.NotNull(newMove);
                 Assert.True(newMove.Validate());
 

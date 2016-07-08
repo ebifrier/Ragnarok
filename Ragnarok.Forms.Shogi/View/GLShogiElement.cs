@@ -9,6 +9,8 @@ using Ragnarok.Shogi;
 
 namespace Ragnarok.Forms.Shogi.View
 {
+    using ViewModel;
+
     /// <summary>
     /// 将棋の盤面を表示するためのコントロールクラスです。
     /// </summary>
@@ -50,23 +52,20 @@ namespace Ragnarok.Forms.Shogi.View
             }
             .Apply(_ => _.Freeze());*/
 
-        private Board board;
         private IEffectManager effectManager;
-        private AutoPlay autoPlay;
-        private Board oldBoard;
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public GLShogiElement()
+        public GLShogiElement(BoardModel boardModel)
         {
+            AddPropertyChangedHandler("Board", BoardUpdated);
             AddPropertyChangedHandler("ViewSide", ViewSideUpdated);
             AddPropertyChangedHandler("EditMode", EditModeUpdated);
 
-            Board = new Board();
+            BoardModel = boardModel;
             ViewSide = BWType.Black;
             EditMode = EditMode.Normal;
-            AutoPlayState = AutoPlayState.None;
             BlackPlayerName = "▲先手";
             WhitePlayerName = "△後手";
             BlackTime = TimeSpan.Zero;
@@ -74,15 +73,14 @@ namespace Ragnarok.Forms.Shogi.View
             InManipulating = false;
 
             InitializeDraw();
-        }
 
-        /// <summary>
-        /// コマンドのバインディングを行います。
-        /// </summary>
-        public void InitializeBindings()
-        {
-            //ViewModel.ShogiCommands.Binding(this, element.CommandBindings);
-            //ViewModel.ShogiCommands.Binding(element.InputBindings);
+            if (boardModel != null)
+            {
+                boardModel.Shogi = this;
+                boardModel.BoardChanged += OnBoardChanged;
+
+                this.AddDependModel(BoardModel);
+            }
         }
 
         /// <summary>
@@ -91,7 +89,6 @@ namespace Ragnarok.Forms.Shogi.View
         protected override void OnTerminate()
         {
             EndMove();
-            StopAutoPlay();
 
             // エフェクトマネージャへの参照と、マネージャが持つ
             // このオブジェクトへの参照を初期化します。
@@ -100,66 +97,36 @@ namespace Ragnarok.Forms.Shogi.View
             // 描画関係の終了処理
             TerminateDraw();
 
-            // Boardには駒が変化したときのハンドラを設定しているため
-            // 最後に必ずそのハンドラを削除する必要があります。
-            // しかしながら、ここで値をnullに設定してしまうと、
-            // Board依存プロパティに設定されたデータの方もnullクリア
-            // されてしまうため、ただ単にイベントを外すだけにします。
-            if (Board != null)
-            {
-                Board.BoardChanged -= OnBoardPieceChanged;
-            }
-
             base.OnTerminate();
         }
 
-        #region イベント
-        /// <summary>
-        /// 指し手が進む直前に呼ばれるイベントを追加または削除します。
-        /// </summary>
-        public event EventHandler<BoardPieceEventArgs> BoardPieceChanging;
-
-        /// <summary>
-        /// 指し手が進んだ直後に呼ばれるイベントを追加または削除します。
-        /// </summary>
-        public event EventHandler<BoardPieceEventArgs> BoardPieceChanged;
-        #endregion
-
         #region 基本プロパティ
+        /// <summary>
+        /// 局面管理用のモデルオブジェクトを取得または設定します。
+        /// </summary>
+        public BoardModel BoardModel
+        {
+            get { return GetValue<BoardModel>("BoardModel"); }
+            private set { SetValue("BoardModel", value); }
+        }
+
         /// <summary>
         /// 表示する局面を取得または設定します。
         /// </summary>
+        [DependOnProperty(typeof(BoardModel), "Board")]
         public Board Board
         {
-            get { return this.board; }
-            set
-            {
-                if (this.board != value)
-                {
-                    EndMove();
-                    ClosePromoteDialog();
-                    StopAutoPlay();
+            get { return BoardModel.Board; }
+            set { BoardModel.Board = value; }
+        }
 
-                    if (this.board != null)
-                    {
-                        this.board.BoardChanged -= OnBoardPieceChanged;
-                        this.board.RemovePropertyChangedHandler("Turn", OnTurnChanged);
-                    }
+        private void BoardUpdated(object sender, PropertyChangedEventArgs e)
+        {
+            EndMove();
+            ClosePromoteDialog();
+            //StopAutoPlay();
 
-                    this.board = value;
-
-                    if (this.board != null)
-                    {
-                        this.board.BoardChanged += OnBoardPieceChanged;
-                        this.board.AddPropertyChangedHandler("Turn", OnTurnChanged);
-                    }
-
-                    InitKomaboxPieceCount();
-                    InitEffect();
-
-                    this.RaisePropertyChanged("Board");
-                }
-            }
+            InitEffect();
         }
 
         /// <summary>
@@ -180,12 +147,22 @@ namespace Ragnarok.Forms.Shogi.View
         }
 
         /// <summary>
+        /// 自動再生中かどうかを取得または設定します。
+        /// </summary>
+        public bool IsAutoPlaying
+        {
+            get { return GetValue<bool>("IsAutoPlaying"); }
+            set { SetValue("IsAutoPlaying", value); }
+        }
+
+        /// <summary>
         /// 編集モードを取得または設定します。
         /// </summary>
+        [DependOnProperty(typeof(BoardModel), "EditMode")]
         public EditMode EditMode
         {
-            get { return GetValue<EditMode>("EditMode"); }
-            set { SetValue("EditMode", value); }
+            get { return BoardModel.EditMode; }
+            set { BoardModel.EditMode = value; }
         }
 
         /// <summary>
@@ -196,15 +173,6 @@ namespace Ragnarok.Forms.Shogi.View
             EndMove();
 
             FormsUtil.InvalidateCommand();
-        }
-
-        /// <summary>
-        /// 自動再生の状態を取得します。
-        /// </summary>
-        public AutoPlayState AutoPlayState
-        {
-            get { return GetValue<AutoPlayState>("AutoPlayState"); }
-            private set { SetValue("AutoPlayState", value); }
         }
 
         /// <summary>
@@ -314,27 +282,15 @@ namespace Ragnarok.Forms.Shogi.View
         /// <summary>
         /// 駒が掴まれているなどするかどうかを取得します。
         /// </summary>
+        [DependOnProperty(typeof(BoardModel), "InManipulating")]
         public bool InManipulating
         {
-            get { return GetValue<bool>("InManipulating"); }
-            set { SetValue("InManipulating", value); }
+            get { return BoardModel.InManipulating; }
+            private set { BoardModel.InManipulating = value; }
         }
         #endregion
 
         #region 駒台の操作
-        /// <summary>
-        /// 現在の局面から、駒箱に入るべき駒数を調べます。
-        /// </summary>
-        private void InitKomaboxPieceCount()
-        {
-            foreach (var pieceType in EnumEx.GetValues<PieceType>())
-            {
-                var count = Board.GetLeavePieceCount(pieceType);
-
-                this.komaboxCount[(int)pieceType] = count;
-            }
-        }
-
         /// <summary>
         /// 持ち駒や駒箱の駒の数を取得します。
         /// </summary>
@@ -343,7 +299,7 @@ namespace Ragnarok.Forms.Shogi.View
             if (bwType == BWType.None)
             {
                 // 駒箱の駒の数
-                return this.komaboxCount[(int)pieceType];
+                return Board.GetLeavePieceCount(pieceType);
             }
             else
             {
@@ -368,12 +324,7 @@ namespace Ragnarok.Forms.Shogi.View
                 throw new ArgumentException("count");
             }
 
-            if (bwType == 0)
-            {
-                // 駒箱の駒の数
-                this.komaboxCount[(int)pieceType] = count;
-            }
-            else
+            if (bwType != BWType.None)
             {
                 // 持ち駒の駒の数
                 Board.SetHandCount(pieceType, bwType, count);
@@ -403,24 +354,39 @@ namespace Ragnarok.Forms.Shogi.View
 
         #region 盤とビューとの同期など
         /// <summary>
-        /// 盤面の駒が移動したときに呼ばれます。
+        /// 局面変更時に呼ばれます。
         /// </summary>
-        private void OnBoardPieceChanged(object sender, BoardChangedEventArgs e)
+        private void OnBoardChanged(object sender, BoardChangedEventArgs e)
         {
-            var move = e.Move;
-            if ((object)move == null || !move.Validate())
+            // 指し手が進んだときのエフェクトを追加します。
+            if (EffectManager != null &&
+                e.Move != null)
             {
-                return;
+                EffectManager.Moved(e.Move, e.IsUndo);
             }
 
-            // 一応
+            FormsUtil.InvalidateCommand();
+        }
+
+        /// <summary>
+        /// 局面を設定します。
+        /// </summary>
+        public void SetBoard(Board board, Move move, bool isUndo = false)
+        {
+            if (board == null)
+            {
+                throw new ArgumentNullException("board");
+            }
+
             EndMove();
 
-            // 指し手が進んだときのエフェクトを追加します。
-            if (EffectManager != null)
+            if (!ReferenceEquals(Board, board))
             {
-                EffectManager.Moved(move, e.IsUndo);
+                Board = board;
             }
+
+            BoardModel.FireBoardChanged(
+                this, new BoardChangedEventArgs(board, move, isUndo, false));
         }
 
         /// <summary>
@@ -445,68 +411,6 @@ namespace Ragnarok.Forms.Shogi.View
             var bwType = (board != null ? board.Turn : BWType.Black);
 
             EffectManager.InitEffect(bwType);
-        }
-        #endregion
-
-        #region 自動再生
-        /// <summary>
-        /// 自動再生を開始します。
-        /// </summary>
-        public void StartAutoPlay(AutoPlay autoPlay)
-        {
-            if (autoPlay == null)
-            {
-                return;
-            }
-
-            if (AutoPlayState == AutoPlayState.Playing)
-            {
-                return;
-            }
-
-            // this.autoPlayを変える前に局面を変更します。
-            // 局面変更時は自動再生を自動で止めるようになっているので、
-            // this.autoPlayフィールドを変更した後に局面を変えると、
-            // すぐに止まってしまいます。
-            this.oldBoard = Board;
-            Board = autoPlay.Board;
-
-            autoPlay.ShogiElement = this;
-            this.autoPlay = autoPlay;
-            
-            AutoPlayState = AutoPlayState.Playing;
-        }
-
-        /// <summary>
-        /// 自動再生を終了します。
-        /// </summary>
-        public void StopAutoPlay()
-        {
-            AutoPlay_Ended();
-        }
-
-        private void AutoPlay_Ended()
-        {
-            if (this.autoPlay == null)
-            {
-                return;
-            }
-
-            // コントロールは消去しておきます。
-            // autoPlay.ShogiElementをnullに設定すると後のStopが
-            // 上手く動かないため、ここでは設定しません。
-            var autoPlay = this.autoPlay;
-            this.autoPlay = null;
-
-            Board = this.oldBoard;
-            this.oldBoard = null;
-
-            AutoPlayState = AutoPlayState.None;
-
-            // Boardが変更されるとAutoPlayはすべてクリアされます。
-            // Stopの中でBoardが変更されると少し面倒なことになるため、
-            // Stopメソッドはすべての状態が落ち着いた後に呼びます。
-            autoPlay.Stop();
         }
         #endregion
     }

@@ -89,7 +89,7 @@ namespace Ragnarok.Shogi.Kif
             WriteComment(writer, node);
 
             var moveList = KifuObject.Convert2List(node);
-            var lineList = board.ConvertMove(moveList, false)
+            var lineList = board.ConvertLiteralListFromMove(moveList, false)
                 .Where(_ => _ != null && _.Validate())
                 .Select(_ => Stringizer.ToString(_, MoveTextStyle.Normal))
                 .TakeBy(6)
@@ -160,15 +160,15 @@ namespace Ragnarok.Shogi.Kif
         private void WriteMakeKif(TextWriter writer, MoveNode node,
                                   Board board, bool hasVariation)
         {
-            var move = board.ConvertMove(node.Move, true);
-            if (move == null || !move.Validate())
+            var lmove = board.ConvertLiteralFromMove(node.Move, true);
+            if (lmove == null || !lmove.Validate())
             {
                 Log.Error("指し手'{0}'を出力できませんでした。", node.Move);
                 return;
             }
 
             // 半角文字相当の文字数で空白の数を計算します。
-            var moveText = Stringizer.ToString(move, MoveTextStyle.KifFile);
+            var moveText = Stringizer.ToString(lmove, MoveTextStyle.KifFile);
             var hanLen = moveText.HankakuLength();
 
             writer.WriteLine(

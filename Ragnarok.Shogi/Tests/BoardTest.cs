@@ -15,7 +15,7 @@ namespace Ragnarok.Shogi.Tests
         /// <summary>
         /// 駒の各移動先に対して、その手が指せるのかどうかをチェックします。
         /// </summary>
-        private void CanMoveTo(Board board, BoardMove move,
+        private void CanMoveTo(Board board, Move move,
                                List<Tuple<Square, bool>> availables)
         {
             for (var file = 1; file <= Board.BoardSize; ++file)
@@ -95,7 +95,7 @@ namespace Ragnarok.Shogi.Tests
         {
             var board = MakeBoard1(BWType.Black);
 
-            var move = BoardMove.CreateMove(
+            var move = Move.CreateMove(
                 BWType.Black, new Square(8, 3), new Square(8, 2),
                 new Piece(PieceType.Kyo, false), true);
             Assert.True(board.CanMove(move));
@@ -122,7 +122,7 @@ namespace Ragnarok.Shogi.Tests
         {
             var board = MakeBoard1(BWType.White);
 
-            var move = BoardMove.CreateMove(
+            var move = Move.CreateMove(
                 BWType.White, new Square(9, 7), new Square(9, 8),
                 new Piece(PieceType.Hu, false), true);
             Assert.True(board.CanMove(move));

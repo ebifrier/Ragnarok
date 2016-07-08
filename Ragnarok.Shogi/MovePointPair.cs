@@ -14,7 +14,7 @@ namespace Ragnarok.Shogi
         /// 指し手を取得または設定します。
         /// </summary>
         [DataMember(Order = 1, IsRequired = true)]
-        public Move Move
+        public LiteralMove Move
         {
             get;
             set;

@@ -9,33 +9,36 @@ namespace Ragnarok.Forms.Shogi
 {
     using View;
 
-    /// <summary>
-    /// 自動再生の種別です。
-    /// </summary>
-    public enum AutoPlayType
+    public interface IAutoPlay
     {
         /// <summary>
-        /// 指し手を動かしません。
+        /// 自動再生を行う将棋エレメントを取得します。
         /// </summary>
-        None,
+        GLShogiElement ShogiElement { get; set; }
+        
         /// <summary>
-        /// 与えられた指し手を自動再生します。
+        /// 重要な自動再生かどうかを取得または設定します。
         /// </summary>
-        Normal,
+        /// <remarks>
+        /// 真の場合は、GUIのマウス押下で自動再生をキャンセルしません。
+        /// </remarks>
+        bool IsImportant { get; }
+
         /// <summary>
-        /// 局面を元に戻しながら自動再生します。
+        /// 更新します。
         /// </summary>
-        Undo,
+        bool Update(TimeSpan elapsed);
+
         /// <summary>
-        /// 局面を次に進めながら自動再生します。
+        /// 自動再生の途中停止を行います。
         /// </summary>
-        Redo,
+        void Stop();
     }
 
     /// <summary>
     /// 指し手の自動再生時に使われます。再生用の変化を保存します。
     /// </summary>
-    public class AutoPlay
+    public class AutoPlayBase : IAutoPlay
     {
         /// <summary>
         /// 指し手のデフォルトの再生間隔です。
@@ -48,8 +51,6 @@ namespace Ragnarok.Forms.Shogi
         public static readonly TimeSpan DefaultEffectFadeInterval =
             TimeSpan.FromSeconds(0.5);
 
-        private readonly List<BoardMove> moveList;
-        private int moveIndex;
         private IEnumerator<bool> enumerator;
 
         /// <summary>
@@ -72,34 +73,7 @@ namespace Ragnarok.Forms.Shogi
         public GLShogiElement ShogiElement
         {
             get;
-            internal set;
-        }
-
-        /// <summary>
-        /// 開始局面を取得または設定します。
-        /// </summary>
-        public Board StartBoard
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
-        /// 現在の局面を取得または設定します。
-        /// </summary>
-        public Board Board
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
-        /// 局面のコピーに対して指し手を動かすかどうかを取得します。
-        /// </summary>
-        public bool IsCloneBoard
-        {
-            get;
-            private set;
+            set;
         }
 
         /// <summary>
@@ -109,14 +83,6 @@ namespace Ragnarok.Forms.Shogi
         /// 真の場合は、GUIのマウス押下で自動再生をキャンセルしません。
         /// </remarks>
         public bool IsImportant
-        {
-            get { return !IsCloneBoard; }
-        }
-
-        /// <summary>
-        /// 自動再生の種類を取得します。
-        /// </summary>
-        public AutoPlayType AutoPlayType
         {
             get;
             private set;
@@ -183,23 +149,6 @@ namespace Ragnarok.Forms.Shogi
         {
             get;
             set;
-        }
-
-        /// <summary>
-        /// 指し手の最大数を取得します。
-        /// </summary>
-        public int MaxMoveCount
-        {
-            get;
-            set;
-        }
-        
-        /// <summary>
-        /// まだ指し手が残っているか取得します。
-        /// </summary>
-        private bool HasMove
-        {
-            get { return (this.moveIndex < MaxMoveCount); }
         }
 
         /// <summary>
@@ -281,34 +230,9 @@ namespace Ragnarok.Forms.Shogi
             ShogiElement.AutoPlayOpacity = target;
         }
 
-        /// <summary>
-        /// 指し手を一手だけ進めます。
-        /// </summary>
-        private void DoMove()
+        protected virtual bool DoMove()
         {
-            if (!HasMove || Board == null)
-            {
-                return;
-            }
-
-            switch (AutoPlayType)
-            {
-                case AutoPlayType.Normal:
-                    var move = this.moveList[this.moveIndex++];
-                    if (move != null)
-                    {
-                        Board.DoMove(move);
-                    }
-                    break;
-                case AutoPlayType.Undo:
-                    this.moveIndex += 1;
-                    Board.Undo();
-                    break;
-                case AutoPlayType.Redo:
-                    this.moveIndex += 1;
-                    Board.Redo();
-                    break;
-            }
+            return false;
         }
 
         /// <summary>
@@ -317,14 +241,14 @@ namespace Ragnarok.Forms.Shogi
         protected IEnumerable<bool> DoMoveExecutor()
         {
             // 最初の指し手はすぐに表示します。
-            DoMove();
+            var hasMove = DoMove();
 
-            while (HasMove)
+            while (hasMove)
             {
                 if (PositionFromBase > Interval)
                 {
                     BasePosition += Interval;
-                    DoMove();
+                    hasMove = DoMove();
                 }
 
                 yield return true;
@@ -389,13 +313,12 @@ namespace Ragnarok.Forms.Shogi
                 }
 
                 this.enumerator = enumerable.GetEnumerator();
+                OnStarted();
             }
 
             // コルーチンを進めます。
             if (!this.enumerator.MoveNext())
             {
-                //RaiseStopped();
-
                 this.enumerator = null;
                 return false;
             }
@@ -403,6 +326,17 @@ namespace Ragnarok.Forms.Shogi
             // 時間はここで進めます。
             Position += elapsed;
             return this.enumerator.Current;
+        }
+
+        /// <summary>
+        /// 自動再生の途中停止を行います。
+        /// </summary>
+        public void Stop()
+        {
+            this.enumerator = null;
+
+            OnStopped();
+            RaiseStopped();
         }
 
         /// <summary>
@@ -422,61 +356,38 @@ namespace Ragnarok.Forms.Shogi
         }
 
         /// <summary>
-        /// 自動再生の途中停止を行います。
+        /// 自動自動開始時に呼ばれます。
         /// </summary>
-        public void Stop()
+        protected virtual void OnStarted()
         {
-            if (ShogiElement !=null)
+            if (ShogiElement != null)
             {
-                ShogiElement.AutoPlayOpacity = 0.0;
+                ShogiElement.IsAutoPlaying = true;
             }
-
-            Board = StartBoard.Clone();
-            Position = TimeSpan.Zero;
-            BasePosition = TimeSpan.Zero;
-            this.enumerator = null;
-            this.moveIndex = 0;
-
-            RaiseStopped();
         }
 
         /// <summary>
-        /// オブジェクトの妥当性を検証します。
+        /// 自動再生の途中時を行います。
         /// </summary>
-        public bool Validate()
+        protected virtual void OnStopped()
         {
-            if (StartBoard == null || !StartBoard.Validate())
+            if (ShogiElement != null)
             {
-                return false;
+                ShogiElement.AutoPlayOpacity = 0.0;
+                ShogiElement.IsAutoPlaying = false;
             }
 
-            if (AutoPlayType == AutoPlayType.Normal)
-            {
-                if (this.moveList == null)
-                {
-                    return false;
-                }
-
-                return StartBoard.CanMoveList(this.moveList);
-            }
-
-            return true;
+            Position = TimeSpan.Zero;
+            BasePosition = TimeSpan.Zero;
         }
 
         /// <summary>
         /// 共通コンストラクタ
         /// </summary>
-        private AutoPlay(Board board, bool isCloneBoard)
+        public AutoPlayBase(bool isImportant)
         {
-            if (board == null)
-            {
-                throw new ArgumentNullException("board");
-            }
-
             UpdateEnumeratorFactory = () => GetUpdateEnumerator();
-            StartBoard = board;
-            Board = (isCloneBoard ? board.Clone() : board);
-            IsCloneBoard = isCloneBoard;
+            IsImportant = isImportant;
             Interval = DefaultInterval;
             EffectFadeInterval = DefaultEffectFadeInterval;
             BeginningInterval = TimeSpan.Zero;
@@ -484,48 +395,6 @@ namespace Ragnarok.Forms.Shogi
             Position = TimeSpan.Zero;
             BasePosition = TimeSpan.Zero;
             IsWaitForLastMove = true;
-        }
-
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        public AutoPlay(Board board, bool isCloneBoard,
-                        IEnumerable<BoardMove> moveList)
-            : this(board, isCloneBoard)
-        {
-            if (moveList == null)
-            {
-                throw new ArgumentNullException("moveList");
-            }
-
-            AutoPlayType = AutoPlayType.Normal;
-            MaxMoveCount = moveList.Count();
-
-            this.moveList = new List<BoardMove>(moveList);
-        }
-
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        public AutoPlay(Board board, bool isCloneBoard,
-                        AutoPlayType autoPlayType, int maxMoveCount = -1)
-            : this(board, isCloneBoard)
-        {
-            if (autoPlayType != AutoPlayType.Undo &&
-                autoPlayType != AutoPlayType.Redo)
-            {
-                throw new ArgumentException(
-                    "アンドゥかリドゥを選択してください。",
-                    "autoPlayType");
-            }
-
-            AutoPlayType = autoPlayType;
-            MaxMoveCount = (
-                maxMoveCount >= 0 ?
-                maxMoveCount :
-                (autoPlayType == AutoPlayType.Undo ?
-                    board.CanUndoCount :
-                    board.CanRedoCount));
         }
     }
 }

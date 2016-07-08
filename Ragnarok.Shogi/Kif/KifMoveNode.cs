@@ -43,7 +43,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 指し手を取得または設定します。
         /// </summary>
-        public Move Move
+        public LiteralMove LiteralMove
         {
             get;
             set;
@@ -131,9 +131,9 @@ namespace Ragnarok.Shogi
         /// </summary>
         private void MakeString(StringBuilder sb, int nmoves)
         {
-            if (Move != null)
+            if (LiteralMove != null)
             {
-                var str = Move.ToString();
+                var str = LiteralMove.ToString();
                 var hanlen = str.HankakuLength();
 
                 sb.AppendFormat(" - {0}{1}",
@@ -197,12 +197,12 @@ namespace Ragnarok.Shogi
                 VariationNode.SetupPVInfo(board);
             }
 
-            if (Move != null && Move.Validate())
+            if (LiteralMove != null && LiteralMove.Validate())
             {
-                var bmove = MakeMove(board, new List<Exception>());
-                if (bmove == null || !bmove.Validate())
+                var move = MakeMove(board, new List<Exception>());
+                if (move == null || !move.Validate())
                 {
-                    Log.Error("'{0}'が正しく着手できません。", bmove);
+                    Log.Error("'{0}'が正しく着手できません。", move);
                     return;
                 }
 
@@ -235,7 +235,7 @@ namespace Ragnarok.Shogi
 
             // 変化の各手を解析して取得します。
             var variationStr = m.Groups[2].Value;
-            var variation = new List<BoardMove>();
+            var variation = new List<Move>();
             var cloned = board.Clone();
             while (true)
             {
@@ -246,7 +246,7 @@ namespace Ragnarok.Shogi
                     break;
                 }
 
-                var bmove = cloned.ConvertMove(move, false);
+                var bmove = cloned.ConvertMoveFromLiteral(move, false);
                 if (bmove == null || !bmove.Validate())
                 {
                     break;
@@ -273,7 +273,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// KifMoveNodeからMoveNodeへ構造を変換します。
         /// </summary>
-        public MoveNode ConvertToMoveNode(Board board, KifMoveNode head,
+        public MoveNode ConvertToMoveNode(KifMoveNode head, Board board,
                                           out Exception error)
         {
             var errors = new List<Exception>();
@@ -285,7 +285,7 @@ namespace Ragnarok.Shogi
                 CommentList = head.CommentList,
             };
             // これでrootの子要素に指し手ツリーが設定されます。
-            ConvertToMoveNode(board, root, errors);
+            ConvertToMoveNode(root, board, errors);
 
             error = (
                 !errors.Any() ? null :
@@ -299,21 +299,21 @@ namespace Ragnarok.Shogi
         /// KifMoveNodeからMoveNodeへ構造を変換します。
         /// 結果は<paramref name="root"/>以下に設定されます。
         /// </summary>
-        private void ConvertToMoveNode(Board board, MoveNode root,
+        private void ConvertToMoveNode(MoveNode root, Board board,
                                        List<Exception> errors)
         {
             for (var node = this; node != null; node = node.VariationNode)
             {
                 // 指し手を実際に指してみます。
-                var bmove = node.MakeMove(board, errors);
-                if (bmove == null)
+                var move = node.MakeMove(board, errors);
+                if (move == null)
                 {
                     continue;
                 }
 
                 var moveNode = new MoveNode
                 {
-                    Move = bmove,
+                    Move = move,
                     MoveCount = node.MoveCount,
                     Duration = node.Duration,
                     PVInfoList = node.PVInfoList,
@@ -323,7 +323,8 @@ namespace Ragnarok.Shogi
                 // 次の指し手とその変化を変換します。
                 if (node.NextNode != null)
                 {
-                    node.NextNode.ConvertToMoveNode(board, moveNode, errors);
+                    // 次の手以降の手はこのノードを親として追加していきます。
+                    node.NextNode.ConvertToMoveNode(moveNode, board, errors);
                 }
 
                 root.AddNextNode(moveNode);
@@ -334,31 +335,27 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// このノードの手を実際に指してみて、着手可能か確認します。
         /// </summary>
-        private BoardMove MakeMove(Board board, List<Exception> errors)
+        private Move MakeMove(Board board, List<Exception> errors)
         {
-            var bmove = board.ConvertMove(Move, true);
-            if (bmove == null || !bmove.Validate())
+            var move = board.ConvertMoveFromLiteral(LiteralMove, true);
+            if (move == null || !move.Validate())
             {
                 errors.Add(new FileFormatException(
                     LineNumber,
-                    string.Format(
-                        "{0}手目: 指し手が正しくありません。",
-                        MoveCount)));
+                    $"{MoveCount}手目: 指し手が正しくありません。"));
                 return null;
             }
 
             // 局面を進めます。
-            if (!board.DoMove(bmove))
+            if (!board.DoMove(move))
             {
                 errors.Add(new FileFormatException(
                     LineNumber,
-                    string.Format(
-                        "{0}手目の手を指すことができませんでした。",
-                        MoveCount)));
+                    $"{MoveCount}手目の手を指すことができませんでした。"));
                 return null;
             }
 
-            return bmove;
+            return move;
         }
     }
 }

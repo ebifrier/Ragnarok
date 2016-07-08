@@ -59,7 +59,7 @@ namespace Ragnarok.Shogi.Sfen.Tests
                 Board.ParseSfen("9/9/9/9/9/9/9/+G8/9 b -")));
         }
 
-        private List<BoardMove> MakeMoveList(string sfen)
+        private List<Move> MakeMoveList(string sfen)
         {
             var board = new Board();
 
@@ -150,7 +150,7 @@ namespace Ragnarok.Shogi.Sfen.Tests
         [Test()]
         public void SpecialMoveTest()
         {
-            var move = BoardMove.CreateSpecialMove(BWType.Black, SpecialMoveType.Interrupt);
+            var move = Move.CreateSpecialMove(BWType.Black, SpecialMoveType.Interrupt);
 
             Assert.Catch<SfenException>(() => move.ToSfen());
         }

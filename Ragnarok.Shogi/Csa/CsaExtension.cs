@@ -44,7 +44,7 @@ namespace Ragnarok.Shogi.Csa
         /// <summary>
         /// <paramref name="move"/>をCSA形式に変換します。
         /// </summary>
-        public static string ToCsa(this BoardMove move)
+        public static string ToCsa(this Move move)
         {
             if (move == null)
             {
@@ -115,7 +115,7 @@ namespace Ragnarok.Shogi.Csa
         /// <summary>
         /// CSA形式の指し手を特殊な指し手に変換します。
         /// </summary>
-        public static BoardMove CsaToSpecialMove(this Board board, string csa)
+        public static Move CsaToSpecialMove(this Board board, string csa)
         {
             var m = SpecialMoveRegex.Match(csa);
             if (!m.Success)
@@ -158,13 +158,13 @@ namespace Ragnarok.Shogi.Csa
                         m.Groups[1].Value + ": 対応していないCSA形式の指し手です。");
             }
 
-            return BoardMove.CreateSpecialMove(board.Turn, smoveType);
+            return Move.CreateSpecialMove(board.Turn, smoveType);
         }
 
         /// <summary>
         /// CSA形式の指し手を解析します。
         /// </summary>
-        public static BoardMove CsaToMove(this Board board, string csa)
+        public static Move CsaToMove(this Board board, string csa)
         {
             if (board == null)
             {
@@ -222,7 +222,7 @@ namespace Ragnarok.Shogi.Csa
             if (srcSquare == null)
             {
                 // 駒打ちの場合
-                return BoardMove.CreateDrop(side, dstSquare, piece.PieceType);
+                return Move.CreateDrop(side, dstSquare, piece.PieceType);
             }
             else
             {
@@ -240,14 +240,14 @@ namespace Ragnarok.Shogi.Csa
                     piece = new Piece(piece.PieceType, false);
                 }
 
-                return BoardMove.CreateMove(side, srcSquare, dstSquare, piece, isPromote);
+                return Move.CreateMove(side, srcSquare, dstSquare, piece, isPromote);
             }
         }
 
         /// <summary>
         /// 連続したCSA形式の指し手を、連続した指し手に変換します。
         /// </summary>
-        public static IEnumerable<BoardMove> CsaToMoveList(this Board board,
+        public static IEnumerable<Move> CsaToMoveList(this Board board,
                                                            IEnumerable<string> csaList)
         {
             if (board == null)

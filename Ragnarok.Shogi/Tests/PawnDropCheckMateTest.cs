@@ -34,7 +34,7 @@ namespace Ragnarok.Shogi.Tests
                 "手数＝130";
             var board = Board.ParseBod(bod);
 
-            var move = BoardMove.CreateDrop(
+            var move = Move.CreateDrop(
                 BWType.Black,
                 new Square(2, 7),
                 PieceType.Hu);
@@ -68,7 +68,7 @@ namespace Ragnarok.Shogi.Tests
                 "後手番\n";
             var board = Board.ParseBod(bod);
 
-            var move = BoardMove.CreateDrop(
+            var move = Move.CreateDrop(
                 BWType.White,
                 new Square(9, 5),
                 PieceType.Hu);

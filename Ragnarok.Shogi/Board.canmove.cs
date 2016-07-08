@@ -89,7 +89,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 実際に駒が動けるか確認します。
         /// </summary>
-        private bool CanMovePiece(BoardMove move)
+        private bool CanMovePiece(Move move)
         {
             var relFile = move.DstSquare.File - move.SrcSquare.File;
             var relRank = move.DstSquare.Rank - move.SrcSquare.Rank;
@@ -321,82 +321,79 @@ namespace Ragnarok.Shogi
             var file = square.File;
             var rank = square.Rank;
 
-            using (LazyLock())
+            if (piece.IsPromoted)
             {
-                if (piece.IsPromoted)
+                // 成り駒の場合
+                switch (piece.PieceType)
                 {
-                    // 成り駒の場合
-                    switch (piece.PieceType)
-                    {
-                        case PieceType.Gyoku:
-                        case PieceType.Hisya:
-                        case PieceType.Kaku:
-                            list = GetMoveRangeWithTable(bwType, square, MoveTableGyoku);
-                            foreach (var p in list)
-                            {
-                                yield return p;
-                            }
-                            break;
-                        case PieceType.Kin:
-                        case PieceType.Gin:
-                        case PieceType.Kei:
-                        case PieceType.Kyo:
-                        case PieceType.Hu:
-                            list = GetMoveRangeWithTable(bwType, square, MoveTableKin);
-                            foreach (var p in list)
-                            {
-                                yield return p;
-                            }
-                            break;
-                    }
+                    case PieceType.Gyoku:
+                    case PieceType.Hisya:
+                    case PieceType.Kaku:
+                        list = GetMoveRangeWithTable(bwType, square, MoveTableGyoku);
+                        foreach (var p in list)
+                        {
+                            yield return p;
+                        }
+                        break;
+                    case PieceType.Kin:
+                    case PieceType.Gin:
+                    case PieceType.Kei:
+                    case PieceType.Kyo:
+                    case PieceType.Hu:
+                        list = GetMoveRangeWithTable(bwType, square, MoveTableKin);
+                        foreach (var p in list)
+                        {
+                            yield return p;
+                        }
+                        break;
                 }
-                else
+            }
+            else
+            {
+                // 成り駒で無い場合
+                switch (piece.PieceType)
                 {
-                    // 成り駒で無い場合
-                    switch (piece.PieceType)
-                    {
-                        case PieceType.Gyoku:
-                            list = GetMoveRangeWithTable(bwType, square, MoveTableGyoku);
-                            foreach (var p in list)
-                            {
-                                yield return p;
-                            }
-                            break;
-                        case PieceType.Kin:
-                            list = GetMoveRangeWithTable(bwType, square, MoveTableKin);
-                            foreach (var p in list)
-                            {
-                                yield return p;
-                            }
-                            break;
-                        case PieceType.Gin:
-                            list = GetMoveRangeWithTable(bwType, square, MoveTableGin);
-                            foreach (var p in list)
-                            {
-                                yield return p;
-                            }
-                            break;
-                        case PieceType.Kei:
-                            list = GetMoveRangeWithTable(bwType, square, MoveTableKei);
-                            foreach (var p in list)
-                            {
-                                yield return p;
-                            }
-                            break;
-                        case PieceType.Hu:
-                            list = GetMoveRangeWithTable(bwType, square, MoveTableHu);
-                            foreach (var p in list)
-                            {
-                                yield return p;
-                            }
-                            break;
-                        case PieceType.Kyo:
-                            for (var r = 1; r <= BoardSize; ++r)
-                            {
-                                yield return new Square(file, r);
-                            }
-                            break;
-                    }
+                    case PieceType.Gyoku:
+                        list = GetMoveRangeWithTable(bwType, square, MoveTableGyoku);
+                        foreach (var p in list)
+                        {
+                            yield return p;
+                        }
+                        break;
+                    case PieceType.Kin:
+                        list = GetMoveRangeWithTable(bwType, square, MoveTableKin);
+                        foreach (var p in list)
+                        {
+                            yield return p;
+                        }
+                        break;
+                    case PieceType.Gin:
+                        list = GetMoveRangeWithTable(bwType, square, MoveTableGin);
+                        foreach (var p in list)
+                        {
+                            yield return p;
+                        }
+                        break;
+                    case PieceType.Kei:
+                        list = GetMoveRangeWithTable(bwType, square, MoveTableKei);
+                        foreach (var p in list)
+                        {
+                            yield return p;
+                        }
+                        break;
+                    case PieceType.Hu:
+                        list = GetMoveRangeWithTable(bwType, square, MoveTableHu);
+                        foreach (var p in list)
+                        {
+                            yield return p;
+                        }
+                        break;
+                    case PieceType.Kyo:
+                        for (var r = 1; r <= BoardSize; ++r)
+                        {
+                            yield return new Square(file, r);
+                        }
+                        break;
                 }
 
                 // 竜・馬の場合、近傍地点はすでに調査済みなので

@@ -1,52 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 
 using Ragnarok;
-using Ragnarok.Utility;
 
 namespace Ragnarok.Shogi
 {
-    using Csa;
-
     /// <summary>
     /// 指し手から盤上の駒を動かすためのクラスです。
     /// </summary>
     public static class BoardExtension
     {
+        #region MakeMoveListFromText
         /// <summary>
         /// 文字列から差し手オブジェクトを作成します。
         /// </summary>
-        public static List<Move> MakeMoveList(string text)
+        public static List<LiteralMove> MakeMoveListFromText(string text)
         {
             string tmp;
 
-            return MakeMoveList(text, out tmp);
-        }
-
-        /// <summary>
-        /// 文字列に差し手が含まれていれば、順次切り出していきます。
-        /// </summary>
-        private static IEnumerable<Move> MakeMoveListInternal(string text)
-        {
-            while (true)
-            {
-                var parsedText = string.Empty;
-
-                // 与えられた文字列の指し手を順次パースします。
-                var move = ShogiParser.ParseMoveEx(
-                    text, false, ref parsedText);
-                if (move == null)
-                {
-                    break;
-                }
-
-                // パースが終わった部分から次のパースをはじめます。
-                text = text.Substring(parsedText.Length);
-                yield return move;
-            }
+            return MakeMoveListFromText(text, out tmp);
         }
 
         private static readonly Regex SepRegex = new Regex(
@@ -59,7 +33,7 @@ namespace Ragnarok.Shogi
         /// <example>
         /// 54歩同歩　コメント
         /// </example>
-        public static List<Move> MakeMoveList(string text, out string comment)
+        public static List<LiteralMove> MakeMoveListFromText(string text, out string comment)
         {
             if (string.IsNullOrEmpty(text))
             {
@@ -71,7 +45,7 @@ namespace Ragnarok.Shogi
             // 変わってしまうことがあります。
             // このため、文字列を空白で区切りながら
             // 正規化とパースを繰り返していきます。
-            var result = new List<Move>();
+            var result = new List<LiteralMove>();
             while (text.Length > 0)
             {
                 var m = SepRegex.Match(text);
@@ -92,7 +66,7 @@ namespace Ragnarok.Shogi
                 }
 
                 // 指し手のパースが上手くいかなくなったら、そこで解析を終了します。
-                var list = MakeMoveListInternal(thisText).ToArray();
+                var list = MakeMoveListFromTextInternal(thisText).ToArray();
                 if (!list.Any())
                 {
                     break;
@@ -105,6 +79,30 @@ namespace Ragnarok.Shogi
             comment = text.Trim();
             return result;
         }
+
+        /// <summary>
+        /// 文字列に差し手が含まれていれば、順次切り出していきます。
+        /// </summary>
+        private static IEnumerable<LiteralMove> MakeMoveListFromTextInternal(string text)
+        {
+            while (true)
+            {
+                var parsedText = string.Empty;
+
+                // 与えられた文字列の指し手を順次パースします。
+                var move = ShogiParser.ParseMoveEx(
+                    text, false, ref parsedText);
+                if (move == null)
+                {
+                    break;
+                }
+
+                // パースが終わった部分から次のパースをはじめます。
+                text = text.Substring(parsedText.Length);
+                yield return move;
+            }
+        }
+        #endregion
 
         #region FilterBoardMove
         /// <summary>
@@ -121,11 +119,11 @@ namespace Ragnarok.Shogi
         /// 該当する手が複数見つかった場合(<paramref name="referenceMove"/>に
         /// 右や左の情報が無い場合など)は、最初に見つかった手を返します。
         /// </remarks>
-        private static BoardMove FilterBoardMove(List<BoardMove> boardMoveList,
-                                                 Move referenceMove,
-                                                 bool multipleIsNull = false)
+        private static Move FilterMoveFromLiteral(List<Move> boardMoveList,
+                                                  LiteralMove referenceMove,
+                                                  bool multipleIsNull = false)
         {
-            IEnumerable<BoardMove> boardMoveListTmp = boardMoveList;
+            IEnumerable<Move> boardMoveListTmp = boardMoveList;
 
             // 移動前の座標情報があれば、それを使います。
             if (referenceMove.SrcSquare != null)
@@ -172,8 +170,8 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 上、引、寄るの判定をします。
         /// </summary>
-        private static bool CheckRankMoveType(BoardMove bm,
-                                              Move referenceMove)
+        private static bool CheckRankMoveType(Move bm,
+                                              LiteralMove referenceMove)
         {
             if (bm.ActionType == ActionType.Drop)
             {
@@ -203,9 +201,9 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 左、右、直の判定をします。
         /// </summary>
-        private static bool CheckRelPosType(BoardMove bm,
-                                            Move referenceMove,
-                                            List<BoardMove> boardMoveList)
+        private static bool CheckRelPosType(Move bm,
+                                            LiteralMove referenceMove,
+                                            List<Move> boardMoveList)
         {
             if (bm.ActionType == ActionType.Drop)
             {
@@ -278,8 +276,8 @@ namespace Ragnarok.Shogi
         /// 駒が指定の場所に移動できない場合は自動的に打つが選ばれます。
         /// (盤上に飛車がないのに、"32飛車"のときなど)
         /// </remarks>
-        private static bool CheckActionType(BoardMove bm,
-                                            Move referenceMove, bool canMove)
+        private static bool CheckActionType(Move bm,
+                                            LiteralMove referenceMove, bool canMove)
         {
             if (referenceMove.ActionType == ActionType.None)
             {
@@ -316,19 +314,19 @@ namespace Ragnarok.Shogi
         /// 文字列から得られた指し手から、移動前の情報も含むような
         /// 指し手情報を取得します。
         /// </summary>
-        public static BoardMove ConvertMove(this Board board, Move move,
-                                            bool multipleIsNull = false)
+        public static Move ConvertMoveFromLiteral(this Board board, LiteralMove move,
+                                                  bool multipleIsNull = false)
         {
-            return board.ConvertMove(move, board.Turn, multipleIsNull);
+            return board.ConvertMoveFromLiteral(move, board.Turn, multipleIsNull);
         }
 
         /// <summary>
         /// 文字列から得られた指し手から、移動前の情報も含むような
         /// 指し手情報を取得します。
         /// </summary>
-        public static BoardMove ConvertMove(this Board board, Move move,
-                                            BWType bwType,
-                                            bool multipleIsNull = false)
+        public static Move ConvertMoveFromLiteral(this Board board, LiteralMove move,
+                                                  BWType bwType,
+                                                  bool multipleIsNull = false)
         {
             if (board == null)
             {
@@ -347,7 +345,7 @@ namespace Ragnarok.Shogi
 
             if (move.IsSpecialMove)
             {
-                return BoardMove.CreateSpecialMove(
+                return Move.CreateSpecialMove(
                     bwType, move.SpecialMoveType);
             }
 
@@ -367,7 +365,7 @@ namespace Ragnarok.Shogi
                 .ToList();
 
             // 複数の指し手の中から適切な一つを選びます。
-            var boardMove = FilterBoardMove(boardMoveList, move, multipleIsNull);
+            var boardMove = FilterMoveFromLiteral(boardMoveList, move, multipleIsNull);
             if (boardMove == null)
             {
                 return null;
@@ -377,11 +375,10 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
-        /// 文字列から得られた差し手から、移動前の情報も含むような
-        /// 指し手情報を取得します。
+        /// 指し手がすべて着手可能かどうかを確認します。
         /// </summary>
         public static bool CanMoveList(this Board board,
-                                       IEnumerable<BoardMove> moveList)
+                                       IEnumerable<Move> moveList)
         {
             if (board == null)
             {
@@ -403,44 +400,6 @@ namespace Ragnarok.Shogi
             return true;
         }
 
-        /// <summary>
-        /// 文字列から得られた差し手から、移動前の情報も含むような
-        /// 指し手情報を取得します。
-        /// </summary>
-        public static List<BoardMove> ConvertMove(this Board board,
-                                                  IEnumerable<Move> moveList)
-        {
-            if (board == null)
-            {
-                throw new ArgumentNullException("board");
-            }
-
-            // 駒を動かしながら差し手を検証するため、
-            // 盤の一時オブジェクトが必要になります。
-            var boardTmp = board.Clone();
-
-            var result = new List<BoardMove>();
-            foreach (var move in moveList)
-            {
-                var boardMove = ConvertMove(boardTmp, move, true);
-                if (boardMove == null)
-                {
-                    ConvertMove(boardTmp, move);
-                    break;
-                }
-
-                // 次の手を検証する必要があるため、実際に駒を動かします。
-                if (!boardTmp.DoMove(boardMove))
-                {
-                    break;
-                }
-
-                result.Add(boardMove);
-            }
-
-            return result;
-        }
-
         #region FilterMove
         /// <summary>
         /// 複数ある指し手の中から、適切なひとつの指し手を選択します。
@@ -449,19 +408,19 @@ namespace Ragnarok.Shogi
         /// <paramref name="referenceMove"/>にはXからYに移動したという情報
         /// しかないため、これを52金右などの指し手に変換します。
         /// </remarks>
-        private static Move FilterMove(this Board board,
-                                       List<BoardMove> boardMoveList,
-                                       BoardMove referenceMove,
-                                       Piece fromPiece,
-                                       bool useSrcSquare)
+        private static LiteralMove FilterLiteralFromMove(this Board board,
+                                                         List<Move> moveList,
+                                                         Move referenceMove,
+                                                         Piece fromPiece,
+                                                         bool useSrcSquare)
         {
-            if (!boardMoveList.Any())
+            if (!moveList.Any())
             {
                 return null;
             }
 
             var nextPos = referenceMove.DstSquare;
-            var move = new Move
+            var move = new LiteralMove
             {
                 BWType = referenceMove.BWType,
                 Piece = fromPiece,
@@ -485,7 +444,7 @@ namespace Ragnarok.Shogi
             }
 
             // 駒打ち、成り、不成りなどでフィルターします。
-            var tmpMoveList = FilterAction(move, referenceMove, boardMoveList);
+            var tmpMoveList = FilterAction(move, referenceMove, moveList);
             if (!tmpMoveList.Any())
             {
                 return null;
@@ -511,9 +470,9 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 指し手の種類で手をフィルターし、Moveに適切なRankMoveTypeを設定します。
         /// </summary>
-        private static List<BoardMove> FilterAction(Move move,
-                                                    BoardMove referenceMove,
-                                                    List<BoardMove> boardMoveList)
+        private static List<Move> FilterAction(LiteralMove move,
+                                                    Move referenceMove,
+                                                    List<Move> boardMoveList)
         {
             var tmpMoveList = boardMoveList.Where(
                 mv => mv.ActionType == referenceMove.ActionType)
@@ -529,9 +488,9 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 段で指し手をフィルターし、Moveに適切なRankMoveTypeを設定します。
         /// </summary>
-        private static List<BoardMove> FilterRank(Move move,
-                                                  BoardMove referenceMove,
-                                                  List<BoardMove> boardMoveList)
+        private static List<Move> FilterRank(LiteralMove move,
+                                                  Move referenceMove,
+                                                  List<Move> boardMoveList)
         {
             // 駒の移動前情報が必要です。
             var nextPos = referenceMove.DstSquare;
@@ -589,9 +548,9 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 列で指し手をフィルターし、Moveに適切なRelPosTypeを設定します。
         /// </summary>
-        private static List<BoardMove> FilterFile(Move move,
-                                                  BoardMove referenceMove,
-                                                  List<BoardMove> boardMoveList)
+        private static List<Move> FilterFile(LiteralMove move,
+                                                  Move referenceMove,
+                                                  List<Move> boardMoveList)
         {
             // 駒の移動前情報が必要です。
             var nextPos = referenceMove.DstSquare;
@@ -628,7 +587,7 @@ namespace Ragnarok.Shogi
                     move.RelFileType = RelFileType.Left;
                 }
 
-                return new List<BoardMove> { referenceMove };
+                return new List<Move> { referenceMove };
             }
             else
             {
@@ -679,8 +638,8 @@ namespace Ragnarok.Shogi
         /// <paramref name="useSrcSquare"/>を真にすると、差し手の後に
         /// 古い位置の情報が付加されるようになります。(例: 32金(22))
         /// </remarks>
-        public static Move ConvertMove(this Board board, BoardMove move,
-                                       bool useSrcSquare)
+        public static LiteralMove ConvertLiteralFromMove(this Board board, Move move,
+                                                         bool useSrcSquare)
         {
             if (board == null)
             {
@@ -694,7 +653,7 @@ namespace Ragnarok.Shogi
 
             if (move.IsSpecialMove)
             {
-                return new Move
+                return new LiteralMove
                 {
                     BWType = move.BWType,
                     SpecialMoveType = move.SpecialMoveType,
@@ -715,7 +674,7 @@ namespace Ragnarok.Shogi
                 fromPiece, move.BWType, move.DstSquare)
                 .ToList();
 
-            return FilterMove(
+            return FilterLiteralFromMove(
                 board, boardMoveList, move, fromPiece, useSrcSquare);
         }
 
@@ -726,35 +685,35 @@ namespace Ragnarok.Shogi
         /// <paramref name="useSrcSquare"/>を真にすると、差し手の後に
         /// 古い位置の情報が付加されるようになります。(例: 32金(22))
         /// </remarks>
-        public static List<Move> ConvertMove(this Board board,
-                                             IEnumerable<BoardMove> bmoveList,
-                                             bool useSrcSquare)
+        public static List<LiteralMove> ConvertLiteralListFromMove(this Board board,
+                                                                   IEnumerable<Move> moveList,
+                                                                   bool useSrcSquare)
         {
             if (board == null)
             {
                 throw new ArgumentNullException("board");
             }
 
-            var moveList = new List<Move>();
+            var lmoveList = new List<LiteralMove>();
             var cloned = board.Clone();
 
-            foreach (var boardMove in bmoveList)
+            foreach (var move in moveList)
             {
-                var move = ConvertMove(cloned, boardMove, useSrcSquare);
-                if (move == null)
+                var lmove = ConvertLiteralFromMove(cloned, move, useSrcSquare);
+                if (lmove == null)
                 {
                     break;
                 }
 
-                if (!cloned.DoMove(boardMove))
+                if (!cloned.DoMove(move))
                 {
                     break;
                 }
 
-                moveList.Add(move);
+                lmoveList.Add(lmove);
             }
 
-            return moveList;
+            return lmoveList;
         }
 
         /// <summary>
@@ -764,7 +723,7 @@ namespace Ragnarok.Shogi
         /// 「正式な表記」にするとは、たとえば不要な「打」を削除したり、
         /// 右や直などの表記を正確なものに修正することです。
         /// </remarks>
-        public static Move NormalizeMove(this Board board, Move move)
+        public static LiteralMove NormalizeMove(this Board board, LiteralMove lmove)
         {
             if (board == null)
             {
@@ -776,14 +735,14 @@ namespace Ragnarok.Shogi
                 throw new ArgumentException("board");
             }
 
-            if (move == null)
+            if (lmove == null)
             {
-                throw new ArgumentNullException("move");
+                throw new ArgumentNullException("lmove");
             }
 
-            if (!move.Validate())
+            if (!lmove.Validate())
             {
-                throw new ArgumentException("move");
+                throw new ArgumentException("lmove");
             }
 
             // 投了などの特殊な指し手は常にさせることにします。
@@ -794,25 +753,26 @@ namespace Ragnarok.Shogi
 
             // 一度、指し手の正規化を行います（打を消したり、左を追加するなど）
             // あり得る指し手が複数ある場合は失敗とします。
-            var bmove = board.ConvertMove(move, true);
-            if (bmove == null || !board.CanMove(bmove))
+            var move = board.ConvertMoveFromLiteral(lmove, true);
+            if (move == null || !board.CanMove(move))
             {
                 return null;
             }
 
             // 指し手を表記形式に再度変換します。
             // 移動元の情報は使いません。("65銀(55)"という表記にはしません)
-            var newMove = board.ConvertMove(bmove, false);
-            if (newMove == null)
+            var newLMove = board.ConvertLiteralFromMove(move, false);
+            if (newLMove == null)
             {
                 return null;
             }
 
             // 最後に元の文字列を保存して返します。
-            newMove.OriginalText = move.OriginalText;
-            return newMove;
+            newLMove.OriginalText = lmove.OriginalText;
+            return newLMove;
         }
 
+#if false
         /// <summary>
         /// <paramref name="fromNumber"/>手からの指し手リストを作成します。
         /// </summary>
@@ -821,9 +781,9 @@ namespace Ragnarok.Shogi
         /// <paramref name="useSrcSquare"/>を真にすると、差し手の後に
         /// 古い位置の情報が付加されるようになります。(例: 32金(22))
         /// </remarks>
-        public static List<Move> MakeMoveList(this Board board,
-                                              int fromNumber,
-                                              bool useSrcSquare)
+        public static List<LiteralMove> MakeMoveList(this Board board,
+                                                      int fromNumber,
+                                                      bool useSrcSquare)
         {
             if (board == null)
             {
@@ -839,7 +799,7 @@ namespace Ragnarok.Shogi
             // が必要なので、一度局面の手を戻し局面を設定した後、
             // もう一度手を進めていきます。
             var clonedBoard = board.Clone();
-            var boardMoveList = new LinkedList<BoardMove>();
+            var boardMoveList = new LinkedList<Move>();
 
             // 局面を戻しながら指し手を取得します。
             while (clonedBoard.MoveCount > fromNumber)
@@ -854,7 +814,7 @@ namespace Ragnarok.Shogi
             }
 
             // 文字列化するための指し手リストを取得します。
-            var moveList = new List<Move>();
+            var moveList = new List<LiteralMove>();
             foreach (var boardMove in boardMoveList)
             {
                 var move = ConvertMove(clonedBoard, boardMove, useSrcSquare);
@@ -873,5 +833,6 @@ namespace Ragnarok.Shogi
 
             return moveList;
         }
+#endif
     }
 }

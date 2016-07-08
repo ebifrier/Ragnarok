@@ -11,31 +11,31 @@ namespace Ragnarok.Shogi.Tests
     [TestFixture]
     internal sealed class ConvertMoveTest
     {
-        private static void TestMove(Board board, Move move, bool makeMove = false)
+        private static void TestMove(Board board, LiteralMove lmove, bool makeMove = false)
         {
-            var newMove = board.NormalizeMove(move);
+            var newMove = board.NormalizeMove(lmove);
             Assert.NotNull(newMove);
             Assert.True(newMove.Validate());
 
             // 移動元の情報は使わない
-            var bmove1 = board.ConvertMove(newMove, false);
-            Assert.NotNull(bmove1);
-            Assert.True(bmove1.Validate());
-            Assert.True(board.CanMove(bmove1));
+            var move1 = board.ConvertMoveFromLiteral(newMove, false);
+            Assert.NotNull(move1);
+            Assert.True(move1.Validate());
+            Assert.True(board.CanMove(move1));
 
             // 移動元の情報を使う
-            var bmove2 = board.ConvertMove(newMove, true);
-            Assert.NotNull(bmove2);
-            Assert.True(bmove2.Validate());
-            Assert.True(board.CanMove(bmove2));
+            var move2 = board.ConvertMoveFromLiteral(newMove, true);
+            Assert.NotNull(move2);
+            Assert.True(move2.Validate());
+            Assert.True(board.CanMove(move2));
 
             if (makeMove)
             {
-                Assert.True(board.DoMove(bmove1));
+                Assert.True(board.DoMove(move1));
             }
         }
 
-        private static void TestInvalidMove(Board board, Move move)
+        private static void TestInvalidMove(Board board, LiteralMove move)
         {
             Assert.Null(board.NormalizeMove(move));
         }
@@ -61,7 +61,7 @@ namespace Ragnarok.Shogi.Tests
             TestInvalidMove(board, move);
         }
 
-        private static Move M(string moveStr)
+        private static LiteralMove M(string moveStr)
         {
             var move = ShogiParser.ParseMove(moveStr, true);
             Assert.NotNull(move);
@@ -182,14 +182,14 @@ namespace Ragnarok.Shogi.Tests
         {
             var board = new Board();
 
-            var resign = new Move { SpecialMoveType = SpecialMoveType.Resign };
+            var resign = new LiteralMove { SpecialMoveType = SpecialMoveType.Resign };
             var move = board.NormalizeMove(resign);
             Assert.NotNull(move);
             Assert.True(move.Validate());
             Assert.True(move.IsSpecialMove);
             Assert.True(move.SpecialMoveType == SpecialMoveType.Resign);
 
-            var invalid = new Move();
+            var invalid = new LiteralMove();
             Assert.Catch(() => board.NormalizeMove(invalid));
         }
     }

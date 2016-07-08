@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Ragnarok.Shogi</RootNamespace>
     <AssemblyName>Ragnarok.Shogi</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
@@ -23,6 +23,7 @@
     <DefineConstants>TRACE;DEBUG;TESTS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -31,6 +32,7 @@
     <DefineConstants>TRACE;TESTS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
@@ -47,6 +49,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Optimize>false</Optimize>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
@@ -56,6 +59,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="nunit.framework, Version=2.6.1.12217, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
@@ -75,7 +79,7 @@
     <Compile Include="Board.mate.cs" />
     <Compile Include="BoardComparer.cs" />
     <Compile Include="BoardExtension.cs" />
-    <Compile Include="BoardMove.cs" />
+    <Compile Include="Move.cs" />
     <Compile Include="BoardPiece.cs" />
     <Compile Include="BoardType.cs" />
     <Compile Include="BWType.cs" />
@@ -113,7 +117,7 @@
     <Compile Include="Kif\KifMoveNode.cs" />
     <Compile Include="Kif\Tests\BodTest.cs" />
     <Compile Include="Kif\KifUtil.cs" />
-    <Compile Include="Move.cs" />
+    <Compile Include="LiteralMove.cs" />
     <Compile Include="MoveNode.cs" />
     <Compile Include="MovePointPair.cs" />
     <Compile Include="MoveStatistics.cs" />
@@ -154,6 +158,7 @@
     <EmbeddedResource Include="Kif\Tests\Sample\Kif_PV.kif" />
     <EmbeddedResource Include="Kif\Tests\Sample\Kif_Variation.kif" />
     <EmbeddedResource Include="Kif\Tests\Sample\Ki2_Illegal.KI2" />
+    <EmbeddedResource Include="Kif\Tests\Sample\Kif_VariationMiss.kif" />
     <None Include="Ragnarok.Shogi.snk" />
   </ItemGroup>
   <ItemGroup>

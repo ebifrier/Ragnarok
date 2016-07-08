@@ -189,7 +189,7 @@ namespace Ragnarok.Shogi.Csa
         /// <summary>
         /// 指し手行をパースします。
         /// </summary>
-        private BoardMove ParseMove(string line)
+        private Move ParseMove(string line)
         {
             if (this.board == null)
             {
