@@ -43,6 +43,16 @@ namespace Ragnarok.Utility
         }
 
         /// <summary>
+        /// リストの優先順を取得または設定します。
+        /// </summary>
+        [DataMember(Name = "priority")]
+        public int Priority
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// タイトルを取得または設定します。
         /// </summary>
         [DataMember(Name = "title")]
@@ -252,6 +262,7 @@ namespace Ragnarok.Utility
                     .Where(File.Exists)
                     .Select(ReadInfo<T>)
                     .Where(_ => _ != null)
+                    .OrderByDescending(_ => _.Priority) // 優先順位順で並び替え
                     .ToList();
             }
             catch (Exception ex)
