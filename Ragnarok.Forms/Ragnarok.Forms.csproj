@@ -116,6 +116,7 @@
     <Compile Include="Tests\Color4bTest.cs" />
     <Compile Include="Utility\FrameTimer.cs" />
     <Compile Include="Utility\FrameTimerEventArgs.cs" />
+    <Compile Include="Utility\FormsSettingsBase.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Ragnarok.Forms.snk" />
