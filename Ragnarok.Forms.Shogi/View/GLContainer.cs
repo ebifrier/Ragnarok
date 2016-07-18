@@ -61,7 +61,7 @@ namespace Ragnarok.Forms.Shogi.View
             GL.Hint(HintTarget.PerspectiveCorrectionHint, HintMode.Nicest);
 
             // 背景色の更新
-            UpdateClearColor();
+            BackColorChanged += OnBackColorChanged;
 
             GLElements
                 .Where(_ => _ != null)
@@ -168,36 +168,15 @@ namespace Ragnarok.Forms.Shogi.View
         }
 
         /// <summary>
-        /// 想定画面サイズを取得または設定します。
-        /// </summary>
-        public Color ClearColor
-        {
-            get { return this.clearColor; }
-            set
-            {
-                if (this.clearColor != value)
-                {
-                    this.clearColor = value;
-                    UpdateClearColor();
-                }
-            }
-        }
-
-        /// <summary>
         /// OpenGLのClearColorを更新します。
         /// </summary>
-        private void UpdateClearColor()
+        private void OnBackColorChanged(object sender, EventArgs e)
         {
-            if (IsDesignMode)
-            {
-                return;
-            }
-
             GL.ClearColor(
-                MathEx.Between(0.0f, 1.0f, this.clearColor.R / 255.0f),
-                MathEx.Between(0.0f, 1.0f, this.clearColor.G / 255.0f),
-                MathEx.Between(0.0f, 1.0f, this.clearColor.B / 255.0f),
-                MathEx.Between(0.0f, 1.0f, this.clearColor.A / 255.0f));
+                MathEx.Between(0.0f, 1.0f, BackColor.R / 255.0f),
+                MathEx.Between(0.0f, 1.0f, BackColor.G / 255.0f),
+                MathEx.Between(0.0f, 1.0f, BackColor.B / 255.0f),
+                MathEx.Between(0.0f, 1.0f, BackColor.A / 255.0f));
         }
 
         /// <summary>
