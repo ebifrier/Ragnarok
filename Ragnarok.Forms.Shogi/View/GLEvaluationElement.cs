@@ -442,7 +442,7 @@ namespace Ragnarok.Forms.Shogi.View
         private void AddRenderValue(GLUtil.RenderBuffer renderBuffer, Score score)
         {
             var textTexture = GLUtil.TextureCache.GetTextTexture(
-                score.Value.ToString(), ValueFont);
+                GetValueText(score), ValueFont);
             var texture = textTexture.Texture;
 
             var textTexture2 = GLUtil.TextureCache.GetTextTexture(
@@ -492,6 +492,14 @@ namespace Ragnarok.Forms.Shogi.View
                     texture, BlendType.Diffuse,
                     bounds, Transform, 1.0);
             }
+        }
+
+        private string GetValueText(Score score)
+        {
+            return (
+                IsValueFullWidth ?
+                IntConverter.Convert(NumberType.Big, score.Value) :
+                score.Value.ToString());
         }
 
         public override void OnMouseDown(MouseEventArgs e)
