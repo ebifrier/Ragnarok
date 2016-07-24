@@ -395,72 +395,72 @@ namespace Ragnarok.Shogi
                         }
                         break;
                 }
+            }
 
-                // 竜・馬の場合、近傍地点はすでに調査済みなので
-                // 成りか不成りかで調査範囲を変更します。
-                var range = (piece.IsPromoted ? 2 : 1);
+            // 竜・馬の場合、近傍地点はすでに調査済みなので
+            // 成りか不成りかで調査範囲を変更します。
+            var range = (piece.IsPromoted ? 2 : 1);
 
-                // 飛車角は成り／不成りに関わらず調べる箇所があります。
-                switch (piece.PieceType)
-                {
-                    case PieceType.Hisya:
-                        for (var f = 1; f <= BoardSize; ++f)
+            // 飛車角は成り／不成りに関わらず調べる箇所があります。
+            switch (piece.PieceType)
+            {
+                case PieceType.Hisya:
+                    for (var f = 1; f <= BoardSize; ++f)
+                    {
+                        if (piece.IsPromoted && Math.Abs(file - f) < range)
                         {
-                            if (piece.IsPromoted && Math.Abs(file - f) < range)
-                            {
-                                continue;
-                            }
-
-                            var sq = new Square(f, rank);
-                            if (sq.Validate())
-                            {
-                                yield return sq;
-                            }
+                            continue;
                         }
-                        for (var r = 1; r <= BoardSize; ++r)
+
+                        var sq = new Square(f, rank);
+                        if (sq.Validate())
                         {
-                            if (piece.IsPromoted && Math.Abs(rank - r) < range)
-                            {
-                                continue;
-                            }
-
-                            var sq = new Square(file, r);
-                            if (sq.Validate())
-                            {
-                                yield return sq;
-                            }
+                            yield return sq;
                         }
-                        break;
-
-                    case PieceType.Kaku:
-                        for (var index = -BoardSize; index <= BoardSize; ++index)
+                    }
+                    for (var r = 1; r <= BoardSize; ++r)
+                    {
+                        if (piece.IsPromoted && Math.Abs(rank - r) < range)
                         {
-                            if (piece.IsPromoted && Math.Abs(index) < range)
-                            {
-                                continue;
-                            }
-
-                            var sq = new Square(file + index, rank + index);
-                            if (sq.Validate())
-                            {
-                                yield return sq;
-                            }
+                            continue;
                         }
-                        for (var index = -BoardSize; index <= BoardSize; ++index)
+
+                        var sq = new Square(file, r);
+                        if (sq.Validate())
                         {
-                            if (piece.IsPromoted && Math.Abs(index) < range)
-                            {
-                                continue;
-                            }
-
-                            var sq = new Square(file + index, rank - index);
-                            if (sq.Validate())
-                            {
-                                yield return sq;
-                            }
+                            yield return sq;
                         }
-                        break;
-                }
+                    }
+                    break;
+
+                case PieceType.Kaku:
+                    for (var index = -BoardSize; index <= BoardSize; ++index)
+                    {
+                        if (piece.IsPromoted && Math.Abs(index) < range)
+                        {
+                            continue;
+                        }
+
+                        var sq = new Square(file + index, rank + index);
+                        if (sq.Validate())
+                        {
+                            yield return sq;
+                        }
+                    }
+                    for (var index = -BoardSize; index <= BoardSize; ++index)
+                    {
+                        if (piece.IsPromoted && Math.Abs(index) < range)
+                        {
+                            continue;
+                        }
+
+                        var sq = new Square(file + index, rank - index);
+                        if (sq.Validate())
+                        {
+                            yield return sq;
+                        }
+                    }
+                    break;
             }
         }
         #endregion
