@@ -324,6 +324,31 @@ namespace Ragnarok.Shogi.Kif.Tests
         }
 
         /// <summary>
+        /// コメントに変化や評価値が含まれる棋譜のテスト
+        /// </summary>
+        [Test()]
+        public void PVComment2Test()
+        {
+            var sample = SampleKif.Get("Kif_PV2.kif");
+
+            // 棋譜の読み込み
+            var kifu = KifuReader.LoadFrom(sample);
+            Assert.NotNull(kifu);
+            Assert.Null(kifu.Error);
+
+            // 手数の確認
+            var count = 30;
+            Assert.AreEqual(count, kifu.MoveList.Count());
+
+            // 入出力テストを行います。
+            TestUtil.ReadWriteTest(kifu, KifuFormat.Kif, count);
+
+            // 書き込みテスト
+            var kif = KifuWriter.WriteTo(kifu, KifuFormat.Kif);
+            CompareWithoutSpace(sample, kif);
+        }
+
+        /// <summary>
         /// 81Dojoの棋譜読み込みテスト
         /// </summary>
         [Test()]
