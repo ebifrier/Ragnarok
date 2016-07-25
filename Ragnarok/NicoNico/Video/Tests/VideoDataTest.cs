@@ -381,14 +381,23 @@ namespace Ragnarok.NicoNico.Video.Tests
             Assert.Catch(() => VideoData.CreateFromApi("134444444444444444"));
         }
 
+        private static string[] GetEmailPassword(string filename)
+        {
+            var dir = Environment.GetFolderPath(
+                Environment.SpecialFolder.MyDocuments);
+            var path = System.IO.Path.Combine(dir, filename);
+
+            return System.IO.File.ReadAllLines(path);
+        }
+
         /// <summary>
         /// CreateFromPageのテスト
         /// </summary>
         [Test()]
         public void CreateFromPageTest()
         {
-            var cc = Login.Loginer.LoginWithBrowser(
-              Net.CookieGetter.BrowserType.Firefox, true);
+            var data = GetEmailPassword(".niconico.txt");
+            var cc = Login.Loginer.LoginDirect(data[0], data[1]);
             Assert.IsNotNull(cc);
 
             TestSM9(VideoData.CreateFromPage("sm9", cc), RemoveTagType.None);

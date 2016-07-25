@@ -22,11 +22,11 @@ namespace Ragnarok.Utility.Tests
             Assert.AreEqual("C1", StringUtility.NamedFormat(format, dic));
 
             // 引数２つ
-            format = "_#{code} #{22}xx";
+            format = "_#{code} #{_22}xx";
             dic = new Dictionary<string, object>()
             {
                 { "code", "C1" },
-                { "22", "xyz" },
+                { "_22", "xyz" },
             };
             Assert.AreEqual("_C1 xyzxx", StringUtility.NamedFormat(format, dic));
 
