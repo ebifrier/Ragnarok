@@ -52,7 +52,7 @@ namespace Ragnarok.Shogi.Kif.Tests
             board0[3, 3] = new BoardPiece(Piece.Hu, BWType.White);
             board0[1, 3] = new BoardPiece(Piece.Hu, BWType.White);
             board0[2, 9] = new BoardPiece(Piece.Hisya, BWType.Black);
-            board0.SetHandCount(PieceType.Hu, BWType.Black, 1);
+            board0.SetHand(PieceType.Hu, BWType.Black, 1);
 
             Assert.True(Board.BoardEquals(board0, board1));
         }

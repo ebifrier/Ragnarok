@@ -130,7 +130,7 @@ namespace Ragnarok.Shogi.Csa
         {
             var handList =
                 from pieceType in EnumEx.GetValues<PieceType>()
-                let count = board.GetHandCount(pieceType, turn)
+                let count = board.GetHand(pieceType, turn)
                 let str = string.Format("00{0}",
                     CsaUtil.PieceToStr(new Piece(pieceType)))
                 let list = Enumerable.Range(1, count).Select(_ => str)

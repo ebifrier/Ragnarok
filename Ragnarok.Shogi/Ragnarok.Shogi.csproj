@@ -85,7 +85,6 @@
     <Compile Include="BWType.cs" />
     <EmbeddedResource Include="Csa\Tests\SampleCsa.csa" />
     <Compile Include="Hand.cs" />
-    <Compile Include="HandBox.cs" />
     <Compile Include="Kif\Tests\SampleKif.cs" />
     <Compile Include="Score.cs" />
     <Compile Include="ShogiParser.cs" />
@@ -159,6 +158,7 @@
     <EmbeddedResource Include="Kif\Tests\Sample\Kif_Variation.kif" />
     <EmbeddedResource Include="Kif\Tests\Sample\Ki2_Illegal.KI2" />
     <EmbeddedResource Include="Kif\Tests\Sample\Kif_VariationMiss.kif" />
+    <EmbeddedResource Include="Kif\Tests\Sample\Kif_PV2.kif" />
     <None Include="Ragnarok.Shogi.snk" />
   </ItemGroup>
   <ItemGroup>

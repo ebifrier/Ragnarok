@@ -246,7 +246,7 @@ namespace Ragnarok.Shogi.Kif
             handText
                 .Split(new char[] { '　', ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries)
                 .Select(_ => ParseHandPiece(bwType, _))
-                .ForEach(_ => this.board.SetHandCount(_.Item1, bwType, _.Item2));
+                .ForEach(_ => this.board.SetHand(_.Item1, bwType, _.Item2));
         }
 
         /// <summary>

@@ -154,8 +154,7 @@ namespace Ragnarok.Shogi.Sfen
                             "SFEN形式の持ち駒'" + c + "'が正しくありません。");
                     }
 
-                    board.SetHandCount(
-                        piece.PieceType, piece.BWType, count);
+                    board.SetHand(piece.PieceType, piece.BWType, count);
                     count = 1;
                 }
             }
@@ -254,7 +253,7 @@ namespace Ragnarok.Shogi.Sfen
                 let obj = new
                 {
                     Piece = new BoardPiece(pieceType, false, turn),
-                    Count = board.GetHandCount(pieceType, turn),
+                    Count = board.GetHand(pieceType, turn),
                 }
                 where obj.Count > 0
                 select string.Format("{0}{1}",
