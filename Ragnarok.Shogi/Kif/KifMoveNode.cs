@@ -178,6 +178,24 @@ namespace Ragnarok.Shogi
         /// </summary>
         public void SetupPVInfo(Board board)
         {
+            Move move = null;
+
+            if (VariationNode != null)
+            {
+                VariationNode.SetupPVInfo(board);
+            }
+
+            // このノードの手を指して、変化の基準局面を進めます。
+            if (LiteralMove != null && LiteralMove.Validate())
+            {
+                move = MakeMove(board, new List<Exception>());
+                if (move == null || !move.Validate())
+                {
+                    Log.Error("'{0}'が正しく着手できません。", move);
+                    return;
+                }
+            }
+
             for (var i = 0; i < CommentList.Count(); )
             {
                 var pvInfo = ParsePVInfo(CommentList[i], board);
@@ -192,25 +210,13 @@ namespace Ragnarok.Shogi
                 }
             }
 
-            if (VariationNode != null)
+            if (NextNode != null)
             {
-                VariationNode.SetupPVInfo(board);
+                NextNode.SetupPVInfo(board);
             }
 
-            if (LiteralMove != null && LiteralMove.Validate())
+            if (move != null)
             {
-                var move = MakeMove(board, new List<Exception>());
-                if (move == null || !move.Validate())
-                {
-                    Log.Error("'{0}'が正しく着手できません。", move);
-                    return;
-                }
-
-                if (NextNode != null)
-                {
-                    NextNode.SetupPVInfo(board);
-                }
-
                 board.Undo();
             }
         }
