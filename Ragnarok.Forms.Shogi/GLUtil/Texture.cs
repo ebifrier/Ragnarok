@@ -125,6 +125,8 @@ namespace Ragnarok.Forms.Shogi.GLUtil
             GC.SuppressFinalize(this);
         }
 
+        private static bool isOutError;
+
         /// <summary>
         /// テクスチャの削除を行います。
         /// </summary>
@@ -144,8 +146,9 @@ namespace Ragnarok.Forms.Shogi.GLUtil
                 }
                 else
                 {
-                    if (TextureName != 0)
+                    if (TextureName != 0 && !isOutError)
                     {
+                        isOutError = true;
                         Log.Error(
                             "削除できないテクスチャが残りました。");
                     }
