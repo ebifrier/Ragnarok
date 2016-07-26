@@ -158,7 +158,7 @@ namespace Ragnarok.Shogi
         /// 解析された変化を示す正規表現です。
         /// </summary>
         private static readonly Regex KifAnalyzedVariationRegex = new Regex(
-            @"^\s*(\*|<analyze>)\s*(?<value>\d+)\s*(.+)\s*(</analyze>)?\s*$");
+            @"^\s*(\*|<analyze>)\s*(?<value>\-?\s*\d+)\s*(.+)\s*(</analyze>)?\s*$");
 
         /// <summary>
         /// コメント文字列を追加します。
