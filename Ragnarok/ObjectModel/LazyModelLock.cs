@@ -6,6 +6,8 @@ using System.Threading;
 
 namespace Ragnarok.ObjectModel
 {
+    using Utility;
+
     /// <summary>
     /// ILazyModelのロックを行います。
     /// </summary>
@@ -37,7 +39,7 @@ namespace Ragnarok.ObjectModel
             if (lockObject != null)
             {
                 // ここからロックを開始します。
-                this.debugLock = new DebugLock(lockObject, false);
+                this.debugLock = new DebugLock(lockObject);
             }
         }
 
