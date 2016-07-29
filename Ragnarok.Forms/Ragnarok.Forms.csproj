@@ -69,9 +69,11 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bindings\BindingCollection.cs" />
@@ -90,6 +92,12 @@
     </Compile>
     <Compile Include="Controls\InfoControl.Designer.cs">
       <DependentUpon>InfoControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\VersionForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Controls\VersionForm.Designer.cs">
+      <DependentUpon>VersionForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Converter\EnumToBooleanConverter.cs" />
     <Compile Include="Converter\IValueConverter.cs" />
@@ -133,6 +141,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\InfoControl.resx">
       <DependentUpon>InfoControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\VersionForm.resx">
+      <DependentUpon>VersionForm.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
