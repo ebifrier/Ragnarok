@@ -61,7 +61,6 @@ namespace Ragnarok.Forms.Shogi.GLUtil
         /// </remarks>
         public static void DeleteAll(IGraphicsContext context)
         {
-            //var context = context;
             lock (textureListSync)
             {
                 for (int index = 0; index < textureList.Count; )
@@ -88,7 +87,7 @@ namespace Ragnarok.Forms.Shogi.GLUtil
                 }
             }
         }
-
+        
         private readonly IGraphicsContext context;
         private uint glTexture;
         private bool disposed;
@@ -125,8 +124,6 @@ namespace Ragnarok.Forms.Shogi.GLUtil
             GC.SuppressFinalize(this);
         }
 
-        private static bool isOutError;
-
         /// <summary>
         /// テクスチャの削除を行います。
         /// </summary>
@@ -134,25 +131,13 @@ namespace Ragnarok.Forms.Shogi.GLUtil
         {
             if (!this.disposed)
             {
-                if (disposing)
+                if (TextureName != 0)
                 {
-                    if (TextureName != 0)
-                    {
-                        TextureDisposer.AddDeleteTexture(this.context, TextureName);
-                        this.glTexture = 0;
-                    }
+                    TextureDisposer.AddDeleteTexture(this.context, TextureName);
+                    this.glTexture = 0;
+                }
 
-                    RemoveTexture(this);
-                }
-                else
-                {
-                    if (TextureName != 0 && !isOutError)
-                    {
-                        isOutError = true;
-                        Log.Error(
-                            "削除できないテクスチャが残りました。");
-                    }
-                }
+                RemoveTexture(this);
 
                 this.disposed = true;
             }
