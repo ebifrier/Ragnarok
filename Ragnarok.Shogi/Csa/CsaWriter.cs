@@ -64,10 +64,7 @@ namespace Ragnarok.Shogi.Csa
             for (node = node.NextNode; node != null; node = node.NextNode)
             {
                 writer.WriteLine(node.Move.ToCsa());
-                if (!node.Move.IsSpecialMove)
-                {
-                    writer.WriteLine("T" + node.DurationSeconds);
-                }
+                writer.WriteLine("T" + node.DurationSeconds);
             }
         }
 

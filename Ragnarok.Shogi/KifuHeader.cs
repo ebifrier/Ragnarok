@@ -43,6 +43,10 @@ namespace Ragnarok.Shogi
         /// 戦型
         /// </summary>
         Opening,
+        /// <summary>
+        /// 評価値タイプ
+        /// </summary>
+        NodeScoreType,
     }
 
     /// <summary>
@@ -54,6 +58,9 @@ namespace Ragnarok.Shogi
         private readonly Dictionary<KifuHeaderType, string> headerItems =
             new Dictionary<KifuHeaderType, string>();
 
+        /// <summary>
+        /// Enumeratorを取得します。
+        /// </summary>
         public IEnumerator<KeyValuePair<KifuHeaderType, string>> GetEnumerator()
         {
             return this.headerItems.GetEnumerator();
@@ -64,6 +71,9 @@ namespace Ragnarok.Shogi
             return this.headerItems.GetEnumerator();
         }
 
+        /// <summary>
+        /// 指定の種類のヘッダ情報を取得または設定します。
+        /// </summary>
         public string this[KifuHeaderType type]
         {
             get
@@ -88,6 +98,9 @@ namespace Ragnarok.Shogi
             }
         }
 
+        /// <summary>
+        /// 指定のタイプのヘッダ情報が含まれるか確認します。
+        /// </summary>
         public bool Contains(KifuHeaderType type)
         {
             lock (SyncRoot)
