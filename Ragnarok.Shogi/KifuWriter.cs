@@ -21,6 +21,29 @@ namespace Ragnarok.Shogi
     public static class KifuWriter
     {
         /// <summary>
+        /// ファイル名から棋譜のフォーマットを取得します。
+        /// </summary>
+        public static KifuFormat GetFormat(string filepath)
+        {
+            // 棋譜フォーマットを取得
+            var ext = Path.GetExtension(filepath);
+            if (string.IsNullOrEmpty(ext))
+            {
+                throw new ArgumentNullException("filepath");
+            }
+
+            switch (ext.ToLower())
+            {
+                case ".kif": return KifuFormat.Kif;
+                case ".ki2": return KifuFormat.Ki2;
+                case ".csa": return KifuFormat.Csa;
+            }
+
+            // 分からない場合はkif形式に設定する。
+            return KifuFormat.Kif;
+        }
+
+        /// <summary>
         /// 各フォーマットに対応するライターを取得します。
         /// </summary>
         private static IKifuWriter GetWriter(KifuFormat format)
@@ -54,12 +77,21 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 棋譜ファイルに保存します。
         /// </summary>
+        /// <remarks>
+        /// <paramref name="format"/>がnullの場合は
+        /// ファイル名からデフォルトの値に設定します。
+        /// </remarks>
         public static void SaveFile(string filepath, KifuObject kifuObj,
-                                    KifuFormat? format)
+                                    KifuFormat? format = null)
         {
             if (string.IsNullOrEmpty(filepath))
             {
                 throw new ArgumentNullException("filepath");
+            }
+
+            if (format == null)
+            {
+                format = GetFormat(filepath);
             }
 
             using (var stream = new FileStream(filepath, FileMode.Create))
