@@ -5,7 +5,7 @@ using System.Text;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 
-namespace Ragnarok.Forms.Shogi.GLUtil
+namespace Ragnarok.OpenGL
 {
     using Ragnarok.Utility;
 

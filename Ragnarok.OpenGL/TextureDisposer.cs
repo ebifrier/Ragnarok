@@ -5,7 +5,7 @@ using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 
-namespace Ragnarok.Forms.Shogi.GLUtil
+namespace Ragnarok.OpenGL
 {
     /// <summary>
     /// OpenGL用のテクスチャを廃棄するためクラスです。

@@ -4,7 +4,7 @@ using System.Linq;
 using OpenTK;
 using OpenTK.Graphics;
 
-namespace Ragnarok.Forms.Shogi.GLUtil
+namespace Ragnarok.OpenGL
 {
     /// <summary>
     /// 画像オブジェクトをキャッシュします。

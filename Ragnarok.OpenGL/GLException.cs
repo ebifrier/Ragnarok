@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Ragnarok.Forms.Shogi.GLUtil
+namespace Ragnarok.OpenGL
 {
     /// <summary>
     /// OpenGL用の例外クラスです。

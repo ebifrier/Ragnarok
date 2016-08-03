@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 
-using Ragnarok.Forms.Draw;
 using Ragnarok.Utility;
 
-namespace Ragnarok.Forms.Shogi.GLUtil
+namespace Ragnarok.OpenGL
 {
     /// <summary>
     /// アニメーション用の分割されたテクスチャを管理します。
@@ -107,7 +107,7 @@ namespace Ragnarok.Forms.Shogi.GLUtil
                     var h = image.Height;
 
                     list = (from i in Enumerable.Range(0, count)
-                            let bitmap = image.CropHighQuality(w * i, 0, w, h)
+                            let bitmap = CropHighQuality(image, w * i, 0, w, h)
                             select LoadTexture(bitmap))
                            .ToList();
                 }
@@ -122,6 +122,33 @@ namespace Ragnarok.Forms.Shogi.GLUtil
 
                 return false;
             }
+        }
+
+        /// <summary>
+        /// 画像の一部を綺麗に切り抜きます。
+        /// </summary>
+        private static Bitmap CropHighQuality(Bitmap bitmap, int x, int y,
+                                              int width, int height)
+        {
+            if (bitmap == null)
+            {
+                throw new ArgumentNullException("bitmap");
+            }
+
+            var target = new Bitmap(width, height);
+            using (Graphics g = Graphics.FromImage(target))
+            {
+                g.SmoothingMode = SmoothingMode.HighQuality;
+                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                //g.PixelOffsetMode = PixelOffsetMode.HighQuality;
+
+                g.DrawImage(bitmap,
+                    new Rectangle(0, 0, width, height), // dst
+                    new Rectangle(x, y, width, height), // src
+                    GraphicsUnit.Pixel);
+            }
+
+            return target;
         }
 
         /// <summary>

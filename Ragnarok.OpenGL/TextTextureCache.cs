@@ -6,7 +6,7 @@ using OpenTK.Graphics;
 
 using Ragnarok.Utility;
 
-namespace Ragnarok.Forms.Shogi.GLUtil
+namespace Ragnarok.OpenGL
 {
     /// <summary>
     /// 文字列用テクスチャのキャッシュキーとして使うオブジェクトです。
