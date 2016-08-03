@@ -7,7 +7,7 @@ using Ragnarok.Extra.Effect;
 
 namespace Ragnarok.Forms.Shogi.Effect
 {
-    using GLUtil;
+    using OpenGL;
 
     /// <summary>
     /// エフェクト用のオブジェクトです。

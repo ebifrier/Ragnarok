@@ -5,12 +5,10 @@ using System.Drawing;
 using System.Linq;
 
 using Ragnarok.Extra.Effect;
-using Ragnarok.ObjectModel;
+using Ragnarok.OpenGL;
 
 namespace Ragnarok.Forms.Shogi.Effect
 {
-    using GLUtil;
-
     /// <summary>
     /// テキスト表示用のオブジェクトです。
     /// </summary>

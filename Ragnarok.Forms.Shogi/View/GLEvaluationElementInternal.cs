@@ -9,7 +9,7 @@ using Ragnarok.Utility;
 
 namespace Ragnarok.Forms.Shogi.View
 {
-    using GL = Ragnarok.Forms.Shogi.GLUtil;
+    using GL = Ragnarok.OpenGL;
 
     /// <summary>
     /// 評価値画像の領域にオブジェクトを描画するための基本クラスです。

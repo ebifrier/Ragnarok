@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using Ragnarok.Extra.Effect;
 using Ragnarok.Forms.Input;
 using Ragnarok.ObjectModel;
+using Ragnarok.OpenGL;
 using Ragnarok.Shogi;
 using Ragnarok.Utility;
 
@@ -97,14 +98,14 @@ namespace Ragnarok.Forms.Shogi.View
             IsValueFullWidth = false;
             MaxValue = 9999;
 
-            ValueFont = new GLUtil.TextTextureFont
+            ValueFont = new TextTextureFont
             {
                 Color = Color.White,
                 EdgeColor = Color.LightGray,
                 EdgeLength = 0.5,
                 IsStretchSize = true,
             };
-            NameFont = new GLUtil.TextTextureFont
+            NameFont = new TextTextureFont
             {
                 Color = Color.White,
                 EdgeColor = Color.LightGray,
@@ -286,18 +287,18 @@ namespace Ragnarok.Forms.Shogi.View
         /// <summary>
         /// 評価値の数字を描画するためのフォントを取得または設定します。
         /// </summary>
-        public GLUtil.TextTextureFont ValueFont
+        public TextTextureFont ValueFont
         {
-            get { return GetValue<GLUtil.TextTextureFont>("ValueFont"); }
+            get { return GetValue<TextTextureFont>("ValueFont"); }
             set { SetValue("ValueFont", value); }
         }
 
         /// <summary>
         /// 評価値の名前を描画するためのフォントを取得または設定します。
         /// </summary>
-        public GLUtil.TextTextureFont NameFont
+        public TextTextureFont NameFont
         {
-            get { return GetValue<GLUtil.TextTextureFont>("NameFont"); }
+            get { return GetValue<TextTextureFont>("NameFont"); }
             set { SetValue("NameFont", value); }
         }
 
@@ -421,7 +422,7 @@ namespace Ragnarok.Forms.Shogi.View
         protected override void OnEnterFrame(EnterFrameEventArgs e)
         {
             base.OnEnterFrame(e);
-            var renderBuffer = (GLUtil.RenderBuffer)e.StateObject;
+            var renderBuffer = (RenderBuffer)e.StateObject;
 
             // 評価値の更新を行います。
             if (this.manager.InternalObj != null)
@@ -439,13 +440,13 @@ namespace Ragnarok.Forms.Shogi.View
         /// <summary>
         /// 評価値を数字として描画リストに加えます。
         /// </summary>
-        private void AddRenderValue(GLUtil.RenderBuffer renderBuffer, Score score)
+        private void AddRenderValue(RenderBuffer renderBuffer, Score score)
         {
-            var textTexture = GLUtil.TextureCache.GetTextTexture(
+            var textTexture = TextureCache.GetTextTexture(
                 GetValueText(score), ValueFont);
             var texture = textTexture.Texture;
 
-            var textTexture2 = GLUtil.TextureCache.GetTextTexture(
+            var textTexture2 = TextureCache.GetTextTexture(
                 score.Name ?? string.Empty, NameFont);
             var texture2 = textTexture2.Texture;
 
