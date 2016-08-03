@@ -7,6 +7,8 @@ using OpenTK.Graphics.OpenGL;
 
 namespace Ragnarok.Forms.Shogi.GLUtil
 {
+    using Ragnarok.Utility;
+
     /// <summary>
     /// OpenGLのユーティリティクラスです。
     /// </summary>
@@ -388,7 +390,7 @@ namespace Ragnarok.Forms.Shogi.GLUtil
             return sb.ToString();
         }
 
-        private sealed class Section : Ragnarok.Utility.ActionOnDispose
+        private sealed class Section : ActionOnDispose
         {
             public Section(StringBuilder sb, string label)
                 : base(new Action(() => OnDispose(sb)))
