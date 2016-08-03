@@ -391,9 +391,14 @@ namespace Ragnarok.Forms.Shogi.GLUtil
         private sealed class Section : Ragnarok.Utility.ActionOnDispose
         {
             public Section(StringBuilder sb, string label)
-                : base(new Action(() => sb.AppendLine()))
+                : base(new Action(() => OnDispose(sb)))
             {
                 sb.AppendLine($"--- {label} ---");
+            }
+
+            private static void OnDispose(StringBuilder sb)
+            {
+                sb.AppendLine();
             }
         }
 
@@ -402,46 +407,47 @@ namespace Ragnarok.Forms.Shogi.GLUtil
         /// </summary>
         private static string Analyze(GetPName pname, GLType type)
         {
-            bool result1b;
-            int result1i;
-            int[] result2i = new int[2];
-            int[] result4i = new int[4];
-            float result1f;
-            Vector2 result2f;
-            Vector4 result4f;
             string output;
 
             switch (type)
             {
                 case GLType.Boolean:
+                    bool result1b;
                     GL.GetBoolean(pname, out result1b);
                     output = pname + ": " + result1b;
                     break;
                 case GLType.Int:
+                    int result1i;
                     GL.GetInteger(pname, out result1i);
                     output = pname + ": " + result1i;
                     break;
                 case GLType.IntEnum:
-                    GL.GetInteger(pname, out result1i);
-                    output = pname + ": " + (All)result1i;
+                    int result1e;
+                    GL.GetInteger(pname, out result1e);
+                    output = pname + ": " + (All)result1e;
                     break;
                 case GLType.IntArray2:
+                    int[] result2i = new int[2];
                     GL.GetInteger(pname, result2i);
                     output = pname + ": ( " + result2i[0] + ", " + result2i[1] + " )";
                     break;
                 case GLType.IntArray4:
+                    int[] result4i = new int[4];
                     GL.GetInteger(pname, result4i);
                     output = pname + ": ( " + result4i[0] + ", " + result4i[1] + " ) ( " + result4i[2] + ", " + result4i[3] + " )";
                     break;
                 case GLType.Float:
+                    float result1f;
                     GL.GetFloat(pname, out result1f);
                     output = pname + ": " + result1f;
                     break;
                 case GLType.FloatArray2:
+                    Vector2 result2f;
                     GL.GetFloat(pname, out result2f);
                     output = pname + ": ( " + result2f.X + ", " + result2f.Y + " )";
                     break;
                 case GLType.FloatArray4:
+                    Vector4 result4f;
                     GL.GetFloat(pname, out result4f);
                     output = pname + ": ( " + result4f.X + ", " + result4f.Y + ", " + result4f.Z + ", " + result4f.W + " )";
                     break;
