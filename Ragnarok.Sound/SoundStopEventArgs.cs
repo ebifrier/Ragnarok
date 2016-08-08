@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Reflection;
 
-namespace Ragnarok.Extra.Sound
+namespace Ragnarok.Sound
 {
     /// <summary>
     /// サウンドが停止した理由です。

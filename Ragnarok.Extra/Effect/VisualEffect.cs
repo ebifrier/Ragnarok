@@ -7,7 +7,7 @@ using FlintSharp;
 using FlintSharp.Renderers;
 using Ragnarok.Utility;
 using Ragnarok.ObjectModel;
-using Ragnarok.Extra.Sound;
+using Ragnarok.Sound;
 
 namespace Ragnarok.Extra.Effect
 {

@@ -1,13 +1,12 @@
-﻿#if !MONO
+﻿#if USE_SOUND_IRRKLANG
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 
 using IrrKlang;
 
-namespace Ragnarok.Extra.Sound.Backend
+namespace Ragnarok.Sound.Backend
 {
     /// <summary>
     /// IrrKlangの音声ファイルをラップします。
