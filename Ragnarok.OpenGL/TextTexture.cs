@@ -8,7 +8,7 @@ using System.Linq;
 
 using Ragnarok.Utility;
 
-namespace Ragnarok.Forms.Shogi.GLUtil
+namespace Ragnarok.OpenGL
 {
     /// <summary>
     /// 文字列用のテクスチャクラスです。

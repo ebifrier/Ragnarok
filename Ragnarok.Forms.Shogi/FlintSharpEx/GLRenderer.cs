@@ -8,6 +8,7 @@ using FlintSharp.Particles;
 using FlintSharp.Renderers;
 
 using Ragnarok.Extra.Effect;
+using Ragnarok.OpenGL;
 
 namespace Ragnarok.Forms.Shogi.FlintSharpEx
 {
@@ -47,7 +48,7 @@ namespace Ragnarok.Forms.Shogi.FlintSharpEx
         /// <remarks>
         /// ちょっと変ですが、毎フレームごとにRenderParticlesが呼ばれる前に設定します。
         /// </remarks>
-        public GLUtil.RenderBuffer RenderBuffer
+        public RenderBuffer RenderBuffer
         {
             get;
             set;

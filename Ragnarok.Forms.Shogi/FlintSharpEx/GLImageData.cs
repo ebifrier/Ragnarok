@@ -8,27 +8,29 @@ using FlintSharp;
 
 namespace Ragnarok.Forms.Shogi.FlintSharpEx
 {
+    using OpenGL;
+
     /// <summary>
     /// OpenGL用のイメージデータを保持します。
     /// </summary>
     internal sealed class GLImageData : IImageData
     {
-        private static readonly Dictionary<IGraphicsContext, GLUtil.Texture> particleDic =
-            new Dictionary<IGraphicsContext, GLUtil.Texture>();
+        private static readonly Dictionary<IGraphicsContext, Texture> particleDic =
+            new Dictionary<IGraphicsContext, Texture>();
 
         /// <summary>
         /// パーティクル用のテクスチャを取得します。
         /// </summary>
-        private static GLUtil.Texture GetParticleTexture()
+        private static Texture GetParticleTexture()
         {
             var context = GraphicsContext.CurrentContext;
             if (context == null)
             {
-                throw new GLUtil.GLException(
+                throw new GLException(
                     "OpenGLコンテキストが設定されていません。");
             }
 
-            GLUtil.Texture texture;
+            Texture texture;
             if (particleDic.TryGetValue(context, out texture))
             {
                 return texture;
@@ -41,7 +43,7 @@ namespace Ragnarok.Forms.Shogi.FlintSharpEx
                     "リソース画像'particle'の読み込みに失敗しました。");
             }
 
-            texture = new GLUtil.Texture();
+            texture = new Texture();
             if (!texture.Create(bitmap))
             {
                 texture.Destroy();
@@ -66,7 +68,7 @@ namespace Ragnarok.Forms.Shogi.FlintSharpEx
             if (!string.IsNullOrEmpty(ImagePath))
             {
                 // 通常画像
-                var texture = GLUtil.TextureCache.GetTexture(ImagePath);
+                var texture = TextureCache.GetTexture(ImagePath);
                 if (texture == null)
                 {
                     // うーん、どうしよう。
@@ -142,7 +144,7 @@ namespace Ragnarok.Forms.Shogi.FlintSharpEx
         /// <summary>
         /// テクスチャを取得します。
         /// </summary>
-        public GLUtil.Texture Texture
+        public Texture Texture
         {
             get;
             private set;

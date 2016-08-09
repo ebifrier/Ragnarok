@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace Ragnarok.Extra.Sound.Backend
+namespace Ragnarok.Sound.Backend
 {
     /// <summary>
     /// IrrKlangの音声ファイルを再生します。
@@ -45,6 +45,14 @@ namespace Ragnarok.Extra.Sound.Backend
     internal sealed class SoundManagerBackend_Dummy : ISoundManagerBackend
     {
         /// <summary>
+        /// SEを再生します。
+        /// </summary>
+        public ISoundObjectBackend Play(string filename, double volume)
+        {
+            return new SoundObjectBackend_Dummy();
+        }
+
+        /// <summary>
         /// 音声を再生できるかどうかを取得します。
         /// </summary>
         public bool CanUseSound
@@ -59,14 +67,6 @@ namespace Ragnarok.Extra.Sound.Backend
         {
             get { return 0.0; }
             set { }
-        }
-
-        /// <summary>
-        /// SEを再生します。
-        /// </summary>
-        public ISoundObjectBackend Play(string filename, double volume)
-        {
-            return new SoundObjectBackend_Dummy();
         }
     }
 }

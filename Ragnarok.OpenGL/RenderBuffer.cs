@@ -6,7 +6,7 @@ using System.Linq;
 using Ragnarok.Extra.Effect;
 using Ragnarok.Utility;
 
-namespace Ragnarok.Forms.Shogi.GLUtil
+namespace Ragnarok.OpenGL
 {
     /// <summary>
     /// オブジェクトの描画順序をzorder順にするためのクラスです。
@@ -213,7 +213,7 @@ namespace Ragnarok.Forms.Shogi.GLUtil
         /// <summary>
         /// 描画オブジェクトを追加します。
         /// </summary>
-        public void AddRender(GLUtil.Texture texture, BlendType blend,
+        public void AddRender(Texture texture, BlendType blend,
                               RectangleF bounds, Matrix44d transform,
                               double zorder, double opacity = 1.0)
         {

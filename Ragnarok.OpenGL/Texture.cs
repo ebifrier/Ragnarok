@@ -8,7 +8,7 @@ using OpenTK.Graphics.OpenGL;
 
 using Ragnarok.Utility;
 
-namespace Ragnarok.Forms.Shogi.GLUtil
+namespace Ragnarok.OpenGL
 {
     using Imaging = System.Drawing.Imaging;
 

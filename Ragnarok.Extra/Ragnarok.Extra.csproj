@@ -66,9 +66,6 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="irrKlang.NET4">
-      <HintPath>..\externals\net\irrKlang.NET4.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -233,30 +230,20 @@
     <Compile Include="FlintSharp\Zones\Zone.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Effect\Scenario.cs" />
-    <Compile Include="Sound\Backend\ISoundManagerBackend.cs" />
-    <Compile Include="Sound\Backend\ISoundObjectBackend.cs" />
-    <Compile Include="Sound\Backend\SoundObjectBackend_IrrKlang.cs" />
     <Compile Include="Effect\IEffectSoundManager.cs" />
-    <Compile Include="Sound\PlaySoundInfo.cs" />
-    <Compile Include="Sound\Backend\SoundManagerBackend_IrrKlang.cs" />
-    <Compile Include="Sound\SoundManager.cs" />
-    <Compile Include="Sound\SoundObject.cs" />
-    <Compile Include="Sound\SoundStopEventArgs.cs" />
     <Compile Include="Xaml\DefaultMeshExtension.cs" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="FlintSharp\Particle.png" />
-    <Content Include="ikpFlac.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="ikpMP3.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <None Include="Ragnarok.Extra.snk" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Ragnarok.Sound\Ragnarok.Sound.csproj">
+      <Project>{9ee1fb51-85ba-496c-b8a6-4c885168b19a}</Project>
+      <Name>Ragnarok.Sound</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Ragnarok\Ragnarok.csproj">
       <Project>{A348968A-DD91-47B4-9420-C7D370A2BE92}</Project>
       <Name>Ragnarok</Name>

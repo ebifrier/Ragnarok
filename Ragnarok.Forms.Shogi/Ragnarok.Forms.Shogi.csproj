@@ -63,23 +63,11 @@
     <Compile Include="ViewModel\BoardModel.cs" />
     <Compile Include="BoardChangedEventArgs.cs" />
     <Compile Include="Effect\ShogiTextObject.cs" />
-    <Compile Include="GLUtil\AnimationTexture.cs" />
-    <Compile Include="GLUtil\GLException.cs" />
-    <Compile Include="GLUtil\Misc.cs" />
-    <Compile Include="GLUtil\TextTextureCache.cs" />
-    <Compile Include="GLUtil\RenderBuffer.cs" />
-    <Compile Include="GLUtil\RenderData.cs" />
-    <Compile Include="GLUtil\TextTexture.cs" />
-    <Compile Include="GLUtil\AnimationTextureCache.cs" />
-    <Compile Include="GLUtil\TextTextureFont.cs" />
-    <Compile Include="GLUtil\TextureCache.cs" />
     <Compile Include="Effect\ShogiObject.cs" />
     <Compile Include="FlintSharpEx\GLRenderer.cs" />
     <Compile Include="EnumTypes.cs" />
     <Compile Include="FlintSharpEx\GLImageData.cs" />
     <Compile Include="FlintSharpEx\GLImageLoader.cs" />
-    <Compile Include="GLUtil\Texture.cs" />
-    <Compile Include="GLUtil\TextureDisposer.cs" />
     <Compile Include="IEffectManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ShogiInitializer.cs" />
@@ -176,6 +164,10 @@
     <ProjectReference Include="..\Ragnarok.Forms\Ragnarok.Forms.csproj">
       <Project>{6B5362A1-22C7-4B5B-8582-24F3E2502214}</Project>
       <Name>Ragnarok.Forms</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Ragnarok.OpenGL\Ragnarok.OpenGL.csproj">
+      <Project>{e4d919e1-a7a8-4c8d-a65d-a25b80290bc9}</Project>
+      <Name>Ragnarok.OpenGL</Name>
     </ProjectReference>
     <ProjectReference Include="..\Ragnarok.Shogi\Ragnarok.Shogi.csproj">
       <Project>{38ABBDA5-B22F-41B7-A415-2A909D0A6A35}</Project>

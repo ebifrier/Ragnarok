@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Ragnarok.Extra.Sound.Backend
+namespace Ragnarok.Sound.Backend
 {
     /// <summary>
     /// IrrKlangの音声ファイルをラップします。
@@ -20,6 +20,14 @@ namespace Ragnarok.Extra.Sound.Backend
         event EventHandler<SoundStopEventArgs> Stopped;
 
         /// <summary>
+        /// 内部で使うオブジェクトを取得します。
+        /// </summary>
+        object State
+        {
+            get;
+        }
+
+        /// <summary>
         /// 音量を0.0～1.0の範囲で取得または設定します。
         /// </summary>
         double Volume
@@ -31,15 +39,15 @@ namespace Ragnarok.Extra.Sound.Backend
         /// <summary>
         /// 再生長さを取得します。
         /// </summary>
-        int Length
+        TimeSpan Length
         {
             get;
         }
 
         /// <summary>
-        /// 再生が終わったかどうかを取得します。
+        /// 再生中かどうかを取得します。
         /// </summary>
-        bool IsFinished
+        bool IsPlaying
         {
             get;
         }
@@ -47,7 +55,7 @@ namespace Ragnarok.Extra.Sound.Backend
         /// <summary>
         /// 再生を停止します。
         /// </summary>
-        void Stop();
+        void Stop(SoundStopReason reason);
     }
 
 
@@ -62,6 +70,14 @@ namespace Ragnarok.Extra.Sound.Backend
         public event EventHandler<SoundStopEventArgs> Stopped;
 
         /// <summary>
+        /// 内部で使うオブジェクトを取得します。
+        /// </summary>
+        public object State
+        {
+            get { return null; }
+        }
+
+        /// <summary>
         /// 音量を0.0～1.0の範囲で取得または設定します。
         /// </summary>
         public double Volume
@@ -73,15 +89,15 @@ namespace Ragnarok.Extra.Sound.Backend
         /// <summary>
         /// 再生長さを取得します。
         /// </summary>
-        public int Length
+        public TimeSpan Length
         {
-            get { return 0; }
+            get { return TimeSpan.Zero; }
         }
 
         /// <summary>
-        /// 再生が終わったかどうかを取得します。
+        /// 再生中かどうかを取得します。
         /// </summary>
-        public bool IsFinished
+        public bool IsPlaying
         {
             get { return true; }
         }
@@ -89,8 +105,9 @@ namespace Ragnarok.Extra.Sound.Backend
         /// <summary>
         /// 再生を停止します。
         /// </summary>
-        public void Stop()
+        public void Stop(SoundStopReason reason)
         {
+            Stopped.SafeRaiseEvent(this, new SoundStopEventArgs(reason));
         }
     }
 }

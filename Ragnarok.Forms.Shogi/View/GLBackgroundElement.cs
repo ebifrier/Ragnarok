@@ -131,7 +131,7 @@ namespace Ragnarok.Forms.Shogi.View
         protected override void OnEnterFrame(EnterFrameEventArgs e)
         {
             base.OnEnterFrame(e);
-            var renderBuffer = (GLUtil.RenderBuffer)e.StateObject;
+            var renderBuffer = (OpenGL.RenderBuffer)e.StateObject;
 
             if (this.prevBg != null)
             {

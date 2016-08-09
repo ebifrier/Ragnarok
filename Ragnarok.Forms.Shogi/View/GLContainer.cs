@@ -9,8 +9,8 @@ using System.Windows.Forms;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 
-using Ragnarok.Extra.Effect;
 using Ragnarok.ObjectModel;
+using Ragnarok.OpenGL;
 
 namespace Ragnarok.Forms.Shogi.View
 {
@@ -25,7 +25,7 @@ namespace Ragnarok.Forms.Shogi.View
     {
         private readonly NotifyCollection<GLElement> glElements =
             new NotifyCollection<GLElement>();
-        private readonly GLUtil.RenderBuffer renderBuffer = new GLUtil.RenderBuffer();
+        private readonly RenderBuffer renderBuffer = new RenderBuffer();
         private Color clearColor = Color.Transparent;
         private int screenWidth = 640;
         private int screenHeight = 360;
@@ -127,7 +127,7 @@ namespace Ragnarok.Forms.Shogi.View
             // このOpenGLに登録されているすべてのテクスチャを削除します。
             if (this.glInitialized)
             {
-                GLUtil.Texture.DeleteAll(Context);
+                Texture.DeleteAll(Context);
             }
 
             base.OnHandleDestroyed(e);
@@ -162,7 +162,7 @@ namespace Ragnarok.Forms.Shogi.View
         /// <summary>
         /// 描画用のオブジェクトを取得します。
         /// </summary>
-        public GLUtil.RenderBuffer RenderBuffer
+        public RenderBuffer RenderBuffer
         {
             get { return this.renderBuffer; }
         }
@@ -270,7 +270,7 @@ namespace Ragnarok.Forms.Shogi.View
                     _.DoEnterFrame(elapsedTime, this.renderBuffer);
                 });
 
-            GLUtil.TextureDisposer.Update(Context);
+            TextureDisposer.Update(Context);
         }
 
         /// <summary>

@@ -8,7 +8,7 @@ using OpenTK.Graphics.OpenGL;
 using Ragnarok.Extra.Effect;
 using Ragnarok.Utility;
 
-namespace Ragnarok.Forms.Shogi.GLUtil
+namespace Ragnarok.OpenGL
 {
     /// <summary>
     /// 描画用のデータをまとめて持ちます。
