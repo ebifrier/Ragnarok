@@ -11,6 +11,15 @@ namespace Ragnarok.Sound
     public class PlaySoundInfo
     {
         /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public PlaySoundInfo()
+        {
+            Volume = 1.0;
+            UsePlayInterval = true;
+        }
+
+        /// <summary>
         /// 音声ファイルのパスを取得または設定します。
         /// </summary>
         public string FilePath
@@ -23,6 +32,18 @@ namespace Ragnarok.Sound
         /// 音量を取得または設定します。
         /// </summary>
         public double Volume
+        {
+            get;
+            set;
+        }
+
+        public bool UsePlayInterval
+        {
+            get;
+            set;
+        }
+
+        public bool IgnoreError
         {
             get;
             set;

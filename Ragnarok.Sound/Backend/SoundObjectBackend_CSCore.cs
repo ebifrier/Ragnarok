@@ -1,8 +1,7 @@
-﻿#if true
+﻿#if USE_SOUND_CSCORE
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 
 using CSCore;
 
@@ -15,8 +14,7 @@ namespace Ragnarok.Sound.Backend
     /// 使用dllが正しく初期化できない場合、
     /// このクラスを使った時点で例外が発生します。
     /// </remarks>
-    internal sealed class SoundObjectBackend_CSCore :
-        ISoundObjectBackend
+    internal sealed class SoundObjectBackend_CSCore : ISoundObjectBackend
     {
         private IWaveSource source;
         private double volume;
@@ -51,7 +49,7 @@ namespace Ragnarok.Sound.Backend
         }
 
         /// <summary>
-        /// 再生長さを取得します。
+        /// 音量を取得します。
         /// </summary>
         public double Volume
         {

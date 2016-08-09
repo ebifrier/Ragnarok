@@ -26,6 +26,14 @@ namespace Ragnarok.Sound.Backend
         public event EventHandler<SoundStopEventArgs> Stopped;
 
         /// <summary>
+        /// 内部オブジェクトを取得します。
+        /// </summary>
+        public object State
+        {
+            get { return this.sound; }
+        }
+
+        /// <summary>
         /// 音量を0.0～1.0の範囲で取得または設定します。
         /// </summary>
         public double Volume
@@ -37,23 +45,23 @@ namespace Ragnarok.Sound.Backend
         /// <summary>
         /// 再生長さを取得します。
         /// </summary>
-        public int Length
+        public TimeSpan Length
         {
-            get { return (int)this.sound.PlayLength; }
+            get { return TimeSpan.FromMilliseconds(this.sound.PlayLength); }
         }
 
         /// <summary>
-        /// 再生が終わったかどうかを取得します。
+        /// 再生中かどうかを取得します。
         /// </summary>
-        public bool IsFinished
+        public bool IsPlaying
         {
-            get { return this.sound.Finished; }
+            get { return !this.sound.Finished; }
         }
 
         /// <summary>
         /// 再生を停止します。
         /// </summary>
-        public void Stop()
+        public void Stop(SoundStopReason reason)
         {
             this.sound.Stop();
         }
