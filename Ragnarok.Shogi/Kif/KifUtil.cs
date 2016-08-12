@@ -235,6 +235,8 @@ namespace Ragnarok.Shogi.Kif
                     return KifuHeaderType.EndTime;
                 case "戦型":
                     return KifuHeaderType.Opening;
+                case "評価値タイプ":
+                    return KifuHeaderType.NodeScoreType;
             }
 
             return null;
@@ -263,6 +265,8 @@ namespace Ragnarok.Shogi.Kif
                     return "終了日時";
                 case KifuHeaderType.Opening:
                     return "戦型";
+                case KifuHeaderType.NodeScoreType:
+                    return "評価値タイプ";
             }
 
             return null;

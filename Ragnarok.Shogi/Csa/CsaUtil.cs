@@ -141,6 +141,8 @@ namespace Ragnarok.Shogi.Csa
                     return "TIME_LIMIT";
                 case KifuHeaderType.Opening:
                     return "OPENING";
+                case KifuHeaderType.NodeScoreType:
+                    return "SCORE_TYPE";
             }
 
             return null;
