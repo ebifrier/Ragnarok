@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Ragnarok.Presentation.Extra</RootNamespace>
     <AssemblyName>Ragnarok.Presentation.Extra</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
@@ -23,6 +23,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -31,6 +32,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
@@ -49,6 +51,7 @@
     <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
     <WarningLevel>4</WarningLevel>
     <Optimize>false</Optimize>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
@@ -60,6 +63,7 @@
     <CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
     <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
@@ -93,6 +97,14 @@
     <Compile Include="Scenario.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Ragnarok.Presentation\Ragnarok.Presentation.csproj">
+      <Project>{2e5515a8-7b34-44a2-9c50-f423c5f87798}</Project>
+      <Name>Ragnarok.Presentation</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Ragnarok.Sound\Ragnarok.Sound.csproj">
+      <Project>{9ee1fb51-85ba-496c-b8a6-4c885168b19a}</Project>
+      <Name>Ragnarok.Sound</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Ragnarok\Ragnarok.csproj">
       <Project>{A348968A-DD91-47B4-9420-C7D370A2BE92}</Project>
       <Name>Ragnarok</Name>

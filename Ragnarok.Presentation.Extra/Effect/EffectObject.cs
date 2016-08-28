@@ -12,7 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
 
 using FlintSharp.Renderers;
-using Ragnarok.Extra.Sound;
+using Ragnarok.Sound;
 
 namespace Ragnarok.Presentation.Extra.Effect
 {
