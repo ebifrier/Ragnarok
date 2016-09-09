@@ -64,7 +64,7 @@ namespace Ragnarok
         /// <summary>
         /// 列挙値の<see ref="TAttribute"/>属性を取得します。
         /// </summary>
-        public static TAttribute GetAttribute<TAttribute>(object value)
+        public static TAttribute GetAttribute<TAttribute>(this object value)
             where TAttribute : Attribute
         {
             if (value == null)
@@ -97,7 +97,7 @@ namespace Ragnarok
         /// <summary>
         /// 列挙値の説明文を取得します。
         /// </summary>
-        public static string GetDescription(object value)
+        public static string GetDescription(this object value)
         {
             var attribute = GetAttribute<LabelDescriptionAttribute>(value);
             if (attribute == null)
@@ -111,7 +111,7 @@ namespace Ragnarok
         /// <summary>
         /// 列挙値のラベルを取得します。
         /// </summary>
-        public static string GetLabel(object value)
+        public static string GetLabel(this object value)
         {
             var attribute = GetAttribute<LabelDescriptionAttribute>(value);
             if (attribute == null)
