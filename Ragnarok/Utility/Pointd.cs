@@ -43,6 +43,22 @@ namespace Ragnarok.Utility
         }
 
         /// <summary>
+        /// 距離の二乗を取得します。
+        /// </summary>
+        public double Distance2
+        {
+            get { return ((X * X) + (Y * Y)); }
+        }
+
+        /// <summary>
+        /// 距離を取得します。
+        /// </summary>
+        public double Distance
+        {
+            get { return Math.Sqrt(Distance2); }
+        }
+
+        /// <summary>
         /// 座標値を指定した分だけ移動させます。
         /// </summary>
         public void Offset(double offsetX, double offsetY)

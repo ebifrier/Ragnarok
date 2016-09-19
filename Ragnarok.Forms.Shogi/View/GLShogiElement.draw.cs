@@ -12,8 +12,6 @@ using Ragnarok.OpenGL;
 
 namespace Ragnarok.Forms.Shogi.View
 {
-    using Effect;
-
     /// <summary>
     /// 盤面の描画を行います。
     /// </summary>
@@ -96,6 +94,13 @@ namespace Ragnarok.Forms.Shogi.View
             BoardOpacity = 1.0;
 
             LocalTransform.Scale(1.0 / 640.0, 1.0 / 360.0, 1.0);
+
+            // TODO:
+            ArrowMoveList = new List<Move>
+            {
+                Move.CreateMove(BWType.Black, new Square(1, 1), new Square(5, 5),
+                                new Piece(PieceType.Hu, false), false),
+            };
         }
 
         /// <summary>
@@ -374,6 +379,15 @@ namespace Ragnarok.Forms.Shogi.View
         }
 
         /// <summary>
+        /// 画面上に矢印を表示するための候補手リストを取得または設定します。
+        /// </summary>
+        public List<Move> ArrowMoveList
+        {
+            get { return GetValue<List<Move>>("ArrowMoveList"); }
+            set { SetValue("ArrowMoveList", value); }
+        }
+
+        /// <summary>
         /// 自動再生時の色を取得または設定します。
         /// </summary>
         public Color AutoPlayColor
@@ -468,6 +482,12 @@ namespace Ragnarok.Forms.Shogi.View
 
                 // 盤上の駒をすべて描画登録します。
                 AddRenderPieceAll(renderBuffer);
+
+                if (AutoPlayOpacity == 0.0)
+                {
+                    // 候補手となる指し手のリストを表示します。
+                    AddRenderArrowMoveList(renderBuffer);
+                }
 
                 // 自動再生時のエフェクトを描画します。
                 if (AutoPlayOpacity > 0.0)
@@ -751,6 +771,58 @@ namespace Ragnarok.Forms.Shogi.View
             }
 
             return mesh;
+        }
+
+        /// <summary>
+        /// 候補手を矢印による描画を行います。
+        /// </summary>
+        private void AddRenderArrowMoveList(RenderBuffer renderBuffer)
+        {
+            if (ArrowMoveList == null)
+            {
+                return;
+            }
+
+            foreach(var move in ArrowMoveList)
+            {
+                AddRenderMoveArrow(renderBuffer, move);
+            }
+        }
+
+        /// <summary>
+        /// 指し手を表示する矢印メッシュを追加します。
+        /// </summary>
+        private void AddRenderMoveArrow(RenderBuffer renderBuffer, Move move)
+        {
+            if (move == null || !move.Validate())
+            {
+                return;
+            }
+
+            // 手番が違う場合は、前に設定された指し手が残っている可能性がある。
+            if (move.BWType != Board.Turn || move.IsSpecialMove)
+            {
+                return;
+            }
+
+            // 駒の移動を開始した地点と終了した地点の座標を求めます。
+            var fromPoint = (
+                move.ActionType == ActionType.Drop ?
+                HandPieceToPoint(move.DropPieceType, move.BWType) :
+                SquareToPoint(move.SrcSquare))
+                .ToPointd();
+            var toPoint = SquareToPoint(move.DstSquare)
+                .ToPointd();
+            var length = (toPoint - fromPoint).Distance;
+
+            var mesh = MeshUtil.CreateArrow(0.3, 0.3, 0.1);
+            var transform = new Matrix44d();
+            transform.Scale(length, length, 1.0);
+
+            // 描画命令を出します。
+            renderBuffer.AddRender(
+                BlendType.Diffuse, Color.White,
+                transform, ShogiZOrder.PostPieceZ);
         }
 
         /// <summary>
