@@ -127,7 +127,9 @@ namespace Ragnarok.Forms.Shogi.View
             // このOpenGLに登録されているすべてのテクスチャを削除します。
             if (this.glInitialized)
             {
-                Texture.DeleteAll(Context);
+                // このメソッドに失敗してVisual Studioが落ちることがあるため、
+                // 念のため例外を潰しておく
+                Util.SafeCall(() => Texture.DeleteAll(Context));
             }
 
             base.OnHandleDestroyed(e);
