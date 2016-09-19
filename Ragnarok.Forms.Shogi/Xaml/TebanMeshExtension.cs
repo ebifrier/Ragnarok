@@ -5,10 +5,13 @@ using System.Linq;
 using System.Windows.Markup;
 
 using Ragnarok.Shogi;
+using Ragnarok.Utility;
 using Ragnarok.Extra.Effect;
 
 namespace Ragnarok.Forms.Shogi.Xaml
 {
+    using View;
+
     /// <summary>
     /// 手番表示のメッシュを作成する拡張構文です。
     /// </summary>

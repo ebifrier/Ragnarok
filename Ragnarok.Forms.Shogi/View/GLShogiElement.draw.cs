@@ -89,18 +89,13 @@ namespace Ragnarok.Forms.Shogi.View
             TebanPlayerNameBackgroundColor = Color.FromArgb(128, Color.White);
             UnTebanPlayerNameBackgroundColor = Color.FromArgb(32, Color.White);
             TimeBackgroundColor = Color.FromArgb(128, Color.Black);
+            IsArrowVisible = true;
+            ArrowMoveList = new List<Move>();
             AutoPlayColor = Color.FromArgb(96, 0, 24, 86);
             AutoPlayOpacity = 0.0;
             BoardOpacity = 1.0;
 
             LocalTransform.Scale(1.0 / 640.0, 1.0 / 360.0, 1.0);
-
-            // TODO:
-            ArrowMoveList = new List<Move>
-            {
-                Move.CreateMove(BWType.Black, new Square(1, 1), new Square(5, 5),
-                                new Piece(PieceType.Hu, false), false),
-            };
         }
 
         /// <summary>
@@ -379,6 +374,15 @@ namespace Ragnarok.Forms.Shogi.View
         }
 
         /// <summary>
+        /// 候補手を示す矢印の表示を行うかどうかを取得または設定します。
+        /// </summary>
+        public bool IsArrowVisible
+        {
+            get { return GetValue<bool>("IsArrowVisible"); }
+            set { SetValue("IsArrowVisible", value); }
+        }
+
+        /// <summary>
         /// 画面上に矢印を表示するための候補手リストを取得または設定します。
         /// </summary>
         public List<Move> ArrowMoveList
@@ -459,6 +463,14 @@ namespace Ragnarok.Forms.Shogi.View
 
             Children.Remove(effect);
         }
+
+        /// <summary>
+        /// 矢印表示用の指し手をクリアします。
+        /// </summary>
+        private void InitArrowMoveList()
+        {
+            ArrowMoveList = new List<Move>();
+        }
         #endregion
 
         /// <summary>
@@ -483,15 +495,14 @@ namespace Ragnarok.Forms.Shogi.View
                 // 盤上の駒をすべて描画登録します。
                 AddRenderPieceAll(renderBuffer);
 
-                if (AutoPlayOpacity == 0.0)
+                if (Math.Abs(AutoPlayOpacity) <= 1.0e-6)
                 {
                     // 候補手となる指し手のリストを表示します。
                     AddRenderArrowMoveList(renderBuffer);
                 }
-
-                // 自動再生時のエフェクトを描画します。
-                if (AutoPlayOpacity > 0.0)
+                else
                 {
+                    // 自動再生時のエフェクトを描画します。
                     AddRenderAutoPlayEffect(renderBuffer);
                 }
             }
@@ -778,21 +789,25 @@ namespace Ragnarok.Forms.Shogi.View
         /// </summary>
         private void AddRenderArrowMoveList(RenderBuffer renderBuffer)
         {
-            if (ArrowMoveList == null)
+            if (ArrowMoveList == null || !IsArrowVisible)
             {
                 return;
             }
 
-            foreach(var move in ArrowMoveList)
+            ArrowMoveList.ForEachWithIndex((move, i) =>
             {
-                AddRenderMoveArrow(renderBuffer, move);
-            }
+                if (move == null) return;
+
+                var label = (i + 1).ToString();
+                AddRenderMoveArrow(renderBuffer, move, i + 1, label);
+            });
         }
 
         /// <summary>
         /// 指し手を表示する矢印メッシュを追加します。
         /// </summary>
-        private void AddRenderMoveArrow(RenderBuffer renderBuffer, Move move)
+        private void AddRenderMoveArrow(RenderBuffer renderBuffer, Move move,
+                                        int priority, string label)
         {
             if (move == null || !move.Validate())
             {
@@ -809,20 +824,93 @@ namespace Ragnarok.Forms.Shogi.View
             var fromPoint = (
                 move.ActionType == ActionType.Drop ?
                 HandPieceToPoint(move.DropPieceType, move.BWType) :
-                SquareToPoint(move.SrcSquare))
-                .ToPointd();
-            var toPoint = SquareToPoint(move.DstSquare)
-                .ToPointd();
-            var length = (toPoint - fromPoint).Distance;
+                SquareToPoint(move.SrcSquare)).ToPointd();
+            var toPoint = SquareToPoint(move.DstSquare).ToPointd();
+            var diff = toPoint - fromPoint;
 
-            var mesh = MeshUtil.CreateArrow(0.3, 0.3, 0.1);
-            var transform = new Matrix44d();
-            transform.Scale(length, length, 1.0);
-
-            // 描画命令を出します。
+            // 矢印を決められた位置に描画します。
+            var data = CreateArrowData(priority, fromPoint, toPoint);
             renderBuffer.AddRender(
-                BlendType.Diffuse, Color.White,
-                transform, ShogiZOrder.PostPieceZ);
+                BlendType.Diffuse,
+                CreateArrowColor(move.BWType, priority),
+                data.Item1, data.Item2,
+                ShogiZOrder.PostPieceZ);
+
+            // ラベルを描画
+            if (!string.IsNullOrEmpty(label))
+            {
+                var font = new TextTextureFont
+                {
+                    Font = new Font(TextTextureFont.DefaultFont, FontStyle.Bold),
+                    Color = Color.White,
+                    EdgeColor = Color.Black,
+                    EdgeLength = 1,
+                    IsStretchSize = true,
+                };
+                var rect = new RectangleF(
+                    (float)(fromPoint.X + diff.X * 0.7),
+                    (float)(fromPoint.Y + diff.Y * 0.7),
+                    SquareSize.Width / 3,
+                    SquareSize.Height / 3);
+                rect.Offset(-rect.Width / 2, -rect.Height / 2);
+
+                AddRenderText(
+                    renderBuffer, label, font,
+                    rect, ShogiZOrder.PostPieceZ);
+            }
+        }
+
+        private Color CreateArrowColor(BWType turn, int priority)
+        {
+            if (turn == BWType.Black)
+            {
+                // 先手は赤が基本
+                return Color.FromArgb(
+                    120 + 100 / priority,
+                    200,
+                    20 + 30 * (priority - 1),
+                    20);
+            }
+            else
+            {
+                // 後手は青が基本
+                return Color.FromArgb(
+                    120 + 100 / priority,
+                    20,
+                    20 + 30 * (priority - 1),
+                    202);
+            }
+        }
+
+        private Tuple<Mesh, Matrix44d> CreateArrowData(int priority,
+                                                       Pointd fromPoint, Pointd toPoint)
+        {
+            var diff = toPoint - fromPoint;
+            var length = diff.Distance;
+            var lengthMax = SquareSize.Width * 9.0;
+
+            // 距離が近いものほど小さくなる
+            var lengthRate = Math.Min(length, lengthMax) / lengthMax;
+
+            // 優先順位の低い矢印ほど、小さくなる値
+            var priorityRate = 1.0 / priority;
+
+            // 先にメッシュを作成
+            var mesh = MeshUtil.CreateArrow(
+                MathEx.InterpLiner(0.4, 0.2, lengthRate),
+                0.2, 0.05);
+
+            var rad = Math.Atan2(diff.Y, diff.X);
+            var transform = new Matrix44d();
+            transform.Translate(fromPoint.X, fromPoint.Y, 1.0);
+            transform.Rotate(rad - Math.PI / 2, 0, 0, 1);
+            transform.Scale(
+                SquareSize.Width *
+                    MathEx.InterpLiner(1.2, 1.5, lengthRate) *
+                    priorityRate,
+                length, 1.0);
+
+            return Tuple.Create(mesh, transform);
         }
 
         /// <summary>

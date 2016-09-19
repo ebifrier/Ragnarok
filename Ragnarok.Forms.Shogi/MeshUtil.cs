@@ -123,9 +123,10 @@ namespace Ragnarok.Forms.Shogi
             };
             var indices = new List<int>
             {
-                0, 1, 2,
-                3, 5, 4,
-                4, 5, 6,
+                // 座標系がyを上と考えているため、時計回りで設定する。
+                0, 2, 1,
+                3, 4, 5,
+                4, 6, 5,
             };
 
             return new Mesh(points, texCoords, indices);
