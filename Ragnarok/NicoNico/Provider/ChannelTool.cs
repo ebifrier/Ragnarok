@@ -292,7 +292,7 @@ namespace Ragnarok.NicoNico.Provider
             // 0: 誰でも編集できる
             // 1: チャンネル会員のみが編集できる
             // 2: ユーザーによるタグ編集を禁止する
-            param["tag_edit_flag"] = 1;
+            param["tag_edit_flag"] = 2;
 
             // 1: 誰でも視聴可能
             // 4: チャンネル会員のみ視聴可能
