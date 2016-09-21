@@ -101,6 +101,7 @@
     </Compile>
     <Compile Include="View\ShogiCommands.cs" />
     <Compile Include="Xaml\SquareMeshExtension.cs" />
+    <Compile Include="MeshUtil.cs" />
     <Compile Include="Xaml\TebanMeshExtension.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

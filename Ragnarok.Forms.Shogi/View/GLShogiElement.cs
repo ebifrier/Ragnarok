@@ -365,6 +365,7 @@ namespace Ragnarok.Forms.Shogi.View
                 EffectManager.Moved(e.Move, e.IsUndo);
             }
 
+            InitArrowMoveList();
             FormsUtil.InvalidateCommand();
         }
 
@@ -395,6 +396,7 @@ namespace Ragnarok.Forms.Shogi.View
         private void OnTurnChanged(object sender, PropertyChangedEventArgs e)
         {
             InitEffect();
+            InitArrowMoveList();
         }
 
         /// <summary>

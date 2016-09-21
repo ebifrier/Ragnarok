@@ -220,7 +220,8 @@ namespace Ragnarok
         /// <summary>
         /// Listクラスをリサイズします。
         /// </summary>
-        public static void Resize<T>(this List<T> list, int size, T value)
+        public static void Resize<T>(this List<T> list, int size,
+                                     T value = default(T))
         {
             int curSize = list.Count;
 

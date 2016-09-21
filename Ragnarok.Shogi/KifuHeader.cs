@@ -46,7 +46,11 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 評価値タイプ
         /// </summary>
-        NodeScoreType,
+        ScoreType,
+        /// <summary>
+        /// 評価値を出力したエンジン名(0 ～ 16)まで
+        /// </summary>
+        ScoreEngine0,
     }
 
     /// <summary>
