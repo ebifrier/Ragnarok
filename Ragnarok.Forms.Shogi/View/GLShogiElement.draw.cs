@@ -794,13 +794,24 @@ namespace Ragnarok.Forms.Shogi.View
                 return;
             }
 
-            ArrowMoveList.ForEachWithIndex((move, i) =>
-            {
-                if (move == null) return;
-
-                var label = (i + 1).ToString();
-                AddRenderMoveArrow(renderBuffer, move, i + 1, label);
-            });
+            // 矢印が被ることがあるため、優先順位が低いものから描画する。
+            ArrowMoveList
+                .SelectWithIndex((move, i) => new { move, priority = i + 1 })
+                .Where(_ => _.move != null)
+                .GroupBy(_ => _.move)
+                .Select(_ => new
+                {
+                    move = _.Key,
+                    lowestPriority = _.Min(__ => __.priority),
+                    priorities = _.Select(__ => __.priority).ToArray(),
+                })
+                .OrderBy(_ => _.lowestPriority)
+                .ForEach(_ =>
+                {
+                    //var label = string.Join(",", _.priorities).ToString();
+                    var label = _.lowestPriority.ToString();
+                    AddRenderMoveArrow(renderBuffer, _.move, _.lowestPriority, label);
+                });
         }
 
         /// <summary>
