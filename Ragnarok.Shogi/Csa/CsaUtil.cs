@@ -89,7 +89,10 @@ namespace Ragnarok.Shogi.Csa
             var value = (m.Groups[4].Success ? m.Groups[4].Value : null);
             return new HeaderItem(key, value);
         }
-        
+
+        private static readonly Regex ScoreEngineNameRegex =
+            new Regex(@"^SCORE_ENGINE(\d+)", RegexOptions.IgnoreCase);
+
         /// <summary>
         /// CSA形式のヘッダアイテム名から、その種類を判別します。
         /// </summary>
@@ -114,6 +117,15 @@ namespace Ragnarok.Shogi.Csa
                     return KifuHeaderType.TimeLimit;
                 case "OPENING":
                     return KifuHeaderType.Opening;
+                case "SCORE_TYPE":
+                    return KifuHeaderType.ScoreType;
+            }
+
+            var m = ScoreEngineNameRegex.Match(key);
+            if (m.Success)
+            {
+                var i = int.Parse(m.Groups[1].Value);
+                return (KifuHeaderType.ScoreEngine0 + i);
             }
 
             return null;
@@ -141,8 +153,15 @@ namespace Ragnarok.Shogi.Csa
                     return "TIME_LIMIT";
                 case KifuHeaderType.Opening:
                     return "OPENING";
-                case KifuHeaderType.NodeScoreType:
+                case KifuHeaderType.ScoreType:
                     return "SCORE_TYPE";
+            }
+
+            if (KifuHeaderType.ScoreEngine0 + 1 <= type &&
+                type <= KifuHeaderType.ScoreEngine0 + 16)
+            {
+                var i = type - KifuHeaderType.ScoreEngine0;
+                return $"SCORE_ENGINE{i}";
             }
 
             return null;

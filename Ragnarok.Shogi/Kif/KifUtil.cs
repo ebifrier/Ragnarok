@@ -210,6 +210,9 @@ namespace Ragnarok.Shogi.Kif
             return new HeaderItem(key, value);
         }
 
+        private static readonly Regex ScoreEngineNameRegex =
+            new Regex(@"^評価値エンジン(\d+)");
+
         /// <summary>
         /// ヘッダアイテム名から、その種類を判別します。
         /// </summary>
@@ -236,7 +239,14 @@ namespace Ragnarok.Shogi.Kif
                 case "戦型":
                     return KifuHeaderType.Opening;
                 case "評価値タイプ":
-                    return KifuHeaderType.NodeScoreType;
+                    return KifuHeaderType.ScoreType;
+            }
+
+            var m = ScoreEngineNameRegex.Match(str);
+            if (m.Success)
+            {
+                var i = int.Parse(m.Groups[1].Value);
+                return (KifuHeaderType.ScoreEngine0 + i);
             }
 
             return null;
@@ -265,8 +275,15 @@ namespace Ragnarok.Shogi.Kif
                     return "終了日時";
                 case KifuHeaderType.Opening:
                     return "戦型";
-                case KifuHeaderType.NodeScoreType:
+                case KifuHeaderType.ScoreType:
                     return "評価値タイプ";
+            }
+
+            if (KifuHeaderType.ScoreEngine0 + 1 <= type &&
+                type <= KifuHeaderType.ScoreEngine0 + 16)
+            {
+                var i = type - KifuHeaderType.ScoreEngine0;
+                return $"評価値エンジン{i}";
             }
 
             return null;
