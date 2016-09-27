@@ -94,8 +94,7 @@ namespace Ragnarok.Utility
                     return null;
                 }
 
-                return Ragnarok.NicoNico.NicoString.GetCommunityUrl(
-                    NicoCommunity);
+                return "http://com.nicovideo.jp/community/" + NicoCommunity;
             }
         }
 

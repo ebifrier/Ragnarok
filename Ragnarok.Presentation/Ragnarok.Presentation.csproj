@@ -158,12 +158,6 @@
     <Compile Include="RagnarokCommands.cs" />
     <Compile Include="DialogUtil.cs" />
     <Compile Include="Extension\FontFamilyListExtension.cs" />
-    <Compile Include="NicoNico\CookieData.cs" />
-    <Compile Include="NicoNico\NicoNicoCommands.cs" />
-    <Compile Include="NicoNico\LoginModel.cs" />
-    <Compile Include="NicoNico\LoginWindow.xaml.cs">
-      <DependentUpon>LoginWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Extension\FileListExtension.cs" />
     <Compile Include="Update\DownloadProgressWindow.xaml.cs">
@@ -190,6 +184,10 @@
     <Compile Include="WPFUtil.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Ragnarok.NicoNico\Ragnarok.NicoNico.csproj">
+      <Project>{6aee649c-ee42-4ae5-87e3-a4f8bfc12f72}</Project>
+      <Name>Ragnarok.NicoNico</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Ragnarok\Ragnarok.csproj">
       <Project>{A348968A-DD91-47B4-9420-C7D370A2BE92}</Project>
       <Name>Ragnarok</Name>
@@ -267,14 +265,6 @@
     <Page Include="Debug\ReportDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="NicoNico\NicoNico.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="NicoNico\LoginWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="Themes\Common.xaml">
       <SubType>Designer</SubType>

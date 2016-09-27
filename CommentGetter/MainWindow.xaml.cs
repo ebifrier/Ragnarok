@@ -17,7 +17,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 using Ragnarok;
-using Ragnarok.Net.CookieGetter;
+using Ragnarok.CookieGetter;
 using Ragnarok.NicoNico;
 using Ragnarok.NicoNico.Login;
 using Ragnarok.NicoNico.Live;

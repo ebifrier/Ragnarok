@@ -42,7 +42,6 @@ using System.Windows.Markup;
 [assembly: XmlnsDefinition("http://schemas.garnet-alice.net/ragnarok/xaml/presentation", "Ragnarok.Presentation.Control")]
 [assembly: XmlnsDefinition("http://schemas.garnet-alice.net/ragnarok/xaml/presentation", "Ragnarok.Presentation.Converter")]
 [assembly: XmlnsDefinition("http://schemas.garnet-alice.net/ragnarok/xaml/presentation", "Ragnarok.Presentation.Extension")]
-[assembly: XmlnsDefinition("http://schemas.garnet-alice.net/ragnarok/xaml/presentation", "Ragnarok.Presentation.NicoNico")]
 [assembly: XmlnsDefinition("http://schemas.garnet-alice.net/ragnarok/xaml/presentation", "Ragnarok.Presentation.Utility")]
 
 // アセンブリのバージョン情報は、以下の 4 つの値で構成されています:

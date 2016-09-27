@@ -1,0 +1,185 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{6AEE649C-EE42-4AE5-87E3-A4F8BFC12F72}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Ragnarok.NicoNico</RootNamespace>
+    <AssemblyName>Ragnarok.NicoNico</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;CLR4_0;CLR_GE_2_0;CLR_GE_3_0;CLR_GE_3_5;CLR_GE_4_0;TESTS</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE;CLR4_0;CLR_GE_2_0;CLR_GE_3_0;CLR_GE_3_5;CLR_GE_4_0;TESTS</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>Ragnarok.NicoNico.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;CLR4_0;CLR_GE_2_0;CLR_GE_3_0;CLR_GE_3_5;CLR_GE_4_0;TESTS</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE;CLR4_0;CLR_GE_2_0;CLR_GE_3_0;CLR_GE_3_5;CLR_GE_4_0;TESTS</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;CLR4_0;CLR_GE_2_0;CLR_GE_3_0;CLR_GE_3_5;CLR_GE_4_0;TESTS</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE;CLR4_0;CLR_GE_2_0;CLR_GE_3_0;CLR_GE_3_5;CLR_GE_4_0;TESTS</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="nunit.framework, Version=2.6.4.14350, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\externals\net\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AccountInfo.cs" />
+    <Compile Include="Comment.cs" />
+    <Compile Include="CommentParser.cs" />
+    <Compile Include="CommentStringizer.cs" />
+    <Compile Include="CookieGetter\BrowserType.cs" />
+    <Compile Include="CookieGetter\ChromiumBrowserManager.cs" />
+    <Compile Include="CookieGetter\CookieGetter.cs" />
+    <Compile Include="CookieGetter\CookieStatus.cs" />
+    <Compile Include="CookieGetter\CookieUtil.cs" />
+    <Compile Include="CookieGetter\Exceptions.cs" />
+    <Compile Include="CookieGetter\FirefoxBrowserManager.cs" />
+    <Compile Include="CookieGetter\FirefoxCookieGetter.cs" />
+    <Compile Include="CookieGetter\FirefoxProfile.cs" />
+    <Compile Include="CookieGetter\GoogleChromeBrowserManager.cs" />
+    <Compile Include="CookieGetter\GoogleChromeCookieGetter.cs" />
+    <Compile Include="CookieGetter\IBrowserManager.cs" />
+    <Compile Include="CookieGetter\ICookieGetter.cs" />
+    <Compile Include="CookieGetter\IEBrowserManager.cs" />
+    <Compile Include="CookieGetter\IEComponentBrowserManager.cs" />
+    <Compile Include="CookieGetter\IECookieGetter.cs" />
+    <Compile Include="CookieGetter\IESafemodeBrowserManager.cs" />
+    <Compile Include="CookieGetter\OperaBrowserManager.cs" />
+    <Compile Include="CookieGetter\OperaCookieGetter.cs" />
+    <Compile Include="CookieGetter\SafariBrowserManager.cs" />
+    <Compile Include="CookieGetter\SafariCookieGetter.cs" />
+    <Compile Include="CookieGetter\SQLite.cs" />
+    <Compile Include="Gender.cs" />
+    <Compile Include="Live\AlertClient.cs" />
+    <Compile Include="Live\AlertInfo.cs" />
+    <Compile Include="Live\ChatResultStatus.cs" />
+    <Compile Include="Live\CommentClient.cs" />
+    <Compile Include="Live\CommentClientEventArgs.cs" />
+    <Compile Include="Live\CommentRoom.cs" />
+    <Compile Include="Live\CommentRoomInfo.cs" />
+    <Compile Include="Live\Detail\ChannelInfoCreator.cs" />
+    <Compile Include="Live\Detail\LiveInfoCreator.cs" />
+    <Compile Include="Live\Detail\OfficialLiveInfoCreator.cs" />
+    <Compile Include="Live\Detail\UserLiveCreator.cs" />
+    <Compile Include="Live\Heartbeat.cs" />
+    <Compile Include="Live\LiveInfo.cs" />
+    <Compile Include="Live\LiveInfomationBase.cs" />
+    <Compile Include="Live\LiveUtil.cs" />
+    <Compile Include="Live\NicoLiveException.cs" />
+    <Compile Include="Live\PlayerStatus.cs" />
+    <Compile Include="Live\PostComment.cs" />
+    <Compile Include="Live\PublishStatus.cs" />
+    <Compile Include="Login\CookieValidator.cs" />
+    <Compile Include="Login\LoginData.cs" />
+    <Compile Include="Login\Loginer.cs" />
+    <Compile Include="NicoClient.cs" />
+    <Compile Include="NicoException.cs" />
+    <Compile Include="NicoStatusCode.cs" />
+    <Compile Include="NicoString.cs" />
+    <Compile Include="NicoUtil.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Provider\ChannelLoginData.cs" />
+    <Compile Include="Provider\ChannelTool.cs" />
+    <Compile Include="Provider\ChannelToolException.cs" />
+    <Compile Include="Provider\ChannelUploadedVideoData.cs" />
+    <Compile Include="Provider\ChannelVideoData.cs" />
+    <Compile Include="Provider\CommunityData.cs" />
+    <Compile Include="Provider\CommunityInfo.cs" />
+    <Compile Include="Provider\CommunityLevelInfo.cs" />
+    <Compile Include="Provider\CommunityLevelTable.cs" />
+    <Compile Include="Provider\NicoProviderException.cs" />
+    <Compile Include="Provider\ProviderType.cs" />
+    <Compile Include="Provider\Tests\ChannelToolTest.cs" />
+    <Compile Include="StrUtil.cs" />
+    <Compile Include="Video\Mylist.cs" />
+    <Compile Include="Video\NicoVideoException.cs" />
+    <Compile Include="Video\SnapshotApi.cs" />
+    <Compile Include="Video\Tests\VideoDataTest.cs" />
+    <Compile Include="Video\Tests\VideoUtilTest.cs" />
+    <Compile Include="Video\VideoData.cs" />
+    <Compile Include="Video\VideoUtil.cs" />
+    <Compile Include="Video\ViewCountData.cs" />
+    <Compile Include="XmlInfomationBase.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Ragnarok\Ragnarok.csproj">
+      <Project>{a348968a-dd91-47b4-9420-c7d370a2be92}</Project>
+      <Name>Ragnarok</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Ragnarok.NicoNico.snk" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

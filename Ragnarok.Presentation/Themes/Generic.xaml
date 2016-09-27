@@ -3,7 +3,6 @@
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006">
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="/Ragnarok.Presentation;component/Themes/Common.xaml" />
-        <ResourceDictionary Source="/Ragnarok.Presentation;component/NicoNico/NicoNico.xaml" />
         <ResourceDictionary Source="/Ragnarok.Presentation;component/Control/Generic.xaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>
