@@ -844,7 +844,7 @@ namespace Ragnarok.Forms.Shogi.View
             var data = CreateArrowData(priority, fromPoint, toPoint);
             renderBuffer.AddRender(
                 BlendType.Diffuse,
-                CreateArrowColor(move.BWType, priority),
+                CreateArrowColor(move.BWType, priorityRate),
                 data.Item1, data.Item2,
                 ShogiZOrder.PostPieceZ);
 
@@ -880,7 +880,7 @@ namespace Ragnarok.Forms.Shogi.View
                 return Color.FromArgb(
                     (int)MathEx.InterpLiner(100, 180, priorityRate),
                     200,
-                    (int)(int)MathEx.InterpLiner(20, 120, priorityRate),
+                    (int)MathEx.InterpLiner(20, 120, priorityRate),
                     20);
             }
             else
@@ -889,7 +889,7 @@ namespace Ragnarok.Forms.Shogi.View
                 return Color.FromArgb(
                     (int)MathEx.InterpLiner(100, 180, priorityRate),
                     20,
-                    (int)(int)MathEx.InterpLiner(20, 120, priorityRate),
+                    (int)MathEx.InterpLiner(20, 120, priorityRate),
                     202);
             }
         }
@@ -899,7 +899,7 @@ namespace Ragnarok.Forms.Shogi.View
         {
             var diff = toPoint - fromPoint;
             var length = diff.Distance;
-            var lengthMax = SquareSize.Width * 9.0;
+            var lengthMax = SquareSize.Width * 5.0;
 
             // 距離が近いものほど小さくなる
             var lengthRate = Math.Min(length, lengthMax) / lengthMax;
@@ -918,7 +918,7 @@ namespace Ragnarok.Forms.Shogi.View
             transform.Rotate(rad - Math.PI / 2, 0, 0, 1);
             transform.Scale(
                 SquareSize.Width *
-                    MathEx.InterpLiner(1.3, 1.2, lengthRate) *
+                    MathEx.InterpLiner(1.3, 1.0, lengthRate) *
                     priorityRate,
                 length, 1.0);
 
