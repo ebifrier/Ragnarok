@@ -840,6 +840,7 @@ namespace Ragnarok.Forms.Shogi.View
             var diff = toPoint - fromPoint;
 
             // 矢印を決められた位置に描画します。
+            var priorityRate = 1.0 / priority;
             var data = CreateArrowData(priority, fromPoint, toPoint);
             renderBuffer.AddRender(
                 BlendType.Diffuse,
@@ -871,24 +872,24 @@ namespace Ragnarok.Forms.Shogi.View
             }
         }
 
-        private Color CreateArrowColor(BWType turn, int priority)
+        private Color CreateArrowColor(BWType turn, double priorityRate)
         {
             if (turn == BWType.Black)
             {
                 // 先手は赤が基本
                 return Color.FromArgb(
-                    120 + 100 / priority,
+                    (int)MathEx.InterpLiner(100, 180, priorityRate),
                     200,
-                    20 + 30 * (priority - 1),
+                    (int)(int)MathEx.InterpLiner(20, 120, priorityRate),
                     20);
             }
             else
             {
                 // 後手は青が基本
                 return Color.FromArgb(
-                    120 + 100 / priority,
+                    (int)MathEx.InterpLiner(100, 180, priorityRate),
                     20,
-                    20 + 30 * (priority - 1),
+                    (int)(int)MathEx.InterpLiner(20, 120, priorityRate),
                     202);
             }
         }
@@ -917,7 +918,7 @@ namespace Ragnarok.Forms.Shogi.View
             transform.Rotate(rad - Math.PI / 2, 0, 0, 1);
             transform.Scale(
                 SquareSize.Width *
-                    MathEx.InterpLiner(1.2, 1.5, lengthRate) *
+                    MathEx.InterpLiner(1.3, 1.2, lengthRate) *
                     priorityRate,
                 length, 1.0);
 
