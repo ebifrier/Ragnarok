@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
+using OpenTK.Graphics.OpenGL;
 
 using Ragnarok.Extra.Effect;
 using Ragnarok.Shogi;
@@ -839,14 +840,12 @@ namespace Ragnarok.Forms.Shogi.View
             var toPoint = SquareToPoint(move.DstSquare).ToPointd();
             var diff = toPoint - fromPoint;
 
+            // 優先順位の高い矢印ほど、小さくなる値
+            var priorityRate = MathEx.Between(0.0, 1.0, 1.0 / 4.0 * (priority - 1));
+            var color = CreateArrowColor(move.BWType, priorityRate);
+
             // 矢印を決められた位置に描画します。
-            var priorityRate = 1.0 / priority;
-            var data = CreateArrowData(priority, fromPoint, toPoint);
-            renderBuffer.AddRender(
-                BlendType.Diffuse,
-                CreateArrowColor(move.BWType, priorityRate),
-                data.Item1, data.Item2,
-                ShogiZOrder.PostPieceZ);
+            AddRenderArrow(renderBuffer, fromPoint, toPoint, priorityRate, color);
 
             // ラベルを描画
             if (!string.IsNullOrEmpty(label))
@@ -856,20 +855,76 @@ namespace Ragnarok.Forms.Shogi.View
                     Font = new Font(TextTextureFont.DefaultFont, FontStyle.Bold),
                     Color = Color.White,
                     EdgeColor = Color.Black,
-                    EdgeLength = 1,
+                    EdgeLength = 4,
                     IsStretchSize = true,
                 };
                 var rect = new RectangleF(
-                    (float)(fromPoint.X + diff.X * 0.7),
-                    (float)(fromPoint.Y + diff.Y * 0.7),
+                    (float)(fromPoint.X + diff.X * 1),
+                    (float)(fromPoint.Y + diff.Y * 1),
                     SquareSize.Width / 3,
                     SquareSize.Height / 3);
                 rect.Offset(-rect.Width / 2, -rect.Height / 2);
 
                 AddRenderText(
                     renderBuffer, label, font,
-                    rect, ShogiZOrder.PostPieceZ);
+                    rect, ShogiZOrder.PreEffectZ2 - priorityRate);
             }
+        }
+
+        private void AddRenderArrow(RenderBuffer renderBuffer,
+                                    Pointd fromPoint, Pointd toPoint,
+                                    double priorityRate, Color color)
+        {
+            var diff = toPoint - fromPoint;
+            var length = diff.Distance;
+            var lengthMax = SquareSize.Width * 5.0;
+
+            // 距離が近いものほど小さくなる
+            var lengthRate = Math.Min(length, lengthMax) / lengthMax;
+            
+            var rad = Math.Atan2(diff.Y, diff.X);
+            var transform = new Matrix44d();
+            transform.Translate(fromPoint.X, fromPoint.Y, 1.0);
+            transform.Rotate(rad - Math.PI / 2, 0, 0, 1);
+            transform.Scale(
+                SquareSize.Width *
+                    MathEx.InterpLiner(0.8, 0.8, lengthRate) *
+                    MathEx.InterpLiner(0.8, 0.2, priorityRate),
+                length, 1.0);
+            
+            // 矢印の中身を描画
+            renderBuffer.AddRender(
+                BlendType.Diffuse, color,
+                CreateArrowMesh(length, priorityRate, false),
+                transform, ShogiZOrder.PreEffectZ - priorityRate);
+
+            // 矢印のアウトラインを描画
+            renderBuffer.AddRenderAction(
+                () =>
+                {
+                    GL.Color4(color.R, color.G, color.B, (byte)(ArrowAlpha(priorityRate) + 60));
+                    GL.LineWidth(1.0f);
+                    GL.LoadMatrix(transform.AsColumnMajorArray);
+
+                    var mesh2 = CreateArrowMesh(length, priorityRate, true);
+                    GL.Begin(BeginMode.LineLoop);
+                        mesh2.VertexArray.ForEach(_ => GL.Vertex3(_.X, _.Y, _.Z));
+                    GL.End();
+                },
+                ShogiZOrder.PreEffectZ - priorityRate);
+        }
+
+        private Mesh CreateArrowMesh(double length, double priorityRate, bool outline)
+        {
+            return MeshUtil.CreateArrow(
+                SquareSize.Width / length *
+                    MathEx.InterpLiner(0.6, 0.2, priorityRate),
+                0.7, 0.05, 0.05, outline);
+        }
+
+        private int ArrowAlpha(double priorityRate)
+        {
+            return (int)MathEx.InterpLiner(140, 20, priorityRate);
         }
 
         private Color CreateArrowColor(BWType turn, double priorityRate)
@@ -878,51 +933,20 @@ namespace Ragnarok.Forms.Shogi.View
             {
                 // 先手は赤が基本
                 return Color.FromArgb(
-                    (int)MathEx.InterpLiner(100, 180, priorityRate),
+                    ArrowAlpha(priorityRate),
                     200,
-                    (int)MathEx.InterpLiner(20, 120, priorityRate),
+                    (int)MathEx.InterpLiner(20, 20, priorityRate),
                     20);
             }
             else
             {
                 // 後手は青が基本
                 return Color.FromArgb(
-                    (int)MathEx.InterpLiner(100, 180, priorityRate),
+                    ArrowAlpha(priorityRate),
                     20,
-                    (int)MathEx.InterpLiner(20, 120, priorityRate),
+                    (int)MathEx.InterpLiner(20, 20, priorityRate),
                     202);
             }
-        }
-
-        private Tuple<Mesh, Matrix44d> CreateArrowData(int priority,
-                                                       Pointd fromPoint, Pointd toPoint)
-        {
-            var diff = toPoint - fromPoint;
-            var length = diff.Distance;
-            var lengthMax = SquareSize.Width * 5.0;
-
-            // 距離が近いものほど小さくなる
-            var lengthRate = Math.Min(length, lengthMax) / lengthMax;
-
-            // 優先順位の低い矢印ほど、小さくなる値
-            var priorityRate = 1.0 / priority;
-
-            // 先にメッシュを作成
-            var mesh = MeshUtil.CreateArrow(
-                MathEx.InterpLiner(0.4, 0.2, lengthRate),
-                0.2, 0.05);
-
-            var rad = Math.Atan2(diff.Y, diff.X);
-            var transform = new Matrix44d();
-            transform.Translate(fromPoint.X, fromPoint.Y, 1.0);
-            transform.Rotate(rad - Math.PI / 2, 0, 0, 1);
-            transform.Scale(
-                SquareSize.Width *
-                    MathEx.InterpLiner(1.3, 1.0, lengthRate) *
-                    priorityRate,
-                length, 1.0);
-
-            return Tuple.Create(mesh, transform);
         }
 
         /// <summary>

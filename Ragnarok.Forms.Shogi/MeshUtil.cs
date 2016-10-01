@@ -96,18 +96,21 @@ namespace Ragnarok.Forms.Shogi
         /// （つまり、xの最大値は0.5となります。また矢印の後ろ端がy=0, 先端がy=1.0となります）
         /// </remarks>
         /// <param name="headLength">ヘッド部分の長さ</param>
+        /// <param name="shaftLengthRate">棒の部分の高さとヘッド部分の高さの比</param>
         /// <param name="shaftWidth2">棒の部分の幅/2</param>
         /// <param name="tailWidth2">棒終端部分の幅/2</param>
+        /// <param name="outline">矢印のアウトラインを描くためのデータを出力するかどうか</param>
         public static Mesh CreateArrow(double headLength,
-                                       double shaftWidth2, double tailWidth2)
+                                       double shaftLengthRate, double shaftWidth2,
+                                       double tailWidth2, bool outline = false)
         {
             var points = new List<Point3d>
             {
                 new Point3d(0, 1.0, 0), // ヘッドの先端部分
                 new Point3d(-0.5, 1.0 - headLength, 0), // ヘッド部分の左端
                 new Point3d(+0.5, 1.0 - headLength, 0), // ヘッド部分の右端
-                new Point3d(-shaftWidth2, 1.0 - headLength, 0), // ヘッドとシャフトの交点（左）
-                new Point3d(+shaftWidth2, 1.0 - headLength, 0), // ヘッドとシャフトの交点（右）
+                new Point3d(-shaftWidth2, 1.0 - headLength * shaftLengthRate, 0), // ヘッドとシャフトの交点（左）
+                new Point3d(+shaftWidth2, 1.0 - headLength * shaftLengthRate, 0), // ヘッドとシャフトの交点（右）
                 new Point3d(-tailWidth2, 0, 0), // シャフトの後端（左）
                 new Point3d(+tailWidth2, 0, 0), // シャフトの後端（右）
             };
@@ -116,20 +119,34 @@ namespace Ragnarok.Forms.Shogi
                 new Pointd(0.5, 0.0),
                 new Pointd(0.0, headLength),
                 new Pointd(1.0, headLength),
-                new Pointd(-shaftWidth2, headLength),
-                new Pointd(+shaftWidth2, headLength),
+                new Pointd(-shaftWidth2, headLength * shaftLengthRate),
+                new Pointd(+shaftWidth2, headLength * shaftLengthRate),
                 new Pointd(-tailWidth2, 1.0),
                 new Pointd(+tailWidth2, 1.0),
             };
             var indices = new List<int>
             {
                 // 座標系がyを上と考えているため、時計回りで設定する。
-                0, 2, 1,
+                0, 3, 1,
+                0, 4, 3,
+                0, 2, 4,
                 3, 4, 5,
                 4, 6, 5,
             };
 
-            return new Mesh(points, texCoords, indices);
+            if (outline)
+            {
+                var outlinePoints = new List<Point3d>
+                {
+                    points[0], points[1], points[3], points[5],
+                    points[6], points[4], points[2]
+                };
+                return new Mesh(outlinePoints, texCoords, indices);
+            }
+            else
+            {
+                return new Mesh(points, texCoords, indices);
+            }
         }
     }
 }
