@@ -110,6 +110,7 @@
     <Compile Include="View\GLEvaluationElementInternal.cs" />
     <Compile Include="View\GLShogiElement.cs" />
     <Compile Include="View\GLElement.cs" />
+    <Compile Include="View\MoveArrowInfo.cs" />
     <Compile Include="View\MovingPiece.cs" />
     <Compile Include="View\GLShogiElement.draw.cs" />
     <Compile Include="View\GLShogiElement.move.cs" />

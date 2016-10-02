@@ -91,7 +91,7 @@ namespace Ragnarok.Forms.Shogi.View
             UnTebanPlayerNameBackgroundColor = Color.FromArgb(32, Color.White);
             TimeBackgroundColor = Color.FromArgb(128, Color.Black);
             IsArrowVisible = true;
-            ArrowMoveList = new List<Move>();
+            MoveArrowList = new List<MoveArrowInfo>();
             AutoPlayColor = Color.FromArgb(96, 0, 24, 86);
             AutoPlayOpacity = 0.0;
             BoardOpacity = 1.0;
@@ -386,10 +386,10 @@ namespace Ragnarok.Forms.Shogi.View
         /// <summary>
         /// 画面上に矢印を表示するための候補手リストを取得または設定します。
         /// </summary>
-        public List<Move> ArrowMoveList
+        public List<MoveArrowInfo> MoveArrowList
         {
-            get { return GetValue<List<Move>>("ArrowMoveList"); }
-            set { SetValue("ArrowMoveList", value); }
+            get { return GetValue<List<MoveArrowInfo>>("MoveArrowList"); }
+            set { SetValue("MoveArrowList", value); }
         }
 
         /// <summary>
@@ -470,7 +470,7 @@ namespace Ragnarok.Forms.Shogi.View
         /// </summary>
         private void InitArrowMoveList()
         {
-            ArrowMoveList = new List<Move>();
+            MoveArrowList = new List<MoveArrowInfo>();
         }
         #endregion
 
@@ -790,37 +790,39 @@ namespace Ragnarok.Forms.Shogi.View
         /// </summary>
         private void AddRenderArrowMoveList(RenderBuffer renderBuffer)
         {
-            if (ArrowMoveList == null || !IsArrowVisible)
+            if (MoveArrowList == null || !IsArrowVisible)
             {
                 return;
             }
 
             // 矢印が被ることがあるため、優先順位が低いものから描画する。
-            ArrowMoveList
-                .SelectWithIndex((move, i) => new { move, priority = i + 1 })
-                .Where(_ => _.move != null)
-                .GroupBy(_ => _.move)
+            MoveArrowList
+                .SelectWithIndex((info, i) => new { info, priority = i + 1 })
+                .Where(_ => _.info != null && _.info.Move != null)
+                .GroupBy(_ => _.info.Move)
                 .Select(_ => new
                 {
-                    move = _.Key,
+                    info = _.First().info,
                     lowestPriority = _.Min(__ => __.priority),
-                    priorities = _.Select(__ => __.priority).ToArray(),
+                    //priorities = _.Select(__ => __.priority).ToArray(),
                 })
                 .OrderBy(_ => _.lowestPriority)
                 .ForEach(_ =>
                 {
                     //var label = string.Join(",", _.priorities).ToString();
                     var label = _.lowestPriority.ToString();
-                    AddRenderMoveArrow(renderBuffer, _.move, _.lowestPriority, label);
+                    AddRenderMoveArrow(renderBuffer, _.info, _.lowestPriority, label);
                 });
         }
 
         /// <summary>
         /// 指し手を表示する矢印メッシュを追加します。
         /// </summary>
-        private void AddRenderMoveArrow(RenderBuffer renderBuffer, Move move,
+        private void AddRenderMoveArrow(RenderBuffer renderBuffer,
+                                        MoveArrowInfo info,
                                         int priority, string label)
         {
+            var move = info.Move;
             if (move == null || !move.Validate())
             {
                 return;
@@ -841,11 +843,10 @@ namespace Ragnarok.Forms.Shogi.View
             var diff = toPoint - fromPoint;
 
             // 優先順位の高い矢印ほど、小さくなる値
-            var priorityRate = MathEx.Between(0.0, 1.0, 1.0 / 4.0 * (priority - 1));
-            var color = CreateArrowColor(move.BWType, priorityRate);
+            var priorityRate = MathEx.Between(0.0, 1.0, 1.0 / 5.0 * (priority - 1));
 
             // 矢印を決められた位置に描画します。
-            AddRenderArrow(renderBuffer, fromPoint, toPoint, priorityRate, color);
+            AddRenderArrow(renderBuffer, fromPoint, toPoint, priorityRate, info.Color);
 
             // ラベルを描画
             if (!string.IsNullOrEmpty(label))
@@ -891,10 +892,13 @@ namespace Ragnarok.Forms.Shogi.View
                     MathEx.InterpLiner(0.8, 0.8, lengthRate) *
                     MathEx.InterpLiner(0.8, 0.2, priorityRate),
                 length, 1.0);
+
+            // 矢印の不透明度を更新
+            var newColor = Color.FromArgb(ArrowAlpha(priorityRate), color);
             
             // 矢印の中身を描画
             renderBuffer.AddRender(
-                BlendType.Diffuse, color,
+                BlendType.Diffuse, newColor,
                 CreateArrowMesh(length, priorityRate, false),
                 transform, ShogiZOrder.PreEffectZ - priorityRate);
 
@@ -902,7 +906,7 @@ namespace Ragnarok.Forms.Shogi.View
             renderBuffer.AddRenderAction(
                 () =>
                 {
-                    GL.Color4(color.R, color.G, color.B, (byte)(ArrowAlpha(priorityRate) + 60));
+                    GL.Color4(newColor.R, newColor.G, newColor.B, (byte)(newColor.A + 60));
                     GL.LineWidth(1.0f);
                     GL.LoadMatrix(transform.AsColumnMajorArray);
 
@@ -925,28 +929,6 @@ namespace Ragnarok.Forms.Shogi.View
         private int ArrowAlpha(double priorityRate)
         {
             return (int)MathEx.InterpLiner(140, 20, priorityRate);
-        }
-
-        private Color CreateArrowColor(BWType turn, double priorityRate)
-        {
-            if (turn == BWType.Black)
-            {
-                // 先手は赤が基本
-                return Color.FromArgb(
-                    ArrowAlpha(priorityRate),
-                    200,
-                    (int)MathEx.InterpLiner(20, 20, priorityRate),
-                    20);
-            }
-            else
-            {
-                // 後手は青が基本
-                return Color.FromArgb(
-                    ArrowAlpha(priorityRate),
-                    20,
-                    (int)MathEx.InterpLiner(20, 20, priorityRate),
-                    202);
-            }
         }
 
         /// <summary>
