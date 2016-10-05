@@ -125,6 +125,7 @@ namespace Ragnarok.Forms.Shogi.View
             EndMove();
             ClosePromoteDialog();
             //StopAutoPlay();
+            InitMoveArrowList();
 
             InitEffect();
         }
@@ -365,7 +366,7 @@ namespace Ragnarok.Forms.Shogi.View
                 EffectManager.Moved(e.Move, e.IsUndo);
             }
 
-            InitArrowMoveList();
+            InitMoveArrowList();
             FormsUtil.InvalidateCommand();
         }
 
@@ -396,7 +397,7 @@ namespace Ragnarok.Forms.Shogi.View
         private void OnTurnChanged(object sender, PropertyChangedEventArgs e)
         {
             InitEffect();
-            InitArrowMoveList();
+            InitMoveArrowList();
         }
 
         /// <summary>

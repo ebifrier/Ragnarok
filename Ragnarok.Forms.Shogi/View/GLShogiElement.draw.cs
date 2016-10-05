@@ -386,9 +386,9 @@ namespace Ragnarok.Forms.Shogi.View
         /// <summary>
         /// 画面上に矢印を表示するための候補手リストを取得または設定します。
         /// </summary>
-        public List<MoveArrowInfo> MoveArrowList
+        public IReadOnlyList<MoveArrowInfo> MoveArrowList
         {
-            get { return GetValue<List<MoveArrowInfo>>("MoveArrowList"); }
+            get { return GetValue<IReadOnlyList<MoveArrowInfo>>("MoveArrowList"); }
             set { SetValue("MoveArrowList", value); }
         }
 
@@ -468,7 +468,7 @@ namespace Ragnarok.Forms.Shogi.View
         /// <summary>
         /// 矢印表示用の指し手をクリアします。
         /// </summary>
-        private void InitArrowMoveList()
+        private void InitMoveArrowList()
         {
             MoveArrowList = new List<MoveArrowInfo>();
         }
@@ -790,13 +790,15 @@ namespace Ragnarok.Forms.Shogi.View
         /// </summary>
         private void AddRenderArrowMoveList(RenderBuffer renderBuffer)
         {
-            if (MoveArrowList == null || !IsArrowVisible)
+            // オブジェクトが変更される可能性があるので、念のためキャッシュしておきます。
+            var moveArrowList = MoveArrowList;
+            if (moveArrowList == null || !IsArrowVisible)
             {
                 return;
             }
 
             // 矢印が被ることがあるため、優先順位が低いものから描画する。
-            MoveArrowList
+            moveArrowList
                 .SelectWithIndex((info, i) => new { info, priority = i + 1 })
                 .Where(_ => _.info != null && _.info.Move != null)
                 .GroupBy(_ => _.info.Move)
@@ -843,7 +845,7 @@ namespace Ragnarok.Forms.Shogi.View
             var diff = toPoint - fromPoint;
 
             // 優先順位の高い矢印ほど、小さくなる値
-            var priorityRate = MathEx.Between(0.0, 1.0, 1.0 / 5.0 * (priority - 1));
+            var priorityRate = MathEx.Between(0.0, 1.0, 1.0 / 3.0 * (priority - 1));
 
             // 矢印を決められた位置に描画します。
             AddRenderArrow(renderBuffer, fromPoint, toPoint, priorityRate, info.Color);
