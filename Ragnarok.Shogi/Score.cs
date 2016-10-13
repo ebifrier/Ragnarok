@@ -21,6 +21,25 @@ namespace Ragnarok.Shogi
     }
 
     /// <summary>
+    /// 評価値探索の種別を示します。
+    /// </summary>
+    public enum ScoreBound
+    {
+        /// <summary>
+        /// 通常の値
+        /// </summary>
+        Exact,
+        /// <summary>
+        /// この値より上の評価値になる。
+        /// </summary>
+        Lower,
+        /// <summary>
+        /// この値より下の評価値になる。
+        /// </summary>
+        Upper,
+    }
+
+    /// <summary>
     /// 評価値を文字列で扱う為のクラスです。
     /// </summary>
     public sealed class Score
@@ -39,7 +58,8 @@ namespace Ragnarok.Shogi
         /// -98
         /// +456↑
         /// </example>
-        public static Score ParseValue(string text, BWType turn)
+        public static Score ParseValue(string text, BWType turn,
+                                       ScoreBound bound = ScoreBound.Exact)
         {
             if (string.IsNullOrEmpty(text))
             {
@@ -49,7 +69,14 @@ namespace Ragnarok.Shogi
             var trimmedText = text.Trim();
             var value = StringToInt(trimmedText);
 
-            return new Score(turn, trimmedText, value);
+            // 評価値の最後に↑や↓があれば評価値タイプを上書き
+            var last = trimmedText.LastOrDefault();
+            bound = (
+                last == '↑' ? ScoreBound.Lower :
+                last == '↓' ? ScoreBound.Upper :
+                bound);
+
+            return new Score(turn, value, bound);
         }
 
         /// <summary>
@@ -74,11 +101,11 @@ namespace Ragnarok.Shogi
             {
                 if (trimmedText[0] == '+')
                 {
-                    return new Score(turn, trimmedText, 0, true);
+                    return new Score(turn, 0, true);
                 }
                 else if (trimmedText[0] == '-')
                 {
-                    return new Score(turn, trimmedText, 0, false);
+                    return new Score(turn, 0, false);
                 }
                 else
                 {
@@ -87,11 +114,11 @@ namespace Ragnarok.Shogi
 
                     // 本来は先頭に+/-が必要ですが、そうなっていないソフトも多いので
                     // ここでは現状に合わせてエラーにはしないことにします。
-                    return new Score(turn, trimmedText, 0, true);
+                    return new Score(turn, 0, true);
                 }
             }
 
-            return new Score(turn, trimmedText, Math.Abs(value), (value > 0));
+            return new Score(turn, Math.Abs(value), (value > 0));
         }
 
         /// <summary>
@@ -157,29 +184,30 @@ namespace Ragnarok.Shogi
         public Score()
         {
             ScoreType = ScoreType.Value;
-            Text = "0";
+            ScoreBound = ScoreBound.Exact;
             Value = 0;
         }
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public Score(BWType turn, string text = "", int value = 0)
+        public Score(BWType turn, int value = 0,
+                     ScoreBound bound = ScoreBound.Exact)
         {
             ScoreType = ScoreType.Value;
+            ScoreBound = bound;
             Turn = turn;
-            Text = text;
             Value = value;
         }
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public Score(BWType turn, string text, int mate, bool isMateWin)
+        public Score(BWType turn, int mate, bool isMateWin)
         {
             ScoreType = ScoreType.Mate;
+            ScoreBound = ScoreBound.Exact;
             Turn = turn;
-            Text = text;
             Mate = mate;
             IsMateWin = isMateWin;
             Value = (isMateWin ? MateScore : -MateScore);
@@ -204,18 +232,18 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
-        /// 評価値文字列を取得します。
+        /// 評価値を取得します。
         /// </summary>
-        public string Text
+        public int Value
         {
             get;
             private set;
         }
 
         /// <summary>
-        /// 評価値を取得します。
+        /// 評価値の特性を取得します。
         /// </summary>
-        public int Value
+        public ScoreBound ScoreBound
         {
             get;
             private set;
@@ -282,37 +310,13 @@ namespace Ragnarok.Shogi
         /// </summary>
         public void Neg()
         {
-            if (ScoreType == ScoreType.Value)
+            if (ScoreType == ScoreType.Mate)
             {
-                if (Value == 0)
-                {
-                    return;
-                }
-
-                Text = (
-                    Text[0] == '-' ? Text.Substring(1) :
-                    Text[0] == '+' ? '-' + Text.Substring(1) :
-                    '-' + Text);
-            }
-            else
-            {
-                // 符号を必ずつけます。
-                Text = (
-                    Text[0] == '-' ? '+' + Text.Substring(1) :
-                    Text[0] == '+' ? '-' + Text.Substring(1) :
-                    '-' + Text);
                 IsMateWin = !IsMateWin;
             }
 
             Value *= -1;
-            Turn = Turn.Flip();
-        }
-
-        /// <summary>
-        /// 評価値の基準となる手番を入れ替えます。
-        /// </summary>
-        public void FlipTurn()
-        {
+            ScoreBound = ScoreBound.Flip();
             Turn = Turn.Flip();
         }
 

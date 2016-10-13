@@ -10,33 +10,36 @@ namespace Ragnarok.Shogi
     [TestFixture()]
     internal sealed class ScoreTest
     {
-        private void AssertValue(string text, int value, string negText)
+        private void AssertValue(string text, int value, ScoreBound bound)
         {
             var score = Score.ParseValue(text, BWType.Black);
             Assert.AreEqual(ScoreType.Value, score.ScoreType);
+            Assert.AreEqual(bound, score.ScoreBound);
             Assert.AreEqual(value, score.Value);
-            Assert.AreEqual(text, score.Text);
+            Assert.AreEqual(BWType.Black, score.Turn);
 
             score.Neg();
             Assert.AreEqual(-value, score.Value);
-            Assert.AreEqual(negText, score.Text);
+            Assert.AreEqual(bound.Flip(), score.ScoreBound);
+            Assert.AreEqual(BWType.White, score.Turn);
 
             score.Neg();
             Assert.AreEqual(value, score.Value);
-            Assert.AreEqual(text.TrimStart('+'), score.Text);
+            Assert.AreEqual(bound, score.ScoreBound);
+            Assert.AreEqual(BWType.Black, score.Turn);
         }
 
         [Test()]
         public void ParseValueTest()
         {
-            AssertValue("+89", 89, "-89");
-            AssertValue("-99999999", -99999999, "99999999");
-            AssertValue("109", 109, "-109");
+            AssertValue("+89", 89, ScoreBound.Exact);
+            AssertValue("-99999999", -99999999, ScoreBound.Exact);
+            AssertValue("109", 109, ScoreBound.Exact);
 
-            AssertValue("7899↑", 7899, "-7899↑");
-            AssertValue("-47↑", -47, "47↑");
-            AssertValue("+ 987↑", 987, "- 987↑");
-            AssertValue("-\t009", -9, "\t009");
+            AssertValue("7899↑", 7899, ScoreBound.Lower);
+            AssertValue("-47↑", -47, ScoreBound.Lower);
+            AssertValue("+ 987↓", 987, ScoreBound.Upper);
+            AssertValue("-\t009", -9, ScoreBound.Exact);
 
             Assert.Catch<OverflowException>(() => Score.ParseValue("44444444444444444", BWType.Black));
             Assert.Catch<OverflowException>(() => Score.ParseValue("-44444444444444444", BWType.White));
@@ -50,7 +53,6 @@ namespace Ragnarok.Shogi
             Assert.AreEqual(ScoreType.Mate, score.ScoreType);
             Assert.AreEqual(mate, score.Mate);
             Assert.AreEqual(isWin, score.IsMateWin);
-            Assert.AreEqual(text, score.Text);
             Assert.AreEqual(Score.MateScore * (isWin ? +1 : -1), score.Value);
 
             score.Neg();

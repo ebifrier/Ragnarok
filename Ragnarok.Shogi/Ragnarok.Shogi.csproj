@@ -86,6 +86,7 @@
     <EmbeddedResource Include="Csa\Tests\SampleCsa.csa" />
     <Compile Include="Hand.cs" />
     <Compile Include="Kif\Tests\SampleKif.cs" />
+    <Compile Include="ScoreUtil.cs" />
     <Compile Include="Score.cs" />
     <Compile Include="ShogiParser.cs" />
     <Compile Include="SquareCollection.cs" />
