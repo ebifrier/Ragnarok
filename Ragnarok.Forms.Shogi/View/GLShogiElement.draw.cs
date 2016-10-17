@@ -798,7 +798,7 @@ namespace Ragnarok.Forms.Shogi.View
             }
 
             // 矢印が被ることがあるため、優先順位が低いものから描画する。
-            moveArrowList
+            var list = moveArrowList
                 .SelectWithIndex((info, i) => new { info, priority = i + 1 })
                 .Where(_ => _.info != null && _.info.Move != null)
                 .GroupBy(_ => _.info.Move)
@@ -809,12 +809,15 @@ namespace Ragnarok.Forms.Shogi.View
                     //priorities = _.Select(__ => __.priority).ToArray(),
                 })
                 .OrderBy(_ => _.lowestPriority)
-                .ForEach(_ =>
-                {
-                    //var label = string.Join(",", _.priorities).ToString();
-                    var label = _.lowestPriority.ToString();
-                    AddRenderMoveArrow(renderBuffer, _.info, _.lowestPriority, label);
-                });
+                .ToArray();
+
+            var needLabel = list.Count() > 1;
+            list.ForEach(_ =>
+            {
+                //var label = string.Join(",", _.priorities).ToString();
+                var label = needLabel ? _.lowestPriority.ToString() : null;
+                AddRenderMoveArrow(renderBuffer, _.info, _.lowestPriority, label);
+            });
         }
 
         /// <summary>
@@ -908,8 +911,8 @@ namespace Ragnarok.Forms.Shogi.View
             renderBuffer.AddRenderAction(
                 () =>
                 {
-                    GL.Color4(newColor.R, newColor.G, newColor.B, (byte)(newColor.A + 60));
-                    GL.LineWidth(1.0f);
+                    GL.Color4(newColor.R, newColor.G, newColor.B, (byte)(newColor.A + 50));
+                    GL.LineWidth(0.5f);
                     GL.LoadMatrix(transform.AsColumnMajorArray);
 
                     var mesh2 = CreateArrowMesh(length, priorityRate, true);
@@ -930,7 +933,7 @@ namespace Ragnarok.Forms.Shogi.View
 
         private int ArrowAlpha(double priorityRate)
         {
-            return (int)MathEx.InterpLiner(140, 20, priorityRate);
+            return (int)MathEx.InterpLiner(110, 20, priorityRate);
         }
 
         /// <summary>
