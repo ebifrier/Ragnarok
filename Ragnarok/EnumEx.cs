@@ -62,9 +62,27 @@ namespace Ragnarok
         }
 
         /// <summary>
+        /// 列挙型の名前から値を取得します。
+        /// </summary>
+        public static T Parse<T>(string value)
+            where T : struct
+        {
+            return (T)Enum.Parse(typeof(T), value);
+        }
+
+        /// <summary>
+        /// 列挙型の名前から値を取得します。
+        /// </summary>
+        public static T Parse<T>(string value, bool ignoreCase)
+            where T : struct
+        {
+            return (T)Enum.Parse(typeof(T), value, ignoreCase);
+        }
+
+        /// <summary>
         /// 列挙値の<see ref="TAttribute"/>属性を取得します。
         /// </summary>
-        public static TAttribute GetAttribute<TAttribute>(this object value)
+        public static TAttribute GetAttribute<TAttribute>(object value)
             where TAttribute : Attribute
         {
             if (value == null)
@@ -97,7 +115,7 @@ namespace Ragnarok
         /// <summary>
         /// 列挙値の説明文を取得します。
         /// </summary>
-        public static string GetDescription(this object value)
+        public static string GetDescription(object value)
         {
             var attribute = GetAttribute<LabelDescriptionAttribute>(value);
             if (attribute == null)
@@ -111,7 +129,7 @@ namespace Ragnarok
         /// <summary>
         /// 列挙値のラベルを取得します。
         /// </summary>
-        public static string GetLabel(this object value)
+        public static string GetLabel(object value)
         {
             var attribute = GetAttribute<LabelDescriptionAttribute>(value);
             if (attribute == null)
