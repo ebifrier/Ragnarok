@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Runtime.Serialization;
+using System.Text.RegularExpressions;
 
 namespace Ragnarok.NicoNico.Video
 {
@@ -13,6 +14,8 @@ namespace Ragnarok.NicoNico.Video
     [DataContract()]
     public sealed class ViewCountData
     {
+        private DateTime? timestamp;
+
         /// <summary>
         /// コンストラクタ
         /// </summary>
@@ -47,11 +50,48 @@ namespace Ragnarok.NicoNico.Video
         /// <summary>
         /// サーバーからデータを取得した時刻を取得または設定します。
         /// </summary>
-        [DataMember()]
-        public DateTime Timestamp
+        [DataMember(Name = "Timestamp")]
+        public string TimestampStr
         {
             get;
             set;
+        }
+
+        private static readonly Regex TimestampRegex = new Regex(
+            @"(\d\d\d\d)(\d\d)(\d\d)(\d\d)");
+
+        /// <summary>
+        /// サーバーからデータを取得した時刻を取得または設定します。
+        /// </summary>
+        public DateTime Timestamp
+        {
+            get
+            {
+                if (this.timestamp != null)
+                {
+                    return this.timestamp.Value;
+                }
+
+                var m = TimestampRegex.Match(TimestampStr);
+                if (m.Success)
+                {
+                    this.timestamp = new DateTime(
+                        int.Parse(m.Groups[1].Value),
+                        int.Parse(m.Groups[2].Value),
+                        int.Parse(m.Groups[3].Value),
+                        int.Parse(m.Groups[4].Value),
+                        0, 0);
+
+                    return this.timestamp.Value;
+                }
+
+                return DateTime.MinValue;
+            }
+            set
+            {
+                this.timestamp = value;
+                TimestampStr = value.ToString("yyyyMMddHH");
+            }
         }
 
         /// <summary>
