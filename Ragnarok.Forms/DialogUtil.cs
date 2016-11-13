@@ -49,9 +49,34 @@ namespace Ragnarok.Forms
             var screenPos = Cursor.Position;
 
             form.StartPosition = FormStartPosition.Manual;
-            form.Left = screenPos.X - (form.Width / 2);
-            form.Top = screenPos.Y - (form.Height / 2);
+            form.Location = new Point(
+                screenPos.X - (form.Width / 2),
+                screenPos.Y - (form.Height / 2));
             form.AdjustInDisplay();
+        }
+
+        /// <summary>
+        /// 親ウィンドウの中心にダイアログを開きます。
+        /// </summary>
+        public static void SetCenterParent(this Form form)
+        {
+            if (form == null)
+            {
+                throw new ArgumentNullException("form");
+            }
+
+            form.StartPosition = FormStartPosition.Manual;
+
+            // フォームの親はShowするときに設定されるため、
+            // 表示後の親を基準に値を設定する。
+            form.Load += (_, e) =>
+            {
+                var parent = form.Owner;
+                form.Location = new Point(
+                    parent.Location.X + (parent.Width - form.Width) / 2,
+                    parent.Location.Y + (parent.Height - form.Height) / 2);
+                form.AdjustInDisplay();
+            };
         }
 
         /// <summary>
