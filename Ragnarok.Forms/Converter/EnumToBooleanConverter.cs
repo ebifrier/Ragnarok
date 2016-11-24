@@ -28,9 +28,27 @@ namespace Ragnarok.Forms.Converter
         }
 
         /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public EnumToBooleanConverter(Type enumType, object targetValue)
+        {
+            EnumType = enumType;
+            TargetValue = targetValue;
+        }
+
+        /// <summary>
         /// 対象となる列挙型を取得または設定します。
         /// </summary>
         public Type EnumType
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 比較対象となる列挙値を取得または設定します。
+        /// </summary>
+        public object TargetValue
         {
             get;
             set;
@@ -42,7 +60,7 @@ namespace Ragnarok.Forms.Converter
         /// </summary>
         public object Convert(object value, Type targetType, object parameter)
         {
-            var tmpString = parameter as string;
+            var tmpString = TargetValue as string;
             if (tmpString != null)
             {
                 if (string.IsNullOrEmpty(tmpString))
@@ -66,7 +84,7 @@ namespace Ragnarok.Forms.Converter
                 // 失敗するので、直接キャストして成功するか判断しています。
                 //
                 // すごく重いので、判定はメソッドの最後で行います。
-                return ((int)value == (int)parameter);
+                return ((int)value == (int)TargetValue);
             }
             catch (InvalidCastException)
             {
@@ -86,7 +104,7 @@ namespace Ragnarok.Forms.Converter
                 return FormsValue.UnsetValue;
             }
 
-            var tmpString = parameter as string;
+            var tmpString = TargetValue as string;
             if (tmpString != null)
             {
                 if (string.IsNullOrEmpty(tmpString))
@@ -103,7 +121,7 @@ namespace Ragnarok.Forms.Converter
                 // 失敗するので、直接キャストして成功するか判断しています。
                 //
                 // すごく重いので、判定はメソッドの最後で行います。
-                return (int)parameter;
+                return (int)TargetValue;
             }
             catch (InvalidCastException)
             {
