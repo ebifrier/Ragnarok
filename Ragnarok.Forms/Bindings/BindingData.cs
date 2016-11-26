@@ -223,7 +223,7 @@ namespace Ragnarok.Forms.Bindings
                 SetTargetPropertyValue(newValue);
 
                 // oldValueにはsource側のオリジナルデータを設定します。
-                this.oldValue = sourceValue;
+                this.oldValue = newValue;
                 FirePropertyChanged(newValue, this.oldValue);                
             }
         }
