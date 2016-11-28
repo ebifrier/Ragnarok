@@ -14,7 +14,7 @@ namespace Ragnarok.Utility.Tests
         public void DictionaryTest()
         {
             // 引数１つ
-            var format = "#{code}";
+            var format = "${code}";
             var dic = new Dictionary<string, object>()
             {
                 { "code", "C1" },
@@ -22,7 +22,7 @@ namespace Ragnarok.Utility.Tests
             Assert.AreEqual("C1", StringUtility.NamedFormat(format, dic));
 
             // 引数２つ
-            format = "_#{code} #{_22}xx";
+            format = "_${code} ${_22}xx";
             dic = new Dictionary<string, object>()
             {
                 { "code", "C1" },
@@ -32,10 +32,10 @@ namespace Ragnarok.Utility.Tests
 
             // 引数３つ
             format =
-                "SELECT #{code}, #{name}" +
-                "FROM #{tableName}" +
-                "WHERE #{createdAt} = @createdAt" +
-                "ORDER BY #{code}";
+                "SELECT $code, ${name}" +
+                "FROM ${tableName}" +
+                "WHERE $createdAt = @createdAt" +
+                "ORDER BY $code";
             dic = new Dictionary<string, object>()
             {
                 { "tableName", "TBL1" },
@@ -49,6 +49,14 @@ namespace Ragnarok.Utility.Tests
                 "WHERE C3 = @createdAt" +
                 "ORDER BY C1",
                 StringUtility.NamedFormat(format, dic));
+
+            // 引数数字のみ
+            format = "$1";
+            dic = new Dictionary<string, object>()
+            {
+                { "1", "x" },
+            };
+            Assert.Catch(() => StringUtility.NamedFormat(format, dic));
         }
 
         /// <summary>

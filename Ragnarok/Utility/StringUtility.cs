@@ -14,7 +14,7 @@ namespace Ragnarok.Utility
     public static class StringUtility
     {
         /// <summary>
-        /// '#{name}'で指定された変数名を与えられた辞書の値に置き換えます。
+        /// '${name}'や'$name'で指定された変数名を与えられた辞書の値に置き換えます。
         /// </summary>
         public static string NamedFormat<T>(string format,
                                             IDictionary<string, T> args)
@@ -29,12 +29,17 @@ namespace Ragnarok.Utility
                 .OrderByDescending(_ => _.Key.Length) // argsを変数名の文字数順に並びかえます。
                 .Select((pair, index) =>
                 {
-                    if (!pair.Key.All(_ => char.IsDigit(_)))
+                    if (pair.Key.All(_ => char.IsDigit(_)))
                     {
-                        // フォーマットを置き換えながら巡回します。
-                        var regex = new Regex(@"#[{]" + pair.Key + "([^}]*)[}]");
-                        replacedFormat = regex.Replace(replacedFormat, "{" + index + "$1}");
+                        throw new FormatException("数字だけの置き換え文字列は許されません。");
                     }
+
+                    // フォーマットを置き換えながら巡回します。
+                    var regex = new Regex(@"\$[{]" + pair.Key + "([^}]*)[}]");
+                    replacedFormat = regex.Replace(replacedFormat, "{" + index + "$1}");
+
+                    regex = new Regex(@"\$" + pair.Key + "([^\\w]|$)");
+                    replacedFormat = regex.Replace(replacedFormat, "{" + index + "}$1");
 
                     // 配列として使う値一覧を取得します。
                     return pair.Value;
