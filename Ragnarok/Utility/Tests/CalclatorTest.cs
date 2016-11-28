@@ -25,6 +25,24 @@ namespace Ragnarok.Utility.Tests
 
             //Assert.AreEqual(Calculator.Default.Run("2.4e14"), 2.4e14);
         }
+        [Test()]
+        public void CompareTest()
+        {
+            Assert.AreEqual(Calculator.Default.Run("2.03456 > 2"), 1.0);
+
+            Assert.AreEqual(Calculator.Default.Run("0<5"), 1.0);
+            Assert.AreEqual(Calculator.Default.Run("0>=5"), 0.0);
+            Assert.AreEqual(Calculator.Default.Run("0.0==0"), 1.0);
+            Assert.AreEqual(Calculator.Default.Run("0.0!=0"), 0.0);
+            Assert.AreEqual(Calculator.Default.Run("1!=2.0"), 1.0);
+            Assert.AreEqual(Calculator.Default.Run("!(0<5)"), 0.0);
+
+            Assert.AreEqual(Calculator.Default.Run("0==0 && 1==1"), 1.0);
+            Assert.AreEqual(Calculator.Default.Run("0==0 && 1!=1"), 0.0);
+            Assert.AreEqual(Calculator.Default.Run("0==0 || 1==1"), 1.0);
+            Assert.AreEqual(Calculator.Default.Run("0==0 || 1!=1"), 1.0);
+            Assert.AreEqual(Calculator.Default.Run("!(0==0) && !(1!=1)"), 0.0);
+        }
 
         [Test()]
         public void ConstTest()

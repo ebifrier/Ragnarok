@@ -301,7 +301,9 @@ namespace Ragnarok.Utility
         {
             var sDelim = Scanners.IsWhitespaces().Many_();
             var OPs = Terms.GetOperatorsInstance(
-                "+", "-", "**", "*", "/", "%", "(", ")", ",", "#");
+                "!", "+", "-", "**", "*", "/", "%",
+                "==", "!=", "<=", ">=", "<", ">", "&&", "||",
+                "(", ")", ",", "#");
 
             var lToken = OPs.Lexer | Lexers.LexDecimal() | Lexers.LexWord();
             var lexeme = Lexers.Lexeme(sDelim, lToken).FollowedBy(Parsers.Eof());
@@ -310,23 +312,37 @@ namespace Ragnarok.Utility
             var pWord = Terms.OnWord((from, len, s) => s);
             Terms.FromSimpleToken<string, string>((from, len, s) => s);
 
+            var pAnd = GetOperator(OPs, "&&", new Binary((a, b) => (a != 0 && b != 0) ? 1.0 : 0.0));
+            var pOr = GetOperator(OPs, "||", new Binary((a, b) => (a != 0 || b != 0) ? 1.0 : 0.0));
+
+            var pEQ = GetOperator(OPs, "==", new Binary((a, b) => (a == b) ? 1.0 : 0.0));
+            var pNQ = GetOperator(OPs, "!=", new Binary((a, b) => (a != b) ? 1.0 : 0.0));
+            var pLE = GetOperator(OPs, "<=", new Binary((a, b) => (a <= b) ? 1.0 : 0.0));
+            var pL = GetOperator(OPs, "<", new Binary((a, b) => (a < b) ? 1.0 : 0.0));
+            var pGE = GetOperator(OPs, ">=", new Binary((a, b) => (a >= b) ? 1.0 : 0.0));
+            var pG = GetOperator(OPs, ">", new Binary((a, b) => (a > b) ? 1.0 : 0.0));
+
             var pPlus = GetOperator(OPs, "+", new Binary((a, b) => (a + b)));
             var pMinus = GetOperator(OPs, "-", new Binary((a, b) => (a - b)));
+
             var pMul = GetOperator(OPs, "*", new Binary((a, b) => (a * b)));
             var pDiv = GetOperator(OPs, "/", new Binary((a, b) => (a / b)));
             var pMod = GetOperator(OPs, "%", new Binary((a, b) => (a % b)));
+
             var pPow = GetOperator(OPs, "**", new Binary((a, b) => Math.Pow(a, b)));
+
             var pNone = GetOperator(OPs, "+", new Unary(n => n));
             var pNeg = GetOperator(OPs, "-", new Unary(n => -n));
+            var pNot = GetOperator(OPs, "!", new Unary(n => (n == 0 ? 1.0 : 0.0)));
+
             var opTable = new OperatorTable<double>()
-                .Infixl(pPlus, 10)
-                .Infixl(pMinus, 10)
-                .Infixl(pMul, 20)
-                .Infixl(pDiv, 20)
-                .Infixl(pMod, 20)
-                .Infixr(pPow, 30)
-                .Prefix(pNone, 40)
-                .Prefix(pNeg, 40);
+                .Infixl(pAnd, 10).Infixl(pOr, 10)
+                .Infixl(pEQ, 20).Infixl(pNQ, 20)
+                .Infixl(pLE, 20).Infixl(pL, 20).Infixl(pGE, 20).Infixl(pG, 20)
+                .Infixl(pPlus, 40).Infixl(pMinus, 40)
+                .Infixl(pMul, 50).Infixl(pDiv, 50).Infixl(pMod, 50)
+                .Infixr(pPow, 60)
+                .Prefix(pNone, 70).Prefix(pNeg, 70).Prefix(pNot, 70);
 
             var pLParen = OPs.GetParser("(");
             var pRParen = OPs.GetParser(")");
