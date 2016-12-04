@@ -933,7 +933,7 @@ namespace Ragnarok.Forms.Shogi.View
 
         private int ArrowAlpha(double priorityRate)
         {
-            return (int)MathEx.InterpLiner(110, 20, priorityRate);
+            return (int)MathEx.InterpLiner(140, 30, priorityRate);
         }
 
         /// <summary>
