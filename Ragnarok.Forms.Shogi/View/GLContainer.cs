@@ -54,11 +54,12 @@ namespace Ragnarok.Forms.Shogi.View
                 return;
             }
 
-            GL.Enable(EnableCap.Texture2D);
-            GL.Enable(EnableCap.Blend);
-            GL.Enable(EnableCap.CullFace);
-            GL.CullFace(CullFaceMode.Back);
-            GL.Hint(HintTarget.PerspectiveCorrectionHint, HintMode.Nicest);
+            GLWrap.Wrap(() => GL.Enable(EnableCap.Texture2D));
+            GLWrap.Wrap(() => GL.Enable(EnableCap.Blend));
+            GLWrap.Wrap(() => GL.Disable(EnableCap.Lighting));
+            GLWrap.Wrap(() => GL.Enable(EnableCap.CullFace));
+            GLWrap.Wrap(() => GL.CullFace(CullFaceMode.Back));
+            //GLWrap.Wrap(() => GL.Hint(HintTarget.PerspectiveCorrectionHint, HintMode.Fastest));
 
             // 背景色の更新
             BackColorChanged += OnBackColorChanged;
@@ -174,11 +175,11 @@ namespace Ragnarok.Forms.Shogi.View
         /// </summary>
         private void OnBackColorChanged(object sender, EventArgs e)
         {
-            GL.ClearColor(
+            GLWrap.Wrap(() => GL.ClearColor(
                 MathEx.Between(0.0f, 1.0f, BackColor.R / 255.0f),
                 MathEx.Between(0.0f, 1.0f, BackColor.G / 255.0f),
                 MathEx.Between(0.0f, 1.0f, BackColor.B / 255.0f),
-                MathEx.Between(0.0f, 1.0f, BackColor.A / 255.0f));
+                MathEx.Between(0.0f, 1.0f, BackColor.A / 255.0f)));
         }
 
         /// <summary>
@@ -223,14 +224,14 @@ namespace Ragnarok.Forms.Shogi.View
                 return;
             }
 
-            GL.Viewport(0, 0, Width, Height);
+            GLWrap.Wrap(() => GL.Viewport(0, 0, Width, Height));
 
-            GL.MatrixMode(MatrixMode.Projection);
-            GL.LoadIdentity();
-            GL.Ortho(0, ScreenWidth, ScreenHeight, 0, -1000, +1000);
+            GLWrap.Wrap(() => GL.MatrixMode(MatrixMode.Projection));
+            GLWrap.Wrap(() => GL.LoadIdentity());
+            GLWrap.Wrap(() => GL.Ortho(0, ScreenWidth, ScreenHeight, 0, -1000, +1000));
 
-            GL.MatrixMode(MatrixMode.Modelview);
-            GL.LoadIdentity();
+            GLWrap.Wrap(() => GL.MatrixMode(MatrixMode.Modelview));
+            GLWrap.Wrap(() => GL.LoadIdentity());
         }
 
         /// <summary>
@@ -287,8 +288,8 @@ namespace Ragnarok.Forms.Shogi.View
 
             MakeCurrent();
 
-            GL.Clear(ClearBufferMask.ColorBufferBit);
-            GL.LoadIdentity();
+            GLWrap.Wrap(() => GL.Clear(ClearBufferMask.ColorBufferBit));
+            GLWrap.Wrap(() => GL.LoadIdentity());
 
             this.renderBuffer.Render();
 

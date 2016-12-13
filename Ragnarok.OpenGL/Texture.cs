@@ -310,7 +310,7 @@ namespace Ragnarok.OpenGL
         {
             uint texture = 0;
 
-            GL.GenTextures(1, out texture);
+            GLWrap.Wrap(() => GL.GenTextures(1, out texture));
 
             //  Lock the image bits (so that we can pass them to OGL).
             var bitmapData = image.LockBits(
@@ -325,22 +325,22 @@ namespace Ragnarok.OpenGL
                     MakePremutipliedAlpha(bitmapData);
                 }
 
-                GL.BindTexture(TextureTarget.Texture2D, texture);
+                GLWrap.Wrap(() => GL.BindTexture(TextureTarget.Texture2D, texture));
 
                 //  テクスチャデータをセットします。
 #if true
-                GL.TexImage2D(
+                GLWrap.Wrap(() => GL.TexImage2D(
                     TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba,
                     image.Width, image.Height, 0,
                     OpenTK.Graphics.OpenGL.PixelFormat.Bgra,
                     PixelType.UnsignedByte,
-                    bitmapData.Scan0);
+                    bitmapData.Scan0));
 #else
-                GL.Build2DMipmaps(
+                GLWrap.Wrap(() => GL.Build2DMipmaps(
                     TextureTarget.Texture2D, (int)OpenGL.GL_RGBA,
                     image.Width, image.Height,
                     OpenGL.GL_BGRA, OpenGL.GL_UNSIGNED_BYTE,
-                    bitmapData.Scan0);
+                    bitmapData.Scan0));
 #endif
             }
             finally
@@ -348,17 +348,17 @@ namespace Ragnarok.OpenGL
                 image.UnlockBits(bitmapData);
             }
 
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Clamp);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Clamp);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
+            GLWrap.Wrap(() => GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Clamp));
+            GLWrap.Wrap(() => GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Clamp));
+            GLWrap.Wrap(() => GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear));
+            GLWrap.Wrap(() => GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear));
 
             if (Misc.HasExtension("GL_SGIS_generate_mipmap"))
             {
                 // GenerateMipmapの前に、FilterをLinearに設定しておく必要がある。
-                GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
-                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.LinearMipmapLinear);
-                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
+                GLWrap.Wrap(() => GL.GenerateMipmap(GenerateMipmapTarget.Texture2D));
+                GLWrap.Wrap(() => GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.LinearMipmapLinear));
+                GLWrap.Wrap(() => GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear));
             }
 
             GL.BindTexture(TextureTarget.Texture2D, 0);
@@ -417,7 +417,7 @@ namespace Ragnarok.OpenGL
             ValidateContext();
 
             int[] textureMaxSize = { 0 };
-            GL.GetInteger(GetPName.MaxTextureSize, textureMaxSize);
+            GLWrap.Wrap(() => GL.GetInteger(GetPName.MaxTextureSize, textureMaxSize));
 
             // 2のn乗値の中から、元の画像サイズを超えるような
             // 一番小さな値を探します。
@@ -521,7 +521,7 @@ namespace Ragnarok.OpenGL
 
             if (this.glTexture != 0)
             {
-                GL.DeleteTextures(1, ref this.glTexture);
+                TextureDisposer.AddDeleteTexture(this.context, this.glTexture);
                 this.glTexture = 0;
             }
             
