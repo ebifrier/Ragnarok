@@ -92,7 +92,7 @@ namespace Ragnarok.Forms.Shogi.View
             TimeBackgroundColor = Color.FromArgb(128, Color.Black);
             IsArrowVisible = true;
             MoveArrowList = new List<MoveArrowInfo>();
-            AutoPlayColor = Color.FromArgb(96, 0, 24, 86);
+            AutoPlayColor = Color.FromArgb(166, 0, 24, 86);
             AutoPlayOpacity = 0.0;
             BoardOpacity = 1.0;
 
@@ -951,7 +951,7 @@ namespace Ragnarok.Forms.Shogi.View
 
             renderBuffer.AddRender(
                 BlendType.Diffuse, bounds, Transform,
-                Color.FromArgb(alpha, AutoPlayColor), ShogiZOrder.PostEffectZ2);
+                Color.FromArgb(alpha, AutoPlayColor), ShogiZOrder.PreBoardZ);
         }
 
         /// <summary>
