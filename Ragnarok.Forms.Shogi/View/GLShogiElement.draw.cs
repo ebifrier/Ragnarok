@@ -916,7 +916,7 @@ namespace Ragnarok.Forms.Shogi.View
                     GL.LoadMatrix(transform.AsColumnMajorArray);
 
                     var mesh2 = CreateArrowMesh(length, priorityRate, true);
-                    GL.Begin(BeginMode.LineLoop);
+                    GL.Begin(PrimitiveType.LineLoop);
                         mesh2.VertexArray.ForEach(_ => GL.Vertex3(_.X, _.Y, _.Z));
                     GL.End();
                 },

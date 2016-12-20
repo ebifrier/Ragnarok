@@ -189,7 +189,7 @@ namespace Ragnarok.OpenGL
             }
 
             // 困ったことにOpenTKのバージョンによって使える方が異なる
-#if false
+#if true
             GL.Begin(PrimitiveType.Triangles);
 #else
             GL.Begin(BeginMode.Triangles);
