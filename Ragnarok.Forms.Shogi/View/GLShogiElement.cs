@@ -325,6 +325,12 @@ namespace Ragnarok.Forms.Shogi.View
                 throw new ArgumentException("count");
             }
 
+            if (pieceType == PieceType.Gyoku && count > 0)
+            {
+                // 玉の場合は駒台に乗せないようにします。
+                return;
+            }
+
             if (bwType != BWType.None)
             {
                 // 持ち駒の駒の数
@@ -337,6 +343,12 @@ namespace Ragnarok.Forms.Shogi.View
         /// </summary>
         private void IncHandCount(PieceType pieceType, BWType bwType)
         {
+            if (pieceType == PieceType.Gyoku)
+            {
+                // 玉の場合は駒台に乗せないようにします。
+                return;
+            }
+
             SetHandCount(
                 pieceType, bwType,
                 GetHandCount(pieceType, bwType) + 1);

@@ -442,6 +442,12 @@ namespace Ragnarok.Forms.Shogi.View
                     Board[dstSquare] = null;
                 }
 
+                // すでに玉がある場合は、手番を反転します。
+                if (Board.GetGyoku(bwType) != null)
+                {
+                    bwType = bwType.Flip();
+                }
+
                 // 移動先の駒を増やします。
                 Board[dstSquare] =
                     new BoardPiece(piece.PieceType, piece.IsPromoted, bwType);

@@ -133,6 +133,12 @@ namespace Ragnarok.Shogi
                 throw new ArgumentException("pieceType");
             }
 
+            if (pieceType == PieceType.Gyoku && count > 0)
+            {
+                throw new ShogiException(
+                    $"玉を駒台に乗せることはできません。");
+            }
+
             var sbm = SBM[(int)pieceType];
             if (count < 0 || (1 << sbm.Bits) <= count)
             {
