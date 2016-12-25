@@ -443,7 +443,8 @@ namespace Ragnarok.Forms.Shogi.View
                 }
 
                 // すでに玉がある場合は、手番を反転します。
-                if (Board.GetGyoku(bwType) != null)
+                if (piece.PieceType == PieceType.Gyoku &&
+                    Board.GetGyoku(bwType) != null)
                 {
                     bwType = bwType.Flip();
                 }
