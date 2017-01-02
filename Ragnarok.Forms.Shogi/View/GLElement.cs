@@ -111,7 +111,9 @@ namespace Ragnarok.Forms.Shogi.View
 
             var m = Transform.Invert();
             var s = GLContainer.ClientSize;
-            var np = new PointF(p.X * 640 / s.Width, p.Y * 360 / s.Height);
+            var np = new PointF(
+                p.X * GLContainer.ScreenWidth / s.Width,
+                p.Y * GLContainer.ScreenHeight / s.Height);
 
             return new PointF(
                 (float)(np.X * m[0, 0] + np.Y * m[0, 1] + m[0, 3]),
