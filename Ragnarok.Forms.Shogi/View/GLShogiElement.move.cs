@@ -18,7 +18,7 @@ namespace Ragnarok.Forms.Shogi.View
         private PromoteDialog promoteDialog;
 
         /// <summary>
-        /// クライアント座標を(640,380)のローカル座標系に変換します。
+        /// クライアント座標を(640,360)のローカル座標系に変換します。
         /// </summary>
         private Point ClientToLocal(Point p)
         {
@@ -28,13 +28,15 @@ namespace Ragnarok.Forms.Shogi.View
                     "親コンテナに追加されていません。");
             }
 
-            var m = Transform.Invert();
-            var s = GLContainer.ClientSize;
+            var clientSize = GLContainer.ClientSize;
+            var screenSize = GLContainer.ScreenSize;
 
+            // クライアント画面上で対応する仮想画面の位置を算出
             var np = new Pointd(
-                p.X * 640.0 / s.Width,
-                p.Y * 360.0 / s.Height);
+                (double)p.X * screenSize.Width / clientSize.Width,
+                (double)p.Y * screenSize.Height / clientSize.Height);
 
+            var m = Transform.Invert();
             return new Point(
                 (int)(np.X * m[0,0] + np.Y * m[0,1]),
                 (int)(np.X * m[1,0] + np.Y * m[1,1]));
@@ -541,7 +543,7 @@ namespace Ragnarok.Forms.Shogi.View
         /// <summary>
         /// 与えられた座標にあるマスを取得します。
         /// </summary>
-        private Square PointToSquare(System.Drawing.Point pos)
+        private Square PointToSquare(Point pos)
         {
             if (!BoardSquareBounds.Contains(pos))
             {

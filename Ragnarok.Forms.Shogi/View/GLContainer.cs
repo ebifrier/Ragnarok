@@ -215,6 +215,22 @@ namespace Ragnarok.Forms.Shogi.View
         }
 
         /// <summary>
+        /// 想定画面サイズを取得または設定します。
+        /// </summary>
+        public Size ScreenSize
+        {
+            get
+            {
+                return new Size(this.screenWidth, this.screenHeight);
+            }
+            set
+            {
+                ScreenWidth = value.Width;
+                ScreenHeight = value.Height;
+            }
+        }
+
+        /// <summary>
         /// 投影行列の更新を行います。
         /// </summary>
         private void UpdateViewport()
