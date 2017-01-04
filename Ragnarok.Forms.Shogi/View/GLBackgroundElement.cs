@@ -76,10 +76,6 @@ namespace Ragnarok.Forms.Shogi.View
                 this.nextBg = null;
             }
 
-            // エフェクトの表示領域はこの背景と同じにします。
-            effect.BaseScale = BaseScale;
-            effect.Coord = Coord;
-
             // 次の背景に設定
             this.nextBg = effect;
 
