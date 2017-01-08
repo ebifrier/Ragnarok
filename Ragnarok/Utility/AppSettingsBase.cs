@@ -407,6 +407,8 @@ namespace Ragnarok.Utility
             }
             catch (Exception ex)
             {
+                Util.ThrowIfFatal(ex);
+
                 Log.ErrorException(ex,
                     "{0}.{1}: 値の設定に失敗しました。",
                     GetType(),
@@ -456,6 +458,8 @@ namespace Ragnarok.Utility
             }
             catch (Exception ex)
             {
+                Util.ThrowIfFatal(ex);
+
                 Log.ErrorException(ex,
                     "{0}: 設定ファイルの読み込みに失敗しました。", Location);
             }
@@ -531,8 +535,10 @@ namespace Ragnarok.Utility
 
                 this.propertyStorage[property.Name] = value;
             }
-            catch (XmlException ex)
+            catch (Exception ex)
             {
+                Util.ThrowIfFatal(ex);
+
                 Log.ErrorException(ex,
                     "{0}プロパティ値の読み込みに失敗しました。",
                     propertyObj.PropertyInfo.Name);
@@ -555,8 +561,10 @@ namespace Ragnarok.Utility
 
                 this.propertyStorage[property.Name] = value;
             }
-            catch (XmlException ex)
+            catch (Exception ex)
             {
+                Util.ThrowIfFatal(ex);
+
                 Log.ErrorException(ex,
                     "{0}プロパティ値の読み込みに失敗しました。",
                     propertyObj.PropertyInfo.Name);
@@ -573,45 +581,57 @@ namespace Ragnarok.Utility
             reader.ReadStartElement();
             while (!reader.EOF)
             {
-                // settingタグの開始ノードまで移動します。
-                if (!reader.IsStartElement() ||
-                    reader.LocalName != SETTING_TAG)
+                try
                 {
-                    if (!reader.ReadToFollowing(SETTING_TAG))
+                    // settingタグの開始ノードまで移動します。
+                    if (!reader.IsStartElement() || reader.LocalName != SETTING_TAG)
                     {
-                        return;
+                        if (!reader.ReadToFollowing(SETTING_TAG))
+                        {
+                            return;
+                        }
                     }
-                }
 
-                // <Setting name="prop name" serialize-as="string or xml">
-                var name = reader.GetAttribute(NAME_ATTRIBUTE);
-                var serializeAs = reader.GetAttribute(SERIALIZEAS_ATTRIBUTE);
-                if (string.IsNullOrEmpty(name) ||
-                    string.IsNullOrEmpty(serializeAs))
+                    // <Setting name="prop name" serialize-as="string or xml">
+                    var name = reader.GetAttribute(NAME_ATTRIBUTE);
+                    var serializeAs = reader.GetAttribute(SERIALIZEAS_ATTRIBUTE);
+                    if (string.IsNullOrEmpty(name) ||
+                        string.IsNullOrEmpty(serializeAs))
+                    {
+                        reader.Read();
+                        continue;
+                    }
+                    reader.ReadStartElement(SETTING_TAG);
+
+                    // プロパティから名前を検索します。
+                    IPropertyObject propertyObj;
+                    if (!propertyDic.TryGetValue(name, out propertyObj))
+                    {
+                        continue;
+                    }
+
+                    // 種別によって読み込み方を変えます。
+                    if (serializeAs == "string")
+                    {
+                        ReadStringValue(reader, propertyObj);
+                    }
+                    else
+                    {
+                        ReadXmlValue(reader, propertyObj);
+                    }
+
+                    reader.ReadEndElement();
+                }
+                catch (Exception ex)
                 {
+                    Util.ThrowIfFatal(ex);
+
+                    Log.ErrorException(ex,
+                        "プロパティ値の読み込みに失敗しました。");
+
+                    // 一つは進めないと無限ループになる可能性がある
                     reader.Read();
-                    continue;
                 }
-                reader.ReadStartElement(SETTING_TAG);
-
-                // プロパティから名前を検索します。
-                IPropertyObject propertyObj;
-                if (!propertyDic.TryGetValue(name, out propertyObj))
-                {
-                    continue;
-                }
-
-                // 種別によって読み込み方を変えます。
-                if (serializeAs == "string")
-                {
-                    ReadStringValue(reader, propertyObj);
-                }
-                else
-                {
-                    ReadXmlValue(reader, propertyObj);
-                }
-
-                reader.ReadEndElement();
             }
 
             reader.ReadEndElement();
@@ -683,8 +703,10 @@ namespace Ragnarok.Utility
                 
                 serializer.WriteObject(writer, value);
             }
-            catch (XmlException ex)
+            catch (Exception ex)
             {
+                Util.ThrowIfFatal(ex);
+
                 Log.ErrorException(ex,
                     "{0}プロパティの出力に失敗しました。",
                     propertyName);
