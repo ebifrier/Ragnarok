@@ -325,7 +325,7 @@ namespace Ragnarok.Forms.Shogi
 
             // 時間はここで進めます。
             Position += elapsed;
-            return this.enumerator.Current;
+            return this.enumerator?.Current ?? false;
         }
 
         /// <summary>
@@ -333,10 +333,14 @@ namespace Ragnarok.Forms.Shogi
         /// </summary>
         public void Stop()
         {
-            this.enumerator = null;
+            // 実行中でなければ停止処理はしないようにします。
+            if (this.enumerator != null)
+            {
+                this.enumerator = null;
 
-            OnStopped();
-            RaiseStopped();
+                OnStopped();
+                RaiseStopped();
+            }
         }
 
         /// <summary>
