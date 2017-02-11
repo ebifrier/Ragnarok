@@ -60,14 +60,11 @@ namespace Ragnarok.NicoNico.Provider
     /// </summary>
     public static class ChannelTool
     {
-        public readonly static string BaseUrl =
-            @"http://chtool.nicovideo.jp/";
-        public readonly static string UploadedVideosUrl =
-            BaseUrl + @"video/uploaded_videos";
-        public readonly static string VideoUrl =
-            BaseUrl + @"video/video.php";
-        public readonly static string VideoEditUrl =
-            BaseUrl + @"video/video_edit.php";
+        public readonly static string BaseUrl = @"http://chtool.nicovideo.jp/";
+        public readonly static string UploadedVideosUrl = BaseUrl + @"video/uploaded_videos";
+        public readonly static string VideoUrl = BaseUrl + @"video/video.php";
+        public readonly static string VideoEditUrl = BaseUrl + @"video/video_edit.php";
+        public readonly static string VideoDeleteUrl = BaseUrl + @"video/video_delete.php";
 
         /// <summary>
         /// 動画編集用のサイトURLを作成します。
@@ -97,6 +94,16 @@ namespace Ragnarok.NicoNico.Provider
             return string.Format(
                 @"{0}?channel_id={1}&fileid={2}&pageID=",
                 VideoEditUrl, channelId, videoId);
+        }
+
+        /// <summary>
+        /// 動画削除用のサイトURLを作成します。
+        /// </summary>
+        public static string MakeVideoDeleteUrl(int channelId, int videoId)
+        {
+            return string.Format(
+                @"{0}?channel_id={1}&fileid={2}&pageID=",
+                VideoDeleteUrl, channelId, videoId);
         }
 
         /// <summary>
@@ -384,6 +391,36 @@ namespace Ragnarok.NicoNico.Provider
 
             // 実際に動画情報の更新リクエストを発行します。
             var url = MakeVideoEditUrl(channelId, fileId);
+            var result = WebUtil.RequestHttpText(url, cparam, cc, Encoding.UTF8);
+            if (string.IsNullOrEmpty(result))
+            {
+                return result;
+            }
+
+            return result;
+        }
+        #endregion
+
+        #region Delete
+        /// <summary>
+        /// 動画の削除リクエストを発行します。
+        /// </summary>
+        public static string RequestDelete(int channelId, string videoId,
+                                           CookieContainer cc)
+        {
+            if (string.IsNullOrEmpty(videoId) || !videoId.StartsWith("so"))
+            {
+                return null;
+            }
+            var fileId = int.Parse(videoId.Substring(2));
+
+            // 動画更新時に必要になる必須パラメータを設定します。
+            var cparam = new Dictionary<string, object>();
+            cparam["channel_id"] = channelId;
+            cparam["fileid"] = fileId;
+
+            // 実際に動画情報の更新リクエストを発行します。
+            var url = MakeVideoDeleteUrl(channelId, fileId);
             var result = WebUtil.RequestHttpText(url, cparam, cc, Encoding.UTF8);
             if (string.IsNullOrEmpty(result))
             {
