@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
 
@@ -51,7 +50,7 @@ namespace Ragnarok.NicoNico.Video
         /// サーバーからデータを取得した時刻を取得または設定します。
         /// </summary>
         [DataMember(Name = "Timestamp")]
-        public string TimestampStr
+        public int Timestamp
         {
             get;
             set;
@@ -63,7 +62,7 @@ namespace Ragnarok.NicoNico.Video
         /// <summary>
         /// サーバーからデータを取得した時刻を取得または設定します。
         /// </summary>
-        public DateTime Timestamp
+        public DateTime TimestampDate
         {
             get
             {
@@ -72,25 +71,23 @@ namespace Ragnarok.NicoNico.Video
                     return this.timestamp.Value;
                 }
 
-                var m = TimestampRegex.Match(TimestampStr);
-                if (m.Success)
-                {
-                    this.timestamp = new DateTime(
-                        int.Parse(m.Groups[1].Value),
-                        int.Parse(m.Groups[2].Value),
-                        int.Parse(m.Groups[3].Value),
-                        int.Parse(m.Groups[4].Value),
-                        0, 0);
+                this.timestamp = new DateTime(
+                    (Timestamp / 1000000),
+                    (Timestamp / 10000) % 100,
+                    (Timestamp / 100) % 100,
+                    (Timestamp / 1) % 100,
+                    0, 0);
 
-                    return this.timestamp.Value;
-                }
-
-                return DateTime.MinValue;
+                return this.timestamp.Value;
             }
             set
             {
                 this.timestamp = value;
-                TimestampStr = value.ToString("yyyyMMddHH");
+                Timestamp =
+                    value.Year  * 1000000 +
+                    value.Month * 10000 +
+                    value.Day   * 100 +
+                    value.Hour;
             }
         }
 
