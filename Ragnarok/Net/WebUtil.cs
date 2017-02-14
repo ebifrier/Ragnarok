@@ -190,7 +190,7 @@ namespace Ragnarok.Net
         public static string RequestHttpText(string url,
                                              Dictionary<string, object> param,
                                              CookieContainer cc,
-                                             Encoding encoding)
+                                             Encoding encoding = null)
         {
             var buffer = RequestHttp(url, param, cc);
             if (buffer == null)
@@ -198,6 +198,7 @@ namespace Ragnarok.Net
                 return null;
             }
 
+            encoding = encoding ?? Encoding.UTF8;
             return encoding.GetString(buffer);
         }
 

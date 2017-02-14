@@ -366,8 +366,15 @@ namespace Ragnarok.NicoNico.Provider
         {
             if (string.IsNullOrEmpty(videoId) || !videoId.StartsWith("so"))
             {
-                return null;
+                throw new ArgumentException(
+                    $"videoId is invalid value: {videoId}", "videoId");
             }
+
+            if (cc == null)
+            {
+                throw new ArgumentNullException("cc");
+            }
+
             var fileId = int.Parse(videoId.Substring(2));
 
             // smile_ch_keyは過去のオペレーションで削除されていることがあるため、
@@ -410,18 +417,25 @@ namespace Ragnarok.NicoNico.Provider
         {
             if (string.IsNullOrEmpty(videoId) || !videoId.StartsWith("so"))
             {
-                return null;
+                throw new ArgumentException(
+                    $"videoId is invalid value: {videoId}", "videoId");
             }
+
+            if (cc == null)
+            {
+                throw new ArgumentNullException("cc");
+            }
+
             var fileId = int.Parse(videoId.Substring(2));
 
             // 動画更新時に必要になる必須パラメータを設定します。
-            var cparam = new Dictionary<string, object>();
-            cparam["channel_id"] = channelId;
-            cparam["fileid"] = fileId;
+            var param = new Dictionary<string, object>();
+            param["channel_id"] = channelId;
+            param["fileid"] = fileId;
 
             // 実際に動画情報の更新リクエストを発行します。
             var url = MakeVideoDeleteUrl(channelId, fileId);
-            var result = WebUtil.RequestHttpText(url, cparam, cc, Encoding.UTF8);
+            var result = WebUtil.RequestHttpText(url, param, cc, Encoding.UTF8);
             if (string.IsNullOrEmpty(result))
             {
                 return result;
