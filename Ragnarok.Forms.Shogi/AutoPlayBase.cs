@@ -319,7 +319,6 @@ namespace Ragnarok.Forms.Shogi
             // コルーチンを進めます。
             if (!this.enumerator.MoveNext())
             {
-                this.enumerator = null;
                 return false;
             }
 
