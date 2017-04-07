@@ -64,6 +64,11 @@ namespace Ragnarok.Shogi
         [LabelDescription(Label = "詰み")]
         CheckMate,
         /// <summary>
+        /// 最大手数
+        /// </summary>
+        [LabelDescription(Label = "最大手数")]
+        MaxMoves,
+        /// <summary>
         /// 封じ手
         /// </summary>
         [LabelDescription(Label = "封じ手")]
