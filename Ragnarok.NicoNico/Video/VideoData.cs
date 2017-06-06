@@ -142,7 +142,7 @@ namespace Ragnarok.NicoNico.Video
         public string Title
         {
             get;
-            private set;
+            set;
         }
 
         /// <summary>
@@ -152,7 +152,7 @@ namespace Ragnarok.NicoNico.Video
         public string Description
         {
             get;
-            private set;
+            set;
         }
 
         /// <summary>

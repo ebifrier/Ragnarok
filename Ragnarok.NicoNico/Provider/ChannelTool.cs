@@ -63,7 +63,7 @@ namespace Ragnarok.NicoNico.Provider
         public readonly static string BaseUrl = @"http://chtool.nicovideo.jp/";
         public readonly static string UploadedVideosUrl = BaseUrl + @"video/uploaded_videos";
         public readonly static string VideoUrl = BaseUrl + @"video/video.php";
-        public readonly static string VideoEditUrl = BaseUrl + @"video/video_edit.php";
+        public readonly static string VideoEditUrl = BaseUrl + @"video/video_edit";
         public readonly static string VideoDeleteUrl = BaseUrl + @"video/video_delete.php";
 
         /// <summary>
@@ -92,7 +92,7 @@ namespace Ragnarok.NicoNico.Provider
         public static string MakeVideoEditUrl(int channelId, int videoId)
         {
             return string.Format(
-                @"{0}?channel_id={1}&fileid={2}&pageID=",
+                @"{0}?channel_id={1}&fileid={2}&pageID=1",
                 VideoEditUrl, channelId, videoId);
         }
 
@@ -102,7 +102,7 @@ namespace Ragnarok.NicoNico.Provider
         public static string MakeVideoDeleteUrl(int channelId, int videoId)
         {
             return string.Format(
-                @"{0}?channel_id={1}&fileid={2}&pageID=",
+                @"{0}?channel_id={1}&fileid={2}&pageID=1",
                 VideoDeleteUrl, channelId, videoId);
         }
 
@@ -291,6 +291,8 @@ namespace Ragnarok.NicoNico.Provider
 
             // すでに動画が初期化済みかどうか
             param["initialized"] = 1;
+            param["mode"] = "edit";
+            param["submit_edit"] = 1;
 
             // 公開or非公開 (公開時は0)
             param["hide_flag"] = 0;
@@ -305,8 +307,9 @@ namespace Ragnarok.NicoNico.Provider
             // 4: チャンネル会員のみ視聴可能
             param["permission"] = (int)DistributeRange.MemberOnly;
 
-            //param["title_url"] = "";
-            param["post_by_mobile"] = "";
+            param["title_url"] = "";
+            param["specify_uploaddate"] = "";
+            //param["post_by_mobile"] = "";
             //param["ppv_permission"] = 1;
             param["ppv_type"] = 0;
             param["ad_flag"] = 1;
@@ -317,28 +320,27 @@ namespace Ragnarok.NicoNico.Provider
             param["uad_maintenance"] = 0; // ニコニ広告で宣伝させる
             param["uad_flag"] = 0;
             param["homeland_flag"] = 0; // 公開地域を日本国内のみに限定する
-            //param["commons_materials"] = "1"; // 使用したニコニコモンズ作品
+            param["commons_materials"] = ""; // 使用したニコニコモンズ作品
 
             // NG関連の指定
             param["deny_mobile"] = 0;
-            param["mobile_ng_docomo"] = 0;
-            param["mobile_ng_au"] = 0;
-            param["mobile_ng_softbank"] = 0;
-            param["mobile_ng_apple"] = 0;
-            param["mobile_ng_other"] = 0;
-            param["ng_tv"] = 0;
-            param["ng_nintendo"] = 0;
-            param["ng_nicoswitch"] = 0;
-            param["ng_boqz"] = 0;
-            param["ng_dolce"] = 0;
-            param["ng_sun"] = 0;
+            param["mobile_ng_docomo"] = "";
+            param["mobile_ng_au"] = "";
+            param["mobile_ng_softbank"] = "";
+            param["mobile_ng_apple"] = "";
+            param["mobile_ng_other"] = "";
+            param["ng_tv"] = "";
+            param["ng_nintendo"] = "";
+            param["ng_boqz"] = "";
+            param["ng_dolce"] = "";
+            param["ng_sun"] = "";
             param["ng_xboxone"] = 0;
+            param["ng_nicoswitch"] = 0;
             param["ng_nicobox"] = 0;
 
             param["ignore_nicodic"] = 0; // 大百科の記事を表示させない
             param["out_flag"] = 0; // niconico外部プレイヤー で再生させない
             param["sexual_flag"] = 0; // R18かどうか
-            param["market_flag"] = 0; // ニコニコ市場を表示する(する場合は0)
             param["mobile_item_max"] = 3;
             param["general_item_max"] = 10;
             param["disabled_ngs"] = 0; // 共有NGを無効にする
@@ -346,6 +348,7 @@ namespace Ragnarok.NicoNico.Provider
             param["vast_enabled"] = 0; // 用途不明
             param["countries"] = ""; // 用途不明
             param["nicolanguage_code"] = ""; // 用途不明
+            param["comment_visibility"] = 0;
 
             return param;
         }
@@ -385,7 +388,6 @@ namespace Ragnarok.NicoNico.Provider
             // 動画更新時に必要になる必須パラメータを設定します。
             var cparam = new Dictionary<string, object>(param);
             cparam["smile_ch_key"] = chKey;
-            cparam["mode"] = "edit";
             cparam["channel_id"] = channelId;
             cparam["fileid"] = fileId;
 
@@ -397,6 +399,7 @@ namespace Ragnarok.NicoNico.Provider
                 return result;
             }
 
+            //Save(@"E:\programs\develop\Ragnarok\index.html", result);
             return result;
         }
         #endregion

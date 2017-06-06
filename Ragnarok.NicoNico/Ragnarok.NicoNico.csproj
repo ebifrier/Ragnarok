@@ -144,6 +144,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Provider\ChannelLoginData.cs" />
     <Compile Include="Provider\ChannelTool.cs" />
+    <Compile Include="Provider\Tests\ChannelToolEditTest.cs" />
     <Compile Include="Provider\ChannelToolException.cs" />
     <Compile Include="Provider\ChannelUploadedVideoData.cs" />
     <Compile Include="Provider\ChannelVideoData.cs" />

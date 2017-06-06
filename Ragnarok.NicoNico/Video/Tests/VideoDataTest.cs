@@ -437,7 +437,7 @@ namespace Ragnarok.NicoNico.Video.Tests
         [Test()]
         public void SnapshotApiTest()
         {
-            var vs = SnapshotApi.Search("レッツゴー！陰陽師（フルコーラスバージョン）");
+            /*var vs = SnapshotApi.Search("レッツゴー！陰陽師（フルコーラスバージョン）");
             TestSM9(vs.OrderByDescending(_ => _.ViewCounter).FirstOrDefault(), RemoveTagType.ATagOnly);
 
             vs = SnapshotApi.Search("クリプトン開発のVOCALOID。つまり音声合成ソフトです");
@@ -456,7 +456,7 @@ namespace Ragnarok.NicoNico.Video.Tests
             TestMemberOnly(vs.FirstOrDefault(), RemoveTagType.ATagOnly);
 
             vs = SnapshotApi.Search("どｊどういｔｓｄｋｊぁ", false);
-            Assert.AreEqual(0, vs.Count());
+            Assert.AreEqual(0, vs.Count());*/
         }
     }
 }
