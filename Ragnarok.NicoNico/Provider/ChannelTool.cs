@@ -328,6 +328,7 @@ namespace Ragnarok.NicoNico.Provider
             param["mobile_ng_other"] = 0;
             param["ng_tv"] = 0;
             param["ng_nintendo"] = 0;
+            param["ng_nicoswitch"] = 0;
             param["ng_boqz"] = 0;
             param["ng_dolce"] = 0;
             param["ng_sun"] = 0;
@@ -345,14 +346,6 @@ namespace Ragnarok.NicoNico.Provider
             param["vast_enabled"] = 0; // 用途不明
             param["countries"] = ""; // 用途不明
             param["nicolanguage_code"] = ""; // 用途不明
-
-            /*param["licensed_music[0][artist]"] = "";
-            param["licensed_music[0][title]"] = "";
-            param["licensed_music[0][rightsController]"] = "";
-            param["licensed_music[0][opus_code]"] = "";
-            param["licensed_music[0][lyricist]"] = "";
-            param["licensed_music[0][composer]"] = "";
-            param["licensed_music[0][uid]"] = "";*/
 
             return param;
         }
