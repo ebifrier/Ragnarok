@@ -33,6 +33,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ragnarok.NicoNico", "Ragnar
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ragnarok.Presentation.NicoNico", "Ragnarok.Presentation.NicoNico\Ragnarok.Presentation.NicoNico.csproj", "{9BA9A6F3-EE43-4B1C-BEB7-3DCAC753D577}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ragnarok.Calculator", "Ragnarok.Calculator\Ragnarok.Calculator.csproj", "{A5D93F5E-B8CF-42F6-9B9B-8EC54748A9E2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -161,6 +163,14 @@ Global
 		{9BA9A6F3-EE43-4B1C-BEB7-3DCAC753D577}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9BA9A6F3-EE43-4B1C-BEB7-3DCAC753D577}.Release|x86.ActiveCfg = Release|x86
 		{9BA9A6F3-EE43-4B1C-BEB7-3DCAC753D577}.Release|x86.Build.0 = Release|x86
+		{A5D93F5E-B8CF-42F6-9B9B-8EC54748A9E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A5D93F5E-B8CF-42F6-9B9B-8EC54748A9E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A5D93F5E-B8CF-42F6-9B9B-8EC54748A9E2}.Debug|x86.ActiveCfg = Debug|x86
+		{A5D93F5E-B8CF-42F6-9B9B-8EC54748A9E2}.Debug|x86.Build.0 = Debug|x86
+		{A5D93F5E-B8CF-42F6-9B9B-8EC54748A9E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A5D93F5E-B8CF-42F6-9B9B-8EC54748A9E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A5D93F5E-B8CF-42F6-9B9B-8EC54748A9E2}.Release|x86.ActiveCfg = Release|x86
+		{A5D93F5E-B8CF-42F6-9B9B-8EC54748A9E2}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
