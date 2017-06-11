@@ -1,0 +1,106 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{A5D93F5E-B8CF-42F6-9B9B-8EC54748A9E2}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Ragnarok.Calculator</RootNamespace>
+    <AssemblyName>Ragnarok.Calculator</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;TESTS</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;TESTS</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE;TESTS</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="nunit.framework">
+      <HintPath>..\externals\net\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Calculator.cs" />
+    <Compile Include="Externals\NParsec\CharPredicates.cs" />
+    <Compile Include="Externals\NParsec\DefaultPositionMap.cs" />
+    <Compile Include="Externals\NParsec\DefaultShowError.cs" />
+    <Compile Include="Externals\NParsec\Expressions.cs" />
+    <Compile Include="Externals\NParsec\Functors.cs" />
+    <Compile Include="Externals\NParsec\Keywords.cs" />
+    <Compile Include="Externals\NParsec\Lexers.cs" />
+    <Compile Include="Externals\NParsec\Operators.cs" />
+    <Compile Include="Externals\NParsec\OperatorTable.cs" />
+    <Compile Include="Externals\NParsec\ParsecError.cs" />
+    <Compile Include="Externals\NParsec\ParseContext.cs" />
+    <Compile Include="Externals\NParsec\Parser.cs" />
+    <Compile Include="Externals\NParsec\ParserException.cs" />
+    <Compile Include="Externals\NParsec\Parsers.cs" />
+    <Compile Include="Externals\NParsec\ParsingFrame.cs" />
+    <Compile Include="Externals\NParsec\Pattern.cs" />
+    <Compile Include="Externals\NParsec\Patterns.cs" />
+    <Compile Include="Externals\NParsec\Position.cs" />
+    <Compile Include="Externals\NParsec\Scanners.cs" />
+    <Compile Include="Externals\NParsec\Terms.cs" />
+    <Compile Include="Externals\NParsec\Token.cs" />
+    <Compile Include="Externals\NParsec\Tokenizers.cs" />
+    <Compile Include="Externals\NParsec\UserException.cs" />
+    <Compile Include="Externals\NParsec\Utils.cs" />
+    <Compile Include="Externals\NParsec\Words.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Xaml\CalcExtension.cs" />
+    <Compile Include="Tests\CalculatorTest.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Ragnarok\Ragnarok.csproj">
+      <Project>{a348968a-dd91-47b4-9420-c7d370a2be92}</Project>
+      <Name>Ragnarok</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
