@@ -66,7 +66,7 @@ namespace Ragnarok.Utility.Tests
         public void ObjectTest()
         {
             // プロパティが一つ
-            var format = "#{code}";
+            var format = "${code}";
             var obj = new
             {
                 code = "C1",
@@ -74,7 +74,7 @@ namespace Ragnarok.Utility.Tests
             Assert.AreEqual("C1", StringUtility.NamedFormat(format, obj));
 
             // プロパティが２つ
-            var format2 = "_#{Code} #{x33x}xx";
+            var format2 = "_${Code} ${x33x}xx";
             var obj2 = new
             {
                 code = "C1",
@@ -84,10 +84,10 @@ namespace Ragnarok.Utility.Tests
             Assert.AreEqual("_C2 xyzxx", StringUtility.NamedFormat(format2, obj2));
 
             // プロパティが多数
-            var format3 = "SELECT #{code}, #{name}" +
-                "FROM #{tableName}" +
-                "WHERE #{createdAt} = @createdAt" +
-                "ORDER BY #{code}";
+            var format3 = "SELECT $code, ${name}" +
+                "FROM ${tableName}" +
+                "WHERE ${createdAt} = @createdAt" +
+                "ORDER BY ${code}";
             var obj3 = new
             {
                 tableName = "TBL1",
@@ -109,7 +109,7 @@ namespace Ragnarok.Utility.Tests
         [Test()]
         public void FormatTest()
         {
-            var format = "#{Code:0000}";
+            var format = "${Code:0000}";
             var obj = new { Code = 1 };
             Assert.AreEqual("0001", StringUtility.NamedFormat(format, obj));
         }
