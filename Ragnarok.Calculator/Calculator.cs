@@ -255,7 +255,7 @@ namespace Ragnarok.Calculator
             catch (Exception ex)
             {
                 throw new RagnarokException(
-                    "計算中にエラーが発生しました。", ex);
+                    $"'{expression}': 計算中にエラーが発生しました。", ex);
             }
         }
 
