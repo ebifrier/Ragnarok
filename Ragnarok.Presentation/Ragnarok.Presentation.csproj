@@ -180,10 +180,6 @@
     <Compile Include="WPFUtil.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Ragnarok.NicoNico\Ragnarok.NicoNico.csproj">
-      <Project>{6aee649c-ee42-4ae5-87e3-a4f8bfc12f72}</Project>
-      <Name>Ragnarok.NicoNico</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Ragnarok\Ragnarok.csproj">
       <Project>{A348968A-DD91-47B4-9420-C7D370A2BE92}</Project>
       <Name>Ragnarok</Name>
