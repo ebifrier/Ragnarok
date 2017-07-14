@@ -129,6 +129,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Utility\LabelAttribute.cs" />
     <Compile Include="Utility\PdbUtility.cs" />
     <Compile Include="Utility\DebugLock.cs" />
     <Compile Include="EnumEx.cs" />

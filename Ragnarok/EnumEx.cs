@@ -131,13 +131,19 @@ namespace Ragnarok
         /// </summary>
         public static string GetLabel(object value)
         {
-            var attribute = GetAttribute<LabelDescriptionAttribute>(value);
-            if (attribute == null)
+            var labelAttribute = GetAttribute<LabelAttribute>(value);
+            if (labelAttribute != null)
             {
-                return null;
+                return labelAttribute.Label;
             }
 
-            return attribute.Label;
+            var descAttribute = GetAttribute<LabelDescriptionAttribute>(value);
+            if (descAttribute == null)
+            {
+                return descAttribute.Label;
+            }
+
+            return null;
         }
     }
 }
