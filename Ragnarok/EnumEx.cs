@@ -138,7 +138,7 @@ namespace Ragnarok
             }
 
             var descAttribute = GetAttribute<LabelDescriptionAttribute>(value);
-            if (descAttribute == null)
+            if (descAttribute != null)
             {
                 return descAttribute.Label;
             }

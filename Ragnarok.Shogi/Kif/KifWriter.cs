@@ -168,25 +168,18 @@ namespace Ragnarok.Shogi.Kif
                 return;
             }
 
-            if (lmove.SpecialMoveType == SpecialMoveType.None)
-            {
-                // 半角文字相当の文字数で空白の数を計算します。
-                var moveText = Stringizer.ToString(lmove, MoveTextStyle.KifFile);
-                var hanLen = moveText.HankakuLength();
+            // 半角文字相当の文字数で空白の数を計算します。
+            var moveText = Stringizer.ToString(lmove, MoveTextStyle.KifFile);
+            var hanLen = moveText.HankakuLength();
 
-                writer.WriteLine(
-                    @"{0,4} {1}{2} ({3:mm\:ss} / {4:hh\:mm\:ss}){5}",
-                    node.MoveCount,
-                    moveText,
-                    new string(' ', Math.Max(0, 14 - hanLen)),
-                    node.Duration,
-                    node.TotalDuration,
-                    (hasVariation ? "+" : ""));
-            }
-            else
-            {
-                // とりあえず空にしておく
-            }
+            writer.WriteLine(
+                @"{0,4} {1}{2} ({3:mm\:ss} / {4:hh\:mm\:ss}){5}",
+                node.MoveCount,
+                moveText,
+                new string(' ', Math.Max(0, 14 - hanLen)),
+                node.Duration,
+                node.TotalDuration,
+                (hasVariation ? "+" : ""));
         }
         #endregion
 
