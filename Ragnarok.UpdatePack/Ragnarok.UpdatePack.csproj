@@ -1,22 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{10F2112B-1B6C-45B2-9620-6BBDA671D475}</ProjectGuid>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{7EB87DB3-784C-4BBD-B76D-D4AF0C1AFC60}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Ragnarok.UpdatePack</RootNamespace>
-    <AssemblyName>UpdatePack</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <TargetFrameworkProfile>
-    </TargetFrameworkProfile>
+    <AssemblyName>Ragnarok.UpdatePack</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -24,38 +21,35 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
-  <PropertyGroup>
-    <RunPostBuildEvent>Always</RunPostBuildEvent>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>bin\x86\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
-    <OutputPath>bin\Release\</OutputPath>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -63,6 +57,11 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SharpZLib\BZip2\BZip2.cs" />
+    <Compile Include="SharpZLib\BZip2\BZip2Constants.cs" />
+    <Compile Include="SharpZLib\BZip2\BZip2Exception.cs" />
+    <Compile Include="SharpZLib\BZip2\BZip2InputStream.cs" />
+    <Compile Include="SharpZLib\BZip2\BZip2OutputStream.cs" />
     <Compile Include="SharpZLib\Checksums\Adler32.cs" />
     <Compile Include="SharpZLib\Checksums\CRC32.cs" />
     <Compile Include="SharpZLib\Checksums\IChecksum.cs" />
@@ -77,8 +76,23 @@
     <Compile Include="SharpZLib\Encryption\PkzipClassic.cs" />
     <Compile Include="SharpZLib\Encryption\ZipAESStream.cs" />
     <Compile Include="SharpZLib\Encryption\ZipAESTransform.cs" />
+    <Compile Include="SharpZLib\GZip\GZIPConstants.cs" />
+    <Compile Include="SharpZLib\GZip\GZipException.cs" />
+    <Compile Include="SharpZLib\GZip\GzipInputStream.cs" />
+    <Compile Include="SharpZLib\GZip\GzipOutputStream.cs" />
+    <Compile Include="SharpZLib\Lzw\LzwConstants.cs" />
+    <Compile Include="SharpZLib\Lzw\LzwException.cs" />
+    <Compile Include="SharpZLib\Lzw\LzwInputStream.cs" />
     <Compile Include="SharpZLib\Main.cs" />
     <Compile Include="SharpZLib\SharpZipBaseException.cs" />
+    <Compile Include="SharpZLib\Tar\InvalidHeaderException.cs" />
+    <Compile Include="SharpZLib\Tar\TarArchive.cs" />
+    <Compile Include="SharpZLib\Tar\TarBuffer.cs" />
+    <Compile Include="SharpZLib\Tar\TarEntry.cs" />
+    <Compile Include="SharpZLib\Tar\TarException.cs" />
+    <Compile Include="SharpZLib\Tar\TarHeader.cs" />
+    <Compile Include="SharpZLib\Tar\TarInputStream.cs" />
+    <Compile Include="SharpZLib\Tar\TarOutputStream.cs" />
     <Compile Include="SharpZLib\Zip\Compression\Deflater.cs" />
     <Compile Include="SharpZLib\Zip\Compression\DeflaterConstants.cs" />
     <Compile Include="SharpZLib\Zip\Compression\DeflaterEngine.cs" />
@@ -108,18 +122,7 @@
     <Compile Include="Utility.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
+    <None Include="App.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
-  </PropertyGroup>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

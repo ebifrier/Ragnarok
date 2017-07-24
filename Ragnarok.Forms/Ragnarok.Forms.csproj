@@ -1,29 +1,26 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{6B5362A1-22C7-4B5B-8582-24F3E2502214}</ProjectGuid>
+    <ProjectGuid>{26EA7DF8-D131-4ED9-8D61-1DAB6CCC7200}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Ragnarok.Forms</RootNamespace>
     <AssemblyName>Ragnarok.Forms</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile>
-    </TargetFrameworkProfile>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;TESTS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -32,10 +29,9 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
+    <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>Ragnarok.Forms.snk</AssemblyOriginatorKeyFile>
@@ -47,24 +43,19 @@
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
-    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
-    <Prefer32Bit>false</Prefer32Bit>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
-    <DefineConstants>TRACE;TESTS</DefineConstants>
+    <DefineConstants>TRACE</DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
-    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
-    <Prefer32Bit>false</Prefer32Bit>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="nunit.framework, Version=2.6.2.12296, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="nunit.framework">
       <HintPath>..\externals\net\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
@@ -76,11 +67,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Bindings\Binding.cs" />
     <Compile Include="Bindings\BindingCollection.cs" />
     <Compile Include="Bindings\BindingData.cs" />
-    <Compile Include="Bindings\BindingPropertyChangedEventArgs.cs" />
-    <Compile Include="Bindings\Binding.cs" />
     <Compile Include="Bindings\BindingMode.cs" />
+    <Compile Include="Bindings\BindingPropertyChangedEventArgs.cs" />
     <Compile Include="Controls\CheckGroupBox.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -108,32 +99,23 @@
     <Compile Include="Draw\BitmapExtension.cs" />
     <Compile Include="FormsUtil.cs" />
     <Compile Include="FormsValue.cs" />
-    <Compile Include="Input\CommandBindingFactory.cs" />
-    <Compile Include="Input\CommandManager.cs" />
     <Compile Include="Input\Command.cs" />
     <Compile Include="Input\CommandBindingBase.cs" />
+    <Compile Include="Input\CommandBindingFactory.cs" />
+    <Compile Include="Input\CommandManager.cs" />
     <Compile Include="Input\CommandUtil.cs" />
     <Compile Include="Input\Detail\ButtonCommandBinding.cs" />
     <Compile Include="Input\Detail\ButtonCommandBindingFactory.cs" />
-    <Compile Include="Input\Detail\MenuItemCommandBindingFactory.cs" />
     <Compile Include="Input\Detail\MenuItemCommandBinding.cs" />
-    <Compile Include="Input\Detail\ToolStripButtonCommandBindingFactory.cs" />
+    <Compile Include="Input\Detail\MenuItemCommandBindingFactory.cs" />
     <Compile Include="Input\Detail\ToolStripButtonCommandBinding.cs" />
+    <Compile Include="Input\Detail\ToolStripButtonCommandBindingFactory.cs" />
     <Compile Include="Input\RelayCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tests\Color4bTest.cs" />
+    <Compile Include="Utility\FormsSettingsBase.cs" />
     <Compile Include="Utility\FrameTimer.cs" />
     <Compile Include="Utility\FrameTimerEventArgs.cs" />
-    <Compile Include="Utility\FormsSettingsBase.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Ragnarok.Forms.snk" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Ragnarok\Ragnarok.csproj">
-      <Project>{A348968A-DD91-47B4-9420-C7D370A2BE92}</Project>
-      <Name>Ragnarok</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Controls\CheckGroupBox.resx">
@@ -146,12 +128,14 @@
       <DependentUpon>VersionForm.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Ragnarok.Forms.snk" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Ragnarok\Ragnarok.csproj">
+      <Project>{58e7ea68-4850-452c-b15c-cd376fc60198}</Project>
+      <Name>Ragnarok</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

@@ -1,80 +1,65 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{FC94395F-6365-45A4-9D0B-278384E3CD50}</ProjectGuid>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{34F49799-B4E8-40AB-A3C2-CE8FC0A4F3B2}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Ragnarok.Forms.Shogi</RootNamespace>
     <AssemblyName>Ragnarok.Forms.Shogi</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <TargetFrameworkProfile>
-    </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;TESTS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject />
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
+    <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>Ragnarok.Forms.Shogi.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;TESTS</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="OpenTK, Version=1.2.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
-      <HintPath>..\packages\OpenTK.Next.1.2.2336.6514-pre\lib\net20\OpenTK.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="OpenTK, Version=3.0.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+      <HintPath>..\packages\OpenTK.3.0.0-pre\lib\net20\OpenTK.dll</HintPath>
     </Reference>
-    <Reference Include="OpenTK.GLControl, Version=1.2.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
-      <HintPath>..\packages\OpenTK.Next.GLControl.1.2.2336.6514-pre\lib\net20\OpenTK.GLControl.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="OpenTK.GLControl, Version=3.0.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+      <HintPath>..\packages\OpenTK.GLControl.3.0.0-pre\lib\net20\OpenTK.GLControl.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -86,19 +71,21 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AutoPlayBase.cs" />
-    <Compile Include="DefaultAutoPlay.cs" />
-    <Compile Include="ViewModel\BoardModel.cs" />
     <Compile Include="BoardChangedEventArgs.cs" />
-    <Compile Include="Effect\ShogiTextObject.cs" />
+    <Compile Include="DefaultAutoPlay.cs" />
     <Compile Include="Effect\ShogiObject.cs" />
-    <Compile Include="FlintSharpEx\GLRenderer.cs" />
+    <Compile Include="Effect\ShogiTextObject.cs" />
     <Compile Include="EnumTypes.cs" />
     <Compile Include="FlintSharpEx\GLImageData.cs" />
     <Compile Include="FlintSharpEx\GLImageLoader.cs" />
+    <Compile Include="FlintSharpEx\GLRenderer.cs" />
     <Compile Include="IEffectManager.cs" />
+    <Compile Include="MeshUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs" />
     <Compile Include="ShogiInitializer.cs" />
     <Compile Include="ShogiZOrder.cs" />
+    <Compile Include="ViewModel\BoardModel.cs" />
     <Compile Include="View\GLBackgroundElement.cs" />
     <Compile Include="View\GLContainer.cs">
       <SubType>UserControl</SubType>
@@ -106,7 +93,9 @@
     <Compile Include="View\GLContainer.Designer.cs">
       <DependentUpon>GLContainer.cs</DependentUpon>
     </Compile>
+    <Compile Include="View\GLElement.cs" />
     <Compile Include="View\GLEvaluationElement.cs" />
+    <Compile Include="View\GLEvaluationElementInternal.cs" />
     <Compile Include="View\GLEvaluationElementManager.cs" />
     <Compile Include="View\GLEvaluationElementSettingDialog.cs">
       <SubType>Form</SubType>
@@ -114,13 +103,11 @@
     <Compile Include="View\GLEvaluationElementSettingDialog.Designer.cs">
       <DependentUpon>GLEvaluationElementSettingDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="View\GLEvaluationElementInternal.cs" />
     <Compile Include="View\GLShogiElement.cs" />
-    <Compile Include="View\GLElement.cs" />
-    <Compile Include="View\MoveArrowInfo.cs" />
-    <Compile Include="View\MovingPiece.cs" />
     <Compile Include="View\GLShogiElement.draw.cs" />
     <Compile Include="View\GLShogiElement.move.cs" />
+    <Compile Include="View\MoveArrowInfo.cs" />
+    <Compile Include="View\MovingPiece.cs" />
     <Compile Include="View\PromoteDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -129,18 +116,10 @@
     </Compile>
     <Compile Include="View\ShogiCommands.cs" />
     <Compile Include="Xaml\SquareMeshExtension.cs" />
-    <Compile Include="MeshUtil.cs" />
     <Compile Include="Xaml\TebanMeshExtension.cs" />
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx" />
     <EmbeddedResource Include="View\GLContainer.resx">
       <DependentUpon>GLContainer.cs</DependentUpon>
     </EmbeddedResource>
@@ -152,70 +131,45 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Resources\Image\ban.jpg" />
+    <Content Include="Resources\Image\koma.png" />
+    <Content Include="Resources\Image\komadai.jpg" />
+    <Content Include="Resources\Image\move_goto_first.png" />
+    <Content Include="Resources\Image\move_goto_last.png" />
+    <Content Include="Resources\Image\move_pause.png" />
+    <Content Include="Resources\Image\move_redo.png" />
+    <Content Include="Resources\Image\move_redo_continue.png" />
+    <Content Include="Resources\Image\move_undo.png" />
+    <Content Include="Resources\Image\move_undo_continue.png" />
+    <Content Include="Resources\Image\particle.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="default.build" />
     <None Include="OpenTK.dll.config" />
     <None Include="packages.config" />
     <None Include="Ragnarok.Forms.Shogi.snk" />
-    <None Include="Resources\Image\ban.jpg" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Image\koma.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Image\komadai.jpg" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Image\move_goto_first.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Image\move_goto_last.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Image\move_pause.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Image\move_redo.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Image\move_redo_continue.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Image\move_undo.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Image\move_undo_continue.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Image\particle.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Ragnarok.Extra\Ragnarok.Extra.csproj">
-      <Project>{8EBDC79A-607B-4B56-A298-1471CD6753DB}</Project>
+      <Project>{7267b7a8-51ec-4d74-b8b1-b9cc98c2d292}</Project>
       <Name>Ragnarok.Extra</Name>
     </ProjectReference>
     <ProjectReference Include="..\Ragnarok.Forms\Ragnarok.Forms.csproj">
-      <Project>{6B5362A1-22C7-4B5B-8582-24F3E2502214}</Project>
+      <Project>{26ea7df8-d131-4ed9-8d61-1dab6ccc7200}</Project>
       <Name>Ragnarok.Forms</Name>
     </ProjectReference>
     <ProjectReference Include="..\Ragnarok.OpenGL\Ragnarok.OpenGL.csproj">
-      <Project>{e4d919e1-a7a8-4c8d-a65d-a25b80290bc9}</Project>
+      <Project>{598a93ca-0bd4-4c1c-b6db-27384a440915}</Project>
       <Name>Ragnarok.OpenGL</Name>
     </ProjectReference>
     <ProjectReference Include="..\Ragnarok.Shogi\Ragnarok.Shogi.csproj">
-      <Project>{38ABBDA5-B22F-41B7-A415-2A909D0A6A35}</Project>
+      <Project>{5c0d7c9b-f2d5-4a08-8856-af7e2f2f7cfe}</Project>
       <Name>Ragnarok.Shogi</Name>
     </ProjectReference>
     <ProjectReference Include="..\Ragnarok\Ragnarok.csproj">
-      <Project>{A348968A-DD91-47B4-9420-C7D370A2BE92}</Project>
+      <Project>{58e7ea68-4850-452c-b15c-cd376fc60198}</Project>
       <Name>Ragnarok</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

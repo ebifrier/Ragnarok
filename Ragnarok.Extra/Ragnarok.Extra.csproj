@@ -1,19 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{8EBDC79A-607B-4B56-A298-1471CD6753DB}</ProjectGuid>
+    <ProjectGuid>{7267B7A8-51EC-4D74-B8B1-B9CC98C2D292}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Ragnarok.Extra</RootNamespace>
     <AssemblyName>Ragnarok.Extra</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile>
-    </TargetFrameworkProfile>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -23,7 +21,6 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -32,11 +29,9 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
+    <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>Ragnarok.Extra.snk</AssemblyOriginatorKeyFile>
@@ -48,10 +43,7 @@
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Optimize>false</Optimize>
-    <NoWarn>3001 3002 3003</NoWarn>
-    <Prefer32Bit>false</Prefer32Bit>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
@@ -60,37 +52,36 @@
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
-    <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Xaml" />
-    <Reference Include="System.XML" />
+    <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Effect\VisualEffect.cs" />
     <Compile Include="Effect\Animation\DoubleAnimationUsingKeyFrame.cs" />
     <Compile Include="Effect\Animation\DoubleKeyFrame.cs" />
-    <Compile Include="Effect\Animation\IKeyFrame.cs" />
     <Compile Include="Effect\Animation\EasingFunctions.cs" />
+    <Compile Include="Effect\Animation\IKeyFrame.cs" />
     <Compile Include="Effect\Animation\Point3dAnimationUsingKeyFrame.cs" />
     <Compile Include="Effect\Animation\Point3dKeyFrame.cs" />
     <Compile Include="Effect\Animation\PropertyAnimation.cs" />
     <Compile Include="Effect\EffectArgumentAttribute.cs" />
+    <Compile Include="Effect\EffectCollection.cs" />
     <Compile Include="Effect\EffectException.cs" />
     <Compile Include="Effect\EffectLoader.cs" />
-    <Compile Include="Effect\Mesh.cs" />
-    <Compile Include="Effect\EnterFrameEventArgs.cs" />
-    <Compile Include="Effect\EffectCollection.cs" />
     <Compile Include="Effect\EffectObject.cs" />
+    <Compile Include="Effect\EnterFrameEventArgs.cs" />
     <Compile Include="Effect\IAnimationTimeline.cs" />
+    <Compile Include="Effect\IEffectSoundManager.cs" />
     <Compile Include="Effect\IFrameObject.cs" />
+    <Compile Include="Effect\Mesh.cs" />
+    <Compile Include="Effect\Scenario.cs" />
+    <Compile Include="Effect\VisualEffect.cs" />
     <Compile Include="FlintSharp\Activities\Activity.cs" />
     <Compile Include="FlintSharp\Activities\EmitterImage.cs" />
     <Compile Include="FlintSharp\Activities\FollowMouse.cs" />
@@ -213,9 +204,9 @@
     <Compile Include="FlintSharp\Utils\GeneralCollection.cs" />
     <Compile Include="FlintSharp\Utils\IImageData.cs" />
     <Compile Include="FlintSharp\Utils\IImageLoader.cs" />
-    <Compile Include="FlintSharp\Utils\Utils.cs" />
     <Compile Include="FlintSharp\Utils\IObjectBase.cs" />
     <Compile Include="FlintSharp\Utils\Misc.cs" />
+    <Compile Include="FlintSharp\Utils\Utils.cs" />
     <Compile Include="FlintSharp\Zones\BitmapDataZone.cs" />
     <Compile Include="FlintSharp\Zones\DiscSectorZone.cs" />
     <Compile Include="FlintSharp\Zones\DiscZone.cs" />
@@ -229,32 +220,23 @@
     <Compile Include="FlintSharp\Zones\TextZone.cs" />
     <Compile Include="FlintSharp\Zones\Zone.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Effect\Scenario.cs" />
-    <Compile Include="Effect\IEffectSoundManager.cs" />
     <Compile Include="Xaml\DefaultMeshExtension.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="FlintSharp\Particle.png" />
+    <Content Include="FlintSharp\Particle.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Ragnarok.Sound\Ragnarok.Sound.csproj">
+      <Project>{6739cd1b-4766-466d-8eed-9a5feb4c2dec}</Project>
+      <Name>Ragnarok.Sound</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Ragnarok\Ragnarok.csproj">
+      <Project>{58e7ea68-4850-452c-b15c-cd376fc60198}</Project>
+      <Name>Ragnarok</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="Ragnarok.Extra.snk" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Ragnarok.Sound\Ragnarok.Sound.csproj">
-      <Project>{9ee1fb51-85ba-496c-b8a6-4c885168b19a}</Project>
-      <Name>Ragnarok.Sound</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Ragnarok\Ragnarok.csproj">
-      <Project>{A348968A-DD91-47B4-9420-C7D370A2BE92}</Project>
-      <Name>Ragnarok</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

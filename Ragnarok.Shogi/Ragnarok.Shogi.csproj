@@ -1,19 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{38ABBDA5-B22F-41B7-A415-2A909D0A6A35}</ProjectGuid>
+    <ProjectGuid>{5C0D7C9B-F2D5-4A08-8856-AF7E2F2F7CFE}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Ragnarok.Shogi</RootNamespace>
     <AssemblyName>Ragnarok.Shogi</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile>
-    </TargetFrameworkProfile>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -23,19 +21,17 @@
     <DefineConstants>TRACE;DEBUG;TESTS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE;TESTS</DefineConstants>
+    <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
+    <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>Ragnarok.Shogi.snk</AssemblyOriginatorKeyFile>
@@ -47,23 +43,19 @@
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Optimize>false</Optimize>
-    <Prefer32Bit>false</Prefer32Bit>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
-    <DefineConstants>TRACE;TESTS</DefineConstants>
+    <DefineConstants>TRACE</DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="nunit.framework, Version=2.6.1.12217, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="nunit.framework">
       <HintPath>..\externals\net\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
@@ -79,102 +71,98 @@
     <Compile Include="Board.mate.cs" />
     <Compile Include="BoardComparer.cs" />
     <Compile Include="BoardExtension.cs" />
-    <Compile Include="Move.cs" />
     <Compile Include="BoardPiece.cs" />
     <Compile Include="BoardType.cs" />
     <Compile Include="BWType.cs" />
-    <EmbeddedResource Include="Csa\Tests\SampleCsa.csa" />
-    <Compile Include="Hand.cs" />
-    <Compile Include="Kif\Tests\SampleKif.cs" />
-    <Compile Include="ScoreUtil.cs" />
-    <Compile Include="Score.cs" />
-    <Compile Include="ShogiParser.cs" />
-    <Compile Include="SquareCollection.cs" />
-    <Compile Include="SquareConverter.cs" />
     <Compile Include="Csa\CsaBoard.cs" />
-    <Compile Include="Csa\CsaException.cs" />
-    <Compile Include="Csa\CsaUtil.cs" />
-    <Compile Include="Csa\CsaExtension.cs" />
     <Compile Include="Csa\CsaBoardParser.cs" />
+    <Compile Include="Csa\CsaException.cs" />
+    <Compile Include="Csa\CsaExtension.cs" />
     <Compile Include="Csa\CsaReader.cs" />
+    <Compile Include="Csa\CsaUtil.cs" />
     <Compile Include="Csa\CsaWriter.cs" />
-    <Compile Include="File\HeaderItem.cs" />
-    <Compile Include="File\Tests\TestUtil.cs" />
     <Compile Include="Csa\Tests\CsaTest.cs" />
-    <Compile Include="KifuHeader.cs" />
-    <Compile Include="Kif\Tests\KifTest.cs" />
-    <Compile Include="Kif\BodBoard.cs" />
-    <Compile Include="Kif\BodParser.cs" />
+    <Compile Include="File\FileFormatException.cs" />
+    <Compile Include="File\HeaderItem.cs" />
     <Compile Include="File\IKifuReader.cs" />
     <Compile Include="File\IKifuWriter.cs" />
-    <Compile Include="File\FileFormatException.cs" />
-    <Compile Include="Kif\Tests\Ki2Test.cs" />
-    <Compile Include="KifuReader.cs" />
-    <Compile Include="Kif\KifReader.cs" />
+    <Compile Include="File\Tests\TestUtil.cs" />
+    <Compile Include="Hand.cs" />
     <Compile Include="HangameSkillLevel.cs" />
+    <Compile Include="KifuHeader.cs" />
     <Compile Include="KifuObject.cs" />
-    <Compile Include="Kif\KifWriter.cs" />
+    <Compile Include="KifuReader.cs" />
+    <Compile Include="KifuWriter.cs" />
+    <Compile Include="Kif\BodBoard.cs" />
+    <Compile Include="Kif\BodParser.cs" />
     <Compile Include="Kif\KifMoveNode.cs" />
-    <Compile Include="Kif\Tests\BodTest.cs" />
+    <Compile Include="Kif\KifReader.cs" />
     <Compile Include="Kif\KifUtil.cs" />
+    <Compile Include="Kif\KifWriter.cs" />
+    <Compile Include="Kif\Tests\BodTest.cs" />
+    <Compile Include="Kif\Tests\Ki2Test.cs" />
+    <Compile Include="Kif\Tests\KifTest.cs" />
+    <Compile Include="Kif\Tests\SampleKif.cs" />
     <Compile Include="LiteralMove.cs" />
+    <Compile Include="Move.cs" />
     <Compile Include="MoveNode.cs" />
     <Compile Include="MovePointPair.cs" />
     <Compile Include="MoveStatistics.cs" />
     <Compile Include="Piece.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="PlayerPool.cs" />
-    <Compile Include="Sfen\SfenException.cs" />
-    <Compile Include="Sfen\SfenUtil.cs" />
-    <Compile Include="Sfen\SfenBoard.cs" />
-    <Compile Include="Sfen\Tests\SfenTest.cs" />
-    <Compile Include="SpecialMoveType.cs" />
-    <Compile Include="Square.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Sfen\SfenExtension.cs" />
-    <Compile Include="ShogiException.cs" />
     <Compile Include="SampleMove.cs" />
+    <Compile Include="Score.cs" />
+    <Compile Include="ScoreUtil.cs" />
+    <Compile Include="Sfen\SfenBoard.cs" />
+    <Compile Include="Sfen\SfenException.cs" />
+    <Compile Include="Sfen\SfenExtension.cs" />
+    <Compile Include="Sfen\SfenUtil.cs" />
+    <Compile Include="Sfen\Tests\SfenTest.cs" />
+    <Compile Include="ShogiException.cs" />
+    <Compile Include="ShogiParser.cs" />
     <Compile Include="ShogiParserEx.cs" />
     <Compile Include="SkillLevel.cs" />
+    <Compile Include="SpecialMoveType.cs" />
+    <Compile Include="Square.cs" />
+    <Compile Include="SquareCollection.cs" />
+    <Compile Include="SquareCollectionConverter.cs" />
+    <Compile Include="SquareConverter.cs" />
     <Compile Include="Stringizer.cs" />
-    <Compile Include="Tests\CheckMatedTest.cs" />
+    <Compile Include="Tests\BoardMoveTest.cs" />
     <Compile Include="Tests\BoardTest.cs" />
+    <Compile Include="Tests\CheckMatedTest.cs" />
     <Compile Include="Tests\ConvertMoveTest.cs" />
-    <Compile Include="Tests\PawnDropCheckMateTest.cs" />
+    <Compile Include="Tests\MoveStatisticsTest.cs" />
     <Compile Include="Tests\MoveTest.cs" />
+    <Compile Include="Tests\PawnDropCheckMateTest.cs" />
     <Compile Include="Tests\ScoreTest.cs" />
     <Compile Include="Tests\ShogiParserExTest.cs" />
-    <Compile Include="KifuWriter.cs" />
-    <Compile Include="Tests\MoveStatisticsTest.cs" />
-    <Compile Include="Tests\BoardMoveTest.cs" />
-    <Compile Include="SquareCollectionConverter.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Csa\Tests\SampleCsa.csa" />
+    <None Include="default.build" />
+    <None Include="GenFiles\kifu.kif" />
+    <None Include="GenFiles\make_evals.bat" />
+    <None Include="GenFiles\make_evals.rb" />
     <EmbeddedResource Include="Kif\Tests\Sample\Ki2_Error.ki2" />
+    <EmbeddedResource Include="Kif\Tests\Sample\Ki2_Illegal.KI2" />
     <EmbeddedResource Include="Kif\Tests\Sample\Ki2_Test1.KI2" />
     <EmbeddedResource Include="Kif\Tests\Sample\Ki2_Test2.KI2" />
     <EmbeddedResource Include="Kif\Tests\Sample\Ki2_Test3.KI2" />
     <EmbeddedResource Include="Kif\Tests\Sample\Kif_Comment.kif" />
     <EmbeddedResource Include="Kif\Tests\Sample\Kif_PV.kif" />
-    <EmbeddedResource Include="Kif\Tests\Sample\Kif_Variation.kif" />
-    <EmbeddedResource Include="Kif\Tests\Sample\Ki2_Illegal.KI2" />
-    <EmbeddedResource Include="Kif\Tests\Sample\Kif_VariationMiss.kif" />
     <EmbeddedResource Include="Kif\Tests\Sample\Kif_PV2.kif" />
+    <EmbeddedResource Include="Kif\Tests\Sample\Kif_Variation.kif" />
+    <EmbeddedResource Include="Kif\Tests\Sample\Kif_VariationMiss.kif" />
     <None Include="Ragnarok.Shogi.snk" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Ragnarok\Ragnarok.csproj">
-      <Project>{A348968A-DD91-47B4-9420-C7D370A2BE92}</Project>
+      <Project>{58e7ea68-4850-452c-b15c-cd376fc60198}</Project>
       <Name>Ragnarok</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

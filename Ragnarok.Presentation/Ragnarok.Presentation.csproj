@@ -1,30 +1,26 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{2E5515A8-7B34-44A2-9C50-F423C5F87798}</ProjectGuid>
+    <ProjectGuid>{387C9CD5-CA86-4031-A46B-91B889BE87E8}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Ragnarok.Presentation</RootNamespace>
     <AssemblyName>Ragnarok.Presentation</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile>
-    </TargetFrameworkProfile>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;TESTS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>Ragnarok.Presentation.xml</DocumentationFile>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -33,11 +29,9 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>Ragnarok.Presentation.xml</DocumentationFile>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
+    <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>Ragnarok.Presentation.snk</AssemblyOriginatorKeyFile>
@@ -45,118 +39,101 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\x86\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;CLR4_0;CLR_GE_2_0;CLR_GE_3_0;CLR_GE_3_5;CLR_GE_4_0;TESTS</DefineConstants>
-    <DocumentationFile>Ragnarok.Presentation.xml</DocumentationFile>
+    <DefineConstants>TRACE;DEBUG;TESTS</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
-    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
-    <WarningLevel>4</WarningLevel>
-    <Optimize>false</Optimize>
-    <Prefer32Bit>false</Prefer32Bit>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
-    <DefineConstants>TRACE;CLR4_0;CLR_GE_2_0;CLR_GE_3_0;CLR_GE_3_5;CLR_GE_4_0</DefineConstants>
-    <DocumentationFile>Ragnarok.Presentation.xml</DocumentationFile>
+    <DefineConstants>TRACE</DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
-    <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\externals\net\System.Windows.Interactivity.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xaml" />
-    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
     <Reference Include="UIAutomationProvider" />
     <Reference Include="UIAutomationTypes" />
     <Reference Include="WindowsBase" />
-    <Reference Include="System.Windows.Interactivity">
-      <HintPath>..\externals\net\System.Windows.Interactivity.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Command\RelayCommand.cs" />
+    <Compile Include="Control\BindOnEnterTextBox.cs" />
     <Compile Include="Control\ColorButton.cs" />
-    <Compile Include="Control\CustomAdorner.cs" />
-    <Compile Include="Control\EvaluationControl.cs" />
-    <Compile Include="Control\EvaluationSettingDialog.xaml.cs">
-      <DependentUpon>EvaluationSettingDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Control\TimeSpanView.cs" />
-    <Compile Include="Control\TimeSpanEditControl.cs" />
-    <Compile Include="Control\DecoratedTextBase.cs" />
-    <Compile Include="Control\TimeSpanWindow.xaml.cs">
-      <DependentUpon>TimeSpanWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Converter\SignEmphasizeConverter.cs" />
-    <Compile Include="Control\MessageStatusBar.cs" />
-    <Compile Include="Control\VersionWindow.xaml.cs">
-      <DependentUpon>VersionWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Converter\ValueCompareToBooleanConverter.cs" />
-    <Compile Include="Converter\FontFamilyConverter.cs" />
-    <Compile Include="Converter\ValueToDecimalConverter.cs" />
-    <Compile Include="Effect\GrayscaleEffect.cs" />
     <Compile Include="Control\ColorDialog.xaml.cs">
       <DependentUpon>ColorDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Control\BindOnEnterTextBox.cs" />
     <Compile Include="Control\ColorPicker\ColorPicker.cs" />
     <Compile Include="Control\ColorPicker\ColorSlider.cs" />
     <Compile Include="Control\ColorPicker\ColorUtils.cs" />
     <Compile Include="Control\ColorPicker\HsvControl.cs" />
     <Compile Include="Control\ColorPicker\SpectrumSlider.cs" />
-    <Compile Include="Command\RelayCommand.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Utility\BindingProxy.cs" />
-    <Compile Include="Utility\ControlUtil.cs" />
+    <Compile Include="Control\CustomAdorner.cs" />
     <Compile Include="Control\DecoratedText.cs" />
+    <Compile Include="Control\DecoratedTextBase.cs" />
+    <Compile Include="Control\EvaluationControl.cs" />
+    <Compile Include="Control\EvaluationSettingDialog.xaml.cs">
+      <DependentUpon>EvaluationSettingDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Control\GenericDialog.cs" />
+    <Compile Include="Control\MessageStatusBar.cs" />
+    <Compile Include="Control\MovableWindow.cs" />
     <Compile Include="Control\NumericUpDown.cs" />
     <Compile Include="Control\ProgressDialog.xaml.cs">
       <DependentUpon>ProgressDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Control\TimeSpanEditControl.cs" />
+    <Compile Include="Control\TimeSpanView.cs" />
+    <Compile Include="Control\TimeSpanWindow.xaml.cs">
+      <DependentUpon>TimeSpanWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Control\VersionWindow.xaml.cs">
+      <DependentUpon>VersionWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Control\WatermarkTextBox.cs" />
-    <Compile Include="Control\WindowOperation\WindowOperationBase.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Control\MovableWindow.cs" />
-    <Compile Include="Control\WindowOperation\WindowMover.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Control\WindowOperation\WindowScaler.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Control\GenericDialog.cs" />
+    <Compile Include="Control\WindowOperation\WindowMover.cs" />
+    <Compile Include="Control\WindowOperation\WindowOperationBase.cs" />
+    <Compile Include="Control\WindowOperation\WindowScaler.cs" />
+    <Compile Include="Converter\BooleanToVisibilityConverter.cs" />
     <Compile Include="Converter\ColorAlphaConverter.cs" />
     <Compile Include="Converter\ColorToSolidColorBrushConverter.cs" />
+    <Compile Include="Converter\EnumToBooleanConverter.cs" />
+    <Compile Include="Converter\FontFamilyConverter.cs" />
     <Compile Include="Converter\ImageConverter.cs" />
     <Compile Include="Converter\IntToFullWidthStringConverter.cs" />
     <Compile Include="Converter\MultiValueConverter.cs" />
-    <Compile Include="Converter\EnumToBooleanConverter.cs" />
     <Compile Include="Converter\ReverseConverter.cs" />
+    <Compile Include="Converter\SignEmphasizeConverter.cs" />
+    <Compile Include="Converter\ValueCompareToBooleanConverter.cs" />
+    <Compile Include="Converter\ValueToDecimalConverter.cs" />
     <Compile Include="Converter\ValueToIntConverter.cs" />
-    <Compile Include="Converter\BooleanToVisibilityConverter.cs" />
-    <Compile Include="Debug\ReportDialogModel.cs" />
     <Compile Include="Debug\ReportDialog.xaml.cs">
       <DependentUpon>ReportDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="RagnarokCommands.cs" />
+    <Compile Include="Debug\ReportDialogModel.cs" />
     <Compile Include="DialogUtil.cs" />
+    <Compile Include="Effect\GrayscaleEffect.cs" />
     <Compile Include="Extension\FontFamilyListExtension.cs" />
+    <Compile Include="Extension\MultiStyleExtension.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RagnarokCommands.cs" />
     <Compile Include="Update\DownloadProgressWindow.xaml.cs">
       <DependentUpon>DownloadProgressWindow.xaml</DependentUpon>
     </Compile>
@@ -164,26 +141,21 @@
     <Compile Include="Update\UpdateWindow.xaml.cs">
       <DependentUpon>UpdateWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Utility\BindingProxy.cs" />
+    <Compile Include="Utility\ContextMenuUtil.cs" />
+    <Compile Include="Utility\ControlUtil.cs" />
     <Compile Include="Utility\DataGridUtil.cs" />
     <Compile Include="Utility\FrameTimer.cs" />
     <Compile Include="Utility\HolderObject.cs" />
     <Compile Include="Utility\ImageUtil.cs" />
-    <Compile Include="Extension\MultiStyleExtension.cs" />
-    <Compile Include="Utility\PseudoKeyboard.cs" />
     <Compile Include="Utility\KeyHook.cs" />
     <Compile Include="Utility\ListBoxUtil.cs" />
-    <Compile Include="Utility\WebBrowserUtil.cs" />
-    <Compile Include="Utility\TextBoxUtil.cs" />
-    <Compile Include="Utility\ContextMenuUtil.cs" />
     <Compile Include="Utility\PasswordBoxUtil.cs" />
-    <Compile Include="WPFSettingsBase.cs" />
-    <Compile Include="WPFUtil.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Ragnarok\Ragnarok.csproj">
-      <Project>{A348968A-DD91-47B4-9420-C7D370A2BE92}</Project>
-      <Name>Ragnarok</Name>
-    </ProjectReference>
+    <Compile Include="Utility\PseudoKeyboard.cs" />
+    <Compile Include="Utility\TextBoxUtil.cs" />
+    <Compile Include="Utility\WebBrowserUtil.cs" />
+    <Compile Include="WpfSettingsBase.cs" />
+    <Compile Include="WpfUtil.cs" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="Control\ColorButton.xaml">
@@ -191,8 +163,8 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Control\ColorDialog.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Control\ColorPicker\ColorPicker.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -210,6 +182,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Control\Generic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Control\GenericDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Control\InfoView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -222,15 +202,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Control\GenericDialog.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Control\ProgressDialog.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
-    <Page Include="Control\Generic.xaml">
+    <Page Include="Control\TimeSpanEditControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -250,56 +226,47 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Control\TimeSpanEditControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Debug\ReportDialog.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Themes\Common.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Themes\Generic.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Update\DownloadProgressWindow.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Update\UpdateWindow.xaml">
       <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Update\UpdateCommon.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Update\UpdateWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Effect\GrayscaleEffect.fx" />
-    <Resource Include="Effect\GrayscaleEffect.ps" />
+    <None Include="Effect\compile.bat" />
+    <None Include="Effect\GrayscaleEffect.ps" />
     <None Include="Ragnarok.Presentation.snk" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\report_dialog.jpg" />
+    <Content Include="Effect\GrayscaleEffect.fx" />
+    <Content Include="Resources\icon.ico" />
+    <Content Include="Resources\report_dialog.jpg" />
+    <Content Include="Resources\software_update_available.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\software_update_available.png" />
-  </ItemGroup>
-  <ItemGroup />
-  <ItemGroup>
-    <Resource Include="Resources\icon.ico" />
+    <ProjectReference Include="..\Ragnarok\Ragnarok.csproj">
+      <Project>{58e7ea68-4850-452c-b15c-cd376fc60198}</Project>
+      <Name>Ragnarok</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

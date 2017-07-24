@@ -1,19 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{A348968A-DD91-47B4-9420-C7D370A2BE92}</ProjectGuid>
+    <ProjectGuid>{58E7EA68-4850-452C-B15C-CD376FC60198}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Ragnarok</RootNamespace>
     <AssemblyName>Ragnarok</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile>
-    </TargetFrameworkProfile>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -22,9 +20,7 @@
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>TRACE;DEBUG;CLR4_0;CLR_GE_2_0;CLR_GE_3_0;CLR_GE_3_5;CLR_GE_4_0;TESTS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>3</WarningLevel>
-    <DocumentationFile>Ragnarok.xml</DocumentationFile>
-    <Prefer32Bit>false</Prefer32Bit>
+    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -32,106 +28,55 @@
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE;CLR4_0;CLR_GE_2_0;CLR_GE_3_0;CLR_GE_3_5;CLR_GE_4_0;TESTS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>3</WarningLevel>
-    <DocumentationFile>Ragnarok.xml</DocumentationFile>
-    <Prefer32Bit>false</Prefer32Bit>
+    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
+    <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>Ragnarok.snk</AssemblyOriginatorKeyFile>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x64\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;CLR_V4;TESTS</DefineConstants>
-    <DocumentationFile>Ragnarok.xml</DocumentationFile>
-    <WarningLevel>3</WarningLevel>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
-    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
-    <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
-    <Optimize>false</Optimize>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>bin\x64\Release\</OutputPath>
-    <DefineConstants>TRACE;CLR_V4;TESTS</DefineConstants>
-    <DocumentationFile>Ragnarok.xml</DocumentationFile>
-    <Optimize>true</Optimize>
-    <WarningLevel>3</WarningLevel>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
-    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\x86\Debug\</OutputPath>
     <DefineConstants>TRACE;DEBUG;CLR4_0;CLR_GE_2_0;CLR_GE_3_0;CLR_GE_3_5;CLR_GE_4_0;TESTS</DefineConstants>
-    <DocumentationFile>Ragnarok.xml</DocumentationFile>
-    <WarningLevel>3</WarningLevel>
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
-    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
-    <Optimize>false</Optimize>
-    <Prefer32Bit>false</Prefer32Bit>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
     <DefineConstants>TRACE;CLR4_0;CLR_GE_2_0;CLR_GE_3_0;CLR_GE_3_5;CLR_GE_4_0;TESTS</DefineConstants>
-    <DocumentationFile>Ragnarok.xml</DocumentationFile>
     <Optimize>true</Optimize>
-    <WarningLevel>3</WarningLevel>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
-    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
-    <Prefer32Bit>false</Prefer32Bit>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.Diagnostics.Runtime, Version=0.8.31.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Diagnostics.Runtime.0.8.31-beta\lib\net40\Microsoft.Diagnostics.Runtime.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Microsoft.Diagnostics.Runtime, Version=0.8.31.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Diagnostics.Runtime.0.9.170626.01\lib\net40\Microsoft.Diagnostics.Runtime.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <HintPath>..\packages\NLog.4.4.11\lib\net45\NLog.dll</HintPath>
-      <Private>True</Private>
     </Reference>
-    <Reference Include="nunit.framework, Version=2.6.4.14350, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="nunit.framework">
       <HintPath>..\externals\net\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
-    <Reference Include="System.IO.Compression" />
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Security" />
-    <Reference Include="System.ServiceModel" />
-    <Reference Include="System.Transactions" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Xaml" />
-    <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Utility\LabelAttribute.cs" />
-    <Compile Include="Utility\PdbUtility.cs" />
-    <Compile Include="Utility\DebugLock.cs" />
     <Compile Include="EnumEx.cs" />
     <Compile Include="Extension.cs" />
     <Compile Include="ILogObject.cs" />
@@ -148,47 +93,52 @@
     <Compile Include="NLog\RemoteSyslog.cs" />
     <Compile Include="NLog\RepeatedException.cs" />
     <Compile Include="NLog\Syslog.cs" />
+    <Compile Include="ObjectModel\AffectOtherPropertyAttribute.cs" />
+    <Compile Include="ObjectModel\DependOnPropertyAttribute.cs" />
+    <Compile Include="ObjectModel\DynamicDictionary.cs" />
+    <Compile Include="ObjectModel\DynamicViewModel.cs" />
     <Compile Include="ObjectModel\DynamicViewModel.Extensions.cs" />
     <Compile Include="ObjectModel\DynamicViewModel.NotifyObject.cs" />
-    <Compile Include="ObjectModel\LazyModelObject.cs" />
-    <Compile Include="ObjectModel\LazyModelLock.cs" />
-    <Compile Include="ObjectModel\DependOnPropertyAttribute.cs" />
-    <Compile Include="ObjectModel\DynamicViewModel.cs" />
     <Compile Include="ObjectModel\IModel.cs" />
+    <Compile Include="ObjectModel\LazyModelLock.cs" />
+    <Compile Include="ObjectModel\LazyModelObject.cs" />
     <Compile Include="ObjectModel\ModelExtensions.cs" />
-    <Compile Include="ObjectModel\Tests\ViewModelTest.cs" />
-    <Compile Include="ObjectModel\Tests\NotifyObjectTest.cs" />
-    <Compile Include="ObjectModel\Tests\DependModelTest.cs" />
-    <Compile Include="ObjectModel\Tests\PropertyChangedCounter.cs" />
-    <Compile Include="ObjectModel\TypeProperty.cs" />
-    <Compile Include="ObjectModel\NotifyObject.cs" />
     <Compile Include="ObjectModel\NotifyCollection.cs" />
-    <Compile Include="ObjectModel\DynamicDictionary.cs" />
+    <Compile Include="ObjectModel\NotifyObject.cs" />
+    <Compile Include="ObjectModel\Tests\DependModelTest.cs" />
+    <Compile Include="ObjectModel\Tests\NotifyObjectTest.cs" />
+    <Compile Include="ObjectModel\Tests\PropertyChangedCounter.cs" />
+    <Compile Include="ObjectModel\Tests\ViewModelTest.cs" />
+    <Compile Include="ObjectModel\TypeProperty.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RagnarokException.cs" />
     <Compile Include="Tests\EnumExTest.cs" />
+    <Compile Include="Tests\UtilTest.cs" />
     <Compile Include="Update\AppCastItem.cs" />
+    <Compile Include="Update\AppCastItemUtil.cs" />
+    <Compile Include="Update\Configuration.cs" />
     <Compile Include="Update\Downloader.cs" />
+    <Compile Include="Update\MD5Verificator.cs" />
+    <Compile Include="Update\RagnarokUpdateException.cs" />
     <Compile Include="Update\UpdateEventArgs.cs" />
     <Compile Include="Update\Updater.cs" />
-    <Compile Include="Utility\AssemblyUtility\IAssemblyAccessor.cs" />
-    <Compile Include="Update\AppCastItemUtil.cs" />
-    <Compile Include="Utility\AssemblyUtility\AssemblyDiagnosticsAccessor.cs" />
-    <Compile Include="Utility\AssemblyUtility\AssemblyReflectionAccessor.cs" />
-    <Compile Include="Update\Configuration.cs" />
+    <Compile Include="Util.cs" />
+    <Compile Include="Utility\ActionOnDispose.cs" />
+    <Compile Include="Utility\AppSettingsBase.cs" />
     <Compile Include="Utility\AssemblyUtility\AssemblyAccessor.cs" />
+    <Compile Include="Utility\AssemblyUtility\AssemblyDiagnosticsAccessor.cs" />
     <Compile Include="Utility\AssemblyUtility\AssemblyNullAccessor.cs" />
+    <Compile Include="Utility\AssemblyUtility\AssemblyReflectionAccessor.cs" />
+    <Compile Include="Utility\AssemblyUtility\IAssemblyAccessor.cs" />
+    <Compile Include="Utility\BinarySplitReader.cs" />
     <Compile Include="Utility\CacheManager.cs" />
     <Compile Include="Utility\Color4b.cs" />
+    <Compile Include="Utility\Color4bConverter.cs" />
     <Compile Include="Utility\Color4bs.cs" />
     <Compile Include="Utility\ComObject.cs" />
     <Compile Include="Utility\DataSegment.cs" />
+    <Compile Include="Utility\DebugLock.cs" />
     <Compile Include="Utility\DeviceInventory.cs" />
-    <Compile Include="Update\MD5Verificator.cs" />
-    <Compile Include="Update\RagnarokUpdateException.cs" />
-    <Compile Include="Util.cs" />
-    <Compile Include="Utility\ActionOnDispose.cs" />
-    <Compile Include="Utility\BinarySplitReader.cs" />
     <Compile Include="Utility\DurationConverter.cs" />
     <Compile Include="Utility\EnumWrapper.cs" />
     <Compile Include="Utility\EvaluationClient.cs" />
@@ -197,6 +147,7 @@
     <Compile Include="Utility\InfoBase.cs" />
     <Compile Include="Utility\IntConverter.cs" />
     <Compile Include="Utility\JsonUtil.cs" />
+    <Compile Include="Utility\LabelAttribute.cs" />
     <Compile Include="Utility\LabelDescriptionAttribute.cs" />
     <Compile Include="Utility\LimitedConcurrencyLevelTaskScheduler.cs" />
     <Compile Include="Utility\Matrix44d.cs" />
@@ -204,62 +155,46 @@
     <Compile Include="Utility\MethodUtil.cs" />
     <Compile Include="Utility\MultiMap.cs" />
     <Compile Include="Utility\PassingTmpFile.cs" />
+    <Compile Include="Utility\PdbUtility.cs" />
     <Compile Include="Utility\Point3d.cs" />
-    <Compile Include="Utility\Color4bConverter.cs" />
+    <Compile Include="Utility\Point3dConverter.cs" />
+    <Compile Include="Utility\Pointd.cs" />
+    <Compile Include="Utility\PointdConverter.cs" />
     <Compile Include="Utility\ReentrantLock.cs" />
     <Compile Include="Utility\Scanner.cs" />
-    <Compile Include="Utility\AppSettingsBase.cs" />
     <Compile Include="Utility\Signal.cs" />
-    <Compile Include="Utility\Point3dConverter.cs" />
     <Compile Include="Utility\StackTraceUtil.cs" />
     <Compile Include="Utility\StringConverter.cs" />
     <Compile Include="Utility\StringNormalizer.cs" />
     <Compile Include="Utility\StringUtility.cs" />
-    <Compile Include="Utility\Tests\Color4bTest.cs" />
-    <Compile Include="Utility\Tests\PdbUtilityTest.cs" />
-    <Compile Include="Utility\Tests\Matrix44dTest.cs" />
     <Compile Include="Utility\Tests\CacheManagerTest.cs" />
-    <Compile Include="Utility\Tests\PointdTest.cs" />
+    <Compile Include="Utility\Tests\Color4bTest.cs" />
+    <Compile Include="Utility\Tests\Matrix44dTest.cs" />
+    <Compile Include="Utility\Tests\PdbUtilityTest.cs" />
     <Compile Include="Utility\Tests\Point3dTest.cs" />
+    <Compile Include="Utility\Tests\PointdTest.cs" />
     <Compile Include="Utility\Tests\ScannerTest.cs" />
+    <Compile Include="Utility\Tests\StringNormalizerTest.cs" />
     <Compile Include="Utility\Tests\StringUtilityTest.cs" />
     <Compile Include="Utility\Tests\TypeSerializerTest.cs" />
-    <Compile Include="Utility\Tests\StringNormalizerTest.cs" />
-    <Compile Include="Tests\UtilTest.cs" />
     <Compile Include="Utility\TimeUtil.cs" />
     <Compile Include="Utility\TypeSerializer.cs" />
     <Compile Include="Utility\Unlock.cs" />
     <Compile Include="Utility\WeakEventHandler.basic.cs" />
     <Compile Include="Utility\WeakEventHandler.cs" />
-    <Compile Include="Utility\Pointd.cs" />
-    <Compile Include="Utility\PointdConverter.cs" />
     <Compile Include="Xaml\EnumListExtension.cs" />
     <Compile Include="Xaml\FileListExtension.cs" />
     <Compile Include="Xaml\ImageSetListExtension.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="NLog.config">
-      <SubType>Designer</SubType>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Resource Include="NLog\NLog.config" />
+    <None Include="default.build" />
+    <None Include="NLog.config" />
     <None Include="NLog.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="NLog\NLog.config" />
     <None Include="packages.config" />
     <None Include="Ragnarok.snk" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PreBuildEvent>
-    </PreBuildEvent>
-  </PropertyGroup>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

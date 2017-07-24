@@ -28,8 +28,7 @@ namespace Ragnarok.Utility
                 using (var dataTarget = DataTarget.AttachToProcess(pid, 5000, AttachFlag.Passive))
                 {
                     var clrInfo = dataTarget.ClrVersions[0];
-                    var dacFile = clrInfo.TryGetDacLocation();
-                    var runtime = clrInfo.CreateRuntime(dacFile);
+                    var runtime = clrInfo.CreateRuntime();
 
                     var list = new List<string>();
 
