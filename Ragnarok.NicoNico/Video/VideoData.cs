@@ -429,43 +429,46 @@ namespace Ragnarok.NicoNico.Video
         }
 
         private static readonly Regex IdRegex = new Regex(
-            @"&quot;videoId&quot;:&quot;((sm|so)([0-9]+))&quot;,",
+            @"&quot;id&quot;:&quot;((sm|so)([0-9]+))&quot;,",
             RegexOptions.IgnoreCase);
         private static readonly Regex ThreadIdRegex = new Regex(
-            @"&quot;v&quot;:&quot;([0-9]+)&quot;,",
+            @"&quot;watchId&quot;:&quot;([0-9]+)&quot;,",
             RegexOptions.IgnoreCase);
         private static readonly Regex TitleRegex = new Regex(
-            @"<h2><span class=""videoHeaderTitle"" style=""font-size:[\d\.]+px"">(.*?)</span></h2>",
+            @"&quot;title&quot;:&quot;(.*?)&quot;,&quot",
             RegexOptions.IgnoreCase);
         private static readonly Regex DescriptionRegex = new Regex(
-            @"<p class=""videoDescription description"">(.*?)</p>",
+            @"&quot;description&quot;:&quot;(.*?)&quot;,&quot",
             RegexOptions.IgnoreCase);
         private static readonly Regex ThumbnailRegex = new Regex(
-           @"&quot;thumbnail&quot;:&quot;(.*?)&quot;,",
-           RegexOptions.IgnoreCase);
+            @"&quot;thumbnailURL&quot;:&quot;(.*?)&quot;",
+            RegexOptions.IgnoreCase);
         private static readonly Regex StartTimeRegex = new Regex(
-            @"&quot;postedAt&quot;:&quot;(.*?)&quot;,",
+            @"&quot;postedDateTime&quot;:&quot;(.*?)&quot;",
             RegexOptions.IgnoreCase);
         private static readonly Regex LengthRegex = new Regex(
-            @"&quot;length&quot;:([0-9]+?),",
+            @"&quot;duration&quot;:([0-9]+?),",
             RegexOptions.IgnoreCase);
         private static readonly Regex ViewCountRegex = new Regex(
-            @"<li class=""videoStatsView"">再生:<span class=""viewCount"">\s*([\d,]+)\s*</span></li>",
+            @"&quot;viewCount&quot;:([\d]+),",
             RegexOptions.IgnoreCase);
         private static readonly Regex CommentCountRegex = new Regex(
-            @"<li class=""videoStatsComment"">コメント:<span class=""commentCount"">\s*([\d,]+)\s*</span></li>",
+            @"&quot;commentCount&quot;:([\d]+),",
             RegexOptions.IgnoreCase);
         private static readonly Regex MylistCountRegex = new Regex(
-            @"<li class=""videoStatsMylist"">マイリスト:<span class=""mylistCount"">\s*([\d,]+)\s*</span></li>",
+            @"&quot;mylistCounter&quot;:&quot;([\d]+)&quot;",
             RegexOptions.IgnoreCase);
-        private static readonly Regex TagRegex = new Regex(
-            @"<a href=""/tag/[\w%#\$&\?\(\)~\.=\+\-]+"" data-playerscreenmode-change=""(\d)+"" class=""videoHeaderTagLink"">(.+?)</a>",
+        private static readonly Regex TagsRegex = new Regex(
+            @"&quot;tags&quot;:\[(.+?)\],",
+            RegexOptions.IgnoreCase);
+        private static readonly Regex TagNameRegex = new Regex(
+            @"&quot;name&quot;:&quot;(.+?)&quot;",
             RegexOptions.IgnoreCase);
         private static readonly Regex IsPublicRegex = new Regex(
-            @"&quot;is_public&quot;:(.+?),",
+            @"&quot;isPublic&quot;:(.+?),",
             RegexOptions.IgnoreCase);
-        private static readonly Regex ThreadPublicRegex = new Regex(
-            @"&quot;threadPublic&quot;:&quot;([0-9]+)&quot;,",
+        private static readonly Regex MemberOnlyRegex = new Regex(
+            @"&quot;isAuthenticationRequired&quot;:(\w+),",
             RegexOptions.IgnoreCase);
 
         /// <summary>
@@ -509,7 +512,8 @@ namespace Ragnarok.NicoNico.Video
                     "動画タイトルを取得できませんでした。",
                     video.IdString);
             }
-            video.Title = m.Groups[1].Value;
+            video.Title = WebUtil.DecodeHtmlText(
+                Regex.Unescape(m.Groups[1].Value));
 
             // 動画詳細
             m = DescriptionRegex.Match(pageStr);
@@ -519,7 +523,8 @@ namespace Ragnarok.NicoNico.Video
                     "動画概要を取得できませんでした。",
                     video.IdString);
             }
-            video.Description = m.Groups[1].Value;
+            video.Description = WebUtil.DecodeHtmlText(
+                Regex.Unescape(m.Groups[1].Value));
 
             // サムネイルURL
             m = ThumbnailRegex.Match(pageStr);
@@ -590,10 +595,20 @@ namespace Ragnarok.NicoNico.Video
                 NumberStyles.AllowThousands);
 
             // タグを収集します。
-            var mc = TagRegex.Matches(pageStr);
-            video.TagList = mc.OfType<Match>()
+            m = TagsRegex.Match(pageStr);
+            if (!m.Success)
+            {
+                throw new NicoVideoException(
+                    "動画タグの取得に失敗しました。",
+                    video.IdString);
+            }
+
+            video.TagList = m.Groups[1].Value.Split(
+                new string[] { "},{" },
+                StringSplitOptions.RemoveEmptyEntries)
+                .Select(_ => TagNameRegex.Match(_))
                 .Where(_ => _.Success)
-                .Select(_ => _.Groups[2].Value)
+                .Select(_ => Regex.Unescape(_.Groups[1].Value))
                 .ToList();
 
             // 表示・非表示
@@ -607,9 +622,9 @@ namespace Ragnarok.NicoNico.Video
             video.IsVisible = (m.Groups[1].Value == "true"); 
 
             // メンバー限定 (チャンネル動画限定)
-            m = ThreadPublicRegex.Match(pageStr);
+            m = MemberOnlyRegex.Match(pageStr);
             video.IsMemberOnly = (m.Success ?
-                int.Parse(m.Groups[1].Value) != 1 :
+                m.Groups[1].Value == "true" :
                 false);
 
             return video;
