@@ -421,7 +421,6 @@ namespace Ragnarok.Presentation.Control
         }
 
         private ReentrancyLock imageLock = new ReentrancyLock();
-        private EvaluationClient client;
 
         /// <summary>
         /// 画像セットリストを更新します。
@@ -524,31 +523,6 @@ namespace Ragnarok.Presentation.Control
         }
 
         /// <summary>
-        /// 評価値サーバーへの接続を行います。
-        /// </summary>
-        public void Connect()
-        {
-            if (PointType != EvaluationPointType.Server)
-            {
-                this.client.Disconnect();
-                return;
-            }
-
-            this.client.Connect(
-                ServerAddress, ServerPort);
-        }
-
-        void client_CommandReceived(object sender, EvaluationEventArgs e)
-        {
-            if (e.Command != EvaluationCommand.Value)
-            {
-                return;
-            }
-
-            WPFUtil.UIProcess(() => ServerPoint = e.Value);
-        }
-
-        /// <summary>
         /// 静的コンストラクタ
         /// </summary>
         static EvaluationControl()
@@ -575,9 +549,6 @@ namespace Ragnarok.Presentation.Control
         public EvaluationControl()
         {
             InitializeBindings(this);
-
-            this.client = new EvaluationClient();
-            this.client.CommandReceived += client_CommandReceived;
         }
     }
 }

@@ -53,7 +53,7 @@ namespace Ragnarok.Presentation.Control
         {
             try
             {
-                this.control.Connect();
+                //this.control.Connect();
 
                 DialogResult = false;
             }

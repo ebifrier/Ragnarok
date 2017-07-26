@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
 
 namespace Ragnarok.Utility
@@ -79,12 +78,8 @@ namespace Ragnarok.Utility
             }
             else
             {
-                var oldUnregister = Interlocked.Exchange(ref this.unregister, null);
-
-                if (oldUnregister != null)
-                {
-                    oldUnregister(this.handler);
-                }
+                Interlocked.Exchange(ref this.unregister, null)
+                    ?.Invoke(this.handler);
             }
         }
     }
