@@ -187,7 +187,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="default.build" />
-    <None Include="NLog.config" />
+    <None Include="NLog.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="NLog.xsd">
       <SubType>Designer</SubType>
     </None>
