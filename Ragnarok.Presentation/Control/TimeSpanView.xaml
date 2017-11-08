@@ -5,7 +5,7 @@
     
     <ControlTemplate x:Key="mainControl">
         <ControlTemplate.Resources>
-            <Style x:Key="baseTextStyle" TargetType="l:DecoratedText">
+            <Style x:Key="textStyle" TargetType="l:DecoratedText">
                 <!--<Setter Property="FontFamily"
                         Value="{Binding FontFamily, RelativeSource={RelativeSource AncestorType=l:TimeSpanView}}" />
                 <Setter Property="FontStyle"
@@ -23,42 +23,18 @@
                 <Setter Property="StrokeThickness"
                         Value="{Binding StrokeThickness, RelativeSource={RelativeSource AncestorType=l:TimeSpanView}}" />
             </Style>
-
-            <Style x:Key="textStyle"
-                   TargetType="l:DecoratedText"
-                   BasedOn="{StaticResource baseTextStyle}">
-                <Setter Property="Width"
-                        Value="{Binding NumberWidth, RelativeSource={RelativeSource AncestorType=l:TimeSpanView}}" />
-            </Style>
         </ControlTemplate.Resources>
         
         <Grid>
             <!-- 通常表示に使います -->
-            <UniformGrid Columns="8" Rows="1"
-                         x:Name="Part_NormalContainer">
+            <Grid x:Name="Part_NormalContainer">
                 <l:DecoratedText Style="{StaticResource textStyle}"
-                                 x:Name="Part_ValueText5" />
-                <l:DecoratedText Style="{StaticResource textStyle}"
-                                 x:Name="Part_ValueText4" />
-                <l:DecoratedText Style="{StaticResource textStyle}"
-                                 x:Name="Part_ColonText0"
-                                 Text=":" />
-                <l:DecoratedText Style="{StaticResource textStyle}"
-                                 x:Name="Part_ValueText3" />
-                <l:DecoratedText Style="{StaticResource textStyle}"
-                                 x:Name="Part_ValueText2" />
-                <l:DecoratedText Style="{StaticResource textStyle}"
-                                 x:Name="Part_ColonText1"
-                                 Text=":" />
-                <l:DecoratedText Style="{StaticResource textStyle}"
-                                 x:Name="Part_ValueText1" />
-                <l:DecoratedText Style="{StaticResource textStyle}"
-                                 x:Name="Part_ValueText0" />
-            </UniformGrid>
+                                 x:Name="Part_ValueText" />
+            </Grid>
             
             <!-- TimeSpanの値がMinValue, MaxValueの時に使います。-->
             <Grid x:Name="Part_SpecialContainer">
-                <l:DecoratedText Style="{StaticResource baseTextStyle}"
+                <l:DecoratedText Style="{StaticResource textStyle}"
                                  HorizontalAlignment="Right"
                                  x:Name="Part_StringText" />
             </Grid>
