@@ -207,6 +207,10 @@ namespace Ragnarok.Shogi
         private static readonly Dictionary<string, SpecialMoveType> SpecialMoveTable =
             new Dictionary<string, SpecialMoveType>()
         {
+            {"中断", SpecialMoveType.Interrupt},
+            {"ちゅうだん", SpecialMoveType.Interrupt},
+            {"INTERRPUT", SpecialMoveType.Interrupt},
+
             {"投了", SpecialMoveType.Resign},
             {"統領", SpecialMoveType.Resign},
             {"等量", SpecialMoveType.Resign},
@@ -220,15 +224,6 @@ namespace Ragnarok.Shogi
             {"TORYO", SpecialMoveType.Resign},
             {"RESIGN", SpecialMoveType.Resign},
 
-            {"時間切れ", SpecialMoveType.TimeUp},
-            {"時間ぎれ", SpecialMoveType.TimeUp},
-            {"時間きれ", SpecialMoveType.TimeUp},
-            {"時間切", SpecialMoveType.TimeUp},
-            {"じかんぎれ", SpecialMoveType.TimeUp},
-            {"じかんきれ", SpecialMoveType.TimeUp},
-            {"TIMEUP", SpecialMoveType.TimeUp},
-            {"TIME_UP", SpecialMoveType.TimeUp},
-
             {"持将棋", SpecialMoveType.Jishogi},
             {"じしょうぎ", SpecialMoveType.Jishogi},
             {"JISHOGI", SpecialMoveType.Jishogi},
@@ -236,7 +231,7 @@ namespace Ragnarok.Shogi
             {"千日手", SpecialMoveType.Sennichite},
             {"せんにちて", SpecialMoveType.Sennichite},
             {"SENNICHITE", SpecialMoveType.Sennichite},
-            
+
             {"王手の千日手", SpecialMoveType.OuteSennichite},
             {"王手のせんにちて", SpecialMoveType.OuteSennichite},
             {"おうての千日手", SpecialMoveType.OuteSennichite},
@@ -248,14 +243,29 @@ namespace Ragnarok.Shogi
             {"OUTESENNICHITE", SpecialMoveType.OuteSennichite},
             {"OUTE_SENNICHITE", SpecialMoveType.OuteSennichite},
 
-            {"中断", SpecialMoveType.Interrupt},
-            {"ちゅうだん", SpecialMoveType.Interrupt},
-            {"INTERRPUT", SpecialMoveType.Interrupt},
+            {"時間切れ", SpecialMoveType.TimeUp},
+            {"時間ぎれ", SpecialMoveType.TimeUp},
+            {"時間きれ", SpecialMoveType.TimeUp},
+            {"時間切", SpecialMoveType.TimeUp},
+            {"じかんぎれ", SpecialMoveType.TimeUp},
+            {"じかんきれ", SpecialMoveType.TimeUp},
+            {"TIMEUP", SpecialMoveType.TimeUp},
+            {"TIME_UP", SpecialMoveType.TimeUp},
 
             {"反則", SpecialMoveType.IllegalMove},
             {"反則手", SpecialMoveType.IllegalMove},
             {"ILLEGALMOVE", SpecialMoveType.IllegalMove},
             {"ILLEGAL_MOVE", SpecialMoveType.IllegalMove},
+
+            {"詰み", SpecialMoveType.CheckMate},
+            {"詰", SpecialMoveType.CheckMate},
+            {"つみ", SpecialMoveType.CheckMate},
+            {"CHECKMATE", SpecialMoveType.CheckMate},
+            {"CHECK_MATE", SpecialMoveType.CheckMate},
+
+            {"最大手数", SpecialMoveType.MaxMoves},
+            {"MAXMOVES", SpecialMoveType.MaxMoves},
+            {"MAX_MOVES", SpecialMoveType.MaxMoves},
 
             {"封じ手", SpecialMoveType.SealedMove },
             {"ふうじて", SpecialMoveType.SealedMove },

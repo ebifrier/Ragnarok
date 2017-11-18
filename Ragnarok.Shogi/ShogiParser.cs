@@ -69,15 +69,14 @@ namespace Ragnarok.Shogi
         private static readonly Dictionary<string, SpecialMoveType> SpecialMoveTable =
             new Dictionary<string, SpecialMoveType>()
         {
+            {"中断", SpecialMoveType.Interrupt},
+            {"ちゅうだん", SpecialMoveType.Interrupt},
+            {"INTERRPUT", SpecialMoveType.Interrupt},
+
             {"投了", SpecialMoveType.Resign},
             {"とうりょう", SpecialMoveType.Resign},
             {"TORYO", SpecialMoveType.Resign},
             {"RESIGN", SpecialMoveType.Resign},
-
-            {"時間切れ", SpecialMoveType.TimeUp},
-            {"時間ぎれ", SpecialMoveType.TimeUp},
-            {"TIMEUP", SpecialMoveType.TimeUp},
-            {"TIME_UP", SpecialMoveType.TimeUp},
 
             {"持将棋", SpecialMoveType.Jishogi},
             {"じしょうぎ", SpecialMoveType.Jishogi},
@@ -91,14 +90,20 @@ namespace Ragnarok.Shogi
             {"OUTESENNICHITE", SpecialMoveType.OuteSennichite},
             {"OUTE_SENNICHITE", SpecialMoveType.OuteSennichite},
 
-            {"中断", SpecialMoveType.Interrupt},
-            {"ちゅうだん", SpecialMoveType.Interrupt},
-            {"INTERRPUT", SpecialMoveType.Interrupt},
+            {"時間切れ", SpecialMoveType.TimeUp},
+            {"時間ぎれ", SpecialMoveType.TimeUp},
+            {"TIMEUP", SpecialMoveType.TimeUp},
+            {"TIME_UP", SpecialMoveType.TimeUp},
 
             {"反則", SpecialMoveType.IllegalMove},
             {"反則手", SpecialMoveType.IllegalMove},
             {"ILLEGALMOVE", SpecialMoveType.IllegalMove},
             {"ILLEGAL_MOVE", SpecialMoveType.IllegalMove},
+
+            {"詰み", SpecialMoveType.CheckMate},
+            {"つみ", SpecialMoveType.CheckMate},
+
+            {"最大手数", SpecialMoveType.MaxMoves},
 
             {"封じ手", SpecialMoveType.SealedMove },
             {"ふうじて", SpecialMoveType.SealedMove },
@@ -398,7 +403,7 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
-        /// 差し手のパースを行います。
+        /// 指し手のパースを行います。
         /// </summary>
         public static LiteralMove ParseMoveEx(string text, bool isNeedEnd,
                                        ref string parsedText)

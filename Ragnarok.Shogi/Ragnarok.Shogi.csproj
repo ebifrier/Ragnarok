@@ -156,6 +156,7 @@
     <EmbeddedResource Include="Kif\Tests\Sample\Kif_PV2.kif" />
     <EmbeddedResource Include="Kif\Tests\Sample\Kif_Variation.kif" />
     <EmbeddedResource Include="Kif\Tests\Sample\Kif_VariationMiss.kif" />
+    <EmbeddedResource Include="Kif\Tests\Sample\Kif_CheckMate.kif" />
     <None Include="Ragnarok.Shogi.snk" />
   </ItemGroup>
   <ItemGroup>
