@@ -62,7 +62,7 @@ namespace Ragnarok.NicoNico.Video.Tests
             Assert.AreEqual("レッツゴー！陰陽師（フルコーラスバージョン）", video.Description);
             Assert.AreEqual(DateTime.Parse("2007-03-06T00:33:00+09:00"), video.StartTime);
             Assert.AreEqual(319, video.LengthSeconds);
-            Assert.AreEqual("http://tn-skr2.smilevideo.jp/smile?i=9", video.ThumbnailUrl);
+            Assert.AreEqual("http://tn.smilevideo.jp/smile?i=9", video.ThumbnailUrl);
             Assert.NotNull(video.IsVisible);
             Assert.True(video.IsVisible.Value);
             if (removeTagType == RemoveTagType.None)
@@ -102,11 +102,11 @@ namespace Ragnarok.NicoNico.Video.Tests
                 "　蟹沢きぬ、 TVアニメ「吉永さん家のガーゴイル」　など）　　　　　" +
                 "詳しくはこちらhttp://www.crypton.co.jp/mp/pages/prod/vocaloid/cv01.jsp　" +
                 "私もミクで遊んでみました " +
-                "<a href=\"http://www.nicovideo.jp/mylist/4883031\" target=\"_blank\">mylist/4883031</a>"),
+                "<a href=\"http://www.nicovideo.jp/mylist/4883031\" target=\"_blank\" rel=\"noopener\">mylist/4883031</a>"),
                 video.Description);
             Assert.AreEqual(DateTime.Parse("2007-08-29T14:02:39+09:00"), video.StartTime);
             Assert.AreEqual(49, video.LengthSeconds);
-            Assert.AreEqual("http://tn-skr2.smilevideo.jp/smile?i=941537", video.ThumbnailUrl);
+            Assert.AreEqual("http://tn.smilevideo.jp/smile?i=941537", video.ThumbnailUrl);
             Assert.NotNull(video.IsVisible);
             Assert.True(video.IsVisible.Value);
             if (removeTagType == RemoveTagType.None)
@@ -144,12 +144,12 @@ namespace Ragnarok.NicoNico.Video.Tests
                 "ニコニコ動画(β・γ)で人気のあった曲などを繋いでひとつの曲にしてみました(2度目)。全33曲。<br />" +
                 "<font size=\"-2\">※多くの方を誤解させてしまっているようですが(申し訳ないです)、厳密には「組曲」ではなく「メドレー」です。<br />" +
                 "「組曲という名前のメドレー」だと思ってください。</font><br /><br />" +
-                "<a href=\"http://www.nicovideo.jp/mylist/1535765\" target=\"_blank\">mylist/1535765</a><br />" +
-                "<a href=\"http://www.nicovideo.jp/user/145217\" target=\"_blank\">user/145217</a>"),
+                "<a href=\"http://www.nicovideo.jp/mylist/1535765\" target=\"_blank\" rel=\"noopener\">mylist/1535765</a><br />" +
+                "<a href=\"http://www.nicovideo.jp/user/145217\" target=\"_blank\" rel=\"noopener\">user/145217</a>"),
                 video.Description);
             Assert.AreEqual(DateTime.Parse("2007-06-23T18:27:06+09:00"), video.StartTime);
             Assert.AreEqual(648, video.LengthSeconds);
-            Assert.AreEqual("http://tn-skr2.smilevideo.jp/smile?i=500873", video.ThumbnailUrl);
+            Assert.AreEqual("http://tn.smilevideo.jp/smile?i=500873", video.ThumbnailUrl);
             Assert.NotNull(video.IsVisible);
             Assert.True(video.IsVisible.Value);
             if (removeTagType == RemoveTagType.None)
@@ -191,12 +191,12 @@ namespace Ragnarok.NicoNico.Video.Tests
                 "12.Unknown, little Scarlet(東方UNオーエンは彼女なのか？)13.Granado Espada《KimJS》" +
                 "14.雫piano ver《あさき 蜉蝣之羽》(pop'n12)15.花帰葬交響曲(志方あきこ)" +
                 "16.東方萃夢想《上海アリス幻樂団》(黄昏フロンティア)" +
-                "マイリスト→<a href=\"http://www.nicovideo.jp/mylist/4068517\" target=\"_blank\">mylist/4068517</a>。" +
+                "マイリスト→<a href=\"http://www.nicovideo.jp/mylist/4068517\" target=\"_blank\" rel=\"noopener\">mylist/4068517</a>。" +
                 "テンション上げたい時用ＢＧＭ→<a href=\"http://www.nicovideo.jp/watch/sm1939013\" class=\"watch\">sm1939013</a>"),
                 video.Description);
             Assert.AreEqual(DateTime.Parse("2008-01-04T22:56:55+09:00"), video.StartTime);
             Assert.AreEqual(61*60+43, video.LengthSeconds);
-            Assert.AreEqual("http://tn-skr4.smilevideo.jp/smile?i=1949063", video.ThumbnailUrl);
+            Assert.AreEqual("http://tn.smilevideo.jp/smile?i=1949063", video.ThumbnailUrl);
             Assert.NotNull(video.IsVisible);
             Assert.True(video.IsVisible.Value);
             if (removeTagType == RemoveTagType.None)
@@ -237,7 +237,7 @@ namespace Ragnarok.NicoNico.Video.Tests
                 video.Description);
             Assert.AreEqual(DateTime.Parse("2015-09-01T18:30:00+09:00"), video.StartTime);
             Assert.AreEqual(30, video.LengthSeconds);
-            Assert.AreEqual("http://tn-skr2.smilevideo.jp/smile?i=27063885", video.ThumbnailUrl);
+            Assert.AreEqual("http://tn.smilevideo.jp/smile?i=27063885", video.ThumbnailUrl);
             Assert.NotNull(video.IsVisible);
             Assert.True(video.IsVisible.Value);
             if (removeTagType == RemoveTagType.None)
@@ -279,12 +279,12 @@ namespace Ragnarok.NicoNico.Video.Tests
                 "【第1回は無料視聴できます】<br><br>" +
                 "前回【<a href=\"http://www.nicovideo.jp/watch/1400283915\" class=\"watch\">watch/1400283915</a>】 次回【<a href=\"http://www.nicovideo.jp/watch/1400284278\" class=\"watch\">watch/1400284278</a>】<br>" +
                 "第1回【<a href=\"http://www.nicovideo.jp/watch/1400283915\" class=\"watch\">watch/1400283915</a>】<br>" +
-                "囲碁講座第1回マイリスト(全動画無料)【<a href=\"http://www.nicovideo.jp/mylist/50433520\" target=\"_blank\">mylist/50433520</a>】<br><br>" +
+                "囲碁講座第1回マイリスト(全動画無料)【<a href=\"http://www.nicovideo.jp/mylist/50433520\" target=\"_blank\" rel=\"noopener\">mylist/50433520</a>】<br><br>" +
                 "万波佳奈の囲碁講座「打ち込み＆荒らし大作戦」【<a href=\"http://www.nicovideo.jp/watch/1390348239\" class=\"watch\">watch/1390348239</a>】"),
                 video.Description);
             Assert.AreEqual(DateTime.Parse("2014-05-17T10:00:00+09:00"), video.StartTime);
             Assert.AreEqual(604, video.LengthSeconds);
-            Assert.AreEqual("http://tn-skr4.smilevideo.jp/smile?i=23569455", video.ThumbnailUrl);
+            Assert.AreEqual("http://tn.smilevideo.jp/smile?i=23569455", video.ThumbnailUrl);
             Assert.NotNull(video.IsVisible);
             Assert.True(video.IsVisible.Value);
             if (removeTagType == RemoveTagType.None)
@@ -336,7 +336,7 @@ namespace Ragnarok.NicoNico.Video.Tests
                 video.Description);
             Assert.AreEqual(DateTime.Parse("2015-09-03T19:00:00+09:00"), video.StartTime);
             Assert.AreEqual(60, video.LengthSeconds);
-            Assert.AreEqual("http://tn-skr1.smilevideo.jp/smile?i=27077196", video.ThumbnailUrl);
+            Assert.AreEqual("http://tn.smilevideo.jp/smile?i=27077196", video.ThumbnailUrl);
             Assert.NotNull(video.IsVisible);
             Assert.False(video.IsVisible.Value);
             if (removeTagType == RemoveTagType.None)
