@@ -205,6 +205,17 @@ namespace Ragnarok.Presentation.Control
 
         #region プロパティメソッド
         /// <summary>
+        /// テキストをすべて選択します。
+        /// </summary>
+        private void SelectAllText(object sender, EventArgs e)
+        {
+            if (this.textBox != null)
+            {
+                this.textBox.Select(0, this.textBox.Text.Length);
+            }
+        }
+
+        /// <summary>
         /// テキストと値の同期を取ります。
         /// </summary>
         private void SyncValueAndText(decimal value)
@@ -377,6 +388,13 @@ namespace Ragnarok.Presentation.Control
         {
             base.OnApplyTemplate();
 
+            if (this.textBox != null)
+            {
+                this.textBox.PreviewMouseLeftButtonDown -= SelectivelyIgnoreMouseButton;
+                this.textBox.GotKeyboardFocus -= SelectAllText;
+                this.textBox.MouseDoubleClick -= SelectAllText;
+            }
+
             if (this.upButton != null)
             {
                 this.upButton.Click -= upButton_Click;
@@ -391,6 +409,13 @@ namespace Ragnarok.Presentation.Control
             this.upButton = GetTemplateChild(ElementUpButtonName) as RepeatButton;
             this.downButton = GetTemplateChild(ElementDownButtonName) as RepeatButton;
 
+            if (this.textBox != null)
+            {
+                this.textBox.PreviewMouseLeftButtonDown += SelectivelyIgnoreMouseButton;
+                this.textBox.GotKeyboardFocus += SelectAllText;
+                this.textBox.MouseDoubleClick += SelectAllText;
+            }
+
             if (this.upButton != null)
             {
                 this.upButton.Click += upButton_Click;
@@ -399,6 +424,30 @@ namespace Ragnarok.Presentation.Control
             if (this.downButton != null)
             {
                 this.downButton.Click += downButton_Click;
+            }
+        }
+
+        /// <summary>
+        /// マウスボタン押下時に余計な処理を行わないようにする。
+        /// </summary>
+        private void SelectivelyIgnoreMouseButton(object sender, MouseButtonEventArgs e)
+        {
+            var parent = e.OriginalSource as DependencyObject;
+            while (parent != null && !(parent is TextBox))
+            {
+                parent = VisualTreeHelper.GetParent(parent);
+            }
+
+            if (parent != null)
+            {
+                var textBox = (TextBox)parent;
+                if (!textBox.IsKeyboardFocusWithin)
+                {
+                    // If the text box is not yet focused, give it the focus and
+                    // stop further processing of this click event.
+                    textBox.Focus();
+                    e.Handled = true;
+                }
             }
         }
 

@@ -65,6 +65,23 @@ namespace Ragnarok.Presentation.Control
         }
 
         /// <summary>
+        /// 表示する時間のフォーマットを扱う依存プロパティです。
+        /// </summary>
+        public static readonly DependencyProperty ValueFormatProperty =
+            DependencyProperty.Register(
+                "ValueFormat", typeof(string), typeof(TimeSpanView),
+                new FrameworkPropertyMetadata(@"hh\:mm\:ss", OnValueChanged));
+
+        /// <summary>
+        /// 表示する時間のフォーマットを取得または設定します。
+        /// </summary>
+        public string ValueFormat
+        {
+            get { return (string)GetValue(ValueFormatProperty); }
+            set { SetValue(ValueFormatProperty, value); }
+        }
+
+        /// <summary>
         /// TimeSpanがMinValueの時に表示される文字列を扱う依存プロパティです。
         /// </summary>
         public static readonly DependencyProperty MinValueTextProperty =
@@ -154,7 +171,7 @@ namespace Ragnarok.Presentation.Control
                 return;
             }
 
-            this.valueText.Text = span.ToString(@"hh\:mm\:ss");
+            this.valueText.Text = span.ToString(ValueFormat);
         }
 
         /// <summary>

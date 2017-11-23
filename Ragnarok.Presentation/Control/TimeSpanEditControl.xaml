@@ -6,6 +6,9 @@
     <Style x:Key="timeSpanStyle" TargetType="l:NumericUpDown">
         <Setter Property="IsTabStop" Value="True" />
     </Style>
+    <Style x:Key="timeLabelStyle" TargetType="l:NumericUpDown">
+        <Setter Property="Margin" Value="True" />
+    </Style>
 
     <!-- 秒と時刻で投票期間などを設定します。-->
     <ControlTemplate x:Key="mainControl">
@@ -14,35 +17,36 @@
                 <ColumnDefinition Width="0" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="5" />
+                <ColumnDefinition Width="2" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="5" />
+                <ColumnDefinition Width="2" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <Label Grid.Column="1" Content="時:" />
-            <l:NumericUpDown Grid.Column="2"
+            <Label Grid.Column="2" Content="時" />
+            <l:NumericUpDown Grid.Column="1"
                              x:Name="Part_Hours"
-                             Width="50" Minimum="0" Maximum="100"
+                             Width="45" Minimum="0" Maximum="100"
                              Style="{StaticResource timeSpanStyle}" />
 
-            <Label Grid.Column="4" Content="分:" />
-            <l:NumericUpDown Grid.Column="5"
+            <Label Grid.Column="5" Content="分" />
+            <l:NumericUpDown Grid.Column="4"
                              x:Name="Part_Minutes"
-                             Width="50" Minimum="0" Maximum="59"
+                             Width="45" Minimum="0" Maximum="59"
                              Style="{StaticResource timeSpanStyle}" />
             
-            <Label Grid.Column="7" Content="秒:" />
-            <l:NumericUpDown Grid.Column="8"
+            <Label Grid.Column="8" Content="秒" />
+            <l:NumericUpDown Grid.Column="7"
                              x:Name="Part_Seconds"
-                             Width="50" Minimum="0" Maximum="59"
+                             Width="45" Minimum="0" Maximum="59"
                              Style="{StaticResource timeSpanStyle}" />            
         </Grid>
     </ControlTemplate>
 
     <Style TargetType="l:TimeSpanEditControl">
         <Setter Property="Template" Value="{StaticResource mainControl}" />
+        <Setter Property="Focusable" Value="False" />
     </Style>
 </ResourceDictionary>
