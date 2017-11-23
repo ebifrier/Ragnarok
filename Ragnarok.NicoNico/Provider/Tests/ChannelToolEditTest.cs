@@ -3,8 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Text.RegularExpressions;
-using System.Threading;
 using NUnit.Framework;
 
 namespace Ragnarok.NicoNico.Provider.Tests
@@ -23,7 +21,7 @@ namespace Ragnarok.NicoNico.Provider.Tests
         {
             var data = GetEmailPassword(".niconico.txt");
 
-            cc = ChannelTool.Login("71oaZrjs", data[0], data[1]);
+            cc = ChannelTool.Login(ChannelId, data[0], data[1]);
             Assert.NotNull(cc);
         }
 

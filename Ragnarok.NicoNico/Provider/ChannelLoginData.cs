@@ -14,9 +14,9 @@ namespace Ragnarok.NicoNico.Provider
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public ChannelLoginData(string id, string mail, string password)
+        public ChannelLoginData(int channelId, string mail, string password)
         {
-            Id = id;
+            ChannelId = channelId;
             Mail = mail;
             Password = password;
         }
@@ -24,7 +24,7 @@ namespace Ragnarok.NicoNico.Provider
         /// <summary>
         /// ログインIDを取得します。
         /// </summary>
-        public string Id
+        public int ChannelId
         {
             get;
             private set;
@@ -53,7 +53,7 @@ namespace Ragnarok.NicoNico.Provider
         /// </summary>
         public CookieContainer Login()
         {
-            return ChannelTool.Login(Id, Mail, Password);
+            return ChannelTool.Login(ChannelId, Mail, Password);
         }
     }
 }

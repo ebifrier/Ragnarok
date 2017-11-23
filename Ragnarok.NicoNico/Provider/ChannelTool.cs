@@ -124,19 +124,28 @@ namespace Ragnarok.NicoNico.Provider
         /// <summary>
         /// chtoolにログインし、そのクッキーを返します。
         /// </summary>
-        public static CookieContainer Login(string loginId, string mail,
+        public static CookieContainer Login(int channelId, string mail,
                                             string password)
         {
-            var param = new Dictionary<string, object>();
-            param["next_url"] = loginId;
-            param["mail"] = mail;
-            param["password"] = password;
-            param["g"] = "dashboard";
+            var postParam = new Dictionary<string, object>
+            {
+                { "mail_tel", mail },
+                { "password", password }
+            };
+
+            var getParam = new Dictionary<string, object>
+            {
+                { "show_button_twitter", 1 },
+                { "site", "chtool_2" },
+                { "show_button_facebook", 1 },
+                { "next_url", $"channel_id={channelId}" }
+            };
+            var getQuery = WebUtil.EncodeParam(getParam);
 
             var cc = new CookieContainer();
             var text = WebUtil.RequestHttpText(
-                @"https://secure.nicovideo.jp/secure/login?site=chtool",
-                param, cc, Encoding.UTF8);
+                $@"https://account.nicovideo.jp/api/v1/login?{getQuery}",
+                postParam, cc, Encoding.UTF8);
 
             //Save("login.html", text);
 
