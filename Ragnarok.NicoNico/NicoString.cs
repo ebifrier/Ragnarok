@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ragnarok.Net;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -30,7 +31,15 @@ namespace Ragnarok.NicoNico
         /// </summary>
         public static string GetLoginUrl()
         {
-            return "https://secure.nicovideo.jp/secure/login?site=niconico";
+            var param = new Dictionary<string, object>
+            {
+                { "show_button_twitter", 1 },
+                { "show_button_facebook", 1 },
+                { "site", "niconico" }
+            };
+            var query = WebUtil.EncodeParam(param);
+
+            return $"https://account.nicovideo.jp/api/v1/login?{query}";
         }
 
         /// <summary>
@@ -39,12 +48,11 @@ namespace Ragnarok.NicoNico
         public static Dictionary<string, object> MakeLoginData(string mail,
                                                                string password)
         {
-            var postData = new Dictionary<string, object>();
-
-            postData["mail"] = mail;
-            postData["password"] = password;
-            postData["next_url"] = null;
-            return postData;
+            return new Dictionary<string, object>
+            {
+                { "mail_tel", mail },
+                { "password", password }
+            };
         }
 
         /// <summary>
