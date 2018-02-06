@@ -296,6 +296,27 @@ namespace Ragnarok.OpenGL
         }
 
         /// <summary>
+        /// ミップマップをサポートするメソッドのレベルを取得します。
+        /// </summary>
+        private static int GenerateMipmapSupportLevel
+        {
+            get
+            {
+                var version = Misc.Version;
+                if (version >= 30000 && Misc.HasExtension("GL_ARB_framebuffer_object"))
+                {
+                    return 2;
+                }
+                else if (version >= 10400 && Misc.HasExtension("GL_SGIS_generate_mipmap"))
+                {
+                    return 1;
+                }
+
+                return 0;
+            }
+        }
+
+        /// <summary>
         /// テクスチャデータの作成を行います。
         /// </summary>
         /// <remarks>
@@ -327,7 +348,8 @@ namespace Ragnarok.OpenGL
 
                 GLWrap.Wrap(() => GL.BindTexture(TextureTarget.Texture2D, texture));
 
-                if (Misc.HasExtension("GL_SGIS_generate_mipmap"))
+                // TexParameterのGenerateMipmapを使う場合
+                if (GenerateMipmapSupportLevel == 1)
                 {
                     // glTexImage2Dの前にmipmapの使用設定を行う
                     //GLWrap.Wrap(() => GL.Hint(HintTarget.GenerateMipmapHint, HintMode.Nicest));
@@ -357,10 +379,16 @@ namespace Ragnarok.OpenGL
 
             GLWrap.Wrap(() => GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Clamp));
             GLWrap.Wrap(() => GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Clamp));
-            
-            if (Misc.HasExtension("GL_SGIS_generate_mipmap"))
+
+            // glGenerateMipmapを使う場合
+            if (GenerateMipmapSupportLevel == 2)
             {
-                // Mipmapを使う設定
+                GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
+            }
+            
+            if (GenerateMipmapSupportLevel > 0)
+            {
+                // Mipmapを使う場合はフィルターを設定
                 GLWrap.Wrap(() => GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.LinearMipmapLinear));
                 GLWrap.Wrap(() => GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear));
             }

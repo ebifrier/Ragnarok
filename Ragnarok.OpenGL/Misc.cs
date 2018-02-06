@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 
@@ -31,6 +32,36 @@ namespace Ragnarok.OpenGL
                 extensions = new string[0];
                 Log.ErrorException(ex,
                     "GL.GetStringに失敗しました。");
+            }
+        }
+
+        /// <summary>
+        /// OpenGLのバージョン番号を整数値で返します。
+        /// </summary>
+        /// <example>
+        /// 4.1.0 → 040100
+        /// 1.1.1 → 010101
+        /// </example>
+        public static int Version
+        {
+            get
+            {
+                var version = GL.GetString(StringName.Version);
+                if (string.IsNullOrEmpty(version))
+                {
+                    return 0;
+                }
+
+                var m = Regex.Match(version, @"(\d+)\.(\d+)\.(\d+)");
+                if (!m.Success)
+                {
+                    return 0;
+                }
+
+                var major = int.Parse(m.Groups[1].Value);
+                var minor = int.Parse(m.Groups[2].Value);
+                var build = int.Parse(m.Groups[3].Value);
+                return (major * 100 * 100 + minor * 100 + build);
             }
         }
 
