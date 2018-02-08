@@ -36,7 +36,8 @@ namespace Ragnarok.OpenGL
                 return 0;
             }
 
-            var m = Regex.Match(version, @"(\d+)\.(\d+)\.(\d+)");
+            // revisionは桁数が増えることがあるため2桁までとする。
+            var m = Regex.Match(version, @"^\s*(\d\d?)\.(\d\d?)\.(\d\d?)");
             if (!m.Success)
             {
                 return 0;

@@ -302,12 +302,11 @@ namespace Ragnarok.OpenGL
         {
             get
             {
-                var version = Misc.Version;
-                if (version >= 30000 && Misc.HasExtension("GL_ARB_framebuffer_object"))
+                if (Misc.Version >= 30000 && Misc.HasExtension("GL_ARB_framebuffer_object"))
                 {
                     return 2;
                 }
-                else if (version >= 10400 && Misc.HasExtension("GL_SGIS_generate_mipmap"))
+                else if (Misc.Version >= 10400 && Misc.HasExtension("GL_SGIS_generate_mipmap"))
                 {
                     return 1;
                 }
@@ -359,7 +358,7 @@ namespace Ragnarok.OpenGL
                 //  テクスチャデータをセットします。
 #if true
                 GLWrap.Wrap(() => GL.TexImage2D(
-                    TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba,
+                    TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba8,
                     image.Width, image.Height, 0,
                     OpenTK.Graphics.OpenGL.PixelFormat.Bgra,
                     PixelType.UnsignedByte,
