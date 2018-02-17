@@ -326,6 +326,8 @@ namespace Ragnarok.OpenGL
                         Supported.Enqueue(t);
                     else
                         Unsupported.Enqueue(t);
+
+                    GL.BindTexture(TextureTarget.Texture2D, 0);
                     GL.DeleteTextures(1, ref DummyTexture);
                 }
                 catch
@@ -336,7 +338,6 @@ namespace Ragnarok.OpenGL
                     }
                 }
             }
-            GL.BindTexture(TextureTarget.Texture2D, 0);
 
             using (new Section(sb, "Supported Texture formats"))
             {
