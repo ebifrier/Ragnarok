@@ -152,7 +152,9 @@ namespace Ragnarok.Shogi.Sfen.Tests
         {
             var move = Move.CreateSpecialMove(BWType.Black, SpecialMoveType.Interrupt);
 
-            Assert.Catch<SfenException>(() => move.ToSfen());
+            Assert.True(move.IsSpecialMove);
+            Assert.AreEqual(SpecialMoveType.Interrupt, move.SpecialMoveType);
+            Assert.AreEqual("", move.ToSfen());
         }
     }
 }

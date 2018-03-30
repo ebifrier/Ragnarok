@@ -41,9 +41,8 @@ namespace Ragnarok.Shogi.Sfen
 
             if (move.IsSpecialMove)
             {
-                // 投了などの特殊な指し手
-                throw new SfenException(
-                    move + ": sfenに変換することはできません。");
+                // 投了などの特殊な指し手(sfenに変換することはできない)
+                return "";
             }
 
             var dstFile = move.DstSquare.File;
@@ -83,6 +82,12 @@ namespace Ragnarok.Shogi.Sfen
             if (string.IsNullOrEmpty(sfen))
             {
                 throw new ArgumentNullException("sfen");
+            }
+
+            var type = SfenToSpecialMoveType(sfen);
+            if (type != SpecialMoveType.None)
+            {
+                return Move.CreateSpecialMove(board.Turn, type);
             }
 
             if (sfen.Length < 4)
@@ -137,6 +142,27 @@ namespace Ragnarok.Shogi.Sfen
                     promote,
                     BoardPiece.GetPiece(board[dstFile, dstRank]));
             }
+        }
+
+        private static SpecialMoveType SfenToSpecialMoveType(string sfen)
+        {
+            switch (sfen)
+            {
+                case "resign":
+                    return SpecialMoveType.Resign;
+                case "win":
+                    return SpecialMoveType.Jishogi;
+                case "lose":
+                    return SpecialMoveType.Jishogi;
+                case "rep_draw":
+                    return SpecialMoveType.Sennichite;
+                case "rep_inf":
+                    break;
+                case "rep_sup":
+                    break;
+            }
+
+            return SpecialMoveType.None;
         }
 
         /// <summary>

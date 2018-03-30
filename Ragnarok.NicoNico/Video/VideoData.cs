@@ -375,7 +375,7 @@ namespace Ragnarok.NicoNico.Video
             if (string.IsNullOrEmpty(videoId))
             {
                 throw new NicoVideoException(
-                    string.Format("{0}: 不正な動画IDです。"));
+                    $"{videoStr}: 不正な動画IDです。");
             }
 
             var url = string.Format(
@@ -407,7 +407,7 @@ namespace Ragnarok.NicoNico.Video
             if (string.IsNullOrEmpty(videoId))
             {
                 throw new NicoVideoException(
-                    string.Format("{0}: 不正な動画IDです。"));
+                    $"{videoStr}: 不正な動画IDです。");
             }
 
             // urlを取得します。

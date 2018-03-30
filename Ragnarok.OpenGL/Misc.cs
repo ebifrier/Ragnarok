@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 
@@ -14,24 +15,38 @@ namespace Ragnarok.OpenGL
     /// </summary>
     public static class Misc
     {
-        private static string[] extensions;
 
-        static Misc()
+        /// <summary>
+        /// OpenGLのバージョン番号を整数値で返します。
+        /// </summary>
+        /// <example>
+        /// 4.1.0 → 040100
+        /// 1.1.1 → 010101
+        /// </example>
+        public static int Version
         {
-            try
-            {
-                var raw = GL.GetString(StringName.Extensions);
-                var splitter = new string[] { " " };
+            get;
+        } = GetVersion();
 
-                extensions = raw.Split(splitter,
-                    StringSplitOptions.RemoveEmptyEntries);
-            }
-            catch (Exception ex)
+        private static int GetVersion()
+        {
+            var version = GL.GetString(StringName.Version);
+            if (string.IsNullOrEmpty(version))
             {
-                extensions = new string[0];
-                Log.ErrorException(ex,
-                    "GL.GetStringに失敗しました。");
+                return 0;
             }
+
+            // revisionは桁数が増えることがあるため2桁までとする。
+            var m = Regex.Match(version, @"^\s*(\d\d?)\.(\d\d?)\.(\d\d?)");
+            if (!m.Success)
+            {
+                return 0;
+            }
+
+            var major = int.Parse(m.Groups[1].Value);
+            var minor = int.Parse(m.Groups[2].Value);
+            var revision = int.Parse(m.Groups[3].Value);
+            return (major * 100 * 100 + minor * 100 + revision);
         }
 
         /// <summary>
@@ -39,7 +54,25 @@ namespace Ragnarok.OpenGL
         /// </summary>
         public static string[] Extensions
         {
-            get { return extensions; }
+            get;
+        } = GetExtensions();
+
+        private static string[] GetExtensions()
+        {
+            try
+            {
+                var raw = GL.GetString(StringName.Extensions);
+                var splitter = new string[] { " " };
+
+                return raw.Split(splitter,
+                    StringSplitOptions.RemoveEmptyEntries);
+            }
+            catch (Exception ex)
+            {
+                Log.ErrorException(ex,
+                    "GL.GetStringに失敗しました。");
+                return new string[0];
+            }
         }
 
         /// <summary>
@@ -47,7 +80,7 @@ namespace Ragnarok.OpenGL
         /// </summary>
         public static bool HasExtension(string name)
         {
-            return extensions.Any(_ => _ == name);
+            return Extensions.Any(_ => _ == name);
         }
 
         private struct TextureFormat
@@ -66,114 +99,114 @@ namespace Ragnarok.OpenGL
 
         private static TextureFormat[] TextureFormats = new TextureFormat[]
         {
-            new TextureFormat( PixelInternalFormat.Alpha, PixelFormat.Alpha, PixelType.UnsignedByte),
-            new TextureFormat( PixelInternalFormat.Alpha4, PixelFormat.Alpha, PixelType.UnsignedByte),
-            new TextureFormat( PixelInternalFormat.Alpha8, PixelFormat.Alpha, PixelType.UnsignedByte),
-            new TextureFormat( PixelInternalFormat.Alpha12, PixelFormat.Alpha, PixelType.UnsignedByte),
-            new TextureFormat( PixelInternalFormat.Alpha16, PixelFormat.Alpha, PixelType.UnsignedByte),
-            new TextureFormat( (PixelInternalFormat)All.Alpha16fArb, PixelFormat.Alpha, PixelType.HalfFloat),
-            new TextureFormat( (PixelInternalFormat)All.Alpha32fArb, PixelFormat.Alpha, PixelType.Float),
+            new TextureFormat(PixelInternalFormat.Alpha, PixelFormat.Alpha, PixelType.UnsignedByte),
+            new TextureFormat(PixelInternalFormat.Alpha4, PixelFormat.Alpha, PixelType.UnsignedByte),
+            new TextureFormat(PixelInternalFormat.Alpha8, PixelFormat.Alpha, PixelType.UnsignedByte),
+            new TextureFormat(PixelInternalFormat.Alpha12, PixelFormat.Alpha, PixelType.UnsignedByte),
+            new TextureFormat(PixelInternalFormat.Alpha16, PixelFormat.Alpha, PixelType.UnsignedByte),
+            new TextureFormat((PixelInternalFormat)All.Alpha16fArb, PixelFormat.Alpha, PixelType.HalfFloat),
+            new TextureFormat((PixelInternalFormat)All.Alpha32fArb, PixelFormat.Alpha, PixelType.Float),
 
-            new TextureFormat( PixelInternalFormat.DepthComponent, PixelFormat.DepthComponent, PixelType.Int),
-            new TextureFormat( PixelInternalFormat.DepthComponent16, PixelFormat.DepthComponent, PixelType.Float),
-            new TextureFormat( PixelInternalFormat.DepthComponent24, PixelFormat.DepthComponent, PixelType.Float),
-            new TextureFormat( PixelInternalFormat.DepthComponent32, PixelFormat.DepthComponent, PixelType.Float),
-            new TextureFormat( PixelInternalFormat.DepthComponent32f, PixelFormat.DepthComponent, PixelType.Float),
-            new TextureFormat( PixelInternalFormat.DepthStencil, PixelFormat.DepthStencil, PixelType.UnsignedInt248),
-            new TextureFormat( PixelInternalFormat.Depth24Stencil8, PixelFormat.DepthStencil, PixelType.UnsignedInt248),
-            new TextureFormat( PixelInternalFormat.Depth32fStencil8, PixelFormat.DepthStencil, PixelType.Float32UnsignedInt248Rev),
+            new TextureFormat(PixelInternalFormat.DepthComponent, PixelFormat.DepthComponent, PixelType.Int),
+            new TextureFormat(PixelInternalFormat.DepthComponent16, PixelFormat.DepthComponent, PixelType.Float),
+            new TextureFormat(PixelInternalFormat.DepthComponent24, PixelFormat.DepthComponent, PixelType.Float),
+            new TextureFormat(PixelInternalFormat.DepthComponent32, PixelFormat.DepthComponent, PixelType.Float),
+            new TextureFormat(PixelInternalFormat.DepthComponent32f, PixelFormat.DepthComponent, PixelType.Float),
+            new TextureFormat(PixelInternalFormat.DepthStencil, PixelFormat.DepthStencil, PixelType.UnsignedInt248),
+            new TextureFormat(PixelInternalFormat.Depth24Stencil8, PixelFormat.DepthStencil, PixelType.UnsignedInt248),
+            new TextureFormat(PixelInternalFormat.Depth32fStencil8, PixelFormat.DepthStencil, PixelType.Float32UnsignedInt248Rev),
 
-            new TextureFormat( PixelInternalFormat.One, PixelFormat.Red, PixelType.UnsignedByte),
-            new TextureFormat( PixelInternalFormat.Two, PixelFormat.Rg, PixelType.UnsignedByte),
-            new TextureFormat( PixelInternalFormat.Rgb, PixelFormat.Rgb, PixelType.UnsignedByte),
-            new TextureFormat( PixelInternalFormat.Rgba, PixelFormat.Rgba, PixelType.UnsignedByte),
+            new TextureFormat(PixelInternalFormat.One, PixelFormat.Red, PixelType.UnsignedByte),
+            new TextureFormat(PixelInternalFormat.Two, PixelFormat.Rg, PixelType.UnsignedByte),
+            new TextureFormat(PixelInternalFormat.Rgb, PixelFormat.Rgb, PixelType.UnsignedByte),
+            new TextureFormat(PixelInternalFormat.Rgba, PixelFormat.Rgba, PixelType.UnsignedByte),
 
-            new TextureFormat( PixelInternalFormat.Srgb, PixelFormat.Rgb, PixelType.UnsignedByte),
-            new TextureFormat( PixelInternalFormat.SrgbAlpha, PixelFormat.Rgb, PixelType.UnsignedByte),
-            new TextureFormat( PixelInternalFormat.Srgb8, PixelFormat.Rgb, PixelType.UnsignedByte),
-            new TextureFormat( PixelInternalFormat.Srgb8Alpha8, PixelFormat.Rgba, PixelType.UnsignedByte),
+            new TextureFormat(PixelInternalFormat.Srgb, PixelFormat.Rgb, PixelType.UnsignedByte),
+            new TextureFormat(PixelInternalFormat.SrgbAlpha, PixelFormat.Rgb, PixelType.UnsignedByte),
+            new TextureFormat(PixelInternalFormat.Srgb8, PixelFormat.Rgb, PixelType.UnsignedByte),
+            new TextureFormat(PixelInternalFormat.Srgb8Alpha8, PixelFormat.Rgba, PixelType.UnsignedByte),
 
-            new TextureFormat( PixelInternalFormat.R16f, PixelFormat.Red, PixelType.HalfFloat),
-            new TextureFormat( PixelInternalFormat.Rg16f, PixelFormat.Rg, PixelType.HalfFloat),
-            new TextureFormat( PixelInternalFormat.Rgb16f, PixelFormat.Rgb, PixelType.HalfFloat),
-            new TextureFormat( PixelInternalFormat.Rgba16f, PixelFormat.Rgba, PixelType.HalfFloat),
-            new TextureFormat( PixelInternalFormat.R32f, PixelFormat.Red, PixelType.Float),
-            new TextureFormat( PixelInternalFormat.Rg32f, PixelFormat.Rg, PixelType.Float),
-            new TextureFormat( PixelInternalFormat.Rgb32f, PixelFormat.Rgb, PixelType.Float),
-            new TextureFormat( PixelInternalFormat.Rgba32f, PixelFormat.Rgba, PixelType.Float),
+            new TextureFormat(PixelInternalFormat.R16f, PixelFormat.Red, PixelType.HalfFloat),
+            new TextureFormat(PixelInternalFormat.Rg16f, PixelFormat.Rg, PixelType.HalfFloat),
+            new TextureFormat(PixelInternalFormat.Rgb16f, PixelFormat.Rgb, PixelType.HalfFloat),
+            new TextureFormat(PixelInternalFormat.Rgba16f, PixelFormat.Rgba, PixelType.HalfFloat),
+            new TextureFormat(PixelInternalFormat.R32f, PixelFormat.Red, PixelType.Float),
+            new TextureFormat(PixelInternalFormat.Rg32f, PixelFormat.Rg, PixelType.Float),
+            new TextureFormat(PixelInternalFormat.Rgb32f, PixelFormat.Rgb, PixelType.Float),
+            new TextureFormat(PixelInternalFormat.Rgba32f, PixelFormat.Rgba, PixelType.Float),
 
-            new TextureFormat( PixelInternalFormat.R8, PixelFormat.Red, PixelType.UnsignedByte),
-            new TextureFormat( PixelInternalFormat.Rg8, PixelFormat.Rg, PixelType.UnsignedByte),
-            new TextureFormat( PixelInternalFormat.Rgb8, PixelFormat.Rgb, PixelType.UnsignedByte),
-            new TextureFormat( PixelInternalFormat.Rgba8, PixelFormat.Rgba, PixelType.UnsignedByte),
+            new TextureFormat(PixelInternalFormat.R8, PixelFormat.Red, PixelType.UnsignedByte),
+            new TextureFormat(PixelInternalFormat.Rg8, PixelFormat.Rg, PixelType.UnsignedByte),
+            new TextureFormat(PixelInternalFormat.Rgb8, PixelFormat.Rgb, PixelType.UnsignedByte),
+            new TextureFormat(PixelInternalFormat.Rgba8, PixelFormat.Rgba, PixelType.UnsignedByte),
 
-            new TextureFormat( PixelInternalFormat.R8ui, PixelFormat.Red, PixelType.UnsignedByte),
-            new TextureFormat( PixelInternalFormat.Rg8ui, PixelFormat.Rg, PixelType.UnsignedByte),
-            new TextureFormat( PixelInternalFormat.Rgb8ui, PixelFormat.Rgb, PixelType.UnsignedByte),
-            new TextureFormat( PixelInternalFormat.Rgba8ui, PixelFormat.Rgba, PixelType.UnsignedByte),
-            new TextureFormat( PixelInternalFormat.R16ui, PixelFormat.Red, PixelType.UnsignedShort),
-            new TextureFormat( PixelInternalFormat.Rg16ui, PixelFormat.Rg, PixelType.UnsignedShort),
-            new TextureFormat( PixelInternalFormat.Rgb16ui, PixelFormat.Rgb, PixelType.UnsignedShort),
-            new TextureFormat( PixelInternalFormat.Rgba16ui, PixelFormat.Rgba, PixelType.UnsignedShort),
-            new TextureFormat( PixelInternalFormat.R32ui, PixelFormat.Red, PixelType.UnsignedInt),
-            new TextureFormat( PixelInternalFormat.Rg32ui, PixelFormat.Rg, PixelType.UnsignedInt),
-            new TextureFormat( PixelInternalFormat.Rgb32ui, PixelFormat.Rgb, PixelType.UnsignedInt),
-            new TextureFormat( PixelInternalFormat.Rgba32ui, PixelFormat.Rgba, PixelType.UnsignedInt),
+            new TextureFormat(PixelInternalFormat.R8ui, PixelFormat.Red, PixelType.UnsignedByte),
+            new TextureFormat(PixelInternalFormat.Rg8ui, PixelFormat.Rg, PixelType.UnsignedByte),
+            new TextureFormat(PixelInternalFormat.Rgb8ui, PixelFormat.Rgb, PixelType.UnsignedByte),
+            new TextureFormat(PixelInternalFormat.Rgba8ui, PixelFormat.Rgba, PixelType.UnsignedByte),
+            new TextureFormat(PixelInternalFormat.R16ui, PixelFormat.Red, PixelType.UnsignedShort),
+            new TextureFormat(PixelInternalFormat.Rg16ui, PixelFormat.Rg, PixelType.UnsignedShort),
+            new TextureFormat(PixelInternalFormat.Rgb16ui, PixelFormat.Rgb, PixelType.UnsignedShort),
+            new TextureFormat(PixelInternalFormat.Rgba16ui, PixelFormat.Rgba, PixelType.UnsignedShort),
+            new TextureFormat(PixelInternalFormat.R32ui, PixelFormat.Red, PixelType.UnsignedInt),
+            new TextureFormat(PixelInternalFormat.Rg32ui, PixelFormat.Rg, PixelType.UnsignedInt),
+            new TextureFormat(PixelInternalFormat.Rgb32ui, PixelFormat.Rgb, PixelType.UnsignedInt),
+            new TextureFormat(PixelInternalFormat.Rgba32ui, PixelFormat.Rgba, PixelType.UnsignedInt),
 
-            new TextureFormat( PixelInternalFormat.R8i, PixelFormat.Red, PixelType.Byte),
-            new TextureFormat( PixelInternalFormat.Rg8i, PixelFormat.Rg, PixelType.Byte),
-            new TextureFormat( PixelInternalFormat.Rgb8i, PixelFormat.Rgb, PixelType.Byte),
-            new TextureFormat( PixelInternalFormat.Rgba8i, PixelFormat.Rgba, PixelType.Byte),
-            new TextureFormat( PixelInternalFormat.R16i, PixelFormat.Red, PixelType.Short),
-            new TextureFormat( PixelInternalFormat.Rg16i, PixelFormat.Rg, PixelType.Short),
-            new TextureFormat( PixelInternalFormat.Rgb16i, PixelFormat.Rgb, PixelType.Short),
-            new TextureFormat( PixelInternalFormat.Rgba16i, PixelFormat.Rgba, PixelType.Short),
-            new TextureFormat( PixelInternalFormat.R32i, PixelFormat.Red, PixelType.Int),
-            new TextureFormat( PixelInternalFormat.Rg32i, PixelFormat.Rg, PixelType.Int),
-            new TextureFormat( PixelInternalFormat.Rgb32i, PixelFormat.Rgb, PixelType.Int),
-            new TextureFormat( PixelInternalFormat.Rgba32i, PixelFormat.Rgba, PixelType.Int),
+            new TextureFormat(PixelInternalFormat.R8i, PixelFormat.Red, PixelType.Byte),
+            new TextureFormat(PixelInternalFormat.Rg8i, PixelFormat.Rg, PixelType.Byte),
+            new TextureFormat(PixelInternalFormat.Rgb8i, PixelFormat.Rgb, PixelType.Byte),
+            new TextureFormat(PixelInternalFormat.Rgba8i, PixelFormat.Rgba, PixelType.Byte),
+            new TextureFormat(PixelInternalFormat.R16i, PixelFormat.Red, PixelType.Short),
+            new TextureFormat(PixelInternalFormat.Rg16i, PixelFormat.Rg, PixelType.Short),
+            new TextureFormat(PixelInternalFormat.Rgb16i, PixelFormat.Rgb, PixelType.Short),
+            new TextureFormat(PixelInternalFormat.Rgba16i, PixelFormat.Rgba, PixelType.Short),
+            new TextureFormat(PixelInternalFormat.R32i, PixelFormat.Red, PixelType.Int),
+            new TextureFormat(PixelInternalFormat.Rg32i, PixelFormat.Rg, PixelType.Int),
+            new TextureFormat(PixelInternalFormat.Rgb32i, PixelFormat.Rgb, PixelType.Int),
+            new TextureFormat(PixelInternalFormat.Rgba32i, PixelFormat.Rgba, PixelType.Int),
 
-            new TextureFormat( PixelInternalFormat.R3G3B2, PixelFormat.Rgb, PixelType.UnsignedByte),
-            new TextureFormat( PixelInternalFormat.Rgb10A2, PixelFormat.Rgba, PixelType.UnsignedByte),
-            new TextureFormat( PixelInternalFormat.Rgb5A1, PixelFormat.Rgb, PixelType.UnsignedByte),
-            new TextureFormat( PixelInternalFormat.Rgb9E5, PixelFormat.Rgb, PixelType.UnsignedByte),
-            new TextureFormat( PixelInternalFormat.R11fG11fB10f, PixelFormat.Rgb, PixelType.UnsignedByte),
+            new TextureFormat(PixelInternalFormat.R3G3B2, PixelFormat.Rgb, PixelType.UnsignedByte),
+            new TextureFormat(PixelInternalFormat.Rgb10A2, PixelFormat.Rgba, PixelType.UnsignedByte),
+            new TextureFormat(PixelInternalFormat.Rgb5A1, PixelFormat.Rgb, PixelType.UnsignedByte),
+            new TextureFormat(PixelInternalFormat.Rgb9E5, PixelFormat.Rgb, PixelType.UnsignedByte),
+            new TextureFormat(PixelInternalFormat.R11fG11fB10f, PixelFormat.Rgb, PixelType.UnsignedByte),
 
-            new TextureFormat( PixelInternalFormat.CompressedAlpha, PixelFormat.Alpha, PixelType.UnsignedByte),
-            new TextureFormat( PixelInternalFormat.CompressedIntensity, PixelFormat.Luminance, PixelType.UnsignedByte),
-            new TextureFormat( PixelInternalFormat.CompressedLuminance, PixelFormat.Luminance, PixelType.UnsignedByte),
-            new TextureFormat( PixelInternalFormat.CompressedLuminanceAlpha, PixelFormat.LuminanceAlpha, PixelType.UnsignedByte),
-            new TextureFormat( (PixelInternalFormat)All.CompressedLuminanceLatc1Ext, PixelFormat.Luminance, PixelType.UnsignedByte),
-            new TextureFormat( (PixelInternalFormat)All.CompressedLuminanceAlphaLatc2Ext, PixelFormat.LuminanceAlpha, PixelType.UnsignedByte),
+            new TextureFormat(PixelInternalFormat.CompressedAlpha, PixelFormat.Alpha, PixelType.UnsignedByte),
+            new TextureFormat(PixelInternalFormat.CompressedIntensity, PixelFormat.Luminance, PixelType.UnsignedByte),
+            new TextureFormat(PixelInternalFormat.CompressedLuminance, PixelFormat.Luminance, PixelType.UnsignedByte),
+            new TextureFormat(PixelInternalFormat.CompressedLuminanceAlpha, PixelFormat.LuminanceAlpha, PixelType.UnsignedByte),
+            new TextureFormat((PixelInternalFormat)All.CompressedLuminanceLatc1Ext, PixelFormat.Luminance, PixelType.UnsignedByte),
+            new TextureFormat((PixelInternalFormat)All.CompressedLuminanceAlphaLatc2Ext, PixelFormat.LuminanceAlpha, PixelType.UnsignedByte),
 
-            new TextureFormat( PixelInternalFormat.CompressedRed, PixelFormat.Red, PixelType.UnsignedByte),
-            new TextureFormat( PixelInternalFormat.CompressedRedRgtc1, PixelFormat.Red, PixelType.UnsignedByte),
-            new TextureFormat( (PixelInternalFormat)All.CompressedRedGreenRgtc2Ext, PixelFormat.Rg, PixelType.UnsignedByte),
-            new TextureFormat( PixelInternalFormat.CompressedRg, PixelFormat.Rg, PixelType.UnsignedByte),
-            new TextureFormat( PixelInternalFormat.CompressedRgRgtc2, PixelFormat.Rg, PixelType.UnsignedByte),
-            new TextureFormat( PixelInternalFormat.CompressedRgb, PixelFormat.Rgb, PixelType.UnsignedByte),
-            new TextureFormat( (PixelInternalFormat)All.CompressedRgbFxt13Dfx, PixelFormat.Rgb, PixelType.UnsignedByte),
-            new TextureFormat( PixelInternalFormat.CompressedRgba, PixelFormat.Rgba, PixelType.UnsignedByte),
-            new TextureFormat( (PixelInternalFormat)All.CompressedRgbaFxt13Dfx, PixelFormat.Rgba, PixelType.UnsignedByte),
+            new TextureFormat(PixelInternalFormat.CompressedRed, PixelFormat.Red, PixelType.UnsignedByte),
+            new TextureFormat(PixelInternalFormat.CompressedRedRgtc1, PixelFormat.Red, PixelType.UnsignedByte),
+            new TextureFormat((PixelInternalFormat)All.CompressedRedGreenRgtc2Ext, PixelFormat.Rg, PixelType.UnsignedByte),
+            new TextureFormat(PixelInternalFormat.CompressedRg, PixelFormat.Rg, PixelType.UnsignedByte),
+            new TextureFormat(PixelInternalFormat.CompressedRgRgtc2, PixelFormat.Rg, PixelType.UnsignedByte),
+            new TextureFormat(PixelInternalFormat.CompressedRgb, PixelFormat.Rgb, PixelType.UnsignedByte),
+            new TextureFormat((PixelInternalFormat)All.CompressedRgbFxt13Dfx, PixelFormat.Rgb, PixelType.UnsignedByte),
+            new TextureFormat(PixelInternalFormat.CompressedRgba, PixelFormat.Rgba, PixelType.UnsignedByte),
+            new TextureFormat((PixelInternalFormat)All.CompressedRgbaFxt13Dfx, PixelFormat.Rgba, PixelType.UnsignedByte),
 
-            new TextureFormat( (PixelInternalFormat)All.CompressedSignedLuminanceAlphaLatc2Ext, PixelFormat.LuminanceAlpha, PixelType.UnsignedByte),
-            new TextureFormat( (PixelInternalFormat)All.CompressedSignedLuminanceLatc1Ext, PixelFormat.Luminance, PixelType.UnsignedByte),
-            new TextureFormat( PixelInternalFormat.CompressedSignedRedRgtc1, PixelFormat.Red, PixelType.UnsignedByte),
-            new TextureFormat( PixelInternalFormat.CompressedSignedRgRgtc2, PixelFormat.Rg, PixelType.UnsignedByte),
+            new TextureFormat((PixelInternalFormat)All.CompressedSignedLuminanceAlphaLatc2Ext, PixelFormat.LuminanceAlpha, PixelType.UnsignedByte),
+            new TextureFormat((PixelInternalFormat)All.CompressedSignedLuminanceLatc1Ext, PixelFormat.Luminance, PixelType.UnsignedByte),
+            new TextureFormat(PixelInternalFormat.CompressedSignedRedRgtc1, PixelFormat.Red, PixelType.UnsignedByte),
+            new TextureFormat(PixelInternalFormat.CompressedSignedRgRgtc2, PixelFormat.Rg, PixelType.UnsignedByte),
 
-            new TextureFormat( PixelInternalFormat.CompressedSluminance, PixelFormat.Luminance, PixelType.UnsignedByte),
-            new TextureFormat( PixelInternalFormat.CompressedSluminanceAlpha, PixelFormat.LuminanceAlpha, PixelType.UnsignedByte),
-            new TextureFormat( PixelInternalFormat.CompressedSrgb, PixelFormat.Rgb, PixelType.UnsignedByte),
-            new TextureFormat( PixelInternalFormat.CompressedSrgbAlpha, PixelFormat.Rgba, PixelType.UnsignedByte),
-            new TextureFormat( PixelInternalFormat.CompressedSrgbS3tcDxt1Ext, PixelFormat.Rgb, PixelType.UnsignedByte),
-            new TextureFormat( PixelInternalFormat.CompressedSrgbAlphaS3tcDxt1Ext, PixelFormat.Rgba, PixelType.UnsignedByte),
-            new TextureFormat( PixelInternalFormat.CompressedSrgbAlphaS3tcDxt3Ext, PixelFormat.Rgba, PixelType.UnsignedByte),
-            new TextureFormat( PixelInternalFormat.CompressedSrgbAlphaS3tcDxt5Ext, PixelFormat.Rgba, PixelType.UnsignedByte),
+            new TextureFormat(PixelInternalFormat.CompressedSluminance, PixelFormat.Luminance, PixelType.UnsignedByte),
+            new TextureFormat(PixelInternalFormat.CompressedSluminanceAlpha, PixelFormat.LuminanceAlpha, PixelType.UnsignedByte),
+            new TextureFormat(PixelInternalFormat.CompressedSrgb, PixelFormat.Rgb, PixelType.UnsignedByte),
+            new TextureFormat(PixelInternalFormat.CompressedSrgbAlpha, PixelFormat.Rgba, PixelType.UnsignedByte),
+            new TextureFormat(PixelInternalFormat.CompressedSrgbS3tcDxt1Ext, PixelFormat.Rgb, PixelType.UnsignedByte),
+            new TextureFormat(PixelInternalFormat.CompressedSrgbAlphaS3tcDxt1Ext, PixelFormat.Rgba, PixelType.UnsignedByte),
+            new TextureFormat(PixelInternalFormat.CompressedSrgbAlphaS3tcDxt3Ext, PixelFormat.Rgba, PixelType.UnsignedByte),
+            new TextureFormat(PixelInternalFormat.CompressedSrgbAlphaS3tcDxt5Ext, PixelFormat.Rgba, PixelType.UnsignedByte),
 
-            new TextureFormat( (PixelInternalFormat)All.CompressedRgbS3tcDxt1Ext, PixelFormat.Rgb, PixelType.UnsignedByte),
-            new TextureFormat( (PixelInternalFormat)All.CompressedRgbaS3tcDxt1Ext, PixelFormat.Rgba, PixelType.UnsignedByte),
-            new TextureFormat( (PixelInternalFormat)All.CompressedRgbaS3tcDxt3Ext, PixelFormat.Rgba, PixelType.UnsignedByte),
-            new TextureFormat( (PixelInternalFormat)All.CompressedRgbaS3tcDxt5Ext, PixelFormat.Rgba, PixelType.UnsignedByte),
+            new TextureFormat((PixelInternalFormat)All.CompressedRgbS3tcDxt1Ext, PixelFormat.Rgb, PixelType.UnsignedByte),
+            new TextureFormat((PixelInternalFormat)All.CompressedRgbaS3tcDxt1Ext, PixelFormat.Rgba, PixelType.UnsignedByte),
+            new TextureFormat((PixelInternalFormat)All.CompressedRgbaS3tcDxt3Ext, PixelFormat.Rgba, PixelType.UnsignedByte),
+            new TextureFormat((PixelInternalFormat)All.CompressedRgbaS3tcDxt5Ext, PixelFormat.Rgba, PixelType.UnsignedByte),
         };
 
         private enum GLType
@@ -293,6 +326,9 @@ namespace Ragnarok.OpenGL
                         Supported.Enqueue(t);
                     else
                         Unsupported.Enqueue(t);
+
+                    GL.BindTexture(TextureTarget.Texture2D, 0);
+                    GL.DeleteTextures(1, ref DummyTexture);
                 }
                 finally
                 {
@@ -302,7 +338,6 @@ namespace Ragnarok.OpenGL
                     }
                 }
             }
-            GL.BindTexture(TextureTarget.Texture2D, 0);
 
             using (new Section(sb, "Supported Texture formats"))
             {
@@ -460,7 +495,7 @@ namespace Ragnarok.OpenGL
             var err = GL.GetError();
             if (err != ErrorCode.NoError)
             {
-                Log.Error("Unsupported Token: " + pname);
+                //Log.Error("Unsupported Token: " + pname);
             }
 
             return output;

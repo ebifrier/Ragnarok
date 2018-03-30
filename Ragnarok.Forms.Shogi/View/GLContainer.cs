@@ -131,6 +131,7 @@ namespace Ragnarok.Forms.Shogi.View
                 // このメソッドに失敗してVisual Studioが落ちることがあるため、
                 // 念のため例外を潰しておく
                 Util.SafeCall(() => Texture.DeleteAll(Context));
+                Util.SafeCall(() => TextureDisposer.Update(Context));
             }
 
             base.OnHandleDestroyed(e);
