@@ -294,7 +294,7 @@ namespace Ragnarok.OpenGL
                     else
                         Unsupported.Enqueue(t);
                 }
-                catch
+                finally
                 {
                     if (DummyTexture != 0)
                     {
