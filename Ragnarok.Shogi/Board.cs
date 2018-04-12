@@ -1290,10 +1290,10 @@ namespace Ragnarok.Shogi
                 return false;
             }
 
-            if (HashValue != other.HashValue)
+            /*if (HashValue != other.HashValue)
             {
                 return false;
-            }
+            }*/
 
             if (!AllSquares().All(_ => this[_] == other[_]))
             {
