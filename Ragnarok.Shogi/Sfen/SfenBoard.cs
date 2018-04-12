@@ -138,12 +138,13 @@ namespace Ragnarok.Shogi.Sfen
                 return;
             }
 
-            var count = 1;
+            var count = 0;
             foreach (var c in sfen)
             {
-                if ('1' <= c && c <= '9')
+                if ('0' <= c && c <= '9')
                 {
-                    count = c - '0';
+                    // 10と数字が並ぶ可能性があります。
+                    count = count * 10 + (c - '0');
                 }
                 else
                 {
@@ -154,8 +155,10 @@ namespace Ragnarok.Shogi.Sfen
                             "SFEN形式の持ち駒'" + c + "'が正しくありません。");
                     }
 
-                    board.SetHand(piece.PieceType, piece.BWType, count);
-                    count = 1;
+                    // 持ち駒の数は0以上に合わせます。
+                    var pcount = Math.Max(count, 1);
+                    board.SetHand(piece.PieceType, piece.BWType, pcount);
+                    count = 0;
                 }
             }
         }

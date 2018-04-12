@@ -59,6 +59,51 @@ namespace Ragnarok.Shogi.Sfen.Tests
                 Board.ParseSfen("9/9/9/9/9/9/9/+G8/9 b -")));
         }
 
+        [Test()]
+        public void ParseBoardTest2()
+        {
+            var board = new Board(false);
+
+            board[9, 1] = new BoardPiece(Piece.Kyo, BWType.White);
+            board[6, 1] = new BoardPiece(Piece.Kei, BWType.White);
+            board[2, 1] = new BoardPiece(Piece.Kei, BWType.White);
+            board[1, 1] = new BoardPiece(Piece.Kyo, BWType.White);
+            board[3, 2] = new BoardPiece(Piece.Kyo, BWType.White);
+            board[2, 2] = new BoardPiece(Piece.Hisya, BWType.White);
+            board[2, 3] = new BoardPiece(Piece.Gyoku, BWType.White);
+            board[9, 4] = new BoardPiece(Piece.Hu, BWType.White);
+            board[8, 4] = new BoardPiece(Piece.Hu, BWType.White);
+            board[5, 4] = new BoardPiece(Piece.Ryu, BWType.Black);
+            board[2, 5] = new BoardPiece(Piece.Kin, BWType.Black);
+            board[1, 5] = new BoardPiece(Piece.Hu, BWType.White);
+            board[9, 6] = new BoardPiece(Piece.Hu, BWType.Black);
+            board[8, 6] = new BoardPiece(Piece.Hu, BWType.Black);
+            board[7, 6] = new BoardPiece(Piece.Gyoku, BWType.Black);
+            board[6, 6] = new BoardPiece(Piece.Kin, BWType.Black);
+            board[5, 6] = new BoardPiece(Piece.Kei, BWType.Black);
+            board[3, 6] = new BoardPiece(Piece.Hu, BWType.Black);
+            board[1, 6] = new BoardPiece(Piece.Hu, BWType.Black);
+            board[4, 7] = new BoardPiece(Piece.Hu, BWType.Black);
+            board[5, 8] = new BoardPiece(Piece.Gin, BWType.Black);
+            board[9, 9] = new BoardPiece(Piece.Kyo, BWType.Black);
+            board[4, 9] = new BoardPiece(Piece.Kei, BWType.Black);
+            board[1, 9] = new BoardPiece(Piece.Uma, BWType.White);
+
+            // 駒台の設定
+            board.SetHand(PieceType.Kaku, BWType.Black, 1);
+            board.SetHand(PieceType.Kin, BWType.Black, 2);
+            board.SetHand(PieceType.Gin, BWType.Black, 2);
+            board.SetHand(PieceType.Hu, BWType.Black, 10);
+            board.SetHand(PieceType.Gin, BWType.White, 1);
+
+            // 手番
+            board.Turn = BWType.White;
+
+            Assert.True(Board.BoardEquals(
+                Board.ParseSfen("l2n3nl/6lr1/7k1/pp2+R4/7Gp/PPKGN1P1P/5P3/4S4/L4N2+b w B2G2S10Ps 1"),
+                board));
+        }
+
         private List<Move> MakeMoveList(string sfen)
         {
             var board = new Board();
