@@ -456,7 +456,7 @@ namespace Ragnarok.NicoNico.Video
             @"&quot;commentCount&quot;:([\d]+),",
             RegexOptions.IgnoreCase);
         private static readonly Regex MylistCountRegex = new Regex(
-            @"&quot;mylistCounter&quot;:&quot;([\d]+)&quot;",
+            @"&quot;mylistCount&quot;:(&quot;)?([\d]+)(&quot;)?",
             RegexOptions.IgnoreCase);
         private static readonly Regex TagsRegex = new Regex(
             @"&quot;tags&quot;:\[(.+?)\],",
@@ -591,7 +591,7 @@ namespace Ragnarok.NicoNico.Video
                     video.IdString);
             }
             video.MylistCounter = int.Parse(
-                m.Groups[1].Value,
+                m.Groups[2].Value,
                 NumberStyles.AllowThousands);
 
             // タグを収集します。
