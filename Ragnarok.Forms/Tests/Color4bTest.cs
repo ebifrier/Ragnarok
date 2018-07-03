@@ -65,7 +65,7 @@ namespace Ragnarok.Forms.Tests
                 var ragnarokPair = ragnarokList[i];
                 var drawingPair = drawingList[i];
 
-                Console.WriteLine("Color.{0}", drawingPair.Item1);
+                //Console.WriteLine("Color.{0}", drawingPair.Item1);
 
                 Assert.AreEqual(drawingPair.Item1, ragnarokPair.Item1);
                 Assert.AreEqual(drawingPair.Item2.A, ragnarokPair.Item2.A);
