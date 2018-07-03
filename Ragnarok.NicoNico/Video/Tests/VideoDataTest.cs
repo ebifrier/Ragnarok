@@ -61,7 +61,7 @@ namespace Ragnarok.NicoNico.Video.Tests
             Assert.AreEqual("新・豪血寺一族 -煩悩解放 - レッツゴー！陰陽師", video.Title);
             Assert.AreEqual("レッツゴー！陰陽師（フルコーラスバージョン）", video.Description);
             Assert.AreEqual(DateTime.Parse("2007-03-06T00:33:00+09:00"), video.StartTime);
-            Assert.AreEqual(319, video.LengthSeconds);
+            Assert.AreEqual(320, video.LengthSeconds);
             Assert.AreEqual("http://tn.smilevideo.jp/smile?i=9", video.ThumbnailUrl);
             Assert.NotNull(video.IsVisible);
             Assert.True(video.IsVisible.Value);
@@ -100,7 +100,7 @@ namespace Ragnarok.NicoNico.Video.Tests
                 "きめきメモリアルOnly Love」弥生水奈役ＴＶアニメ「がくえんゆー" +
                 "とぴあ まなびストレート！」小鳥桃葉役 TVアニメ「つよきすCool×Sweet」" +
                 "　蟹沢きぬ、 TVアニメ「吉永さん家のガーゴイル」　など）　　　　　" +
-                "詳しくはこちらhttp://www.crypton.co.jp/mp/pages/prod/vocaloid/cv01.jsp　" +
+                "詳しくはこちら<a href=\"http://www.crypton.co.jp/mp/pages/prod/vocaloid/cv01.jsp\" target=\"_blank\" rel=\"noopener nofollow\">http://www.crypton.co.jp/mp/pages/prod/vocaloid/cv01.jsp</a>　" +
                 "私もミクで遊んでみました " +
                 "<a href=\"http://www.nicovideo.jp/mylist/4883031\" target=\"_blank\" rel=\"noopener\">mylist/4883031</a>"),
                 video.Description);
