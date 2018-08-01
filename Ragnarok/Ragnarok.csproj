@@ -80,7 +80,7 @@
       <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-      <HintPath>..\packages\NLog.4.5.6\lib\net45\NLog.dll</HintPath>
+      <HintPath>..\packages\NLog.4.5.7\lib\net45\NLog.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\externals\net\nunit.framework.dll</HintPath>
@@ -112,9 +112,6 @@
     <Compile Include="Net\SendData.cs" />
     <Compile Include="Net\SendThread.cs" />
     <Compile Include="Net\WebUtil.cs" />
-    <Compile Include="NLog\RemoteSyslog.cs" />
-    <Compile Include="NLog\RepeatedException.cs" />
-    <Compile Include="NLog\Syslog.cs" />
     <Compile Include="ObjectModel\AffectOtherPropertyAttribute.cs" />
     <Compile Include="ObjectModel\DependOnPropertyAttribute.cs" />
     <Compile Include="ObjectModel\DynamicDictionary.cs" />
@@ -216,7 +213,6 @@
     <None Include="NLog.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="NLog\NLog.config" />
     <None Include="packages.config" />
     <None Include="Ragnarok.snk" />
   </ItemGroup>

@@ -73,13 +73,21 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.4.5.7\lib\net45\NLog.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression" />
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -168,6 +176,7 @@
     <Compile Include="Utility\ImageUtil.cs" />
     <Compile Include="Utility\KeyHook.cs" />
     <Compile Include="Utility\ListBoxUtil.cs" />
+    <Compile Include="Utility\NLogControlTarget.cs" />
     <Compile Include="Utility\PasswordBoxUtil.cs" />
     <Compile Include="Utility\PseudoKeyboard.cs" />
     <Compile Include="Utility\TextBoxUtil.cs" />
@@ -272,6 +281,13 @@
   <ItemGroup>
     <None Include="Effect\compile.bat" />
     <None Include="Effect\GrayscaleEffect.ps" />
+    <Content Include="NLog.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Include="NLog.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config" />
     <None Include="Ragnarok.Presentation.snk" />
   </ItemGroup>
   <ItemGroup>

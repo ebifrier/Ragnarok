@@ -1,10 +1,9 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Reflection;
-using System.Diagnostics;
 
 using NLog;
 using NLog.Config;
@@ -21,7 +20,37 @@ namespace Ragnarok
     /// </remarks>
     public static class Log
     {
+        private static ConcurrentDictionary<string, object> targetDic =
+             new ConcurrentDictionary<string, object>();
         private static readonly Logger logger = null;
+
+        /// <summary>
+        /// 出力対象となるコントロールとその名前を追加。
+        /// </summary>
+        public static void AddTarget<T>(string name, T target)
+            where T : class
+        {
+            if (target == null)
+            {
+                throw new ArgumentNullException(nameof(target));
+            }
+
+            targetDic.AddOrUpdate(name, target, (_, __) => target);
+        }
+
+        /// <summary>
+        /// 名前から出力対象となるコントロールを探します。
+        /// </summary>
+        public static T FindTarget<T>(string name)
+            where T : class
+        {
+            if (!targetDic.TryGetValue(name, out object target))
+            {
+                return null;
+            }
+
+            return target as T;
+        }
 
         /// <summary>
         /// 未処理の例外が発生したときに呼ばれます。

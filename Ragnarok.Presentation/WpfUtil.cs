@@ -42,6 +42,9 @@ namespace Ragnarok.Presentation
         {
             Initializer.Initialize();
 
+            // NLog用の設定
+            NLog.Targets.Target.Register<Utility.NLogControlTarget>("WpfControl");
+
             Util.SetPropertyChangedCaller(CallPropertyChanged);
             Util.SetColletionChangedCaller(CallCollectionChanged);
             Util.SetEventCaller(UIProcess);
