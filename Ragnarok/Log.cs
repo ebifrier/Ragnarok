@@ -244,7 +244,10 @@ namespace Ragnarok
         /// </summary>
         public static void Info(string format, params object[] args)
         {
-            var message = string.Format(format, args);
+            var message = (
+                args != null && args.Length > 0 ?
+                string.Format(format, args) :
+                format);
 
             if (logger != null)
             {
@@ -258,7 +261,10 @@ namespace Ragnarok
         public static void Info(ILogObject logObj, string format,
                                 params object[] args)
         {
-            var message = string.Format(format, args);
+            var message = (
+                args != null && args.Length > 0 ?
+                string.Format(format, args) :
+                format);
 
             if (logger != null)
             {

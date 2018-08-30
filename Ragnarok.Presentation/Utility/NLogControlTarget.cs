@@ -37,14 +37,14 @@ namespace Ragnarok.Presentation.Utility
         /// </summary>
         public void AddLog(string logMessage)
         {
-            var control = Log.FindTarget<TextBoxBase>(ControlName);
-            if (control == null)
-            {
-                return;
-            }
-
             WPFUtil.UIProcess(() =>
             {
+                var control = Log.FindTarget<TextBoxBase>(ControlName);
+                if (control == null)
+                {
+                    return;
+                }
+
                 control.AppendText(logMessage + Environment.NewLine);
             });
         }
