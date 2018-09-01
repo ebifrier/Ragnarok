@@ -285,7 +285,7 @@ namespace Ragnarok.Presentation
                 message, ex.Message);
 
             // ログにも出力します。
-            Log.ErrorException(ex, message);
+            //Log.ErrorException(ex, message);
 
             ShowErrorInternal(owner, text);
         }
@@ -296,7 +296,7 @@ namespace Ragnarok.Presentation
         public static void ShowError(Window owner, string message)
         {
             // ログにも出力します。
-            Log.Error(message);
+            //Log.Error(message);
 
             ShowErrorInternal(owner, message);
         }
