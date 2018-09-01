@@ -100,6 +100,23 @@ namespace Ragnarok.Presentation
         }
 
         /// <summary>
+        /// 与えられた手続きをUIスレッド上で実行するように予約します。
+        /// </summary>
+        public static void UIDispatch(Action func)
+        {
+            var dispatcher = WPFUtil.UIDispatcher;
+
+            if (dispatcher == null)
+            {
+                func();
+            }
+            else
+            {
+                dispatcher.BeginInvoke(func);
+            }
+        }
+
+        /// <summary>
         /// コマンドバインダをすべて更新します。
         /// </summary>
         public static void InvalidateCommand()
