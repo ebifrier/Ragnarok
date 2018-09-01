@@ -39,6 +39,14 @@ namespace Ragnarok
         }
 
         /// <summary>
+        /// 出力対象となるコントロールを削除。
+        /// </summary>
+        public static void RemoveTarget(string name)
+        {
+            targetDic.TryRemove(name, out object value);
+        }
+
+        /// <summary>
         /// 名前から出力対象となるコントロールを探します。
         /// </summary>
         public static T FindTarget<T>(string name)
