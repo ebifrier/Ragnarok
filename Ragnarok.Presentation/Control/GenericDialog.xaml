@@ -4,7 +4,7 @@
                     xmlns:l="clr-namespace:Ragnarok.Presentation.Control">
     <Style x:Key="gridStyle" TargetType="Grid">
         <Setter Property="Background"
-                Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" />
+                Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
     </Style>
     
     <Style x:Key="buttonStyle" TargetType="Button">
@@ -39,7 +39,7 @@
                        Foreground="{TemplateBinding Foreground}" 
                        Text="{Binding Message, RelativeSource={RelativeSource TemplatedParent}}"
                        TextWrapping="Wrap"
-                       Margin="30,40,30,30"
+                       Margin="30,20,30,20"
                        MaxWidth="400" />
 
             <DockPanel Grid.Row="1"
