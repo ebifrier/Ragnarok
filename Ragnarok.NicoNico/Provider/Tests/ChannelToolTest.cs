@@ -38,12 +38,12 @@ namespace Ragnarok.NicoNico.Provider.Tests
             Assert.AreEqual(2, list.Count());
 
             Assert.AreEqual(UploadedVideoStatus.Uploading, list[0].Status);
-            Assert.AreEqual("so33990719", list[0].Id);
-            Assert.AreEqual("57-07-751 小林泉美の囲碁初級講座「４路詰碁で脳トレーニング」3 ～めざせ！5級～ 石の連絡と切断(1)-n.mp4", list[0].Title);
+            Assert.AreEqual("so34006431", list[0].Id);
+            Assert.AreEqual("57-07-752 小林泉美の囲碁初級講座「４路詰碁で脳トレーニング」4 ～めざせ！5級～ 石の連絡と切断(2)-n.mp4", list[0].Title);
 
             Assert.AreEqual(UploadedVideoStatus.Success, list[1].Status);
-            Assert.AreEqual("so33974261", list[1].Id);
-            Assert.AreEqual("57-74-881 第27期 銀河戦 本戦Fブロック 1回戦 島本亮五段 vs 渡部愛女流王位-n.mp4", list[1].Title);
+            Assert.AreEqual("so34006415", list[1].Id);
+            Assert.AreEqual("57-07-754 小林泉美の囲碁初級講座「４路詰碁で脳トレーニング」6 ～めざせ！5級～ ウッテガエシ(2)-n.mp4", list[1].Title);
 
             // エラーなど
             list = ChannelTool.GetUploadedVideoList("");

@@ -61,7 +61,7 @@ namespace Ragnarok.NicoNico.Provider
     public static class ChannelTool
     {
         public readonly static string BaseUrl = @"http://chtool.nicovideo.jp/";
-        public readonly static string UploadedVideosUrl = BaseUrl + @"video/video";
+        public readonly static string UploadedVideosUrl = BaseUrl + @"video/uploaded_videos";
         public readonly static string VideoUrl = BaseUrl + @"video/video.php";
         public readonly static string VideoEditUrl = BaseUrl + @"video/video_edit";
         public readonly static string VideoDeleteUrl = BaseUrl + @"video/video_delete.php";
@@ -232,10 +232,6 @@ namespace Ragnarok.NicoNico.Provider
 
         #region UploadedVideoList
         private readonly static Regex UploadedVideoRegex = new Regex(
-            @"<ul class=""videoListItems"" data-reservedvideolistitems="""">\s*<li>\s*" +
-            @"(?<content>[\s\S]+?)\s*" +
-            @"</div>\s*</div>\s*</li>\s*</ul>");
-        private readonly static Regex UploadedVideoItemRegex = new Regex(
             @"<li>\s*<div class=""videoListItems__thumbnail"">\s*" +
             @"(?<content>[\s\S]+?)\s*" +
             @"</div>\s*</div>\s*</li>");
@@ -248,6 +244,8 @@ namespace Ragnarok.NicoNico.Provider
         {
             var url = MakeUploadedVideosUrl(channelId);
             var text = WebUtil.RequestHttpText(url, null, cc, Encoding.UTF8);
+
+            File.WriteAllText("channelpage.html", text);
 
             return GetUploadedVideoList(text);
         }
@@ -262,14 +260,8 @@ namespace Ragnarok.NicoNico.Provider
                 throw new ArgumentNullException("html");
             }
 
-            var m = UploadedVideoRegex.Match(html);
-            if (!m.Success)
-            {
-                return new List<ChannelUploadedVideoData>();
-            }
-
-            return UploadedVideoItemRegex
-                .Matches(m.Value)
+            return UploadedVideoRegex
+                .Matches(html)
                 .OfType<Match>()
                 .Where(_ => _.Success)
                 .Select(_ => CreateUploadedVideoData(_))
@@ -277,7 +269,7 @@ namespace Ragnarok.NicoNico.Provider
         }
 
         private static readonly Regex IdRegex = new Regex(
-            @"<li data-gaeventtracktarget=""videoList_reservedVideoMetadata_videoId"">\s*(.+)\s*</li>");
+            @"<li data-gaEventTrackTarget=""videoList_reservedVideoMetadata_videoId"">\s*(.+)\s*</li>");
         private static readonly Regex TitleRegex = new Regex(
             @"<h3 class=""videoListItems__metadata__controls__title"">\s*([\s\S]+?)\s*</h3>");
         private static readonly Regex StatusRegex = new Regex(
