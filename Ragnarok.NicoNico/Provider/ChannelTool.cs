@@ -61,7 +61,7 @@ namespace Ragnarok.NicoNico.Provider
     public static class ChannelTool
     {
         public readonly static string BaseUrl = @"http://chtool.nicovideo.jp/";
-        public readonly static string UploadedVideosUrl = BaseUrl + @"video/uploaded_videos";
+        public readonly static string UploadedVideosUrl = BaseUrl + @"video/video";
         public readonly static string VideoUrl = BaseUrl + @"video/video.php";
         public readonly static string VideoEditUrl = BaseUrl + @"video/video_edit";
         public readonly static string VideoDeleteUrl = BaseUrl + @"video/video_delete.php";
@@ -232,10 +232,13 @@ namespace Ragnarok.NicoNico.Provider
 
         #region UploadedVideoList
         private readonly static Regex UploadedVideoRegex = new Regex(
-            @"<div class=""video_right"">\s*" +
-            @"<h6 class=""video_title"" title=""(?<title>[^""]+)"">\s*" +
-            @"(?<content>[\s\S]+?)\s*fileid=""(?<id>\d+)""\s*" +
-            @"([\s\S]+?)\s*</menu>\s*</div>");
+            @"<ul class=""videoListItems"" data-reservedvideolistitems="""">\s*<li>\s*" +
+            @"(?<content>[\s\S]+?)\s*" +
+            @"</div>\s*</div>\s*</li>\s*</ul>");
+        private readonly static Regex UploadedVideoItemRegex = new Regex(
+            @"<li>\s*<div class=""videoListItems__thumbnail"">\s*" +
+            @"(?<content>[\s\S]+?)\s*" +
+            @"</div>\s*</div>\s*</li>");
 
         /// <summary>
         /// アップロードされた動画のリストを取得します。
@@ -259,27 +262,59 @@ namespace Ragnarok.NicoNico.Provider
                 throw new ArgumentNullException("html");
             }
 
-            return UploadedVideoRegex
-                .Matches(html)
+            var m = UploadedVideoRegex.Match(html);
+            if (!m.Success)
+            {
+                return new List<ChannelUploadedVideoData>();
+            }
+
+            return UploadedVideoItemRegex
+                .Matches(m.Value)
                 .OfType<Match>()
                 .Where(_ => _.Success)
                 .Select(_ => CreateUploadedVideoData(_))
                 .ToList();
         }
 
+        private static readonly Regex IdRegex = new Regex(
+            @"<li data-gaeventtracktarget=""videoList_reservedVideoMetadata_videoId"">\s*(.+)\s*</li>");
+        private static readonly Regex TitleRegex = new Regex(
+            @"<h3 class=""videoListItems__metadata__controls__title"">\s*([\s\S]+?)\s*</h3>");
+        private static readonly Regex StatusRegex = new Regex(
+            @"<div class=""videoListItems__metadata__date"">\s*<span>\s*(.*)\s*</span>");
+
         private static ChannelUploadedVideoData CreateUploadedVideoData(Match m)
         {
             var content = m.Groups["content"].Value;
-            var status = (
-                content.Contains(@"<p class=""info"">") ||
-                content.Contains(@"<p class=""info strong"">") ?
-                UploadedVideoStatus.Uploading :
-                UploadedVideoStatus.Success);
 
-            return new ChannelUploadedVideoData(
-                status,
-                "so" + m.Groups["id"].Value,
-                m.Groups["title"].Value);
+            var sm = IdRegex.Match(content);
+            if (!sm.Success)
+            {
+                return null;
+            }
+            var id = sm.Groups[1].Value;
+
+            sm = TitleRegex.Match(content);
+            if (!sm.Success)
+            {
+                return null;
+            }
+            var title = sm.Groups[1].Value;
+
+            sm = StatusRegex.Match(content);
+            if (!sm.Success)
+            {
+                return null;
+            }
+            var statusText = sm.Groups[1].Value;
+
+            var status = (
+                statusText.Contains("処理順番待ち") || statusText.Contains("エンコード中") ?
+                    UploadedVideoStatus.Uploading :
+                statusText.IsWhiteSpaceOnly() ? UploadedVideoStatus.Success :
+                UploadedVideoStatus.Error);
+
+            return new ChannelUploadedVideoData(status, id, title);
         }
         #endregion
 

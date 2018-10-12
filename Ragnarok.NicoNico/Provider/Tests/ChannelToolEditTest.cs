@@ -85,7 +85,7 @@ namespace Ragnarok.NicoNico.Provider.Tests
                 Description =
                     "対穴熊△3三角 講義<br>講師：藤井猛\n" +
                     "\n" +
-                    "テストサン123",
+                    "テストサン23",
                 TagList = new List<string> { "将棋", "テスト", "Abcd", "比較" },
                 StartTime = new DateTime(2016, 10, 1, 0, 0, 0),
             };
