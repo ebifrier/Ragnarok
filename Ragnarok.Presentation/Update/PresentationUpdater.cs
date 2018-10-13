@@ -31,8 +31,8 @@ namespace Ragnarok.Presentation.Update
         /// </summary>
         public string AssemblyTitle
         {
-            get { return GetValue<string>("AssemblyTitle"); }
-            private set { SetValue("AssemblyTitle", value); }
+            get { return GetValue<string>(nameof(AssemblyTitle)); }
+            private set { SetValue(nameof(AssemblyTitle), value); }
         }
 
         /// <summary>
@@ -40,8 +40,8 @@ namespace Ragnarok.Presentation.Update
         /// </summary>
         public string LatestVersion
         {
-            get { return GetValue<string>("LatestVersion"); }
-            private set { SetValue("LatestVersion", value); }
+            get { return GetValue<string>(nameof(LatestVersion)); }
+            private set { SetValue(nameof(LatestVersion), value); }
         }
 
         /// <summary>
@@ -49,8 +49,8 @@ namespace Ragnarok.Presentation.Update
         /// </summary>
         public string InstalledVersion
         {
-            get { return GetValue<string>("InstalledVersion"); }
-            private set { SetValue("InstalledVersion", value); }
+            get { return GetValue<string>(nameof(InstalledVersion)); }
+            private set { SetValue(nameof(InstalledVersion), value); }
         }
 
         /// <summary>
@@ -58,8 +58,8 @@ namespace Ragnarok.Presentation.Update
         /// </summary>
         public string ReleaseNotesLink
         {
-            get { return GetValue<string>("ReleaseNotesLink"); }
-            private set { SetValue("ReleaseNotesLink", value); }
+            get { return GetValue<string>(nameof(ReleaseNotesLink)); }
+            private set { SetValue(nameof(ReleaseNotesLink), value); }
         }
 
         /// <summary>
@@ -67,8 +67,8 @@ namespace Ragnarok.Presentation.Update
         /// </summary>
         public Exception DownloadError
         {
-            get { return GetValue<Exception>("DownloadError"); }
-            private set { SetValue("DownloadError", value); }
+            get { return GetValue<Exception>(nameof(DownloadError)); }
+            private set { SetValue(nameof(DownloadError), value); }
         }
 
         /// <summary>

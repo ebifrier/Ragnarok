@@ -91,12 +91,12 @@ namespace Ragnarok.Update
         {
             get
             {
-                return GetValue<double>("ProgressRate");
+                return GetValue<double>(nameof(ProgressRate));
             }
             private set
             {
                 value = MathEx.Between(0.0, 1.0, value);
-                SetValue("ProgressRate", value);
+                SetValue(nameof(ProgressRate), value);
             }
         }
 

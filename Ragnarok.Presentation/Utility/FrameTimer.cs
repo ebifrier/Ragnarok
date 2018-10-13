@@ -52,8 +52,8 @@ namespace Ragnarok.Presentation.Utility
         /// </summary>
         public Dispatcher Dispatcher
         {
-            get { return GetValue<Dispatcher>("Dispatcher"); }
-            set { SetValue("Dispatcher", value); }
+            get { return GetValue<Dispatcher>(nameof(Dispatcher)); }
+            set { SetValue(nameof(Dispatcher), value); }
         }
 
         /// <summary>
@@ -61,8 +61,8 @@ namespace Ragnarok.Presentation.Utility
         /// </summary>
         public double TargetFPS
         {
-            get { return GetValue<double>("TargetFPS"); }
-            set { SetValue("TargetFPS", value); }
+            get { return GetValue<double>(nameof(TargetFPS)); }
+            set { SetValue(nameof(TargetFPS), value); }
         }
 
         /// <summary>
