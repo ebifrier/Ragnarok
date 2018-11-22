@@ -188,6 +188,14 @@ namespace Ragnarok.Shogi
                 return true;
             }
 
+            // 玉を取るとエラーになってしまうため、
+            // DoMoveまで行かないようにしておく。
+            var dstPiece = this[dstSquare];
+            if (dstPiece?.PieceType == PieceType.Gyoku)
+            {
+                return true;
+            }
+
             var move = Move.CreateMove(
                 bwType, srcSquare, dstSquare, piece.Piece, false);
 
@@ -197,28 +205,18 @@ namespace Ragnarok.Shogi
                 move.IsPromote = true;
                 if (DoMove(move))
                 {
-                    if (!IsChecked(bwType))
-                    {
-                        Undo();
-                        return false;
-                    }
+                    var check = IsChecked(bwType);
                     Undo();
-
-                    return true;
+                    return check;
                 }
             }
 
             move.IsPromote = false;
             if (DoMove(move))
             {
-                if (!IsChecked(bwType))
-                {
-                    Undo();
-                    return false;
-                }
+                var check = IsChecked(bwType);
                 Undo();
-
-                return true;
+                return check;
             }
 
             return true;
