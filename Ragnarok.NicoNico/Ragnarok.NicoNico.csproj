@@ -157,7 +157,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Provider\Tests\channelpage_sample.html" />
+    <EmbeddedResource Include="Provider\Tests\uploads_sample.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Provider\Tests\videos_sample.html" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

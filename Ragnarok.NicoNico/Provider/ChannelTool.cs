@@ -230,12 +230,93 @@ namespace Ragnarok.NicoNico.Provider
         }
         #endregion
 
-        #region UploadedVideoList
-        private readonly static Regex UploadedVideoRegex = new Regex(
+        #region VideoList
+        private readonly static Regex VideoRegex = new Regex(
             @"<li>\s*<div class=""videoListItems__thumbnail"">\s*" +
             @"(?<content>[\s\S]+?)\s*" +
             @"</div>\s*</div>\s*</li>");
+        
+        private static readonly Regex IdRegex = new Regex(
+            @"<li data-gaEventTrackTarget=""videoList_[\w]+VideoMetadata_videoId"">\s*(.+)\s*</li>");
+        private static readonly Regex ThreadIdRegex = new Regex(
+            @"<li data-gaEventTrackTarget=""videoList_[\w]+VideoMetadata_threadId"">\s*watch/(\d+)\s*</li>");
+        private static readonly Regex TitleRegex = new Regex(
+            @"<h3 class=""videoListItems__metadata__controls__title"">\s*([\s\S]+?)\s*</h3>");
+        private static readonly Regex DataRegex = new Regex(
+            @"<div class=""videoListItems__metadata__date"">[\s\S]+?\s*<span>\s*(.*?)\s*公開\s*</span>");
+        private static readonly Regex StatusRegex = new Regex(
+            @"<div class=""videoListItems__metadata__date"">\s*<span>\s*(.*?)\s*</span>");
 
+        /// <summary>
+        /// 動画のリストを取得します。
+        /// </summary>
+        public static List<ChannelVideoData> ParseVideoList(string html)
+        {
+            if (html == null)
+            {
+                throw new ArgumentNullException("html");
+            }
+
+            return VideoRegex
+                .Matches(html)
+                .OfType<Match>()
+                .Where(_ => _.Success)
+                .Select(_ => ParseVideoData(_.Groups["content"].Value))
+                .ToList();
+        }
+
+        /// <summary>
+        /// チャンネルツールのHTML情報から、動画情報を作成します。
+        /// </summary>
+        private static ChannelVideoData ParseVideoData(string htmlContent)
+        {
+            var result = new ChannelVideoData
+            {
+                Timestamp = DateTime.Now,
+            };
+
+            var m = IdRegex.Match(htmlContent);
+            if (!m.Success)
+            {
+                return null;
+            }
+            result.Id = m.Groups[1].Value;
+
+            m = ThreadIdRegex.Match(htmlContent);
+            if (!m.Success)
+            {
+                return null;
+            }
+            result.ThreadId = m.Groups[1].Value;
+
+            m = TitleRegex.Match(htmlContent);
+            if (!m.Success)
+            {
+                return null;
+            }
+            result.Title = m.Groups[1].Value;
+
+            // 動画の公開日時
+            m = DataRegex.Match(htmlContent);
+            if (!m.Success)
+            {
+                return null;
+            }
+            result.StartTime = DateTime.Parse(m.Groups[1].Value);
+
+            // 表示／非表示
+            var hidden = "videoListItems__metadata__label__status__private";
+            result.IsVisible = !htmlContent.Contains(hidden);
+
+            // 会員限定／全員公開
+            var memberOnly = "videoListItems__metadata__label__status__memberOnly";
+            result.IsMemberOnly = htmlContent.Contains(memberOnly);
+
+            return result;
+        }
+        #endregion
+
+        #region UploadedVideoList
         /// <summary>
         /// アップロードされた動画のリストを取得します。
         /// </summary>
@@ -245,35 +326,28 @@ namespace Ragnarok.NicoNico.Provider
             var url = MakeUploadedVideosUrl(channelId);
             var text = WebUtil.RequestHttpText(url, null, cc, Encoding.UTF8);
 
-            File.WriteAllText("channelpage.html", text);
+            //File.WriteAllText("channelpage.html", text);
 
-            return GetUploadedVideoList(text);
+            return ParseUploadedVideoList(text);
         }
 
         /// <summary>
         /// アップロードされた動画のリストを取得します。
         /// </summary>
-        public static List<ChannelUploadedVideoData> GetUploadedVideoList(string html)
+        public static List<ChannelUploadedVideoData> ParseUploadedVideoList(string html)
         {
             if (html == null)
             {
                 throw new ArgumentNullException("html");
             }
 
-            return UploadedVideoRegex
+            return VideoRegex
                 .Matches(html)
                 .OfType<Match>()
                 .Where(_ => _.Success)
                 .Select(_ => CreateUploadedVideoData(_))
                 .ToList();
         }
-
-        private static readonly Regex IdRegex = new Regex(
-            @"<li data-gaEventTrackTarget=""videoList_reservedVideoMetadata_videoId"">\s*(.+)\s*</li>");
-        private static readonly Regex TitleRegex = new Regex(
-            @"<h3 class=""videoListItems__metadata__controls__title"">\s*([\s\S]+?)\s*</h3>");
-        private static readonly Regex StatusRegex = new Regex(
-            @"<div class=""videoListItems__metadata__date"">\s*<span>\s*(.*)\s*</span>");
 
         private static ChannelUploadedVideoData CreateUploadedVideoData(Match m)
         {
@@ -533,7 +607,7 @@ namespace Ragnarok.NicoNico.Provider
                 throw new ArgumentNullException("cc");
             }
 
-            var text = ChannelTool.RequestSearch(
+            var text = RequestSearch(
                 cc, channelId, keyword, order, pageId, limit);
             if (string.IsNullOrEmpty(text))
             {
@@ -542,7 +616,7 @@ namespace Ragnarok.NicoNico.Provider
 
             //Save("searcg.html", text);
 
-            return ChannelVideoData.FromSearchResults(text);
+            return ParseVideoList(text);
         }
         #endregion
     }
