@@ -146,6 +146,7 @@ namespace Ragnarok.Net
                 DecompressionMethods.Deflate |
                 DecompressionMethods.GZip;
             request.CookieContainer = cc;
+            request.KeepAlive = false;
 
             // タイムアウトのデフォルト値が設定されていれば
             // それを使ってネットワークに接続します。
@@ -209,9 +210,21 @@ namespace Ragnarok.Net
                                          Dictionary<string, object> param,
                                          CookieContainer cc)
         {
-            var request = MakeNormalRequest(url, param, cc);
+            HttpWebRequest request = null;
 
-            return RequestHttp(request);
+            try
+            {
+                request = MakeNormalRequest(url, param, cc);
+
+                return RequestHttp(request);
+            }
+            finally
+            {
+                if (request != null)
+                {
+                    request.Abort();
+                }
+            }
         }
 
         /// <summary>
