@@ -44,19 +44,56 @@ namespace Ragnarok.Presentation.Control
                 typeof(Window));
 
         /// <summary>
+        /// ウィンドウが移動可能な時に適用される不透明度を示す依存プロパティです。
+        /// </summary>
+        public static readonly DependencyProperty MovableOpacityProperty =
+            DependencyProperty.Register(
+                "MovableOpacity", typeof(double), typeof(MovableWindow),
+                new FrameworkPropertyMetadata(1.0, OnMovableOpacityChanged));
+
+        private static void OnMovableOpacityChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var self = (MovableWindow)d;
+            self.UpdateOpacity();
+        }
+
+        /// <summary>
+        /// ウィンドウが移動可能な時に適用される不透明度を取得または設定します。
+        /// </summary>
+        public double MovableOpacity
+        {
+            get { return (double)GetValue(MovableOpacityProperty); }
+            set { SetValue(MovableOpacityProperty, value); }
+        }
+
+        /// <summary>
         /// ウィンドウが移動可能かどうかを示す依存プロパティです。
         /// </summary>
         public static readonly DependencyProperty IsMovableProperty =
             DependencyProperty.Register(
                 "IsMovable", typeof(bool), typeof(MovableWindow),
-                new FrameworkPropertyMetadata(true));
+                new FrameworkPropertyMetadata(true, OnIsMovableChanged));
+
+        private static void OnIsMovableChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var self = (MovableWindow)d;
+            self.UpdateOpacity();
+        }
+
         /// <summary>
-        /// サイズを変更するときの枠の長さを示す依存プロパティです。
+        /// ウィンドウの不透明度を更新します。
         /// </summary>
-        public static readonly DependencyProperty EdgeLengthProperty =
-            DependencyProperty.Register(
-                "EdgeLength", typeof(double), typeof(MovableWindow),
-                new FrameworkPropertyMetadata(10.0));
+        private void UpdateOpacity()
+        {
+            if (IsMovable)
+            {
+                Opacity = MovableOpacity;
+            }
+            else
+            {
+                Opacity = 1.0;
+            }
+        }
 
         /// <summary>
         /// ウィンドウが移動可能かどうかを取得または設定します。
@@ -66,6 +103,14 @@ namespace Ragnarok.Presentation.Control
             get { return (bool)GetValue(IsMovableProperty); }
             set { SetValue(IsMovableProperty, value); }
         }
+
+        /// <summary>
+        /// サイズを変更するときの枠の長さを示す依存プロパティです。
+        /// </summary>
+        public static readonly DependencyProperty EdgeLengthProperty =
+            DependencyProperty.Register(
+                "EdgeLength", typeof(double), typeof(MovableWindow),
+                new FrameworkPropertyMetadata(10.0));
 
         /// <summary>
         /// サイズ変更時の枠の長さを取得または設定します。
