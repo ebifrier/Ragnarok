@@ -419,18 +419,17 @@ namespace Ragnarok.NicoNico.Provider
 
             param["title_url"] = "";
             param["specify_uploaddate"] = "";
-            //param["post_by_mobile"] = "";
-            //param["ppv_permission"] = 1;
             param["ppv_type"] = 0;
             param["ad_flag"] = 1;
-            //param["comment"] = "allow";
             param["display_flag"] = 0; // コメントの表示方法 (0:通常、1:動画の裏)
 
             param["retrieval_flag"] = 1; // 動画検索結果に表示させる
             param["uad_maintenance"] = 0; // ニコニ広告で宣伝させる
             param["uad_flag"] = 0;
             param["homeland_flag"] = 0; // 公開地域を日本国内のみに限定する
-            param["commons_materials"] = ""; // 使用したニコニコモンズ作品
+
+            param["market_flag"] = 0;
+            param["option_flag_dmc_hls_encryption_method"] = 0;
 
             // NG関連の指定
             param["deny_mobile"] = 0;
@@ -500,6 +499,7 @@ namespace Ragnarok.NicoNico.Provider
             cparam["smile_ch_key"] = chKey;
             cparam["channel_id"] = channelId;
             cparam["fileid"] = fileId;
+            cparam["submit_edit"] = 1;
 
             // 実際に動画情報の更新リクエストを発行します。
             var url = MakeVideoEditUrl(channelId, fileId);
