@@ -81,7 +81,7 @@ namespace Ragnarok.NicoNico.Provider.Tests
         {
             var expectedVideo = new VideoData
             {
-                Title = "test TEST2",
+                Title = "test TEST3",
                 Description =
                     "対穴熊△3三角 講義<br>講師：藤井猛\n" +
                     "\n" +

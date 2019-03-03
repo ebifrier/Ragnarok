@@ -402,7 +402,7 @@ namespace Ragnarok.NicoNico.Provider
             // すでに動画が初期化済みかどうか
             param["initialized"] = 1;
             param["mode"] = "edit";
-            param["submit_edit"] = 1;
+            param["submit_edit"] = "";
 
             // 公開or非公開 (公開時は0)
             param["hide_flag"] = 0;
@@ -422,6 +422,7 @@ namespace Ragnarok.NicoNico.Provider
             param["ppv_type"] = 0;
             param["ad_flag"] = 1;
             param["display_flag"] = 0; // コメントの表示方法 (0:通常、1:動画の裏)
+            param["nicos_jump"] = ""; // ジャンプ先動画
 
             param["retrieval_flag"] = 1; // 動画検索結果に表示させる
             param["uad_maintenance"] = 0; // ニコニ広告で宣伝させる
@@ -429,20 +430,21 @@ namespace Ragnarok.NicoNico.Provider
             param["homeland_flag"] = 0; // 公開地域を日本国内のみに限定する
 
             param["market_flag"] = 0;
+            param["commons_materials"] = "";
             param["option_flag_dmc_hls_encryption_method"] = 0;
 
             // NG関連の指定
             param["deny_mobile"] = 0;
-            param["mobile_ng_docomo"] = "";
-            param["mobile_ng_au"] = "";
-            param["mobile_ng_softbank"] = "";
-            param["mobile_ng_apple"] = "";
-            param["mobile_ng_other"] = "";
-            param["ng_tv"] = "";
-            param["ng_nintendo"] = "";
-            param["ng_boqz"] = "";
-            param["ng_dolce"] = "";
-            param["ng_sun"] = "";
+            param["mobile_ng_docomo"] = 0;
+            param["mobile_ng_au"] = 0;
+            param["mobile_ng_softbank"] = 0;
+            param["mobile_ng_apple"] = 0;
+            param["mobile_ng_other"] = 0;
+            param["ng_tv"] = 0;
+            param["ng_nintendo"] = 0;
+            param["ng_boqz"] = 0;
+            param["ng_dolce"] = 0;
+            param["ng_sun"] = 0;
             param["ng_xboxone"] = 0;
             param["ng_nicoswitch"] = 0;
             param["ng_nicobox"] = 0;
@@ -453,7 +455,7 @@ namespace Ragnarok.NicoNico.Provider
             param["mobile_item_max"] = 3;
             param["general_item_max"] = 10;
             param["disabled_ngs"] = 0; // 共有NGを無効にする
-            param["account_linkage"] = 0; // 用途不明
+            param["account_linkage"] = ""; // 用途不明
             param["vast_enabled"] = 0; // 用途不明
             param["countries"] = ""; // 用途不明
             param["nicolanguage_code"] = ""; // 用途不明
@@ -499,7 +501,7 @@ namespace Ragnarok.NicoNico.Provider
             cparam["smile_ch_key"] = chKey;
             cparam["channel_id"] = channelId;
             cparam["fileid"] = fileId;
-            cparam["submit_edit"] = 1;
+            cparam["submit_edit"] = "";
 
             // 実際に動画情報の更新リクエストを発行します。
             var url = MakeVideoEditUrl(channelId, fileId);
