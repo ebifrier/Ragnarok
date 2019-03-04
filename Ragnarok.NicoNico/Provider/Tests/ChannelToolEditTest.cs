@@ -66,7 +66,7 @@ namespace Ragnarok.NicoNico.Provider.Tests
             }
 
             param["specify_uploaddate"] = "";
-            param["uploaddate"] = expectedVideo.StartTime.ToString("yyyy-MM-dd HH:mm:ss");
+            //param["uploaddate"] = expectedVideo.StartTime.ToString("yyyy-MM-dd HH:mm:ss");
             param["visible_start_time"] = expectedVideo.StartTime.ToString("yyyy-MM-dd HH:mm:ss");
             param["visible_end_time"] = expectedVideo.StartTime.AddDays(1).ToString("yyyy-MM-dd HH:mm:ss");
             param["is_nicos"] = "0";
@@ -81,7 +81,7 @@ namespace Ragnarok.NicoNico.Provider.Tests
         {
             var expectedVideo = new VideoData
             {
-                Title = "test TEST3",
+                Title = "test TEST1",
                 Description =
                     "対穴熊△3三角 講義<br>講師：藤井猛\n" +
                     "\n" +

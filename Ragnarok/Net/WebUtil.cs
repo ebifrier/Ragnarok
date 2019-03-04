@@ -136,7 +136,6 @@ namespace Ragnarok.Net
         /// このアプリの標準的なHTTPリクエストを作成します。
         /// </summary>
         public static HttpWebRequest MakeNormalRequest(string url,
-                                                       Dictionary<string, object> param,
                                                        CookieContainer cc)
         {
             var request = (HttpWebRequest)WebRequest.Create(url);
@@ -147,6 +146,7 @@ namespace Ragnarok.Net
                 DecompressionMethods.GZip;
             request.CookieContainer = cc;
             request.KeepAlive = false;
+            request.Method = "GET";
 
             // タイムアウトのデフォルト値が設定されていれば
             // それを使ってネットワークに接続します。
@@ -155,13 +155,18 @@ namespace Ragnarok.Net
                 request.Timeout = DefaultTimeout;
             }
 
+            return request;
+        }
+
+        /// <summary>
+        /// POSTするデータを書き込みます。
+        /// </summary>
+        public static void WritePostData(HttpWebRequest request,
+                                         Dictionary<string, object> param)
+        {
             // パラメータがあれば、POSTを無ければGETを使います。
             var data = EncodePostData(param);
-            if (data == null || !data.Any())
-            {
-                request.Method = "GET";
-            }
-            else
+            if (data != null && data.Any())
             {
                 request.Method = "POST";
                 request.ContentType = "application/x-www-form-urlencoded";
@@ -172,8 +177,6 @@ namespace Ragnarok.Net
                     reqStream.Write(data, 0, data.Length);
                 }
             }
-
-            return request;
         }
 
         /// <summary>
@@ -214,7 +217,8 @@ namespace Ragnarok.Net
 
             try
             {
-                request = MakeNormalRequest(url, param, cc);
+                request = MakeNormalRequest(url, cc);
+                WritePostData(request, param);
 
                 return RequestHttp(request);
             }
@@ -292,7 +296,8 @@ namespace Ragnarok.Net
             CookieContainer cc,
             RequestHttpAsyncCallback callback)
         {
-            var request = MakeNormalRequest(url, param, cc);
+            var request = MakeNormalRequest(url, cc);
+            WritePostData(request, param);
 
             return RequestHttpAsync(request, callback);
         }

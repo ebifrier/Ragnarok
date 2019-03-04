@@ -501,11 +501,24 @@ namespace Ragnarok.NicoNico.Provider
             cparam["smile_ch_key"] = chKey;
             cparam["channel_id"] = channelId;
             cparam["fileid"] = fileId;
-            cparam["submit_edit"] = "";
+            cparam["mode"] = "edit";
 
             // 実際に動画情報の更新リクエストを発行します。
             var url = MakeVideoEditUrl(channelId, fileId);
-            var result = WebUtil.RequestHttpText(url, cparam, cc, Encoding.UTF8);
+            var req = WebUtil.MakeNormalRequest(url, cc);
+
+            var oldValue = WebUtil.IsConvertPostParamSpaceToPlus;
+            WebUtil.IsConvertPostParamSpaceToPlus = true;
+            WebUtil.WritePostData(req, cparam);
+            WebUtil.IsConvertPostParamSpaceToPlus = oldValue;
+
+            var buffer = WebUtil.RequestHttp(req);
+            if (buffer == null)
+            {
+                return null;
+            }
+
+            var result = Encoding.UTF8.GetString(buffer);
             if (string.IsNullOrEmpty(result))
             {
                 return result;
