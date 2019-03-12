@@ -146,7 +146,6 @@ namespace Ragnarok.Net
                 DecompressionMethods.GZip;
             request.CookieContainer = cc;
             request.KeepAlive = false;
-            request.Method = "GET";
 
             // タイムアウトのデフォルト値が設定されていれば
             // それを使ってネットワークに接続します。
@@ -176,6 +175,10 @@ namespace Ragnarok.Net
                 {
                     reqStream.Write(data, 0, data.Length);
                 }
+            }
+            else
+            {
+                request.Method = "GET";
             }
         }
 
