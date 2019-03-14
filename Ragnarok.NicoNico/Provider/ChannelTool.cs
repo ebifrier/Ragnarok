@@ -232,20 +232,20 @@ namespace Ragnarok.NicoNico.Provider
 
         #region VideoList
         private readonly static Regex VideoRegex = new Regex(
-            @"<li>\s*<div class=""videoListItems__thumbnail"">\s*" +
+            @"<li class=""item"">\s*<div class=""item__thumbnail"">\s*" +
             @"(?<content>[\s\S]+?)\s*" +
-            @"</div>\s*</div>\s*</li>");
+            @"</li>\s*</ul>\s*</li>");
         
         private static readonly Regex IdRegex = new Regex(
-            @"<li data-gaEventTrackTarget=""videoList_[\w]+VideoMetadata_videoId"">\s*(.+)\s*</li>");
+            @"<li class=""videoId"" data-gaEventTrackTarget=""videoList_[\w]+VideoMetadata_videoId"">\s*(.+?)\s*</li>");
         private static readonly Regex ThreadIdRegex = new Regex(
-            @"<li data-gaEventTrackTarget=""videoList_[\w]+VideoMetadata_threadId"">\s*watch/(\d+)\s*</li>");
+            @"<li class=""threadId"" data-gaEventTrackTarget=""videoList_[\w]+VideoMetadata_threadId"">\s*watch/(\d+)\s*</li>");
         private static readonly Regex TitleRegex = new Regex(
-            @"<h3 class=""videoListItems__metadata__controls__title"">\s*([\s\S]+?)\s*</h3>");
+            @"<h3 class=""item__metadata__title"">\s*([\s\S]+?)\s*</h3>");
         private static readonly Regex DataRegex = new Regex(
-            @"<div class=""videoListItems__metadata__date"">[\s\S]+?\s*<span>\s*(.*?)\s*公開\s*</span>");
+            @"<div class=""item__metadata__date"">[\s\S]+?\s*<span>\s*(.*?)\s*公開\s*</span>");
         private static readonly Regex StatusRegex = new Regex(
-            @"<div class=""videoListItems__metadata__date"">\s*<span>\s*(.*?)\s*</span>");
+            @"<ul class=""item__metadata__label"">\s*([\s\S]*?)\s*</ul>");
 
         /// <summary>
         /// 動画のリストを取得します。
@@ -305,11 +305,11 @@ namespace Ragnarok.NicoNico.Provider
             result.StartTime = DateTime.Parse(m.Groups[1].Value);
 
             // 表示／非表示
-            var hidden = "videoListItems__metadata__label__status__private";
+            var hidden = "isPrivate";
             result.IsVisible = !htmlContent.Contains(hidden);
 
             // 会員限定／全員公開
-            var memberOnly = "videoListItems__metadata__label__status__memberOnly";
+            var memberOnly = "isMemberOnly";
             result.IsMemberOnly = htmlContent.Contains(memberOnly);
 
             return result;

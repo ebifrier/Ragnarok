@@ -36,24 +36,24 @@ namespace Ragnarok.NicoNico.Provider.Tests
             Assert.NotNull(list);
             Assert.AreEqual(20, list.Count());
 
-            Assert.AreEqual("so34211191", list[0].Id);
-            Assert.AreEqual("1542886922", list[0].ThreadId);
-            Assert.AreEqual("【将棋】第27期 銀河戦 本戦Fブロック 3回戦 中村亮介六段 vs 及川拓馬六段", list[0].Title);
-            Assert.AreEqual(new DateTime(2018, 12, 13, 20, 0, 0), list[0].StartTime);
+            Assert.AreEqual("so34766508", list[0].Id);
+            Assert.AreEqual("1552542002", list[0].ThreadId);
+            Assert.AreEqual("57-74-865 第27期 銀河戦 本戦Dブロック 7回戦 佐々木勇気七段 vs 八代弥六段-n", list[0].Title);
+            Assert.AreEqual(new DateTime(2019, 3, 12, 20, 41, 0), list[0].StartTime);
             Assert.False(list[0].IsVisible);
-            Assert.True(list[0].IsMemberOnly);
+            Assert.False(list[0].IsMemberOnly);
 
-            Assert.AreEqual("so34210702", list[1].Id);
-            Assert.AreEqual("1542881823", list[1].ThreadId);
-            Assert.AreEqual("【将棋】第27期 銀河戦 本戦Eブロック 3回戦 阿部光瑠六段 vs 佐藤慎一五段", list[1].Title);
-            Assert.AreEqual(new DateTime(2018, 12, 11, 20, 0, 0), list[1].StartTime);
+            Assert.AreEqual("so34747664", list[1].Id);
+            Assert.AreEqual("1552348983", list[1].ThreadId);
+            Assert.AreEqual("【将棋】第27期 銀河戦 本戦Cブロック 7回戦 阿部隆八段 vs 青嶋未来五段", list[1].Title);
+            Assert.AreEqual(new DateTime(2019, 3, 26, 20, 0, 0), list[1].StartTime);
             Assert.True(list[1].IsVisible);
             Assert.True(list[1].IsMemberOnly);
 
-            Assert.AreEqual("so33924522", list[19].Id);
-            Assert.AreEqual("1538011325", list[19].ThreadId);
-            Assert.AreEqual("【将棋】第27期 銀河戦 本戦Dブロック 1回戦 古森悠太四段 vs 菅野倫太郎アマ", list[19].Title);
-            Assert.AreEqual(new DateTime(2018, 10, 11, 20, 0, 0), list[19].StartTime);
+            Assert.AreEqual("so34492741", list[19].Id);
+            Assert.AreEqual("1547811362", list[19].ThreadId);
+            Assert.AreEqual("【将棋】第27期 銀河戦 本戦Aブロック 5回戦 堀口一史座七段 vs 折田翔吾アマ", list[19].Title);
+            Assert.AreEqual(new DateTime(2019, 1, 22, 20, 0, 0), list[19].StartTime);
             Assert.True(list[19].IsVisible);
             Assert.True(list[19].IsMemberOnly);
 
