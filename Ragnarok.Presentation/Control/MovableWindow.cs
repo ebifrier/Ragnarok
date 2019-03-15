@@ -120,6 +120,23 @@ namespace Ragnarok.Presentation.Control
             get { return (double)GetValue(EdgeLengthProperty); }
             set { SetValue(EdgeLengthProperty, value); }
         }
+
+        /// <summary>
+        /// ウィンドウ固定時のカーソルを示す依存プロパティです。
+        /// </summary>
+        public static readonly DependencyProperty FixedCursorProperty =
+            DependencyProperty.Register(
+                "FixedCursor", typeof(Cursor), typeof(MovableWindow),
+                new FrameworkPropertyMetadata(Cursors.Arrow));
+
+        /// <summary>
+        /// ウィンドウ固定時のカーソルを取得または設定します。
+        /// </summary>
+        public Cursor FixedCursor
+        {
+            get { return (Cursor)GetValue(FixedCursorProperty); }
+            set { SetValue(FixedCursorProperty, value); }
+        }
         #endregion
 
         #region マウス関連
@@ -166,7 +183,7 @@ namespace Ragnarok.Presentation.Control
 
             if (!IsMovable)
             {
-                Cursor = Cursors.Arrow;
+                Cursor = FixedCursor;
                 return;
             }
 
