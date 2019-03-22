@@ -158,7 +158,6 @@ namespace Ragnarok.Presentation.Control
             }
 
             var wp = e.GetPosition(this);
-            Log.Info(wp.ToString());
 
             // 開始可能なオペレーションがあるなら、それを開始します。
             foreach (var starter in this.starters)
