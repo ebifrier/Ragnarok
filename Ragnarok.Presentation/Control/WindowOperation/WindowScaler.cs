@@ -128,7 +128,8 @@ namespace Ragnarok.Presentation.Control.WindowOperation
 
         protected override void OnOperate(Point wp)
         {
-            var screenPos = Window.PointToScreen(wp);
+            var devicePos = Window.PointToScreen(wp);
+            var screenPos = WPFUtil.LogicalFromDevice(devicePos, Window);
             var l = Window.Left;
             var t = Window.Top;
             var r = l + Window.Width;

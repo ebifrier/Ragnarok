@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace Ragnarok.Presentation.Control.WindowOperation
 {
@@ -47,7 +48,8 @@ namespace Ragnarok.Presentation.Control.WindowOperation
 
         protected override void OnOperate(Point wp)
         {
-            var screenPos = Window.PointToScreen(wp);
+            var devicePos = Window.PointToScreen(wp);
+            var screenPos = WPFUtil.LogicalFromDevice(devicePos, Window);
             var leftTop = new Point(
                 screenPos.X - this.relativePoint.X,
                 screenPos.Y - this.relativePoint.Y);

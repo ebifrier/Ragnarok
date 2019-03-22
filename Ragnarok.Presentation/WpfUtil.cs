@@ -170,6 +170,26 @@ namespace Ragnarok.Presentation
         }
 
         /// <summary>
+        /// デバイス座標を論理座標に変換します。
+        /// </summary>
+        public static Point LogicalFromDevice(Point devicePos, Visual visual)
+        {
+            var src = PresentationSource.FromVisual(visual);
+            var ct = src.CompositionTarget;
+            return ct.TransformFromDevice.Transform(devicePos);
+        }
+
+        /// <summary>
+        /// 論理座標をデバイス座標に変換します。
+        /// </summary>
+        public static Point DeviceFromLogical(Point devicePos, Visual visual)
+        {
+            var src = PresentationSource.FromVisual(visual);
+            var ct = src.CompositionTarget;
+            return ct.TransformToDevice.Transform(devicePos);
+        }
+
+        /// <summary>
         /// 透明度だけを変えた色を作成します。
         /// </summary>
         public static Color MakeColor(byte a, Color baseColor)
