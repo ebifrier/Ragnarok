@@ -254,6 +254,21 @@ namespace Ragnarok.Go
         }
 
         /// <summary>
+        /// ヨーロッパ形式の交点をパースします。
+        /// </summary>
+        public static Square ParseEstr(string europe, int boardSize)
+        {
+            if (europe.Length < 2)
+            {
+                throw new ArgumentException($"'{europe}' is invalid format");
+            }
+
+            var col = (europe[0] - 'A') + (europe[0] <= 'I' ? 1 : 0);
+            var row = (boardSize + 1) - int.Parse(europe.Substring(1));
+            return Create(col, row, boardSize);
+        }
+
+        /// <summary>
         /// 文字列化します。
         /// </summary>
         public override string ToString()
