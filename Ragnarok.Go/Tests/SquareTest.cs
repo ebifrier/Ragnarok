@@ -46,42 +46,26 @@ namespace Ragnarok.Go.Tests
             Assert.AreEqual("19-4", pt.ToJstr());
         }
 
-        /*[Test]
+        [Test]
         public void FromIndexTest()
         {
-            var pt = Square.FromIndex(0, 7);
-            Assert.AreEqual(1, pt.Col);
-            Assert.AreEqual(1, pt.Row);
-            Assert.AreEqual(0, pt.Index);
-            Assert.AreEqual(7, pt.BoardSize);
-            Assert.False(pt.IsEmpty);
-            Assert.False(pt.IsPass);
-            Assert.True(pt.IsOk());
-            Assert.AreEqual("aa", pt.ToSgf());
-            Assert.AreEqual("1-1", pt.ToJstr());
+            var pt = Square.ParseEstr("A1", 19);
+            Assert.AreEqual(1 - 1, pt.Col);
+            Assert.AreEqual(19 - 1, pt.Row);
 
-            pt = Square.FromIndex(19 * (19 + 2) - 1, 19);
-            Assert.AreEqual(19, pt.Col);
-            Assert.AreEqual(19, pt.Row);
-            Assert.AreEqual(19 * 19 - 1, pt.Index);
-            Assert.AreEqual(19, pt.BoardSize);
-            Assert.False(pt.IsEmpty);
-            Assert.False(pt.IsPass);
-            Assert.True(pt.IsOk());
-            Assert.AreEqual("ss", pt.ToSgf());
-            Assert.AreEqual("19-19", pt.ToJstr());
+            pt = Square.ParseEstr("T4", 19);
+            Assert.AreEqual(19 - 1, pt.Col);
+            Assert.AreEqual(16 - 1, pt.Row);
 
-            pt = Square.FromIndex(100, 13);
-            Assert.AreEqual(10, pt.Col);
-            Assert.AreEqual(8, pt.Row);
-            Assert.AreEqual(100, pt.Index);
-            Assert.AreEqual(13, pt.BoardSize);
-            Assert.False(pt.IsEmpty);
-            Assert.False(pt.IsPass);
-            Assert.True(pt.IsOk());
-            Assert.AreEqual("jh", pt.ToSgf());
-            Assert.AreEqual("10-8", pt.ToJstr());
-        }*/
+            pt = Square.ParseEstr("J19", 19);
+            Assert.AreEqual(9 - 1, pt.Col);
+            Assert.AreEqual(1 - 1, pt.Row);
+
+            Assert.Catch(() => Square.ParseEstr("test", 19));
+            Assert.Catch(() => Square.ParseEstr(null, 19));
+            Assert.Catch(() => Square.ParseEstr("RR2", 19));
+            Assert.Catch(() => Square.ParseEstr("1", 19));
+        }
 
         [Test]
         public void NotOkTest()

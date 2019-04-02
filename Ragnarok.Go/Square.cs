@@ -263,8 +263,13 @@ namespace Ragnarok.Go
                 throw new ArgumentException($"'{europe}' is invalid format");
             }
 
-            var col = (europe[0] - 'A') + (europe[0] <= 'I' ? 1 : 0);
-            var row = (boardSize + 1) - int.Parse(europe.Substring(1));
+            if (!int.TryParse(europe.Substring(1), out int rawRow))
+            {
+                throw new ArgumentException($"'{europe}' is invalid format");
+            }
+
+            var col = (europe[0] - 'A') - (europe[0] >= 'I' ? 1 : 0);
+            var row = boardSize - rawRow;
             return Create(col, row, boardSize);
         }
 
