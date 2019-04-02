@@ -40,6 +40,38 @@ namespace Ragnarok.Presentation.Control
                 "ウィンドウの移動を停止します。",
                 "MakeFixWindow",
                 typeof(Window));
+        /// <summary>
+        /// ウィンドウを最前面に表示するためのコマンドです。
+        /// </summary>
+        public readonly static ICommand SetTopmost =
+            new RoutedUICommand(
+                "ウィンドウを最前面に表示します。",
+                "SetTopmost",
+                typeof(Window));
+        /// <summary>
+        /// ウィンドウを最前面表示をやめるためのコマンドです。
+        /// </summary>
+        public readonly static ICommand UnsetTopmost =
+            new RoutedUICommand(
+                "ウィンドウの最前面表示をやめます。",
+                "UnsetTopmost",
+                typeof(Window));
+        /// <summary>
+        /// ウィンドウを最大化するためのコマンドです。
+        /// </summary>
+        public readonly static ICommand SetMaximized =
+            new RoutedUICommand(
+                "ウィンドウを最前面に表示します。",
+                "SetMaximized",
+                typeof(Window));
+        /// <summary>
+        /// ウィンドウの最大化を解除するためのコマンドです。
+        /// </summary>
+        public readonly static ICommand UnsetMaximized =
+            new RoutedUICommand(
+                "ウィンドウの最前面表示をやめます。",
+                "UnsetMaximized",
+                typeof(Window));
 
         /// <summary>
         /// ウィンドウが移動可能な時に適用される不透明度を示す依存プロパティです。
@@ -265,17 +297,37 @@ namespace Ragnarok.Presentation.Control
             CommandBindings.Add(
                 new CommandBinding(
                     MakeMoveWindow,
-                    ExecuteMakeMoveWindow,
+                    (_, __) => IsMovable = true,
                     CanExecuteCommand));
             CommandBindings.Add(
                 new CommandBinding(
                     MakeFixWindow,
-                    ExecuteMakeFixWindow,
+                    (_, __) => IsMovable = false,
+                    CanExecuteCommand));
+            CommandBindings.Add(
+                new CommandBinding(
+                    SetTopmost,
+                    (_, __) => { Activate(); Topmost = true; },
+                    CanExecuteCommand));
+            CommandBindings.Add(
+                new CommandBinding(
+                    UnsetTopmost,
+                    (_, __) => Topmost = false,
+                    CanExecuteCommand));
+            CommandBindings.Add(
+                new CommandBinding(
+                    SetMaximized,
+                    (_, __) => WindowState = WindowState.Maximized,
+                    CanExecuteCommand));
+            CommandBindings.Add(
+                new CommandBinding(
+                    UnsetMaximized,
+                    (_, __) => WindowState = WindowState.Normal,
                     CanExecuteCommand));
             CommandBindings.Add(
                 new CommandBinding(
                     ApplicationCommands.Close,
-                    ExecuteClose,
+                    (_, __) => Close(),
                     CanExecuteCommand));
         }
 
@@ -292,34 +344,26 @@ namespace Ragnarok.Presentation.Control
             {
                 e.CanExecute = IsMovable;
             }
+            else if (e.Command == SetTopmost)
+            {
+                e.CanExecute = !Topmost;
+            }
+            else if (e.Command == UnsetTopmost)
+            {
+                e.CanExecute = Topmost;
+            }
+            else if (e.Command == SetMaximized)
+            {
+                e.CanExecute = (WindowState != WindowState.Maximized);
+            }
+            else if (e.Command == UnsetMaximized)
+            {
+                e.CanExecute = (WindowState != WindowState.Normal);
+            }
             else
             {
                 e.CanExecute = true;
             }
-        }
-
-        /// <summary>
-        /// ウィンドウを移動可能状態にします。
-        /// </summary>
-        private void ExecuteMakeMoveWindow(object sender, ExecutedRoutedEventArgs e)
-        {
-            IsMovable = true;
-        }
-
-        /// <summary>
-        /// ウィンドウを移動不可能状態にします。
-        /// </summary>
-        private void ExecuteMakeFixWindow(object sender, ExecutedRoutedEventArgs e)
-        {
-            IsMovable = false;
-        }
-
-        /// <summary>
-        /// ウィンドウを閉じます。
-        /// </summary>
-        private void ExecuteClose(object sender, ExecutedRoutedEventArgs e)
-        {
-            Close();
         }
     }
 }
