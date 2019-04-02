@@ -13,6 +13,57 @@ namespace Ragnarok.Presentation.Utility
     /// </summary>
     public static class TextBoxUtil
     {
+
+        /// <summary>
+        /// テキスト表示を自動で右端までスクロールさせるための添付プロパティです。
+        /// </summary>
+        public static readonly DependencyProperty AutoVerticalScrollToEndProperty =
+            DependencyProperty.RegisterAttached(
+                "AutoVerticalScrollToEnd", typeof(bool),
+                typeof(TextBoxUtil),
+                new UIPropertyMetadata(false,
+                    OnAutoVerticalScrollToEndChanged));
+
+        /// <summary>
+        /// テキスト表示を自動で下端までスクロールさせるかどうかを取得します。
+        /// </summary>
+        public static bool GetAutoVerticalScrollToEnd(DependencyObject obj)
+        {
+            return (bool)obj.GetValue(AutoVerticalScrollToEndProperty);
+        }
+
+        /// <summary>
+        /// テキスト表示を自動で下端までスクロールさせるかどうかを設定します。
+        /// </summary>
+        public static void SetAutoVerticalScrollToEnd(DependencyObject obj, bool value)
+        {
+            obj.SetValue(AutoVerticalScrollToEndProperty, value);
+        }
+
+        /// <summary>
+        /// 自動的にスクロールを行うようにする。
+        /// </summary>
+        private static void OnAutoVerticalScrollToEndChanged(DependencyObject s, DependencyPropertyChangedEventArgs e)
+        {
+            var textBox = s as TextBox;
+
+            var handler = new TextChangedEventHandler(
+                (s1, e1) =>
+                {
+                    // キャレット位置を最後にします。
+                    textBox.CaretIndex = int.MaxValue;
+                    textBox.ScrollToEnd();
+                });
+
+            if ((bool)e.NewValue)
+            {
+                textBox.TextChanged += handler;
+            }
+            else
+            {
+                textBox.TextChanged -= handler;
+            }
+        }
         /// <summary>
         /// テキスト表示を自動で右端までスクロールさせるための添付プロパティです。
         /// </summary>
