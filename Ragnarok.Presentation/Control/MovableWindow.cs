@@ -167,6 +167,23 @@ namespace Ragnarok.Presentation.Control
             get { return (Cursor)GetValue(FixedCursorProperty); }
             set { SetValue(FixedCursorProperty, value); }
         }
+
+        /// <summary>
+        /// リサイズ時にアスペクト比を保存するかどうかを示す依存プロパティです。
+        /// </summary>
+        public static readonly DependencyProperty SaveAspectProperty =
+            DependencyProperty.Register(
+                "SaveAspect", typeof(bool), typeof(MovableWindow),
+                new PropertyMetadata(false, (d, e) => ((MovableWindow)d).SaveAspectUpdated()));
+
+        /// <summary>
+        /// リサイズ時にアスペクト比を保存するかどうかを取得または設定します。
+        /// </summary>
+        public bool SaveAspect
+        {
+            get { return (bool)GetValue(SaveAspectProperty); }
+            set { SetValue(SaveAspectProperty, value); }
+        }
         #endregion
 
         #region マウス関連
@@ -184,14 +201,14 @@ namespace Ragnarok.Presentation.Control
                 return;
             }
 
+            // 動かせないなら帰ります。
             if (!IsMovable)
             {
                 return;
             }
 
-            var wp = e.GetPosition(this);
-
             // 開始可能なオペレーションがあるなら、それを開始します。
+            var wp = e.GetPosition(this);
             foreach (var starter in this.starters)
             {
                 var op = starter.BeginOperation(wp);
@@ -254,7 +271,7 @@ namespace Ragnarok.Presentation.Control
         }
         #endregion
 
-        private readonly IWindowOperationStarter[] starters;
+        private IWindowOperationStarter[] starters;
         private WindowOperationBase operation;
 
         /// <summary>
@@ -282,11 +299,32 @@ namespace Ragnarok.Presentation.Control
         {
             InitializeCommand();
 
-            this.starters = new IWindowOperationStarter[]
+            SaveAspectUpdated();
+        }
+
+        /// <summary>
+        /// startersのリストを更新します。
+        /// </summary>
+        private void SaveAspectUpdated()
+        {
+            if (this.operation != null)
             {
-                new WindowScalerStarter(this),
-                new WindowMoverStarter(this),
-            };
+                this.operation.End();
+                this.operation = null;
+            }
+
+            this.starters = (SaveAspect ?
+                new IWindowOperationStarter[]
+                {
+                    new WindowScalerStarter(this, saveAspect:true, withShift:false),
+                    new WindowScalerStarter(this, saveAspect:false, withShift:true),
+                    new WindowMoverStarter(this),
+                } :
+                new IWindowOperationStarter[]
+                {
+                    new WindowScalerStarter(this, saveAspect:false),
+                    new WindowMoverStarter(this),
+                });
         }
 
         /// <summary>

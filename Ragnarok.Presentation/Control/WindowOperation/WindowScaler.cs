@@ -30,6 +30,8 @@ namespace Ragnarok.Presentation.Control.WindowOperation
     class WindowScalerStarter : IWindowOperationStarter
     {
         private readonly MovableWindow window;
+        private readonly bool saveAspect;
+        private readonly bool? withShift;
 
         /// <summary>
         /// ウィンドウ上のエッジ位置を取得します。
@@ -86,20 +88,38 @@ namespace Ragnarok.Presentation.Control.WindowOperation
 
         public override WindowOperationBase BeginOperation(Point wp)
         {
+            // shiftキーが押されている必要がある場合
+            if (this.withShift != null)
+            {
+                var isShiftDown = Keyboard.IsKeyDown(Key.LeftShift) | Keyboard.IsKeyDown(Key.RightShift);
+
+                if (this.withShift == true && !isShiftDown)
+                {
+                    return null;
+                }
+
+                if (this.withShift == false && isShiftDown)
+                {
+                    return null;
+                }
+            }
+
             var edge = GetWindowEdge(wp);
             if (edge == WindowEdge.None)
             {
                 return null;
             }
 
-            var operation = new WindowScaler(this.window, edge);
+            var operation = new WindowScaler(this.window, this.saveAspect, edge);
             operation.Begin(wp);
             return operation;
         }
 
-        public WindowScalerStarter(MovableWindow window)
+        public WindowScalerStarter(MovableWindow window, bool saveAspect, bool? withShift=null)
         {
             this.window = window;
+            this.saveAspect = saveAspect;
+            this.withShift = withShift;
         }
     }
 
@@ -108,6 +128,7 @@ namespace Ragnarok.Presentation.Control.WindowOperation
     /// </summary>
     class WindowScaler : WindowOperationBase
     {
+        private readonly bool saveAspect;
         private readonly WindowEdge edge;
         private Point relativePoint;
 
@@ -134,54 +155,73 @@ namespace Ragnarok.Presentation.Control.WindowOperation
             var t = Window.Top;
             var r = l + Window.Width;
             var b = t + Window.Height;
+            var aspect = Window.Width / Window.Height;
 
             if ((this.edge & WindowEdge.Left) != 0)
             {
                 l = screenPos.X - this.relativePoint.X;
+                l = Math.Min(l, r - 32);
 
-                if (r - l < 32)
+                if (this.saveAspect)
                 {
-                    l = r - 32;
+                    b = t + (r - l) / aspect;
+                    SetBounds(l, t, r, b);
+                    return;
                 }
             }
             else if ((this.edge & WindowEdge.Right) != 0)
             {
                 r = screenPos.X - this.relativePoint.X;
+                r = Math.Max(r, l + 32);
 
-                if (r - l < 32)
+                if (this.saveAspect)
                 {
-                    r = l + 32;
+                    b = t + (r - l) / aspect;
+                    SetBounds(l, t, r, b);
+                    return;
                 }
             }
 
             if ((this.edge & WindowEdge.Top) != 0)
             {
                 t = screenPos.Y - this.relativePoint.Y;
+                t = Math.Min(t, b - 32);
 
-                if (b - t < 32)
+                if (this.saveAspect)
                 {
-                    t = b - 32;
+                    r = l + (b - t) * aspect;
+                    SetBounds(l, t, r, b);
+                    return;
                 }
             }
             else if ((this.edge & WindowEdge.Bottom) != 0)
             {
                 b = screenPos.Y - this.relativePoint.Y;
+                b = Math.Max(b, t + 32);
 
-                if (b - t < 32)
+                if (this.saveAspect)
                 {
-                    b = t + 32;
+                    r = l + (b - t) * aspect;
+                    SetBounds(l, t, r, b);
+                    return;
                 }
             }
 
+            SetBounds(l, t, r, b);
+        }
+
+        private void SetBounds(double l, double t, double r, double b)
+        {
             Window.Left = l;
             Window.Top = t;
             Window.Width = r - l;
             Window.Height = b - t;
         }
 
-        public WindowScaler(MovableWindow window, WindowEdge edge)
+        public WindowScaler(MovableWindow window, bool saveAspect, WindowEdge edge)
             : base(window)
         {
+            this.saveAspect = saveAspect;
             this.edge = edge;
         }
     }
