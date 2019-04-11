@@ -91,14 +91,11 @@ namespace Ragnarok.Presentation.Control.WindowOperation
             // shiftキーが押されている必要がある場合
             if (this.withShift != null)
             {
-                var isShiftDown = Keyboard.IsKeyDown(Key.LeftShift) | Keyboard.IsKeyDown(Key.RightShift);
+                var isShiftDown = Keyboard.IsKeyDown(Key.LeftShift) |
+                                  Keyboard.IsKeyDown(Key.RightShift);
 
-                if (this.withShift == true && !isShiftDown)
-                {
-                    return null;
-                }
-
-                if (this.withShift == false && isShiftDown)
+                if ((this.withShift == true && !isShiftDown) ||
+                    (this.withShift == false && isShiftDown))
                 {
                     return null;
                 }
@@ -130,10 +127,12 @@ namespace Ragnarok.Presentation.Control.WindowOperation
     {
         private readonly bool saveAspect;
         private readonly WindowEdge edge;
+        private double aspectRatio;
         private Point relativePoint;
 
         protected override void OnBegin(Point wp)
         {
+            this.aspectRatio = Window.Width / Window.Height;
             this.relativePoint = wp;
 
             if ((this.edge & WindowEdge.Right) != 0)
@@ -151,65 +150,118 @@ namespace Ragnarok.Presentation.Control.WindowOperation
         {
             var devicePos = Window.PointToScreen(wp);
             var screenPos = WPFUtil.LogicalFromDevice(devicePos, Window);
+
+            if (this.saveAspect)
+            {
+                ResizeFixedAspect(screenPos);
+            }
+            else
+            {
+                ResizeFreeAspect(screenPos);
+            }
+        }
+
+        /// <summary>
+        /// アスペクト比に関係なくウィンドウをリサイズします。
+        /// </summary>
+        private void ResizeFreeAspect(Point screenPos)
+        {
             var l = Window.Left;
             var t = Window.Top;
             var r = l + Window.Width;
             var b = t + Window.Height;
-            var aspect = Window.Width / Window.Height;
 
             if ((this.edge & WindowEdge.Left) != 0)
             {
                 l = screenPos.X - this.relativePoint.X;
                 l = Math.Min(l, r - 32);
-
-                if (this.saveAspect)
-                {
-                    b = t + (r - l) / aspect;
-                    SetBounds(l, t, r, b);
-                    return;
-                }
             }
             else if ((this.edge & WindowEdge.Right) != 0)
             {
                 r = screenPos.X - this.relativePoint.X;
                 r = Math.Max(r, l + 32);
-
-                if (this.saveAspect)
-                {
-                    b = t + (r - l) / aspect;
-                    SetBounds(l, t, r, b);
-                    return;
-                }
             }
 
             if ((this.edge & WindowEdge.Top) != 0)
             {
                 t = screenPos.Y - this.relativePoint.Y;
                 t = Math.Min(t, b - 32);
-
-                if (this.saveAspect)
-                {
-                    r = l + (b - t) * aspect;
-                    SetBounds(l, t, r, b);
-                    return;
-                }
             }
             else if ((this.edge & WindowEdge.Bottom) != 0)
             {
                 b = screenPos.Y - this.relativePoint.Y;
                 b = Math.Max(b, t + 32);
-
-                if (this.saveAspect)
-                {
-                    r = l + (b - t) * aspect;
-                    SetBounds(l, t, r, b);
-                    return;
-                }
             }
 
             SetBounds(l, t, r, b);
         }
 
+        /// <summary>
+        /// アスペクト比固定でウィンドウをリサイズします。
+        /// </summary>
+        private void ResizeFixedAspect(Point screenPos)
+        {
+            var l = Window.Left;
+            var t = Window.Top;
+            var r = l + Window.Width;
+            var b = t + Window.Height;
+            var changedWidth = false;
+
+            // 横方向をリサイズ
+            if (EnumEx.HasFlag(this.edge, WindowEdge.Left))
+            {
+                l = screenPos.X - this.relativePoint.X;
+                l = Math.Min(l, r - 32);
+                changedWidth = true;
+            }
+            else if (EnumEx.HasFlag(this.edge, WindowEdge.Right))
+            {
+                r = screenPos.X - this.relativePoint.X;
+                r = Math.Max(r, l + 32);
+                changedWidth = true;
+            }
+
+            if (changedWidth)
+            {
+                // 横方向が変わった場合、高さをアスペクト比に合わせます。
+                var height = (r - l) / this.aspectRatio;
+
+                if (EnumEx.HasFlag(this.edge, WindowEdge.Top))
+                {
+                    t = b - height;
+                }
+                else if (EnumEx.HasFlag(this.edge, WindowEdge.Bottom))
+                {
+                    b = t + height;
+                }
+                else
+                {
+                    b = t + height;
+                }
+            }
+            else
+            {
+                // 横方向が変わってない場合は、横方向を高さに合わせます。
+                if (EnumEx.HasFlag(this.edge, WindowEdge.Top))
+                {
+                    t = screenPos.Y - this.relativePoint.Y;
+                    t = Math.Min(t, b - 32);
+                }
+                else if (EnumEx.HasFlag(this.edge, WindowEdge.Bottom))
+                {
+                    b = screenPos.Y - this.relativePoint.Y;
+                    b = Math.Max(b, t + 32);
+                }
+
+                r = l + (b - t) * this.aspectRatio;
+            }
+
+            SetBounds(l, t, r, b);
+        }
+
+        /// <summary>
+        /// ウィンドウの上下左右の位置を設定します。
+        /// </summary>
         private void SetBounds(double l, double t, double r, double b)
         {
             Window.Left = l;
