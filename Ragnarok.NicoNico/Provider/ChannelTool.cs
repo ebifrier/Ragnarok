@@ -237,15 +237,15 @@ namespace Ragnarok.NicoNico.Provider
             @"</li>\s*</ul>\s*</li>");
         
         private static readonly Regex IdRegex = new Regex(
-            @"<li class=""videoId"" data-gaEventTrackTarget=""videoList_[\w]+VideoMetadata_videoId"">\s*(.+?)\s*</li>");
+            @"<li class=""videoId"" data-ga-event-track-target=""videoList_[\w]+VideoMetadata_videoId"">\s*(.+?)\s*</li>");
         private static readonly Regex ThreadIdRegex = new Regex(
-            @"<li class=""threadId"" data-gaEventTrackTarget=""videoList_[\w]+VideoMetadata_threadId"">\s*watch/(\d+)\s*</li>");
+            @"<li class=""threadId"" data-ga-event-track-target=""videoList_[\w]+VideoMetadata_threadId"">\s*watch/(\d+)\s*</li>");
         private static readonly Regex TitleRegex = new Regex(
             @"<h3 class=""item__metadata__title"">\s*([\s\S]+?)\s*</h3>");
         private static readonly Regex DataRegex = new Regex(
             @"<div class=""item__metadata__date"">[\s\S]+?\s*<span>\s*(.*?)\s*公開\s*</span>");
         private static readonly Regex StatusRegex = new Regex(
-            @"<ul class=""item__metadata__label"">\s*([\s\S]*?)\s*</ul>");
+            @"<div class=""item__metadata__date"">\s*<span>\s*([\s\S]*?)\s*</span>\s*</div>");
 
         /// <summary>
         /// 動画のリストを取得します。
@@ -403,6 +403,7 @@ namespace Ragnarok.NicoNico.Provider
             param["initialized"] = 1;
             param["mode"] = "edit";
             param["submit_edit"] = "";
+            param["genre_key"] = "game";
 
             // 公開or非公開 (公開時は0)
             param["hide_flag"] = 0;
