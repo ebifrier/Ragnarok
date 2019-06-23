@@ -182,8 +182,8 @@
     <Compile Include="Utility\PseudoKeyboard.cs" />
     <Compile Include="Utility\TextBoxUtil.cs" />
     <Compile Include="Utility\WebBrowserUtil.cs" />
-    <Compile Include="WpfSettingsBase.cs" />
-    <Compile Include="WpfUtil.cs" />
+    <Compile Include="WPFSettingsBase.cs" />
+    <Compile Include="WPFUtil.cs" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="Control\ColorButton.xaml">
