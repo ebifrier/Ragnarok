@@ -802,7 +802,7 @@ namespace Ragnarok.Utility
         /// </summary>
         protected AppSettingsBase()
         {
-            var asm = Assembly.GetEntryAssembly();
+            var asm = Assembly.GetExecutingAssembly();
             SetLocationFromAssembly(asm);
 
             // プロパティ値をDictionaryで管理しているので、
