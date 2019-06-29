@@ -22,15 +22,35 @@ namespace Ragnarok.Presentation.Extension
         }
 
         /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public FontFamilyListExtension(string language)
+        {
+            Language = language;
+        }
+
+        /// <summary>
+        /// 対象言語を取得または設定します。
+        /// </summary>
+        public string Language
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// フォント一覧を取得します。
         /// </summary>
         public override object ProvideValue(IServiceProvider service)
         {
-            var language = XmlLanguage.GetLanguage("ja-jp");
+            var language = (Language != null ?
+                XmlLanguage.GetLanguage(Language) :
+                null);
 
             // 日本語フォントのみをリストアップします。
             return Fonts.SystemFontFamilies
-                .Where(ff => ff.FamilyNames.Any(fn => fn.Key == language))
+                .Where(ff => language == null ||
+                             ff.FamilyNames.Any(fn => fn.Key == language))
                 .ToList();
         }
     }

@@ -13,6 +13,8 @@ namespace Ragnarok.Presentation.Converter
     /// </summary>
     public class ValueToDecimalConverter : IValueConverter
     {
+        public static ValueToDecimalConverter Default = new ValueToDecimalConverter();
+
         /// <summary>
         /// 変換元の型を取得または設定します。
         /// </summary>
