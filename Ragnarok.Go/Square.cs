@@ -254,6 +254,19 @@ namespace Ragnarok.Go
         }
 
         /// <summary>
+        /// 交点をヨーロッパ形式の文字列に変換します。
+        /// </summary>
+        public string ToEstr()
+        {
+            if (IsEmpty) return string.Empty;
+            if (IsPass) return "pass";
+
+            var col = (char)((int)'A' + Col + (Col >= 8 ? 1 : 0));
+            var row = BoardSize - Row;
+            return $"{col}{row}";
+        }
+
+        /// <summary>
         /// ヨーロッパ形式の交点をパースします。
         /// </summary>
         public static Square ParseEstr(string europe, int boardSize)

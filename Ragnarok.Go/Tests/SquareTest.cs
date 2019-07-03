@@ -22,6 +22,7 @@ namespace Ragnarok.Go.Tests
             Assert.True(pt.IsOk());
             Assert.AreEqual("[aa]", pt.ToSgf());
             Assert.AreEqual("1-1", pt.ToJstr());
+            Assert.AreEqual("A9", pt.ToEstr());
 
             pt = Square.Create(7 - 1, 2 - 1, 9);
             Assert.AreEqual(7 - 1, pt.Col);
@@ -33,6 +34,7 @@ namespace Ragnarok.Go.Tests
             Assert.True(pt.IsOk());
             Assert.AreEqual("[gb]", pt.ToSgf());
             Assert.AreEqual("7-2", pt.ToJstr());
+            Assert.AreEqual("G8", pt.ToEstr());
 
             pt = Square.Create(19 - 1, 4 - 1, 19);
             Assert.AreEqual(19 - 1, pt.Col);
@@ -44,6 +46,7 @@ namespace Ragnarok.Go.Tests
             Assert.True(pt.IsOk());
             Assert.AreEqual("[sd]", pt.ToSgf());
             Assert.AreEqual("19-4", pt.ToJstr());
+            Assert.AreEqual("T16", pt.ToEstr());
         }
 
         [Test]
@@ -52,14 +55,17 @@ namespace Ragnarok.Go.Tests
             var pt = Square.ParseEstr("A1", 19);
             Assert.AreEqual(1 - 1, pt.Col);
             Assert.AreEqual(19 - 1, pt.Row);
+            Assert.AreEqual("A1", pt.ToEstr());
 
             pt = Square.ParseEstr("T4", 19);
             Assert.AreEqual(19 - 1, pt.Col);
             Assert.AreEqual(16 - 1, pt.Row);
+            Assert.AreEqual("T4", pt.ToEstr());
 
             pt = Square.ParseEstr("J19", 19);
             Assert.AreEqual(9 - 1, pt.Col);
             Assert.AreEqual(1 - 1, pt.Row);
+            Assert.AreEqual("J19", pt.ToEstr());
 
             Assert.Catch(() => Square.ParseEstr("test", 19));
             Assert.Catch(() => Square.ParseEstr(null, 19));
@@ -86,12 +92,18 @@ namespace Ragnarok.Go.Tests
             Assert.False(pt.IsPass);
             Assert.False(pt.IsOk());
             Assert.AreEqual("", pt.ToString());
+            Assert.AreEqual("", pt.ToSgf());
+            Assert.AreEqual("", pt.ToJstr());
+            Assert.AreEqual("", pt.ToEstr());
 
             pt = Square.Pass();
             Assert.False(pt.IsEmpty);
             Assert.True(pt.IsPass);
             Assert.True(pt.IsOk());
             Assert.AreEqual("[]", pt.ToString());
+            Assert.AreEqual("[]", pt.ToSgf());
+            Assert.AreEqual("PASS", pt.ToJstr());
+            Assert.AreEqual("pass", pt.ToEstr());
         }
 
         [Test]
@@ -106,6 +118,7 @@ namespace Ragnarok.Go.Tests
             Assert.True(pt.IsOk());
             Assert.AreEqual("[jl]", pt.ToSgf());
             Assert.AreEqual("10-12", pt.ToJstr());
+            Assert.AreEqual("K2", pt.ToEstr());
 
             pt = Square.Create(2 - 1, 7 - 1, 7).Inv();
             Assert.AreEqual(6 - 1, pt.Col);
@@ -116,6 +129,7 @@ namespace Ragnarok.Go.Tests
             Assert.True(pt.IsOk());
             Assert.AreEqual("[fa]", pt.ToSgf());
             Assert.AreEqual("6-1", pt.ToJstr());
+            Assert.AreEqual("F7", pt.ToEstr());
         }
 
         [Test]
