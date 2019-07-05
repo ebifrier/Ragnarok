@@ -745,6 +745,14 @@ namespace Ragnarok.Go
             Turn = Turn.Inv();
         }*/
 
+        public override int GetHashCode()
+        {
+            return (
+                BoardSize.GetHashCode() ^
+                Turn.GetHashCode() ^
+                this.stones.GetHashCode());
+        }
+
         /// <summary>
         /// 盤の比較を行います。
         /// </summary>
