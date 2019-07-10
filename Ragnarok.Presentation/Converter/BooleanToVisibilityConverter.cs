@@ -16,6 +16,18 @@ namespace Ragnarok.Presentation.Converter
     [ValueConversion(typeof(object), typeof(Visibility))]
     public class BooleanToVisibilityConverter : IValueConverter
     {
+        public static readonly BooleanToVisibilityConverter DefaultHidden =
+            new BooleanToVisibilityConverter
+            {
+                DefaultHiddenValue = Visibility.Hidden
+            };
+
+        public static readonly BooleanToVisibilityConverter DefaultCollapsed =
+            new BooleanToVisibilityConverter
+            {
+                DefaultHiddenValue = Visibility.Collapsed
+            };
+
         private Visibility defaultHiddenValue = Visibility.Hidden;
 
         /// <summary>
