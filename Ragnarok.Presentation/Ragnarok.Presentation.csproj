@@ -157,6 +157,7 @@
     <Compile Include="Debug\ReportDialogModel.cs" />
     <Compile Include="DialogUtil.cs" />
     <Compile Include="Effect\GrayscaleEffect.cs" />
+    <Compile Include="Extension\HorizontalAlignmentListExtension.cs" />
     <Compile Include="Extension\FontWeightListExtension.cs" />
     <Compile Include="Extension\FontStyleListExtension.cs" />
     <Compile Include="Extension\FontFamilyNameListExtension.cs" />
