@@ -363,10 +363,10 @@ namespace Ragnarok.Utility
                 let attrs3 = prop.GetCustomAttributes(
                     typeof(DefaultValueAttribute), false)
                 let valAttr = attrs3.FirstOrDefault() as DefaultValueAttribute
-                let value = (valAttr != null ? valAttr.Value : null)
-                select new { propObj, value };
+                where valAttr != null
+                select new { propObj, valAttr.Value };
 
-            list.ForEach(_ => ResetProperty(_.propObj, _.value));
+            list.ForEach(_ => ResetProperty(_.propObj, _.Value));
         }
 
         /// <summary>
