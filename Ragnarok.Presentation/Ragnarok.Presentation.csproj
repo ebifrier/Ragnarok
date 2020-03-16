@@ -125,6 +125,7 @@
     <Compile Include="Control\ProgressDialog.xaml.cs">
       <DependentUpon>ProgressDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Control\DateTimeEditControl.cs" />
     <Compile Include="Control\TimeSpanEditControl.cs" />
     <Compile Include="Control\TimeSpanView.cs" />
     <Compile Include="Control\TimeSpanWindow.xaml.cs">
@@ -235,6 +236,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Control\ProgressDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Control\DateTimeEditControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
