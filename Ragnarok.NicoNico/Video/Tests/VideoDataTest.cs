@@ -62,7 +62,6 @@ namespace Ragnarok.NicoNico.Video.Tests
             Assert.AreEqual("レッツゴー！陰陽師（フルコーラスバージョン）", video.Description);
             Assert.AreEqual(DateTime.Parse("2007-03-06T00:33:00+09:00"), video.StartTime);
             Assert.AreEqual(320, video.LengthSeconds);
-            Assert.True(video.ThumbnailUrl.Contains("://tn.smilevideo.jp/smile?i=9"));
             Assert.NotNull(video.IsVisible);
             Assert.True(video.IsVisible.Value);
             if (removeTagType == RemoveTagType.None)
@@ -106,7 +105,6 @@ namespace Ragnarok.NicoNico.Video.Tests
                 video.Description);
             Assert.AreEqual(DateTime.Parse("2007-08-29T14:02:39+09:00"), video.StartTime);
             Assert.AreEqual(49, video.LengthSeconds);
-            Assert.True(video.ThumbnailUrl.Contains("://tn.smilevideo.jp/smile?i=941537"));
             Assert.NotNull(video.IsVisible);
             Assert.True(video.IsVisible.Value);
             if (removeTagType == RemoveTagType.None)
@@ -149,7 +147,6 @@ namespace Ragnarok.NicoNico.Video.Tests
                 video.Description);
             Assert.AreEqual(DateTime.Parse("2007-06-23T18:27:06+09:00"), video.StartTime);
             Assert.AreEqual(648, video.LengthSeconds);
-            Assert.True(video.ThumbnailUrl.Contains("://tn.smilevideo.jp/smile?i=500873"));
             Assert.NotNull(video.IsVisible);
             Assert.True(video.IsVisible.Value);
             if (removeTagType == RemoveTagType.None)
@@ -196,7 +193,6 @@ namespace Ragnarok.NicoNico.Video.Tests
                 video.Description);
             Assert.AreEqual(DateTime.Parse("2008-01-04T22:56:55+09:00"), video.StartTime);
             Assert.AreEqual(61*60+43, video.LengthSeconds);
-            Assert.True(video.ThumbnailUrl.Contains("://tn.smilevideo.jp/smile?i=1949063"));
             Assert.NotNull(video.IsVisible);
             Assert.True(video.IsVisible.Value);
             if (removeTagType == RemoveTagType.None)
@@ -237,7 +233,6 @@ namespace Ragnarok.NicoNico.Video.Tests
                 video.Description);
             Assert.AreEqual(DateTime.Parse("2015-09-01T18:30:00+09:00"), video.StartTime);
             Assert.AreEqual(30, video.LengthSeconds);
-            Assert.True(video.ThumbnailUrl.Contains("://tn.smilevideo.jp/smile?i=27063885"));
             Assert.NotNull(video.IsVisible);
             Assert.True(video.IsVisible.Value);
             if (removeTagType == RemoveTagType.None)
@@ -284,7 +279,6 @@ namespace Ragnarok.NicoNico.Video.Tests
                 video.Description);
             Assert.AreEqual(DateTime.Parse("2014-05-17T10:00:00+09:00"), video.StartTime);
             Assert.AreEqual(604, video.LengthSeconds);
-            Assert.True(video.ThumbnailUrl.Contains("://tn.smilevideo.jp/smile?i=23569455"));
             Assert.NotNull(video.IsVisible);
             Assert.True(video.IsVisible.Value);
             if (removeTagType == RemoveTagType.None)
@@ -336,7 +330,6 @@ namespace Ragnarok.NicoNico.Video.Tests
                 video.Description);
             Assert.AreEqual(DateTime.Parse("2015-09-03T19:00:00+09:00"), video.StartTime);
             Assert.AreEqual(60, video.LengthSeconds);
-            Assert.True(video.ThumbnailUrl.Contains("://tn.smilevideo.jp/smile?i=27077196"));
             Assert.NotNull(video.IsVisible);
             Assert.False(video.IsVisible.Value);
             if (removeTagType == RemoveTagType.None)
@@ -350,7 +343,7 @@ namespace Ragnarok.NicoNico.Video.Tests
             }
             Assert.GreaterOrEqual(video.ViewCounter, 120);
             Assert.GreaterOrEqual(video.CommentCounter, 1);
-            Assert.GreaterOrEqual(video.MylistCounter, 2);
+            Assert.GreaterOrEqual(video.MylistCounter, 1);
 
             var tags = new string[]
             {
