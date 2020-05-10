@@ -166,10 +166,10 @@ namespace Ragnarok.OpenGL
             switch (Blend)
             {
                 case BlendType.Diffuse:
-                    GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
+                    GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
                     break;
                 case BlendType.Emissive:
-                    GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.One);
+                    GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.One);
                     break;
             }
         }
