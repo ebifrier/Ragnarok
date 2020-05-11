@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2003
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29709.97
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ragnarok", "Ragnarok\Ragnarok.csproj", "{58E7EA68-4850-452C-B15C-CD376FC60198}"
 EndProject
@@ -14,8 +14,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ragnarok.Forms", "Ragnarok.Forms\Ragnarok.Forms.csproj", "{26EA7DF8-D131-4ED9-8D61-1DAB6CCC7200}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ragnarok.Shogi", "Ragnarok.Shogi\Ragnarok.Shogi.csproj", "{5C0D7C9B-F2D5-4A08-8856-AF7E2F2F7CFE}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ragnarok.Forms.Shogi", "Ragnarok.Forms.Shogi\Ragnarok.Forms.Shogi.csproj", "{34F49799-B4E8-40AB-A3C2-CE8FC0A4F3B2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ragnarok.OpenGL", "Ragnarok.OpenGL\Ragnarok.OpenGL.csproj", "{598A93CA-0BD4-4C1C-B6DB-27384A440915}"
 EndProject
@@ -111,18 +109,6 @@ Global
 		{5C0D7C9B-F2D5-4A08-8856-AF7E2F2F7CFE}.Release|x64.Build.0 = Release|Any CPU
 		{5C0D7C9B-F2D5-4A08-8856-AF7E2F2F7CFE}.Release|x86.ActiveCfg = Release|x86
 		{5C0D7C9B-F2D5-4A08-8856-AF7E2F2F7CFE}.Release|x86.Build.0 = Release|x86
-		{34F49799-B4E8-40AB-A3C2-CE8FC0A4F3B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{34F49799-B4E8-40AB-A3C2-CE8FC0A4F3B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{34F49799-B4E8-40AB-A3C2-CE8FC0A4F3B2}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{34F49799-B4E8-40AB-A3C2-CE8FC0A4F3B2}.Debug|x64.Build.0 = Debug|Any CPU
-		{34F49799-B4E8-40AB-A3C2-CE8FC0A4F3B2}.Debug|x86.ActiveCfg = Debug|x86
-		{34F49799-B4E8-40AB-A3C2-CE8FC0A4F3B2}.Debug|x86.Build.0 = Debug|x86
-		{34F49799-B4E8-40AB-A3C2-CE8FC0A4F3B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{34F49799-B4E8-40AB-A3C2-CE8FC0A4F3B2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{34F49799-B4E8-40AB-A3C2-CE8FC0A4F3B2}.Release|x64.ActiveCfg = Release|Any CPU
-		{34F49799-B4E8-40AB-A3C2-CE8FC0A4F3B2}.Release|x64.Build.0 = Release|Any CPU
-		{34F49799-B4E8-40AB-A3C2-CE8FC0A4F3B2}.Release|x86.ActiveCfg = Release|x86
-		{34F49799-B4E8-40AB-A3C2-CE8FC0A4F3B2}.Release|x86.Build.0 = Release|x86
 		{598A93CA-0BD4-4C1C-B6DB-27384A440915}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{598A93CA-0BD4-4C1C-B6DB-27384A440915}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{598A93CA-0BD4-4C1C-B6DB-27384A440915}.Debug|x64.ActiveCfg = Debug|Any CPU
