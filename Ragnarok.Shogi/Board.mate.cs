@@ -231,6 +231,10 @@ namespace Ragnarok.Shogi
         /// </remarks>
         public bool IsCheckMated()
         {
+#if OUTE_SHOGI
+            // 王手将棋では王手＝積みとなります。
+            return IsChecked(Turn);
+#else
             if (!IsChecked(Turn))
             {
                 return false;
@@ -275,6 +279,7 @@ namespace Ragnarok.Shogi
             }
 
             return true;
+#endif
         }
     }
 }

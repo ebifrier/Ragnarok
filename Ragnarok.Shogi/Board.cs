@@ -834,6 +834,10 @@ namespace Ragnarok.Shogi
         /// </summary>
         private bool IsPawnDropCheckMate(BWType bwType, Square square)
         {
+#if OUTE_SHOGI
+            // 王手将棋では打ち歩詰めを反則にしません。
+            return false;
+#else
             // 歩の前に敵の玉がいるか確認します。
             var rankDif = (bwType == BWType.Black ? -1 : +1);
             var gyokuSq = new Square(square.File, square.Rank + rankDif);
@@ -868,6 +872,7 @@ namespace Ragnarok.Shogi
             Turn = Turn.Flip();
 
             return mated;
+#endif
         }
 
         /// <summary>
@@ -1319,7 +1324,7 @@ namespace Ragnarok.Shogi
             return true;
         }
 
-        #region Serialize
+#region Serialize
         /// <summary>
         /// 局面をシリアライズするために一時的に使います。
         /// </summary>
@@ -1470,7 +1475,7 @@ namespace Ragnarok.Shogi
             this.moveList = DeserializeMoveList(this.moveListBytes);
             this.redoList = DeserializeMoveList(this.redoListBytes);
         }
-        #endregion
+#endregion
 
 #if false
         /// <summary>
