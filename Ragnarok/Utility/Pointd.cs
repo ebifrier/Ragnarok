@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 
 namespace Ragnarok.Utility
 {
@@ -13,16 +12,13 @@ namespace Ragnarok.Utility
     [TypeConverter(typeof(PointdConverter))]
     public struct Pointd : IEquatable<Pointd>
     {
-        private double x;
-        private double y;
-
         /// <summary>
         /// コンストラクタ
         /// </summary>
         public Pointd(double x, double y)
         {
-            this.x = x;
-            this.y = y;
+            X = x;
+            Y = y;
         }
 
         /// <summary>
@@ -30,8 +26,8 @@ namespace Ragnarok.Utility
         /// </summary>
         public double X
         {
-            get { return this.x; }
-            set { this.x = value; }
+            get;
+            set;
         }
 
         /// <summary>
@@ -39,8 +35,8 @@ namespace Ragnarok.Utility
         /// </summary>
         public double Y
         {
-            get { return this.y; }
-            set { this.y = value; }
+            get;
+            set;
         }
 
         /// <summary>

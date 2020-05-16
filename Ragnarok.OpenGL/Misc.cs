@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -9,7 +10,6 @@ using OpenTK.Graphics.OpenGL;
 namespace Ragnarok.OpenGL
 {
     using Ragnarok.Utility;
-    using System.Globalization;
 
     /// <summary>
     /// OpenGLのユーティリティクラスです。

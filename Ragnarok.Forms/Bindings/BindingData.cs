@@ -1,17 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Windows.Forms;
 
 using Ragnarok.Utility;
 
 namespace Ragnarok.Forms.Bindings
 {
-    using Controls;
-    using System.Globalization;
-
     internal sealed class BindingData
     {
         private readonly ReentrancyLock recurceLock = new ReentrancyLock();
