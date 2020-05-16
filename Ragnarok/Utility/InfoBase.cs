@@ -120,9 +120,7 @@ namespace Ragnarok.Utility
                     return null;
                 }
 
-                return string.Format(
-                    "http://twitter.com/#!/{0}",
-                    TwitterId);
+                return $"http://twitter.com/#!/{TwitterId}";
             }
         }
 
@@ -148,9 +146,7 @@ namespace Ragnarok.Utility
                     return null;
                 }
 
-                return string.Format(
-                    "http://www.pixiv.net/member.php?id={0}",
-                    PixivId);
+                return $"http://www.pixiv.net/member.php?id={PixivId}";
             }
         }
 

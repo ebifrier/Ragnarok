@@ -111,7 +111,7 @@ namespace Ragnarok.Net
                     }
                 }
 
-                return string.Format("{0}={1}", pair.Key, value);
+                return $"{pair.Key}={value}";
             });
 
             return string.Join("&", enDataStrs.ToArray());
@@ -163,6 +163,11 @@ namespace Ragnarok.Net
         public static void WritePostData(HttpWebRequest request,
                                          Dictionary<string, object> param)
         {
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+
             // パラメータがあれば、POSTを無ければGETを使います。
             var data = EncodePostData(param);
             if (data != null && data.Any())
@@ -240,6 +245,11 @@ namespace Ragnarok.Net
         /// <exception cref="WebException" />
         public static byte[] RequestHttp(HttpWebRequest request)
         {
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+
             // responseをCloseしないと、MONOでは次回のリクエストから
             // タイムアウトするようになります。
             using (var response = (HttpWebResponse)request.GetResponse())
@@ -332,6 +342,11 @@ namespace Ragnarok.Net
             HttpWebRequest request,
             RequestHttpAsyncCallback callback)
         {
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+
             var data = new GetHttpResponseDoneData()
             {
                 WebRequest = request,

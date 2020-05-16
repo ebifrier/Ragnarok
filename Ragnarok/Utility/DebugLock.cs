@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Diagnostics;
 using System.Threading;
 
 namespace Ragnarok.Utility
@@ -13,7 +11,7 @@ namespace Ragnarok.Utility
     /// <remarks>
     /// 必ずusingと一緒に使ってください。
     /// </remarks>
-    public class DebugLock : IDisposable
+    public sealed class DebugLock : IDisposable
     {
         private static long idCounter = 0;
         private object locker;
@@ -45,10 +43,24 @@ namespace Ragnarok.Utility
             this.locker = locker;
         }
 
+        ~DebugLock()
+        {
+            Dispose(false);
+        }
+
+        /// <summary>
+        /// ロックを解除します。
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
         /// <summary>
         /// スタックトレースの出力を行います。
         /// </summary>
-        public void WriteStackTrace()
+        public static void WriteStackTrace()
         {
             var traceList =
 #if !MONO
@@ -70,15 +82,18 @@ namespace Ragnarok.Utility
         /// <summary>
         /// ロックを解除します。
         /// </summary>
-        public void Dispose()
+        private void Dispose(bool disposing)
         {
-            var tmpLocker = Interlocked.Exchange(ref this.locker, null);
-            if (tmpLocker == null)
+            if (disposing)
             {
-                Log.Error("Disposeが２度呼び出されています。");
-            }
+                var tmpLocker = Interlocked.Exchange(ref this.locker, null);
+                if (tmpLocker == null)
+                {
+                    Log.Error("Disposeが２度呼び出されています。");
+                }
 
-            Monitor.Exit(tmpLocker);
+                Monitor.Exit(tmpLocker);
+            }
         }
     }
 }

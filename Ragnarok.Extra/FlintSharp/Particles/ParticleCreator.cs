@@ -82,6 +82,11 @@ namespace FlintSharp.Particles
         /// <param name="particle">The particle to return for reuse.</param>
         public void DisposeParticle(Particle particle)
         {
+            if (particle == null)
+            {
+                return;
+            }
+
             particle.Initialize();
             m_particles.Push(particle);
         }

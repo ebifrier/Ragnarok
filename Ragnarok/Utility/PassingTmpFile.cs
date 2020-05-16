@@ -12,7 +12,7 @@ namespace Ragnarok.Utility
     /// <remarks>
     /// こうすることでファイルが中途半端な状態になることを防ぎます。
     /// </remarks>
-    public class PassingTmpFile : IDisposable
+    public sealed class PassingTmpFile : IDisposable
     {
         private volatile bool success;
 
@@ -62,34 +62,50 @@ namespace Ragnarok.Utility
             this.success = true;
         }
 
+        ~PassingTmpFile()
+        {
+            Dispose(false);
+        }
         /// <summary>
         /// ファイル作成に成功したら、一時ファイルを元のファイルに置き換えます。
         /// </summary>
         public void Dispose()
         {
-            if (this.success)
-            {
-                // 元のファイルを削除し、tmpファイルを規定の名前に変えます。
-                if (File.Exists(OriginalFileName))
-                {
-                    File.Delete(OriginalFileName);
-                }
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
 
-                File.Move(TmpFileName, OriginalFileName);
-            }
-            else
+        /// <summary>
+        /// ファイル作成に成功したら、一時ファイルを元のファイルに置き換えます。
+        /// </summary>
+        private void Dispose(bool disposing)
+        {
+            if (disposing)
             {
-                try
+                if (this.success)
                 {
-                    if (File.Exists(TmpFileName))
+                    // 元のファイルを削除し、tmpファイルを規定の名前に変えます。
+                    if (File.Exists(OriginalFileName))
                     {
-                        File.Delete(TmpFileName);
+                        File.Delete(OriginalFileName);
                     }
+
+                    File.Move(TmpFileName, OriginalFileName);
                 }
-                catch (Exception ex)
+                else
                 {
-                    Log.ErrorException(ex,
-                        "一時ファイルの削除に失敗しました。");
+                    try
+                    {
+                        if (File.Exists(TmpFileName))
+                        {
+                            File.Delete(TmpFileName);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.ErrorException(ex,
+                            "一時ファイルの削除に失敗しました。");
+                    }
                 }
             }
         }

@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text;
 
 namespace Ragnarok.Sound.Backend
 {
@@ -42,6 +41,7 @@ namespace Ragnarok.Sound.Backend
     /// <summary>
     /// ダミーです。
     /// </summary>
+    [SuppressMessage("Microsoft.Performance", "CA1812:インスタンス化されていない内部クラスを使用しないでください")]
     internal sealed class SoundManagerBackend_Dummy : ISoundManagerBackend
     {
         /// <summary>

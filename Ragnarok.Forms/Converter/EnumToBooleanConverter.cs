@@ -68,7 +68,7 @@ namespace Ragnarok.Forms.Converter
                     return FormsValue.UnsetValue;
                 }
 
-                if (!Enum.IsDefined(value.GetType(), value))
+                if (value == null || !Enum.IsDefined(value.GetType(), value))
                 {
                     return FormsValue.UnsetValue;
                 }
@@ -83,7 +83,7 @@ namespace Ragnarok.Forms.Converter
                 // 列挙値を整数型に変換するときはasやis演算子を使うと
                 // 失敗するので、直接キャストして成功するか判断しています。
                 //
-                // すごく重いので、判定はメソッドの最後で行います。
+                // すごく重いので、判定はメソッドの最後に行います。
                 return ((int)value == (int)TargetValue);
             }
             catch (InvalidCastException)

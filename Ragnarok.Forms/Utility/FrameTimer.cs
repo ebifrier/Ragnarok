@@ -70,8 +70,8 @@ namespace Ragnarok.Forms.Utility
         /// </summary>
         public double TargetFPS
         {
-            get { return GetValue<double>("TargetFPS"); }
-            set { SetValue("TargetFPS", value); }
+            get { return GetValue<double>(nameof(TargetFPS)); }
+            set { SetValue(nameof(TargetFPS), value); }
         }
 
         /// <summary>

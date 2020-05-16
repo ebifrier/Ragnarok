@@ -8,7 +8,7 @@ using NUnit.Framework;
 namespace Ragnarok.Shogi.Tests
 {
     [TestFixture()]
-    internal sealed class ShogiParserExTest
+    public sealed class ShogiParserExTest
     {
         [Test()]
         public void ResignTest()

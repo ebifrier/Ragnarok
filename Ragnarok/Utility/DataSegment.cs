@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text;
 
 namespace Ragnarok.Utility
 {
@@ -13,6 +13,7 @@ namespace Ragnarok.Utility
         /// <summary>
         /// バッファオブジェクトを取得します。
         /// </summary>
+        [SuppressMessage("Microsoft.Performance", "CA1819")]
         public T[] Array
         {
             get;
@@ -74,7 +75,7 @@ namespace Ragnarok.Utility
         /// </summary>
         public static bool operator ==(DataSegment<T> a, DataSegment<T> b)
         {
-            return a.Equals(b);
+            return Util.GenericEquals(a, b);
         }
 
         /// <summary>
@@ -102,12 +103,12 @@ namespace Ragnarok.Utility
         /// <summary>
         /// オブジェクトを比較します。
         /// </summary>
-        public bool Equals(ArraySegment<T> obj)
+        public bool Equals(ArraySegment<T> other)
         {
             return (
-                Array == obj.Array &&
-                Count == obj.Count &&
-                Offset == obj.Offset);
+                Array == other.Array &&
+                Count == other.Count &&
+                Offset == other.Offset);
         }
 
         /// <summary>

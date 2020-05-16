@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Ragnarok.Utility
 {
@@ -25,7 +24,7 @@ namespace Ragnarok.Utility
     /// 登録されたオブジェクトのサイズが一定値を越えたら、
     /// もっとも使われていないデータを捨てるようにしています。
     /// </remarks>
-    public class CacheManager<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>
+    public class CacheCollection<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>
         where TValue: ICachable
     {
         /// <summary>
@@ -60,22 +59,23 @@ namespace Ragnarok.Utility
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public CacheManager(CreatorFunc creator, long capacity,
+        public CacheCollection(CreatorFunc creator, long capacity,
                             IEqualityComparer<TKey> comparer)
         {
             if (comparer == null)
             {
-                throw new ArgumentNullException("comparer");
+                throw new ArgumentNullException(nameof(comparer));
             }
 
             if (creator == null)
             {
-                throw new ArgumentNullException("creator");
+                throw new ArgumentNullException(nameof(creator));
             }
 
             if (capacity < 0)
             {
-                throw new ArgumentException("capacity");
+                throw new ArgumentException(
+                    "capacityが負の値になっています。", nameof(capacity));
             }
 
             this.usageList = new LinkedList<CacheData>();
@@ -88,7 +88,7 @@ namespace Ragnarok.Utility
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public CacheManager(CreatorFunc creator, long capacity)
+        public CacheCollection(CreatorFunc creator, long capacity)
             : this(creator, capacity, EqualityComparer<TKey>.Default)
         {
         }
@@ -133,7 +133,7 @@ namespace Ragnarok.Utility
             {
                 if (value < 0)
                 {
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException(nameof(value));
                 }
 
                 this.capacity = value;
@@ -153,7 +153,7 @@ namespace Ragnarok.Utility
         /// </summary>
         public int Count
         {
-            get { return this.usageList.Count(); }
+            get { return this.usageList.Count; }
         }
 
         /// <summary>
@@ -243,14 +243,14 @@ namespace Ragnarok.Utility
         {
             if (value == null)
             {
-                throw new ArgumentNullException("value");
+                throw new ArgumentNullException(nameof(value));
             }
 
             var size = value.ObjectSize;
             if (size < 0)
             {
                 throw new ArgumentException(
-                    "オブジェクトサイズが負数です。");
+                    "オブジェクトサイズが負数です。", nameof(value));
             }
 
             lock (this.syncRoot)

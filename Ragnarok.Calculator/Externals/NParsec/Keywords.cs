@@ -1,10 +1,13 @@
+using System;
+using System.Globalization;
+
 namespace Codehaus.Parsec
 {
-    using System;
     using FromString = FromRange<string, object>;
     using SortedIndex = System.Collections.Generic.SortedDictionary<string, bool>;
     using Lexer = Parser<Tok>;
     using Scanner = Parser<D_>;
+
     /// <author>  Ben Yu
     /// 
     /// Dec 19, 2004
@@ -12,9 +15,8 @@ namespace Codehaus.Parsec
 #if !NETSTANDARD
     [Serializable]
 #endif
-    sealed class Keywords
+    static class Keywords
     {
-
         interface StringCase
         {
             System.Collections.Generic.IComparer<string> Comparator
@@ -45,7 +47,7 @@ namespace Codehaus.Parsec
                     return 1;
                 else
                 {
-                    return string.Compare(a, b, insensitive);
+                    return string.Compare(a, b, insensitive, CultureInfo.InvariantCulture);
                 }
             }
         }
@@ -56,7 +58,7 @@ namespace Codehaus.Parsec
             readonly StringComparer comparer;
             public string ToKey(string k)
             {
-                return comparer.CaseInsensitive ? k.ToLower() : k;
+                return comparer.CaseInsensitive ? k.ToUpperInvariant() : k;
             }
             public Map<string, object> ToMap(System.Collections.IDictionary dict)
             {
@@ -64,7 +66,7 @@ namespace Codehaus.Parsec
                 {
                     return delegate(string k)
                     {
-                        return dict[k.ToLower()];
+                        return dict[k.ToUpperInvariant()];
                     };
                 }
                 else return Functors.AsMap<string, object>(dict);

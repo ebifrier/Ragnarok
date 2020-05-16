@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 
@@ -115,6 +116,11 @@ namespace Ragnarok.Shogi
         /// </summary>
         public static string ToString(Piece piece)
         {
+            if (piece == null)
+            {
+                throw new ArgumentNullException(nameof(piece));
+            }
+
             if (!piece.IsPromoted)
             {
                 switch (piece.PieceType)
@@ -251,6 +257,11 @@ namespace Ragnarok.Shogi
         /// </summary>
         public static string ToString(SkillLevel skillLevel)
         {
+            if (skillLevel == null)
+            {
+                throw new ArgumentNullException(nameof(skillLevel));
+            }
+
             if (!string.IsNullOrEmpty(skillLevel.OriginalText))
             {
                 var text = skillLevel.OriginalText;
@@ -292,7 +303,9 @@ namespace Ragnarok.Shogi
             {
                 var skillName = ToString(player.SkillLevel);
 
-                return string.Format("{0}{1}",
+                return string.Format(
+                    CultureInfo.CurrentCulture,
+                    "{0}{1}",
                     player.Nickname,
                     (string.IsNullOrEmpty(skillName) ? "" : "(" + skillName + ")"));
             }

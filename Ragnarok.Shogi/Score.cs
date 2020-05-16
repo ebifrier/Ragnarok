@@ -63,7 +63,7 @@ namespace Ragnarok.Shogi
         {
             if (string.IsNullOrEmpty(text))
             {
-                throw new ArgumentNullException("text");
+                throw new ArgumentNullException(nameof(text));
             }
 
             var trimmedText = text.Trim();
@@ -91,7 +91,7 @@ namespace Ragnarok.Shogi
         {
             if (string.IsNullOrEmpty(text))
             {
-                throw new ArgumentNullException("text");
+                throw new ArgumentNullException(nameof(text));
             }
 
             var trimmedText = text.Trim();
@@ -132,7 +132,7 @@ namespace Ragnarok.Shogi
 
             if (string.IsNullOrEmpty(text))
             {
-                throw new ArgumentNullException("text");
+                throw new ArgumentNullException(nameof(text));
             }
 
             if (text[0] == '-')
@@ -341,6 +341,11 @@ namespace Ragnarok.Shogi
         /// </summary>
         public static Score operator -(Score score)
         {
+            if (score == null)
+            {
+                throw new ArgumentNullException(nameof(score));
+            }
+
             var clone = score.Clone();
             clone.Neg();
             return clone;

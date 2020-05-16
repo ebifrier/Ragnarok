@@ -21,17 +21,28 @@ namespace Ragnarok.Utility
             this.action = action;
         }
 
+        ~ActionOnDispose()
+        {
+            Dispose(false);
+        }
+
         /// <summary>
         /// オブジェクトを破棄します。
         /// </summary>
         public void Dispose()
         {
+            Dispose(true);
             GC.SuppressFinalize(this);
+        }
 
-            var action = Interlocked.Exchange(ref this.action, null);
-            if (action != null)
+        /// <summary>
+        /// オブジェクトを破棄します。
+        /// </summary>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
             {
-                action();
+                Interlocked.Exchange(ref this.action, null)?.Invoke();
             }
         }
     }

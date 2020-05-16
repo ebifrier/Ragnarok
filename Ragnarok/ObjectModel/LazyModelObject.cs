@@ -39,7 +39,7 @@ namespace Ragnarok.ObjectModel
         {
             if (model == null)
             {
-                throw new ArgumentNullException("model");
+                throw new ArgumentNullException(nameof(model));
             }
 
             lock (SyncRoot)

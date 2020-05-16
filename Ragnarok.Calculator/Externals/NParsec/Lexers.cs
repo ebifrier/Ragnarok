@@ -33,7 +33,7 @@ namespace Codehaus.Parsec
         }
     }
 
-    public class Lexers
+    public static class Lexers
     {
         /// <summary>
         /// Create a FromRange object that converts any range to a certain value.

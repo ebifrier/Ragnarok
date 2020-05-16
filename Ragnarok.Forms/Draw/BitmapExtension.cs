@@ -20,7 +20,7 @@ namespace Ragnarok.Forms.Draw
         {
             if (bitmap == null)
             {
-                throw new ArgumentNullException("bitmap");
+                throw new ArgumentNullException(nameof(bitmap));
             }
 
             var target = new Bitmap(width, height);

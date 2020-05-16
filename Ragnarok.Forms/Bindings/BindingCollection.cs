@@ -174,7 +174,7 @@ namespace Ragnarok.Forms.Bindings
         {
             if (binding == null)
             {
-                throw new ArgumentNullException("binding");
+                throw new ArgumentNullException(nameof(binding));
             }
 
             binding.Control = Control;

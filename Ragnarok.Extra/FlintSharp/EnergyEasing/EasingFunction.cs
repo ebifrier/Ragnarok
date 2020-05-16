@@ -62,7 +62,7 @@ namespace FlintSharp.EnergyEasing
 {
     public delegate double EnergyEasingDelegate(double age, double lifetime);
 
-    public class EasingFunction
+    public static class EasingFunction
     {
         public static EnergyEasingDelegate GetEasingFunction(EaseCategory easeCategory, EaseType easeType)
         {

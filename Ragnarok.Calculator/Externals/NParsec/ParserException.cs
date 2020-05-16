@@ -1,7 +1,8 @@
 using System;
+using System.Runtime.Serialization;
+
 namespace Codehaus.Parsec
 {
-
     /// <summary> ParserException is thrown when a grammar error happens.
     /// <p />
     /// </summary>
@@ -106,22 +107,31 @@ namespace Codehaus.Parsec
         /// <summary> Prints the parsing trace to the standard error output.</summary>
         public void WriteParsingTrace()
         {
-            System.IO.StreamWriter temp_writer;
-            temp_writer = new System.IO.StreamWriter(System.Console.OpenStandardError(), System.Console.Error.Encoding);
-            temp_writer.AutoFlush = true;
-            WriteParsingTrace(temp_writer);
+            using (System.IO.StreamWriter temp_writer =
+                new System.IO.StreamWriter(System.Console.OpenStandardError(), System.Console.Error.Encoding))
+            {
+                temp_writer.AutoFlush = true;
+                WriteParsingTrace(temp_writer);
+            }
         }
         public override string StackTrace
         {
             get
             {
-                System.IO.StringWriter swriter = new System.IO.StringWriter();
-                WriteParsingTrace(swriter);
-                swriter.WriteLine();
-                return swriter.ToString() + base.StackTrace;
+                using (System.IO.StringWriter swriter = new System.IO.StringWriter())
+                {
+                    WriteParsingTrace(swriter);
+                    swriter.WriteLine();
+                    return swriter.ToString() + base.StackTrace;
+                }
             }
         }
 
+
+        public ParserException() { }
+        public ParserException(string msg) : base(msg) { }
+        public ParserException(string msg, Exception innerException)
+            : base(msg, innerException) { }
 
         /// <summary> Create a ParserException object.</summary>
         /// <param name="err">the ParseError object.
@@ -189,6 +199,11 @@ namespace Codehaus.Parsec
             this.err = err;
             this.pos = pos;
             this.module = mname;
+        }
+
+        protected ParserException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
         }
     }
 }

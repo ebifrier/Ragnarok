@@ -65,17 +65,17 @@ namespace Ragnarok.Forms.Input
         {
             if (component == null)
             {
-                throw new ArgumentNullException("component");
+                throw new ArgumentNullException(nameof(component));
             }
 
             if (command == null)
             {
-                throw new ArgumentNullException("command");
+                throw new ArgumentNullException(nameof(command));
             }
 
             if (commandParameterCallback == null)
             {
-                throw new ArgumentNullException("commandParameterCallback");
+                throw new ArgumentNullException(nameof(commandParameterCallback));
             }
 
             foreach (var factory in factories)
@@ -91,9 +91,7 @@ namespace Ragnarok.Forms.Input
             }
 
             throw new NotSupportedException(
-                string.Format(
-                    "コンポ―ネント'{0}'はコマンドバインディングに対応していません。",
-                    component.GetType().Name));
+                $"コンポ―ネント'{component.GetType().Name}'はコマンドバインディングに対応していません。");
         }
 
         /// <summary>
@@ -103,7 +101,7 @@ namespace Ragnarok.Forms.Input
         {
             if (binding == null)
             {
-                throw new ArgumentNullException("binding");
+                throw new ArgumentNullException(nameof(binding));
             }
 
             bindings.Remove(binding);

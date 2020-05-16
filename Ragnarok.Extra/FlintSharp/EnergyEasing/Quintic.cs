@@ -50,7 +50,7 @@
 
 namespace FlintSharp.EnergyEasing
 {
-    public class Quintic
+    public static class Quintic
     {
         public static double EaseIn(double age, double lifetime)
         {

@@ -194,6 +194,11 @@ namespace FlintSharp.Behaviours
         /// <param name="emitter">The Emitter that the Action was added to.</param>
         public override void AddedToEmitter(Emitter emitter)
         {
+            if (emitter == null)
+            {
+                return;
+            }
+
             m_updateActivity = new UpdateOnFrame(this);
             emitter.Activities.Add(m_updateActivity);
         }
@@ -206,6 +211,11 @@ namespace FlintSharp.Behaviours
         /// <param name="emitter">The Emitter that the Action was removed from.</param>
         public override void RemovedFromEmitter(Emitter emitter)
         {
+            if (emitter == null)
+            {
+                return;
+            }
+
             if (m_updateActivity != null)
                 emitter.Activities.Remove(m_updateActivity);
         }
@@ -239,6 +249,16 @@ namespace FlintSharp.Behaviours
         /// <param name="elapsedTime">The duration of the frame - used for time based updates.</param>
         public override void Update(Emitter emitter, Particle particle, double elapsedTime)
         {
+            if (emitter == null)
+            {
+                return;
+            }
+
+            if (particle == null)
+            {
+                return;
+            }
+
             double x = particle.X - m_x;
             double y = particle.Y - m_y;
             double dSq = x * x + y * y;

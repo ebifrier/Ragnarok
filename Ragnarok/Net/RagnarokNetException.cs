@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Runtime.Serialization;
 
 namespace Ragnarok.Net
 {
     /// <summary>
     /// コネクションの例外です。
     /// </summary>
+    [Serializable()]
     public class RagnarokNetException : RagnarokException
     {
         /// <summary>
@@ -31,6 +32,14 @@ namespace Ragnarok.Net
         public RagnarokNetException(string message,
                                Exception innerException)
             : base(message, innerException)
+        {
+        }
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        protected RagnarokNetException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
         {
         }
     }

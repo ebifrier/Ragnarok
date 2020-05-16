@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 
@@ -22,7 +23,7 @@ namespace Ragnarok.Utility
 
             public int GetHashCode(string obj)
             {
-                return obj.ToLower().GetHashCode();
+                return obj.ToLowerInvariant().GetHashCode();
             }
         }
         /// <summary>
@@ -30,17 +31,17 @@ namespace Ragnarok.Utility
         /// 事前にリスト化しておきます。
         /// </summary>
         internal readonly static Dictionary<string, Color4b>
-            RegisteredColorsDic;
+            RegisteredColorsDic = MakeRegisteredColorsDic();
 
         /// <summary>
         /// 静的コンストラクタ
         /// </summary>
-        static Color4bs()
+        private static Dictionary<string, Color4b> MakeRegisteredColorsDic()
         {
             var flags = BindingFlags.GetProperty | BindingFlags.Public |
                         BindingFlags.Static;
 
-            RegisteredColorsDic = typeof(Color4bs)
+            return typeof(Color4bs)
                 .GetProperties(flags)
                 .Where(_ => _ != null)
                 .Where(_ => _.PropertyType == typeof(Color4b))

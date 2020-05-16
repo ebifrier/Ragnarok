@@ -15,9 +15,10 @@ namespace Ragnarok.Extra.Effect.Animation
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public DoubleKeyFrame(EasingFunctions function)
+        public DoubleKeyFrame(EasingFunction function)
         {
             KeyTime = TimeSpan.Zero;
+            Function = function;
         }
 
         /// <summary>
@@ -25,8 +26,8 @@ namespace Ragnarok.Extra.Effect.Animation
         /// </summary>
         public TimeSpan KeyTime
         {
-            get { return GetValue<TimeSpan>("KeyTime"); }
-            set { SetValue("KeyTime", value); }
+            get { return GetValue<TimeSpan>(nameof(KeyTime)); }
+            set { SetValue(nameof(KeyTime), value); }
         }
 
         /// <summary>
@@ -34,17 +35,17 @@ namespace Ragnarok.Extra.Effect.Animation
         /// </summary>
         public double Value
         {
-            get { return GetValue<double>("Value"); }
-            set { SetValue("Value", value); }
+            get { return GetValue<double>(nameof(Value)); }
+            set { SetValue(nameof(Value), value); }
         }
 
         /// <summary>
         /// 補間関数を取得または設定します。
         /// </summary>
-        public EasingFunctions Function
+        public EasingFunction Function
         {
-            get { return GetValue<EasingFunctions>("Function"); }
-            set { SetValue("Function", value); }
+            get { return GetValue<EasingFunction>(nameof(Function)); }
+            set { SetValue(nameof(Function), value); }
         }
 
         /// <summary>
@@ -65,7 +66,7 @@ namespace Ragnarok.Extra.Effect.Animation
         /// コンストラクタ
         /// </summary>
         public LinearDoubleKeyFrame()
-            : base(EasingFunctions.Linear)
+            : base(EasingFunction.Linear)
         {
         }
 
@@ -89,7 +90,7 @@ namespace Ragnarok.Extra.Effect.Animation
         /// コンストラクタ
         /// </summary>
         public DiscreteDoubleKeyFrame()
-            : base(EasingFunctions.Discrete)
+            : base(EasingFunction.Discrete)
         {
         }
 

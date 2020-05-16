@@ -46,16 +46,14 @@ using Ragnarok.Utility;
 
 namespace FlintSharp
 {
-    public partial class Utils
+    public static partial class Utils
     {
-        public static Random Random = null;
-
-        static Utils()
-        {
-            Random = new Random();
-        }
-
         #region Math
+        public static Random Random
+        {
+            get;
+        } = new Random();
+
         public static double RandomDouble(double min, double max)
         {
             return ((max - min) * Random.NextDouble() + min);

@@ -50,7 +50,7 @@
 
 namespace FlintSharp.Easing
 {
-    public class Bounce
+    public static class Bounce
     {
         public static double EaseOut(double t, double b, double c, double d)
         {

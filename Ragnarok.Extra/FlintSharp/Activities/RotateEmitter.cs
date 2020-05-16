@@ -86,6 +86,11 @@ namespace FlintSharp.Activities
         /// <param name="elapsedTime">The duration of the frame - used for time based updates.</param>
         public override void Update(Emitter emitter, double elapsedTime)
         {
+            if (emitter == null)
+            {
+                return;
+            }
+
             emitter.RotRadians += m_angularVelocity * elapsedTime;
         }
     }

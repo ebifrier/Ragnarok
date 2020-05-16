@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
-using System.Text;
 
 using Codehaus.Parsec;
 
@@ -20,16 +20,13 @@ namespace Ragnarok.Calculator
     /// </summary>
     internal class ConstantInfo
     {
-        private readonly string name;
-        private readonly double value;
-
         /// <summary>
         /// コンストラクタ
         /// </summary>
         public ConstantInfo(string name, double value)
         {
-            this.name = name;
-            this.value = value;
+            Name = name;
+            Value = value;
         }
 
         /// <summary>
@@ -37,7 +34,7 @@ namespace Ragnarok.Calculator
         /// </summary>
         public string Name
         {
-            get { return this.name; }
+            get;
         }
 
         /// <summary>
@@ -45,7 +42,7 @@ namespace Ragnarok.Calculator
         /// </summary>
         public double Value
         {
-            get { return this.value; }
+            get;
         }
     }
 
@@ -55,9 +52,6 @@ namespace Ragnarok.Calculator
     internal class FunctionInfo
     {
         private readonly Func<double[], double> func;
-        private readonly string name;
-        private readonly int parameterCount;
-        private readonly bool isVariableLengthParameter;
 
         /// <summary>
         /// コンストラクタ
@@ -66,9 +60,9 @@ namespace Ragnarok.Calculator
                             bool isVariableLengthParameter,
                             Func<double[], double> func)
         {
-            this.name = name;
-            this.parameterCount = parameterCount;
-            this.isVariableLengthParameter = isVariableLengthParameter;
+            Name = name;
+            ParameterCount = parameterCount;
+            IsVariableLengthParameter = isVariableLengthParameter;
             this.func = func;
         }
 
@@ -77,7 +71,7 @@ namespace Ragnarok.Calculator
         /// </summary>
         public string Name
         {
-            get { return this.name; }
+            get;
         }
 
         /// <summary>
@@ -85,7 +79,7 @@ namespace Ragnarok.Calculator
         /// </summary>
         public int ParameterCount
         {
-            get { return this.parameterCount; }
+            get;
         }
 
         /// <summary>
@@ -93,7 +87,7 @@ namespace Ragnarok.Calculator
         /// </summary>
         public bool IsVariableLengthParameter
         {
-            get { return this.isVariableLengthParameter; }
+            get;
         }
 
         /// <summary>
@@ -229,7 +223,7 @@ namespace Ragnarok.Calculator
                 : (angleMode == AngleMode.Degree ? DegreeFuncTable
                   : EmptyFuncTable));
 
-            this.parser = CreateParser(angleMode);
+            this.parser = CreateParser();
             this.constTable = DefaultConstTable;
             this.funcTable = DefaultFuncTable.Concat(angleFuncTable).ToArray();
         }
@@ -266,11 +260,11 @@ namespace Ragnarok.Calculator
         {
             args = args ?? new double[0];
 
-            if (args.Count() == 0)
+            if (args.Length == 0)
             {
                 // 名前が一致する定数値を探します。
                 var constInfo = this.constTable
-                    .Where(_ => string.Compare(name, _.Name, true) == 0)
+                    .Where(_ => string.Compare(name, _.Name, StringComparison.InvariantCultureIgnoreCase) == 0)
                     .FirstOrDefault();
                 if (constInfo != null)
                 {
@@ -280,24 +274,24 @@ namespace Ragnarok.Calculator
 
             // 一致する関数を探します。
             var funcInfo = this.funcTable
-                .Where(_ => string.Compare(name, _.Name, true) == 0)
+                .Where(_ => string.Compare(name, _.Name, StringComparison.InvariantCultureIgnoreCase) == 0)
                 .Where(_ => _.IsVariableLengthParameter ?
-                    args.Count() >= _.ParameterCount :
-                    args.Count() == _.ParameterCount)
+                    args.Length >= _.ParameterCount :
+                    args.Length == _.ParameterCount)
                 .FirstOrDefault();
             if (funcInfo != null)
             {
                 return funcInfo.Apply(args);
             }
 
-            throw new RagnarokException(string.Format(
-                "'{0}': 適切な定数or関数が見つかりません。", name));
+            throw new RagnarokException(
+                $"'{name}': 適切な定数or関数が見つかりません。");
         }
 
         /// <summary>
         /// 新規にパーサーを作成します。
         /// </summary>
-        private Grammar CreateParser(AngleMode angleMode)
+        private Grammar CreateParser()
         {
             var sDelim = Scanners.IsWhitespaces().Many_();
             var OPs = Terms.GetOperatorsInstance(
@@ -308,7 +302,7 @@ namespace Ragnarok.Calculator
             var lToken = OPs.Lexer | Lexers.LexDecimal() | Lexers.LexWord();
             var lexeme = Lexers.Lexeme(sDelim, lToken).FollowedBy(Parsers.Eof());
             
-            var pNumber = Terms.OnDecimal((from, len, s) => double.Parse(s));
+            var pNumber = Terms.OnDecimal((from, len, s) => double.Parse(s, CultureInfo.InvariantCulture));
             var pWord = Terms.OnWord((from, len, s) => s);
             Terms.FromSimpleToken<string, string>((from, len, s) => s);
 

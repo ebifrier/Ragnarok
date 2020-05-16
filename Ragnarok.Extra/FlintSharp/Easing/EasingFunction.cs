@@ -85,7 +85,7 @@ namespace FlintSharp.Easing
 
     public delegate double EasingDelegate(double start, double end, double duration, double elapsedTime);
 
-    public class EasingFunction
+    public static class EasingFunction
     {
         public static EasingDelegate GetEasingFunction(EaseCategory easeCategory, EaseType easeType)
         {

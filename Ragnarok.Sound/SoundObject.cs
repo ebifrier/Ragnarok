@@ -18,7 +18,7 @@ namespace Ragnarok.Sound
         {
             if (backend == null)
             {
-                throw new ArgumentNullException("backend");
+                throw new ArgumentNullException(nameof(backend));
             }
 
             this.backend = backend;

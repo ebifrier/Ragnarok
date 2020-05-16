@@ -47,8 +47,8 @@ namespace Ragnarok.Extra.Effect
         /// </summary>
         public object Target
         {
-            get { return GetValue<object>("Target"); }
-            private set { SetValue("Target", value); }
+            get { return GetValue<object>(nameof(Target)); }
+            private set { SetValue(nameof(Target), value); }
         }
 
         /// <summary>
@@ -65,8 +65,8 @@ namespace Ragnarok.Extra.Effect
         /// </summary>
         public NotifyCollection<IAnimationTimeline> Children
         {
-            get { return GetValue<NotifyCollection<IAnimationTimeline>>("Children"); }
-            private set { SetValue("Children", value); }
+            get { return GetValue<NotifyCollection<IAnimationTimeline>>(nameof(Children)); }
+            private set { SetValue(nameof(Children), value); }
         }
 
         /// <summary>
@@ -76,7 +76,7 @@ namespace Ragnarok.Extra.Effect
         {
             if (target == null)
             {
-                throw new ArgumentNullException("target");
+                throw new ArgumentNullException(nameof(target));
             }
 
             if (Target != null)

@@ -11,7 +11,7 @@ namespace Codehaus.Parsec
 #if !NETSTANDARD
     [Serializable]
 #endif
-    sealed class DefaultShowError
+    static class DefaultShowError
     {
         internal static string Show(ParseError err, Pos pos)
         {
@@ -87,9 +87,6 @@ namespace Codehaus.Parsec
                 buf.Append(" or \n").Append(msgs[i]);
             }
             buf.Append("\n");
-        }
-        private DefaultShowError()
-        {
         }
     }
 }

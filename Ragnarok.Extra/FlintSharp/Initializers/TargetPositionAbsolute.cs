@@ -40,6 +40,7 @@ using FlintSharp.EnergyEasing;
 using FlintSharp.Initializers;
 using FlintSharp.Particles;
 using FlintSharp.Zones;
+using System;
 
 namespace FlintSharp.Initializers
 {
@@ -92,6 +93,11 @@ namespace FlintSharp.Initializers
         /// <param name="particle">The particle to be initialized.</param>
         public override void Initialize(Emitter emitter, Particle particle)
         {
+            if (particle == null)
+            {
+                return;
+            }
+
             Point loc;
             loc = m_zone.GetLocation();
             particle.TargetX = loc.X;

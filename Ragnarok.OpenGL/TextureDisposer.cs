@@ -29,7 +29,7 @@ namespace Ragnarok.OpenGL
         {
             if (context == null)
             {
-                throw new ArgumentNullException("context");
+                throw new ArgumentNullException(nameof(context));
             }
 
             lock (syncInstance)
@@ -116,7 +116,7 @@ namespace Ragnarok.OpenGL
             }
 
             // テクスチャをまとめて削除します。
-            GL.DeleteTextures(textureNames.Count(), textureNames);
+            GL.DeleteTextures(textureNames.Length, textureNames);
         }
     }
 }

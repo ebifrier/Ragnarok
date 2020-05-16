@@ -9,6 +9,7 @@ using OpenTK.Graphics.OpenGL;
 namespace Ragnarok.OpenGL
 {
     using Ragnarok.Utility;
+    using System.Globalization;
 
     /// <summary>
     /// OpenGLのユーティリティクラスです。
@@ -43,35 +44,36 @@ namespace Ragnarok.OpenGL
                 return 0;
             }
 
-            var major = int.Parse(m.Groups[1].Value);
-            var minor = int.Parse(m.Groups[2].Value);
-            var revision = int.Parse(m.Groups[3].Value);
+            var major = int.Parse(m.Groups[1].Value, CultureInfo.InvariantCulture);
+            var minor = int.Parse(m.Groups[2].Value, CultureInfo.InvariantCulture);
+            var revision = int.Parse(m.Groups[3].Value, CultureInfo.InvariantCulture);
             return (major * 100 * 100 + minor * 100 + revision);
         }
 
         /// <summary>
         /// OpenGL拡張のリストを取得します。
         /// </summary>
-        public static string[] Extensions
+        public static List<string> Extensions
         {
             get;
         } = GetExtensions();
 
-        private static string[] GetExtensions()
+        private static List<string> GetExtensions()
         {
             try
             {
                 var raw = GL.GetString(StringName.Extensions);
                 var splitter = new string[] { " " };
 
-                return raw.Split(splitter,
-                    StringSplitOptions.RemoveEmptyEntries);
+                return raw
+                    .Split(splitter, StringSplitOptions.RemoveEmptyEntries)
+                    .ToList();
             }
             catch (Exception ex)
             {
                 Log.ErrorException(ex,
                     "GL.GetStringに失敗しました。");
-                return new string[0];
+                return new List<string>();
             }
         }
 

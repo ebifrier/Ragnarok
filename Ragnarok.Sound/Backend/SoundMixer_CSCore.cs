@@ -99,7 +99,7 @@ namespace Ragnarok.Sound.Backend
         {
             if (backend == null)
             {
-                throw new ArgumentNullException("backend");
+                throw new ArgumentNullException(nameof(backend));
             }
 
             /*if (source.WaveFormat.Channels != WaveFormat.Channels ||

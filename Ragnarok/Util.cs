@@ -181,7 +181,7 @@ namespace Ragnarok
         /// </summary>
         public static object GetDefaultValue(Type type)
         {
-            if (type.IsValueType)
+            if (type != null && type.IsValueType)
             {
                 return Activator.CreateInstance(type);
             }
@@ -368,6 +368,11 @@ namespace Ragnarok
         public static TValue GetValue<TKey, TValue>(this IDictionary<TKey, TValue> dic,
                                                     TKey key)
         {
+            if (dic == null)
+            {
+                throw new ArgumentNullException(nameof(dic));
+            }
+
             TValue value;
             if (dic.TryGetValue(key, out value))
             {
@@ -548,6 +553,11 @@ namespace Ragnarok
         /// </summary>
         public static byte[] ReadToEnd(Stream stream)
         {
+            if (stream == null)
+            {
+                throw new ArgumentNullException(nameof(stream));
+            }
+
             using (var result = new MemoryStream())
             {
                 var buffer = new byte[1024];
@@ -687,6 +697,11 @@ namespace Ragnarok
         public static LabelDescriptionAttribute GetFieldLabelAttribute<T>(
             Type type, T value)
         {
+            if (type == null)
+            {
+                throw new ArgumentNullException(nameof(type));
+            }
+
             var fields = type.GetFields(
                 BindingFlags.Static |
                 BindingFlags.Public);
@@ -791,7 +806,7 @@ namespace Ragnarok
         {
             if (eventHandler == null)
             {
-                throw new ArgumentNullException("eventHandler");
+                throw new ArgumentNullException(nameof(eventHandler));
             }
 
             if (eventHandler.Method.IsStatic || eventHandler.Target == null)
@@ -824,7 +839,7 @@ namespace Ragnarok
         {
             if (eventHandler == null)
             {
-                throw new ArgumentNullException("eventHandler");
+                throw new ArgumentNullException(nameof(eventHandler));
             }
 
             if (eventHandler.Method.IsStatic || eventHandler.Target == null)

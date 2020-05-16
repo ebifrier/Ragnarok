@@ -122,6 +122,11 @@ namespace FlintSharp.Initializers
         /// <param name="particle">The particle to be initialized.</param>
         public override void Initialize(Emitter emitter, Particle particle)
         {
+            if (particle == null)
+            {
+                return;
+            }
+
             if (Utils.ImageLoader == null)
             {
                 throw new InvalidOperationException(
@@ -132,7 +137,7 @@ namespace FlintSharp.Initializers
             var data = Utils.ImageLoader.LoadImage(path, m_materialType);
             if (data == null)
             {
-                Ragnarok.Log.Error(
+                Log.Error(
                     "{0}: ?C???[?W???????????????s?????????B", path);
                 return;
             }

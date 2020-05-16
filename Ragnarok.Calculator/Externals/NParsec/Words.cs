@@ -59,10 +59,10 @@ namespace Codehaus.Parsec
         {
             if (cs)
             {
-                return a.Equals(b);
+                return a == b;
             }
             else
-                return a.ToUpper().Equals(b.ToUpper());
+                return a.ToUpperInvariant() == b.ToUpperInvariant();
         }
         static void checkDup(string[] a, string[] b, bool cs)
         {

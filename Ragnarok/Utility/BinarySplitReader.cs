@@ -85,6 +85,11 @@ namespace Ragnarok.Utility
         /// </summary>
         public int Write(byte[] buffer)
         {
+            if (buffer == null)
+            {
+                return 0;
+            }
+
             return Write(buffer, 0, buffer.Length);
         }
 
@@ -225,8 +230,8 @@ namespace Ragnarok.Utility
         {
             if (separator == null || !separator.Any())
             {
-                throw new ArgumentNullException(
-                    "セパレーターが正しくありません。", "separator");
+                throw new ArgumentException(
+                    "セパレーターが正しくありません。", nameof(separator));
             }
 
             var rp = this.readPosition;

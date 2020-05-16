@@ -1,18 +1,20 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Globalization;
+
 namespace Codehaus.Parsec
 {
-    using System.Collections.Generic;
-    using System;
-    using System.Collections;
     using Lexer = Parser<Tok>;
     using Scanner = Parser<D_>;
+
     /// <author>  Ben Yu
     /// 
     /// Dec 19, 2004
     /// </author>
     [Serializable]
-    sealed class Operators
+    static class Operators
     {
-
         internal static WordsData instance(string[] names)
         {
             Hashtable operators = new Hashtable();
@@ -46,7 +48,7 @@ namespace Codehaus.Parsec
                 for (int i = list.Count - 1; i >= 0; i--)
                 {
                     string s = list[i];
-                    if (s.StartsWith(v))
+                    if (s.StartsWith(v, StringComparison.InvariantCulture))
                     {
                         if (s.Length == v.Length)
                             return true; // ignore duplicates

@@ -6,6 +6,7 @@ using System.Text;
 using System.Dynamic;
 using System.ComponentModel;
 using System.Runtime.Serialization;
+using System.Globalization;
 
 namespace Ragnarok.ObjectModel
 {
@@ -119,7 +120,7 @@ namespace Ragnarok.ObjectModel
         /// ここで各オブジェクトの初期化を行っています。
         /// </remarks>
         [OnDeserializing()]
-        protected void OnBeforeDeselialize(StreamingContext context)
+        private void OnBeforeDeselialize(StreamingContext context)
         {
             this.syncRoot = new object();
             this.lazyModelObject = new LazyModelObject();
@@ -137,7 +138,7 @@ namespace Ragnarok.ObjectModel
         /// <summary>
         /// PropertyChangedイベントの遅延実行オブジェクトを取得します。
         /// </summary>
-        LazyModelObject ILazyModel.LazyModelObject
+        public LazyModelObject LazyModelObject
         {
             get { return this.lazyModelObject; }
         }
@@ -169,7 +170,7 @@ namespace Ragnarok.ObjectModel
         /// <summary>
         /// プロパティ名の一覧を取得します。
         /// </summary>
-        public string[] PropertyNames
+        public List<string> PropertyNames
         {
             get
             {
@@ -178,7 +179,7 @@ namespace Ragnarok.ObjectModel
                     return this.propInfoDic.Keys
                         .Concat(this.propDic.Keys)
                         .Distinct()
-                        .ToArray();
+                        .ToList();
                 }
             }
         }
@@ -186,13 +187,13 @@ namespace Ragnarok.ObjectModel
         /// <summary>
         /// 変更されたプロパティ名の一覧を取得します。
         /// </summary>
-        public string[] ChangedPropertyNames
+        public List<string> ChangedPropertyNames
         {
             get
             {
                 using (LazyLock())
                 {
-                    return this.propDic.Keys.ToArray();
+                    return this.propDic.Keys.ToList();
                 }
             }
         }
@@ -208,9 +209,7 @@ namespace Ragnarok.ObjectModel
                 if (!TryGetValue(key, out value))
                 {
                     throw new KeyNotFoundException(
-                        string.Format(
-                            "{0}: 指定のプロパティは存在しません。",
-                            key));
+                        $"{key}: 指定のプロパティは存在しません。");
                 }
 
                 return value;
@@ -220,9 +219,7 @@ namespace Ragnarok.ObjectModel
                 if (!TrySetValue(key, value))
                 {
                     throw new KeyNotFoundException(
-                        string.Format(
-                            "{0}: 指定のプロパティには書き込みできません。",
-                            key));
+                        $"{key}: 指定のプロパティには書き込みできません。");
                 }
             }
         }
@@ -249,6 +246,11 @@ namespace Ragnarok.ObjectModel
         public override bool TryGetMember(GetMemberBinder binder,
                                           out object result)
         {
+            if (binder == null)
+            {
+                throw new ArgumentNullException(nameof(binder));
+            }
+
             return TryGetValue(binder.Name, out result);
         }
 
@@ -257,6 +259,11 @@ namespace Ragnarok.ObjectModel
         /// </summary>
         public override bool TrySetMember(SetMemberBinder binder, object value)
         {
+            if (binder == null)
+            {
+                throw new ArgumentNullException(nameof(binder));
+            }
+
             return TrySetValue(binder.Name, value);
         }
 
@@ -308,7 +315,10 @@ namespace Ragnarok.ObjectModel
                 // 正確に型を合わせるために必要です。
                 if (propInfo != null && value is IConvertible)
                 {
-                    value = Convert.ChangeType(value, propInfo.PropertyType);
+                    value = Convert.ChangeType(
+                        value,
+                        propInfo.PropertyType,
+                        CultureInfo.CurrentCulture);
                 }
 
                 object current;

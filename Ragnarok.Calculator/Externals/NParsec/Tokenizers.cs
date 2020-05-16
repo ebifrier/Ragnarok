@@ -7,7 +7,7 @@ namespace Codehaus.Parsec
     /// 
     /// 2004-11-15
     /// </author>
-    public class Tokens
+    public static class Tokens
     {
         /// <summary> create a TypedToken object.</summary>
         /// <param name="type">the data type.</param>
@@ -108,7 +108,7 @@ namespace Codehaus.Parsec
     /// <summary>
     /// The facade class to create all tokenizers.
     /// </summary>
-    public class Tokenizers
+    public static class Tokenizers
     {
         /// <summary>
         /// Create a Tokenizer that always returns the same value regardless of the input range.
@@ -415,7 +415,7 @@ namespace Codehaus.Parsec
             if (obj is TypedToken<T>)
             {
                 TypedToken<T> other = obj as TypedToken<T>;
-                return type.Equals(other.type) && raw.Equals(other.raw);
+                return type.Equals(other.type) && raw == other.raw;
             }
             else
                 return false;
@@ -489,7 +489,7 @@ namespace Codehaus.Parsec
         }
         public bool Equals(TokenQuoted other)
         {
-            return open.Equals(other.open) && close.Equals(other.close) && quoted.Equals(other.quoted);
+            return open == other.open && close == other.close && quoted == other.quoted;
         }
         public override bool Equals(object obj)
         {

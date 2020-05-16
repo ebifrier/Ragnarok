@@ -2,13 +2,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using NUnit.Framework;
 
 namespace Ragnarok.Calculator.Tests
 {
     [TestFixture()]
-    public class CalculatorTest
+    public sealed class CalculatorTest
     {
         [Test()]
         public void SimpleTest()

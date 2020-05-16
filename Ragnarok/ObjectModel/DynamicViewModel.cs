@@ -4,9 +4,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Dynamic;
 using System.Linq;
-using System.Text;
-using System.Reflection;
-using System.Runtime.Serialization;
 
 namespace Ragnarok.ObjectModel
 {
@@ -36,9 +33,7 @@ namespace Ragnarok.ObjectModel
                 if (!TryGetValue(key, out value))
                 {
                     throw new KeyNotFoundException(
-                        string.Format(
-                            "{0}: 指定のプロパティは存在しません。",
-                            key));
+                        $"{key}: 指定のプロパティは存在しません。");
                 }
 
                 return value;
@@ -48,9 +43,7 @@ namespace Ragnarok.ObjectModel
                 if (!TrySetValue(key, value))
                 {
                     throw new KeyNotFoundException(
-                        string.Format(
-                            "{0}: 指定のプロパティには書き込みできません。",
-                            key));
+                        $"{key}: 指定のプロパティには書き込みできません。");
                 }
             }
         }
@@ -61,6 +54,11 @@ namespace Ragnarok.ObjectModel
         public override bool TryGetMember(GetMemberBinder binder,
                                           out object result)
         {
+            if (binder == null)
+            {
+                throw new ArgumentNullException(nameof(binder));
+            }
+
             return TryGetValue(binder.Name, out result);
         }
 
@@ -71,8 +69,12 @@ namespace Ragnarok.ObjectModel
                                          object[] indexes,
                                          out object result)
         {
-            var name = indexes[0] as string;
+            if (indexes == null)
+            {
+                throw new ArgumentNullException(nameof(indexes));
+            }
 
+            var name = indexes[0] as string;
             return TryGetValue(name, out result);
         }
 
@@ -114,6 +116,11 @@ namespace Ragnarok.ObjectModel
         /// </summary>
         public override bool TrySetMember(SetMemberBinder binder, object value)
         {
+            if (binder == null)
+            {
+                throw new ArgumentNullException(nameof(binder));
+            }
+
             return TrySetValue(binder.Name, value);
         }
 
@@ -123,6 +130,11 @@ namespace Ragnarok.ObjectModel
         public override bool TrySetIndex(SetIndexBinder binder,
                                          object[] indexes, object value)
         {
+            if (indexes == null)
+            {
+                throw new ArgumentNullException(nameof(indexes));
+            }
+
             var name = indexes[0] as string;
 
             return TrySetValue(name, value);

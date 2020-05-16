@@ -20,7 +20,7 @@ namespace Ragnarok.Shogi
         {
             if (string.IsNullOrEmpty(filepath))
             {
-                throw new ArgumentNullException("filepath");
+                throw new ArgumentNullException(nameof(filepath));
             }
 
             using (var reader = new StreamReader(filepath, KifuObject.DefaultEncoding))
@@ -36,7 +36,7 @@ namespace Ragnarok.Shogi
         {
             if (reader == null)
             {
-                throw new ArgumentNullException("reader");
+                throw new ArgumentNullException(nameof(reader));
             }
 
             return LoadFrom(reader.ReadToEnd());
@@ -49,7 +49,7 @@ namespace Ragnarok.Shogi
         {
             if (string.IsNullOrEmpty(text))
             {
-                throw new ArgumentNullException("text");
+                throw new ArgumentNullException(nameof(text));
             }
 
             var kifuReaders = new IKifuReader[]

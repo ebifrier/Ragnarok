@@ -41,7 +41,7 @@ namespace Ragnarok.Utility
         {
             if (string.IsNullOrEmpty(text))
             {
-                throw new ArgumentNullException("text");
+                throw new ArgumentNullException(nameof(text));
             }
 
             try
@@ -84,7 +84,7 @@ namespace Ragnarok.Utility
         {
             if (string.IsNullOrEmpty(filepath))
             {
-                throw new ArgumentNullException("text");
+                throw new ArgumentNullException(nameof(filepath));
             }
 
             try

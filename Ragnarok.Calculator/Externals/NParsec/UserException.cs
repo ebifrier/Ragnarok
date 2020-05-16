@@ -1,6 +1,9 @@
+
+using System;
+using System.Runtime.Serialization;
+
 namespace Codehaus.Parsec
 {
-    using System;
     /// <summary>
     /// This exception represents an illegal parser state that should not happen.
     /// This exception being thrown means a bug in the parser application.
@@ -8,7 +11,14 @@ namespace Codehaus.Parsec
     [Serializable]
     public class IllegalParserStateException : SystemException
     {
+        public IllegalParserStateException() { }
         public IllegalParserStateException(string msg) : base(msg) { }
+        public IllegalParserStateException(string msg, Exception innerException)
+            : base(msg, innerException) { }
+
+        protected IllegalParserStateException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {}
     }
 
 
@@ -22,7 +32,7 @@ namespace Codehaus.Parsec
     /// 
     /// </author>
     [Serializable]
-    public class UserException : System.ApplicationException
+    public class UserException : System.Exception
     {
         /// <summary> Get the index in the original source.</summary>
         public int Index
@@ -33,6 +43,18 @@ namespace Codehaus.Parsec
             }
         }
         private readonly int ind;
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            base.GetObjectData(info, context);
+            info.AddValue("Index", Index);
+        }
+
+        public UserException() { }
+        public UserException(string msg) : base(msg) { }
+        public UserException(string msg, Exception innerException)
+            : base(msg, innerException) { }
+
         /// <summary> Create a UserException object.</summary>
         /// <param name="ind">the index in the original source.
         /// -1 if the index is unknown.
@@ -77,6 +99,11 @@ namespace Codehaus.Parsec
             : base("user exception", cause)
         {
             this.ind = ind;
+        }
+        protected UserException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+            this.ind = info.GetInt32("Index");
         }
     }
 }

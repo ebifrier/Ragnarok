@@ -9,7 +9,7 @@ using NUnit.Framework;
 namespace Ragnarok.Shogi.Sfen.Tests
 {
     [TestFixture()]
-    internal sealed class SfenTest
+    public sealed class SfenTest
     {
         [Test()]
         public void ParseBoardTest()
@@ -120,11 +120,11 @@ namespace Ragnarok.Shogi.Sfen.Tests
         {
             // すべて正しい指し手
             var moveList = MakeMoveList("1g1f 4a3b 6i7h");
-            Assert.AreEqual(3, moveList.Count());
+            Assert.AreEqual(3, moveList.Count);
 
             // 2つめの指し手が正しくない
             moveList = MakeMoveList("1g1f 4a8b 6i7h");
-            Assert.AreEqual(1, moveList.Count());
+            Assert.AreEqual(1, moveList.Count);
         }
 
         private void BoardAndMoveTest(string boardSfen, string moveListSfen)
@@ -140,7 +140,7 @@ namespace Ragnarok.Shogi.Sfen.Tests
             // 指し手を読み込みます。
             var moveList = board1.SfenToMoveList(sfenMoveList)
                 .ToList();
-            Assert.AreEqual(sfenMoveList.Count(), moveList.Count());
+            Assert.AreEqual(sfenMoveList.Count, moveList.Count);
 
             moveList.ForEach(_ => Assert.True(board1.DoMove(_)));
 

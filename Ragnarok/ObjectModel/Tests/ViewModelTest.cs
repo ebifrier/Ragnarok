@@ -3,11 +3,13 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
 using NUnit.Framework;
 
 namespace Ragnarok.ObjectModel.Tests
 {
+    // メンバー Xxx はインスタンス データにアクセスしないため、static (Visual Basic では Shared) に設定できます
+    #pragma warning disable CA1822 
+
     internal class SimpleClass
     {
         public int SimpleProperty1
@@ -66,13 +68,13 @@ namespace Ragnarok.ObjectModel.Tests
         [DependOnProperty(typeof(SimpleClass), "SimpleProperty1")]
         public int InheritProperty1
         {
-            get { return 1; }
+            get { return this.countDic.Count; }
         }
 
         [DependOnProperty(typeof(BaseModel), "BaseProperty1")]
         public int InheritProperty2
         {
-            get { return 1; }
+            get { return this.countDic.Count; }
         }
 
         public void Validate(int simpleCount1, int simpleCount2,

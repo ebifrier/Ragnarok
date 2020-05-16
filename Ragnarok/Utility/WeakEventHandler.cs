@@ -40,6 +40,11 @@ namespace Ragnarok.Utility
         public WeakEventHandler(EventHandler<TEventArgs> eventHandler,
                                 UnregisterCallback<TEventArgs> unregister)
         {
+            if (eventHandler == null)
+            {
+                throw new ArgumentNullException(nameof(eventHandler));
+            }
+
             this.targetRef = new WeakReference(eventHandler.Target);
             this.openHandler = (OpenEventHandler)Delegate.CreateDelegate(
                 typeof(OpenEventHandler),
@@ -59,10 +64,10 @@ namespace Ragnarok.Utility
         /// <summary>
         /// 呼び出し可能なハンドラに変換します。
         /// </summary>
-        public static implicit operator EventHandler<TEventArgs>(
+        public EventHandler<TEventArgs> ToEventHandler(
             WeakEventHandler<TTarget, TEventArgs> weh)
         {
-            return weh.handler;
+            return weh?.handler;
         }
 
         /// <summary>

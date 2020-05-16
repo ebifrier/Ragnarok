@@ -85,7 +85,7 @@ namespace Ragnarok.OpenGL
         {
             if (renderAction == null)
             {
-                throw new ArgumentNullException("renderAction");
+                throw new ArgumentNullException(nameof(renderAction));
             }
 
             lock (this.syncObject)
@@ -108,7 +108,7 @@ namespace Ragnarok.OpenGL
         {
             if (data == null)
             {
-                throw new ArgumentNullException("data");
+                throw new ArgumentNullException(nameof(data));
             }
 
             lock (this.syncObject)
@@ -128,7 +128,7 @@ namespace Ragnarok.OpenGL
         {
             if (mesh == null)
             {
-                throw new ArgumentNullException("mesh");
+                throw new ArgumentNullException(nameof(mesh));
             }
 
             AddRenderInternal(new RenderData
@@ -167,7 +167,7 @@ namespace Ragnarok.OpenGL
         {
             if (mesh == null)
             {
-                throw new ArgumentNullException("mesh");
+                throw new ArgumentNullException(nameof(mesh));
             }
 
             AddRenderInternal(new RenderData

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 
@@ -53,9 +54,11 @@ namespace Ragnarok.Shogi
         ScoreEngine0,
     }
 
+
     /// <summary>
     /// 棋譜のヘッダを管理します。
     /// </summary>
+    [SuppressMessage("Naming", "CA1710:識別子は、正しいサフィックスを含んでいなければなりません")]
     public sealed class KifuHeader : IEnumerable<KeyValuePair<KifuHeaderType, string>>
     {
         private readonly object SyncRoot = new object();

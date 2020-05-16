@@ -4,18 +4,18 @@ using System.Text;
 namespace Codehaus.Parsec
 {
     public delegate bool FromToken<T>(Tok tok, ref T result);
-    public delegate To Map<From, To>(From from);
-    public delegate To Map<A, B, To>(A a, B b);
-    public delegate To Map<A, B, C, To>(A a, B b, C c);
-    public delegate To Map<A, B, C, D, To>(A a, B b, C c, D d);
-    public delegate To Map<A, B, C, D, E, To>(A a, B b, C c, D d, E e);
-    public delegate To Map<To>(params object[] args);
-    public delegate To Mapn<From, To>(params From[] args);
+    public delegate TTo Map<TFrom, TTo>(TFrom from);
+    public delegate TTo Map<TA, TB, TTo>(TA a, TB b);
+    public delegate TTo Map<TA, TB, TC, TTo>(TA a, TB b, TC c);
+    public delegate TTo Map<TA, TB, TC, TD, TTo>(TA a, TB b, TC c, TD d);
+    public delegate TTo Map<TA, TB, TC, TD, TE, TTo>(TA a, TB b, TC c, TD d, TE e);
+    public delegate TTo Map<TTo>(params object[] args);
+    public delegate TTo Mapn<TFrom, TTo>(params TFrom[] args);
     public delegate bool Predicate<T>(T t);
     public delegate T[] ArrayFactory<T>(int len);
-    public delegate R FromRange<T, R>(int from, int len, T data);
-    public delegate R FromRange<A, B, R>(int from, int len, A a, B b);
-    public delegate R FromRange<A, B, C, R>(int from, int len, A a, B b, C c);
+    public delegate TR FromRange<T, TR>(int from, int len, T data);
+    public delegate TR FromRange<TA, TB, TR>(int from, int len, TA a, TB b);
+    public delegate TR FromRange<TA, TB, TC, TR>(int from, int len, TA a, TB b, TC c);
     /// <summary>
     /// Used to trace a parser.
     /// </summary>
@@ -55,13 +55,13 @@ namespace Codehaus.Parsec
     public delegate Parser<To> Binder<From, To>(From from);
     public delegate void Proc();
     public delegate void Proc<T>(T t);
-    public delegate void Proc<A, B>(A a, B b);
-    public delegate void Proc<A, B, C>(A a, B b, C c);
-    public delegate void Proc<A, B, C, D>(A a, B b, C c, D d);
-    public delegate void Proc<A, B, C, D, E>(A a, B b, C c, D d, E e);
+    public delegate void Proc<TA, TB>(TA a, TB b);
+    public delegate void Proc<TA, TB, TC>(TA a, TB b, TC c);
+    public delegate void Proc<TA, TB, TC, TD>(TA a, TB b, TC c, TD d);
+    public delegate void Proc<TA, TB, TC, TD, TE>(TA a, TB b, TC c, TD d, TE e);
     public delegate Parser<T> Catch<T>(T val, object e);
     public delegate T Generator<T>();
-    public class Tuple
+    public static class Tuple
     {
         public static T Create<T>(T v)
         {
@@ -84,129 +84,204 @@ namespace Codehaus.Parsec
             return new Tuple<A, B, C, D, E>(a, b, c, d, e);
         }
     }
-    public struct Pair<A, B>
+    public struct Pair<A, B> : IEquatable<Pair<A, B>>
     {
-        A a;
-        B b;
         public A V1
         {
-            get { return a; }
-            set { a = value; }
+            get;
+            set;
         }
         public B V2
         {
-            get { return b; }
-            set { b = value; }
+            get;
+            set;
         }
         public Pair(A a, B b)
         {
-            this.a = a;
-            this.b = b;
+            this.V1 = a;
+            this.V2 = b;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Equals((Pair<A, B>)obj);
+        }
+        public bool Equals(Pair<A, B> other)
+        {
+            return V1.Equals(other.V1) && V2.Equals(other.V2);
+        }
+        public static bool operator ==(Pair<A, B> x, Pair<A, B> y)
+        {
+            return x.Equals(y);
+        }
+        public static bool operator !=(Pair<A, B> x, Pair<A, B> y)
+        {
+            return !(x == y);
+        }
+        public override int GetHashCode()
+        {
+            return V1.GetHashCode() ^ V2.GetHashCode();
         }
     }
-    public struct Tuple<A, B, C>
+    public struct Tuple<A, B, C> : IEquatable<Tuple<A, B, C>>
     {
-        A a;
-        B b;
-        C c;
         public A V1
         {
-            get { return a; }
-            set { a = value; }
+            get;
+            set;
         }
         public B V2
         {
-            get { return b; }
-            set { b = value; }
+            get;
+            set;
         }
         public C V3
         {
-            get { return c; }
-            set { c = value; }
+            get;
+            set;
         }
         public Tuple(A a, B b, C c)
         {
-            this.a = a;
-            this.b = b;
-            this.c = c;
+            this.V1 = a;
+            this.V2 = b;
+            this.V3 = c;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Equals((Tuple<A, B, C>)obj);
+        }
+        public bool Equals(Tuple<A, B, C> other)
+        {
+            return V1.Equals(other.V1) && V2.Equals(other.V2) && V3.Equals(other.V3);
+        }
+        public static bool operator ==(Tuple<A, B, C> x, Tuple<A, B, C> y)
+        {
+            return x.Equals(y);
+        }
+        public static bool operator !=(Tuple<A, B, C> x, Tuple<A, B, C> y)
+        {
+            return !(x == y);
+        }
+        public override int GetHashCode()
+        {
+            return V1.GetHashCode() ^ V2.GetHashCode() ^ V3.GetHashCode();
         }
     }
-    public struct Tuple<A, B, C, D>
+    public struct Tuple<A, B, C, D> : IEquatable<Tuple<A, B, C, D>>
     {
-        A a;
-        B b;
-        C c;
-        D d;
         public A V1
         {
-            get { return a; }
-            set { a = value; }
+            get;
+            set;
         }
         public B V2
         {
-            get { return b; }
-            set { b = value; }
+            get;
+            set;
         }
         public C V3
         {
-            get { return c; }
-            set { c = value; }
+            get;
+            set;
         }
         public D V4
         {
-            get { return d; }
-            set { d = value; }
+            get;
+            set;
         }
         public Tuple(A a, B b, C c, D d)
         {
-            this.a = a;
-            this.b = b;
-            this.c = c;
-            this.d = d;
+            this.V1 = a;
+            this.V2 = b;
+            this.V3 = c;
+            this.V4 = d;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Equals((Tuple<A, B, C, D>)obj);
+        }
+        public bool Equals(Tuple<A, B, C, D> other)
+        {
+            return V1.Equals(other.V1) && V2.Equals(other.V2) &&
+                   V3.Equals(other.V3) && V4.Equals(other.V4);
+        }
+        public static bool operator ==(Tuple<A, B, C, D> x, Tuple<A, B, C, D> y)
+        {
+            return x.Equals(y);
+        }
+        public static bool operator !=(Tuple<A, B, C, D> x, Tuple<A, B, C, D> y)
+        {
+            return !(x == y);
+        }
+        public override int GetHashCode()
+        {
+            return V1.GetHashCode() ^ V2.GetHashCode() ^
+                   V3.GetHashCode() ^ V4.GetHashCode();
         }
     }
-    public struct Tuple<A, B, C, D, E>
+    public struct Tuple<A, B, C, D, E> : IEquatable<Tuple<A, B, C, D, E>>
     {
-        A a;
-        B b;
-        C c;
-        D d;
-        E e;
         public A V1
         {
-            get { return a; }
-            set { a = value; }
+            get;
+            set;
         }
         public B V2
         {
-            get { return b; }
-            set { b = value; }
+            get;
+            set;
         }
         public C V3
         {
-            get { return c; }
-            set { c = value; }
+            get;
+            set;
         }
         public D V4
         {
-            get { return d; }
-            set { d = value; }
+            get;
+            set;
         }
         public E V5
         {
-            get { return e; }
-            set { e = value; }
+            get;
+            set;
         }
         public Tuple(A a, B b, C c, D d, E e)
         {
-            this.a = a;
-            this.b = b;
-            this.c = c;
-            this.d = d;
-            this.e = e;
+            this.V1 = a;
+            this.V2 = b;
+            this.V3 = c;
+            this.V4 = d;
+            this.V5 = e;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Equals((Tuple<A, B, C, D, E>)obj);
+        }
+        public bool Equals(Tuple<A, B, C, D, E> other)
+        {
+            return V1.Equals(other.V1) && V2.Equals(other.V2) &&
+                   V3.Equals(other.V3) && V4.Equals(other.V4) &&
+                   V5.Equals(other.V5);
+        }
+        public static bool operator ==(Tuple<A, B, C, D, E> x, Tuple<A, B, C, D, E> y)
+        {
+            return x.Equals(y);
+        }
+        public static bool operator !=(Tuple<A, B, C, D, E> x, Tuple<A, B, C, D, E> y)
+        {
+            return !(x == y);
+        }
+        public override int GetHashCode()
+        {
+            return V1.GetHashCode() ^ V2.GetHashCode() ^
+                   V3.GetHashCode() ^ V4.GetHashCode() ^ V5.GetHashCode();
         }
     }
-    public class Traces
+    public static class Traces
     {
         const int LDEADING = 32;
         static string getLeadingChars(string src, int ind, int n)
@@ -260,7 +335,7 @@ namespace Codehaus.Parsec
             };
         }
     }
-    public class Functors
+    public static class Functors
     {
         public static ArrayFactory<T> getSimpleArrayFactory<T>()
         {
@@ -303,7 +378,7 @@ namespace Codehaus.Parsec
             };
         }
     }
-    public class Maps
+    public static class Maps
     {
         public static string ToString(object v)
         {

@@ -64,7 +64,7 @@ namespace Ragnarok.Shogi
         {
             if (typeof(string).Equals(destinationType))
             {
-                return value.ToString();
+                return value?.ToString();
             }
 
             return base.ConvertTo(context, culture, value, destinationType);

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
-using System.Text;
 
 namespace Ragnarok.Utility
 {
@@ -164,7 +164,7 @@ namespace Ragnarok.Utility
         /// </summary>
         public override string ToString()
         {
-            return string.Format("{0},{1},{2}", X, Y, Z);
+            return $"{X},{Y},{Z}";
         }
 
         /// <summary>
@@ -174,19 +174,19 @@ namespace Ragnarok.Utility
         {
             if (source == null)
             {
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
             }
 
             var list = source.Split(new char[] { ',' });
-            if (list == null || list.Count() != 3)
+            if (list == null || list.Length != 3)
             {
                 throw new FormatException(
                     "Point3d型への変換に失敗しました。");
             }
 
-            var x = double.Parse(list[0]);
-            var y = double.Parse(list[1]);
-            var z = double.Parse(list[2]);
+            var x = double.Parse(list[0], CultureInfo.InvariantCulture);
+            var y = double.Parse(list[1], CultureInfo.InvariantCulture);
+            var z = double.Parse(list[2], CultureInfo.InvariantCulture);
             return new Point3d(x, y, z);
         }
     }

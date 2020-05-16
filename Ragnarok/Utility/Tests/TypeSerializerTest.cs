@@ -1,9 +1,9 @@
 ﻿#if TESTS
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using NUnit.Framework;
 
 namespace Ragnarok.Utility.Tests
@@ -17,6 +17,7 @@ namespace Ragnarok.Utility.Tests
         /// <summary>
         /// テスト用クラス
         /// </summary>
+        [SuppressMessage("Microsoft.Performance", "CA1812:インスタンス化されていない内部クラスを使用しないでください")]
         private class InnerClass
         {
         }

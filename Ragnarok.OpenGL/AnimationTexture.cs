@@ -35,7 +35,7 @@ namespace Ragnarok.OpenGL
         /// </summary>
         public int Count
         {
-            get { return TextureList.Count(); }
+            get { return TextureList.Count; }
         }
 
         /// <summary>
@@ -49,17 +49,16 @@ namespace Ragnarok.OpenGL
         /// <summary>
         /// ファイルからテクスチャをアニメーション用に分割した状態で読み込みます。
         /// </summary>
-        public bool Load(string filepath, int count,
-                         bool toPremultipliedAlpha = false)
+        public bool Load(string filepath, int count)
         {
             if (string.IsNullOrEmpty(filepath))
             {
-                throw new ArgumentNullException("filepath");
+                throw new ArgumentNullException(nameof(filepath));
             }
 
             if (count <= 0)
             {
-                throw new ArgumentException("count");
+                throw new ArgumentException("countの値が小さすぎます。", nameof(count));
             }
 
             using (var image = new Bitmap(filepath))
@@ -69,24 +68,23 @@ namespace Ragnarok.OpenGL
                     return false;
                 }
 
-                return Create(image, count, toPremultipliedAlpha);
+                return Create(image, count);
             }
         }
 
         /// <summary>
         /// テクスチャをアニメーション用に分割した状態で読み込みます。
         /// </summary>
-        public bool Create(Bitmap image, int count,
-                           bool toPremultipliedAlpha = false)
+        public bool Create(Bitmap image, int count)
         {
             if (image == null)
             {
-                throw new ArgumentNullException("image");
+                throw new ArgumentNullException(nameof(image));
             }
 
             if (count <= 0)
             {
-                throw new ArgumentException("count");
+                throw new ArgumentException("countの値が小さすぎます。", nameof(count));
             }
 
             try
@@ -132,7 +130,7 @@ namespace Ragnarok.OpenGL
         {
             if (bitmap == null)
             {
-                throw new ArgumentNullException("bitmap");
+                throw new ArgumentNullException(nameof(bitmap));
             }
 
             var target = new Bitmap(width, height);
@@ -154,7 +152,7 @@ namespace Ragnarok.OpenGL
         /// <summary>
         /// ビットマップからテクスチャを読み込みます。
         /// </summary>
-        private Texture LoadTexture(Bitmap bitmap)
+        private static Texture LoadTexture(Bitmap bitmap)
         {
             var tex = new Texture();
             if (!tex.Create(bitmap))

@@ -34,7 +34,7 @@ namespace Ragnarok.Utility
     /// <summary>
     /// ComObject参照カウンタの自動解放を行うクラスです。
     /// </summary>
-    public class ComObject<T> : IDisposable
+    public sealed class ComObject<T> : IDisposable
         where T : class
     {
         private Action<T> closer;
@@ -70,14 +70,14 @@ namespace Ragnarok.Utility
         /// </summary>
         public void Dispose()
         {
+            Dispose(true);
             GC.SuppressFinalize(this);
-            Dispose(false);
         }
 
         /// <summary>
         /// オブジェクトを破棄します。
         /// </summary>
-        protected void Dispose(bool disposing)
+        private void Dispose(bool disposing)
         {
             if (!this.disposed)
             {
@@ -87,11 +87,7 @@ namespace Ragnarok.Utility
                 // 自信が持てない。。。
                 if (Value != null)
                 {
-                    if (closer != null)
-                    {
-                        closer(Value);
-                    }
-
+                    closer?.Invoke(Value);
                     Marshal.ReleaseComObject(Value);
                     Value = null;
                 }

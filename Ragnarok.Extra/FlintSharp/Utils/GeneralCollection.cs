@@ -151,6 +151,11 @@ namespace FlintSharp
         /// </summary>
         public void CopyTo(Array array, int index)
         {
+            if (array == null)
+            {
+                throw new ArgumentNullException(nameof(array));
+            }
+
             foreach (var v in m_implList)
             {
                 array.SetValue(v, index);
@@ -199,7 +204,7 @@ namespace FlintSharp
         {
             if (element == null)
             {
-                throw new ArgumentNullException("element");
+                throw new ArgumentNullException(nameof(element));
             }
 
             //m_implList.Insert(i, element);

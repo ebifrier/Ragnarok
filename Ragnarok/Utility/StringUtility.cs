@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -47,24 +48,24 @@ namespace Ragnarok.Utility
                 .ToArray();
 
             // 整形は string.Format にまかせる
-            return string.Format(replacedFormat, values);
+            return string.Format(CultureInfo.CurrentCulture, replacedFormat, values);
         }
 
         /// <summary>
         /// 匿名クラスのインスタンスを渡します。
         /// </summary>
-        public static string NamedFormat(string format, object obj)
+        public static string NamedFormat(string format, object target)
         {
-            if (string.IsNullOrEmpty(format) || obj == null)
+            if (string.IsNullOrEmpty(format) || target == null)
             {
-                return string.Format(format, obj);
+                return string.Format(CultureInfo.CurrentCulture, format, target);
             }
 
             // プロパティ名とプロパティ値をセットにした辞書を作り、
             // それを使って文字列埋め込みを行います。
-            var dic = obj.GetType().GetProperties()
+            var dic = target.GetType().GetProperties()
                 .Where(_ => _.GetIndexParameters() == null || !_.GetIndexParameters().Any())
-                .ToDictionary(p => p.Name, p => p.GetValue(obj, null));
+                .ToDictionary(p => p.Name, p => p.GetValue(target, null));
             return NamedFormat(format, dic);
         }
 
@@ -75,16 +76,16 @@ namespace Ragnarok.Utility
         /// NotifyObjectはオブジェクト内にプロパティを辞書としてもっているため、
         /// このクラスでは直接その辞書を使って文字列のフォーマットを行います。
         /// </remarks>
-        public static string NamedFormat(string format, NotifyObject obj)
+        public static string NamedFormat(string format, NotifyObject target)
         {
-            if (string.IsNullOrEmpty(format) || obj == null)
+            if (string.IsNullOrEmpty(format) || target == null)
             {
-                return string.Format(format, obj);
+                return string.Format(CultureInfo.CurrentCulture, format, target);
             }
 
             // プロパティ名とプロパティ値をセットにした辞書を使い、
             // それを使って文字列埋め込みを行います。
-            return NamedFormat(format, obj.GetPropertyData());
+            return NamedFormat(format, target.GetPropertyData());
         }
     }
 }

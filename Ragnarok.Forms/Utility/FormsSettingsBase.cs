@@ -19,6 +19,11 @@ namespace Ragnarok.Forms.Utility
         protected override bool TryConvertToString(Type type, object value,
                                                    out string result)
         {
+            if (type == null)
+            {
+                throw new ArgumentNullException(nameof(type));
+            }
+
             if (type == typeof(Color))
             {
                 var c = (Color)value;
@@ -35,7 +40,12 @@ namespace Ragnarok.Forms.Utility
         protected override bool TryConvertToValue(Type type, string str,
                                                   out object result)
         {
-            if (type == typeof(Color))
+            if (type == null)
+            {
+                throw new ArgumentNullException(nameof(type));
+            }
+
+            if (type == typeof(Color) && str != null)
             {
                 var tmp = str.Replace("#", "0x");
                 result = ColorTranslator.FromHtml(tmp);

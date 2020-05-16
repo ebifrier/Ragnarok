@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Ragnarok.Shogi
@@ -780,6 +780,7 @@ namespace Ragnarok.Shogi
         private static Regex CreateSpecialMoveRegex()
         {
             var pattern = string.Format(
+                CultureInfo.CurrentCulture,
                 @"^(あ(､|、|っ)?)?({0})?({1})",
                 ConvertToRegexPattern(BWTypeTable),
                 ConvertToRegexPattern(SpecialMoveTable));
@@ -860,6 +861,7 @@ namespace Ragnarok.Shogi
         {
             // 指し手の前に空白があってもおｋとします。
             var moveRegexPattern = string.Format(
+                CultureInfo.CurrentCulture,
                 @"^\s*({0})?({1})?({1})?(?:({2})\s*)?(?:お)?({3})(?:ー|～)?(?:{4})?(?:ー|～)?({5})?({6})?({7})?([(](\d)(\d)[)])?",
                 ConvertToRegexPattern(BWTypeTable),
                 ConvertToRegexPattern(NumberTable),
@@ -905,7 +907,7 @@ namespace Ragnarok.Shogi
             {
                 text = StringNormalizer.NormalizeText(
                     text,
-                    NormalizeTextOption.All & ~NormalizeTextOption.KanjiDigit);
+                    NormalizeTextOptions.All & ~NormalizeTextOptions.KanjiDigit);
             }
 
             // 投了などの特殊な指し手の判断を行います。
@@ -982,8 +984,8 @@ namespace Ragnarok.Shogi
                 if (m.Groups[9].Success)
                 {
                     move.SrcSquare = new Square(
-                        int.Parse(m.Groups[10].Value),
-                        int.Parse(m.Groups[11].Value));
+                        int.Parse(m.Groups[10].Value, CultureInfo.CurrentCulture),
+                        int.Parse(m.Groups[11].Value, CultureInfo.CurrentCulture));
                 }
             }
 
@@ -1024,6 +1026,7 @@ namespace Ragnarok.Shogi
         {
             // 棋力は文字列のどこにあってもかまいません。
             var regexPattern = string.Format(
+                CultureInfo.InvariantCulture,
                 @"({0})?({0})({1})",
                 ConvertToRegexPattern(NumberTable),
                 ConvertToRegexPattern(SkillKindTable));
@@ -1054,7 +1057,7 @@ namespace Ragnarok.Shogi
             // そのため、参加者のパース時は文字列の正規化を行いません。
             //
             //text = StringNormalizer.NormalizeText(
-            //    text, NormalizeTextOption.Number);
+            //    text, NormalizeTextOptions.Number);
             var m = PlayerRegex.Match(text);
             if (!m.Success)
             {

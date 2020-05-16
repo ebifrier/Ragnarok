@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Ragnarok.Shogi.Sfen
 {
@@ -46,11 +45,16 @@ namespace Ragnarok.Shogi.Sfen
         /// </summary>
         public static string PieceToSfen(BoardPiece piece)
         {
+            if (piece == null)
+            {
+                throw new ArgumentNullException(nameof(piece));
+            }
+
             var c = SfenPieceList[(int)piece.PieceType];
 
             if (piece.BWType == BWType.White)
             {
-                c = char.ToLower(c);
+                c = char.ToLowerInvariant(c);
             }
 
             return ((piece.IsPromoted ? "+" : "") + c);
@@ -64,9 +68,9 @@ namespace Ragnarok.Shogi.Sfen
         /// </remarks>
         public static PieceType SfenToPieceType(char piece)
         {
-            for (var i = 0; i < SfenPieceList.Count(); ++i)
+            for (var i = 0; i < SfenPieceList.Length; ++i)
             {
-                if (char.ToUpper(piece) == SfenPieceList[i])
+                if (char.ToUpperInvariant(piece) == SfenPieceList[i])
                 {
                     return (PieceType)i;
                 }
@@ -83,14 +87,14 @@ namespace Ragnarok.Shogi.Sfen
         /// </remarks>
         public static BoardPiece SfenToPiece(char piece)
         {
-            for (var i = 0; i < SfenPieceList.Count(); ++i)
+            for (var i = 0; i < SfenPieceList.Length; ++i)
             {
                 if (piece == SfenPieceList[i])
                 {
                     return new BoardPiece((PieceType)i, false, BWType.Black);
                 }
 
-                if (piece == char.ToLower(SfenPieceList[i]))
+                if (piece == char.ToLowerInvariant(SfenPieceList[i]))
                 {
                     return new BoardPiece((PieceType)i, false, BWType.White);
                 }

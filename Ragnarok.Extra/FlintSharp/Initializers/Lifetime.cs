@@ -83,6 +83,11 @@ namespace FlintSharp.Initializers
 
         public override void Initialize(Emitter emitter, Particle particle)
         {
+            if (particle == null)
+            {
+                return;
+            }
+
             if (double.IsNaN(m_max))
                 particle.Lifetime = m_min;
             else

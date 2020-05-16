@@ -8,7 +8,7 @@ using NUnit.Framework;
 namespace Ragnarok.Shogi.Tests
 {
     [TestFixture()]
-    internal sealed class MoveStatisticsTest
+    public sealed class MoveStatisticsTest
     {
         [Test()]
         public void VoteTest()

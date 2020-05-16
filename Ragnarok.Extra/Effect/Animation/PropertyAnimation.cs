@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 
@@ -41,7 +42,7 @@ namespace Ragnarok.Extra.Effect.Animation
         {
             if ((object)propertyType == null)
             {
-                throw new ArgumentNullException("propertyType");
+                throw new ArgumentNullException(nameof(propertyType));
             }
 
             TargetPropertyType = propertyType;
@@ -66,8 +67,8 @@ namespace Ragnarok.Extra.Effect.Animation
         /// </summary>
         public TimeSpan Duration
         {
-            get { return GetValue<TimeSpan>("Duration"); }
-            set { SetValue("Duration", value); }
+            get { return GetValue<TimeSpan>(nameof(Duration)); }
+            set { SetValue(nameof(Duration), value); }
         }
 
         /// <summary>
@@ -84,8 +85,8 @@ namespace Ragnarok.Extra.Effect.Animation
         /// </summary>
         public TimeSpan BeginTime
         {
-            get { return GetValue<TimeSpan>("BeginTime"); }
-            set { SetValue("BeginTime", value); }
+            get { return GetValue<TimeSpan>(nameof(BeginTime)); }
+            set { SetValue(nameof(BeginTime), value); }
         }
 
         /// <summary>
@@ -102,8 +103,8 @@ namespace Ragnarok.Extra.Effect.Animation
         /// </summary>
         public bool IsRepeatForever
         {
-            get { return GetValue<bool>("IsRepeatForever"); }
-            set { SetValue("IsRepeatForever", value); }
+            get { return GetValue<bool>(nameof(IsRepeatForever)); }
+            set { SetValue(nameof(IsRepeatForever), value); }
         }
 
         /// <summary>
@@ -111,8 +112,8 @@ namespace Ragnarok.Extra.Effect.Animation
         /// </summary>
         public FillBehavior FillBehavior
         {
-            get { return GetValue<FillBehavior>("FillBehavior"); }
-            set { SetValue("FillBehavior", value); }
+            get { return GetValue<FillBehavior>(nameof(FillBehavior)); }
+            set { SetValue(nameof(FillBehavior), value); }
         }
 
         /// <summary>
@@ -120,8 +121,8 @@ namespace Ragnarok.Extra.Effect.Animation
         /// </summary>
         public bool AutoReverse
         {
-            get { return GetValue<bool>("AutoReverse"); }
-            set { SetValue("AutoReverse", value); }
+            get { return GetValue<bool>(nameof(AutoReverse)); }
+            set { SetValue(nameof(AutoReverse), value); }
         }
 
         /// <summary>
@@ -129,8 +130,8 @@ namespace Ragnarok.Extra.Effect.Animation
         /// </summary>
         public bool IsCompleted
         {
-            get { return GetValue<bool>("IsCompleted"); }
-            private set { SetValue("IsCompleted", value); }
+            get { return GetValue<bool>(nameof(IsCompleted)); }
+            private set { SetValue(nameof(IsCompleted), value); }
         }
 
         /// <summary>
@@ -138,8 +139,8 @@ namespace Ragnarok.Extra.Effect.Animation
         /// </summary>
         public bool IsStopped
         {
-            get { return GetValue<bool>("IsStopped"); }
-            private set { SetValue("IsStopped", value); }
+            get { return GetValue<bool>(nameof(IsStopped)); }
+            private set { SetValue(nameof(IsStopped), value); }
         }
 
         /// <summary>
@@ -147,8 +148,8 @@ namespace Ragnarok.Extra.Effect.Animation
         /// </summary>
         public object Target
         {
-            get { return GetValue<object>("Target"); }
-            set { SetValue("Target", value); }
+            get { return GetValue<object>(nameof(Target)); }
+            set { SetValue(nameof(Target), value); }
         }
 
         /// <summary>
@@ -156,8 +157,8 @@ namespace Ragnarok.Extra.Effect.Animation
         /// </summary>
         public string TargetProperty
         {
-            get { return GetValue<string>("TargetProperty"); }
-            set { SetValue("TargetProperty", value); }
+            get { return GetValue<string>(nameof(TargetProperty)); }
+            set { SetValue(nameof(TargetProperty), value); }
         }
 
         /// <summary>
@@ -167,7 +168,7 @@ namespace Ragnarok.Extra.Effect.Animation
         {
             if (target == null)
             {
-                throw new ArgumentNullException("target");
+                throw new ArgumentNullException(nameof(target));
             }
 
             if (this.initialized)
@@ -212,6 +213,7 @@ namespace Ragnarok.Extra.Effect.Animation
             {
                 throw new InvalidOperationException(
                     string.Format(
+                        CultureInfo.CurrentCulture,
                         "{0}.{1}: プロパティ名が正しくありません。",
                         target.GetType(), TargetProperty));
             }
@@ -220,6 +222,7 @@ namespace Ragnarok.Extra.Effect.Animation
             {
                 throw new InvalidOperationException(
                     string.Format(
+                        CultureInfo.CurrentCulture,
                         "{0}.{1}: プロパティの型が正しくありません。",
                         target.GetType(), TargetProperty));
             }
@@ -228,6 +231,7 @@ namespace Ragnarok.Extra.Effect.Animation
             {
                 throw new InvalidOperationException(
                     string.Format(
+                        CultureInfo.CurrentCulture,
                         "{0}.{1}: このプロパティは読み込みできません。",
                         target.GetType(), TargetProperty));
             }
@@ -236,6 +240,7 @@ namespace Ragnarok.Extra.Effect.Animation
             {
                 throw new InvalidOperationException(
                     string.Format(
+                        CultureInfo.CurrentCulture,
                         "{0}.{1}: このプロパティには書き込みできません。",
                         target.GetType(), TargetProperty));
             }

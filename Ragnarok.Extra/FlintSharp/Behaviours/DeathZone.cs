@@ -122,6 +122,16 @@ namespace FlintSharp.Behaviours
         /// <param name="elapsedTime">The duration of the frame - used for time based updates.</param>
         public override void Update(Emitter emitter, Particle particle, double elapsedTime)
         {
+            if (emitter == null)
+            {
+                return;
+            }
+
+            if (particle == null)
+            {
+                return;
+            }
+
             bool inside = m_zone.Contains(particle.X, particle.Y);
 
             if (m_invertZone)

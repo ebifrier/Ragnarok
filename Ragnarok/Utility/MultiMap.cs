@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text;
+using System.Runtime.Serialization;
 
 namespace Ragnarok.Utility
 {
     /// <summary>
     /// 重複したキーを許すDictionaryクラスです。 
     /// </summary>
-    public class MultiMap<TKey, TValue> : Dictionary<TKey, HashSet<TValue>>
+    [Serializable()]
+    [SuppressMessage("Microsoft.Naming", "CA1710")]
+    public sealed class MultiMap<TKey, TValue> : Dictionary<TKey, HashSet<TValue>>
     {
         /// <summary>
         /// キーと値の組を追加します。
@@ -112,6 +115,14 @@ namespace Ragnarok.Utility
         /// コンストラクタ
         /// </summary>
         public MultiMap()
+        {
+        }
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        private MultiMap(SerializationInfo info, StreamingContext context)
+            : base(info, context)
         {
         }
     }

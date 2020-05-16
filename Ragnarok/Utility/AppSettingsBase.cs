@@ -507,7 +507,7 @@ namespace Ragnarok.Utility
         /// <summary>
         /// スキーマを返します。
         /// </summary>
-        System.Xml.Schema.XmlSchema IXmlSerializable.GetSchema()
+        public System.Xml.Schema.XmlSchema GetSchema()
         {
             return null;
         }
@@ -574,8 +574,13 @@ namespace Ragnarok.Utility
         /// <summary>
         /// デシリアライズします。
         /// </summary>
-        void IXmlSerializable.ReadXml(XmlReader reader)
+        public void ReadXml(XmlReader reader)
         {
+            if (reader == null)
+            {
+                throw new ArgumentNullException(nameof(reader));
+            }
+
             var propertyDic = MethodUtil.GetPropertyDic(GetType());
 
             reader.ReadStartElement();
@@ -716,10 +721,14 @@ namespace Ragnarok.Utility
         /// <summary>
         /// シリアライズします。
         /// </summary>
-        void IXmlSerializable.WriteXml(XmlWriter writer)
+        public void WriteXml(XmlWriter writer)
         {
-            var propertyDic = MethodUtil.GetPropertyDic(GetType());
+            if (writer == null)
+            {
+                throw new ArgumentNullException(nameof(writer));
+            }
 
+            var propertyDic = MethodUtil.GetPropertyDic(GetType());
             foreach (var propertyObj in propertyDic.Values)
             {
                 var property = propertyObj.PropertyInfo;
@@ -774,7 +783,7 @@ namespace Ragnarok.Utility
         {
             if (asm == null)
             {
-                throw new ArgumentNullException("asm");
+                throw new ArgumentNullException(nameof(asm));
             }
 
             // AssemblyCompanyの取得

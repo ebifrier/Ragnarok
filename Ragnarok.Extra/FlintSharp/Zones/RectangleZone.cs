@@ -49,12 +49,12 @@ namespace FlintSharp.Zones
     /// </summary>
     public class RectangleZone : IZone
     {
-        protected double m_left;
-        protected double m_top;
-        protected double m_right;
-        protected double m_bottom;
-        protected double m_width;
-        protected double m_height;
+        private double m_left;
+        private double m_top;
+        private double m_right;
+        private double m_bottom;
+        private double m_width;
+        private double m_height;
 
         public RectangleZone()
             : this(0, 0, 1, 1)

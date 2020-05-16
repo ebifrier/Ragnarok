@@ -1,37 +1,54 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Codehaus.Parsec
 {
-    public struct Tok
+    public struct Tok : IEquatable<Tok>
     {
-        private readonly int ind;
-        private readonly int len;
-        private readonly object tok;
-
         public int Length
         {
-            get { return len; }
+            get;
         }
         public int Index
         {
-            get { return ind; }
+            get;
         }
         public object Token
         {
-            get { return tok; }
+            get;
         }
 
         public Tok(int i, int l, object tok)
         {
-            this.ind = i;
-            this.len = l;
-            this.tok = tok;
+            this.Length = l;
+            this.Index = i;
+            this.Token = tok;
         }
         public override string ToString()
         {
-            return Maps.ToString(tok);
+            return Maps.ToString(Token);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Equals((Tok)obj);
+        }
+        public bool Equals(Tok other)
+        {
+            return Length == other.Length && Index == other.Index &&
+                   Token == other.Token;
+        }
+        public static bool operator ==(Tok x, Tok y)
+        {
+            return x.Equals(y);
+        }
+        public static bool operator !=(Tok x, Tok y)
+        {
+            return !(x == y);
+        }
+        public override int GetHashCode()
+        {
+            return Length.GetHashCode() ^ Index.GetHashCode() ^ Token.GetHashCode();
         }
     }
 }

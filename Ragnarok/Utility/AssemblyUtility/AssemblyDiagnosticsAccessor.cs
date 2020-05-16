@@ -74,7 +74,7 @@ namespace Ragnarok.Utility.AssemblyUtility
         {
             if (string.IsNullOrEmpty(assemblyName))
             {
-                throw new ArgumentNullException("assemblyName");
+                throw new ArgumentNullException(nameof(assemblyName));
             }
 
             // 例外が返る可能性があります。

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using System.Reflection;
 
 namespace Ragnarok.Utility
@@ -421,7 +420,7 @@ namespace Ragnarok.Utility
         {
             if ((object)targetType == null)
             {
-                throw new ArgumentNullException("targetType");
+                throw new ArgumentNullException(nameof(targetType));
             }
 
             lock (TypePropertySet)
@@ -499,12 +498,12 @@ namespace Ragnarok.Utility
         {
             if (target == null)
             {
-                throw new ArgumentNullException("target");
+                throw new ArgumentNullException(nameof(target));
             }
 
             if (string.IsNullOrEmpty(propertyName))
             {
-                throw new ArgumentNullException("propertyName");
+                throw new ArgumentNullException(nameof(propertyName));
             }
 
             // propertyObjを探します。
@@ -513,9 +512,7 @@ namespace Ragnarok.Utility
             if (propertyObj == null)
             {
                 throw new InvalidOperationException(
-                    string.Format(
-                        "'{0}': 指定のプロパティ名は存在しません。",
-                        propertyName));
+                    $"'{propertyName}': 指定のプロパティ名は存在しません。");
             }
 
             return propertyObj.GetValue(target);
@@ -534,12 +531,12 @@ namespace Ragnarok.Utility
         {
             if (target == null)
             {
-                throw new ArgumentNullException("target");
+                throw new ArgumentNullException(nameof(target));
             }
 
             if (string.IsNullOrEmpty(propertyName))
             {
-                throw new ArgumentNullException("propertyName");
+                throw new ArgumentNullException(nameof(propertyName));
             }
 
             var propertyObj = GetPropertyObject(
@@ -547,9 +544,7 @@ namespace Ragnarok.Utility
             if (propertyObj == null)
             {
                 throw new InvalidOperationException(
-                    string.Format(
-                        "'{0}': 指定のプロパティ名は存在しません。",
-                        propertyName));
+                    $"'{propertyName}': 指定のプロパティ名は存在しません。");
             }
 
             propertyObj.SetValue(target, value);

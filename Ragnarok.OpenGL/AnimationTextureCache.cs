@@ -86,7 +86,7 @@ namespace Ragnarok.OpenGL
     /// </remarks>
     public sealed class AnimationTextureCache
     {
-        private readonly CacheManager<AnimationTextureKey, AnimationTexture> cache;
+        private readonly CacheCollection<AnimationTextureKey, AnimationTexture> cache;
         private readonly IGraphicsContext context;
 
         /// <summary>
@@ -96,10 +96,10 @@ namespace Ragnarok.OpenGL
         {
             if (context == null)
             {
-                throw new ArgumentNullException("context");
+                throw new ArgumentNullException(nameof(context));
             }
 
-            this.cache = new CacheManager<AnimationTextureKey, AnimationTexture>(
+            this.cache = new CacheCollection<AnimationTextureKey, AnimationTexture>(
                 CreateAnimationTexture, capacity);
             this.context = context;
         }
@@ -129,12 +129,12 @@ namespace Ragnarok.OpenGL
 
             if (string.IsNullOrEmpty(imagePath))
             {
-                throw new ArgumentNullException("imagePath");
+                throw new ArgumentNullException(nameof(imagePath));
             }
 
             if (count <= 0)
             {
-                throw new ArgumentException("count");
+                throw new ArgumentException("countの値が小さすぎます。", nameof(count));
             }
 
             try

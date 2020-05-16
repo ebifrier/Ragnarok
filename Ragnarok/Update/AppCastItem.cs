@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Ragnarok.Update
 {
@@ -92,6 +91,11 @@ namespace Ragnarok.Update
         /// </summary>
         public int CompareTo(AppCastItem other)
         {
+            if (other == null)
+            {
+                throw new ArgumentNullException(nameof(other));
+            }
+
             var v1 = new Version(this.Version);
             var v2 = new Version(other.Version);
 

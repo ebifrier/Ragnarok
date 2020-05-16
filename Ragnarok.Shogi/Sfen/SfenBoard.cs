@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
-using System.Text;
 
 namespace Ragnarok.Shogi.Sfen
 {
@@ -18,13 +18,13 @@ namespace Ragnarok.Shogi.Sfen
         {
             if (string.IsNullOrEmpty(sfen))
             {
-                throw new ArgumentNullException("sfen");
+                throw new ArgumentNullException(nameof(sfen));
             }
 
             var split = sfen.Split(
                 new char[] { ' ' },
                 StringSplitOptions.RemoveEmptyEntries);
-            if (split.Count() < 3)
+            if (split.Length < 3)
             {
                 throw new SfenException(
                     "SFEN形式の盤表現が正しくありません。");
@@ -172,10 +172,11 @@ namespace Ragnarok.Shogi.Sfen
         {
             if (board == null)
             {
-                throw new ArgumentNullException("board");
+                throw new ArgumentNullException(nameof(board));
             }
 
             return string.Format(
+                CultureInfo.InvariantCulture,
                 "{0} {1} {2} {3}",
                 Board0ToSfen(board),
                 TurnToSfen(board.Turn),
@@ -230,7 +231,7 @@ namespace Ragnarok.Shogi.Sfen
                     // 駒がある場合
                     if (spaceCount > 0)
                     {
-                        yield return spaceCount.ToString();
+                        yield return $"{spaceCount}";
                         spaceCount = 0;
                     }
 
@@ -241,7 +242,7 @@ namespace Ragnarok.Shogi.Sfen
             // 空白の数は数字で示します。
             if (spaceCount > 0)
             {
-                yield return spaceCount.ToString();
+                yield return $"{spaceCount}";
             }
         }
 
@@ -259,9 +260,9 @@ namespace Ragnarok.Shogi.Sfen
                     Count = board.GetHand(pieceType, turn),
                 }
                 where obj.Count > 0
-                select string.Format("{0}{1}",
-                    (obj.Count > 1 ? obj.Count.ToString() : ""),
-                    SfenUtil.PieceToSfen(obj.Piece));
+                let count = obj.Count > 1 ? $"{obj.Count}" : ""
+                let pieceSfen = SfenUtil.PieceToSfen(obj.Piece)
+                select $"{count}{pieceSfen}";
 
             // ToArray()しないと、MONOでstring.Joinのコンパイルに失敗します。
             var array = handList.ToArray();

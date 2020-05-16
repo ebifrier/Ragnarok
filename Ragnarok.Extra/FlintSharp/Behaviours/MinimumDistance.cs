@@ -116,6 +116,11 @@ namespace FlintSharp.Behaviours
         /// <param name="emitter">The Emitter that the Action was added to.</param>
         public override void AddedToEmitter(Emitter emitter)
         {
+            if (emitter == null)
+            {
+                return;
+            }
+
             emitter.SpaceSort = true;
         }
 
@@ -129,6 +134,16 @@ namespace FlintSharp.Behaviours
         /// <param name="elapsedTime">The duration of the frame - used for time based updates.</param>
         public override void Update(Emitter emitter, Particle particle, double elapsedTime)
         {
+            if (emitter == null)
+            {
+                return;
+            }
+
+            if (particle == null)
+            {
+                return;
+            }
+
             List<Particle> particles = emitter.Particles;
             Particle other;
             int i;

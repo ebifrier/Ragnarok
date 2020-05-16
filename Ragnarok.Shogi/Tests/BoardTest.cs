@@ -10,7 +10,7 @@ using Ragnarok.Utility;
 namespace Ragnarok.Shogi.Tests
 {
     [TestFixture()]
-    internal sealed class BoardTest
+    public sealed class BoardTest
     {
         /// <summary>
         /// 駒の各移動先に対して、その手が指せるのかどうかをチェックします。
@@ -146,23 +146,23 @@ namespace Ragnarok.Shogi.Tests
             var list = board
                 .ListupMoves(Piece.Ryu, BWType.Black, new Square(4, 1))
                 .ToList();
-            Assert.AreEqual(1, list.Count());
+            Assert.AreEqual(1, list.Count);
             Assert.AreEqual(new Square(7, 1), list[0].SrcSquare);
 
             list = board
                 .ListupMoves(Piece.Ryu, BWType.Black, new Square(3, 2))
                 .ToList();
-            Assert.AreEqual(0, list.Count());
+            Assert.AreEqual(0, list.Count);
 
             list = board
                 .ListupMoves(Piece.Uma, BWType.Black, new Square(4, 7))
                 .ToList();
-            Assert.AreEqual(2, list.Count());
+            Assert.AreEqual(2, list.Count);
 
             list = board
                 .ListupMoves(Piece.Kin, BWType.Black, new Square(5, 7))
                 .ToList();
-            Assert.AreEqual(2, list.Count());
+            Assert.AreEqual(2, list.Count);
         }
 
         [Test()]
@@ -173,7 +173,7 @@ namespace Ragnarok.Shogi.Tests
             var list = board
                 .ListupMoves(Piece.Gin, BWType.White, new Square(6, 5))
                 .ToList();
-            Assert.AreEqual(2, list.Count());
+            Assert.AreEqual(2, list.Count);
         }
 
         [Test()]

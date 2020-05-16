@@ -23,7 +23,7 @@ namespace Ragnarok.Shogi
 
             // objectとして比較します。比較の仕方を間違えると
             // 無限ループになるので注意が必要です。
-            if ((object)lhs == null || (object)rhs == null)
+            if (lhs == null || rhs == null)
             {
                 return false;
             }
@@ -34,9 +34,14 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 局面のハッシュ値を計算します。
         /// </summary>
-        public int GetHashCode(Board x)
+        public int GetHashCode(Board value)
         {
-            return (int)x.HashValue;
+            if (value == null)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
+
+            return (int)value.HashValue;
         }
     }
 }

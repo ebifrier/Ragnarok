@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-
-using Ragnarok.Shogi;
-using Ragnarok.Utility;
 
 namespace Ragnarok.Shogi.Csa
 {
@@ -57,7 +54,7 @@ namespace Ragnarok.Shogi.Csa
         {
             if (line == null)
             {
-                throw new ArgumentNullException("line");
+                throw new ArgumentNullException(nameof(line));
             }
 
             return (line.Length == 0 || line[0] == '\'');
@@ -70,7 +67,7 @@ namespace Ragnarok.Shogi.Csa
         {
             if (line == null)
             {
-                throw new ArgumentNullException("line");
+                throw new ArgumentNullException(nameof(line));
             }
 
             var m = HeaderRegex.Match(line);
@@ -100,10 +97,10 @@ namespace Ragnarok.Shogi.Csa
         {
             if (key == null)
             {
-                throw new ArgumentNullException("key");
+                throw new ArgumentNullException(nameof(key));
             }
 
-            switch (key.ToUpper())
+            switch (key.ToUpperInvariant())
             {
                 case "EVENT":
                     return KifuHeaderType.Event;
@@ -124,7 +121,7 @@ namespace Ragnarok.Shogi.Csa
             var m = ScoreEngineNameRegex.Match(key);
             if (m.Success)
             {
-                var i = int.Parse(m.Groups[1].Value);
+                var i = int.Parse(m.Groups[1].Value, CultureInfo.InvariantCulture);
                 return (KifuHeaderType.ScoreEngine0 + i);
             }
 
@@ -198,9 +195,9 @@ namespace Ragnarok.Shogi.Csa
                 return " * ";
             }
 
-            return string.Format("{0}{1}",
-                (piece.BWType == BWType.Black ? '+' : '-'),
-                PieceToStr(piece.Piece));
+            var turnStr = (piece.BWType == BWType.Black ? '+' : '-');
+            var pieceStr = PieceToStr(piece.Piece);
+            return $"{turnStr}{pieceStr}";
         }
 
         /// <summary>

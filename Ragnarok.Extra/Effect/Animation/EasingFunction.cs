@@ -8,7 +8,7 @@ namespace Ragnarok.Extra.Effect.Animation
     /// <summary>
     /// キーフレーム補間の計算方法です。
     /// </summary>
-    public enum EasingFunctions
+    public enum EasingFunction
     {
         /// <summary>
         /// 線形補間を行います。
@@ -23,19 +23,19 @@ namespace Ragnarok.Extra.Effect.Animation
     /// <summary>
     /// 値の補完メソッドなどを定義します。
     /// </summary>
-    public static class EasingFunctionsUtil
+    public static class EasingFunctionUtil
     {
         /// <summary>
         /// xとyをrを使って補完します。
         /// </summary>
-        public static double Interpolate(this EasingFunctions func, double x,
+        public static double Interpolate(this EasingFunction func, double x,
                                          double y, double r)
         {
             switch (func)
             {
-                case EasingFunctions.Linear:
+                case EasingFunction.Linear:
                     return (x * (1.0 - r) + y * r);
-                case EasingFunctions.Discrete:
+                case EasingFunction.Discrete:
                     return (r == 0.0 ? x : y);
             }
 

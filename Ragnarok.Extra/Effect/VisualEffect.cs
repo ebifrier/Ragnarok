@@ -68,8 +68,8 @@ namespace Ragnarok.Extra.Effect
         [CLSCompliant(false)]
         public Renderer ParticleRenderer
         {
-            get { return GetValue<Renderer>("ParticleRenderer"); }
-            set { SetValue("ParticleRenderer", value); }
+            get { return GetValue<Renderer>(nameof(ParticleRenderer)); }
+            set { SetValue(nameof(ParticleRenderer), value); }
         }
 
         /// <summary>
@@ -96,8 +96,8 @@ namespace Ragnarok.Extra.Effect
         /// </summary>
         public Mesh Mesh
         {
-            get { return GetValue<Mesh>("Mesh"); }
-            set { SetValue("Mesh", value); }
+            get { return GetValue<Mesh>(nameof(Mesh)); }
+            set { SetValue(nameof(Mesh), value); }
         }
 
         /// <summary>
@@ -105,8 +105,8 @@ namespace Ragnarok.Extra.Effect
         /// </summary>
         public BlendType Blend
         {
-            get { return GetValue<BlendType>("Blend"); }
-            set { SetValue("Blend", value); }
+            get { return GetValue<BlendType>(nameof(Blend)); }
+            set { SetValue(nameof(Blend), value); }
         }
         #endregion
         
@@ -117,10 +117,10 @@ namespace Ragnarok.Extra.Effect
         /// <remarks>
         /// XAML上での処理を考え、string型にしています。
         /// </remarks>
-        public string[] InitialImageUriList
+        public List<string> InitialImageUriList
         {
-            get { return GetValue<string[]>("InitialImageUriList"); }
-            set { SetValue("InitialImageUriList", value); }
+            get { return GetValue<List<string>>(nameof(InitialImageUriList)); }
+            private set { SetValue(nameof(InitialImageUriList), value); }
         }
 
         /// <summary>
@@ -131,8 +131,8 @@ namespace Ragnarok.Extra.Effect
         /// </remarks>
         public string ImageUri
         {
-            get { return GetValue<string>("ImageUri"); }
-            set { SetValue("ImageUri", value); }
+            get { return GetValue<string>(nameof(ImageUri)); }
+            set { SetValue(nameof(ImageUri), value); }
         }
 
         /// <summary>
@@ -140,8 +140,8 @@ namespace Ragnarok.Extra.Effect
         /// </summary>
         public AnimationType AnimationType
         {
-            get { return GetValue<AnimationType>("AnimationType"); }
-            set { SetValue("AnimationType", value); }
+            get { return GetValue<AnimationType>(nameof(AnimationType)); }
+            set { SetValue(nameof(AnimationType), value); }
         }
 
         /// <summary>
@@ -149,8 +149,8 @@ namespace Ragnarok.Extra.Effect
         /// </summary>
         public int AnimationImageCount
         {
-            get { return GetValue<int>("AnimationImageCount"); }
-            set { SetValue("AnimationImageCount", value); }
+            get { return GetValue<int>(nameof(AnimationImageCount)); }
+            set { SetValue(nameof(AnimationImageCount), value); }
         }
 
         /// <summary>
@@ -158,8 +158,8 @@ namespace Ragnarok.Extra.Effect
         /// </summary>
         public int AnimationImageIndex
         {
-            get { return GetValue<int>("AnimationImageIndex"); }
-            set { SetValue("AnimationImageIndex", value); }
+            get { return GetValue<int>(nameof(AnimationImageIndex)); }
+            set { SetValue(nameof(AnimationImageIndex), value); }
         }
         #endregion
 
@@ -169,8 +169,8 @@ namespace Ragnarok.Extra.Effect
         /// </summary>
         public IEffectSoundManager SoundManager
         {
-            get { return GetValue<IEffectSoundManager>("SoundManager"); }
-            set { SetValue("SoundManager", value); }
+            get { return GetValue<IEffectSoundManager>(nameof(SoundManager)); }
+            set { SetValue(nameof(SoundManager), value); }
         }
 
         /// <summary>
@@ -178,8 +178,8 @@ namespace Ragnarok.Extra.Effect
         /// </summary>
         public string StartSoundPath
         {
-            get { return GetValue<string>("StartSoundPath"); }
-            set { SetValue("StartSoundPath", value); }
+            get { return GetValue<string>(nameof(StartSoundPath)); }
+            set { SetValue(nameof(StartSoundPath), value); }
         }
 
         /// <summary>
@@ -187,8 +187,8 @@ namespace Ragnarok.Extra.Effect
         /// </summary>
         public double StartSoundVolume
         {
-            get { return GetValue<double>("StartSoundVolume"); }
-            set { SetValue("StartSoundVolume", value); }
+            get { return GetValue<double>(nameof(StartSoundVolume)); }
+            set { SetValue(nameof(StartSoundVolume), value); }
         }
         #endregion
 
@@ -251,7 +251,7 @@ namespace Ragnarok.Extra.Effect
             // ランダムイメージの設定を行います。
             if (InitialImageUriList != null && InitialImageUriList.Any())
             {
-                var index = MathEx.RandInt(0, InitialImageUriList.Length);
+                var index = MathEx.RandInt(0, InitialImageUriList.Count);
 
                 ImageUri = InitialImageUriList[index];
             }

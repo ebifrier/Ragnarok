@@ -31,12 +31,13 @@ namespace Ragnarok.Shogi.Sfen
         {
             if (move == null)
             {
-                throw new ArgumentNullException("move");
+                throw new ArgumentNullException(nameof(move));
             }
 
             if (!move.Validate())
             {
-                throw new ArgumentException("move");
+                throw new ArgumentException(
+                    "指し手が正しくありません。", nameof(move));
             }
 
             if (move.IsSpecialMove)
@@ -46,26 +47,23 @@ namespace Ragnarok.Shogi.Sfen
             }
 
             var dstFile = move.DstSquare.File;
-            var dstRank = (char)((int)'a' + (move.DstSquare.Rank - 1));
+            var dstRank = (char)('a' + (move.DstSquare.Rank - 1));
 
             if (move.ActionType == ActionType.Drop)
             {
                 // 駒打ちの場合
                 var piece = SfenUtil.PieceTypeToSfen(move.DropPieceType);
 
-                return string.Format("{0}*{1}{2}",
-                    piece, dstFile, dstRank);
+                return $"{piece}*{dstFile}{dstRank}";
             }
             else
             {
                 // 駒の移動の場合
                 var srcFile = move.SrcSquare.File;
-                var srcRank = (char)((int)'a' + (move.SrcSquare.Rank - 1));
+                var srcRank = (char)('a' + (move.SrcSquare.Rank - 1));
                 var isPromote = (move.ActionType == ActionType.Promote);
 
-                return string.Format("{0}{1}{2}{3}{4}",
-                    srcFile, srcRank, dstFile, dstRank,
-                    (isPromote ? "+" : ""));
+                return $"{srcFile}{srcRank}{dstFile}{dstRank}{(isPromote ? "+" : "")}";
             }
         }
 
@@ -76,12 +74,12 @@ namespace Ragnarok.Shogi.Sfen
         {
             if (board == null)
             {
-                throw new ArgumentNullException("board");
+                throw new ArgumentNullException(nameof(board));
             }
 
             if (string.IsNullOrEmpty(sfen))
             {
-                throw new ArgumentNullException("sfen");
+                throw new ArgumentNullException(nameof(sfen));
             }
 
             var type = SfenToSpecialMoveType(sfen);
@@ -173,12 +171,12 @@ namespace Ragnarok.Shogi.Sfen
         {
             if (board == null)
             {
-                throw new ArgumentNullException("board");
+                throw new ArgumentNullException(nameof(board));
             }
 
             if (sfenList == null)
             {
-                throw new ArgumentNullException("sfenList");
+                throw new ArgumentNullException(nameof(sfenList));
             }
 
             var tmpBoard = board.Clone();

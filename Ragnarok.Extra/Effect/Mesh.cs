@@ -26,30 +26,30 @@ namespace Ragnarok.Extra.Effect
         {
             if (vertices == null)
             {
-                throw new ArgumentNullException("vertices");
+                throw new ArgumentNullException(nameof(vertices));
             }
 
             if (indices == null)
             {
-                throw new ArgumentNullException("indexes");
+                throw new ArgumentNullException(nameof(indices));
             }
 
             if (uvs == null)
             {
-                throw new ArgumentNullException("uvs");
+                throw new ArgumentNullException(nameof(uvs));
             }
 
-            VertexArray = vertices.ToArray();
-            IndexArray = indices.ToArray();
-            TextureUVArray = uvs.ToArray();
+            VertexArray = vertices.ToList();
+            IndexArray = indices.ToList();
+            TextureUVArray = uvs.ToList();
 
-            if (VertexArray.Count() != TextureUVArray.Count())
+            if (VertexArray.Count != TextureUVArray.Count)
             {
                 throw new ArgumentException(
                     "頂点配列とテクスチャUV配列の数が一致しません。");
             }
 
-            if (IndexArray.Count() % 3 != 0)
+            if (IndexArray.Count % 3 != 0)
             {
                 throw new ArgumentException(
                     "インデックス配列は三角形による指定をお願いします。");
@@ -59,7 +59,7 @@ namespace Ragnarok.Extra.Effect
         /// <summary>
         /// 頂点配列を取得します。
         /// </summary>
-        public Point3d[] VertexArray
+        public List<Point3d> VertexArray
         {
             get;
             private set;
@@ -68,7 +68,7 @@ namespace Ragnarok.Extra.Effect
         /// <summary>
         /// テクスチャのUV配列を取得します。
         /// </summary>
-        public Pointd[] TextureUVArray
+        public List<Pointd> TextureUVArray
         {
             get;
             private set;
@@ -77,7 +77,7 @@ namespace Ragnarok.Extra.Effect
         /// <summary>
         /// インデックス配列を取得します。
         /// </summary>
-        public int[] IndexArray
+        public List<int> IndexArray
         {
             get;
             private set;
@@ -87,7 +87,7 @@ namespace Ragnarok.Extra.Effect
         /// 指定の座標を持った矩形モデルを作成します。
         /// </summary>
         public static Mesh CreateDefault(double width, double height,
-                                               double imageWidth, double imageHeight)
+                                         double imageWidth, double imageHeight)
         {
             // テクスチャのUV座標をイメージの0.5ピクセル分ずらします。
             var halfPixelW = (imageWidth != 0.0 ? 0.5 / imageWidth : 0.0);

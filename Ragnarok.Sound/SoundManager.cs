@@ -174,7 +174,7 @@ namespace Ragnarok.Sound
         {
             if (data == null)
             {
-                throw new ArgumentNullException("data");
+                throw new ArgumentNullException(nameof(data));
             }
 
             lock (SyncRoot)

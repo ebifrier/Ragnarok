@@ -1,11 +1,10 @@
 ﻿#if TESTS
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.IO;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using NUnit.Framework;
 
 namespace Ragnarok.Shogi.Kif.Tests
@@ -13,7 +12,7 @@ namespace Ragnarok.Shogi.Kif.Tests
     using File.Tests;
 
     [TestFixture()]
-    internal sealed class KifTest
+    public sealed class KifTest
     {
         /// <summary>
         /// 文字列を空白を考慮に入れずに比較します。
@@ -36,14 +35,14 @@ namespace Ragnarok.Shogi.Kif.Tests
         public static int? GetMoveCount(string text)
         {
             var m = Regex.Match(text,
-                string.Format(@"(\d+)\s+({0})", KifUtil.SpecialMoveText),
+                $@"(\d+)\s+({KifUtil.SpecialMoveText})",
                 RegexOptions.Multiline);
             if (!m.Success)
             {
                 return null;
             }
 
-            return int.Parse(m.Groups[1].Value);
+            return int.Parse(m.Groups[1].Value, CultureInfo.InvariantCulture);
         }
 
         /// <summary>
@@ -193,11 +192,15 @@ namespace Ragnarok.Shogi.Kif.Tests
             Assert.NotNull(kifu);
 
             var node = kifu.RootNode;
-            for (var i = 0; i < durations.Count(); ++i)
+            for (var i = 0; i < durations.Length; ++i)
             {
                 node = node.NextNode;
-                Assert.AreEqual(TimeSpan.Parse(durations[i]), node.Duration);
-                Assert.AreEqual(TimeSpan.Parse(totalDurations[i]), node.TotalDuration);
+                Assert.AreEqual(
+                    TimeSpan.Parse(durations[i], CultureInfo.InvariantCulture),
+                    node.Duration);
+                Assert.AreEqual(
+                    TimeSpan.Parse(totalDurations[i], CultureInfo.InvariantCulture),
+                    node.TotalDuration);
             }
 
             // 書き込みテスト
@@ -410,7 +413,7 @@ namespace Ragnarok.Shogi.Kif.Tests
             Assert.AreEqual(6, kifu.MoveList.Count());
 
             var node = kifu.RootNode;
-            for (var i = 0; i < durations.Count(); ++i)
+            for (var i = 0; i < durations.Length; ++i)
             {
                 node = node.NextNode;
                 Assert.AreEqual(TimeSpan.FromSeconds(durations[i]), node.Duration);
@@ -450,7 +453,7 @@ namespace Ragnarok.Shogi.Kif.Tests
             Assert.AreEqual(6, kifu.MoveList.Count());
 
             var node = kifu.RootNode;
-            for (var i = 0; i < durations.Count(); ++i)
+            for (var i = 0; i < durations.Length; ++i)
             {
                 node = node.NextNode;
                 Assert.AreEqual(TimeSpan.FromSeconds(durations[i]), node.Duration);

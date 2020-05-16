@@ -9,7 +9,7 @@ namespace Ragnarok.Net
     /// <summary>
     /// データ送信完了時に呼ばれるデリゲート型です。
     /// </summary>
-    public delegate void SentDataHandler(SendData sendData, Exception ex);
+    public delegate void SentDataHandler(SendData sender, Exception ex);
 
     /// <summary>
     /// 送信用のデータです。

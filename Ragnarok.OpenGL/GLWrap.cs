@@ -13,7 +13,7 @@ namespace Ragnarok.OpenGL
     {
         public static void Wrap(Action action)
         {
-            action();
+            action?.Invoke();
 
             var err = GL.GetError();
             if (err != ErrorCode.NoError)
@@ -26,6 +26,11 @@ namespace Ragnarok.OpenGL
 
         public static T Wrap<T>(Func<T> action)
         {
+            if (action == null)
+            {
+                throw new ArgumentNullException(nameof(action));
+            }
+
             var result = action();
 
             var err = GL.GetError();

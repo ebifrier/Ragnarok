@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Reflection;
 using System.Diagnostics;
+using System.Globalization;
 
 namespace Ragnarok.Utility
 {
@@ -17,15 +17,19 @@ namespace Ragnarok.Utility
         /// </summary>
         public static string GetMethodString(MethodBase method)
         {
+            if (method == null)
+            {
+                throw new ArgumentNullException(nameof(method));
+            }
+
             var args = method.GetParameters()
                 .Select(paramInfo =>
                     paramInfo.ParameterType.Name + " " +
                     paramInfo.Name);
 
-            return string.Format(
-                "{0}.{1}({2})",
-                method.DeclaringType.Name, method.Name,
-                string.Join(", ", args.ToArray()));
+            var typeName = method.DeclaringType.Name;
+            var argName = string.Join(", ", args.ToArray());
+            return $"{typeName}.{method.Name}({argName})";
         }
 
         /// <summary>
@@ -33,8 +37,12 @@ namespace Ragnarok.Utility
         /// </summary>
         public static IEnumerable<string> ToStackTraceString(StackTrace stackTrace)
         {
-            var omitted = false;
+            if (stackTrace == null)
+            {
+                throw new ArgumentNullException(nameof(stackTrace));
+            }
 
+            var omitted = false;
             return stackTrace.GetFrames()
                 .Where(frame =>
                 {
@@ -58,7 +66,9 @@ namespace Ragnarok.Utility
                     }
                     else
                     {
-                        return string.Format("  場所: {0}({1}): {2}",
+                        return string.Format(
+                            CultureInfo.CurrentCulture, 
+                            "  場所: {0}({1}): {2}",
                             frame.GetFileName(),
                             frame.GetFileLineNumber(),
                             GetMethodString(frame.GetMethod()));

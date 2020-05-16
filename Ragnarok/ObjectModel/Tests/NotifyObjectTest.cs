@@ -13,47 +13,47 @@ namespace Ragnarok.ObjectModel.Tests
         public int BaseProperty1
         {
             get { return 1; }
-            set { this.RaisePropertyChanged("BaseProperty1"); }
+            set { this.RaisePropertyChanged(nameof(BaseProperty1)); }
         }
 
-        [DependOnProperty("BaseProperty1")]
+        [DependOnProperty(nameof(BaseProperty1))]
         public int BaseProperty2
         {
             get { return 2; }
-            set { this.RaisePropertyChanged("BaseProperty2"); }
+            set { this.RaisePropertyChanged(nameof(BaseProperty2)); }
         }
 
-        [DependOnProperty("BaseProperty1")]
+        [DependOnProperty(nameof(BaseProperty1))]
         public int InheritProperty1
         {
             get { return 3; }
-            set { this.RaisePropertyChanged("InheritProperty1"); }
+            set { this.RaisePropertyChanged(nameof(InheritProperty1)); }
         }
 
-        [DependOnProperty("BaseProperty2")]
+        [DependOnProperty(nameof(BaseProperty2))]
         public int InheritProperty2
         {
             get { return 4; }
-            set { this.RaisePropertyChanged("InheritProperty2"); }
+            set { this.RaisePropertyChanged(nameof(InheritProperty2)); }
         }
 
         public void Validate(int baseCount1, int baseCount2,
                              int inheritCount1, int inheritCount2)
         {
-            Assert.AreEqual(baseCount1, this["BaseProperty1"]);
-            Assert.AreEqual(baseCount2, this["BaseProperty2"]);
-            Assert.AreEqual(inheritCount1, this["InheritProperty1"]);
-            Assert.AreEqual(inheritCount2, this["InheritProperty2"]);
+            Assert.AreEqual(baseCount1, this[nameof(BaseProperty1)]);
+            Assert.AreEqual(baseCount2, this[nameof(BaseProperty2)]);
+            Assert.AreEqual(inheritCount1, this[nameof(InheritProperty1)]);
+            Assert.AreEqual(inheritCount2, this[nameof(InheritProperty2)]);
         }
     }
 
     internal class DerivedModel : BaseModel
     {
-        [DependOnProperty(typeof(BaseModel), "InheritProperty1")]
+        [DependOnProperty(typeof(BaseModel), nameof(InheritProperty1))]
         public int DerivedProperty1
         {
             get { return 10; }
-            set { this.RaisePropertyChanged("DerivedProperty1"); }
+            set { this.RaisePropertyChanged(nameof(DerivedProperty1)); }
         }
 
         public void Validate(int baseCount1, int baseCount2,
@@ -62,12 +62,12 @@ namespace Ragnarok.ObjectModel.Tests
         {
             base.Validate(baseCount1, baseCount2, inheritCount1, inheritCount2);
 
-            Assert.AreEqual(derivedCount, this["DerivedProperty1"]);
+            Assert.AreEqual(derivedCount, this[nameof(DerivedProperty1)]);
         }
     }
 
     [TestFixture()]
-    internal class NotifyObjectTest
+    public class NotifyObjectTest
     {
         [Test()]
         public void DependOnPropertyTest()

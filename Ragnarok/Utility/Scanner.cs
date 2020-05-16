@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
-using System.IO;
-using System.Text;
+using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
 
 namespace Ragnarok.Utility
@@ -10,6 +10,7 @@ namespace Ragnarok.Utility
     /// <summary>
     /// 解析失敗時に投げられる例外です。
     /// </summary>
+    [Serializable()]
     public class ParseException : Exception
     {
         /// <summary>
@@ -34,6 +35,14 @@ namespace Ragnarok.Utility
             : base(message, innerException)
         {
         }
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        protected ParseException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+        }
     }
 
     /// <summary>
@@ -41,11 +50,11 @@ namespace Ragnarok.Utility
     /// </summary>
     public class Scanner
     {
-        private static readonly string WordRegexPattern = @"\G\s*(\w+)(\s+|$)";
-        private static readonly string QuotedTextRegexPattern = @"\G\s*""((\""|[^""])*?)""";
-        private static readonly string TextRegexPattern = @"\G\s*(.*?)";
-        private static readonly string IntRegexPattern = @"\G\s*((\+|\-)?[0-9]+)";
-        private static readonly string DoubleRegexPattern = @"\G\s*((\+|\-)?[0-9]+([.][0-9.]+)?)";
+        private const string WordRegexPattern = @"\G\s*(\w+)(\s+|$)";
+        private const string QuotedTextRegexPattern = @"\G\s*""((\""|[^""])*?)""";
+        private const string TextRegexPattern = @"\G\s*(.*?)";
+        private const string IntRegexPattern = @"\G\s*((\+|\-)?[0-9]+)";
+        private const string DoubleRegexPattern = @"\G\s*((\+|\-)?[0-9]+([.][0-9.]+)?)";
 
         private static readonly Regex WordRegex = new Regex(
             WordRegexPattern, RegexOptions.Compiled);
@@ -105,6 +114,7 @@ namespace Ragnarok.Utility
                     .ToArray());
 
             var newPattern = string.Format(
+                CultureInfo.InvariantCulture,
                 @"{0}\s*(({1})\s*|$)",
                 pattern,
                 escapedDelimiters);
@@ -124,7 +134,7 @@ namespace Ragnarok.Utility
 
             this.delimiters = delimiters;
 
-            if (delimiters.Count() == 1 && delimiters[0] == ",")
+            if (delimiters.Length == 1 && delimiters[0] == ",")
             {
                 this.quotedTextRegex = CommaQuotedTextRegex;
                 this.textRegex = CommaTextRegex;
@@ -170,7 +180,7 @@ namespace Ragnarok.Utility
                     "整数値の解析に失敗しました。");
             }
 
-            var result = int.Parse(m.Groups[1].Value);
+            var result = int.Parse(m.Groups[1].Value, CultureInfo.CurrentCulture);
             this.index += m.Length;
             return result;
         }
@@ -189,7 +199,7 @@ namespace Ragnarok.Utility
                     "小数値の解析に失敗しました。");
             }
 
-            var result = double.Parse(m.Groups[1].Value);
+            var result = double.Parse(m.Groups[1].Value, CultureInfo.CurrentCulture);
             this.index += m.Length;
             return result;
         }
@@ -279,7 +289,7 @@ namespace Ragnarok.Utility
         {
             if (string.IsNullOrEmpty(text))
             {
-                throw new ArgumentNullException("text");
+                throw new ArgumentNullException(nameof(text));
             }
 
             SetDelimiters(",");

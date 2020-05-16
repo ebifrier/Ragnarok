@@ -52,7 +52,7 @@ using System;
 
 namespace FlintSharp.EnergyEasing
 {
-    public class TwoWay
+    public static class TwoWay
     {
         public static double Linear(double age, double lifetime)
         {

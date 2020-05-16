@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -38,7 +39,8 @@ namespace Ragnarok.Shogi.Csa
                     return "%ERROR";
             }
 
-            throw new ArgumentException("smoveType");
+            throw new ArgumentException(
+                "Enumの値が不正です。", nameof(smoveType));
         }
 
         /// <summary>
@@ -48,12 +50,13 @@ namespace Ragnarok.Shogi.Csa
         {
             if (move == null)
             {
-                throw new ArgumentNullException("move");
+                throw new ArgumentNullException(nameof(move));
             }
 
             if (!move.Validate())
             {
-                throw new ArgumentException("move");
+                throw new ArgumentException(
+                    "指し手が正しくありません。", nameof(move));
             }
 
             if (move.IsSpecialMove)
@@ -117,6 +120,11 @@ namespace Ragnarok.Shogi.Csa
         /// </summary>
         public static Move CsaToSpecialMove(this Board board, string csa)
         {
+            if (board == null)
+            {
+                throw new ArgumentNullException(nameof(board));
+            }
+
             var m = SpecialMoveRegex.Match(csa);
             if (!m.Success)
             {
@@ -168,12 +176,12 @@ namespace Ragnarok.Shogi.Csa
         {
             if (board == null)
             {
-                throw new ArgumentNullException("board");
+                throw new ArgumentNullException(nameof(board));
             }
 
             if (string.IsNullOrEmpty(csa))
             {
-                throw new ArgumentNullException("csa");
+                throw new ArgumentNullException(nameof(csa));
             }
 
             // 特殊な指し手
@@ -197,16 +205,16 @@ namespace Ragnarok.Shogi.Csa
                 BWType.None);
 
             // 移動前の位置
-            var srcFile = int.Parse(m.Groups[2].Value);
-            var srcRank = int.Parse(m.Groups[3].Value);
+            var srcFile = int.Parse(m.Groups[2].Value, CultureInfo.InvariantCulture);
+            var srcRank = int.Parse(m.Groups[3].Value, CultureInfo.InvariantCulture);
             var srcSquare =
                 (srcFile == 0 || srcRank == 0
                 ? (Square)null
                 : new Square(srcFile, srcRank));
 
             // 移動後の位置
-            var dstFile = int.Parse(m.Groups[4].Value);
-            var dstRank = int.Parse(m.Groups[5].Value);
+            var dstFile = int.Parse(m.Groups[4].Value, CultureInfo.InvariantCulture);
+            var dstRank = int.Parse(m.Groups[5].Value, CultureInfo.InvariantCulture);
             var dstSquare =
                 (dstFile == 0 || dstRank == 0
                 ? (Square)null
@@ -252,12 +260,12 @@ namespace Ragnarok.Shogi.Csa
         {
             if (board == null)
             {
-                throw new ArgumentNullException("board");
+                throw new ArgumentNullException(nameof(board));
             }
 
             if (csaList == null)
             {
-                throw new ArgumentNullException("csaList");
+                throw new ArgumentNullException(nameof(csaList));
             }
 
             var tmpBoard = board.Clone();

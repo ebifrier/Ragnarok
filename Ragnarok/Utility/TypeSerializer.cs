@@ -114,7 +114,7 @@ namespace Ragnarok.Utility
         {
             get
             {
-                if (this.index >= this.tokenList.Count())
+                if (this.index >= this.tokenList.Count)
                 {
                     return LexicalToken.End;
                 }
@@ -130,7 +130,7 @@ namespace Ragnarok.Utility
         {
             get
             {
-                if (this.index >= this.tokenList.Count())
+                if (this.index >= this.tokenList.Count)
                 {
                     return null;
                 } 
@@ -157,14 +157,14 @@ namespace Ragnarok.Utility
             if (mc == null || mc.Count == 0)
             {
                 throw new RagnarokException(
-                    string.Format("{0}: 型名のパースに失敗しました。", text));
+                    $"{text}: 型名のパースに失敗しました。");
             }
 
             var last = mc[mc.Count - 1];
             if (last.Index + last.Length < text.Length)
             {
                 throw new RagnarokException(
-                    string.Format("{0}: 型名のパースに失敗しました。", text));
+                    $"{text}: 型名のパースに失敗しました。");
             }
 
             this.tokenList = mc.OfType<Match>()
@@ -198,7 +198,7 @@ namespace Ragnarok.Utility
         {
             if ((object)type == null)
             {
-                throw new ArgumentNullException("type");
+                throw new ArgumentNullException(nameof(type));
             }
 
             /*if (type.ContainsGenericParameters)
@@ -222,7 +222,7 @@ namespace Ragnarok.Utility
                     // 再帰するのがポイント。
                     var paramNameList = type.GetGenericArguments()
                         .Select(_ => Serialize(_))
-                        .Select(_ => string.Format("[{0}]", _))
+                        .Select(_ => $"[{_}]")
                         .ToArray();
                     var paramStr = string.Join(", ", paramNameList);
 
@@ -242,7 +242,7 @@ namespace Ragnarok.Utility
         {
             if (string.IsNullOrEmpty(serializedTypeName))
             {
-                throw new ArgumentNullException("serializedTypeName");
+                throw new ArgumentNullException(nameof(serializedTypeName));
             }
             
             // レキサからトークンを取り出しながら構文解析を行います。
@@ -285,9 +285,7 @@ namespace Ragnarok.Utility
             if ((object)type == null)
             {
                 throw new TypeLoadException(
-                    string.Format(
-                        "型'{0}'が現在のドメインで見つかりませんでした。",
-                        lexer.Name));
+                    $"型'{lexer.Name}'が現在のドメインで見つかりませんでした。");
             }
 
             if (lexer.Token == LexicalToken.GenericTypeName)

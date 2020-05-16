@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text;
 
 namespace Ragnarok.Net
 {
@@ -68,6 +68,7 @@ namespace Ragnarok.Net
         /// <summary>
         /// 送受信されたデータを取得します。
         /// </summary>
+        [SuppressMessage("Microsoft.Performance", "CA1819")]
         public byte[] Data
         {
             get;

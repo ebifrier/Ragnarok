@@ -75,7 +75,7 @@ namespace Ragnarok.Forms
             }
             else
             {
-                func();
+                func?.Invoke();
             }
         }
 
@@ -90,7 +90,7 @@ namespace Ragnarok.Forms
             }
             else
             {
-                func();
+                func?.Invoke();
             }
         }
 
@@ -99,13 +99,13 @@ namespace Ragnarok.Forms
         /// </summary>
         public static void UIProcess(this Control control, Action func)
         {
-            if (control.InvokeRequired)
+            if (control?.InvokeRequired == true)
             {
                 control.BeginInvoke(func);
             }
             else
             {
-                func();
+                func?.Invoke();
             }
         }
 

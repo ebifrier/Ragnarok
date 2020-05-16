@@ -37,7 +37,7 @@ namespace Ragnarok.Shogi
         {
             if (string.IsNullOrEmpty(text))
             {
-                throw new ArgumentNullException("text");
+                throw new ArgumentNullException(nameof(text));
             }
 
             // 指し手の解析前には文字列の正規化が必要ですが、
@@ -163,7 +163,7 @@ namespace Ragnarok.Shogi
             var list = boardMoveListTmp.ToList();
             return (
                 multipleIsNull ?
-                (list.Count() == 1 ? list.FirstOrDefault() : null) :
+                (list.Count == 1 ? list.FirstOrDefault() : null) :
                 list.FirstOrDefault());
         }
 
@@ -213,7 +213,7 @@ namespace Ragnarok.Shogi
             if (bm.MovePiece == Piece.Ryu || bm.MovePiece == Piece.Uma)
             {
                 // 竜、馬の場合、「直」は使わずに「右左」のみを使用します。
-                if (boardMoveList.Count() == 1)
+                if (boardMoveList.Count == 1)
                 {
                     return (referenceMove.RelFileType == RelFileType.None);
                 }
@@ -317,6 +317,11 @@ namespace Ragnarok.Shogi
         public static Move ConvertMoveFromLiteral(this Board board, LiteralMove move,
                                                   bool multipleIsNull = false)
         {
+            if (board == null)
+            {
+                throw new ArgumentNullException(nameof(board));
+            }
+
             return board.ConvertMoveFromLiteral(move, board.Turn, multipleIsNull);
         }
 
@@ -330,7 +335,7 @@ namespace Ragnarok.Shogi
         {
             if (board == null)
             {
-                throw new ArgumentNullException("board");
+                throw new ArgumentNullException(nameof(board));
             }
 
             if (move == null)
@@ -382,7 +387,12 @@ namespace Ragnarok.Shogi
         {
             if (board == null)
             {
-                throw new ArgumentNullException("board");
+                throw new ArgumentNullException(nameof(board));
+            }
+
+            if (moveList == null)
+            {
+                throw new ArgumentNullException(nameof(moveList));
             }
 
             // 駒を動かしながら差し手を検証するため、
@@ -477,7 +487,7 @@ namespace Ragnarok.Shogi
             var tmpMoveList = boardMoveList.Where(
                 mv => mv.ActionType == referenceMove.ActionType)
                 .ToList();
-            if (tmpMoveList.Count() != boardMoveList.Count())
+            if (tmpMoveList.Count != boardMoveList.Count)
             {
                 move.ActionType = referenceMove.ActionType;
             }
@@ -524,7 +534,7 @@ namespace Ragnarok.Shogi
             }).ToList();
 
             // 段情報でフィルターされた場合は、段の移動情報を付加します。
-            if (tmpMoveList.Count() != boardMoveList.Count())
+            if (tmpMoveList.Count != boardMoveList.Count)
             {
                 var relRank2 = relRank * referenceMove.BWType.Sign();
 
@@ -562,7 +572,7 @@ namespace Ragnarok.Shogi
             }
 
             if ((move.Piece == Piece.Ryu || move.Piece == Piece.Uma) &&
-                boardMoveList.Count() == 2)
+                boardMoveList.Count == 2)
             {
                 // 馬と竜の場合は'直'ではなく、右と左しか使いません。
                 var other = (
@@ -606,7 +616,7 @@ namespace Ragnarok.Shogi
                 }).ToList();
 
                 // 列情報でフィルターされた場合は、列の移動情報を付加します。
-                if (tmpMoveList.Count() != boardMoveList.Count())
+                if (tmpMoveList.Count != boardMoveList.Count)
                 {
                     var relFile2 = relFile * referenceMove.BWType.Sign();
 
@@ -643,12 +653,12 @@ namespace Ragnarok.Shogi
         {
             if (board == null)
             {
-                throw new ArgumentNullException("board");
+                throw new ArgumentNullException(nameof(board));
             }
 
             if (move == null || !move.Validate())
             {
-                throw new ArgumentNullException("move");
+                throw new ArgumentNullException(nameof(move));
             }
 
             if (move.IsSpecialMove)
@@ -691,7 +701,12 @@ namespace Ragnarok.Shogi
         {
             if (board == null)
             {
-                throw new ArgumentNullException("board");
+                throw new ArgumentNullException(nameof(board));
+            }
+
+            if (moveList == null)
+            {
+                throw new ArgumentNullException(nameof(moveList));
             }
 
             var lmoveList = new List<LiteralMove>();
@@ -727,22 +742,24 @@ namespace Ragnarok.Shogi
         {
             if (board == null)
             {
-                throw new ArgumentNullException("board");
+                throw new ArgumentNullException(nameof(board));
             }
 
             if (!board.Validate())
             {
-                throw new ArgumentException("board");
+                throw new ArgumentException(
+                    "局面の状態が正しくありません。", nameof(board));
             }
 
             if (lmove == null)
             {
-                throw new ArgumentNullException("lmove");
+                throw new ArgumentNullException(nameof(lmove));
             }
 
             if (!lmove.Validate())
             {
-                throw new ArgumentException("lmove");
+                throw new ArgumentException(
+                    "指し手の状態が正しくありません。", nameof(lmove));
             }
 
             // 投了などの特殊な指し手は常にさせることにします。
@@ -787,7 +804,7 @@ namespace Ragnarok.Shogi
         {
             if (board == null)
             {
-                throw new ArgumentNullException("board");
+                throw new ArgumentNullException(nameof(board));
             }
 
             if (fromNumber < 0)

@@ -95,7 +95,7 @@ namespace Ragnarok.Sound.Backend
                     return SoundStopReason.StoppedBySourceRemoval;
             }
 
-            throw new ArgumentException("cause");
+            throw new ArgumentException("値が正しくありません。", nameof(cause));
         }
 
         /// <summary>
@@ -105,7 +105,7 @@ namespace Ragnarok.Sound.Backend
         {
             if (sound == null)
             {
-                throw new ArgumentNullException("sound");
+                throw new ArgumentNullException(nameof(sound));
             }
 
             sound.setSoundStopEventReceiver(this);

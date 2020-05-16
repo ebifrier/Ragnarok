@@ -13,7 +13,7 @@ namespace Ragnarok.Shogi.Tests
     /// Moveに関するテストを行います。
     /// </summary>
     [TestFixture]
-    internal sealed class MoveTest
+    public sealed class MoveTest
     {
         [Test]
         public void SerializeTest()

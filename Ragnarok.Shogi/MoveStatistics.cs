@@ -60,15 +60,15 @@ namespace Ragnarok.Shogi
         public LiteralMove OpponentMove
         {
             get { return this.opponentMove; }
-            set { SetValue("OpponentMove", value, ref this.opponentMove); }
+            set { SetValue(nameof(OpponentMove), value, ref this.opponentMove); }
         }
 
         /// <summary>
         /// 指し手を得票ポイントが高い順に取得します。
         /// </summary>
-        [DependOnProperty("OpponentMove")]
-        [DependOnProperty("DefaultSkillPoint")]
-        public MovePointPair[] MoveList
+        [DependOnProperty(nameof(OpponentMove))]
+        [DependOnProperty(nameof(DefaultSkillPoint))]
+        public List<MovePointPair> MoveList
         {
             get
             {
@@ -89,7 +89,7 @@ namespace Ragnarok.Shogi
                              Move = g.Key,
                              Point = total,
                              Timestamp = timestamp,
-                         }).ToArray();
+                         }).ToList();
                 }
             }
         }
@@ -99,10 +99,16 @@ namespace Ragnarok.Shogi
         /// </summary>
         private LiteralMove ModifyMove(LiteralMove move)
         {
-            /*if (move == null || !move.Validate())
+            if (move == null)
             {
-                throw new Exception("与えられた指し手が正しくありません。");
-            }*/
+                throw new ArgumentNullException(nameof(move));
+            }
+
+            if (!move.Validate())
+            {
+                throw new ArgumentException(
+                    "与えられた指し手が正しくありません。", nameof(move));
+            }
 
             using (LazyLock())
             {
@@ -138,7 +144,7 @@ namespace Ragnarok.Shogi
             {
                 this.skillPointTable[skillLevel] = point;
 
-                this.RaisePropertyChanged("MoveList");
+                this.RaisePropertyChanged(nameof(MoveList));
             }
         }
 
@@ -164,9 +170,14 @@ namespace Ragnarok.Shogi
         /// </summary>
         public void Vote(ShogiPlayer player, LiteralMove move, DateTime timestamp)
         {
-            if (move == null || player == null)
+            if (player == null)
             {
-                throw new ArgumentNullException();
+                throw new ArgumentNullException(nameof(player));
+            }
+
+            if (move == null)
+            {
+                throw new ArgumentNullException(nameof(move));
             }
 
             using (LazyLock())
@@ -184,7 +195,7 @@ namespace Ragnarok.Shogi
                     Timestamp = timestamp,
                 };
 
-                this.RaisePropertyChanged("MoveList");
+                this.RaisePropertyChanged(nameof(MoveList));
             }
         }
 
@@ -219,7 +230,7 @@ namespace Ragnarok.Shogi
             {
                 this.moveDatas.Clear();
 
-                this.RaisePropertyChanged("MoveList");
+                this.RaisePropertyChanged(nameof(MoveList));
             }
         }
 

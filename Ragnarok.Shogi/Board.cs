@@ -279,7 +279,7 @@ namespace Ragnarok.Shogi
         {
             get
             {
-                return this.moveList.Count();
+                return this.moveList.Count;
             }
         }
 
@@ -301,7 +301,7 @@ namespace Ragnarok.Shogi
         {
             get
             {
-                return this.redoList.Count();
+                return this.redoList.Count;
             }
         }
 
@@ -400,7 +400,7 @@ namespace Ragnarok.Shogi
         {
             get
             {
-                return this.moveList.Count();
+                return this.moveList.Count;
             }
         }
 
@@ -696,7 +696,7 @@ namespace Ragnarok.Shogi
         {
             if (move == null || !move.Validate())
             {
-                throw new ArgumentNullException("move");
+                throw new ArgumentNullException(nameof(move));
             }
 
             // 投了などの特殊な指し手がある場合はゲームが既に終了しているので
@@ -880,7 +880,7 @@ namespace Ragnarok.Shogi
         /// </summary>
         public bool CanDrop(BWType bwType, Square square, PieceType pieceType)
         {
-            if (this[square] != null)
+            if (square == null || this[square] != null)
             {
                 return false;
             }
@@ -1000,7 +1000,7 @@ namespace Ragnarok.Shogi
         {
             if (move == null)
             {
-                throw new ArgumentNullException("move");
+                throw new ArgumentNullException(nameof(move));
             }
 
             return CanPromote(move.MovePiece, move.BWType,
@@ -1063,7 +1063,7 @@ namespace Ragnarok.Shogi
         {
             if (move == null)
             {
-                throw new ArgumentNullException("move");
+                throw new ArgumentNullException(nameof(move));
             }
 
             return IsPromoteForce(move.MovePiece, move.BWType, move.DstSquare);
@@ -1290,7 +1290,7 @@ namespace Ragnarok.Shogi
         /// </summary>
         public bool BoardEquals(Board other)
         {
-            if ((object)other == null)
+            if (other == null)
             {
                 return false;
             }
@@ -1398,9 +1398,9 @@ namespace Ragnarok.Shogi
         /// </summary>
         private byte[] SerializeMoveList(List<Move> moveList)
         {
-            var result = new byte[4 * moveList.Count()];
+            var result = new byte[4 * moveList.Count];
 
-            for (var i = 0; i < moveList.Count(); ++i)
+            for (var i = 0; i < moveList.Count; ++i)
             {
                 var bits = (int)moveList[i].Serialize();
 
@@ -1424,8 +1424,8 @@ namespace Ragnarok.Shogi
                 return new List<Move>();
             }
 
-            var result = new List<Move>(moveListBytes.Count() / 4);
-            for (var i = 0; i < moveListBytes.Count(); i += 4)
+            var result = new List<Move>(moveListBytes.Length / 4);
+            for (var i = 0; i < moveListBytes.Length; i += 4)
             {
                 var bits = (
                     (moveListBytes[i + 0] <<  0) |

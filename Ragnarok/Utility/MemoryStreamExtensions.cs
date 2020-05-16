@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 
 namespace Ragnarok.Utility
@@ -23,8 +24,12 @@ namespace Ragnarok.Utility
         public static void WriteToReadStream(this MemoryStream stream, byte[] buffer,
                                              int offset, int count)
         {
-            var oldPosition = -1L;
+            if (stream == null)
+            {
+                throw new ArgumentNullException(nameof(stream));
+            }
 
+            var oldPosition = -1L;
             try
             {
                 // 現在の読み込み位置を保存してから、データを書き込みます。
@@ -32,7 +37,7 @@ namespace Ragnarok.Utility
 
                 // データを最後尾に書き込みます。
                 stream.Seek(0, SeekOrigin.End);
-                stream.Write(buffer, 0, count);
+                stream.Write(buffer, offset, count);
             }
             finally
             {

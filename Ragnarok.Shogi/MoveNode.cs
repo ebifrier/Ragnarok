@@ -156,7 +156,7 @@ namespace Ragnarok.Shogi
         /// </summary>
         public int NextNodeCount
         {
-            get { return NextNodes.Count(); }
+            get { return NextNodes.Count; }
         }
 
         /// <summary>
@@ -193,7 +193,7 @@ namespace Ragnarok.Shogi
         {
             if (node == null)
             {
-                throw new ArgumentNullException("node");
+                throw new ArgumentNullException(nameof(node));
             }
 
             if (node.ParentNode != null)
@@ -225,7 +225,7 @@ namespace Ragnarok.Shogi
                 NextNode.MakeString(sb, nmoves + 1);
             }
 
-            for (var i = 1; i < NextNodes.Count(); ++i)
+            for (var i = 1; i < NextNodes.Count; ++i)
             {
                 sb.AppendLine();
                 sb.Append(new string(' ', 17 * nmoves));
@@ -250,9 +250,9 @@ namespace Ragnarok.Shogi
             while (node != null)
             {
                 // 変化の重複を削除します。
-                for (var i = 0; i < node.NextNodes.Count(); ++i)
+                for (var i = 0; i < node.NextNodes.Count; ++i)
                 {
-                    for (var j = i + 1; j < node.NextNodes.Count(); )
+                    for (var j = i + 1; j < node.NextNodes.Count; )
                     {
                         var baseNode = node.NextNodes[i];
                         var compNode = node.NextNodes[j];

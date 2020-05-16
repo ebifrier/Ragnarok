@@ -43,7 +43,7 @@ namespace Ragnarok.OpenGL
             {
                 if (value == null)
                 {
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException(nameof(value));
                 }
 
                 if (this.text != value)
@@ -64,7 +64,7 @@ namespace Ragnarok.OpenGL
             {
                 if (value == null)
                 {
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException(nameof(value));
                 }
 
                 if (this.font != value)
@@ -160,7 +160,7 @@ namespace Ragnarok.OpenGL
             {
                 if (value == null)
                 {
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException(nameof(value));
                 }
 
                 Font = value.Font;
@@ -252,12 +252,18 @@ namespace Ragnarok.OpenGL
                         // MONOで使えないため使わないようにする。
                         //path.Widen(pen, new Matrix());
 
-                        bounds = path.GetBounds(new Matrix(), pen);
+                        using (var matrix = new Matrix())
+                        {
+                            bounds = path.GetBounds(matrix, pen);
+                        }
                     }
                 }
                 else
                 {
-                    bounds = path.GetBounds(new Matrix());
+                    using (var matrix = new Matrix())
+                    {
+                        bounds = path.GetBounds(matrix);
+                    }
                 }
 
                 if (IsStretchSize)

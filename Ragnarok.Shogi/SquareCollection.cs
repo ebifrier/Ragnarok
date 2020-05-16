@@ -203,7 +203,7 @@ namespace Ragnarok.Shogi
         {
             if (element == null)
             {
-                throw new ArgumentNullException("element");
+                throw new ArgumentNullException(nameof(element));
             }
 
             this.implList.Add(element);
@@ -216,7 +216,7 @@ namespace Ragnarok.Shogi
         {
             if (elements == null)
             {
-                throw new ArgumentNullException("elements");
+                throw new ArgumentNullException(nameof(elements));
             }
 
             this.implList.AddRange(elements);
@@ -247,7 +247,7 @@ namespace Ragnarok.Shogi
         {
             if (source == null)
             {
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
             }
 
             var list = source.Split(

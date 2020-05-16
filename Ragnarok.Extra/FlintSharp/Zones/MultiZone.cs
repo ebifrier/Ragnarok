@@ -67,9 +67,14 @@ namespace FlintSharp.Zones
         /// <summary>
         /// The addZone method is used to add a zone into this MultiZone object.
         /// </summary>
-        /// <param name="zone"> The zone you want to add.</param>
+        /// <param name="zone">The zone you want to add.</param>
         public void AddZone(IZone zone)
         {
+            if (zone == null)
+            {
+                return;
+            }
+
             double area = zone.GetArea();
 
             m_zones.Add(zone);

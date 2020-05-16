@@ -19,7 +19,8 @@ namespace Ragnarok.Net
     /// </remarks>
     public class Connection : ILogObject, IDisposable
     {
-        private static readonly int[] idCounter = new int[] { 0 };
+        private static readonly object idCounterLock = new object();
+        private static int idCounter = 0;
         private readonly object socketLock = new object();
         private ReentrancyLock connectingLock = new ReentrancyLock();
         private bool disposed = false;
@@ -56,9 +57,7 @@ namespace Ragnarok.Net
         {
             get
             {
-                var name = Name ?? "";
-
-                return string.Format("{0}[{1,8:D8}]", name, this.Id);
+                return $"{Name ?? ""}[{this.Id,8:D8}]";
             }
         }
 
@@ -559,7 +558,7 @@ namespace Ragnarok.Net
         {
             if (data == null)
             {
-                throw new ArgumentNullException("data");
+                throw new ArgumentNullException(nameof(data));
             }
 
             lock (this.socketLock)
@@ -581,7 +580,7 @@ namespace Ragnarok.Net
         {
             if (data == null)
             {
-                throw new ArgumentNullException("data");
+                throw new ArgumentNullException(nameof(data));
             }
 
             lock (this.socketLock)
@@ -626,16 +625,16 @@ namespace Ragnarok.Net
         /// </summary>
         protected static int GetNextConnectionId()
         {
-            lock (idCounter)
+            lock (idCounterLock)
             {
-                if (idCounter[0] == int.MaxValue)
+                if (idCounter >= int.MaxValue)
                 {
-                    idCounter[0] = 0;
+                    idCounter = 0;
                 }
 
-                idCounter[0] += 1;
+                idCounter += 1;
 
-                return idCounter[0];
+                return idCounter;
             }
         }
 
@@ -658,16 +657,6 @@ namespace Ragnarok.Net
         }
 
         /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        [Obsolete("Connection()を使ってください。")]
-        public Connection(Socket socket)
-            : this()
-        {
-            SetSocket(socket);
-        }
-
-        /// <summary>
         /// デストラクタ
         /// </summary>
         ~Connection()
@@ -680,14 +669,14 @@ namespace Ragnarok.Net
         /// </summary>
         public void Dispose()
         {
-            GC.SuppressFinalize(this);
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         /// <summary>
         /// オブジェクトを破棄します。
         /// </summary>
-        protected void Dispose(bool disposing)
+        protected virtual void Dispose(bool disposing)
         {
             if (!this.disposed)
             {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 
 using Ragnarok.Utility;
@@ -60,7 +60,7 @@ namespace Ragnarok.Shogi.Kif
         {
             if (string.IsNullOrEmpty(line))
             {
-                throw new ArgumentNullException("line");
+                throw new ArgumentNullException(nameof(line));
             }
 
             if (IsBoardParsing)
@@ -189,9 +189,7 @@ namespace Ragnarok.Shogi.Kif
                 if (line.Length < 21)
                 {
                     throw new ShogiException(
-                        string.Format(
-                            "局面の{0}段目が正しくありません。",
-                            rank));
+                        $"局面の{rank}段目が正しくありません。");
                 }
 
                 for (var file = 1; file <= Board.BoardSize; ++file)
@@ -216,9 +214,7 @@ namespace Ragnarok.Shogi.Kif
             if (piece == null)
             {
                 throw new ShogiException(
-                    string.Format(
-                        "局面の{0}段目の駒'{1}'が正しくありません。",
-                        rank, pieceStr));
+                    $"局面の{rank}段目の駒'{pieceStr}'が正しくありません。");
             }
 
             if (piece.PieceType == PieceType.None)
@@ -264,6 +260,7 @@ namespace Ragnarok.Shogi.Kif
             {
                 throw new ShogiException(
                     string.Format(
+                        CultureInfo.CurrentCulture,
                         "{0}手の持ち駒'{1}'が正しくありません。",
                         bwType == BWType.Black ? "先" : "後",
                         handPieceText));
@@ -273,6 +270,7 @@ namespace Ragnarok.Shogi.Kif
             {
                 throw new ShogiException(
                     string.Format(
+                        CultureInfo.CurrentCulture,
                         "{0}手の持ち駒に成り駒があります。",
                         bwType == BWType.Black ? "先" : "後"));
             }
@@ -284,7 +282,7 @@ namespace Ragnarok.Shogi.Kif
                 var numText = handPieceText.Substring(1);
                 var normalized = StringNormalizer.NormalizeNumber(numText, true);
                 
-                count = int.Parse(normalized);
+                count = int.Parse(normalized, CultureInfo.CurrentCulture);
             }
 
             return Tuple.Create(piece.PieceType, count);

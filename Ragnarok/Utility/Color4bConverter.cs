@@ -62,9 +62,9 @@ namespace Ragnarok.Utility
                                          CultureInfo culture, object value,
                                          Type destinationType)
         {
-            if (typeof(string).Equals(destinationType))
+            if (destinationType == typeof(string))
             {
-                return value.ToString();
+                return value?.ToString();
             }
 
             return base.ConvertTo(context, culture, value, destinationType);

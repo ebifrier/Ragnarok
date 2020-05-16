@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Runtime.Serialization;
 
 using Ragnarok.Utility;
@@ -127,7 +127,7 @@ namespace Ragnarok.Shogi
                     return (IsPromote ? ActionType.Promote : ActionType.None);
                 }
 
-                throw new ShogiException(
+                throw new InvalidOperationException(
                     "指し手が正しくありません。");
             }
         }
@@ -164,6 +164,7 @@ namespace Ragnarok.Shogi
             if (SpecialMoveType != SpecialMoveType.None)
             {
                 return string.Format(
+                    CultureInfo.CurrentCulture,
                     "{0}{1}",
                     Stringizer.ToString(BWType),
                     EnumEx.GetLabel(SpecialMoveType));
@@ -171,6 +172,7 @@ namespace Ragnarok.Shogi
             else if (ActionType == ActionType.Drop)
             {
                 return string.Format(
+                    CultureInfo.CurrentCulture,
                     "{0}{1}{2}{3}打",
                     Stringizer.ToString(BWType),
                     IntConverter.Convert(NumberType.Big, DstSquare.File),
@@ -180,6 +182,7 @@ namespace Ragnarok.Shogi
             else if (HasSameSquareAsPrev)
             {
                 return string.Format(
+                    CultureInfo.CurrentCulture,
                     "{0}同　{1}{2}({3}{4})",
                     Stringizer.ToString(BWType),
                     MovePiece,
@@ -190,6 +193,7 @@ namespace Ragnarok.Shogi
             else
             {
                 return string.Format(
+                    CultureInfo.CurrentCulture,
                     "{0}{1}{2}{3}{4}({5}{6})",
                     Stringizer.ToString(BWType),
                     IntConverter.Convert(NumberType.Big, DstSquare.File),
@@ -518,7 +522,8 @@ namespace Ragnarok.Shogi
         {
             if (smoveType == SpecialMoveType.None)
             {
-                throw new ArgumentException("smoveType");
+                throw new ArgumentException(
+                    "Enumの値が正しくありません。", nameof(smoveType));
             }
 
             return new Move
@@ -537,27 +542,32 @@ namespace Ragnarok.Shogi
         {
             if (turn == BWType.None)
             {
-                throw new ArgumentException("turn");
+                throw new ArgumentException(
+                    "Enumの値が正しくありません。", nameof(turn));
             }
 
             if (src == null || !src.Validate())
             {
-                throw new ArgumentException("src");
+                throw new ArgumentException(
+                    "移動元のマスが正しくありません。", nameof(src));
             }
 
             if (dst == null || !dst.Validate())
             {
-                throw new ArgumentException("dst");
+                throw new ArgumentException(
+                    "移動先のマスが正しくありません。", nameof(dst));
             }
 
             if (movePiece == null || !movePiece.Validate())
             {
-                throw new ArgumentException("movePiece");
+                throw new ArgumentException(
+                    "動かす駒が正しくありません。", nameof(movePiece));
             }
 
             if (tookPiece != null && !tookPiece.Validate())
             {
-                throw new ArgumentException("tookPiece");
+                throw new ArgumentException(
+                    "取った駒が正しくありません。", nameof(tookPiece));
             }
 
             return new Move
@@ -575,21 +585,24 @@ namespace Ragnarok.Shogi
         /// 駒を打つ手を生成します。
         /// </summary>
         public static Move CreateDrop(BWType turn, Square dst,
-                                           PieceType dropPieceType)
+                                      PieceType dropPieceType)
         {
             if (turn == BWType.None)
             {
-                throw new ArgumentException("turn");
+                throw new ArgumentException(
+                    "Enumの値が正しくありません。", nameof(turn));
             }
 
             if (dst == null || !dst.Validate())
             {
-                throw new ArgumentException("dst");
+                throw new ArgumentException(
+                    "Squareの値が正しくありません。", nameof(dst));
             }
 
             if (dropPieceType == PieceType.None)
             {
-                throw new ArgumentException("dropPieceType");
+                throw new ArgumentException(
+                    "Enumの値が正しくありません。", nameof(dropPieceType));
             }
 
             return new Move

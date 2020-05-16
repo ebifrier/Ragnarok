@@ -77,7 +77,7 @@ namespace Ragnarok.Utility
         {
             if (typeof(string).Equals(destinationType))
             {
-                return value.ToString();
+                return $"{value}";
             }
 
             return base.ConvertTo(context, culture, value, destinationType);

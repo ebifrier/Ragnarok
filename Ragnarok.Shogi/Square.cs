@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Runtime.Serialization;
 
 namespace Ragnarok.Shogi
@@ -65,7 +65,7 @@ namespace Ragnarok.Shogi
         /// </summary>
         public override string ToString()
         {
-            return string.Format("{0}{1}", File, Rank);
+            return $"{File}{Rank}";
         }
 
         /// <summary>
@@ -75,7 +75,7 @@ namespace Ragnarok.Shogi
         {
             if (source == null)
             {
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
             }
 
             var trimmedSource = source.Trim();
@@ -85,8 +85,12 @@ namespace Ragnarok.Shogi
                     source + ": Square型への変換に失敗しました。");
             }
 
-            var file = int.Parse(trimmedSource.Substring(0, 1));
-            var rank = int.Parse(trimmedSource.Substring(1, 1));
+            var file = int.Parse(
+                trimmedSource.Substring(0, 1),
+                CultureInfo.InvariantCulture);
+            var rank = int.Parse(
+                trimmedSource.Substring(1, 1),
+                CultureInfo.InvariantCulture);
             var square = new Square(file, rank);
 
             if (!square.Validate())
@@ -197,7 +201,7 @@ namespace Ragnarok.Shogi
         {
             if (index < 0 || 81 <= index)
             {
-                throw new ArgumentException("index");
+                throw new IndexOutOfRangeException();
             }
 
             File = (index % 9) + 1;

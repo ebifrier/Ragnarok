@@ -117,56 +117,56 @@ namespace FlintSharp.Zones
                 case ZonePosition.TopLeft:
                     if (m_direction == ZoneDirection.Vertical)
                     {
-                        m_x = m_left;
-                        m_y = m_top - m_stepY;
+                        m_x = Left;
+                        m_y = Top - m_stepY;
                         UpdateFunction = new UpdateDelegate(UpdateLocationTopLeftVertical);
                     }
                     else
                     {
-                        m_x = m_left - m_stepX;
-                        m_y = m_top;
+                        m_x = Left - m_stepX;
+                        m_y = Top;
                         UpdateFunction = new UpdateDelegate(UpdateLocationTopLeftHorizontal);
                     }
                     break;
                 case ZonePosition.TopRight:
                     if (m_direction == ZoneDirection.Vertical)
                     {
-                        m_x = m_right - 1;
-                        m_y = m_top - m_stepY;
+                        m_x = Right - 1;
+                        m_y = Top - m_stepY;
                         UpdateFunction = new UpdateDelegate(UpdateLocationTopRightVertical);
                     }
                     else
                     {
-                        m_x = m_right - 1 + m_stepX;
-                        m_y = m_top;
+                        m_x = Right - 1 + m_stepX;
+                        m_y = Top;
                         UpdateFunction = new UpdateDelegate(UpdateLocationTopRightHorizontal);
                     }
                     break;
                 case ZonePosition.BottomLeft:
                     if (m_direction == ZoneDirection.Vertical)
                     {
-                        m_x = m_left;
-                        m_y = m_bottom - 1 + m_stepY;
+                        m_x = Left;
+                        m_y = Bottom - 1 + m_stepY;
                         UpdateFunction = new UpdateDelegate(UpdateLocationBottomLeftVertical);
                     }
                     else
                     {
-                        m_x = m_left - m_stepX;
-                        m_y = m_bottom - 1;
+                        m_x = Left - m_stepX;
+                        m_y = Bottom - 1;
                         UpdateFunction = new UpdateDelegate(UpdateLocationBottomLeftHorizontal);
                     }
                     break;
                 case ZonePosition.BottomRight:
                     if (m_direction == ZoneDirection.Vertical)
                     {
-                        m_x = m_right - 1;
-                        m_y = m_bottom - 1 + m_stepY;
+                        m_x = Right - 1;
+                        m_y = Bottom - 1 + m_stepY;
                         UpdateFunction = new UpdateDelegate(UpdateLocationBottomRightVertical);
                     }
                     else
                     {
-                        m_x = m_right - 1 + m_stepX;
-                        m_y = m_bottom - 1;
+                        m_x = Right - 1 + m_stepX;
+                        m_y = Bottom - 1;
                         UpdateFunction = new UpdateDelegate(UpdateLocationBottomRightHorizontal);
                     }
                     break;
@@ -183,13 +183,13 @@ namespace FlintSharp.Zones
         {
             m_x += m_stepX;
 
-            if (m_x >= m_right)
+            if (m_x >= Right)
             {
-                m_x -= m_width;
+                m_x -= Width;
                 m_y += m_stepY;
 
-                if (m_y >= m_bottom)
-                    m_y -= m_height;
+                if (m_y >= Bottom)
+                    m_y -= Height;
             }
         }
 
@@ -197,13 +197,13 @@ namespace FlintSharp.Zones
         {
             m_x -= m_stepX;
 
-            if (m_x < m_left)
+            if (m_x < Left)
             {
-                m_x += m_width;
+                m_x += Width;
                 m_y += m_stepY;
 
-                if (m_y >= m_bottom)
-                    m_y -= m_height;
+                if (m_y >= Bottom)
+                    m_y -= Height;
             }
         }
 
@@ -211,13 +211,13 @@ namespace FlintSharp.Zones
         {
             m_x += m_stepX;
 
-            if (m_x >= m_right)
+            if (m_x >= Right)
             {
-                m_x -= m_width;
+                m_x -= Width;
                 m_y -= m_stepY;
 
-                if (m_y < m_top)
-                    m_y += m_height;
+                if (m_y < Top)
+                    m_y += Height;
             }
         }
 
@@ -225,13 +225,13 @@ namespace FlintSharp.Zones
         {
             m_x -= m_stepX;
 
-            if (m_x < m_left)
+            if (m_x < Left)
             {
-                m_x += m_width;
+                m_x += Width;
                 m_y -= m_stepY;
 
-                if (m_y < m_top)
-                    m_y += m_height;
+                if (m_y < Top)
+                    m_y += Height;
             }
         }
 
@@ -239,13 +239,13 @@ namespace FlintSharp.Zones
         {
             m_y += m_stepY;
 
-            if (m_y >= m_bottom)
+            if (m_y >= Bottom)
             {
-                m_y -= m_height;
+                m_y -= Height;
                 m_x += m_stepX;
 
-                if (m_x >= m_right)
-                    m_x -= m_width;
+                if (m_x >= Right)
+                    m_x -= Width;
             }
         }
 
@@ -253,13 +253,13 @@ namespace FlintSharp.Zones
         {
             m_y += m_stepY;
 
-            if (m_y >= m_bottom)
+            if (m_y >= Bottom)
             {
-                m_y -= m_height;
+                m_y -= Height;
                 m_x -= m_stepX;
 
-                if (m_x < m_left)
-                    m_x += m_width;
+                if (m_x < Left)
+                    m_x += Width;
             }
         }
 
@@ -267,13 +267,13 @@ namespace FlintSharp.Zones
         {
             m_y -= m_stepY;
 
-            if (m_y < m_top)
+            if (m_y < Top)
             {
-                m_y += m_height;
+                m_y += Height;
                 m_x += m_stepX;
 
-                if (m_x >= m_right)
-                    m_x -= m_width;
+                if (m_x >= Right)
+                    m_x -= Width;
             }
         }
 
@@ -281,13 +281,13 @@ namespace FlintSharp.Zones
         {
             m_y -= m_stepY;
 
-            if (m_y < m_top)
+            if (m_y < Top)
             {
-                m_y += m_height;
+                m_y += Height;
                 m_x -= m_stepX;
 
-                if (m_x < m_left)
-                    m_x += m_width;
+                if (m_x < Left)
+                    m_x += Width;
             }
         }
 

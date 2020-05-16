@@ -178,7 +178,10 @@ namespace Ragnarok.Shogi
         /// </summary>
         public void SetupPVInfo(Board board)
         {
-            Move move = null;
+            if (board == null)
+            {
+                throw new ArgumentNullException(nameof(board));
+            }
 
             if (VariationNode != null)
             {
@@ -186,6 +189,7 @@ namespace Ragnarok.Shogi
             }
 
             // このノードの手を指して、変化の基準局面を進めます。
+            Move move = null;
             if (LiteralMove != null && LiteralMove.Validate())
             {
                 move = MakeMove(board, new List<Exception>());
@@ -196,7 +200,7 @@ namespace Ragnarok.Shogi
                 }
             }
 
-            for (var i = 0; i < CommentList.Count(); )
+            for (var i = 0; i < CommentList.Count; )
             {
                 var pvInfo = ParsePVInfo(CommentList[i], board);
                 if (pvInfo != null)
@@ -282,6 +286,16 @@ namespace Ragnarok.Shogi
         public MoveNode ConvertToMoveNode(KifMoveNode head, Board board,
                                           out Exception error)
         {
+            if (head == null)
+            {
+                throw new ArgumentNullException(nameof(head));
+            }
+            
+            if (board == null)
+            {
+                throw new ArgumentNullException(nameof(board));
+            }
+
             var errors = new List<Exception>();
             var root =  new MoveNode
             {
@@ -295,7 +309,7 @@ namespace Ragnarok.Shogi
 
             error = (
                 !errors.Any() ? null :
-                errors.Count() == 1 ? errors.FirstOrDefault() :
+                errors.Count == 1 ? errors.FirstOrDefault() :
                 new AggregateException(errors));
 
             return root;

@@ -192,12 +192,12 @@ namespace Ragnarok.Net
         /// </summary>
         static SendThread()
         {
-            for (var i = 0; i < threads.Count(); ++i)
+            for (var i = 0; i < threads.Length; ++i)
             {
                 var th = new Thread(UpdateSendData)
                 {
                     Priority = ThreadPriority.Normal,
-                    Name = string.Format("SendThread {0}", i),
+                    Name = $"SendThread {i}",
                     IsBackground = true,
                 };
 

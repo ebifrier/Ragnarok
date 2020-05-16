@@ -134,10 +134,10 @@ namespace Ragnarok.Shogi.Kif
             WriteComment(writer, node);
 
             // 次の指し手があればそれも出力します。
-            for (var i = 0; i < node.NextNodes.Count(); ++i)
+            for (var i = 0; i < node.NextNodes.Count; ++i)
             {
                 var child = node.NextNodes[i];
-                var hasVariationNext = (i < node.NextNodes.Count() - 1);
+                var hasVariationNext = (i < node.NextNodes.Count - 1);
 
                 if (i > 0)
                 {

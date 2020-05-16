@@ -50,7 +50,7 @@
 
 namespace FlintSharp.EnergyEasing
 {
-    public class Linear
+    public static class Linear
     {
         public static double EaseNone(double age, double lifetime)
         {

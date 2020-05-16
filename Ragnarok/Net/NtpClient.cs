@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 
@@ -171,7 +170,7 @@ namespace Ragnarok.Net
         /// </summary>
         private static NtpClockInfo GetNetworkClockInfo()
         {
-            var count = NtpServerList.Count();
+            var count = NtpServerList.Length;
             var start = MathEx.RandInt(0, count);
 
             // サーバー不可を分散するため、開始サーバーはランダムに選択します。
@@ -201,15 +200,14 @@ namespace Ragnarok.Net
         /// </summary>
         private static NtpClockInfo GetNetworkClockInfo(string host, int port)
         {
-            var socket = new Socket(
+            using (var socket = new Socket(
                 AddressFamily.InterNetwork,
                 SocketType.Dgram,
                 ProtocolType.Udp)
             {
                 SendTimeout = 2000,
                 ReceiveTimeout = 2000,
-            };
-
+            })
             using (new Utility.ActionOnDispose(socket.Close))
             {
                 socket.Connect(host, port);
@@ -235,7 +233,7 @@ namespace Ragnarok.Net
                     throw new InvalidOperationException(
                         "データの受信に失敗しました。");
                 }
-                
+
                 return new NtpClockInfo()
                 {
                     ReferenceTime = referenceTime,

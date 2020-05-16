@@ -52,7 +52,7 @@ using System;
 
 namespace FlintSharp.EnergyEasing
 {
-    public class Sine
+    public static class Sine
     {
         public static double EaseIn(double age, double lifetime)
         {

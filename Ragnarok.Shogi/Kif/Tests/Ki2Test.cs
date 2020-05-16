@@ -1,11 +1,9 @@
 ﻿#if TESTS
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
-using System.IO;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using NUnit.Framework;
 
 namespace Ragnarok.Shogi.Kif.Tests
@@ -13,7 +11,7 @@ namespace Ragnarok.Shogi.Kif.Tests
     using File.Tests;
 
     [TestFixture()]
-    internal sealed class Ki2Test
+    public sealed class Ki2Test
     {
         /// <summary>
         /// 棋譜から手数を取得します。
@@ -30,7 +28,7 @@ namespace Ragnarok.Shogi.Kif.Tests
                 }
             }
 
-            return int.Parse(m.Groups[1].Value);
+            return int.Parse(m.Groups[1].Value, CultureInfo.CurrentCulture);
         }
 
         /// <summary>

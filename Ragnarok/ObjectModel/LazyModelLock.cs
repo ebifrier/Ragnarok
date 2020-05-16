@@ -25,6 +25,11 @@ namespace Ragnarok.ObjectModel
         /// </summary>
         public LazyModelLock(ILazyModel self)
         {
+            if (self == null)
+            {
+                throw new ArgumentNullException(nameof(self));
+            }
+
             self.LazyModelObject.Enter(self);
 
             this.self = self;

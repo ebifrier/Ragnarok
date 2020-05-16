@@ -65,16 +65,16 @@ namespace Ragnarok.Extra.Effect
             // そのため、ここでは非常に小さいけれど０より大きい値を設定しています。
             Duration = TimeSpan.FromSeconds(0.001);
 
-            this.AddPropertyChangedHandler("Parent", (_, __) =>
+            this.AddPropertyChangedHandler(nameof(Parent), (_, __) =>
             {
                 OnDataContextChanged(true);
                 UpdateInheritedOpacity();
             });
-            this.AddPropertyChangedHandler("BasePath", (_, __) =>
+            this.AddPropertyChangedHandler(nameof(BasePath), (_, __) =>
                 OnBasePathChanged(BasePath));
-            this.AddPropertyChangedHandler("DataContext", (_, __) =>
+            this.AddPropertyChangedHandler(nameof(DataContext), (_, __) =>
                 OnDataContextChanged(false));
-            this.AddPropertyChangedHandler("Opacity", (_, __) =>
+            this.AddPropertyChangedHandler(nameof(Opacity), (_, __) =>
                 UpdateInheritedOpacity());
 
             lock (instanceList)
@@ -109,8 +109,8 @@ namespace Ragnarok.Extra.Effect
         /// </summary>
         public string BasePath
         {
-            get { return GetValue<string>("BasePath"); }
-            set { SetValue("BasePath", value); }
+            get { return GetValue<string>(nameof(BasePath)); }
+            set { SetValue(nameof(BasePath), value); }
         }
 
         /// <summary>
@@ -126,8 +126,8 @@ namespace Ragnarok.Extra.Effect
         /// </summary>
         public bool RemoveMe
         {
-            get { return GetValue<bool>("RemoveMe"); }
-            private set { SetValue("RemoveMe", value); }
+            get { return GetValue<bool>(nameof(RemoveMe)); }
+            private set { SetValue(nameof(RemoveMe), value); }
         }
 
         /// <summary>
@@ -135,8 +135,8 @@ namespace Ragnarok.Extra.Effect
         /// </summary>
         public bool AutoRemove
         {
-            get { return GetValue<bool>("AutoRemove"); }
-            set { SetValue("AutoRemove", value); }
+            get { return GetValue<bool>(nameof(AutoRemove)); }
+            set { SetValue(nameof(AutoRemove), value); }
         }
 
         /// <summary>
@@ -145,8 +145,8 @@ namespace Ragnarok.Extra.Effect
         [TypeConverter(typeof(DurationConverter))]
         public TimeSpan Duration
         {
-            get { return GetValue<TimeSpan>("Duratio"); }
-            set { SetValue("Duratio", value); }
+            get { return GetValue<TimeSpan>(nameof(Duration)); }
+            set { SetValue(nameof(Duration), value); }
         }
 
         /// <summary>
@@ -154,8 +154,8 @@ namespace Ragnarok.Extra.Effect
         /// </summary>
         public TimeSpan WaitTime
         {
-            get { return GetValue<TimeSpan>("WaitTime"); }
-            set { SetValue("WaitTime", value); }
+            get { return GetValue<TimeSpan>(nameof(WaitTime)); }
+            set { SetValue(nameof(WaitTime), value); }
         }
 
         /// <summary>
@@ -163,8 +163,8 @@ namespace Ragnarok.Extra.Effect
         /// </summary>
         public string Name
         {
-            get { return GetValue<string>("Name"); }
-            set { SetValue("Name", value); }
+            get { return GetValue<string>(nameof(Name)); }
+            set { SetValue(nameof(Name), value); }
         }
 
         /// <summary>
@@ -172,8 +172,8 @@ namespace Ragnarok.Extra.Effect
         /// </summary>
         public EffectObject Parent
         {
-            get { return GetValue<EffectObject>("Parent"); }
-            private set { SetValue("Parent", value); }
+            get { return GetValue<EffectObject>(nameof(Parent)); }
+            private set { SetValue(nameof(Parent), value); }
         }
 
         /// <summary>
@@ -181,8 +181,8 @@ namespace Ragnarok.Extra.Effect
         /// </summary>
         public EffectCollection Children
         {
-            get { return GetValue<EffectCollection>("Children"); }
-            private set { SetValue("Children", value); }
+            get { return GetValue<EffectCollection>(nameof(Children)); }
+            private set { SetValue(nameof(Children), value); }
         }
 
         /// <summary>
@@ -190,8 +190,8 @@ namespace Ragnarok.Extra.Effect
         /// </summary>
         public double ZOrder
         {
-            get { return GetValue<double>("ZOrder"); }
-            set { SetValue("ZOrder", value); }
+            get { return GetValue<double>(nameof(ZOrder)); }
+            set { SetValue(nameof(ZOrder), value); }
         }
 
         /// <summary>
@@ -217,8 +217,8 @@ namespace Ragnarok.Extra.Effect
         /// </summary>
         public object DataContext
         {
-            get { return GetValue<object>("DataContext"); }
-            set { SetValue("DataContext", value); }
+            get { return GetValue<object>(nameof(DataContext)); }
+            set { SetValue(nameof(DataContext), value); }
         }
 
         /// <summary>
@@ -263,8 +263,8 @@ namespace Ragnarok.Extra.Effect
         /// </remarks>
         public bool IsFastInitialize
         {
-            get { return GetValue<bool>("IsFastInitialize"); }
-            set { SetValue("IsFastInitialize", value); }
+            get { return GetValue<bool>(nameof(IsFastInitialize)); }
+            set { SetValue(nameof(IsFastInitialize), value); }
         }
         #endregion
 
@@ -277,8 +277,8 @@ namespace Ragnarok.Extra.Effect
         /// </remarks>
         protected Matrix44d LocalTransform
         {
-            get { return GetValue<Matrix44d>("LocalTransform"); }
-            set { SetValue("LocalTransform", value); }
+            get { return GetValue<Matrix44d>(nameof(LocalTransform)); }
+            set { SetValue(nameof(LocalTransform), value); }
         }
 
         /// <summary>
@@ -290,8 +290,8 @@ namespace Ragnarok.Extra.Effect
         /// </remarks>
         public Point3d CenterPoint
         {
-            get { return GetValue<Point3d>("CenterPoint"); }
-            set { SetValue("CenterPoint", value); }
+            get { return GetValue<Point3d>(nameof(CenterPoint)); }
+            set { SetValue(nameof(CenterPoint), value); }
         }
 
         /// <summary>
@@ -302,8 +302,8 @@ namespace Ragnarok.Extra.Effect
         /// </remarks>
         public Point3d BaseScale
         {
-            get { return GetValue<Point3d>("BaseScale"); }
-            set { SetValue("BaseScale", value); }
+            get { return GetValue<Point3d>(nameof(BaseScale)); }
+            set { SetValue(nameof(BaseScale), value); }
         }
 
         /// <summary>
@@ -311,8 +311,8 @@ namespace Ragnarok.Extra.Effect
         /// </summary>
         public Point3d Coord
         {
-            get { return GetValue<Point3d>("Coord"); }
-            set { SetValue("Coord", value); }
+            get { return GetValue<Point3d>(nameof(Coord)); }
+            set { SetValue(nameof(Coord), value); }
         }
 
         /// <summary>
@@ -320,8 +320,8 @@ namespace Ragnarok.Extra.Effect
         /// </summary>
         public Point3d Scale
         {
-            get { return GetValue<Point3d>("Scale"); }
-            set { SetValue("Scale", value); }
+            get { return GetValue<Point3d>(nameof(Scale)); }
+            set { SetValue(nameof(Scale), value); }
         }
 
         /// <summary>
@@ -329,8 +329,8 @@ namespace Ragnarok.Extra.Effect
         /// </summary>
         public double RotateZ
         {
-            get { return GetValue<double>("RotateZ"); }
-            set { SetValue("RotateZ", value); }
+            get { return GetValue<double>(nameof(RotateZ)); }
+            set { SetValue(nameof(RotateZ), value); }
         }
 
         /// <summary>
@@ -350,10 +350,10 @@ namespace Ragnarok.Extra.Effect
         {
             get
             {
-                var m = GetValue<Matrix44d>("Transform");
+                var m = GetValue<Matrix44d>(nameof(Transform));
                 return (m != null ? m.Clone() : new Matrix44d());
             }
-            private set { SetValue("Transform", value); }
+            private set { SetValue(nameof(Transform), value); }
         }
 
         private void UpdateTransform()
@@ -394,8 +394,8 @@ namespace Ragnarok.Extra.Effect
         /// </summary>
         public double Opacity
         {
-            get { return GetValue<double>("Opacity"); }
-            set { SetValue("Opacity", value); }
+            get { return GetValue<double>(nameof(Opacity)); }
+            set { SetValue(nameof(Opacity), value); }
         }
 
         /// <summary>
@@ -403,8 +403,8 @@ namespace Ragnarok.Extra.Effect
         /// </summary>
         public double InheritedOpacity
         {
-            get { return GetValue<double>("InheritedOpacity"); }
-            private set { SetValue("InheritedOpacity", value); }
+            get { return GetValue<double>(nameof(InheritedOpacity)); }
+            private set { SetValue(nameof(InheritedOpacity), value); }
         }
 
         /// <summary>
@@ -438,8 +438,8 @@ namespace Ragnarok.Extra.Effect
         /// </summary>
         public Scenario Scenario
         {
-            get { return GetValue<Scenario>("Scenario"); }
-            set { SetValue("Scenario", value); }
+            get { return GetValue<Scenario>(nameof(Scenario)); }
+            set { SetValue(nameof(Scenario), value); }
         }
         #endregion
 
@@ -448,6 +448,11 @@ namespace Ragnarok.Extra.Effect
         /// </summary>
         public string MakeContentPath(string relativePath)
         {
+            if (relativePath == null)
+            {
+                throw new ArgumentNullException(nameof(relativePath));
+            }
+
             var path = (
                 BasePath == null ?
                 relativePath :

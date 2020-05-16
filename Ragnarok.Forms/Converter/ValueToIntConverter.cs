@@ -48,7 +48,7 @@ namespace Ragnarok.Forms.Converter
             try
             {
                 // 数値型で一番受け入れが広そうなものにキャストする。
-                var v = System.Convert.ToDecimal(value);
+                var v = System.Convert.ToDecimal(value, CultureInfo.CurrentCulture);
                 
                 switch (RoundingMode)
                 {

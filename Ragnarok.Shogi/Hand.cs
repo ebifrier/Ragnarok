@@ -116,7 +116,8 @@ namespace Ragnarok.Shogi
         {
             if (pieceType > PieceType.Hu)
             {
-                throw new ArgumentException("pieceType");
+                throw new ArgumentException(
+                    "pieceTypeの値が不正です。", nameof(pieceType));
             }
 
             var sbm = SBM[(int)pieceType];
@@ -130,13 +131,14 @@ namespace Ragnarok.Shogi
         {
             if (pieceType > PieceType.Hu)
             {
-                throw new ArgumentException("pieceType");
+                throw new ArgumentException(
+                    "pieceTypeの値が不正です。", nameof(pieceType));
             }
 
             if (pieceType == PieceType.Gyoku && count > 0)
             {
                 throw new ShogiException(
-                    $"玉を駒台に乗せることはできません。");
+                    "玉を駒台に乗せることはできません。");
             }
 
             var sbm = SBM[(int)pieceType];
@@ -157,7 +159,8 @@ namespace Ragnarok.Shogi
         {
             if (pieceType > PieceType.Hu)
             {
-                throw new ArgumentException("pieceType");
+                throw new ArgumentException(
+                    "pieceTypeの値が不正です。", nameof(pieceType));
             }
 
             var count = Get(pieceType);

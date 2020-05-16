@@ -203,7 +203,7 @@ namespace Ragnarok.Extra.Effect
         {
             if (element == null)
             {
-                throw new ArgumentNullException("element");
+                throw new ArgumentNullException(nameof(element));
             }
 
             this.implList.Add(element);

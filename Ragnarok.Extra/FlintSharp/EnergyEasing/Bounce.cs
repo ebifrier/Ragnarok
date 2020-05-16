@@ -50,7 +50,7 @@
 
 namespace FlintSharp.EnergyEasing
 {
-    public class Bounce
+    public static class Bounce
     {
         public static double EaseOut(double age, double lifetime)
         {

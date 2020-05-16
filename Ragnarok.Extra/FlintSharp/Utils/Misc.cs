@@ -60,7 +60,7 @@ namespace FlintSharp
         Diffuse,
     }
 
-    public partial class Utils
+    public static partial class Utils
     {
         public static Point MousePos
         {
@@ -82,8 +82,12 @@ namespace FlintSharp
 
         public static IEnumerable<T> Reverse<T>(IList<T> list)
         {
-            int i = list.Count;
+            if (list == null)
+            {
+                throw new ArgumentNullException(nameof(list));
+            }
 
+            int i = list.Count;
             while (--i >= 0)
             {
                 yield return list[i];
@@ -96,10 +100,7 @@ namespace FlintSharp
         public static void RaiseEvent<T>(EventHandler<T> handler, object sender, T e)
             where T : EventArgs
         {
-            if (handler != null)
-            {
-                handler(sender, e);
-            }
+            handler?.Invoke(sender, e);
         }
 
         /// <summary>

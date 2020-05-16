@@ -39,8 +39,10 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 棋力不明。
         /// </summary>
-        public static SkillLevel Unknown =
-            new SkillLevel(SkillKind.Unknown, 0);
+        public static SkillLevel Unknown
+        {
+            get;
+        } = new SkillLevel(SkillKind.Unknown, 0);
 
         /// <summary>
         /// 棋力の種別を取得または設定します。

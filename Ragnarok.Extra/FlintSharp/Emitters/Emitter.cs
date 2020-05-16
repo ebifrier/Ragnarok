@@ -201,6 +201,11 @@ namespace FlintSharp.Emitters
         /// </summary>
         protected virtual void InitParticle(Particle particle)
         {
+            if (particle == null)
+            {
+                return;
+            }
+
             particle.PreviousX = particle.X = m_x;
             particle.PreviousY = particle.Y = m_y;
             particle.Rotation = m_rotation;
@@ -399,7 +404,7 @@ namespace FlintSharp.Emitters
         public List<Particle> Particles
         {
             get { return m_particles; }
-            set { m_particles = value; }
+            private set { m_particles = value; }
         }
 
         /// <summary>

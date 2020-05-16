@@ -1,3 +1,5 @@
+using System;
+
 namespace Codehaus.Parsec
 {
     /// <summary> This class represents an error frame during parsing.
@@ -6,7 +8,7 @@ namespace Codehaus.Parsec
     /// <author>  Ben Yu
     /// Dec 4, 2005 2:25:47 PM
     /// </author>
-    public struct ParsingFrame
+    public struct ParsingFrame : IEquatable<ParsingFrame>
     {
         /// <summary> Get the index of the character within the source.</summary>
         public int Index
@@ -84,6 +86,14 @@ namespace Codehaus.Parsec
         public override int GetHashCode()
         {
             return Misc.Hashcode(module) * 31 + ind;
+        }
+        public static bool operator==(ParsingFrame x, ParsingFrame y)
+        {
+            return x.Equals(y);
+        }
+        public static bool operator !=(ParsingFrame x, ParsingFrame y)
+        {
+            return !(x == y);
         }
     }
 }

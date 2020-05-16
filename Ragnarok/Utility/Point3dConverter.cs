@@ -62,7 +62,7 @@ namespace Ragnarok.Utility
                                          CultureInfo culture, object value,
                                          Type destinationType)
         {
-            if (typeof(string).Equals(destinationType))
+            if (value != null && typeof(string).Equals(destinationType))
             {
                 return value.ToString();
             }

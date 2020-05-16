@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace Ragnarok.Shogi
 {
@@ -29,14 +29,14 @@ namespace Ragnarok.Shogi
             var ext = Path.GetExtension(filepath);
             if (string.IsNullOrEmpty(ext))
             {
-                throw new ArgumentNullException("filepath");
+                throw new ArgumentNullException(nameof(filepath));
             }
 
-            switch (ext.ToLower())
+            switch (ext.ToUpperInvariant())
             {
-                case ".kif": return KifuFormat.Kif;
-                case ".ki2": return KifuFormat.Ki2;
-                case ".csa": return KifuFormat.Csa;
+                case ".KIF": return KifuFormat.Kif;
+                case ".KI2": return KifuFormat.Ki2;
+                case ".CSA": return KifuFormat.Csa;
             }
 
             // 分からない場合はkif形式に設定する。
@@ -86,7 +86,7 @@ namespace Ragnarok.Shogi
         {
             if (string.IsNullOrEmpty(filepath))
             {
-                throw new ArgumentNullException("filepath");
+                throw new ArgumentNullException(nameof(filepath));
             }
 
             if (format == null)
@@ -109,12 +109,12 @@ namespace Ragnarok.Shogi
         {
             if (writer == null)
             {
-                throw new ArgumentNullException("writer");
+                throw new ArgumentNullException(nameof(writer));
             }
 
             if (kifuObj == null)
             {
-                throw new ArgumentNullException("kifuObj");
+                throw new ArgumentNullException(nameof(kifuObj));
             }
 
             var kifuWriter = GetWriter(format);

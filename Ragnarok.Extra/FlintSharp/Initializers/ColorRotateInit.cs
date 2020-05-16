@@ -142,6 +142,11 @@ namespace FlintSharp.Initializers
         /// <param name="particle">The particle to be initialized.</param>
         public override void Initialize(Emitter emitter, Particle particle)
         {
+            if (particle == null)
+            {
+                return;
+            }
+
             //int colorRotation = Utils.Random.Next(360);
 
             //m_min = (uint)Utils.RotateHue(colorRotation, m_intensityStart).ToArgb();

@@ -62,7 +62,7 @@ namespace Ragnarok.Update
             {
                 using (LazyLock())
                 {
-                    return this.itemList.Count();
+                    return this.itemList.Count;
                 }
             }
         }
@@ -168,7 +168,7 @@ namespace Ragnarok.Update
                 item.IsCompleted = true;
 
                 UpdateProgressPercentage();
-                this.RaisePropertyChanged("LeaveCount");
+                this.RaisePropertyChanged(nameof(LeaveCount));
             }
 
             // コールバックは最後に呼びます。
@@ -188,7 +188,7 @@ namespace Ragnarok.Update
         {
             if (address == null)
             {
-                throw new ArgumentNullException("address");
+                throw new ArgumentNullException(nameof(address));
             }
 
             var client = new WebClient();
@@ -211,7 +211,7 @@ namespace Ragnarok.Update
             {
                 this.itemList.Add(item);
 
-                this.RaisePropertyChanged("Count");
+                this.RaisePropertyChanged(nameof(Count));
             }
         }
 

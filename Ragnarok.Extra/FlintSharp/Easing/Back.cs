@@ -50,7 +50,7 @@
 
 namespace FlintSharp.Easing
 {
-    public class Back
+    public static class Back
     {
         public static double EaseIn(double t, double b, double c, double d)
         {

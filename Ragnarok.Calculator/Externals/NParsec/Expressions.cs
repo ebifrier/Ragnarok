@@ -9,7 +9,7 @@ namespace Codehaus.Parsec
     /// 
     /// Nov 19, 2004
     /// </author>
-    public sealed class Expressions
+    public static class Expressions
     {
         /// <summary> Creates a Parser object based on information described by OperatorTable.</summary>
         /// <param name="term">parser for the terminals.

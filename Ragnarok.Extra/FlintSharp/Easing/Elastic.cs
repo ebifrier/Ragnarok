@@ -52,7 +52,7 @@ using System;
 
 namespace FlintSharp.Easing
 {
-    public class Elastic
+    public static class Elastic
     {
         public static double EaseIn(double t, double b, double c, double d)
         {

@@ -38,6 +38,7 @@ using FlintSharp.EnergyEasing;
 using FlintSharp.Initializers;
 using FlintSharp.Particles;
 using FlintSharp.Zones;
+using System;
 
 namespace FlintSharp.Initializers
 {
@@ -119,6 +120,11 @@ namespace FlintSharp.Initializers
         /// <param name="particle">The particle to be initialized.</param>
         public override void Initialize(Emitter emitter, Particle particle)
         {
+            if (particle == null)
+            {
+                return;
+            }
+
             if (double.IsNaN(m_max))
                 particle.Rotation = m_min;
             else

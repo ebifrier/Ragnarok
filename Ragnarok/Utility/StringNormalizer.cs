@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -10,7 +11,7 @@ namespace Ragnarok.Utility
     /// 文字列を正規化するときのオプションです。
     /// </summary>
     [Flags()]
-    public enum NormalizeTextOption
+    public enum NormalizeTextOptions
     {
         /// <summary>
         /// なにもしません。
@@ -57,7 +58,7 @@ namespace Ragnarok.Utility
         /// ・半角/全角アルファベット → 半角大文字アルファベット
         /// に変換します。
         /// </remarks>
-        public static string NormalizeText(string text, NormalizeTextOption option)
+        public static string NormalizeText(string text, NormalizeTextOptions option)
         {
             // なにもしません。
             if (string.IsNullOrEmpty(text))
@@ -65,23 +66,23 @@ namespace Ragnarok.Utility
                 return text;
             }
 
-            if ((option & NormalizeTextOption.Number) != 0)
+            if ((option & NormalizeTextOptions.Number) != 0)
             {
-                var kanjiDigit = option.HasFlag(NormalizeTextOption.KanjiDigit);
+                var kanjiDigit = option.HasFlag(NormalizeTextOptions.KanjiDigit);
                 text = NormalizeNumber(text, kanjiDigit);
             }
 
-            if ((option & NormalizeTextOption.Alphabet) != 0)
+            if ((option & NormalizeTextOptions.Alphabet) != 0)
             {
                 text = NormalizeAlphabet(text);
             }
 
-            if ((option & NormalizeTextOption.Kana) != 0)
+            if ((option & NormalizeTextOptions.Kana) != 0)
             {
                 text = NormalizeKana(text);
             }
 
-            if ((option & NormalizeTextOption.Symbol) != 0)
+            if ((option & NormalizeTextOptions.Symbol) != 0)
             {
                 text = NormalizeSymbol(text);
             }
@@ -94,7 +95,7 @@ namespace Ragnarok.Utility
         /// </summary>
         public static string NormalizeText(string text)
         {
-            return NormalizeText(text, NormalizeTextOption.All);
+            return NormalizeText(text, NormalizeTextOptions.All);
         }
 
         /// <summary>
@@ -185,7 +186,7 @@ namespace Ragnarok.Utility
                     allNum = ((allNum ?? 1) + (prevNum ?? 0)) * n;
                     prevNum = null;
                 }
-                else if (numberTable.TryGetValue(c.ToString(), out n))
+                else if (numberTable.TryGetValue(new string(c, 1), out n))
                 {
                     // 普通の数字の場合
                     if (prevNum != null)
@@ -232,15 +233,15 @@ namespace Ragnarok.Utility
             text = Regex.Replace(
                 text, "[\uFF21-\uFF3A]",
                 (match) =>
-                    ((char)((match.Value[0] - 'Ａ') + 'A')).ToString());
+                    new string((char)((match.Value[0] - 'Ａ') + 'A'), 1));
 
             // 全角小文字アルファベット
             text = Regex.Replace(
                 text, "[\uFF41-\uFF5A]",
                 (match) =>
-                    ((char)((match.Value[0] - 'ａ') + 'A')).ToString());
+                    new string((char)((match.Value[0] - 'ａ') + 'A'), 1));
 
-            return text.ToUpper();
+            return text.ToUpperInvariant();
         }
 
         /// <summary>
@@ -265,10 +266,15 @@ namespace Ragnarok.Utility
                 "ﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜｵﾝ" +
                 "ｧｨｩｪｫｬｭｮｯ";
 
+            if (string.IsNullOrEmpty(text))
+            {
+                return text;
+            }
+
             var result = new StringBuilder();
             foreach (var c in text)
             {
-                var index = 0;
+                int index;
 
                 if ((index = katakana.IndexOf(c)) >= 0)
                 {
@@ -299,14 +305,17 @@ namespace Ragnarok.Utility
                 ";:-`^'\"<>(){}[]｢｣､｡･" +
                 "ー";
 
+            if (string.IsNullOrEmpty(text))
+            {
+                return text;
+            }
+
             var result = new StringBuilder();
             foreach (var c in text)
             {
-                var index = 0;
+                var index = source.IndexOf(c);
 
-                result.Append(
-                    (index = source.IndexOf(c)) >= 0 ?
-                    destination[index] : c);
+                result.Append(index >= 0 ? destination[index] : c);
             }
 
             return result.ToString();

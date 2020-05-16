@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -10,8 +11,6 @@ using NLog.Config;
 
 namespace Ragnarok
 {
-    using Utility;
-
     /// <summary>
     /// ログの出力を行うクラスです。
     /// </summary>
@@ -142,7 +141,7 @@ namespace Ragnarok
         /// </summary>
         public static void Fatal(string format, params object[] args)
         {
-            var message = string.Format(format, args);
+            var message = string.Format(CultureInfo.CurrentCulture, format, args);
 
             if (logger != null)
             {
@@ -156,11 +155,11 @@ namespace Ragnarok
         public static void Fatal(ILogObject logObj, string format,
                                  params object[] args)
         {
-            var message = string.Format(format, args);
+            var message = string.Format(CultureInfo.CurrentCulture, format, args);
 
             Log.Fatal(
                 "{0}: {1}",
-                logObj.LogName, message);
+                logObj?.LogName, message);
         }
 
         /// <summary>
@@ -169,7 +168,7 @@ namespace Ragnarok
         public static void FatalException(Exception ex, string format,
                                           params object[] args)
         {
-            var message = string.Format(format, args);
+            var message = string.Format(CultureInfo.CurrentCulture, format, args);
 
             if (logger != null)
             {
@@ -183,11 +182,11 @@ namespace Ragnarok
         public static void FatalException(ILogObject logObj, Exception ex,
                                           string format, params object[] args)
         {
-            var message = string.Format(format, args);
+            var message = string.Format(CultureInfo.CurrentCulture, format, args);
 
             Log.FatalException(ex,
                 "{0}: {1}",
-                logObj.LogName, message);
+                logObj?.LogName, message);
         }
         #endregion
 
@@ -197,7 +196,7 @@ namespace Ragnarok
         /// </summary>
         public static void Error(string format, params object[] args)
         {
-            var message = string.Format(format, args);
+            var message = string.Format(CultureInfo.CurrentCulture, format, args);
 
             if (logger != null)
             {
@@ -211,11 +210,11 @@ namespace Ragnarok
         public static void Error(ILogObject logObj, string format,
                                  params object[] args)
         {
-            var message = string.Format(format, args);
+            var message = string.Format(CultureInfo.CurrentCulture, format, args);
 
             Log.Error(
                 "{0}: {1}",
-                logObj.LogName, message);
+                logObj?.LogName, message);
         }
 
         /// <summary>
@@ -224,7 +223,7 @@ namespace Ragnarok
         public static void ErrorException(Exception ex, string format,
                                           params object[] args)
         {
-            var message = string.Format(format, args);
+            var message = string.Format(CultureInfo.CurrentCulture, format, args);
 
             if (logger != null)
             {
@@ -238,11 +237,11 @@ namespace Ragnarok
         public static void ErrorException(ILogObject logObj, Exception ex,
                                           string format, params object[] args)
         {
-            var message = string.Format(format, args);
+            var message = string.Format(CultureInfo.CurrentCulture, format, args);
 
             Log.ErrorException(ex,
                 "{0}: {1}",
-                logObj.LogName, message);
+                logObj?.LogName, message);
         }
         #endregion
 
@@ -254,7 +253,7 @@ namespace Ragnarok
         {
             var message = (
                 args != null && args.Length > 0 ?
-                string.Format(format, args) :
+                string.Format(CultureInfo.CurrentCulture, format, args) :
                 format);
 
             if (logger != null)
@@ -271,14 +270,14 @@ namespace Ragnarok
         {
             var message = (
                 args != null && args.Length > 0 ?
-                string.Format(format, args) :
+                string.Format(CultureInfo.CurrentCulture, format, args) :
                 format);
 
             if (logger != null)
             {
                 logger.Info(
                     "{0}: {1}",
-                    logObj.LogName, message);
+                    logObj?.LogName, message);
             }
         }
         #endregion
@@ -289,7 +288,7 @@ namespace Ragnarok
         /// </summary>
         public static void Debug(string format, params object[] args)
         {
-            var message = string.Format(format, args);
+            var message = string.Format(CultureInfo.CurrentCulture, format, args);
 
             if (logger != null)
             {
@@ -303,13 +302,13 @@ namespace Ragnarok
         public static void Debug(ILogObject logObj, string format,
                                  params object[] args)
         {
-            var message = string.Format(format, args);
+            var message = string.Format(CultureInfo.CurrentCulture, format, args);
 
             if (logger != null)
             {
                 logger.Debug(
                     "{0}: {1}",
-                    logObj.LogName, message);
+                    logObj?.LogName, message);
             }
         }
         #endregion
@@ -320,7 +319,7 @@ namespace Ragnarok
         /// </summary>
         public static void Trace(string format, params object[] args)
         {
-            var message = string.Format(format, args);
+            var message = string.Format(CultureInfo.CurrentCulture, format, args);
 
             if (logger != null)
             {
@@ -334,13 +333,13 @@ namespace Ragnarok
         public static void Trace(ILogObject logObj, string format,
                                  params object[] args)
         {
-            var message = string.Format(format, args);
+            var message = string.Format(CultureInfo.CurrentCulture, format, args);
 
             if (logger != null)
             {
                 logger.Trace(
                     "{0}: {1}",
-                    logObj.LogName, message);
+                    logObj?.LogName, message);
             }
         }
         #endregion

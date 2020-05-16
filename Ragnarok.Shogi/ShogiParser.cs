@@ -1,13 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Ragnarok.Shogi
 {
-    using Ragnarok.Utility;
-
     /// <summary>
     /// 将棋の各指し手を文字列から解析します。
     /// </summary>
@@ -319,6 +317,7 @@ namespace Ragnarok.Shogi
         private static Regex CreateSpecialMoveRegex()
         {
             var pattern = string.Format(
+                CultureInfo.CurrentCulture,
                 @"^({0})?({1})",
                 ConvertToRegexPattern(BWTypeTable),
                 ConvertToRegexPattern(SpecialMoveTable));
@@ -379,12 +378,12 @@ namespace Ragnarok.Shogi
         {
             // 指し手の前に空白があってもおｋとします。
             var moveRegexPattern = string.Format(
-                @"^\s*({0})?({1})?({1})?(?:({2})\s*)?({3})({5})?({6})?({7})?([(](\d)(\d)[)])?",
+                CultureInfo.CurrentCulture,
+                @"^\s*({0})?({1})?({1})?(?:({2})\s*)?({3})({4})?({5})?({6})?([(](\d)(\d)[)])?",
                 ConvertToRegexPattern(BWTypeTable),
                 ConvertToRegexPattern(NumberTable),
                 ConvertToRegexPattern(SameAsOldTable),
                 ConvertToRegexPattern(PieceTable),
-                null,
                 ConvertToRegexPattern(RelFileTypeTable),
                 ConvertToRegexPattern(RankMoveTypeTable),
                 ConvertToRegexPattern(ActionTable));
@@ -492,8 +491,8 @@ namespace Ragnarok.Shogi
                 if (m.Groups[9].Success)
                 {
                     move.SrcSquare = new Square(
-                        int.Parse(m.Groups[10].Value),
-                        int.Parse(m.Groups[11].Value));
+                        int.Parse(m.Groups[10].Value, CultureInfo.InvariantCulture),
+                        int.Parse(m.Groups[11].Value, CultureInfo.InvariantCulture));
                 }
             }
 

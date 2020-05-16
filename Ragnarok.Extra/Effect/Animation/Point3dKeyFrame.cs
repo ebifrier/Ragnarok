@@ -16,9 +16,10 @@ namespace Ragnarok.Extra.Effect.Animation
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public Point3dKeyFrame(EasingFunctions function)
+        public Point3dKeyFrame(EasingFunction function)
         {
             KeyTime = TimeSpan.Zero;
+            Function = function;
         }
 
         /// <summary>
@@ -26,8 +27,8 @@ namespace Ragnarok.Extra.Effect.Animation
         /// </summary>
         public TimeSpan KeyTime
         {
-            get { return GetValue<TimeSpan>("KeyTime"); }
-            set { SetValue("KeyTime", value); }
+            get { return GetValue<TimeSpan>(nameof(KeyTime)); }
+            set { SetValue(nameof(KeyTime), value); }
         }
 
         /// <summary>
@@ -35,17 +36,17 @@ namespace Ragnarok.Extra.Effect.Animation
         /// </summary>
         public Point3d Value
         {
-            get { return GetValue<Point3d>("Value"); }
-            set { SetValue("Value", value); }
+            get { return GetValue<Point3d>(nameof(Value)); }
+            set { SetValue(nameof(Value), value); }
         }
 
         /// <summary>
         /// 補間関数を取得または設定します。
         /// </summary>
-        public EasingFunctions Function
+        public EasingFunction Function
         {
-            get { return GetValue<EasingFunctions>("Function"); }
-            set { SetValue("Function", value); }
+            get { return GetValue<EasingFunction>(nameof(Function)); }
+            set { SetValue(nameof(Function), value); }
         }
 
         /// <summary>
@@ -71,7 +72,7 @@ namespace Ragnarok.Extra.Effect.Animation
         /// コンストラクタ
         /// </summary>
         public LinearPoint3dKeyFrame()
-            : base(EasingFunctions.Linear)
+            : base(EasingFunction.Linear)
         {
         }
 
@@ -92,7 +93,7 @@ namespace Ragnarok.Extra.Effect.Animation
     public class DiscretePoint3dKeyFrame : Point3dKeyFrame
     {
         public DiscretePoint3dKeyFrame()
-            : base(EasingFunctions.Discrete)
+            : base(EasingFunction.Discrete)
         {
         }
 

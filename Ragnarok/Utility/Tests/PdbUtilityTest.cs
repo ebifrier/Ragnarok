@@ -14,7 +14,7 @@ namespace Ragnarok.Utility.Tests
         public void GetAllThreadStackTraceTest()
         {
             var traceList = PdbUtility.GetAllThreadStackTrace();
-            Assert.Greater(traceList.Count(), 0);
+            Assert.Greater(traceList.Count, 0);
         }
     }
 }

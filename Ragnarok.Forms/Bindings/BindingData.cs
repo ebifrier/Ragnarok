@@ -10,6 +10,7 @@ using Ragnarok.Utility;
 namespace Ragnarok.Forms.Bindings
 {
     using Controls;
+    using System.Globalization;
 
     internal sealed class BindingData
     {
@@ -93,9 +94,7 @@ namespace Ragnarok.Forms.Bindings
         private void SetTargetPropertyValue(object value)
         {
             var type = this.targetPropertyObject.PropertyType;
-            value = (
-                typeof(string).Equals(type) ? string.Format("{0}", value) :
-                value);
+            value = (type == typeof(string) ? $"{value}" : value);
 
             this.targetPropertyObject.SetValue(Binding.BindableTarget, value);
         }
@@ -162,7 +161,10 @@ namespace Ragnarok.Forms.Bindings
                 // 文字列へのフォーマットを行います。
                 if (!string.IsNullOrEmpty(Binding.StringFormat))
                 {
-                    newValue = string.Format(Binding.StringFormat, newValue);
+                    newValue = string.Format(
+                        CultureInfo.CurrentCulture,
+                        Binding.StringFormat,
+                        newValue);
                 }
 
                 if (Util.GenericEquals(newValue, this.oldValue) ||
@@ -210,7 +212,10 @@ namespace Ragnarok.Forms.Bindings
                 // 文字列へのフォーマットを行います。
                 if (!string.IsNullOrEmpty(Binding.StringFormat))
                 {
-                    newValue = string.Format(Binding.StringFormat, newValue);
+                    newValue = string.Format(
+                        CultureInfo.CurrentCulture,
+                        Binding.StringFormat,
+                        newValue);
                 }
 
                 if (Util.GenericEquals(newValue, this.oldValue) ||
@@ -418,10 +423,8 @@ namespace Ragnarok.Forms.Bindings
                 }
 
                 throw new InvalidOperationException(
-                    string.Format(
-                        "'{0}': 指定のプロパティかその変更イベントが" +
-                        "コントロールに存在しません。",
-                        propertyName));
+                    $"'{propertyName}': 指定のプロパティかその変更イベントが" +
+                    "コントロールに存在しません。");
             }
 
             // TargetがINotifyPropertyChangedの場合は

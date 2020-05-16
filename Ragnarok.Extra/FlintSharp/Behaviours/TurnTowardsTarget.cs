@@ -88,6 +88,11 @@ namespace FlintSharp.Behaviours
         /// <param name="elapsedTime">The duration of the frame - used for time based updates.</param>
         public override void Update(Emitter emitter, Particle particle, double elapsedTime)
         {
+            if (particle == null)
+            {
+                return;
+            }
+
             bool turnLeft = ((particle.Y - particle.TargetY) * particle.VelocityX + (particle.TargetX - particle.X) * particle.VelocityY > 0);
             double newAngle =
                 Math.Atan2(particle.VelocityY, particle.VelocityX) +

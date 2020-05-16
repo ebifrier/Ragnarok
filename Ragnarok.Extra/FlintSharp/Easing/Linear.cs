@@ -50,7 +50,7 @@
 
 namespace FlintSharp.Easing
 {
-    public class Linear
+    public static class Linear
     {
         public static double EaseNone(double t, double b, double c, double d)
         {

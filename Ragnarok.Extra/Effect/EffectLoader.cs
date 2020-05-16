@@ -54,20 +54,20 @@ namespace Ragnarok.Extra.Effect
                     bytes = Encoding.UTF8.GetBytes(text);
                 }
 
+                var settings = new XamlXmlReaderSettings
+                {
+                    BaseUri = new Uri(path), //, UriKind.Absolute),
+                    CloseInput = false,
+                };
+                var context = new XamlSchemaContext(GetReferenceAssemblies());
+
                 // xamlの読み込みを開始します。
                 using (var stream = new MemoryStream(bytes))
+                using (var reader = new XamlXmlReader(stream, context, settings))
                 {
-                    var settings = new XamlXmlReaderSettings
-                    {
-                        BaseUri = new Uri(path), //, UriKind.Absolute),
-                        CloseInput = false,
-                    };
-                    var context = new XamlSchemaContext(GetReferenceAssemblies());
-
-					var reader = new XamlXmlReader(stream, context, settings);
                     var obj = XamlServices.Load(reader);
 
-                    var result = obj as EffectObject; 
+                    var result = obj as EffectObject;
                     if (result != null)
                     {
                         result.BasePath = Path.GetDirectoryName(path);

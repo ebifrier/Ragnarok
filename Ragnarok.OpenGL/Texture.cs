@@ -27,7 +27,7 @@ namespace Ragnarok.OpenGL
         {
             if (texture == null)
             {
-                throw new ArgumentNullException("texture");
+                throw new ArgumentNullException(nameof(texture));
             }
 
             lock (textureListSync)
@@ -43,7 +43,7 @@ namespace Ragnarok.OpenGL
         {
             if (texture == null)
             {
-                throw new ArgumentNullException("texture");
+                throw new ArgumentNullException(nameof(texture));
             }
 
             lock (textureListSync)
@@ -126,7 +126,7 @@ namespace Ragnarok.OpenGL
         /// <summary>
         /// テクスチャの削除を行います。
         /// </summary>
-        private void Dispose(bool disposing)
+        protected virtual void Dispose(bool disposing)
         {
             if (!this.disposed)
             {
@@ -136,7 +136,10 @@ namespace Ragnarok.OpenGL
                     this.glTexture = 0;
                 }
 
-                RemoveTexture(this);
+                if (disposing)
+                {
+                    RemoveTexture(this);
+                }
 
                 this.disposed = true;
             }
@@ -290,7 +293,7 @@ namespace Ragnarok.OpenGL
         /// <summary>
         /// テクスチャのバインドを解除します。
         /// </summary>
-        public void Unbind()
+        public static void Unbind()
         {
             GL.BindTexture(TextureTarget.Texture2D, 0);
         }
@@ -414,7 +417,7 @@ namespace Ragnarok.OpenGL
         /// <summary>
         /// α乗算済み画像データに変換します。
         /// </summary>
-        private void MakePremutipliedAlpha(BitmapData data)
+        private static void MakePremutipliedAlpha(BitmapData data)
         {
             if (data.PixelFormat != Imaging.PixelFormat.Format32bppArgb)
             {
@@ -447,7 +450,7 @@ namespace Ragnarok.OpenGL
         {
             if (image == null)
             {
-                throw new ArgumentNullException("image");
+                throw new ArgumentNullException(nameof(image));
             }
 
             ValidateContext();
@@ -511,12 +514,12 @@ namespace Ragnarok.OpenGL
         {
             if (dst == null)
             {
-                throw new ArgumentNullException("dst");
+                throw new ArgumentNullException(nameof(dst));
             }
 
             if (src == null)
             {
-                throw new ArgumentNullException("src");
+                throw new ArgumentNullException(nameof(src));
             }
 
             using (Graphics g = Graphics.FromImage(dst))

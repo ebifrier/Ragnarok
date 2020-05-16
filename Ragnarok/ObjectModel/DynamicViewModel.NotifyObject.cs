@@ -41,7 +41,7 @@ namespace Ragnarok.ObjectModel
         /// ここで各オブジェクトの初期化を行っています。
         /// </remarks>
         [OnDeserializing()]
-        protected void OnBeforeDeselialize(StreamingContext context)
+        private void OnBeforeDeselialize(StreamingContext context)
         {
             this.syncRoot = new object();
             this.dependModelList = new List<object>();
@@ -68,7 +68,7 @@ namespace Ragnarok.ObjectModel
         /// <summary>
         /// 依存モデルのリストです。
         /// </summary>
-        List<object> IParentModel.DependModelList
+        public List<object> DependModelList
         {
             get { return this.dependModelList; }
         }
@@ -76,7 +76,7 @@ namespace Ragnarok.ObjectModel
         /// <summary>
         /// PropertyChangedイベントの遅延実行オブジェクトを取得します。
         /// </summary>
-        LazyModelObject ILazyModel.LazyModelObject
+        public LazyModelObject LazyModelObject
         {
             get { return this.lazyModelObject; }
         }

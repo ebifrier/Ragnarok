@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.IO;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Ragnarok.Shogi.Kif
@@ -26,6 +26,7 @@ namespace Ragnarok.Shogi.Kif
         /// </example>
         private static readonly Regex MoveLineRegex = new Regex(
             string.Format(
+                CultureInfo.InvariantCulture,
                 @"^\s*(\d+)\s*[:]?\s*(.*?(?:{0}|打|[(]\d\d[)])?)(\s+[(]?\s*([\s\d:/sS]+)\s*[)]?)?\s*([\+])?\s*$",
                 KifUtil.SpecialMoveText),
             RegexOptions.Compiled);
@@ -66,7 +67,7 @@ namespace Ragnarok.Shogi.Kif
         {
             if (line == null)
             {
-                throw new ArgumentNullException("line");
+                throw new ArgumentNullException(nameof(line));
             }
 
             return KifUtil.IsCommentLine(line);
@@ -480,7 +481,7 @@ namespace Ragnarok.Shogi.Kif
                     var m = BeginVariationLineRegex.Match(this.currentLine);
                     if (m.Success)
                     {
-                        head.MoveCount = int.Parse(m.Groups[1].Value);
+                        head.MoveCount = int.Parse(m.Groups[1].Value, CultureInfo.InvariantCulture);
                         ReadNextLine();
                         break;
                     }
@@ -523,7 +524,7 @@ namespace Ragnarok.Shogi.Kif
                 return null;
             }
 
-            var moveCount = int.Parse(m.Groups[1].Value);
+            var moveCount = int.Parse(m.Groups[1].Value, CultureInfo.InvariantCulture);
             var hasVariation = m.Groups[5].Success;
 
             // 指し手'３六歩(37)'のような形式でパースします。
@@ -533,9 +534,7 @@ namespace Ragnarok.Shogi.Kif
             {
                 throw new FileFormatException(
                     this.lineNumber,
-                    string.Format(
-                        "{0}手目: 指し手が正しくありません。({1})",
-                        m.Groups[1].Value, moveText));
+                    $"{m.Groups[1].Value}手目: 指し手が正しくありません。({moveText})");
             }
 
             // 時間を取得します。
@@ -551,10 +550,10 @@ namespace Ragnarok.Shogi.Kif
             };
         }
 
-        private static readonly string TimeFormat =
+        private const string TimeFormat =
             @"(?:(\d+)\s*\:\s*)?(\d+)\s*\:\s*(\d+)";
         private static readonly Regex DurationRegex1 = new Regex(
-            string.Format(@"{0}\s*(?:/\s*{0})?", TimeFormat),
+            $@"{TimeFormat}\s*(?:/\s*{TimeFormat})?",
             RegexOptions.Compiled);
         private static readonly Regex DurationRegex2 = new Regex(
             @"(\d+)\s*[sS]?",
@@ -570,16 +569,16 @@ namespace Ragnarok.Shogi.Kif
             {
                 var hourStr = m.Groups[1].Success ? m.Groups[1].Value : "0";
                 return new TimeSpan(
-                    int.Parse(hourStr),
-                    int.Parse(m.Groups[2].Value),
-                    int.Parse(m.Groups[3].Value));
+                    int.Parse(hourStr, CultureInfo.InvariantCulture),
+                    int.Parse(m.Groups[2].Value, CultureInfo.InvariantCulture),
+                    int.Parse(m.Groups[3].Value, CultureInfo.InvariantCulture));
             }
 
             m = DurationRegex2.Match(input);
             if (m.Success)
             {
                 return TimeSpan.FromSeconds(
-                    int.Parse(m.Groups[1].Value));
+                    int.Parse(m.Groups[1].Value, CultureInfo.InvariantCulture));
             }
 
             return TimeSpan.Zero;
@@ -631,7 +630,7 @@ namespace Ragnarok.Shogi.Kif
         {
             if (reader == null)
             {
-                throw new ArgumentNullException("reader");
+                throw new ArgumentNullException(nameof(reader));
             }
 
             this.reader = reader;

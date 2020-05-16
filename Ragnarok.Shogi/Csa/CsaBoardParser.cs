@@ -43,13 +43,13 @@ namespace Ragnarok.Shogi.Csa
             {
                 if (this.board == null)
                 {
-                    throw new ShogiException(
+                    throw new InvalidOperationException(
                         "局面が正しく読み込まれていません。");
                 }
 
                 if (this.turn == BWType.None)
                 {
-                    throw new ShogiException(
+                    throw new InvalidOperationException(
                         "手番が正しく読み込まれていません。");
                 }
 
@@ -65,7 +65,7 @@ namespace Ragnarok.Shogi.Csa
         {
             if (string.IsNullOrEmpty(line))
             {
-                throw new ArgumentNullException("line");
+                throw new ArgumentNullException(nameof(line));
             }
 
             var trimmedLine = line.TrimEnd('\r', '\n');
@@ -174,7 +174,7 @@ namespace Ragnarok.Shogi.Csa
                 this.board = new Board(false);
             }
 
-            if (line.Substring(2).StartsWith("00AL"))
+            if (line.Substring(2).StartsWith("00AL", StringComparison.InvariantCulture))
             {
                 // 残りの駒をすべて手番側の持ち駒に設定します。
                 EnumEx.GetValues<PieceType>()
@@ -236,7 +236,7 @@ namespace Ragnarok.Shogi.Csa
                 .Select(_ => CsaUtil.StrToBoardPiece(_))
                 .Where(_ => _ != null)
                 .ToList();
-            if (pieceList.Count() != Board.BoardSize ||
+            if (pieceList.Count != Board.BoardSize ||
                 pieceList.Any(_ => _ == null))
             {
                 throw new ShogiException(

@@ -19,7 +19,7 @@ namespace Ragnarok.Forms.Input
         {
             if (command == null)
             {
-                throw new ArgumentNullException("command");
+                throw new ArgumentNullException(nameof(command));
             }
 
             if (command.CanExecute(parameter))
@@ -73,7 +73,7 @@ namespace Ragnarok.Forms.Input
         {
             if ((object)types == null)
             {
-                throw new ArgumentNullException("types");
+                throw new ArgumentNullException(nameof(types));
             }
 
             if (items == null)
@@ -93,7 +93,7 @@ namespace Ragnarok.Forms.Input
         {
             if ((object)types == null)
             {
-                throw new ArgumentNullException("types");
+                throw new ArgumentNullException(nameof(types));
             }
 
             if (items == null)
@@ -133,7 +133,7 @@ namespace Ragnarok.Forms.Input
         {
             if (types == null || !types.Any())
             {
-                throw new ArgumentNullException("types");
+                throw new ArgumentNullException(nameof(types));
             }
 
             if (item == null)

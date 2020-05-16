@@ -19,10 +19,6 @@ namespace Ragnarok.Forms.Bindings
     /// </summary>
     public delegate object CoerceBindingValueCallback(Control c, object baseValue);
 
-    internal sealed class SpecialObject
-    {
-    }
-
     /// <summary>
     /// バインディングを扱うクラスです。
     /// </summary>

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -15,17 +17,18 @@ namespace Ragnarok.Update
         /// <summary>
         /// MD5を計算します。
         /// </summary>
+        [SuppressMessage("Security", "CA5351:破られた暗号アルゴリズムを使用しない")]
         public static string ComputeMD5(string filename)
         {
             using (var stream = File.OpenRead(filename))
+            using (var md5 = MD5.Create())
             {
-                var md5 = MD5.Create();
                 var result = md5.ComputeHash(stream);
 
                 var sb = new StringBuilder();
                 for (int i = 0; i < result.Length; i++)
                 {
-                    sb.Append(result[i].ToString("x2"));
+                    sb.Append(result[i].ToString("x2", CultureInfo.InvariantCulture));
                 }
 
                 return sb.ToString();
@@ -42,13 +45,13 @@ namespace Ragnarok.Update
                 return true;
             }
 
-            if ((object)x == null || x.Length != y.Length)
+            if ((object)x == null || (object)y == null || x.Length != y.Length)
             {
                 return false;
             }
 
             // 大文字・小文字は区別しない。
-            return (string.Compare(x, 0, y, 0, x.Length, true) == 0);
+            return (string.Compare(x, 0, y, 0, x.Length, true, CultureInfo.InvariantCulture) == 0);
         }
     }
 }

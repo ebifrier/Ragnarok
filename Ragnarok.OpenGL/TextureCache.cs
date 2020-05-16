@@ -15,7 +15,7 @@ namespace Ragnarok.OpenGL
     /// このクラスでは各画像をクロッピングして管理します。
     /// </remarks>
     [CLSCompliant(false)]
-    public class TextureCache
+    public static class TextureCache
     {
         public readonly static long AnimationTextureCacheCapacity = 20L * 1024 * 1024; // 20MB
         public readonly static long TextTextureCacheCapacity = 20L * 1024 * 1024; // 20MB
@@ -74,7 +74,7 @@ namespace Ragnarok.OpenGL
         public static Texture GetTexture(string imagePath)
         {
             var animTexture = GetAnimationTexture(imagePath, 1);
-            if (animTexture == null || animTexture.TextureList.Count() != 1)
+            if (animTexture == null || animTexture.TextureList.Count != 1)
             {
                 return null;
             }
@@ -91,17 +91,17 @@ namespace Ragnarok.OpenGL
             var context = GraphicsContext.CurrentContext;
             if (context == null)
             {
-                throw new ArgumentNullException("context");
+                throw new InvalidOperationException("OpenGLのコンテキストがありません。");
             }
 
             if (string.IsNullOrEmpty(imagePath))
             {
-                throw new ArgumentNullException("imagePath");
+                throw new ArgumentNullException(nameof(imagePath));
             }
 
             if (count <= 0)
             {
-                throw new ArgumentException("count");
+                throw new ArgumentException("countの値が小さすぎます。", nameof(count));
             }
 
             var cache = GetAnimationTextureCache(context);
@@ -117,17 +117,17 @@ namespace Ragnarok.OpenGL
             var context = GraphicsContext.CurrentContext;
             if (context == null)
             {
-                throw new ArgumentNullException("context");
+                throw new InvalidOperationException("OpenGLのコンテキストがありません。");
             }
 
             if (text == null)
             {
-                throw new ArgumentNullException("text");
+                throw new ArgumentNullException(nameof(text));
             }
 
             if (font == null)
             {
-                throw new ArgumentNullException("font");
+                throw new ArgumentNullException(nameof(font));
             }
 
             var cache = GetTextTextureCache(context);

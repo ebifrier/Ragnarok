@@ -312,19 +312,20 @@ namespace Ragnarok.Utility
         {
             if (string.IsNullOrEmpty(source))
             {
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
             }
 
             var trimmedSource = source.Trim();
             if (string.IsNullOrEmpty(source))
             {
-                throw new ArgumentException("source");
+                throw new ArgumentNullException(nameof(source));
             }
 
             if (trimmedSource[0] == '#')
             {
                 var substr = trimmedSource.Substring(1);
-                var value = uint.Parse(substr, NumberStyles.AllowHexSpecifier);
+                var value = uint.Parse(
+                    substr, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture);
 
                 switch (substr.Length)
                 {
@@ -380,9 +381,7 @@ namespace Ragnarok.Utility
             }
 
             // ARGB形式の出力
-            return string.Format(
-                "#{0:X2}{1:X2}{2:X2}{3:X3}",
-                A, R, G, B);
+            return $"#{A:X2}{R:X2}{G:X2}{B:X3}";
         }
     }
 }

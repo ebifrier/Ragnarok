@@ -35,7 +35,7 @@ namespace Ragnarok.Shogi.Csa
         {
             // 次の行を読み込みます。
             while (this.currentLines == null ||
-                   this.currentLineIndex >= this.currentLines.Count())
+                   this.currentLineIndex >= this.currentLines.Length)
             {
                 var line = this.reader.ReadLine();
                 if (line == null)
@@ -296,7 +296,7 @@ namespace Ragnarok.Shogi.Csa
         {
             if (reader == null)
             {
-                throw new ArgumentNullException("reader");
+                throw new ArgumentNullException(nameof(reader));
             }
 
             this.reader = reader;

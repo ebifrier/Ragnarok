@@ -87,7 +87,7 @@ namespace Ragnarok
         {
             if (value == null)
             {
-                throw new ArgumentNullException("value");
+                throw new ArgumentNullException(nameof(value));
             }
 
             // 列挙型の値から、その値のリフレクション情報を得ます。

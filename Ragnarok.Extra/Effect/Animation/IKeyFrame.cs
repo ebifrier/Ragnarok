@@ -30,8 +30,12 @@ namespace Ragnarok.Extra.Effect.Animation
         /// </remarks>
         public static void ValidateKeyFrames(IEnumerable<IKeyFrame> keyFrames)
         {
-            IKeyFrame prev = null;
+            if (keyFrames == null)
+            {
+                throw new ArgumentNullException(nameof(keyFrames));
+            }
 
+            IKeyFrame prev = null;
             foreach (var curr in keyFrames)
             {
                 if (prev != null)
@@ -60,7 +64,7 @@ namespace Ragnarok.Extra.Effect.Animation
         {
             if (keyFrames == null)
             {
-                throw new ArgumentNullException("keyFrames");
+                throw new ArgumentNullException(nameof(keyFrames));
             }
 
             // 各キーフレームを検索し、frameTimeを含むキーフレームを探します。

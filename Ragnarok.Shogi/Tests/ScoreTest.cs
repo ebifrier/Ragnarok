@@ -8,7 +8,7 @@ using NUnit.Framework;
 namespace Ragnarok.Shogi
 {
     [TestFixture()]
-    internal sealed class ScoreTest
+    public sealed class ScoreTest
     {
         private void AssertValue(string text, int value, ScoreBound bound)
         {

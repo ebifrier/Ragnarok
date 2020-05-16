@@ -50,7 +50,7 @@
 
 namespace FlintSharp.EnergyEasing
 {
-    public class Quartic
+    public static class Quartic
     {
         public static double EaseIn(double age, double lifetime)
         {

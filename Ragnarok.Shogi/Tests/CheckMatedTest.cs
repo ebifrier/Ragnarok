@@ -13,7 +13,7 @@ namespace Ragnarok.Shogi.Tests
     /// 詰みや王手に関するテストを行います。
     /// </summary>
     [TestFixture()]
-    internal sealed class CheckMatedTest
+    public sealed class CheckMatedTest
     {
         private static Tuple<string, string[]>[] Mate1PlyList =
         {

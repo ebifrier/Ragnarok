@@ -50,7 +50,7 @@
 
 namespace FlintSharp.Easing
 {
-    public class Cubic
+    public static class Cubic
     {
         public static double EaseIn(double t, double b, double c, double d)
         {

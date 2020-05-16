@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Codehaus.Parsec
 {
@@ -23,6 +22,10 @@ namespace Codehaus.Parsec
             get { return lno; }
         }
 
+        public override bool Equals(object obj)
+        {
+            return Equals((Pos)obj);
+        }
 
         public bool Equals(Pos other)
         {
@@ -39,6 +42,15 @@ namespace Codehaus.Parsec
             return "line " + lno + " column " + cno;
         }
 
+        public static bool operator==(Pos x, Pos y)
+        {
+            return x.Equals(y);
+        }
+
+        public static bool operator !=(Pos x, Pos y)
+        {
+            return !(x == y);
+        }
     }
     /// <summary> The interface to find the line number,
     /// column number of a certain position in the source.

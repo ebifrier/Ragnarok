@@ -125,8 +125,8 @@ namespace Ragnarok.Update
         /// </summary>
         public void Dispose()
         {
-            GC.SuppressFinalize(this);
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         /// <summary>
@@ -138,6 +138,24 @@ namespace Ragnarok.Update
             {
                 if (disposing)
                 {
+                    if (this.latestVersionEvent != null)
+                    {
+                        this.latestVersionEvent.Dispose();
+                        this.latestVersionEvent = null;
+                    }
+
+                    if (this.startedEvent != null)
+                    {
+                        this.startedEvent.Dispose();
+                        this.startedEvent = null;
+                    }
+
+                    if (this.downloadDoneEvent != null)
+                    {
+                        this.downloadDoneEvent.Dispose();
+                        this.downloadDoneEvent = null;
+                    }
+
                     Stop();
                 }
 
@@ -207,7 +225,7 @@ namespace Ragnarok.Update
             }
 
             // check if the available update has to be skipped
-            if (latestVersion.Version.Equals(this.config.SkipThisVersion))
+            if (latestVersion.Version == this.config.SkipThisVersion)
             {
                 Log.Info(
                     "Updater: Latest update has to be skipped (user decided to skip version {0})",
@@ -343,7 +361,7 @@ namespace Ragnarok.Update
 
                 using (var stream = new FileStream(filename, FileMode.Create))
                 {
-                    stream.Write(e.Result, 0, e.Result.Count());
+                    stream.Write(e.Result, 0, e.Result.Length);
                 }
 
                 HandleDownloadDone(false, null);
@@ -463,6 +481,13 @@ namespace Ragnarok.Update
         private void ExecutePackInternal()
         {
             var workingDir = Environment.CurrentDirectory;
+            var arguments = new string[]
+            {
+                $"{Process.GetCurrentProcess().Id}",
+                this.downloadFilePath,
+                workingDir,
+                Environment.CommandLine
+            };
 
             // start update helper
             // 0. this process' id
@@ -472,12 +497,8 @@ namespace Ragnarok.Update
             var startInfo = new ProcessStartInfo
             {
                 FileName = this.packFilePath,
-                Arguments = string.Format(
-                    @"{0} ""{1}"" ""{2}"" {3}",
-                    Process.GetCurrentProcess().Id,
-                    this.downloadFilePath,
-                    workingDir,
-                    Environment.CommandLine),
+                Arguments = string.Join(" ",
+                    arguments.Select(_ => _.Quote("\"")).ToArray()),
                 UseShellExecute = false,
                 CreateNoWindow = true,
             };

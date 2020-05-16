@@ -21,7 +21,7 @@ namespace Ragnarok.Forms.Input.Detail
             : base(button, command, commandParameterCallback)
         {
             this.target = button;
-            this.target.Click += event_DoExecute;
+            this.target.Click += DoExecuteEvent;
 
             OnUpdatedEnabled();
         }
@@ -39,7 +39,7 @@ namespace Ragnarok.Forms.Input.Detail
         /// </summary>
         protected override void OnDisposed()
         {
-            this.target.Click -= event_DoExecute;
+            this.target.Click -= DoExecuteEvent;
             this.target = null;
         }
     }

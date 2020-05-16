@@ -82,7 +82,7 @@ namespace Ragnarok.OpenGL
     [CLSCompliant(false)]
     public sealed class TextTextureCache
     {
-        private readonly CacheManager<TextTextureKey, TextTexture> cache;
+        private readonly CacheCollection<TextTextureKey, TextTexture> cache;
         private readonly IGraphicsContext context;
 
         /// <summary>
@@ -92,10 +92,10 @@ namespace Ragnarok.OpenGL
         {
             if (context == null)
             {
-                throw new ArgumentNullException("context");
+                throw new ArgumentNullException(nameof(context));
             }
 
-            this.cache = new CacheManager<TextTextureKey, TextTexture>(
+            this.cache = new CacheCollection<TextTextureKey, TextTexture>(
                 CreateTextTexture, capacity);
             this.context = context;
         }
@@ -130,12 +130,12 @@ namespace Ragnarok.OpenGL
 
             if (text == null)
             {
-                throw new ArgumentNullException("text");
+                throw new ArgumentNullException(nameof(text));
             }
 
             if (textureFont == null)
             {
-                throw new ArgumentNullException("textureFont");
+                throw new ArgumentNullException(nameof(textureFont));
             }
 
             try

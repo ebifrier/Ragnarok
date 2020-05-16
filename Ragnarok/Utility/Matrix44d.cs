@@ -1,20 +1,47 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text;
+using System.Linq.Expressions;
+using System.Runtime.Serialization;
 
 namespace Ragnarok.Utility
 {
     /// <summary>
     /// 行列用の例外クラスです。
     /// </summary>
-    public class MatrixException : ApplicationException
+    [Serializable()]
+    public class MatrixException : Exception
     {
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public MatrixException()
+            : base()
+        {
+        }
+
         /// <summary>
         /// コンストラクタ
         /// </summary>
         public MatrixException(string message)
             : base(message)
+        {
+        }
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public MatrixException(string message, Exception innerException)
+            : base(message, innerException)
+        {
+        }
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        protected MatrixException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
         {
         }
     }
@@ -49,8 +76,12 @@ namespace Ragnarok.Utility
         /// </summary>
         public Matrix44d(double[,] values)
         {
-            this.values = new double[4, 4];
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
 
+            this.values = new double[4, 4];
             for (int i = 0; i < Rows; i++)
             {
                 for (int j = 0; j < Columns; j++)
@@ -96,6 +127,7 @@ namespace Ragnarok.Utility
         /// <summary>
         /// 各値を配列として取得します。
         /// </summary>
+        [SuppressMessage("Microsoft.Performance", "CA1819")]
         public double[,] AsArray
         {
             get { return this.values; }
@@ -257,8 +289,12 @@ namespace Ragnarok.Utility
         /// </summary>
         public static Matrix44d FromRowMajorArray(double[] rowMajorArray)
         {
-            var matrix = new Matrix44d();
+            if (rowMajorArray == null)
+            {
+                throw new ArgumentNullException(nameof(rowMajorArray));
+            }
 
+            var matrix = new Matrix44d();
             int index = 0;
             for (int i = 0; i < Rows; i++)
             {
@@ -276,8 +312,12 @@ namespace Ragnarok.Utility
         /// </summary>
         public static Matrix44d FromColumnMajorArray(double[] columnMajorArray)
         {
-            var matrix = new Matrix44d();
+            if (columnMajorArray == null)
+            {
+                throw new ArgumentNullException(nameof(columnMajorArray));
+            }
 
+            var matrix = new Matrix44d();
             int index = 0;
             for (int j = 0; j < Columns; j++)
             {
@@ -293,6 +333,7 @@ namespace Ragnarok.Utility
         /// <summary>
         /// 行列を列優先の数字列に変換します。
         /// </summary>
+        [SuppressMessage("Microsoft.Performance", "CA1819")]
         public double[] AsRowMajorArray
         {
             get
@@ -314,6 +355,7 @@ namespace Ragnarok.Utility
         /// <summary>
         /// 行列を行優先の数字列に変換します。
         /// </summary>
+        [SuppressMessage("Microsoft.Performance", "CA1819")]
         public double[] AsColumnMajorArray
         {
             get
@@ -339,6 +381,11 @@ namespace Ragnarok.Utility
         /// </summary>
         public void Add(Matrix44d mat)
         {
+            if (mat == null)
+            {
+                throw new ArgumentNullException(nameof(mat));
+            }
+
             for (var i = 0; i < Rows; i++)
             {
                 for (var j = 0; j < Columns; j++)
@@ -353,6 +400,11 @@ namespace Ragnarok.Utility
         /// </summary>
         public static Matrix44d operator +(Matrix44d mat1, Matrix44d mat2)
         {
+            if (mat1 == null)
+            {
+                throw new ArgumentNullException(nameof(mat1));
+            }
+
             var result = mat1.Clone();
             result.Add(mat2);
             return result;
@@ -363,6 +415,11 @@ namespace Ragnarok.Utility
         /// </summary>
         public void Subtract(Matrix44d mat)
         {
+            if (mat == null)
+            {
+                throw new ArgumentNullException(nameof(mat));
+            }
+
             for (var i = 0; i < Rows; i++)
             {
                 for (var j = 0; j < Columns; j++)
@@ -377,6 +434,11 @@ namespace Ragnarok.Utility
         /// </summary>
         public static Matrix44d operator -(Matrix44d mat1, Matrix44d mat2)
         {
+            if (mat1 == null)
+            {
+                throw new ArgumentNullException(nameof(mat1));
+            }
+
             var result = mat1.Clone();
             result.Subtract(mat2);
             return result;
@@ -401,6 +463,11 @@ namespace Ragnarok.Utility
         /// </summary>
         public static Matrix44d operator *(Matrix44d mat, double scala)
         {
+            if (mat == null)
+            {
+                throw new ArgumentNullException(nameof(mat));
+            }
+
             var result = mat.Clone();
             result.Multiply(scala);
             return result;
@@ -411,6 +478,11 @@ namespace Ragnarok.Utility
         /// </summary>
         public static Matrix44d operator *(double scala, Matrix44d mat)
         {
+            if (mat == null)
+            {
+                throw new ArgumentNullException(nameof(mat));
+            }
+
             var result = mat.Clone();
             result.Multiply(scala);
             return result;
@@ -435,6 +507,11 @@ namespace Ragnarok.Utility
         /// </summary>
         public static Matrix44d operator /(Matrix44d mat, double scala)
         {
+            if (mat == null)
+            {
+                throw new ArgumentNullException(nameof(mat));
+            }
+
             var result = mat.Clone();
             result.Divide(scala);
             return result;
@@ -445,8 +522,12 @@ namespace Ragnarok.Utility
         /// </summary>
         public void Multiply(Matrix44d mat)
         {
-            var clone = Clone();
+            if (mat == null)
+            {
+                throw new ArgumentNullException(nameof(mat));
+            }
 
+            var clone = Clone();
             for (int i = 0; i < Rows; i++)
             {
                 for (int j = 0; j < Columns; j++)
@@ -467,8 +548,12 @@ namespace Ragnarok.Utility
         /// </summary>
         public void Prepend(Matrix44d mat)
         {
-            var clone = Clone();
+            if (mat == null)
+            {
+                throw new ArgumentNullException(nameof(mat));
+            }
 
+            var clone = Clone();
             for (int i = 0; i < Rows; i++)
             {
                 for (int j = 0; j < Columns; j++)
@@ -489,6 +574,11 @@ namespace Ragnarok.Utility
         /// </summary>
         public static Matrix44d operator *(Matrix44d mat1, Matrix44d mat2)
         {
+            if (mat1 == null)
+            {
+                throw new ArgumentNullException(nameof(mat1));
+            }
+
             var result = mat1.Clone();
             result.Multiply(mat2);
             return result;

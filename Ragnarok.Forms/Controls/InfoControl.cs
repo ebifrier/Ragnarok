@@ -85,7 +85,7 @@ namespace Ragnarok.Forms.Controls
                 }
 
                 var infoItems = GetInfoItems().ToList();
-                for (var i = 0; i < this.itemNameLabels.Count(); ++i)
+                for (var i = 0; i < this.itemNameLabels.Length; ++i)
                 {
                     // 前に作ったラベルは消しておきます。
                     if (this.itemValueLabels[i] != null)
@@ -94,7 +94,7 @@ namespace Ragnarok.Forms.Controls
                         this.itemValueLabels[i] = null;
                     }
 
-                    if (i < infoItems.Count())
+                    if (i < infoItems.Count)
                     {
                         var infoItem = infoItems[i];
                         this.itemNameLabels[i].Text = infoItem.Item1 + "：";
@@ -125,7 +125,7 @@ namespace Ragnarok.Forms.Controls
         {
             if (Info.PixivId > 0)
             {
-                yield return Tuple.Create("pixiv", Info.PixivId.ToString(), info.PixivUrl);
+                yield return Tuple.Create("pixiv", $"{Info.PixivId}", info.PixivUrl);
             }
 
             if (!string.IsNullOrEmpty(info.NicoCommunity))

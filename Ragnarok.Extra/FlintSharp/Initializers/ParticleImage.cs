@@ -90,6 +90,11 @@ namespace FlintSharp.Initializers
         /// <param name="particle">The particle to be initialized.</param>
         public override void Initialize(Emitter emitter, Particle particle)
         {
+            if (particle == null)
+            {
+                return;
+            }
+
             if (Utils.ImageLoader == null)
             {
                 throw new InvalidOperationException(

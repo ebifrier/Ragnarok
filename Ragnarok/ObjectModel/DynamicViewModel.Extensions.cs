@@ -75,8 +75,12 @@ namespace Ragnarok.ObjectModel
         /// </remarks>
         public void RaiseAllPropertyChanged(object target)
         {
-            var properties = MethodUtil.GetPropertyDic(target.GetType());
+            if (target == null)
+            {
+                throw new ArgumentNullException(nameof(target));
+            }
 
+            var properties = MethodUtil.GetPropertyDic(target.GetType());
             foreach (var property in properties)
             {
                 if (target == this)
@@ -129,6 +133,11 @@ namespace Ragnarok.ObjectModel
         /// </remarks>
         public void RaisePropertyChanged(Expression<Func<object>> expression)
         {
+            if (expression == null)
+            {
+                throw new ArgumentNullException(nameof(expression));
+            }
+
             MemberExpression member;
             UnaryExpression unary;
             string propertyName;
@@ -146,7 +155,7 @@ namespace Ragnarok.ObjectModel
                 {
                     throw new ArgumentException(
                         "メンバを扱う単項式である必要があります。",
-                        "expression");
+                        nameof(expression));
                 }
 
                 propertyName = member.Member.Name;
@@ -154,7 +163,7 @@ namespace Ragnarok.ObjectModel
             else
             {
                 throw new ArgumentException(
-                    "単項式である必要があります。", "expression");
+                    "単項式である必要があります。", nameof(expression));
             }
 
             this.RaisePropertyChanged(propertyName);
@@ -176,7 +185,7 @@ namespace Ragnarok.ObjectModel
             if (!object.ReferenceEquals(this, sender))
             {
                 throw new ArgumentException(
-                    "thisとsenderの内容が一致しません。", "sender");
+                    "thisとsenderの内容が一致しません。", nameof(sender));
             }
 
             // このプロパティの変更通知を送ります。
@@ -224,13 +233,13 @@ namespace Ragnarok.ObjectModel
         {
             if (sender == null)
             {
-                throw new ArgumentNullException("sender");
+                throw new ArgumentNullException(nameof(sender));
             }
 
             if (e == null || string.IsNullOrEmpty(e.PropertyName))
             {
                 throw new ArgumentException(
-                    "プロパティ名がありません。", "e");
+                    "プロパティ名がありません。", nameof(e));
             }
 
 #if !RGN_DYNAMICVIEWMODEL

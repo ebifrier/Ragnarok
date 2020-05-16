@@ -66,7 +66,7 @@ namespace Ragnarok.Utility.Tests
         [Test()]
         public void NormalTest()
         {
-            var manager = new CacheManager<int, CacheObject>(CreateObject, 1000);
+            var manager = new CacheCollection<int, CacheObject>(CreateObject, 1000);
 
             var obj1 = manager.GetOrCreate(100);
             Assert.AreEqual(100, obj1.ObjectSize);
@@ -104,7 +104,7 @@ namespace Ragnarok.Utility.Tests
         [Test()]
         public void RandomTest()
         {
-            var manager = new CacheManager<int, CacheObject>(CreateObject, 100);
+            var manager = new CacheCollection<int, CacheObject>(CreateObject, 100);
 
             // ObjectSizeが乱数を返すようなオブジェクトを登録する。
             var robj = manager.GetOrCreate(int.MaxValue);
@@ -121,7 +121,7 @@ namespace Ragnarok.Utility.Tests
         [Test()]
         public void MinusTest()
         {
-            var manager = new CacheManager<int, CacheObject>(CreateObject, 100);
+            var manager = new CacheCollection<int, CacheObject>(CreateObject, 100);
 
             // ObjectSizeが負数になるようなオブジェクトを作成した場合
             Assert.Catch(() => manager.GetOrCreate(-100));
@@ -135,7 +135,7 @@ namespace Ragnarok.Utility.Tests
         [Test()]
         public void ExceptionTest()
         {
-            var manager = new CacheManager<int, ExceptionObject>(CreateExceptionObject, 100);
+            var manager = new CacheCollection<int, ExceptionObject>(CreateExceptionObject, 100);
 
             Assert.Catch(typeof(InvalidOperationException), () => manager.GetOrCreate(100));
         }

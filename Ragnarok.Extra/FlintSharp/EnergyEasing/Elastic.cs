@@ -52,7 +52,7 @@ using System;
 
 namespace FlintSharp.EnergyEasing
 {
-    public class Elastic
+    public static class Elastic
     {
         private static double TWOPI = Math.PI * 2;
 

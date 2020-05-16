@@ -2,12 +2,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.ComponentModel;
 using NUnit.Framework;
 
 namespace Ragnarok.ObjectModel.Tests
 {
+    // メンバー Xxx はインスタンス データにアクセスしないため、static (Visual Basic では Shared) に設定できます
+    #pragma warning disable CA1822
+
     internal class AggregateClass : PropertyChangedCounter
     {
         private BaseModel model;
@@ -59,7 +60,7 @@ namespace Ragnarok.ObjectModel.Tests
     }
 
     [TestFixture()]
-    internal class DependModelTest
+    public sealed class DependModelTest
     {
         [Test()]
         public void BaseTest()

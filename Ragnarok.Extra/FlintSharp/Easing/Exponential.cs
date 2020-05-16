@@ -52,7 +52,7 @@ using System;
 
 namespace FlintSharp.Easing
 {
-    public class Exponential
+    public static class Exponential
     {
         public static double EaseIn(double t, double b, double c, double d)
         {

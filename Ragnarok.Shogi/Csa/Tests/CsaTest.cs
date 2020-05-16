@@ -13,7 +13,7 @@ namespace Ragnarok.Shogi.Csa.Tests
     using File.Tests;
 
     [TestFixture()]
-    internal sealed class CsaTest
+    public sealed class CsaTest
     {
         /// <summary>
         /// 指定の名前を持つ棋譜をリソースから読み込みます。
@@ -24,9 +24,11 @@ namespace Ragnarok.Shogi.Csa.Tests
             var ns = typeof(CsaTest).Namespace + ".";
 
             using (var stream = asm.GetManifestResourceStream(ns + resourceName))
-            using (var reader = new StreamReader(stream, KifuObject.DefaultEncoding))
             {
-                return reader.ReadToEnd();
+                using (var reader = new StreamReader(stream, KifuObject.DefaultEncoding))
+                {
+                    return reader.ReadToEnd();
+                }
             }
         }
 
@@ -147,11 +149,11 @@ namespace Ragnarok.Shogi.Csa.Tests
             // 棋譜の読み込み
             var kifu = KifuReader.LoadFrom(sample);
             Assert.NotNull(kifu);
-            Assert.AreEqual(timeSeconds.Count(), kifu.MoveList.Count());
+            Assert.AreEqual(timeSeconds.Length, kifu.MoveList.Count());
 
             // 消費時間の比較
             var node = kifu.RootNode;
-            for (var i = 0; i < timeSeconds.Count(); ++i)
+            for (var i = 0; i < timeSeconds.Length; ++i)
             {
                 node = node.NextNode;
                 Assert.AreEqual(timeSeconds[i], node.DurationSeconds);

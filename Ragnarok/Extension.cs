@@ -158,12 +158,12 @@ namespace Ragnarok
         {
             if (source == null)
             {
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
             }
 
             if (count < 1)
             {
-                throw new ArgumentOutOfRangeException("count");
+                throw new ArgumentOutOfRangeException(nameof(count));
             }
 
             while (source.Any())
@@ -184,12 +184,12 @@ namespace Ragnarok
         {
             if (source == null)
             {
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
             }
 
             if (count < 1)
             {
-                throw new ArgumentOutOfRangeException("count");
+                throw new ArgumentOutOfRangeException(nameof(count));
             }
 
             using (var enumerator = source.GetEnumerator())
@@ -209,7 +209,7 @@ namespace Ragnarok
 
                     for (; index < count; ++index)
                     {
-                        values[index] = default(TSource);
+                        values[index] = default;
                     }
 
                     yield return values;
@@ -221,8 +221,13 @@ namespace Ragnarok
         /// Listクラスをリサイズします。
         /// </summary>
         public static void Resize<T>(this List<T> list, int size,
-                                     T value = default(T))
+                                     T value = default)
         {
+            if (list == null)
+            {
+                throw new ArgumentNullException(nameof(list));
+            }
+
             int curSize = list.Count;
 
             if (size < curSize)

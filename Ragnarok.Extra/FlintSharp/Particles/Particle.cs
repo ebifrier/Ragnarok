@@ -272,6 +272,11 @@ namespace FlintSharp.Particles
         /// </summary>
         public int CompareTo(Particle other)
         {
+            if (other == null)
+            {
+                return 1;
+            }
+
             return this.X.CompareTo(other.X);
         }
     }

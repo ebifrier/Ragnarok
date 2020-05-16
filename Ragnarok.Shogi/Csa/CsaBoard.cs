@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Globalization;
 using System.Linq;
-using System.Text;
 
 namespace Ragnarok.Shogi.Csa
 {
@@ -19,7 +18,7 @@ namespace Ragnarok.Shogi.Csa
         {
             if (string.IsNullOrEmpty(csa))
             {
-                throw new ArgumentNullException("csa");
+                throw new ArgumentNullException(nameof(csa));
             }
 
             var parser = new CsaBoardParser();
@@ -42,7 +41,7 @@ namespace Ragnarok.Shogi.Csa
         {
             if (board == null)
             {
-                throw new ArgumentNullException("board");
+                throw new ArgumentNullException(nameof(board));
             }
 
             var comp = new Board();
@@ -73,6 +72,7 @@ namespace Ragnarok.Shogi.Csa
                 }
 
                 return string.Format(
+                    CultureInfo.InvariantCulture,
                     "{0}\n{1}{2}{3}",
                     BoardToCsa2(board),
                     bhand, whand,
@@ -131,8 +131,7 @@ namespace Ragnarok.Shogi.Csa
             var handList =
                 from pieceType in EnumEx.GetValues<PieceType>()
                 let count = board.GetHand(pieceType, turn)
-                let str = string.Format("00{0}",
-                    CsaUtil.PieceToStr(new Piece(pieceType)))
+                let str = $"00{CsaUtil.PieceToStr(new Piece(pieceType))}"
                 let list = Enumerable.Range(1, count).Select(_ => str)
                 select string.Join("", list.ToArray());
 
@@ -144,9 +143,9 @@ namespace Ragnarok.Shogi.Csa
             }
             else
             {
-                return string.Format("P{0}{1}",
-                    turn == BWType.Black ? "+" : "-",
-                    string.Join("", array));
+                var turnStr = (turn == BWType.Black ? "+" : "-");
+                var arrayStr = string.Join("", array);
+                return $"P{turnStr}{arrayStr}";
             }
         }
         #endregion

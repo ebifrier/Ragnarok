@@ -41,8 +41,8 @@ namespace Ragnarok.Extra.Effect.Animation
         /// </summary>
         public NotifyCollection<Point3dKeyFrame> KeyFrames
         {
-            get { return GetValue<NotifyCollection<Point3dKeyFrame>>("KeyFrames"); }
-            set { SetValue("KeyFrames", value); }
+            get { return GetValue<NotifyCollection<Point3dKeyFrame>>(nameof(KeyFrames)); }
+            private set { SetValue(nameof(KeyFrames), value); }
         }
 
         /// <summary>

@@ -76,8 +76,12 @@ namespace Ragnarok.ObjectModel
         public static void RaiseAllPropertyChanged(this IModel self,
                                                    object target)
         {
-            var properties = MethodUtil.GetPropertyDic(target.GetType());
+            if (self == null)
+            {
+                throw new ArgumentNullException(nameof(self));
+            }
 
+            var properties = MethodUtil.GetPropertyDic(target.GetType());
             foreach (var property in properties)
             {
                 if (target == self)
@@ -137,6 +141,11 @@ namespace Ragnarok.ObjectModel
             UnaryExpression unary;
             string propertyName;
 
+            if (expression == null)
+            {
+                throw new ArgumentNullException(nameof(expression));
+            }
+
             // 以下のコンパイル結果はclrのバージョンによって
             // 変わる可能性があります。
             if ((member = expression.Body as MemberExpression) != null)
@@ -150,7 +159,7 @@ namespace Ragnarok.ObjectModel
                 {
                     throw new ArgumentException(
                         "メンバを扱う単項式である必要があります。",
-                        "expression");
+                        nameof(expression));
                 }
 
                 propertyName = member.Member.Name;
@@ -158,7 +167,7 @@ namespace Ragnarok.ObjectModel
             else
             {
                 throw new ArgumentException(
-                    "単項式である必要があります。", "expression");
+                    "単項式である必要があります。", nameof(expression));
             }
 
             self.RaisePropertyChanged(propertyName);
@@ -180,7 +189,7 @@ namespace Ragnarok.ObjectModel
             if (!object.ReferenceEquals(self, sender))
             {
                 throw new ArgumentException(
-                    "selfとsenderの内容が一致しません。", "sender");
+                    "selfとsenderの内容が一致しません。", nameof(sender));
             }
 
             // このプロパティの変更通知を送ります。
@@ -230,13 +239,13 @@ namespace Ragnarok.ObjectModel
         {
             if (sender == null)
             {
-                throw new ArgumentNullException("sender");
+                throw new ArgumentNullException(nameof(sender));
             }
 
             if (e == null || string.IsNullOrEmpty(e.PropertyName))
             {
                 throw new ArgumentException(
-                    "プロパティ名がありません。", "e");
+                    "プロパティ名がありません。", nameof(e));
             }
 
 #if !RGN_DYNAMICVIEWMODEL
@@ -251,9 +260,7 @@ namespace Ragnarok.ObjectModel
             if (!propertyDic.ContainsKey(e.PropertyName))
             {
                 throw new InvalidOperationException(
-                    string.Format(
-                        "型'{0}'にプロパティ'{1}'は存在しません。",
-                        sender.GetType(), e.PropertyName));
+                    $"型'{sender.GetType()}'にプロパティ'{e.PropertyName}'は存在しません。");
             }
 #endif
         }
@@ -426,9 +433,14 @@ namespace Ragnarok.ObjectModel
         public static void AddDependModel(this IParentModel self, object model,
                                           bool notifyAllPropertyChanged)
         {
+            if (self == null)
+            {
+                throw new ArgumentNullException(nameof(self));
+            }
+
             if (model == null)
             {
-                return;
+                throw new ArgumentNullException(nameof(model));
             }
 
             lock (self)
@@ -459,9 +471,14 @@ namespace Ragnarok.ObjectModel
         public static void RemoveDependModel(this IParentModel self,
                                              object model)
         {
+            if (self == null)
+            {
+                throw new ArgumentNullException(nameof(self));
+            }
+
             if (model == null)
             {
-                return;
+                throw new ArgumentNullException(nameof(model));
             }
 
             lock (self)
@@ -490,6 +507,11 @@ namespace Ragnarok.ObjectModel
         /// </summary>
         public static bool HasDependModel(this IParentModel self, object model)
         {
+            if (self == null)
+            {
+                throw new ArgumentNullException(nameof(self));
+            }
+
             lock (self)
             {
                 return (self.DependModelList.FindIndex(
@@ -502,6 +524,11 @@ namespace Ragnarok.ObjectModel
         /// </summary>
         public static void ClearDependModels(this IParentModel self)
         {
+            if (self == null)
+            {
+                throw new ArgumentNullException(nameof(self));
+            }
+
             lock (self)
             {
                 while (self.DependModelList.Count > 0)

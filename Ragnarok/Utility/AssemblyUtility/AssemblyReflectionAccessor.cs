@@ -69,9 +69,7 @@ namespace Ragnarok.Utility.AssemblyUtility
             if (result == null)
             {
                 throw new RagnarokException(
-                    string.Format(
-                        "Attribute of type {0} does not exists in the assembly {1}.",
-                        typeof(T), this.assembly.FullName));
+                    $"属性 {typeof(T)} が {this.assembly.FullName} に存在しません。");
             }
 
             return (T)result;

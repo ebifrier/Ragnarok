@@ -56,11 +56,11 @@ namespace Ragnarok.Forms.Tests
             var ragnarokList = GetColor4bList();
             var drawingList = GetDrawingColorList();
 
-            ragnarokList.Sort((x, y) => x.Item1.CompareTo(y.Item1));
-            drawingList.Sort((x, y) => x.Item1.CompareTo(y.Item1));
+            ragnarokList.Sort((x, y) => string.Compare(x.Item1, y.Item1, StringComparison.InvariantCulture));
+            drawingList.Sort((x, y) => string.Compare(x.Item1, y.Item1, StringComparison.InvariantCulture));
 
-            Assert.AreEqual(drawingList.Count(), ragnarokList.Count());
-            for (var i = 0; i < drawingList.Count(); ++i)
+            Assert.AreEqual(drawingList.Count, ragnarokList.Count);
+            for (var i = 0; i < drawingList.Count; ++i)
             {
                 var ragnarokPair = ragnarokList[i];
                 var drawingPair = drawingList[i];

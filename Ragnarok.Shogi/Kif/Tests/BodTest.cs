@@ -9,12 +9,12 @@ using NUnit.Framework;
 namespace Ragnarok.Shogi.Kif.Tests
 {
     [TestFixture()]
-    internal sealed class BodTest
+    public sealed class BodTest
     {
         /// <summary>
         /// bod形式の局面を読み取り、実際の局面に直します。
         /// </summary>
-        public Board ParseBoard(string text)
+        public static Board ParseBoard(string text)
         {
             var board = Board.ParseBod(text);
             Assert.NotNull(board);

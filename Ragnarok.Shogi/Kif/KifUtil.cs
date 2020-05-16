@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Ragnarok.Shogi.Kif
@@ -66,7 +66,20 @@ namespace Ragnarok.Shogi.Kif
                 { 'と', Piece.To },
             };
 
-        private static readonly Dictionary<Piece, char> PieceToCharDic;
+        private static readonly Dictionary<Piece, char> PieceToCharDic =
+             CreatePieceToCharDic();
+
+        /// <summary>
+        /// 静的コンストラクタ
+        /// </summary>
+        private static Dictionary<Piece, char> CreatePieceToCharDic()
+        {
+            var dic = new Dictionary<Piece, char>();
+
+            // keyとvalueを入れ替えます。
+            CharToPieceDic.ForEach(_ => dic.Add(_.Value, _.Key));
+            return dic;
+        }
 
         /// <summary>
         /// ヘッダー部分の正規表現
@@ -85,20 +98,7 @@ namespace Ragnarok.Shogi.Kif
         /// 「まで77手で先手の反則勝ち」など、特殊なコメントを判別します。
         /// </summary>
         public static readonly Regex SpecialMoveRegex = new Regex(
-            string.Format(@"{0}", SpecialMoveText),
-            RegexOptions.Compiled);
-
-        /// <summary>
-        /// 静的コンストラクタ
-        /// </summary>
-        static KifUtil()
-        {
-            PieceToCharDic = new Dictionary<Piece, char>();
-
-            // keyとvalueを入れ替えます。
-            CharToPieceDic.ForEach(_ =>
-                PieceToCharDic.Add(_.Value, _.Key));
-        }
+            SpecialMoveText, RegexOptions.Compiled);
 
         /// <summary>
         /// コメント行かどうか調べます。
@@ -107,7 +107,7 @@ namespace Ragnarok.Shogi.Kif
         {
             if (line == null)
             {
-                throw new ArgumentNullException("line");
+                throw new ArgumentNullException(nameof(line));
             }
 
             return (
@@ -127,7 +127,7 @@ namespace Ragnarok.Shogi.Kif
         {
             if (line == null)
             {
-                throw new ArgumentNullException("line");
+                throw new ArgumentNullException(nameof(line));
             }
 
             // 空行もコメント行として考える
@@ -245,7 +245,7 @@ namespace Ragnarok.Shogi.Kif
             var m = ScoreEngineNameRegex.Match(str);
             if (m.Success)
             {
-                var i = int.Parse(m.Groups[1].Value);
+                var i = int.Parse(m.Groups[1].Value, CultureInfo.CurrentCulture);
                 return (KifuHeaderType.ScoreEngine0 + i);
             }
 
@@ -310,16 +310,17 @@ namespace Ragnarok.Shogi.Kif
         {
             if (str == null)
             {
-                throw new ArgumentNullException("str");
+                throw new ArgumentNullException(nameof(str));
             }
 
             if (str.Length < 2)
             {
-                throw new ArgumentException("str");
+                throw new ArgumentException(
+                    "文字列が短すぎます。", nameof(str));
             }
 
             // まず手番
-            var bwTypeCh = char.ToLower(str[0]);
+            var bwTypeCh = char.ToLowerInvariant(str[0]);
             if (bwTypeCh != ' ' && bwTypeCh != 'v')
             {
                 return null;
@@ -344,7 +345,8 @@ namespace Ragnarok.Shogi.Kif
         {
             if (piece != null && !piece.Validate())
             {
-                throw new ArgumentException("piece");
+                throw new ArgumentException(
+                    "pieceが不正です。", nameof(piece));
             }
 
             if (piece == null)
@@ -368,7 +370,8 @@ namespace Ragnarok.Shogi.Kif
         {
             if (piece != null && !piece.Validate())
             {
-                throw new ArgumentException("piece");
+                throw new ArgumentException(
+                    "駒の状態が正しくありません。", nameof(piece));
             }
 
             if (piece == null)

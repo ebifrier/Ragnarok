@@ -197,7 +197,7 @@ namespace Codehaus.Parsec
 
         static bool compareIgnoreCase(char a, char b)
         {
-            return char.ToLower(a) == char.ToLower(b);
+            return char.ToLowerInvariant(a) == char.ToLowerInvariant(b);
         }
 
         internal static int matchString(string str, string underlying_text, int starting_index, int ending_index)
@@ -314,7 +314,7 @@ namespace Codehaus.Parsec
         public static Pattern Some(int min, int max, CharPredicate cp)
         {
             if (max < 0 || min < 0 || min > max)
-                throw new System.ArgumentException();
+                throw new System.ArgumentException("must be min>=0 && max>=0 && min<=max");
             if (max == 0)
                 return Always();
             return new SomeMinCharsPattern(min, cp, max);

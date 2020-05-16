@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 
@@ -15,6 +16,11 @@ namespace Ragnarok.Utility
         /// </summary>
         public static bool CanConvert(Type type)
         {
+            if (ReferenceEquals(type, null))
+            {
+                throw new ArgumentNullException(nameof(type));
+            }
+
             return (
                 typeof(string).Equals(type) || typeof(bool).Equals(type) ||
                 typeof(char).Equals(type) || typeof(decimal).Equals(type) ||
@@ -36,7 +42,7 @@ namespace Ragnarok.Utility
         {
             if (ReferenceEquals(type, null))
             {
-                throw new ArgumentNullException("type");
+                throw new ArgumentNullException(nameof(type));
             }
 
             if (typeof(string).Equals(type))
@@ -53,59 +59,59 @@ namespace Ragnarok.Utility
             }
             else if (typeof(byte).Equals(type))
             {
-                return Byte.Parse(value);
+                return Byte.Parse(value, CultureInfo.CurrentCulture);
             }
             else if (typeof(sbyte).Equals(type))
             {
-                return SByte.Parse(value);
+                return SByte.Parse(value, CultureInfo.CurrentCulture);
             }
             else if (typeof(decimal).Equals(type))
             {
-                return Decimal.Parse(value);
+                return Decimal.Parse(value, CultureInfo.CurrentCulture);
             }
 
             else if (typeof(ushort).Equals(type))
             {
-                return UInt16.Parse(value);
+                return UInt16.Parse(value, CultureInfo.CurrentCulture);
             }
             else if (typeof(uint).Equals(type))
             {
-                return UInt32.Parse(value);
+                return UInt32.Parse(value, CultureInfo.CurrentCulture);
             }
             else if (typeof(ulong).Equals(type))
             {
-                return UInt64.Parse(value);
+                return UInt64.Parse(value, CultureInfo.CurrentCulture);
             }
 
             else if (typeof(short).Equals(type))
             {
-                return Int16.Parse(value);
+                return Int16.Parse(value, CultureInfo.CurrentCulture);
             }
             else if (typeof(int).Equals(type))
             {
-                return Int32.Parse(value);
+                return Int32.Parse(value, CultureInfo.CurrentCulture);
             }
             else if (typeof(long).Equals(type))
             {
-                return Int64.Parse(value);
+                return Int64.Parse(value, CultureInfo.CurrentCulture);
             }
 
             else if (typeof(float).Equals(type))
             {
-                return Single.Parse(value);
+                return Single.Parse(value, CultureInfo.CurrentCulture);
             }
             else if (typeof(double).Equals(type))
             {
-                return Double.Parse(value);
+                return Double.Parse(value, CultureInfo.CurrentCulture);
             }
 
             else if (typeof(DateTime).Equals(type))
             {
-                return DateTime.Parse(value);
+                return DateTime.Parse(value, CultureInfo.CurrentCulture);
             }
             else if (typeof(TimeSpan).Equals(type))
             {
-                return TimeSpan.Parse(value);
+                return TimeSpan.Parse(value, CultureInfo.CurrentCulture);
             }
             else if (typeof(Guid).Equals(type))
             {
@@ -118,7 +124,7 @@ namespace Ragnarok.Utility
             }
 
             throw new InvalidOperationException(
-                string.Format("{0}: 指定の型は変換できません。", type));
+                $"{type}: 指定の型は変換できません。");
         }
     }
 }

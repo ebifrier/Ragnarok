@@ -430,7 +430,7 @@ namespace Codehaus.Parsec
         public Parser<To> Some<To>(int min, int max, Generator<Accumulator<T, To>> accm)
         {
             if (min < 0 || max < 0 || min > max)
-                throw new System.ArgumentException(string.Format("invalid repetition bounds: ({0},{1})", min, max));
+                throw new System.ArgumentException($"invalid repetition bounds: ({min},{max})");
             if (max == 0)
                 return Parsers.One<To>();
             return new SomeMinParser<T, To>(accm, min, max, this);

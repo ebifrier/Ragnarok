@@ -13,24 +13,26 @@ namespace Ragnarok.Utility
     public static class DeviceInventory
     {
 #if !MONO
-        #region PInvoke
-        [DllImport("kernel32.dll")]
-        extern static void GlobalMemoryStatusEx(ref MEMORYSTATUSEX lpBuffer);
-
-        [StructLayout(LayoutKind.Sequential)]
-        private struct MEMORYSTATUSEX
+        private static class NativeMethods
         {
-            public uint dwLength;
-            public uint dwMemoryLoad;
-            public ulong ullTotalPhys;
-            public ulong ullAvailPhys;
-            public ulong ullTotalPageFile;
-            public ulong ullAvailPageFile;
-            public ulong ullTotalVirtual;
-            public ulong ullAvailVirtual;
-            public ulong ullAvailExtendedVirtual;
+            [return: MarshalAs(UnmanagedType.Bool)]
+            [DllImport("kernel32.dll", CharSet = CharSet.Auto, EntryPoint = "GlobalMemoryStatusEx", SetLastError = true)]
+            public static extern bool GlobalMemoryStatusEx(ref MEMORYSTATUSEX lpBuffer);
+
+            [StructLayout(LayoutKind.Sequential)]
+            public struct MEMORYSTATUSEX
+            {
+                public uint dwLength;
+                public uint dwMemoryLoad;
+                public ulong ullTotalPhys;
+                public ulong ullAvailPhys;
+                public ulong ullTotalPageFile;
+                public ulong ullAvailPageFile;
+                public ulong ullTotalVirtual;
+                public ulong ullAvailVirtual;
+                public ulong ullAvailExtendedVirtual;
+            }
         }
-        #endregion
 #endif
 
         /// <summary>
@@ -130,9 +132,9 @@ namespace Ragnarok.Utility
 #if MONO
             MemorySize = 0;
 #else
-            var ms = new MEMORYSTATUSEX();
+            var ms = new NativeMethods.MEMORYSTATUSEX();
             ms.dwLength = (uint)Marshal.SizeOf(ms);
-            GlobalMemoryStatusEx(ref ms);
+            NativeMethods.GlobalMemoryStatusEx(ref ms);
 
             // MemorySizeはbyte単位
             MemorySize = (long)ms.ullAvailPhys;

@@ -13,7 +13,7 @@ namespace Ragnarok.Shogi.Tests
     /// BoardMoveに関するテストを行います。
     /// </summary>
     [TestFixture]
-    internal sealed class BoardMoveTest
+    public sealed class BoardMoveTest
     {
         [Test]
         public void SerializeTest()

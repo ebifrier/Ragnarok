@@ -68,7 +68,7 @@ namespace Ragnarok.Shogi
         {
             if (root == null)
             {
-                throw new ArgumentNullException("root");
+                throw new ArgumentNullException(nameof(root));
             }
 
             // 先頭ノードの手はnullのため、次のノードから手を取得します。
@@ -86,7 +86,7 @@ namespace Ragnarok.Shogi
         {
             if (moveList == null)
             {
-                throw new ArgumentNullException("moveList");
+                throw new ArgumentNullException(nameof(moveList));
             }
 
             var root = new MoveNode();
@@ -126,12 +126,13 @@ namespace Ragnarok.Shogi
         {
             if (board == null)
             {
-                throw new ArgumentNullException("board");
+                throw new ArgumentNullException(nameof(board));
             }
 
             if (!board.Validate())
             {
-                throw new ArgumentException("board");
+                throw new ArgumentException(
+                    "局面の状態が正しくありません。", nameof(board));
             }
 
             // 念のためクローンしておきます。
@@ -168,7 +169,7 @@ namespace Ragnarok.Shogi
         {
             if (root == null)
             {
-                throw new ArgumentNullException("root");
+                throw new ArgumentNullException(nameof(root));
             }
 
             RootNode = root;
@@ -182,7 +183,7 @@ namespace Ragnarok.Shogi
         {
             if (moveList == null)
             {
-                throw new ArgumentNullException("moveList");
+                throw new ArgumentNullException(nameof(moveList));
             }
 
             MoveList = moveList.ToList();
@@ -201,9 +202,7 @@ namespace Ragnarok.Shogi
                 if (!board.DoMove(move))
                 {
                     throw new InvalidOperationException(
-                        string.Format(
-                            "{0}手目: 差し手が正しくありません。",
-                            n + 1));
+                        $"{n + 1}手目: 差し手が正しくありません。");
                 }
             });
 

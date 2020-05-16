@@ -17,11 +17,21 @@ namespace Ragnarok.Forms.Input
         protected CommandBindingBase(Component component, ICommand command,
                                      Func<object> commandParameterCallback)
         {
+            if (component == null)
+            {
+                throw new ArgumentNullException(nameof(component));
+            }
+
+            if (command == null)
+            {
+                throw new ArgumentNullException(nameof(command));
+            }
+
             Component = component;
             Command = command;
             CommandParameterCallback = commandParameterCallback;
 
-            Component.Disposed += event_Dispose;
+            Component.Disposed += DoDisposeEvent;
             Command.CanExecuteChanged += CanExecuteChanged;
         }
 
@@ -47,7 +57,7 @@ namespace Ragnarok.Forms.Input
         /// <summary>
         /// オブジェクトを破棄します。
         /// </summary>
-        protected void Dispose(bool disposing)
+        protected virtual void Dispose(bool disposing)
         {
             if (!this.disposed)
             {
@@ -56,7 +66,7 @@ namespace Ragnarok.Forms.Input
                     OnDisposed();
 
                     Command.CanExecuteChanged -= CanExecuteChanged;
-                    Component.Disposed -= event_Dispose;
+                    Component.Disposed -= DoDisposeEvent;
                 }
 
                 CommandParameterCallback = null;
@@ -67,7 +77,7 @@ namespace Ragnarok.Forms.Input
             }
         }
 
-        private void event_Dispose(object sender, EventArgs e)
+        private void DoDisposeEvent(object sender, EventArgs e)
         {
             Dispose();
         }
@@ -99,7 +109,7 @@ namespace Ragnarok.Forms.Input
             private set;
         }
 
-        protected void event_DoExecute(object sender, EventArgs e)
+        protected void DoExecuteEvent(object sender, EventArgs e)
         {
             DoExecute();
         }

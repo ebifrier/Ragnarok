@@ -130,6 +130,11 @@ namespace FlintSharp.Behaviours
         /// <param name="elapsedTime">The duration of the frame - used for time based updates.</param>
         public override void Update(Emitter emitter, Particle particle, double elapsedTime)
         {
+            if (particle == null)
+            {
+                return;
+            }
+
             double ratio = m_rate * elapsedTime;
 
             particle.Color = Utils.InterpolateColors(m_color, particle.Color, ratio);

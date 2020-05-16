@@ -120,6 +120,11 @@ namespace FlintSharp.Zones
         /// <returns>Whether a collision occured.</returns>
         public bool CollideParticle(Particle particle, double bounce = 1)
         {
+            if (particle == null)
+            {
+                throw new ArgumentNullException(nameof(particle));
+            }
+
             double dist = Utils.LineCircleDistance(
                 new Vector(particle.PreviousX, particle.PreviousY),
                 new Vector(particle.X, particle.Y),

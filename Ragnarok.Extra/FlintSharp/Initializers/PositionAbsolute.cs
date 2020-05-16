@@ -92,6 +92,11 @@ namespace FlintSharp.Initializers
         /// <param name="particle">The particle to be initialized.</param>
         public override void Initialize(Emitter emitter, Particle particle)
         {
+            if (particle == null)
+            {
+                return;
+            }
+
             Point loc;
             loc = m_zone.GetLocation();
             particle.X = loc.X;

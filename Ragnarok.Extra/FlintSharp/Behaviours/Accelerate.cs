@@ -102,6 +102,11 @@ namespace FlintSharp.Behaviours
         /// <param name="elapsedTime">The duration of the frame - used for time based updates.</param>
         public override void Update(Emitter emitter, Particle particle, double elapsedTime)
         {
+            if (particle == null)
+            {
+                return;
+            }    
+
             particle.VelocityX += m_x * elapsedTime;
             particle.VelocityY += m_y * elapsedTime;
         }

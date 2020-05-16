@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Globalization;
 
 namespace Ragnarok.Forms
 {
@@ -19,7 +20,7 @@ namespace Ragnarok.Forms
         {
             if (control == null)
             {
-                throw new ArgumentNullException("control");
+                throw new ArgumentNullException(nameof(control));
             }
 
             // control.LocationはScreen.FromHandle後に変わってしまう
@@ -43,7 +44,7 @@ namespace Ragnarok.Forms
         {
             if (form == null)
             {
-                throw new ArgumentNullException("form");
+                throw new ArgumentNullException(nameof(form));
             }
 
             var screenPos = Cursor.Position;
@@ -62,7 +63,7 @@ namespace Ragnarok.Forms
         {
             if (form == null)
             {
-                throw new ArgumentNullException("form");
+                throw new ArgumentNullException(nameof(form));
             }
 
             form.StartPosition = FormStartPosition.Manual;
@@ -128,9 +129,10 @@ namespace Ragnarok.Forms
                                      string message)
         {
             var text = string.Format(
+                CultureInfo.CurrentCulture,
                 "{1}{0}{0} 詳細: {2}",
                 Environment.NewLine,
-                message, ex.Message);
+                message, ex?.Message);
 
             // ログにも出力します。
             Log.ErrorException(ex, message);
@@ -177,18 +179,19 @@ namespace Ragnarok.Forms
         /// </summary>
         public static Font ShowFontDialog(Font defaultInfo, IWin32Window owner = null)
         {
-            var dialog = new FontDialog()
+            using (var dialog = new FontDialog()
             {
                 Font = defaultInfo,
-            };
-
-            var result = dialog.ShowDialog(owner);
-            if (result != DialogResult.OK)
+            })
             {
-                return null;
-            }
+                var result = dialog.ShowDialog(owner);
+                if (result != DialogResult.OK)
+                {
+                    return null;
+                }
 
-            return dialog.Font;
+                return dialog.Font;
+            }
         }
         #endregion
 
@@ -198,22 +201,23 @@ namespace Ragnarok.Forms
         /// </summary>
         public static Color? ShowColorDialog(Color? defaultColor, IWin32Window owner = null)
         {
-            var dialog = new ColorDialog();
-
-            // 必要ならデフォルト色を設定します。
-            if (defaultColor != null)
+            using (var dialog = new ColorDialog())
             {
-                dialog.Color = defaultColor.Value;
-            }
+                // 必要ならデフォルト色を設定します。
+                if (defaultColor != null)
+                {
+                    dialog.Color = defaultColor.Value;
+                }
 
-            // OKボタンが押されたら、その色を返します。
-            var result = dialog.ShowDialog(owner);
-            if (result != DialogResult.OK)
-            {
-                return null;
+                // OKボタンが押されたら、その色を返します。
+                var result = dialog.ShowDialog(owner);
+                if (result != DialogResult.OK)
+                {
+                    return null;
+                }
+
+                return dialog.Color;
             }
-            
-            return dialog.Color;
         }
         #endregion
     }

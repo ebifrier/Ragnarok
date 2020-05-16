@@ -1,11 +1,11 @@
 namespace Codehaus.Parsec
 {
     using System.Collections.Generic;
-    public class Misc
+    public static class Misc
     {
-        public static int Hashcode(object obj)
+        public static int Hashcode(object value)
         {
-            return (obj == null) ? 0 : obj.GetHashCode();
+            return (value == null) ? 0 : value.GetHashCode();
         }
         public static bool AreEqual(object o1, object o2)
         {
@@ -71,7 +71,7 @@ namespace Codehaus.Parsec
         /// <summary> accumulate one object into the result.</summary>
         /// <param name="obj">the object to be accumulated.
         /// </param>
-        void Accumulate(From obj);
+        void Accumulate(From value);
     }
     public class ArrayAccumulator<T> : Accumulator<T, T[]>
     {

@@ -7,7 +7,10 @@ namespace Ragnarok.OpenGL
 {
     public sealed class TextTextureFont : IEquatable<TextTextureFont>
     {
-        public static Font DefaultFont = new Font(FontFamily.GenericSansSerif, 40);
+        public static Font DefaultFont
+        {
+            get;
+        } = new Font(FontFamily.GenericSansSerif, 40);
 
         /// <summary>
         /// コンストラクタ
@@ -32,7 +35,7 @@ namespace Ragnarok.OpenGL
             {
                 if (value == null)
                 {
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException(nameof(value));
                 }
 
                 FontFamily = value.FontFamily;
@@ -60,7 +63,7 @@ namespace Ragnarok.OpenGL
             {
                 if (value == null)
                 {
-                    throw new ArgumentNullException("FontFamilyName");
+                    throw new ArgumentNullException(nameof(FontFamilyName));
                 }
 
                 // フォントファミリーを検索し、もしなければ無視します。

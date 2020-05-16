@@ -6,7 +6,7 @@ namespace Codehaus.Parsec
     /// <summary>
     /// This class contains most commonly used combinator functions.
     /// </summary>
-    public class Parsers
+    public static class Parsers
     {
         static bool debug = true;
         /// <summary>

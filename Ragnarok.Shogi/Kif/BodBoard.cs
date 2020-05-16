@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 
@@ -21,7 +22,7 @@ namespace Ragnarok.Shogi.Kif
         {
             if (text == null)
             {
-                throw new ArgumentNullException("text");
+                throw new ArgumentNullException(nameof(text));
             }
 
             var parser = new BodParser();
@@ -86,9 +87,15 @@ namespace Ragnarok.Shogi.Kif
         /// </example>
         public static string BoardToBod(Board board)
         {
-            if (board == null || !board.Validate())
+            if (board == null)
             {
-                throw new ArgumentException("board");
+                throw new ArgumentNullException(nameof(board));
+            }
+
+            if (!board.Validate())
+            {
+                throw new ArgumentException(
+                    "局面の状態が正しくありません。", nameof(board));
             }
 
             var result = new List<string>();
@@ -152,7 +159,9 @@ namespace Ragnarok.Shogi.Kif
                     Count = board.GetHand(pieceType, turn),
                 }
                 where obj.Count > 0
-                select string.Format("{0}{1}{2}　",
+                select string.Format(
+                    CultureInfo.InvariantCulture, 
+                    "{0}{1}{2}　",
                     KifUtil.PieceToChar(obj.Piece),
                     (obj.Count >= 10 ? "十" : ""),
                     (obj.Count == 10 || obj.Count == 1 ? "" :

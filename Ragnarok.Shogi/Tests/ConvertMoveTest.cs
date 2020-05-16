@@ -9,7 +9,7 @@ using NUnit.Framework;
 namespace Ragnarok.Shogi.Tests
 {
     [TestFixture]
-    internal sealed class ConvertMoveTest
+    public sealed class ConvertMoveTest
     {
         private static void TestMove(Board board, LiteralMove lmove, bool makeMove = false)
         {
@@ -178,7 +178,7 @@ namespace Ragnarok.Shogi.Tests
         }
 
         [Test]
-        public void SpecialMove_NormalizeTest()
+        public void SpecialMoveNormalizeTest()
         {
             var board = new Board();
 

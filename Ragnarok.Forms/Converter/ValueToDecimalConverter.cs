@@ -36,7 +36,7 @@ namespace Ragnarok.Forms.Converter
         {
             try
             {
-                return System.Convert.ToDecimal(value);
+                return System.Convert.ToDecimal(value, CultureInfo.CurrentCulture);
             }
             catch (Exception ex)
             {
@@ -52,7 +52,10 @@ namespace Ragnarok.Forms.Converter
         /// </summary>
         public object ConvertBack(object value, Type targetType, object parameter)
         {
-            return System.Convert.ChangeType(value, SourceType ?? targetType);
+            return System.Convert.ChangeType(
+                value,
+                SourceType ?? targetType,
+                CultureInfo.CurrentCulture);
         }
     }
 }

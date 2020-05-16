@@ -1,16 +1,16 @@
-using Codehaus.Parsec;
 
 namespace Codehaus.Parsec
 {
     using CharPredicate = Predicate<char>;
     using Scanner = Parser<D_>;
-    using CharPattern = Codehaus.Parsec.Pattern;
+    using CharPattern = Pattern;
+
     /// <summary> Scanners class provides basic character level parsers
     /// and the combinators that only work on scanners.
     /// </summary>
     /// <author>  Ben Yu
     /// </author>
-    public class Scanners
+    public static class Scanners
     {
         class PatternScanner : Scanner
         {
