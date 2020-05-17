@@ -51,6 +51,49 @@ namespace Ragnarok.Shogi
         private string name;
 
         /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public Score()
+        {
+            ScoreType = ScoreType.Value;
+            ScoreBound = ScoreBound.Exact;
+            Value = 0;
+        }
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public static Score CreateValue(BWType turn, int value = 0,
+                                        ScoreBound bound = ScoreBound.Exact)
+        {
+            return new Score()
+            {
+                ScoreType = ScoreType.Value,
+                ScoreBound = bound,
+                Turn = turn,
+                Value = value
+            };
+        }
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public static Score CreateMate(BWType turn, int mate,
+                                       bool isMateWin,
+                                       ScoreBound bound = ScoreBound.Exact)
+        {
+            return new Score()
+            {
+                ScoreType = ScoreType.Mate,
+                ScoreBound = bound,
+                Turn = turn,
+                Mate = mate,
+                IsMateWin = isMateWin,
+                Value = (isMateWin ? MateScore : -MateScore)
+            };
+        }
+
+        /// <summary>
         /// 通常の評価値をパースします。
         /// </summary>
         /// <example>
@@ -76,7 +119,7 @@ namespace Ragnarok.Shogi
                 last == '↓' ? ScoreBound.Upper :
                 bound);
 
-            return new Score(turn, value, bound);
+            return Score.CreateValue(turn, value, bound);
         }
 
         /// <summary>
@@ -87,7 +130,8 @@ namespace Ragnarok.Shogi
         /// -10
         /// +5↑
         /// </example>
-        public static Score ParseMate(string text, BWType turn)
+        public static Score ParseMate(string text, BWType turn,
+                                      ScoreBound bound = ScoreBound.Exact)
         {
             if (string.IsNullOrEmpty(text))
             {
@@ -99,26 +143,19 @@ namespace Ragnarok.Shogi
 
             if (value == 0)
             {
-                if (trimmedText[0] == '+')
+                if (trimmedText.FirstOrDefault() == '-')
                 {
-                    return new Score(turn, 0, true);
-                }
-                else if (trimmedText[0] == '-')
-                {
-                    return new Score(turn, 0, false);
+                    return CreateMate(turn, 0, false, bound);
                 }
                 else
                 {
-                    //throw new ShogiException(
-                    //    trimmedText + ": メイト手数が正しくありません。");
-
                     // 本来は先頭に+/-が必要ですが、そうなっていないソフトも多いので
                     // ここでは現状に合わせてエラーにはしないことにします。
-                    return new Score(turn, 0, true);
+                    return CreateMate(turn, 0, true, bound);
                 }
             }
 
-            return new Score(turn, Math.Abs(value), (value > 0));
+            return CreateMate(turn, Math.Abs(value), value > 0, bound);
         }
 
         /// <summary>
@@ -179,41 +216,6 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        public Score()
-        {
-            ScoreType = ScoreType.Value;
-            ScoreBound = ScoreBound.Exact;
-            Value = 0;
-        }
-
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        public Score(BWType turn, int value = 0,
-                     ScoreBound bound = ScoreBound.Exact)
-        {
-            ScoreType = ScoreType.Value;
-            ScoreBound = bound;
-            Turn = turn;
-            Value = value;
-        }
-
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        public Score(BWType turn, int mate, bool isMateWin)
-        {
-            ScoreType = ScoreType.Mate;
-            ScoreBound = ScoreBound.Exact;
-            Turn = turn;
-            Mate = mate;
-            IsMateWin = isMateWin;
-            Value = (isMateWin ? MateScore : -MateScore);
-        }
-
-        /// <summary>
         /// 評価値の種類を取得します。
         /// </summary>
         public ScoreType ScoreType
@@ -232,7 +234,7 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
-        /// 評価値を取得します。
+        /// 評価値を取得します。(詰みの場合はその手数となります)
         /// </summary>
         public int Value
         {
