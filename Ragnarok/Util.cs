@@ -177,53 +177,6 @@ namespace Ragnarok
         }
 
         /// <summary>
-        /// default(type)を取得します。
-        /// </summary>
-        public static object GetDefaultValue(Type type)
-        {
-            if (type != null && type.IsValueType)
-            {
-                return Activator.CreateInstance(type);
-            }
-
-            return null;
-        }
-
-        /// <summary>
-        /// <paramref name="value"/>がnullであれば<paramref name="defaultValue"/>
-        /// を、そうでなければ値をそのまま返します。
-        /// </summary>
-        public static T GetValue<T>(T value, T defaultValue)
-            where T: class
-        {
-            if (value == null)
-            {
-                return defaultValue;
-            }
-            else
-            {
-                return value;
-            }
-        }
-
-        /// <summary>
-        /// <paramref name="value"/>がnullであれば<paramref name="defaultValue"/>
-        /// を、そうでなければ値をそのまま返します。
-        /// </summary>
-        public static T GetNullableValue<T>(T? value, T defaultValue)
-            where T: struct
-        {
-            if (value == null)
-            {
-                return defaultValue;
-            }
-            else
-            {
-                return value.Value;
-            }
-        }
-
-        /// <summary>
         /// Actionをエラー処理つきで呼び出します。
         /// </summary>
         public static void SafeCall(Action caller, bool logging = true)
@@ -362,25 +315,49 @@ namespace Ragnarok
         }
 
         /// <summary>
-        /// IDictionaryから指定のキーを持つ要素を探し、
-        /// もしなければデフォルト値を返します。
+        /// default(type)を取得します。
         /// </summary>
-        public static TValue GetValue<TKey, TValue>(this IDictionary<TKey, TValue> dic,
-                                                    TKey key)
+        public static object GetDefaultValue(Type type)
         {
-            if (dic == null)
+            if (type != null && type.IsValueType)
             {
-                throw new ArgumentNullException(nameof(dic));
+                return Activator.CreateInstance(type);
             }
 
-            TValue value;
-            if (dic.TryGetValue(key, out value))
+            return null;
+        }
+
+        /// <summary>
+        /// <paramref name="value"/>がnullであれば<paramref name="defaultValue"/>
+        /// を、そうでなければ値をそのまま返します。
+        /// </summary>
+        public static T GetValue<T>(T value, T defaultValue)
+            where T : class
+        {
+            if (value == null)
             {
-                return value;
+                return defaultValue;
             }
             else
             {
-                return default(TValue);
+                return value;
+            }
+        }
+
+        /// <summary>
+        /// <paramref name="value"/>がnullであれば<paramref name="defaultValue"/>
+        /// を、そうでなければ値をそのまま返します。
+        /// </summary>
+        public static T GetNullableValue<T>(T? value, T defaultValue)
+            where T : struct
+        {
+            if (value == null)
+            {
+                return defaultValue;
+            }
+            else
+            {
+                return value.Value;
             }
         }
 
@@ -662,87 +639,6 @@ namespace Ragnarok
             throw new IOException(
                 "一時ファイルの作成に失敗しました。",
                 exception);
-        }
-
-        /// <summary>
-        /// 安全にDisposeを行います。
-        /// </summary>
-        public static void SafeDispose<T>(ref T resource)
-            where T : class
-        {
-            if (resource == null)
-            {
-                return;
-            }
-
-            var disposer = resource as IDisposable;
-            if (disposer != null)
-            {
-                try
-                {
-                    disposer.Dispose();
-                }
-                catch
-                {
-                }
-            }
-
-            resource = null;
-        }
-
-        /// <summary>
-        /// クラスフィールドの<see ref="LabelDescriptionAttribute"/>
-        /// 属性を取得します。
-        /// </summary>
-        public static LabelDescriptionAttribute GetFieldLabelAttribute<T>(
-            Type type, T value)
-        {
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
-
-            var fields = type.GetFields(
-                BindingFlags.Static |
-                BindingFlags.Public);
-
-            // LabelDescriptionAttributeを持ち、フィールドの値が
-            // valueと同じフィールドを探します。
-            return fields
-                .Where(_ => value.Equals(_.GetValue(null)))
-                .Select(_ => _.GetCustomAttributes(
-                    typeof(LabelDescriptionAttribute), true))
-                .Where(_ => _.Any())
-                .OfType<LabelDescriptionAttribute>()
-                .FirstOrDefault();
-        }
-
-        /// <summary>
-        /// クラスフィールドの説明を取得します。
-        /// </summary>
-        public static string GetFieldDescription<T>(Type type, T value)
-        {
-            var attribute = GetFieldLabelAttribute(type, value);
-            if (attribute == null)
-            {
-                return null;
-            }
-
-            return attribute.Description;
-        }
-
-        /// <summary>
-        /// クラスフィールドのラベルを取得します。
-        /// </summary>
-        public static string GetFieldLabel<T>(Type type, T value)
-        {
-            var attribute = GetFieldLabelAttribute(type, value);
-            if (attribute == null)
-            {
-                return null;
-            }
-
-            return attribute.Label;
         }
 
         /// <summary>

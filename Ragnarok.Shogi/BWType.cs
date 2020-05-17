@@ -18,21 +18,21 @@ namespace Ragnarok.Shogi
         /// 駒箱の駒などです。
         /// </summary>
         [EnumMember()]
-        [LabelDescription(Label = "手番なし")]
+        [Label(Label = "手番なし")]
         None = 0,
 
         /// <summary>
         /// 先手です。
         /// </summary>
         [EnumMember()]
-        [LabelDescription(Label = "先手")]
+        [Label(Label = "先手")]
         Black = 1,
 
         /// <summary>
         /// 後手です。
         /// </summary>
         [EnumMember()]
-        [LabelDescription(Label = "後手")]
+        [Label(Label = "後手")]
         White = 2,
     }
 

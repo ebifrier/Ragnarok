@@ -21,62 +21,62 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 特になし
         /// </summary>
-        [LabelDescription(Label = "なし")]
+        [Label(Label = "なし")]
         None,
         /// <summary>
         /// 中断
         /// </summary>
-        [LabelDescription(Label = "中断")]
+        [Label(Label = "中断")]
         Interrupt,
         /// <summary>
         /// 投了
         /// </summary>
-        [LabelDescription(Label = "投了")]
+        [Label(Label = "投了")]
         Resign,
         /// <summary>
         /// 持将棋
         /// </summary>
-        [LabelDescription(Label = "持将棋")]
+        [Label(Label = "持将棋")]
         Jishogi,
         /// <summary>
         /// 千日手
         /// </summary>
-        [LabelDescription(Label = "千日手")]
+        [Label(Label = "千日手")]
         Sennichite,
         /// <summary>
         /// 王手の千日手
         /// </summary>
-        [LabelDescription(Label = "王手の千日手")]
+        [Label(Label = "王手の千日手")]
         OuteSennichite,
         /// <summary>
         /// 時間切れ
         /// </summary>
-        [LabelDescription(Label = "時間切れ")]
+        [Label(Label = "時間切れ")]
         TimeUp,
         /// <summary>
         /// 反則
         /// </summary>
-        [LabelDescription(Label = "反則")]
+        [Label(Label = "反則")]
         IllegalMove,
         /// <summary>
         /// 詰み
         /// </summary>
-        [LabelDescription(Label = "詰み")]
+        [Label(Label = "詰み")]
         CheckMate,
         /// <summary>
         /// 最大手数
         /// </summary>
-        [LabelDescription(Label = "最大手数")]
+        [Label(Label = "最大手数")]
         MaxMoves,
         /// <summary>
         /// 封じ手
         /// </summary>
-        [LabelDescription(Label = "封じ手")]
+        [Label(Label = "封じ手")]
         SealedMove,
         /// <summary>
         /// エラー
         /// </summary>
-        [LabelDescription(Label = "エラー")]
+        [Label(Label = "エラー")]
         Error,
     }
 }

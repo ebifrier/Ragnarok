@@ -113,20 +113,6 @@ namespace Ragnarok
         }
 
         /// <summary>
-        /// 列挙値の説明文を取得します。
-        /// </summary>
-        public static string GetDescription(object value)
-        {
-            var attribute = GetAttribute<LabelDescriptionAttribute>(value);
-            if (attribute == null)
-            {
-                return null;
-            }
-
-            return attribute.Description;
-        }
-
-        /// <summary>
         /// 列挙値のラベルを取得します。
         /// </summary>
         public static string GetLabel(object value)
@@ -137,13 +123,21 @@ namespace Ragnarok
                 return labelAttribute.Label;
             }
 
-            var descAttribute = GetAttribute<LabelDescriptionAttribute>(value);
-            if (descAttribute != null)
+            return null;
+        }
+
+        /// <summary>
+        /// 列挙値の説明文を取得します。
+        /// </summary>
+        public static string GetDescription(object value)
+        {
+            var attribute = GetAttribute<DescriptionAttribute>(value);
+            if (attribute == null)
             {
-                return descAttribute.Label;
+                return null;
             }
 
-            return null;
+            return attribute.Description;
         }
     }
 }
