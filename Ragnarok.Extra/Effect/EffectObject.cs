@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Windows.Markup;
 
+using Ragnarok.MathEx;
 using Ragnarok.Utility;
 using Ragnarok.ObjectModel;
 
@@ -339,13 +339,13 @@ namespace Ragnarok.Extra.Effect
         /// <remarks>
         /// ワールド座標系に直すため、親の変換行列なども考慮に入れています。
         /// </remarks>
-        [DependOnProperty("Parent")]
-        [DependOnProperty("LocalTransform")]
-        [DependOnProperty("CenterPoint")]
-        [DependOnProperty("BaseScale")]
-        [DependOnProperty("Coord")]
-        [DependOnProperty("Scale")]
-        [DependOnProperty("RotateZ")]
+        [DependOnProperty(nameof(Parent))]
+        [DependOnProperty(nameof(LocalTransform))]
+        [DependOnProperty(nameof(CenterPoint))]
+        [DependOnProperty(nameof(BaseScale))]
+        [DependOnProperty(nameof(Coord))]
+        [DependOnProperty(nameof(Scale))]
+        [DependOnProperty(nameof(RotateZ))]
         public Matrix44d Transform
         {
             get

@@ -9,6 +9,8 @@ using IrrKlang;
 
 namespace Ragnarok.Sound.Backend
 {
+    using MathEx;
+
     /// <summary>
     /// IrrKlangの音声ファイルを再生します。
     /// </summary>
@@ -53,7 +55,7 @@ namespace Ragnarok.Sound.Backend
                 }
 
                 // 設定可能な音量値は0.0～1.0
-                engine.SoundVolume = MathEx.Between(0.0f, 1.0f, (float)value);
+                engine.SoundVolume = MathUtil.Between(0.0f, 1.0f, (float)value);
             }
         }
 
@@ -146,7 +148,7 @@ namespace Ragnarok.Sound.Backend
             }
 
             // 音量を設定します。
-            sound.Volume = MathEx.Between(0.0f, 1.0f, (float)(engine.SoundVolume * volume));
+            sound.Volume = MathUtil.Between(0.0f, 1.0f, (float)(engine.SoundVolume * volume));
             sound.Paused = false;
 
             return new SoundObjectBackend_IrrKlang(sound);

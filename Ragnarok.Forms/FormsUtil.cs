@@ -4,11 +4,9 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Windows;
 using System.Windows.Forms;
 
-using Ragnarok.Utility;
+using Ragnarok.MathEx;
 
 namespace Ragnarok.Forms
 {

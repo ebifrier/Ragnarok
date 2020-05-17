@@ -2,10 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using NUnit.Framework;
 
-namespace Ragnarok.Utility.Tests
+namespace Ragnarok.MathEx.Tests
 {
     [TestFixture()]
     public sealed class PointdTest

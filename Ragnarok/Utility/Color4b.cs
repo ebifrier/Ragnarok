@@ -4,6 +4,8 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 
+using Ragnarok.MathEx;
+
 namespace Ragnarok.Utility
 {
     /// <summary>
@@ -123,7 +125,7 @@ namespace Ragnarok.Utility
         public float ScA
         {
             get { return ((float)A / 255.0f);}
-            set { A = (byte)MathEx.Between(0, 255, (int)(value * 255.0f)); }
+            set { A = (byte)MathUtil.Between(0, 255, (int)(value * 255.0f)); }
         }
 
         /// <summary>
@@ -132,7 +134,7 @@ namespace Ragnarok.Utility
         public float ScR
         {
             get { return ((float)R / 255.0f); }
-            set { R = (byte)MathEx.Between(0, 255, (int)(value * 255.0f)); }
+            set { R = (byte)MathUtil.Between(0, 255, (int)(value * 255.0f)); }
         }
         
         /// <summary>
@@ -141,7 +143,7 @@ namespace Ragnarok.Utility
         public float ScG
         {
             get { return ((float)G / 255.0f); }
-            set { G = (byte)MathEx.Between(0, 255, (int)(value * 255.0f)); }
+            set { G = (byte)MathUtil.Between(0, 255, (int)(value * 255.0f)); }
         }
 
         /// <summary>
@@ -150,7 +152,7 @@ namespace Ragnarok.Utility
         public float ScB
         {
             get { return ((float)B / 255.0f); }
-            set { B = (byte)MathEx.Between(0, 255, (int)(value * 255.0f)); }
+            set { B = (byte)MathUtil.Between(0, 255, (int)(value * 255.0f)); }
         }
 
         /// <summary>
@@ -191,10 +193,10 @@ namespace Ragnarok.Utility
         public static Color4b Multiply(Color4b color, double coefficient)
         {
             return Color4b.FromArgb(
-                MathEx.Between(0, 255, (int)(color.A * coefficient)),
-                MathEx.Between(0, 255, (int)(color.R * coefficient)),
-                MathEx.Between(0, 255, (int)(color.G * coefficient)),
-                MathEx.Between(0, 255, (int)(color.B * coefficient)));
+                MathUtil.Between(0, 255, (int)(color.A * coefficient)),
+                MathUtil.Between(0, 255, (int)(color.R * coefficient)),
+                MathUtil.Between(0, 255, (int)(color.G * coefficient)),
+                MathUtil.Between(0, 255, (int)(color.B * coefficient)));
         }
 
         /// <summary>

@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
+using Ragnarok.MathEx;
 using Ragnarok.ObjectModel;
-using Ragnarok.Utility;
 
 namespace Ragnarok.Extra.Effect.Animation
 {

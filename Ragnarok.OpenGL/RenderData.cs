@@ -6,7 +6,7 @@ using OpenTK;
 using OpenTK.Graphics.OpenGL;
 
 using Ragnarok.Extra.Effect;
-using Ragnarok.Utility;
+using Ragnarok.MathEx;
 
 namespace Ragnarok.OpenGL
 {

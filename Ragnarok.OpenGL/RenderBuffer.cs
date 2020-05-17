@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Linq;
 
 using Ragnarok.Extra.Effect;
-using Ragnarok.Utility;
+using Ragnarok.MathEx;
 
 namespace Ragnarok.OpenGL
 {

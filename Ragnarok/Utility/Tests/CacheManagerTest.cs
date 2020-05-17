@@ -2,13 +2,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using NUnit.Framework;
 
 #pragma warning disable 219
 
 namespace Ragnarok.Utility.Tests
 {
+    using MathEx;
+
     internal class CacheObject : ICachable
     {
         private long size;
@@ -33,7 +34,7 @@ namespace Ragnarok.Utility.Tests
 
         public override long ObjectSize
         {
-            get { return MathEx.RandInt(1, 10000); }
+            get { return MathUtil.RandInt(1, 10000); }
         }
     }
 

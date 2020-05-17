@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
-using System.Text;
 
-using Ragnarok.Utility;
+using Ragnarok.MathEx;
 
 namespace Ragnarok.Extra.Effect
 {

@@ -43,7 +43,7 @@ namespace Ragnarok.Utility
         /// </summary>
         public void Increment(int inc)
         {
-            inc = MathEx.Between(-Offset, Count, inc);
+            inc = MathEx.MathUtil.Between(-Offset, Count, inc);
 
             // 先頭オフセットを移動し、バッファサイズは減らします。
             Offset += inc;

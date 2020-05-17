@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 
+using Ragnarok.MathEx;
 using Ragnarok.ObjectModel;
 
 namespace Ragnarok.Update
@@ -95,7 +96,7 @@ namespace Ragnarok.Update
             }
             private set
             {
-                value = MathEx.Between(0.0, 1.0, value);
+                value = MathUtil.Between(0.0, 1.0, value);
                 SetValue(nameof(ProgressRate), value);
             }
         }
@@ -110,7 +111,7 @@ namespace Ragnarok.Update
             {
                 var value = (int)(ProgressRate * 100);
 
-                return MathEx.Between(0, 100, value);
+                return MathUtil.Between(0, 100, value);
             }
         }
 

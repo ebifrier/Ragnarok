@@ -7,6 +7,8 @@ using Codehaus.Parsec;
 
 namespace Ragnarok.Calculator
 {
+    using Ragnarok.MathEx;
+
     using Scanner = Parser<D_>;
     using Lexer = Parser<Tok>;
     using Lexeme = Parser<Tok[]>;
@@ -169,9 +171,9 @@ namespace Ragnarok.Calculator
                 new FunctionInfo("max", 2, true, _ => _.Max()),
                 new FunctionInfo("min", 2, true, _ => _.Min()),
                 new FunctionInfo("leap", 3, false, _ => (_[0] * (1.0 - _[2]) + _[1] * _[2])),
-                new FunctionInfo("rand", 0, false, _ => MathEx.RandDouble()),
-                new FunctionInfo("rand", 1, false, _ => MathEx.RandDouble(_[0])),
-                new FunctionInfo("rand", 2, false, _ => MathEx.RandDouble(_[0], _[1])),
+                new FunctionInfo("rand", 0, false, _ => MathUtil.RandDouble()),
+                new FunctionInfo("rand", 1, false, _ => MathUtil.RandDouble(_[0])),
+                new FunctionInfo("rand", 2, false, _ => MathUtil.RandDouble(_[0], _[1])),
             };
 
         /// <summary>
@@ -200,13 +202,13 @@ namespace Ragnarok.Calculator
         static readonly FunctionInfo[] DegreeFuncTable =
             new FunctionInfo[]
             {
-                new FunctionInfo("sin", 1, false, _ => Math.Sin(MathEx.ToRad(_[0]))),
-                new FunctionInfo("cos", 1, false, _ => Math.Cos(MathEx.ToRad(_[0]))),
-                new FunctionInfo("tan", 1, false, _ => Math.Tan(MathEx.ToRad(_[0]))),
-                new FunctionInfo("asin", 1, false, _ => MathEx.ToDeg(Math.Asin(_[0]))),
-                new FunctionInfo("acos", 1, false, _ => MathEx.ToDeg(Math.Acos(_[0]))),
-                new FunctionInfo("atan", 1, false, _ => MathEx.ToDeg(Math.Atan(_[0]))),
-                new FunctionInfo("atan2", 2, false, _ => MathEx.ToDeg(Math.Atan2(_[0], _[2]))),
+                new FunctionInfo("sin", 1, false, _ => Math.Sin(MathUtil.ToRad(_[0]))),
+                new FunctionInfo("cos", 1, false, _ => Math.Cos(MathUtil.ToRad(_[0]))),
+                new FunctionInfo("tan", 1, false, _ => Math.Tan(MathUtil.ToRad(_[0]))),
+                new FunctionInfo("asin", 1, false, _ => MathUtil.ToDeg(Math.Asin(_[0]))),
+                new FunctionInfo("acos", 1, false, _ => MathUtil.ToDeg(Math.Acos(_[0]))),
+                new FunctionInfo("atan", 1, false, _ => MathUtil.ToDeg(Math.Atan(_[0]))),
+                new FunctionInfo("atan2", 2, false, _ => MathUtil.ToDeg(Math.Atan2(_[0], _[2]))),
             };
 
         private readonly Grammar parser;

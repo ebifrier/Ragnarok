@@ -5,7 +5,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.Serialization;
 
-namespace Ragnarok.Utility
+namespace Ragnarok.MathEx
 {
     /// <summary>
     /// 行列用の例外クラスです。
@@ -212,7 +212,7 @@ namespace Ragnarok.Utility
             {
                 for (int j = 0; j < Columns; j++)
                 {
-                    if (MathEx.Compare(this[i, j], other[i, j]) != 0)
+                    if (MathUtil.Compare(this[i, j], other[i, j]) != 0)
                     {
                         return false;
                     }

@@ -5,9 +5,7 @@ using System.Text;
 
 using FlintSharp;
 using FlintSharp.Renderers;
-using Ragnarok.Utility;
-using Ragnarok.ObjectModel;
-using Ragnarok.Sound;
+using Ragnarok.MathEx;
 
 namespace Ragnarok.Extra.Effect
 {
@@ -251,7 +249,7 @@ namespace Ragnarok.Extra.Effect
             // ランダムイメージの設定を行います。
             if (InitialImageUriList != null && InitialImageUriList.Any())
             {
-                var index = MathEx.RandInt(0, InitialImageUriList.Count);
+                var index = MathUtil.RandInt(0, InitialImageUriList.Count);
 
                 ImageUri = InitialImageUriList[index];
             }
@@ -306,7 +304,7 @@ namespace Ragnarok.Extra.Effect
                         AnimationImageCount - 1);
                     break;
                 case AnimationType.Random:
-                    AnimationImageIndex = MathEx.RandInt(0, AnimationImageCount);
+                    AnimationImageIndex = MathUtil.RandInt(0, AnimationImageCount);
                     break;
             }
 

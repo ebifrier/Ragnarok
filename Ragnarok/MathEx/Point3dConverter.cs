@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 
-namespace Ragnarok.Utility
+namespace Ragnarok.MathEx
 {
     /// <summary>
     /// Point3dクラスと文字列との変換を行います。
@@ -61,9 +61,9 @@ namespace Ragnarok.Utility
                                          CultureInfo culture, object value,
                                          Type destinationType)
         {
-            if (value != null && typeof(string).Equals(destinationType))
+            if (typeof(string).Equals(destinationType))
             {
-                return value.ToString();
+                return value?.ToString();
             }
 
             return base.ConvertTo(context, culture, value, destinationType);

@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 
-namespace Ragnarok.Utility
+namespace Ragnarok.MathEx
 {
     /// <summary>
     /// ３次元用のポイントクラスです。
@@ -144,9 +144,9 @@ namespace Ragnarok.Utility
             }
 
             return (
-                MathEx.Compare(X, other.X) == 0 &&
-                MathEx.Compare(Y, other.Y) == 0 &&
-                MathEx.Compare(Z, other.Z) == 0);
+                MathUtil.Compare(X, other.X) == 0 &&
+                MathUtil.Compare(Y, other.Y) == 0 &&
+                MathUtil.Compare(Z, other.Z) == 0);
         }
 
         public static bool operator ==(Point3d lhs, Point3d rhs)

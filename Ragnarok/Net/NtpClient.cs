@@ -6,6 +6,8 @@ using System.Threading;
 
 namespace Ragnarok.Net
 {
+    using MathEx;
+
     /// <summary>
     /// NTPサーバーから時刻を取得します。
     /// 
@@ -171,7 +173,7 @@ namespace Ragnarok.Net
         private static NtpClockInfo GetNetworkClockInfo()
         {
             var count = NtpServerList.Length;
-            var start = MathEx.RandInt(0, count);
+            var start = MathUtil.RandInt(0, count);
 
             // サーバー不可を分散するため、開始サーバーはランダムに選択します。
             for (var i = start; i < start + count; ++i)
