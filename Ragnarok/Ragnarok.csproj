@@ -165,6 +165,7 @@
     <Compile Include="Utility\ComObject.cs" />
     <Compile Include="Utility\DataSegment.cs" />
     <Compile Include="Utility\DebugLock.cs" />
+    <Compile Include="Utility\DescriptionAttribute.cs" />
     <Compile Include="Utility\DeviceInventory.cs" />
     <Compile Include="Utility\DurationConverter.cs" />
     <Compile Include="Utility\EnumWrapper.cs" />
@@ -174,7 +175,6 @@
     <Compile Include="Utility\IntConverter.cs" />
     <Compile Include="Utility\JsonUtil.cs" />
     <Compile Include="Utility\LabelAttribute.cs" />
-    <Compile Include="Utility\LabelDescriptionAttribute.cs" />
     <Compile Include="Utility\LimitedConcurrencyLevelTaskScheduler.cs" />
     <Compile Include="MathEx\Matrix44d.cs" />
     <Compile Include="Utility\MemoryStreamExtensions.cs" />

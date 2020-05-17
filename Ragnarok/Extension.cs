@@ -256,6 +256,20 @@ namespace Ragnarok
         }
 
         /// <summary>
+        /// リストの要素をすべて削除し、新しいコレクションを代入します。
+        /// </summary>
+        public static void Assign<T>(this List<T> list, IEnumerable<T> collection)
+        {
+            if (list == null)
+            {
+                throw new ArgumentNullException(nameof(list));
+            }
+
+            list.Clear();
+            list.AddRange(collection);
+        }
+
+        /// <summary>
         /// イベントハンドラを呼び出します。
         /// </summary>
         public static void RaiseEvent(this EventHandler handler, object sender,
