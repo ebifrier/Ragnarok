@@ -140,9 +140,9 @@ namespace Ragnarok.Sound
         }
 
         /// <summary>
-        /// SEが再生可能か調べます。
+        /// SEの過去の再生時刻を調べ、間隔が短ければ再生しないようにします。
         /// </summary>
-        private bool CheckPlayInterval(string fullpath)
+        private bool CheckLastPlayedTime(string fullpath)
         {
             lock (SyncRoot)
             {
@@ -170,7 +170,7 @@ namespace Ragnarok.Sound
         /// <summary>
         /// SEを再生します。再生中のファイルがあればその再生の直後に鳴らします。
         /// </summary>
-        public SoundObject PlaySE(PlaySoundInfo data)
+        public SoundObject PlaySE(SoundInfo data)
         {
             if (data == null)
             {
@@ -185,7 +185,7 @@ namespace Ragnarok.Sound
                 }
 
                 var fullpath = GetSoundFilePath(data.FilePath);
-                if (data.UsePlayInterval && !CheckPlayInterval(fullpath))
+                if (data.CheckPlayInterval && !CheckLastPlayedTime(fullpath))
                 {
                     return null;
                 }
@@ -204,15 +204,16 @@ namespace Ragnarok.Sound
         /// SEを再生します。再生中のファイルがあればその再生の直後に鳴らします。
         /// </summary>
         public SoundObject PlaySE(string filename, double volume = 1.0,
-                                  bool usePlayInterval = true, bool ignoreError = false)
+                                  bool checkPlayInterval = false,
+                                  bool ignoreError = false)
         {
             try
             {
-                var data = new PlaySoundInfo
+                var data = new SoundInfo
                 {
                     FilePath = filename,
                     Volume = volume,
-                    UsePlayInterval = usePlayInterval,
+                    CheckPlayInterval = checkPlayInterval,
                     IgnoreError = ignoreError,
                 };
 

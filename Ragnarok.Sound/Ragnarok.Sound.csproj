@@ -78,7 +78,7 @@
     <Compile Include="Backend\SoundMixer_CSCore.cs" />
     <Compile Include="Backend\SoundObjectBackend_CSCore.cs" />
     <Compile Include="Backend\SoundObjectBackend_IrrKlang.cs" />
-    <Compile Include="PlaySoundInfo.cs" />
+    <Compile Include="SoundInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SoundManager.cs" />
     <Compile Include="SoundObject.cs" />
