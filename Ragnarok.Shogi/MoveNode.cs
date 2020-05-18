@@ -102,15 +102,11 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
-        /// このノードの評価値を取得します。
+        /// このノードのPVの評価値を取得します。
         /// </summary>
         public int? Value
         {
-            get
-            {
-                return (PVInfoList != null && PVInfoList.Any() ?
-                    PVInfoList.First().Value : (int?)null);
-            }
+            get { return PVInfoList?.FirstOrDefault()?.Value; }
         }
 
         /// <summary>
@@ -189,21 +185,51 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 次の指し手ノードを追加します。
         /// </summary>
-        public void AddNextNode(MoveNode node)
+        public void AddNextNode(MoveNode addNode)
         {
-            if (node == null)
+            if (addNode == null)
             {
-                throw new ArgumentNullException(nameof(node));
+                throw new ArgumentNullException(nameof(addNode));
             }
 
-            if (node.ParentNode != null)
+            if (addNode.ParentNode != null)
             {
                 throw new InvalidOperationException(
                     "すでに親ノードが登録されています。");
             }
 
-            NextNodes.Add(node);
-            node.ParentNode = this;
+            // マージされなかった場合のみ、指し手を追加
+            if (!MergeNextMove(addNode))
+            {
+                NextNodes.Add(addNode);
+            }
+
+            addNode.ParentNode = this;
+        }
+
+        /// <summary>
+        /// 変化の重複を削除します。
+        /// </summary>
+        private bool MergeNextMove(MoveNode addNode)
+        {
+            var node = NextNodes
+                .FirstOrDefault(_ => _.Move == addNode.Move);
+            if (node == null)
+            {
+                return false;
+            }
+
+            node.PVInfoList.AddRange(addNode.PVInfoList);
+            node.CommentList.AddRange(addNode.CommentList);
+
+            // 次の指し手をマージします。
+            addNode.NextNodes.ForEach(_ =>
+            {
+                _.ParentNode = null;
+                node.AddNextNode(_);
+            });
+
+            return true;
         }
 
         /// <summary>
@@ -249,31 +275,6 @@ namespace Ragnarok.Shogi
         {
             while (node != null)
             {
-                // 変化の重複を削除します。
-                for (var i = 0; i < node.NextNodes.Count; ++i)
-                {
-                    for (var j = i + 1; j < node.NextNodes.Count; )
-                    {
-                        var baseNode = node.NextNodes[i];
-                        var compNode = node.NextNodes[j];
-
-                        if (baseNode.Move == compNode.Move)
-                        {
-                            // もし同じ指し手の変化があれば、子の指し手をマージします。
-                            // 子の重複チェックはこの後行うので、
-                            // ここで重複があっても構いません。
-                            compNode.NextNodes.ForEach(_ => _.ParentNode = null);
-                            compNode.NextNodes.ForEach(_ => baseNode.AddNextNode(_));
-
-                            node.NextNodes.RemoveAt(j);
-                        }
-                        else
-                        {
-                            ++j;
-                        }
-                    }
-                }
-
                 // 手数の再設定
                 node.MoveCount = moveCount;
 
