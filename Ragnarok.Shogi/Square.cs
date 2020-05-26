@@ -107,8 +107,16 @@ namespace Ragnarok.Shogi
         /// </summary>
         public bool Validate()
         {
-            if (File < 1 || Board.BoardSize < File ||
-                Rank < 1 || Board.BoardSize < Rank)
+            return Validate(File, Rank);
+        }
+
+        /// <summary>
+        /// マスが正しい位置にあるか確かめます。
+        /// </summary>
+        public static bool Validate(int file, int rank)
+        {
+            if (file < 1 || Board.BoardSize < file ||
+                rank < 1 || Board.BoardSize < rank)
             {
                 return false;
             }
@@ -140,8 +148,7 @@ namespace Ragnarok.Shogi
                 return false;
             }
 
-            if (File != other.File ||
-                Rank != other.Rank)
+            if (File != other.File || Rank != other.Rank)
             {
                 return false;
             }
@@ -154,9 +161,7 @@ namespace Ragnarok.Shogi
         /// </summary>
         public override int GetHashCode()
         {
-            return (
-                this.File.GetHashCode() ^
-                this.Rank.GetHashCode());
+            return (File.GetHashCode() ^ Rank.GetHashCode());
         }
 
         /// <summary>
@@ -164,7 +169,7 @@ namespace Ragnarok.Shogi
         /// </summary>
         public static bool operator==(Square lhs, Square rhs)
         {
-            return Ragnarok.Util.GenericEquals(lhs, rhs);
+            return Util.GenericEquals(lhs, rhs);
         }
 
         /// <summary>

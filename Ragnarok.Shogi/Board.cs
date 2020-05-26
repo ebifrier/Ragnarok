@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text;
-using System.ComponentModel;
 using System.Runtime.Serialization;
-
-using Ragnarok;
-using Ragnarok.ObjectModel;
 
 namespace Ragnarok.Shogi
 {
@@ -45,13 +41,13 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// CanMoveメソッドのフラグデフォルト値です。
         /// </summary>
-        CanMoveDefault = MoveFlags.CheckTurn | MoveFlags.CheckChecked |
-                         MoveFlags.CheckPawnDropCheckMate | MoveFlags.CheckOnly,
+        CanMoveDefault = CheckTurn | CheckChecked |
+                         CheckPawnDropCheckMate | CheckOnly,
         /// <summary>
         /// DoMoveメソッドのフラグデフォルト値です。
         /// </summary>
-        DoMoveDefault = MoveFlags.CheckTurn | MoveFlags.CheckChecked |
-                        MoveFlags.CheckPawnDropCheckMate | MoveFlags.AutoRemoveSpecialMove,
+        DoMoveDefault = CheckTurn | CheckChecked |
+                        CheckPawnDropCheckMate | AutoRemoveSpecialMove,
     }
 
     /// <summary>
@@ -90,8 +86,8 @@ namespace Ragnarok.Shogi
         /// </summary>
         public static IEnumerable<Square> AllSquares()
         {
-            return from file in Enumerable.Range(1, Board.BoardSize)
-                   from rank in Enumerable.Range(1, Board.BoardSize)
+            return from file in Enumerable.Range(1, BoardSize)
+                   from rank in Enumerable.Range(1, BoardSize)
                    select new Square(file, rank);
         }
 
@@ -186,14 +182,6 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
-        /// 盤を作成します。
-        /// </summary>
-        private BoardPiece[] CreatePieceMatrix()
-        {
-            return new BoardPiece[81];
-        }
-
-        /// <summary>
         /// オブジェクトのコピーを作成します。
         /// </summary>
         public Board Clone(bool cloneMoveList = true)
@@ -203,10 +191,7 @@ namespace Ragnarok.Shogi
                 blackHandBox = this.blackHandBox.Clone(),
                 whiteHandBox = this.whiteHandBox.Clone(),
                 turn = this.turn,
-                prevMovedSquare = (
-                        this.prevMovedSquare != null ?
-                        this.prevMovedSquare.Clone() :
-                        null),
+                prevMovedSquare = this.prevMovedSquare?.Clone()
             };
 
             // 指し手リストもコピーする場合
@@ -226,13 +211,7 @@ namespace Ragnarok.Shogi
             {
                 for (var file = 1; file <= BoardSize; ++file)
                 {
-                    var square = new Square(file, rank);
-                    var piece = this[square];
-
-                    cloned[square] = (
-                        piece != null ?
-                        piece.Clone() :
-                        null);
+                    cloned[file, rank] = this[file, rank]?.Clone();
                 }
             }
 
@@ -314,7 +293,7 @@ namespace Ragnarok.Shogi
             {
                 var move = this.moveList.LastOrDefault();
 
-                return (move != null ? move.Clone() : null);
+                return move?.Clone();
             }
         }
 
@@ -325,36 +304,34 @@ namespace Ragnarok.Shogi
         {
             get
             {
-                return (LastMove != null && LastMove.IsSpecialMove);
+                return (LastMove?.IsSpecialMove == true);
             }
         }
+
 
         /// <summary>
         /// <paramref name="dstSquare"/> にある駒を取得します。
         /// </summary>
+        [SuppressMessage("Design", "CA1043:インデクサーには整数または文字列引数を使用します")]
         public BoardPiece this[Square square]
         {
             get
             {
-                if (square == null || !square.Validate())
+                if (square == null)
                 {
-                    return null;
+                    throw new ArgumentNullException(nameof(square));
                 }
 
-                var rank = square.Rank - 1;
-                var file = BoardSize - square.File;
-                return this.board[rank * 9 + file];
+                return this[square.File, square.Rank];
             }
             set
             {
-                if (square == null || !square.Validate())
+                if (square == null)
                 {
-                    throw new ArgumentException("dstSquare");
+                    throw new ArgumentNullException(nameof(square));
                 }
 
-                var rank = square.Rank - 1;
-                var file = BoardSize - square.File;
-                this.board[rank * 9 + file] = value;
+                this[square.File, square.Rank] = value;
             }
         }
 
@@ -363,8 +340,28 @@ namespace Ragnarok.Shogi
         /// </summary>
         public BoardPiece this[int file, int rank]
         {
-            get { return this[new Square(file, rank)]; }
-            set { this[new Square(file, rank)] = value; }
+            get
+            {
+                if (!Square.Validate(file, rank))
+                {
+                    return null;
+                }
+
+                var file2 = BoardSize - file;
+                var rank2 = rank - 1;
+                return this.board[rank2 * 9 + file2];
+            }
+            set
+            {
+                if (!Square.Validate(file, rank))
+                {
+                    throw new ArgumentException("fileかrankが正しくありません。");
+                }
+
+                var file2 = BoardSize - file;
+                var rank2 = rank - 1;
+                this.board[rank2 * 9 + file2] = value;
+            }
         }
 
         /// <summary>
@@ -590,10 +587,7 @@ namespace Ragnarok.Shogi
             if (!move.IsSpecialMove)
             {
                 Turn = Turn.Flip();
-                PrevMovedSquare = (
-                    this.moveList.Any() ?
-                    this.moveList.Last().DstSquare :
-                    null);
+                PrevMovedSquare = this.moveList.LastOrDefault()?.DstSquare;
             }
         }
 
@@ -1468,7 +1462,7 @@ namespace Ragnarok.Shogi
             }
 
             // 盤面を設定します。
-            this.board = CreatePieceMatrix();
+            this.board = new BoardPiece[81];
             DeserializePieces(this.serializeBoard);
 
             // 指し手のデシリアライズを行います。
@@ -1520,7 +1514,7 @@ namespace Ragnarok.Shogi
         /// </summary>
         public Board(bool isInitPiece)
         {
-            this.board = CreatePieceMatrix();
+            this.board = new BoardPiece[81];
 
             if (isInitPiece)
             {
