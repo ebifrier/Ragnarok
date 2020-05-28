@@ -15,80 +15,80 @@ namespace Ragnarok.NicoNico
         /// <summary>
         /// 異常はありません。
         /// </summary>
-        [LabelDescription("エラーはありません。")]
+        [Description("エラーはありません。")]
         Ok,
 
         /// <summary>
         /// 不明なエラーです。
         /// </summary>
-        [LabelDescription("不明なエラーです。")]
+        [Description("不明なエラーです。")]
         UnknownError,
         /// <summary>
         /// 放送ＩＤが正しくありません。
         /// </summary>
-        [LabelDescription("放送ＩＤが正しくありません。")]
+        [Description("放送ＩＤが正しくありません。")]
         InvalidLiveId,
         /// <summary>
         /// 取得したXMLのパースに失敗しました。
         /// </summary>
-        [LabelDescription("受信したXmlデータに誤りがありました。")]
+        [Description("受信したXmlデータに誤りがありました。")]
         XmlParseError,
         /// <summary>
         /// ネットワークエラーです。
         /// </summary>
-        [LabelDescription("ネットワーク障害により通信できません。")]
+        [Description("ネットワーク障害により通信できません。")]
         NetworkError,
 
 
         /// <summary>
         /// ビジー状態です。
         /// </summary>
-        [LabelDescription("ビジー状態です。")]
+        [Description("ビジー状態です。")]
         Busy,
         /// <summary>
         /// ログインしていません。
         /// </summary>
-        [LabelDescription("ログインしていません。")]
+        [Description("ログインしていません。")]
         NotLogin,
         /// <summary>
         /// 放送が見つかりません。
         /// </summary>
-        [LabelDescription("放送が見つかりません。")]
+        [Description("放送が見つかりません。")]
         NotFound,
         /// <summary>
         /// 放送はすでに終了しています。
         /// </summary>
-        [LabelDescription("放送はすでに終了しています。")]
+        [Description("放送はすでに終了しています。")]
         AlreadyClosed,
         /// <summary>
         /// 権限がありません。
         /// </summary>
-        [LabelDescription("アクセスする権限がありません。")]
+        [Description("アクセスする権限がありません。")]
         NoAuthentification,
         /// <summary>
         /// アクセスは拒否されました。
         /// </summary>
-        [LabelDescription("アクセスが拒否されました。")]
+        [Description("アクセスが拒否されました。")]
         PermissionDenied,
         /// <summary>
         /// まもなく放送が始まります。
         /// </summary>
-        [LabelDescription("放送が始まるまでしばらくお待ちください。")]
+        [Description("放送が始まるまでしばらくお待ちください。")]
         ComingSoon,
         /// <summary>
         /// 放送はすでに人が多すぎです。
         /// </summary>
-        [LabelDescription("放送はすでに満員です。")]
+        [Description("放送はすでに満員です。")]
         Full,
         /// <summary>
         /// コミュニティに参加する必要があります。
         /// </summary>
-        [LabelDescription("コミュニティのメンバーである必要があります。")]
+        [Description("コミュニティのメンバーである必要があります。")]
         RequireCommunityMember,
         /// <summary>
         /// スレッドが見つかりません。
         /// </summary>
-        [LabelDescription("スレッドが見つかりません。")]
+        [Description("スレッドが見つかりません。")]
         NotFoundThread,
         /// <summary>
         /// スロットが見つかりません。
@@ -96,7 +96,7 @@ namespace Ragnarok.NicoNico
         /// <remarks>
         /// heartbeat取得時によく現れます。
         /// </remarks>
-        [LabelDescription("スロットが見つかりません。")]
+        [Description("スロットが見つかりません。")]
         NotFoundSlot,
         /// <summary>
         /// スロットがありません。
@@ -104,32 +104,32 @@ namespace Ragnarok.NicoNico
         /// <remarks>
         /// heartbeat取得時によく現れます。
         /// </remarks>
-        [LabelDescription("スロットがありません。")]
+        [Description("スロットがありません。")]
         NotExistSlot,
         /// <summary>
         /// 削除されました。
         /// </summary>
-        [LabelDescription("削除されました。")]
+        [Description("削除されました。")]
         Deleted,
         /// <summary>
         /// ユーザーにより削除されました。
         /// </summary>
-        [LabelDescription("ユーザーにより削除されました。")]
+        [Description("ユーザーにより削除されました。")]
         DeletedByUser,
         /// <summary>
         /// 管理者により削除されました。
         /// </summary>
-        [LabelDescription("管理者により削除されました。")]
+        [Description("管理者により削除されました。")]
         DeletedByVisor,
         /// <summary>
         /// プレミアム会員のみが視聴できます。
         /// </summary>
-        [LabelDescription("プレミアム会員のみが視聴できます。")]
+        [Description("プレミアム会員のみが視聴できます。")]
         PremiumOnly,
         /// <summary>
         /// 権利侵害などの理由で削除されました。
         /// </summary>
-        [LabelDescription("権利侵害などの理由で削除されました。")]
+        [Description("権利侵害などの理由で削除されました。")]
         Violated,
     }
 

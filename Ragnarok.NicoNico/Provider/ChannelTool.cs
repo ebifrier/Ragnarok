@@ -33,25 +33,25 @@ namespace Ragnarok.NicoNico.Provider
     /// </summary>
     public enum SearchOrder
     {
-        [LabelDescription(Description = "_fileid")]
+        [Description(Description = "_fileid")]
         BiggerFileId,
-        [LabelDescription(Description = "fileid")]
+        [Description(Description = "fileid")]
         SmallerFileId,
-        [LabelDescription(Description = "title")]
+        [Description(Description = "title")]
         Title,
-        [LabelDescription(Description = "_title")]
+        [Description(Description = "_title")]
         TitleReverse,
-        [LabelDescription(Description = "_insertdate")]
+        [Description(Description = "_insertdate")]
         NewerInsertDate,
-        [LabelDescription(Description = "insertdate")]
+        [Description(Description = "insertdate")]
         OlderInsertDate,
-        [LabelDescription(Description = "_uploaddate")]
+        [Description(Description = "_uploaddate")]
         NewerUploadDate,
-        [LabelDescription(Description = "uploaddate")]
+        [Description(Description = "uploaddate")]
         OlderUploadDate,
-        [LabelDescription(Description = "_visible_start_time")]
+        [Description(Description = "_visible_start_time")]
         NewerVisibleStartTime,
-        [LabelDescription(Description = "visible_start_time")]
+        [Description(Description = "visible_start_time")]
         OlderVisibleStartTime,
     }
 

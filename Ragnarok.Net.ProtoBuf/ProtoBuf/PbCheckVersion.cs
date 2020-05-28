@@ -16,37 +16,37 @@ namespace Ragnarok.Net.ProtoBuf
         /// <summary>
         /// OK
         /// </summary>
-        [LabelDescription(Description = "バージョンはOKです。")]
+        [Description(Description = "バージョンはOKです。")]
         Ok,
 
         /// <summary>
         /// 不明なエラー
         /// </summary>
-        [LabelDescription(Description = "不明なエラーです。")]
+        [Description(Description = "不明なエラーです。")]
         Unknown,
 
         /// <summary>
         /// 値が正しくありません。
         /// </summary>
-        [LabelDescription(Description = "バージョン値が正しくありません。")]
+        [Description(Description = "バージョン値が正しくありません。")]
         InvalidValue,
 
         /// <summary>
         /// プロトコルのバージョンが高すぎます。
         /// </summary>
-        [LabelDescription(Description = "バージョンが高すぎます。")]
+        [Description(Description = "バージョンが高すぎます。")]
         TooUpper,
 
         /// <summary>
         /// プロトコルのバージョンが低すぎます。
         /// </summary>
-        [LabelDescription(Description = "バージョンが低すぎます。")]
+        [Description(Description = "バージョンが低すぎます。")]
         TooLower,
 
         /// <summary>
         /// タイムアウトしました。
         /// </summary>
-        [LabelDescription(Description = "タイムアウトしました。")]
+        [Description(Description = "タイムアウトしました。")]
         Timeout,
     }
 
