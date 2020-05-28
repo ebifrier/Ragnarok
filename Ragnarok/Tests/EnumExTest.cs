@@ -17,10 +17,10 @@ namespace Ragnarok.Tests
             var flag1 = FileAccess.Read | FileAccess.Write;
             var flag2 = FileAccess.Read;
 
-            Assert.IsTrue(EnumEx.HasFlag(flag1, FileAccess.Read));
-            Assert.IsTrue(EnumEx.HasFlag(flag1, FileAccess.Write));
-            Assert.IsTrue(EnumEx.HasFlag(flag2, FileAccess.Read));
-            Assert.IsFalse(EnumEx.HasFlag(flag2, FileAccess.Write));
+            Assert.IsTrue(EnumUtil.HasFlag(flag1, FileAccess.Read));
+            Assert.IsTrue(EnumUtil.HasFlag(flag1, FileAccess.Write));
+            Assert.IsTrue(EnumUtil.HasFlag(flag2, FileAccess.Read));
+            Assert.IsFalse(EnumUtil.HasFlag(flag2, FileAccess.Write));
         }
     }
 }

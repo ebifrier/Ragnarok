@@ -177,7 +177,7 @@ namespace Ragnarok.Shogi.Csa
             if (line.Substring(2).StartsWith("00AL", StringComparison.InvariantCulture))
             {
                 // 残りの駒をすべて手番側の持ち駒に設定します。
-                EnumEx.GetValues<PieceType>()
+                EnumUtil.GetValues<PieceType>()
                     .ForEach(_ => Board.SetHand(
                         _, bwType, this.board.GetLeavePieceCount(_)));
             }

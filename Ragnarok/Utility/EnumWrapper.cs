@@ -26,7 +26,7 @@ namespace Ragnarok.Utility
         {
             get
             {
-                var label = EnumEx.GetLabel(Value);
+                var label = EnumUtil.GetLabel(Value);
                 if (!string.IsNullOrEmpty(label))
                 {
                     return label;
@@ -41,7 +41,7 @@ namespace Ragnarok.Utility
         /// </summary>
         public string Description
         {
-            get { return EnumEx.GetDescription(Value); }
+            get { return EnumUtil.GetDescription(Value); }
         }
 
         /// <summary>

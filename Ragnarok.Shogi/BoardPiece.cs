@@ -88,7 +88,7 @@ namespace Ragnarok.Shogi
         /// </summary>
         public bool Validate()
         {
-            if (!EnumEx.IsDefined(BWType))
+            if (!EnumUtil.IsDefined(BWType))
             {
                 return false;
             }

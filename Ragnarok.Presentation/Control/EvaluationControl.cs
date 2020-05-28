@@ -11,13 +11,11 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-using Ragnarok;
+using Ragnarok.MathEx;
 using Ragnarok.Utility;
 
 namespace Ragnarok.Presentation.Control
 {
-    using Utility;
-
     /// <summary>
     /// 評価値の取得元を識別します。
     /// </summary>
@@ -153,7 +151,7 @@ namespace Ragnarok.Presentation.Control
         {
             var value = (double)v;
 
-            return MathEx.Between(-9999.0, 9999.0, value);
+            return MathUtil.Between(-9999.0, 9999.0, value);
         }
         #endregion
 

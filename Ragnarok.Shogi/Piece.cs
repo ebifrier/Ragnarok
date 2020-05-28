@@ -169,7 +169,7 @@ namespace Ragnarok.Shogi
         /// </summary>
         public bool Validate()
         {
-            if (!EnumEx.IsDefined(PieceType))
+            if (!EnumUtil.IsDefined(PieceType))
             {
                 return false;
             }

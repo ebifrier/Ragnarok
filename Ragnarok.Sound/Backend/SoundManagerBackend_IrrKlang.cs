@@ -7,10 +7,10 @@ using System.Text;
 
 using IrrKlang;
 
+using Ragnarok.MathEx;
+
 namespace Ragnarok.Sound.Backend
 {
-    using MathEx;
-
     /// <summary>
     /// IrrKlangの音声ファイルを再生します。
     /// </summary>

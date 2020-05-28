@@ -18,31 +18,31 @@ namespace Ragnarok.Net.ProtoBuf
         /// <summary>
         /// エラーはありません。
         /// </summary>
-        [LabelDescription("エラーはありません。")]
+        [Description("エラーはありません。")]
         public const int None = 0;
 
         /// <summary>
         /// 不明なエラーです。
         /// </summary>
-        [LabelDescription("不明なエラーです。")]
+        [Description("不明なエラーです。")]
         public const int Unknown = -1;
 
         /// <summary>
         /// データ処理中に例外が発生しました。
         /// </summary>
-        [LabelDescription("データ処理中に例外が発生しました。")]
+        [Description("データ処理中に例外が発生しました。")]
         public const int HandlerException = -2;
 
         /// <summary>
         /// 通信プロトコルのバージョンエラーです。
         /// </summary>
-        [LabelDescription("通信プロトコルのバージョンエラーです。")]
+        [Description("通信プロトコルのバージョンエラーです。")]
         public const int VersionError = -3;
 
         /// <summary>
         /// レスポンスが返る前にタイムアウトしました。
         /// </summary>
-        [LabelDescription("通信がタイムアウトしました。")]
+        [Description("通信がタイムアウトしました。")]
         public const int Timeout = -4;
     }
 }

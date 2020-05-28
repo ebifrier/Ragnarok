@@ -20,11 +20,11 @@ namespace Ragnarok.Shogi.Tests
         {
             var validMoveList =
                 from sq in Board.AllSquares()
-                from pc in EnumEx.GetValues<PieceType>()
+                from pc in EnumUtil.GetValues<PieceType>()
                 from promoted in new bool[] { false, true }
-                from rm in EnumEx.GetValues<RankMoveType>()
-                from rf in EnumEx.GetValues<RelFileType>()
-                from at in EnumEx.GetValues<ActionType>()
+                from rm in EnumUtil.GetValues<RankMoveType>()
+                from rf in EnumUtil.GetValues<RelFileType>()
+                from at in EnumUtil.GetValues<ActionType>()
                 from same in new bool[] { false, true }
                 let move = new LiteralMove
                 {

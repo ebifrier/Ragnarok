@@ -208,13 +208,13 @@ namespace Ragnarok.Presentation.Control.WindowOperation
             var changedWidth = false;
 
             // 横方向をリサイズ
-            if (EnumEx.HasFlag(this.edge, WindowEdge.Left))
+            if (EnumUtil.HasFlag(this.edge, WindowEdge.Left))
             {
                 l = screenPos.X - this.relativePoint.X;
                 l = Math.Min(l, r - 32);
                 changedWidth = true;
             }
-            else if (EnumEx.HasFlag(this.edge, WindowEdge.Right))
+            else if (EnumUtil.HasFlag(this.edge, WindowEdge.Right))
             {
                 r = screenPos.X - this.relativePoint.X;
                 r = Math.Max(r, l + 32);
@@ -226,11 +226,11 @@ namespace Ragnarok.Presentation.Control.WindowOperation
                 // 横方向が変わった場合、高さをアスペクト比に合わせます。
                 var height = (r - l) / this.aspectRatio;
 
-                if (EnumEx.HasFlag(this.edge, WindowEdge.Top))
+                if (EnumUtil.HasFlag(this.edge, WindowEdge.Top))
                 {
                     t = b - height;
                 }
-                else if (EnumEx.HasFlag(this.edge, WindowEdge.Bottom))
+                else if (EnumUtil.HasFlag(this.edge, WindowEdge.Bottom))
                 {
                     b = t + height;
                 }
@@ -242,12 +242,12 @@ namespace Ragnarok.Presentation.Control.WindowOperation
             else
             {
                 // 横方向が変わってない場合は、横方向を高さに合わせます。
-                if (EnumEx.HasFlag(this.edge, WindowEdge.Top))
+                if (EnumUtil.HasFlag(this.edge, WindowEdge.Top))
                 {
                     t = screenPos.Y - this.relativePoint.Y;
                     t = Math.Min(t, b - 32);
                 }
-                else if (EnumEx.HasFlag(this.edge, WindowEdge.Bottom))
+                else if (EnumUtil.HasFlag(this.edge, WindowEdge.Bottom))
                 {
                     b = screenPos.Y - this.relativePoint.Y;
                     b = Math.Max(b, t + 32);

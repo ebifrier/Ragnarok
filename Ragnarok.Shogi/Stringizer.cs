@@ -199,7 +199,7 @@ namespace Ragnarok.Shogi
                     turnStr = ToString(move.BWType);
                 }
 
-                return (turnStr + EnumEx.GetLabel(move.SpecialMoveType));
+                return (turnStr + EnumUtil.GetLabel(move.SpecialMoveType));
             }
 
             var result = new StringBuilder();

@@ -160,7 +160,7 @@ namespace Ragnarok.Shogi
 
             foreach (var bwType in new BWType[] { BWType.Black, BWType.White })
             {
-                foreach (var pieceType in EnumEx.GetValues<PieceType>())
+                foreach (var pieceType in EnumUtil.GetValues<PieceType>())
                 {
                     if (pieceType == PieceType.None) continue;
 
@@ -714,7 +714,7 @@ namespace Ragnarok.Shogi
 
             {
                 // 手番があわなければ失敗とします。
-                if (EnumEx.HasFlag(flags, MoveFlags.CheckTurn))
+                if (EnumUtil.HasFlag(flags, MoveFlags.CheckTurn))
                 {
                     if (this.turn == BWType.None || this.turn != move.BWType)
                     {
@@ -770,7 +770,7 @@ namespace Ragnarok.Shogi
         /// </summary>
         private bool CheckAndMakeSpecialMove(Move move, MoveFlags flags)
         {
-            if (!EnumEx.HasFlag(flags, MoveFlags.CheckOnly))
+            if (!EnumUtil.HasFlag(flags, MoveFlags.CheckOnly))
             {
                 MoveDone(move);
             }
@@ -802,14 +802,14 @@ namespace Ragnarok.Shogi
             }
 
             // 打ち歩詰のチェックを行います。
-            if (EnumEx.HasFlag(flags, MoveFlags.CheckPawnDropCheckMate) &&
+            if (EnumUtil.HasFlag(flags, MoveFlags.CheckPawnDropCheckMate) &&
                 move.DropPieceType == PieceType.Hu &&
                 IsPawnDropCheckMate(move.BWType, move.DstSquare))
             {
                 return false;
             }
 
-            if (!EnumEx.HasFlag(flags, MoveFlags.CheckOnly))
+            if (!EnumUtil.HasFlag(flags, MoveFlags.CheckOnly))
             {
                 // 駒を盤面に置き、持ち駒から駒を減らします。
                 this[move.DstSquare] = new BoardPiece(
@@ -954,7 +954,7 @@ namespace Ragnarok.Shogi
                 if (IsPromoteForce(move)) return false;
             }
 
-            if (!EnumEx.HasFlag(flags, MoveFlags.CheckOnly))
+            if (!EnumUtil.HasFlag(flags, MoveFlags.CheckOnly))
             {
                 var pieceType = srcPiece.PieceType;
 
@@ -1173,7 +1173,7 @@ namespace Ragnarok.Shogi
             var result =
                 from bwType in new BWType[] { BWType.Black, BWType.White }
                 let countList = (
-                    from type in EnumEx.GetValues<PieceType>()
+                    from type in EnumUtil.GetValues<PieceType>()
                     let count = GetHand(type, bwType)
                     select new { PieceType = type, Count = count }
                     ).ToList()
@@ -1233,7 +1233,7 @@ namespace Ragnarok.Shogi
             foreach (var bwType in new BWType[] { BWType.Black, BWType.White })
             {
                 // 局面上の駒の数を確認します。
-                foreach (var pieceType in EnumEx.GetValues<PieceType>())
+                foreach (var pieceType in EnumUtil.GetValues<PieceType>())
                 {
                     if (pieceType == PieceType.None) continue;
 

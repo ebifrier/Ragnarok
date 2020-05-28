@@ -253,7 +253,7 @@ namespace Ragnarok.Shogi.Sfen
         {
             var handList =
                 from turn in new BWType[] { BWType.Black, BWType.White }
-                from pieceType in EnumEx.GetValues<PieceType>()
+                from pieceType in EnumUtil.GetValues<PieceType>()
                 let obj = new
                 {
                     Piece = new BoardPiece(pieceType, false, turn),

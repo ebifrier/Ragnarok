@@ -85,7 +85,7 @@ namespace Ragnarok.Shogi
         public IEnumerable<Move> ListupMoves(BWType bwType, Square dstSquare)
         {
             return
-                from type in EnumEx.GetValues<PieceType>()
+                from type in EnumUtil.GetValues<PieceType>()
                 where type != PieceType.None
                 from promoted in new bool[] { true, false }
                 let piece = new Piece(type, promoted)

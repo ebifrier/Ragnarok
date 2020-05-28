@@ -103,7 +103,7 @@ namespace Ragnarok.Shogi.Kif
             var type = BoardTypeUtil.GetBoardTypeFromBoard(board);
             if (type != BoardType.None)
             {
-                result.Add("手合割：" + EnumEx.GetLabel(type));
+                result.Add("手合割：" + EnumUtil.GetLabel(type));
             }
             else
             {
@@ -152,7 +152,7 @@ namespace Ragnarok.Shogi.Kif
         private static string HandToBod(Board board, BWType turn)
         {
             var list =
-                from pieceType in EnumEx.GetValues<PieceType>()
+                from pieceType in EnumUtil.GetValues<PieceType>()
                 let obj = new
                 {
                     Piece = new Piece(pieceType, false),

@@ -53,7 +53,7 @@ namespace Ragnarok.NicoNico.Live
         {
             var value = StrUtil.ToInt(text, -1);
 
-            foreach (var enumValue in EnumEx.GetValues<ChatResultStatus>())
+            foreach (var enumValue in EnumUtil.GetValues<ChatResultStatus>())
             {
                 if ((int)enumValue == value)
                 {

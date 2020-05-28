@@ -167,7 +167,7 @@ namespace Ragnarok.Shogi
                     CultureInfo.CurrentCulture,
                     "{0}{1}",
                     Stringizer.ToString(BWType),
-                    EnumEx.GetLabel(SpecialMoveType));
+                    EnumUtil.GetLabel(SpecialMoveType));
             }
             else if (ActionType == ActionType.Drop)
             {
