@@ -13,10 +13,11 @@ using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using System.Runtime.InteropServices;
 
+using Ragnarok.MathEx;
+using Ragnarok.Utility;
+
 namespace Ragnarok.Presentation
 {
-    using Ragnarok.Utility;
-
     /// <summary>
     /// ユーティリティクラスです。
     /// </summary>
@@ -382,7 +383,7 @@ namespace Ragnarok.Presentation
             var t = -Vector3D.DotProduct(cp, l) / length2;
 
             // 線分と点の距離なので点Pは端点の外には出れません。
-            t = MathEx.Between(0.0, 1.0, t);
+            t = MathUtil.Between(0.0, 1.0, t);
 
             return (cp + t * l).Length;
         }
