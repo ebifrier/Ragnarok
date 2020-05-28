@@ -597,7 +597,7 @@ namespace Ragnarok.NicoNico.Provider
             param["ppv_type"] = "all";
             param["hide_flag"] = "";
             param["permission"] = "1,2,3,4,5";
-            param["order"] = EnumEx.GetDescription(order);
+            param["order"] = EnumUtil.GetDescription(order);
             param["keyword"] = keyword;
 
             // パラメータはGET用のエンコードを行います。

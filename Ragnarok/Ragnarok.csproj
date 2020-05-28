@@ -107,7 +107,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EnumEx.cs" />
+    <Compile Include="EnumUtil.cs" />
     <Compile Include="Extension.cs" />
     <Compile Include="ILogObject.cs" />
     <Compile Include="Initializer.cs" />

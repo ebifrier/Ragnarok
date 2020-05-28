@@ -98,9 +98,9 @@ namespace Ragnarok.Shogi
         /// </summary>
         public static BoardType GetBoardTypeFromName(string handicap)
         {
-            var list = EnumEx.GetValues<BoardType>()
+            var list = EnumUtil.GetValues<BoardType>()
                 .Where(_ => _ != BoardType.None)
-                .Where(_ => EnumEx.GetLabel(_) == handicap)
+                .Where(_ => EnumUtil.GetLabel(_) == handicap)
                 .ToArray();
 
             if (!list.Any())
@@ -130,7 +130,7 @@ namespace Ragnarok.Shogi
         /// </summary>
         public static BoardType GetBoardTypeFromBoard(Board board)
         {
-            var list = EnumEx.GetValues<BoardType>()
+            var list = EnumUtil.GetValues<BoardType>()
                 .Where(_ => _ != BoardType.None)
                 .Where(_ => Board.BoardEquals(board, _.ToBoard()))
                 .ToArray();

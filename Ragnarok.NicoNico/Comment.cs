@@ -395,7 +395,7 @@ namespace Ragnarok.NicoNico
 
             // コメントタイプを取得します。
             var attrValue = int.Parse(attr.Value);
-            foreach (var enumValue in EnumEx.GetValues<CommentType>())
+            foreach (var enumValue in EnumUtil.GetValues<CommentType>())
             {
                 if (attrValue == (int)enumValue)
                 {

@@ -200,7 +200,7 @@ namespace Ragnarok.NicoNico
         /// </summary>
         public static string GetDescription(this NicoStatusCode code)
         {
-            var description = EnumEx.GetDescription(code);
+            var description = EnumUtil.GetDescription(code);
             if (string.IsNullOrEmpty(description))
             {
                 return string.Format(

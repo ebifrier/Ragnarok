@@ -24,9 +24,9 @@ namespace Ragnarok.Shogi.Tests
                 from turn in new BWType[] { BWType.Black, BWType.White }
                 from dst in Board.AllSquares()
                 from src in Board.AllSquares()
-                from pc in EnumEx.GetValues<PieceType>()
+                from pc in EnumUtil.GetValues<PieceType>()
                 from promoted in new bool[] { false, true }
-                from tookPc in EnumEx.GetValues<PieceType>()
+                from tookPc in EnumUtil.GetValues<PieceType>()
                 from tookPromoted in new bool[] { false, true }
                 from promote in new bool[] { false, true }
                 let pcPiece = new Piece(pc, promoted)
@@ -46,7 +46,7 @@ namespace Ragnarok.Shogi.Tests
             var validDropList =
                 from turn in new BWType[] { BWType.Black, BWType.White }
                 from dst in Board.AllSquares()
-                from pc in EnumEx.GetValues<PieceType>()
+                from pc in EnumUtil.GetValues<PieceType>()
                 where pc != PieceType.None
                 let bmove = Move.CreateDrop(turn, dst, pc)
                 where bmove.Validate()
@@ -54,7 +54,7 @@ namespace Ragnarok.Shogi.Tests
 
             var specialMoveList =
                 from turn in new BWType[] { BWType.Black, BWType.White }
-                from special in EnumEx.GetValues<SpecialMoveType>()
+                from special in EnumUtil.GetValues<SpecialMoveType>()
                 where special != SpecialMoveType.None
                 let bmove = Move.CreateSpecialMove(turn, special)
                 where bmove.Validate()
