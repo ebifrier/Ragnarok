@@ -123,7 +123,7 @@ namespace Ragnarok.Shogi
                 {
                     return ActionType.Drop;
                 }
-                else if (!SrcSquare.IsEmpty && !MovePiece.IsNone)
+                else if (!SrcSquare.IsEmpty() && !MovePiece.IsNone)
                 {
                     return (IsPromote ? ActionType.Promote : ActionType.None);
                 }
@@ -176,8 +176,8 @@ namespace Ragnarok.Shogi
                     CultureInfo.CurrentCulture,
                     "{0}{1}{2}{3}打",
                     Stringizer.ToString(BWType),
-                    IntConverter.Convert(NumberType.Big, DstSquare.File),
-                    IntConverter.Convert(NumberType.Kanji, DstSquare.Rank),
+                    IntConverter.Convert(NumberType.Big, DstSquare.GetFile()),
+                    IntConverter.Convert(NumberType.Kanji, DstSquare.GetRank()),
                     Stringizer.ToString(DropPieceType));
             }
             else if (HasSameSquareAsPrev)
@@ -188,8 +188,8 @@ namespace Ragnarok.Shogi
                     Stringizer.ToString(BWType),
                     MovePiece,
                     Stringizer.ToString(ActionType),
-                    SrcSquare.File,
-                    SrcSquare.Rank);
+                    SrcSquare.GetFile(),
+                    SrcSquare.GetRank());
             }
             else
             {
@@ -197,12 +197,12 @@ namespace Ragnarok.Shogi
                     CultureInfo.CurrentCulture,
                     "{0}{1}{2}{3}{4}({5}{6})",
                     Stringizer.ToString(BWType),
-                    IntConverter.Convert(NumberType.Big, DstSquare.File),
-                    IntConverter.Convert(NumberType.Kanji, DstSquare.Rank),
+                    IntConverter.Convert(NumberType.Big, DstSquare.GetFile()),
+                    IntConverter.Convert(NumberType.Kanji, DstSquare.GetRank()),
                     MovePiece,
                     Stringizer.ToString(ActionType),
-                    SrcSquare.File,
-                    SrcSquare.Rank);
+                    SrcSquare.GetFile(),
+                    SrcSquare.GetRank());
             }
         }
 
@@ -228,7 +228,7 @@ namespace Ragnarok.Shogi
                     return false;
                 }
                 
-                if (!SrcSquare.IsEmpty)
+                if (!SrcSquare.IsEmpty())
                 {
                     return false;
                 }

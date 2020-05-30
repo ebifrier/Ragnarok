@@ -88,7 +88,7 @@ namespace Ragnarok.Shogi
         {
             return from file in Enumerable.Range(1, BoardSize)
                    from rank in Enumerable.Range(1, BoardSize)
-                   select new Square(file, rank);
+                   select SquareUtil.Create(file, rank);
         }
 
         private static long[,,] zobrist = new long[SquareCount, 9 * 2, 2];
@@ -155,7 +155,7 @@ namespace Ragnarok.Shogi
                 var pc = this[sq];
                 if (pc == null) continue;
 
-                hashValue += zobrist[sq.Index, pc.Piece.Index, pc.BWType.GetIndex()];
+                hashValue += zobrist[(int)sq, pc.Piece.Index, pc.BWType.GetIndex()];
             }
 
             foreach (var bwType in new BWType[] { BWType.Black, BWType.White })
@@ -191,7 +191,7 @@ namespace Ragnarok.Shogi
                 blackHandBox = this.blackHandBox.Clone(),
                 whiteHandBox = this.whiteHandBox.Clone(),
                 turn = this.turn,
-                prevMovedSquare = this.prevMovedSquare.Clone()
+                prevMovedSquare = this.prevMovedSquare
             };
 
             // 指し手リストもコピーする場合
@@ -315,8 +315,8 @@ namespace Ragnarok.Shogi
         [SuppressMessage("Design", "CA1043:インデクサーには整数または文字列引数を使用します")]
         public BoardPiece this[Square square]
         {
-            get { return this[square.File, square.Rank]; }
-            set { this[square.File, square.Rank] = value; }
+            get { return this[square.GetFile(), square.GetRank()]; }
+            set { this[square.GetFile(), square.GetRank()] = value; }
         }
 
         /// <summary>
@@ -326,7 +326,7 @@ namespace Ragnarok.Shogi
         {
             get
             {
-                if (!Square.Validate(file, rank))
+                if (!SquareUtil.Validate(file, rank))
                 {
                     return null;
                 }
@@ -337,7 +337,7 @@ namespace Ragnarok.Shogi
             }
             set
             {
-                if (!Square.Validate(file, rank))
+                if (!SquareUtil.Validate(file, rank))
                 {
                     throw new ArgumentException("fileかrankが正しくありません。");
                 }
@@ -820,13 +820,12 @@ namespace Ragnarok.Shogi
 #else
             // 歩の前に敵の玉がいるか確認します。
             var rankDif = (bwType == BWType.Black ? -1 : +1);
-            var gyokuSq = new Square(square.File, square.Rank + rankDif);
-            if (!gyokuSq.Validate())
+            if (!SquareUtil.Validate(square.GetFile(), square.GetRank() + rankDif))
             {
                 return false;
             }
 
-            var gyoku = this[gyokuSq];
+            var gyoku = this[square.GetFile(), square.GetRank() + rankDif];
             if (gyoku == null ||
                 gyoku.PieceType != PieceType.Gyoku ||
                 gyoku.BWType != bwType.Flip())
@@ -834,8 +833,7 @@ namespace Ragnarok.Shogi
                 return false;
             }
 
-            var newPiece = new BoardPiece(
-                PieceType.Hu, false, bwType);
+            var newPiece = new BoardPiece(PieceType.Hu, false, bwType);
             var oldPiece = this[square];
 
             // 打ち歩詰の判定には、実際に歩を打ってみるのが簡単なため、
@@ -867,8 +865,8 @@ namespace Ragnarok.Shogi
 
             var rank =
                 (bwType == BWType.Black
-                ? square.Rank
-                : (BoardSize + 1) - square.Rank);
+                ? square.GetRank()
+                : (BoardSize + 1) - square.GetRank());
 
             switch (pieceType)
             {
@@ -876,7 +874,7 @@ namespace Ragnarok.Shogi
                     return false;
                 case PieceType.Hu:
                     // 2歩のチェックを行います。
-                    if (GetPawnCount(bwType, square.File) > 0)
+                    if (GetPawnCount(bwType, square.GetFile()) > 0)
                     {
                         return false;
                     }
@@ -1010,8 +1008,8 @@ namespace Ragnarok.Shogi
                 return false;
             }
 
-            var srcRank = srcSquare.Rank;
-            var dstRank = dstSquare.Rank;
+            var srcRank = srcSquare.GetRank();
+            var dstRank = dstSquare.GetRank();
 
             if (bwType == BWType.White)
             {
@@ -1068,8 +1066,8 @@ namespace Ragnarok.Shogi
 
             var normalizedRank = (
                 bwType == BWType.White ?
-                (BoardSize + 1) - dstSquare.Rank :
-                dstSquare.Rank);
+                (BoardSize + 1) - dstSquare.GetRank() :
+                dstSquare.GetRank());
 
             if (piece.PieceType == PieceType.Kei)
             {
@@ -1146,7 +1144,7 @@ namespace Ragnarok.Shogi
                 var fileMax = Board.BoardSize / (rank == 5 ? 2 : 1);
                 for (var file = 1; file <= fileMax; ++file)
                 {
-                    var sq1 = new Square(file, rank);
+                    var sq1 = SquareUtil.Create(file, rank);
                     var sq2 = sq1.Flip();
 
                     var p = this[sq1];

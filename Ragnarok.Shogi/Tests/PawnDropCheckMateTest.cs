@@ -36,7 +36,7 @@ namespace Ragnarok.Shogi.Tests
 
             var move = Move.CreateDrop(
                 BWType.Black,
-                new Square(2, 7),
+                SquareUtil.Create(2, 7),
                 PieceType.Hu);
 
             Assert.False(board.CanMove(move));
@@ -70,7 +70,7 @@ namespace Ragnarok.Shogi.Tests
 
             var move = Move.CreateDrop(
                 BWType.White,
-                new Square(9, 5),
+                SquareUtil.Create(9, 5),
                 PieceType.Hu);
 
             Assert.False(board.CanMove(move));

@@ -143,14 +143,14 @@ namespace Ragnarok.Shogi
         {
             get
             {
-                return new Square(File, Rank);
+                return SquareUtil.Create(File, Rank);
             }
             set
             {
                 if ((object)value != null)
                 {
-                    File = value.File;
-                    Rank = value.Rank;
+                    File = value.GetFile();
+                    Rank = value.GetRank();
                 }
             }
         }
@@ -305,7 +305,7 @@ namespace Ragnarok.Shogi
             }
 
             // 移動前の位置は、nullでなければ内容を調べます。
-            if (!SrcSquare.IsEmpty && !SrcSquare.Validate())
+            if (!SrcSquare.IsEmpty() && !SrcSquare.Validate())
             {
                 return false;
             }

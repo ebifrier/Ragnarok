@@ -199,7 +199,7 @@ namespace Ragnarok.Shogi
         /// </summary>
         public void Add(Square element)
         {
-            if (element.IsEmpty)
+            if (element.IsEmpty())
             {
                 throw new ArgumentNullException(nameof(element));
             }
@@ -232,7 +232,7 @@ namespace Ragnarok.Shogi
         {
             return string.Join(
                 " ",
-                this.implList.Select(_ => _.ToString()).ToArray());
+                this.implList.Select(_ => SquareUtil.ToString(_)).ToArray());
         }
 
         /// <summary>
@@ -257,7 +257,7 @@ namespace Ragnarok.Shogi
             }
 
             var result = new SquareCollection();
-            list.Select(_ => Square.Parse(_))
+            list.Select(_ => SquareUtil.Parse(_))
                 .ForEach(_ => result.Add(_));
             return result;
         }

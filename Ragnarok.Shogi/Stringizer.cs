@@ -237,11 +237,11 @@ namespace Ragnarok.Shogi
                 result.Insert(0, ToString(move.BWType));
             }
 
-            if (!move.SrcSquare.IsEmpty && style == MoveTextStyle.KifFile)
+            if (!move.SrcSquare.IsEmpty() && style == MoveTextStyle.KifFile)
             {
                 result.AppendFormat("({0}{1})",
-                    move.SrcSquare.File,
-                    move.SrcSquare.Rank);
+                    move.SrcSquare.GetFile(),
+                    move.SrcSquare.GetRank());
             }
 
             return result.ToString();

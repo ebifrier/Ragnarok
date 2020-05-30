@@ -126,7 +126,7 @@ namespace Ragnarok.Shogi
             IEnumerable<Move> boardMoveListTmp = boardMoveList;
 
             // 移動前の座標情報があれば、それを使います。
-            if (!referenceMove.SrcSquare.IsEmpty)
+            if (!referenceMove.SrcSquare.IsEmpty())
             {
                 boardMoveListTmp = boardMoveListTmp.Where(
                     bm => referenceMove.SrcSquare == bm.SrcSquare);
@@ -178,8 +178,8 @@ namespace Ragnarok.Shogi
                 return false;
             }
 
-            var fileMove = bm.DstSquare.File - bm.SrcSquare.File;
-            var rankMove = bm.DstSquare.Rank - bm.SrcSquare.Rank;
+            var fileMove = bm.DstSquare.GetFile() - bm.SrcSquare.GetFile();
+            var rankMove = bm.DstSquare.GetRank() - bm.SrcSquare.GetRank();
 
             switch (referenceMove.RankMoveType)
             {
@@ -226,7 +226,7 @@ namespace Ragnarok.Shogi
                         ReferenceEquals(bm, boardMoveList[0])
                         ? boardMoveList[1]
                         : boardMoveList[0]);
-                    var fileDif = bm.SrcSquare.File - other.SrcSquare.File;
+                    var fileDif = bm.SrcSquare.GetFile() - other.SrcSquare.GetFile();
 
                     switch (referenceMove.RelFileType)
                     {
@@ -245,8 +245,8 @@ namespace Ragnarok.Shogi
             }
             else
             {
-                var fileMove = bm.DstSquare.File - bm.SrcSquare.File;
-                var rankMove = bm.DstSquare.Rank - bm.SrcSquare.Rank;
+                var fileMove = bm.DstSquare.GetFile() - bm.SrcSquare.GetFile();
+                var rankMove = bm.DstSquare.GetRank() - bm.SrcSquare.GetRank();
 
                 switch (referenceMove.RelFileType)
                 {
@@ -343,7 +343,7 @@ namespace Ragnarok.Shogi
                 return null;
             }
 
-            if (move.SameAsOld && board.PrevMovedSquare.IsEmpty)
+            if (move.SameAsOld && board.PrevMovedSquare.IsEmpty())
             {
                 return null;
             }
@@ -434,8 +434,8 @@ namespace Ragnarok.Shogi
             {
                 BWType = referenceMove.BWType,
                 Piece = fromPiece,
-                File = nextPos.File,
-                Rank = nextPos.Rank,
+                File = nextPos.GetFile(),
+                Rank = nextPos.GetRank(),
                 ActionType = ( // '打', '不成'は消える可能性があります。
                     referenceMove.ActionType == ActionType.Promote ?
                     referenceMove.ActionType :
@@ -505,7 +505,7 @@ namespace Ragnarok.Shogi
             // 駒の移動前情報が必要です。
             var nextPos = referenceMove.DstSquare;
             var prevPos = referenceMove.SrcSquare;
-            if (prevPos.IsEmpty)
+            if (prevPos.IsEmpty())
             {
                 // 何もフィルターしません。
                 return boardMoveList;
@@ -513,12 +513,12 @@ namespace Ragnarok.Shogi
 
             // 黒から見ると正の場合は引く or 左へ移動(右)で
             // 負の場合は上がる or 右へ移動(左)です。
-            var relRank = nextPos.Rank - prevPos.Rank;
+            var relRank = nextPos.GetRank() - prevPos.GetRank();
 
             // 段の位置でフィルターします。
             var tmpMoveList = boardMoveList.Where(mv =>
             {
-                var rel = nextPos.Rank - mv.SrcSquare.Rank;
+                var rel = nextPos.GetRank() - mv.SrcSquare.GetRank();
                 if (relRank < 0)
                 {
                     return (rel < 0);
@@ -565,7 +565,7 @@ namespace Ragnarok.Shogi
             // 駒の移動前情報が必要です。
             var nextPos = referenceMove.DstSquare;
             var prevPos = referenceMove.SrcSquare;
-            if (prevPos.IsEmpty)
+            if (prevPos.IsEmpty())
             {
                 // 何もフィルターしません。
                 return boardMoveList;
@@ -581,7 +581,7 @@ namespace Ragnarok.Shogi
 
                 // 動かす前の駒が相方に比べて右にあるか左にあるか調べます。
                 // 先手の場合は筋が小さい方が右です。
-                var relFile = prevPos.File - other.SrcSquare.File;
+                var relFile = prevPos.GetFile() - other.SrcSquare.GetFile();
                 relFile *= (referenceMove.BWType == BWType.White ? -1 : +1);
 
                 if (relFile == 0)
@@ -603,12 +603,12 @@ namespace Ragnarok.Shogi
             {
                 // 黒から見ると正の場合は引く or 左へ移動(右)で
                 // 負の場合は上がる or 右へ移動(左)です。
-                var relFile = nextPos.File - prevPos.File;
+                var relFile = nextPos.GetFile() - prevPos.GetFile();
 
                 // 列の位置でフィルターします。
                 var tmpMoveList = boardMoveList.Where(mv =>
                 {
-                    var rel = nextPos.File - mv.SrcSquare.File;
+                    var rel = nextPos.GetFile() - mv.SrcSquare.GetFile();
                     return (
                         relFile < 0 ? (rel < 0) :
                         relFile > 0 ? (rel > 0) :

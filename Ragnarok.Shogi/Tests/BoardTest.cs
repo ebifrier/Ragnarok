@@ -22,7 +22,7 @@ namespace Ragnarok.Shogi.Tests
             {
                 for (var rank = 1; rank <= Board.BoardSize; ++rank)
                 {
-                    var sq = new Square(file, rank);
+                    var sq = SquareUtil.Create(file, rank);
                     var avail = availables.FirstOrDefault(_ => _.Item1 == sq);
 
                     MethodUtil.SetPropertyValue(move, "DstSquare", sq);
@@ -96,7 +96,7 @@ namespace Ragnarok.Shogi.Tests
             var board = MakeBoard1(BWType.Black);
 
             var move = Move.CreateMove(
-                BWType.Black, new Square(8, 3), new Square(8, 2),
+                BWType.Black, SquareUtil.Create(8, 3), SquareUtil.Create(8, 2),
                 new Piece(PieceType.Kyo, false), true);
             Assert.True(board.CanMove(move));
 
@@ -106,14 +106,14 @@ namespace Ragnarok.Shogi.Tests
             MethodUtil.SetPropertyValue(move, "MovePiece", Piece.Kyo);
 
             // 84の駒は移動できません。
-            MethodUtil.SetPropertyValue(move, "SrcSquare", new Square(8, 4));
+            MethodUtil.SetPropertyValue(move, "SrcSquare", SquareUtil.Create(8, 4));
             Assert.False(board.CanMove(move));
-            MethodUtil.SetPropertyValue(move, "SrcSquare", new Square(8, 3));
+            MethodUtil.SetPropertyValue(move, "SrcSquare", SquareUtil.Create(8, 3));
 
             CanMoveTo(board, move, new List<Tuple<Square, bool>>
             {
-                Tuple.Create(new Square(8, 2), false),
-                Tuple.Create(new Square(8, 1), true),
+                Tuple.Create(SquareUtil.Create(8, 2), false),
+                Tuple.Create(SquareUtil.Create(8, 1), true),
             });
         }
 
@@ -123,18 +123,18 @@ namespace Ragnarok.Shogi.Tests
             var board = MakeBoard1(BWType.White);
 
             var move = Move.CreateMove(
-                BWType.White, new Square(9, 7), new Square(9, 8),
+                BWType.White, SquareUtil.Create(9, 7), SquareUtil.Create(9, 8),
                 new Piece(PieceType.Hu, false), true);
             Assert.True(board.CanMove(move));
 
             // 84の駒は移動できません。
-            MethodUtil.SetPropertyValue(move, "SrcSquare", new Square(8, 4));
+            MethodUtil.SetPropertyValue(move, "SrcSquare", SquareUtil.Create(8, 4));
             Assert.False(board.CanMove(move));
-            MethodUtil.SetPropertyValue(move, "SrcSquare", new Square(9, 7));
+            MethodUtil.SetPropertyValue(move, "SrcSquare", SquareUtil.Create(9, 7));
 
             CanMoveTo(board, move, new List<Tuple<Square, bool>>
             {
-                Tuple.Create(new Square(9, 8), false),
+                Tuple.Create(SquareUtil.Create(9, 8), false),
             });
         }
 
@@ -144,23 +144,23 @@ namespace Ragnarok.Shogi.Tests
             var board = MakeBoard1(BWType.Black);
 
             var list = board
-                .ListupMoves(Piece.Ryu, BWType.Black, new Square(4, 1))
+                .ListupMoves(Piece.Ryu, BWType.Black, SquareUtil.Create(4, 1))
                 .ToList();
             Assert.AreEqual(1, list.Count);
-            Assert.AreEqual(new Square(7, 1), list[0].SrcSquare);
+            Assert.AreEqual(SquareUtil.Create(7, 1), list[0].SrcSquare);
 
             list = board
-                .ListupMoves(Piece.Ryu, BWType.Black, new Square(3, 2))
+                .ListupMoves(Piece.Ryu, BWType.Black, SquareUtil.Create(3, 2))
                 .ToList();
             Assert.AreEqual(0, list.Count);
 
             list = board
-                .ListupMoves(Piece.Uma, BWType.Black, new Square(4, 7))
+                .ListupMoves(Piece.Uma, BWType.Black, SquareUtil.Create(4, 7))
                 .ToList();
             Assert.AreEqual(2, list.Count);
 
             list = board
-                .ListupMoves(Piece.Kin, BWType.Black, new Square(5, 7))
+                .ListupMoves(Piece.Kin, BWType.Black, SquareUtil.Create(5, 7))
                 .ToList();
             Assert.AreEqual(2, list.Count);
         }
@@ -171,7 +171,7 @@ namespace Ragnarok.Shogi.Tests
             var board = MakeBoard1(BWType.White);
 
             var list = board
-                .ListupMoves(Piece.Gin, BWType.White, new Square(6, 5))
+                .ListupMoves(Piece.Gin, BWType.White, SquareUtil.Create(6, 5))
                 .ToList();
             Assert.AreEqual(2, list.Count);
         }

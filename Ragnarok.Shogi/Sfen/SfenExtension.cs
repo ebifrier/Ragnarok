@@ -46,8 +46,8 @@ namespace Ragnarok.Shogi.Sfen
                 return "";
             }
 
-            var dstFile = move.DstSquare.File;
-            var dstRank = (char)('a' + (move.DstSquare.Rank - 1));
+            var dstFile = move.DstSquare.GetFile();
+            var dstRank = (char)('a' + (move.DstSquare.GetRank() - 1));
 
             if (move.ActionType == ActionType.Drop)
             {
@@ -59,8 +59,8 @@ namespace Ragnarok.Shogi.Sfen
             else
             {
                 // 駒の移動の場合
-                var srcFile = move.SrcSquare.File;
-                var srcRank = (char)('a' + (move.SrcSquare.Rank - 1));
+                var srcFile = move.SrcSquare.GetFile();
+                var srcRank = (char)('a' + (move.SrcSquare.GetRank() - 1));
                 var isPromote = (move.ActionType == ActionType.Promote);
 
                 return $"{srcFile}{srcRank}{dstFile}{dstRank}{(isPromote ? "+" : "")}";
@@ -108,7 +108,7 @@ namespace Ragnarok.Shogi.Sfen
                 var dstRank = (sfen[3] - 'a') + 1;
 
                 return Move.CreateDrop(
-                    board.Turn, new Square(dstFile, dstRank), dropPieceType);
+                    board.Turn, SquareUtil.Create(dstFile, dstRank), dropPieceType);
             }
             else
             {
@@ -134,8 +134,8 @@ namespace Ragnarok.Shogi.Sfen
                 var promote = (sfen.Length > 4 && sfen[4] == '+');
                 return Move.CreateMove(
                     board.Turn,
-                    new Square(srcFile, srcRank),
-                    new Square(dstFile, dstRank),
+                    SquareUtil.Create(srcFile, srcRank),
+                    SquareUtil.Create(dstFile, dstRank),
                     piece.Piece,
                     promote,
                     BoardPiece.GetPiece(board[dstFile, dstRank]));

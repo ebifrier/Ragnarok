@@ -134,7 +134,7 @@ namespace Ragnarok.Shogi.Csa
 
             return new PieceSquare
             {
-                Square = new Square(file, rank),
+                Square = SquareUtil.Create(file, rank),
                 Piece = piece.Value,
             };
         }
@@ -196,7 +196,7 @@ namespace Ragnarok.Shogi.Csa
         private void SetPiece(BWType bwType, PieceSquare ps)
         {
             // 駒位置が"00"の場合は持ち駒となります。
-            if (ps.Square.File != 0)
+            if (ps.Square.GetFile() != 0)
             {
                 this.board[ps.Square] = new BoardPiece(ps.Piece, bwType);
             }

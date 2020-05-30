@@ -34,7 +34,7 @@ namespace Ragnarok.Shogi
             var str = value as string;
             if (str != null)
             {
-                return Square.Parse(str);
+                return SquareUtil.Parse(str);
             }
 
             return base.ConvertFrom(context, culture, value);

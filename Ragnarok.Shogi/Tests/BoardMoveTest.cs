@@ -35,8 +35,8 @@ namespace Ragnarok.Shogi.Tests
                     : Piece.None)
                 where pcPiece.Validate()
                 where tookPiece == null || tookPiece.Validate()
-                where (dst.Rank % 2) == 1 && (dst.File % 3) == 1
-                where (src.Rank % 2) == 1 && (src.File % 3) == 1
+                where (dst.GetRank() % 2) == 1 && (dst.GetFile() % 3) == 1
+                where (src.GetRank() % 2) == 1 && (src.GetFile() % 3) == 1
                 let bmove = Move.CreateMove(
                     turn, src, dst,
                     pcPiece, promote,

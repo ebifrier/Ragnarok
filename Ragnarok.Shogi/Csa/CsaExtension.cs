@@ -70,10 +70,10 @@ namespace Ragnarok.Shogi.Csa
                 move.BWType == BWType.White ? "-" :
                 "");
 
-            if (!move.SrcSquare.IsEmpty)
+            if (!move.SrcSquare.IsEmpty())
             {
-                sb.Append(move.SrcSquare.File);
-                sb.Append(move.SrcSquare.Rank);
+                sb.Append(move.SrcSquare.GetFile());
+                sb.Append(move.SrcSquare.GetRank());
             }
             else
             {
@@ -81,10 +81,10 @@ namespace Ragnarok.Shogi.Csa
                 sb.Append("00");
             }
 
-            if (!move.DstSquare.IsEmpty)
+            if (!move.DstSquare.IsEmpty())
             {
-                sb.Append(move.DstSquare.File);
-                sb.Append(move.DstSquare.Rank);
+                sb.Append(move.DstSquare.GetFile());
+                sb.Append(move.DstSquare.GetRank());
             }
             else
             {
@@ -210,7 +210,7 @@ namespace Ragnarok.Shogi.Csa
             var srcSquare =
                 (srcFile == 0 || srcRank == 0
                 ? Square.Empty
-                : new Square(srcFile, srcRank));
+                : SquareUtil.Create(srcFile, srcRank));
 
             // 移動後の位置
             var dstFile = int.Parse(m.Groups[4].Value, CultureInfo.InvariantCulture);
@@ -218,7 +218,7 @@ namespace Ragnarok.Shogi.Csa
             var dstSquare =
                 (dstFile == 0 || dstRank == 0
                 ? Square.Empty
-                : new Square(dstFile, dstRank));
+                : SquareUtil.Create(dstFile, dstRank));
 
             // 駒
             var nullablePiece = CsaUtil.StrToPiece(m.Groups[6].Value);
@@ -228,7 +228,7 @@ namespace Ragnarok.Shogi.Csa
             }
 
             var piece = nullablePiece.Value;
-            if (srcSquare.IsEmpty)
+            if (srcSquare.IsEmpty())
             {
                 // 駒打ちの場合
                 return Move.CreateDrop(side, dstSquare, piece.PieceType);

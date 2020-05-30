@@ -73,13 +73,11 @@ namespace Ragnarok.Shogi
 
             foreach (var elem in table)
             {
-                var sq = new Square(
-                    square.File + elem[0],
-                    square.Rank + elem[1] * sign);
-
-                if (sq.Validate())
+                var file = square.GetFile() + elem[0];
+                var rank = square.GetRank() + elem[1] * sign;
+                if (SquareUtil.Validate(file, rank))
                 {
-                    yield return sq;
+                    yield return SquareUtil.Create(file, rank);
                 }
             }
         }
@@ -90,8 +88,8 @@ namespace Ragnarok.Shogi
         /// </summary>
         private bool CanMovePiece(Move move)
         {
-            var relFile = move.DstSquare.File - move.SrcSquare.File;
-            var relRank = move.DstSquare.Rank - move.SrcSquare.Rank;
+            var relFile = move.DstSquare.GetFile() - move.SrcSquare.GetFile();
+            var relRank = move.DstSquare.GetRank() - move.SrcSquare.GetRank();
             var piece = move.MovePiece;
 
             if (piece.IsPromoted)
@@ -166,13 +164,13 @@ namespace Ragnarok.Shogi
                 return false;
             }
 
-            var destRank = basePos.Rank + relRank;
+            var destRank = basePos.GetRank() + relRank;
             var addRank = (relRank >= 0 ? +1 : -1);
 
             // 基準点には自分がいるので、とりあえず一度は
             // 駒の位置をズラしておきます。
-            var baseFile = basePos.File;
-            var baseRank = basePos.Rank + addRank;
+            var baseFile = basePos.GetFile();
+            var baseRank = basePos.GetRank() + addRank;
 
             // 駒を動かしながら、目的地まで動かします。
             // 動かす途中に何か駒があれば、目的地へは動けません。
@@ -195,8 +193,8 @@ namespace Ragnarok.Shogi
         /// </summary>
         private bool CanMoveHisya(Square basePos, int relFile, int relRank)
         {
-            var baseFile = basePos.File;
-            var baseRank = basePos.Rank;
+            var baseFile = basePos.GetFile();
+            var baseRank = basePos.GetRank();
             var newFile = baseFile + relFile;
             var newRank = baseRank + relRank;
             var addFile = 0;
@@ -243,8 +241,8 @@ namespace Ragnarok.Shogi
         /// </summary>
         private bool CanMoveKaku(Square basePos, int relFile, int relRank)
         {
-            var baseFile = basePos.File;
-            var baseRank = basePos.Rank;
+            var baseFile = basePos.GetFile();
+            var baseRank = basePos.GetRank();
             var newFile = baseFile + relFile;
             var newRank = baseRank + relRank;
 
@@ -317,8 +315,8 @@ namespace Ragnarok.Shogi
             }
 
             IEnumerable<Square> list;
-            var file = square.File;
-            var rank = square.Rank;
+            var file = square.GetFile();
+            var rank = square.GetRank();
 
             if (piece.IsPromoted)
             {
@@ -390,7 +388,7 @@ namespace Ragnarok.Shogi
                     case PieceType.Kyo:
                         for (var r = 1; r <= BoardSize; ++r)
                         {
-                            yield return new Square(file, r);
+                            yield return SquareUtil.Create(file, r);
                         }
                         break;
                 }
@@ -411,11 +409,12 @@ namespace Ragnarok.Shogi
                             continue;
                         }
 
-                        var sq = new Square(f, rank);
-                        if (sq.Validate())
+                        if (!SquareUtil.Validate(f, rank))
                         {
-                            yield return sq;
+                            continue;
                         }
+
+                        yield return SquareUtil.Create(f, rank);
                     }
                     for (var r = 1; r <= BoardSize; ++r)
                     {
@@ -424,11 +423,12 @@ namespace Ragnarok.Shogi
                             continue;
                         }
 
-                        var sq = new Square(file, r);
-                        if (sq.Validate())
+                        if (!SquareUtil.Validate(file, r))
                         {
-                            yield return sq;
+                            continue;
                         }
+
+                        yield return SquareUtil.Create(file, r);
                     }
                     break;
 
@@ -440,11 +440,12 @@ namespace Ragnarok.Shogi
                             continue;
                         }
 
-                        var sq = new Square(file + index, rank + index);
-                        if (sq.Validate())
+                        if (!SquareUtil.Validate(file + index, rank + index))
                         {
-                            yield return sq;
+                            continue;
                         }
+
+                        yield return SquareUtil.Create(file + index, rank + index);
                     }
                     for (var index = -BoardSize; index <= BoardSize; ++index)
                     {
@@ -453,11 +454,12 @@ namespace Ragnarok.Shogi
                             continue;
                         }
 
-                        var sq = new Square(file + index, rank - index);
-                        if (sq.Validate())
+                        if (!SquareUtil.Validate(file + index, rank - index))
                         {
-                            yield return sq;
+                            continue;
                         }
+
+                        yield return SquareUtil.Create(file + index, rank - index);
                     }
                     break;
             }

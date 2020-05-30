@@ -976,7 +976,7 @@ namespace Ragnarok.Shogi
                 // 移動前の位置
                 if (m.Groups[9].Success)
                 {
-                    move.SrcSquare = new Square(
+                    move.SrcSquare = SquareUtil.Create(
                         int.Parse(m.Groups[10].Value, CultureInfo.CurrentCulture),
                         int.Parse(m.Groups[11].Value, CultureInfo.CurrentCulture));
                 }
