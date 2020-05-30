@@ -1276,44 +1276,21 @@ namespace Ragnarok.Shogi
                 return result.Value;
             }
 
-            return x.BoardEquals(y);
-        }
-
-        /// <summary>
-        /// オブジェクトの等値性を判定します。
-        /// </summary>
-        public bool BoardEquals(Board other)
-        {
-            if (other == null)
+            if (!AllSquares().All(_ => x[_] == y[_]))
             {
                 return false;
             }
 
-            /*if (HashValue != other.HashValue)
-            {
-                return false;
-            }*/
-
-            if (!AllSquares().All(_ => this[_] == other[_]))
+            if (!x.blackHandBox.Equals(y.blackHandBox) ||
+                !x.whiteHandBox.Equals(y.whiteHandBox))
             {
                 return false;
             }
 
-            if (!this.blackHandBox.Equals(other.blackHandBox) ||
-                !this.whiteHandBox.Equals(other.whiteHandBox))
+            if (x.turn != y.turn)
             {
                 return false;
             }
-
-            if (this.turn != other.turn)
-            {
-                return false;
-            }
-
-            /*if (this.prevMovedSquare != other.prevMovedSquare)
-            {
-                return false;
-            }*/
 
             return true;
         }

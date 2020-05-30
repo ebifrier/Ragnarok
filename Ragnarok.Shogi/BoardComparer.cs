@@ -28,7 +28,7 @@ namespace Ragnarok.Shogi
                 return false;
             }
 
-            return lhs.BoardEquals(rhs);
+            return Board.BoardEquals(lhs, rhs);
         }
 
         /// <summary>

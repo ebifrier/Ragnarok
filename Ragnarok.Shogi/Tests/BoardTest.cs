@@ -225,7 +225,7 @@ namespace Ragnarok.Shogi.Tests
             Assert.True(board2.Validate());
 
             board1.FlipPieces();
-            Assert.True(board1.BoardEquals(board2));
+            Assert.True(Board.BoardEquals(board1, board2));
         }
     }
 }
