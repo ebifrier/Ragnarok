@@ -122,7 +122,7 @@ namespace Ragnarok.Shogi
                 {
                     return ActionType.Drop;
                 }
-                else if (SrcSquare != null && MovePiece != null)
+                else if (!SrcSquare.IsEmpty && MovePiece != null)
                 {
                     return (IsPromote ? ActionType.Promote : ActionType.None);
                 }
@@ -222,12 +222,12 @@ namespace Ragnarok.Shogi
             else if (ActionType == ActionType.Drop)
             {
                 // 駒打ちの場合
-                if (DstSquare == null || !DstSquare.Validate())
+                if (!DstSquare.Validate())
                 {
                     return false;
                 }
                 
-                if (SrcSquare != null)
+                if (!SrcSquare.IsEmpty)
                 {
                     return false;
                 }
@@ -245,12 +245,12 @@ namespace Ragnarok.Shogi
             else
             {
                 // 駒打ちでない場合
-                if (DstSquare == null || !DstSquare.Validate())
+                if (!DstSquare.Validate())
                 {
                     return false;
                 }
 
-                if (SrcSquare == null || !SrcSquare.Validate())
+                if (!SrcSquare.Validate())
                 {
                     return false;
                 }
@@ -349,9 +349,9 @@ namespace Ragnarok.Shogi
         {
             return (
                 BWType.GetHashCode() ^
-                (DstSquare != null ? DstSquare.GetHashCode() : 0) ^
-                (SrcSquare != null ? SrcSquare.GetHashCode() : 0) ^
-                (MovePiece != null ? MovePiece.GetHashCode() : 0) ^
+                DstSquare.GetHashCode() ^
+                SrcSquare.GetHashCode() ^
+                MovePiece.GetHashCode() ^
                 DropPieceType.GetHashCode() ^
                 IsPromote.GetHashCode() ^
                 SpecialMoveType.GetHashCode());
@@ -371,7 +371,7 @@ namespace Ragnarok.Shogi
         /// </remarks>
         private static byte SerializeSquare(Square square)
         {
-            if (square == null)
+            if (square.IsEmpty)
             {
                 return 0;
             }
@@ -389,7 +389,7 @@ namespace Ragnarok.Shogi
         {
             if (bits == 0)
             {
-                return null;
+                return Square.Empty;
             }
 
             var file = (int)bits / (Board.BoardSize + 1);
@@ -537,8 +537,8 @@ namespace Ragnarok.Shogi
         /// 移動手を生成します。
         /// </summary>
         public static Move CreateMove(BWType turn, Square src, Square dst,
-                                           Piece movePiece, bool isPromote,
-                                           Piece tookPiece = null)
+                                      Piece movePiece, bool isPromote,
+                                      Piece tookPiece = null)
         {
             if (turn == BWType.None)
             {
@@ -546,13 +546,13 @@ namespace Ragnarok.Shogi
                     "Enumの値が正しくありません。", nameof(turn));
             }
 
-            if (src == null || !src.Validate())
+            if (!src.Validate())
             {
                 throw new ArgumentException(
                     "移動元のマスが正しくありません。", nameof(src));
             }
 
-            if (dst == null || !dst.Validate())
+            if (!dst.Validate())
             {
                 throw new ArgumentException(
                     "移動先のマスが正しくありません。", nameof(dst));
@@ -593,7 +593,7 @@ namespace Ragnarok.Shogi
                     "Enumの値が正しくありません。", nameof(turn));
             }
 
-            if (dst == null || !dst.Validate())
+            if (!dst.Validate())
             {
                 throw new ArgumentException(
                     "Squareの値が正しくありません。", nameof(dst));

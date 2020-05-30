@@ -4,14 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using System.Reflection;
-using System.Text;
 using System.Text.RegularExpressions;
 using NUnit.Framework;
 
 namespace Ragnarok.Shogi.Csa.Tests
 {
-    using File.Tests;
-
     [TestFixture()]
     public sealed class CsaTest
     {

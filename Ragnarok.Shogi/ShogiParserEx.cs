@@ -889,8 +889,8 @@ namespace Ragnarok.Shogi
         /// 差し手のパースを行います。
         /// </summary>
         public static LiteralMove ParseMoveEx(string text, bool isNeedEnd,
-                                       bool isNormalizeText,
-                                       ref string parsedText)
+                                              bool isNormalizeText,
+                                              ref string parsedText)
         {
             if (string.IsNullOrEmpty(text))
             {
@@ -948,18 +948,11 @@ namespace Ragnarok.Shogi
                 move.SameAsOld = m.Groups[4].Success;
                 if (!move.SameAsOld || file != null || rank != null)
                 {
-                    // 筋
-                    if (file == null)
+                    if (file == null || rank == null)
                     {
                         return null;
                     }
                     move.File = file.Value;
-
-                    // 段
-                    if (rank == null)
-                    {
-                        return null;
-                    }
                     move.Rank = rank.Value;
                 }
 

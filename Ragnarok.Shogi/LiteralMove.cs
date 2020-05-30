@@ -305,7 +305,7 @@ namespace Ragnarok.Shogi
             }
 
             // 移動前の位置は、nullでなければ内容を調べます。
-            if (SrcSquare != null && !SrcSquare.Validate())
+            if (!SrcSquare.IsEmpty && !SrcSquare.Validate())
             {
                 return false;
             }
@@ -403,7 +403,7 @@ namespace Ragnarok.Shogi
                     RankMoveType.GetHashCode() ^
                     ActionType.GetHashCode() ^
                     (Piece != null ? Piece.GetHashCode() : 0) ^
-                    (SrcSquare != null ? SrcSquare.GetHashCode() : 0);
+                    SrcSquare.GetHashCode();
 
                 if (SameAsOld)
                 {

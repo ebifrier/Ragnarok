@@ -191,8 +191,6 @@ namespace Ragnarok.Shogi
         /// </summary>
         public void RemoveAt(int index)
         {
-            var item = this.implList[index];
-
             this.implList.RemoveAt(index);
         }
 
@@ -201,7 +199,7 @@ namespace Ragnarok.Shogi
         /// </summary>
         public void Add(Square element)
         {
-            if (element == null)
+            if (element.IsEmpty)
             {
                 throw new ArgumentNullException(nameof(element));
             }

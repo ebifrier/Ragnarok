@@ -125,7 +125,7 @@ namespace Ragnarok.Shogi
         public bool IsChecked(BWType bwType)
         {
             var gyoku = GetGyoku(bwType);
-            if (gyoku == null || !gyoku.Validate())
+            if (!gyoku.Validate())
             {
                 return false;
             }

@@ -146,6 +146,7 @@
     <Compile Include="Tests\MoveTest.cs" />
     <Compile Include="Tests\PawnDropCheckMateTest.cs" />
     <Compile Include="Tests\ScoreTest.cs" />
+    <Compile Include="Tests\ShogiParserTest.cs" />
     <Compile Include="Tests\ShogiParserExTest.cs" />
   </ItemGroup>
   <ItemGroup>

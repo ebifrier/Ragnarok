@@ -286,7 +286,7 @@ namespace Ragnarok.Shogi
         /// </summary>
         private IEnumerable<Square> GetCanMoveRange(Square square, BWType bwType)
         {
-            if (square == null || !square.Validate())
+            if (!square.Validate())
             {
                 return new Square[0];
             }
@@ -306,7 +306,7 @@ namespace Ragnarok.Shogi
         /// </summary>
         private IEnumerable<Square> GetCanMoveRange(Piece piece, Square square, BWType bwType)
         {
-            if (square == null || !square.Validate())
+            if (!square.Validate())
             {
                 yield break;
             }

@@ -12,8 +12,13 @@ namespace Ragnarok.Shogi
     /// </summary>
     [DataContract()]
     [TypeConverter(typeof(SquareConverter))]
-    public class Square : IEquatable<Square>
+    public readonly struct Square : IEquatable<Square>
     {
+        /// <summary>
+        /// 空のマスを取得します。
+        /// </summary>
+        public static readonly Square Empty = new Square();
+
         /// <summary>
         /// 列を取得または設定します。
         /// </summary>
@@ -21,7 +26,6 @@ namespace Ragnarok.Shogi
         public int File
         {
             get;
-            set;
         }
 
         /// <summary>
@@ -31,7 +35,6 @@ namespace Ragnarok.Shogi
         public int Rank
         {
             get;
-            set;
         }
 
         /// <summary>
@@ -40,6 +43,14 @@ namespace Ragnarok.Shogi
         public int Index
         {
             get { return ((File - 1) * 9 + (Rank - 1)); }
+        }
+
+        /// <summary>
+        /// 空のマスかどうかを調べます。
+        /// </summary>
+        public bool IsEmpty
+        {
+            get { return (this == Empty); }
         }
 
         /// <summary>
@@ -82,7 +93,7 @@ namespace Ragnarok.Shogi
             if (trimmedSource.Length != 2)
             {
                 throw new FormatException(
-                    source + ": Square型への変換に失敗しました。");
+                    $"{source}: Square型への変換に失敗しました。");
             }
 
             var file = int.Parse(
@@ -93,7 +104,7 @@ namespace Ragnarok.Shogi
                 CultureInfo.InvariantCulture);
             var square = new Square(file, rank);
 
-            if (!square.Validate())
+            if (!square.IsEmpty && !square.Validate())
             {
                 throw new FormatException(
                     source + ": 正しくないSquare型です。");
@@ -135,7 +146,7 @@ namespace Ragnarok.Shogi
                 return result.Value;
             }
 
-            return Equals(obj as Square);
+            return Equals((Square)obj);
         }
 
         /// <summary>
@@ -143,11 +154,6 @@ namespace Ragnarok.Shogi
         /// </summary>
         public bool Equals(Square other)
         {
-            if ((object)other == null)
-            {
-                return false;
-            }
-
             if (File != other.File || Rank != other.Rank)
             {
                 return false;
@@ -181,20 +187,31 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
+        /// オブジェクトを比較します。(nullとの比較用)
+        /// </summary>
+        public static bool operator ==(Square lhs, Square? rhs)
+        {
+            if (rhs == null)
+            {
+                return lhs.IsEmpty;
+            }
+
+            return Util.GenericEquals(lhs, rhs.Value);
+        }
+
+        /// <summary>
+        /// オブジェクトを比較します。(nullとの比較用)
+        /// </summary>
+        public static bool operator !=(Square lhs, Square? rhs)
+        {
+            return !(lhs == rhs);
+        }
+
+        /// <summary>
         /// コンストラクタ
         /// </summary>
         public Square(int file, int rank)
         {
-            /*if (file < 1 || Board.BoardSize < file)
-            {
-                throw new ArgumentException("file");
-            }
-
-            if (rank < 1 || Board.BoardSize < rank)
-            {
-                throw new ArgumentException("rank");
-            }*/
-
             File = file;
             Rank = rank;
         }
@@ -211,13 +228,6 @@ namespace Ragnarok.Shogi
 
             File = (index % 9) + 1;
             Rank = (index / 9) + 1;
-        }
-
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        public Square()
-        {
         }
     }
 }

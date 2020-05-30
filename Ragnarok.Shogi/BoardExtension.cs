@@ -126,7 +126,7 @@ namespace Ragnarok.Shogi
             IEnumerable<Move> boardMoveListTmp = boardMoveList;
 
             // 移動前の座標情報があれば、それを使います。
-            if (referenceMove.SrcSquare != null)
+            if (!referenceMove.SrcSquare.IsEmpty)
             {
                 boardMoveListTmp = boardMoveListTmp.Where(
                     bm => referenceMove.SrcSquare == bm.SrcSquare);
@@ -343,7 +343,7 @@ namespace Ragnarok.Shogi
                 return null;
             }
 
-            if (move.SameAsOld && board.PrevMovedSquare == null)
+            if (move.SameAsOld && board.PrevMovedSquare.IsEmpty)
             {
                 return null;
             }
@@ -505,7 +505,7 @@ namespace Ragnarok.Shogi
             // 駒の移動前情報が必要です。
             var nextPos = referenceMove.DstSquare;
             var prevPos = referenceMove.SrcSquare;
-            if (prevPos == null)
+            if (prevPos.IsEmpty)
             {
                 // 何もフィルターしません。
                 return boardMoveList;
@@ -565,7 +565,7 @@ namespace Ragnarok.Shogi
             // 駒の移動前情報が必要です。
             var nextPos = referenceMove.DstSquare;
             var prevPos = referenceMove.SrcSquare;
-            if (prevPos == null)
+            if (prevPos.IsEmpty)
             {
                 // 何もフィルターしません。
                 return boardMoveList;

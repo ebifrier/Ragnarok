@@ -68,20 +68,16 @@ namespace Ragnarok.Shogi
             new Dictionary<string, SpecialMoveType>()
         {
             {"中断", SpecialMoveType.Interrupt},
-            {"ちゅうだん", SpecialMoveType.Interrupt},
             {"INTERRPUT", SpecialMoveType.Interrupt},
 
             {"投了", SpecialMoveType.Resign},
-            {"とうりょう", SpecialMoveType.Resign},
             {"TORYO", SpecialMoveType.Resign},
             {"RESIGN", SpecialMoveType.Resign},
 
             {"持将棋", SpecialMoveType.Jishogi},
-            {"じしょうぎ", SpecialMoveType.Jishogi},
             {"JISHOGI", SpecialMoveType.Jishogi},
 
             {"千日手", SpecialMoveType.Sennichite},
-            {"せんにちて", SpecialMoveType.Sennichite},
             {"SENNICHITE", SpecialMoveType.Sennichite},
             
             {"王手の千日手", SpecialMoveType.OuteSennichite},
@@ -99,12 +95,10 @@ namespace Ragnarok.Shogi
             {"ILLEGAL_MOVE", SpecialMoveType.IllegalMove},
 
             {"詰み", SpecialMoveType.CheckMate},
-            {"つみ", SpecialMoveType.CheckMate},
 
             {"最大手数", SpecialMoveType.MaxMoves},
 
             {"封じ手", SpecialMoveType.SealedMove },
-            {"ふうじて", SpecialMoveType.SealedMove },
 
             {"エラー", SpecialMoveType.Error},
             {"ERROR", SpecialMoveType.Error},
@@ -405,7 +399,7 @@ namespace Ragnarok.Shogi
         /// 指し手のパースを行います。
         /// </summary>
         public static LiteralMove ParseMoveEx(string text, bool isNeedEnd,
-                                       ref string parsedText)
+                                              ref string parsedText)
         {
             if (string.IsNullOrEmpty(text))
             {
@@ -509,18 +503,6 @@ namespace Ragnarok.Shogi
 
             parsedText = m.Value;
             return move;
-        }
-
-        /// <summary>
-        /// 参加者の情報を解析する正規表現オブジェクトを作成します。
-        /// </summary>
-        private static Regex CreatePlayerRegex()
-        {
-            // 棋力文字列の中に空白を含めるのは可能とします。
-            const string regexPattern =
-                @"^\s*([^\s]+)\s+([\s\S]+)\s*";
-
-            return new Regex(regexPattern, RegexOptions.Compiled);
         }
 
         private static readonly Regex SpecialMoveRegex;

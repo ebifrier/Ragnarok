@@ -106,7 +106,7 @@ namespace Ragnarok.Shogi
         [DataMember(Order = 4, IsRequired = true)]
         private BWType turn = BWType.Black;
         [DataMember(Order = 5, IsRequired = true)]
-        private Square prevMovedSquare = null;
+        private Square prevMovedSquare = Square.Empty;
         //[DataMember(Order = 6, IsRequired = true)]
         private List<Move> moveList = new List<Move>();
         //[DataMember(Order = 7, IsRequired = true)]
@@ -191,7 +191,7 @@ namespace Ragnarok.Shogi
                 blackHandBox = this.blackHandBox.Clone(),
                 whiteHandBox = this.whiteHandBox.Clone(),
                 turn = this.turn,
-                prevMovedSquare = this.prevMovedSquare?.Clone()
+                prevMovedSquare = this.prevMovedSquare.Clone()
             };
 
             // 指し手リストもコピーする場合
@@ -315,24 +315,8 @@ namespace Ragnarok.Shogi
         [SuppressMessage("Design", "CA1043:インデクサーには整数または文字列引数を使用します")]
         public BoardPiece this[Square square]
         {
-            get
-            {
-                if (square == null)
-                {
-                    throw new ArgumentNullException(nameof(square));
-                }
-
-                return this[square.File, square.Rank];
-            }
-            set
-            {
-                if (square == null)
-                {
-                    throw new ArgumentNullException(nameof(square));
-                }
-
-                this[square.File, square.Rank] = value;
-            }
+            get { return this[square.File, square.Rank]; }
+            set { this[square.File, square.Rank] = value; }
         }
 
         /// <summary>
@@ -587,7 +571,9 @@ namespace Ragnarok.Shogi
             if (!move.IsSpecialMove)
             {
                 Turn = Turn.Flip();
-                PrevMovedSquare = this.moveList.LastOrDefault()?.DstSquare;
+                PrevMovedSquare =
+                    this.moveList.LastOrDefault()?.DstSquare ??
+                    Square.Empty;
             }
         }
 
@@ -630,7 +616,7 @@ namespace Ragnarok.Shogi
         public void ClearUndoList()
         {
             this.moveList.Clear();
-            PrevMovedSquare = null;
+            PrevMovedSquare = Square.Empty;
         }
 
         /// <summary>
@@ -874,7 +860,7 @@ namespace Ragnarok.Shogi
         /// </summary>
         public bool CanDrop(BWType bwType, Square square, PieceType pieceType)
         {
-            if (square == null || this[square] != null)
+            if (this[square] != null)
             {
                 return false;
             }
@@ -1007,13 +993,13 @@ namespace Ragnarok.Shogi
         public static bool CanPromote(Piece piece, BWType bwType,
                                       Square dstSquare, Square srcSquare)
         {
-            if (dstSquare == null || !dstSquare.Validate())
+            if (!dstSquare.Validate())
             {
                 return false;
             }
 
             // 駒の移動でない場合は成れません。
-            if (srcSquare == null || !srcSquare.Validate())
+            if (!srcSquare.Validate())
             {
                 return false;
             }
@@ -1069,7 +1055,7 @@ namespace Ragnarok.Shogi
         public static bool IsPromoteForce(Piece piece, BWType bwType,
                                           Square dstSquare)
         {
-            if (dstSquare == null || !dstSquare.Validate())
+            if (!dstSquare.Validate())
             {
                 return false;
             }
@@ -1207,12 +1193,6 @@ namespace Ragnarok.Shogi
 
             if (!Enum.IsDefined(typeof(BWType), this.turn) ||
                 this.turn == BWType.None)
-            {
-                return false;
-            }
-
-            if (this.prevMovedSquare != null &&
-                !this.prevMovedSquare.Validate())
             {
                 return false;
             }
