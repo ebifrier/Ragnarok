@@ -549,7 +549,7 @@ namespace Ragnarok.Shogi
                 }
 
                 // 駒を取った場合は、その駒を元に戻します。
-                if (move.TookPiece != null)
+                if (!move.TookPiece.IsNone)
                 {
                     this[move.DstSquare] = new BoardPiece(
                         move.TookPiece.Clone(),
@@ -1005,7 +1005,7 @@ namespace Ragnarok.Shogi
             }
 
             // 既に成っている駒を再度成ることはできません。
-            if (piece == null || piece.IsPromoted)
+            if (piece.IsNone || piece.IsPromoted)
             {
                 return false;
             }
@@ -1061,7 +1061,7 @@ namespace Ragnarok.Shogi
             }
 
             // 駒の移動元に自分の駒がなければダメ
-            if (piece == null || piece.IsPromoted)
+            if (piece.IsNone || piece.IsPromoted)
             {
                 return false;
             }
@@ -1275,6 +1275,7 @@ namespace Ragnarok.Shogi
             return true;
         }
 
+#if false
 #region Serialize
         /// <summary>
         /// 局面をシリアライズするために一時的に使います。
@@ -1426,7 +1427,8 @@ namespace Ragnarok.Shogi
             this.moveList = DeserializeMoveList(this.moveListBytes);
             this.redoList = DeserializeMoveList(this.redoListBytes);
         }
-#endregion
+        #endregion
+#endif
 
 #if false
         /// <summary>

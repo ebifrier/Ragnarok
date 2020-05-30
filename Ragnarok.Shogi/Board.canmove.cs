@@ -311,7 +311,7 @@ namespace Ragnarok.Shogi
                 yield break;
             }
 
-            if (piece == null)
+            if (piece.IsNone)
             {
                 yield break;
             }

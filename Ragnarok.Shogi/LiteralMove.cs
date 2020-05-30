@@ -264,7 +264,7 @@ namespace Ragnarok.Shogi
                 }
             }
 
-            if (Piece == null || !Piece.Validate())
+            if (Piece.IsNone || !Piece.Validate())
             {
                 return false;
             }
@@ -402,7 +402,7 @@ namespace Ragnarok.Shogi
                     RelFileType.GetHashCode() ^
                     RankMoveType.GetHashCode() ^
                     ActionType.GetHashCode() ^
-                    (Piece != null ? Piece.GetHashCode() : 0) ^
+                    Piece.GetHashCode() ^
                     SrcSquare.GetHashCode();
 
                 if (SameAsOld)

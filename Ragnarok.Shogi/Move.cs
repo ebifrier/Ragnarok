@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.Serialization;
-
+using System.Security.Permissions;
 using Ragnarok.Utility;
 
 namespace Ragnarok.Shogi
@@ -23,7 +23,8 @@ namespace Ragnarok.Shogi
     /// </para>
     /// </remarks>
     [DataContract()]
-    public class Move : IEquatable<Move>
+    [Serializable()]
+    public class Move : IEquatable<Move>, ISerializable
     {
         /// <summary>
         /// オブジェクトのコピーを作成します。
@@ -122,7 +123,7 @@ namespace Ragnarok.Shogi
                 {
                     return ActionType.Drop;
                 }
-                else if (!SrcSquare.IsEmpty && MovePiece != null)
+                else if (!SrcSquare.IsEmpty && !MovePiece.IsNone)
                 {
                     return (IsPromote ? ActionType.Promote : ActionType.None);
                 }
@@ -232,7 +233,7 @@ namespace Ragnarok.Shogi
                     return false;
                 }
 
-                if (MovePiece != null)
+                if (!MovePiece.IsNone)
                 {
                     return false;
                 }
@@ -255,7 +256,7 @@ namespace Ragnarok.Shogi
                     return false;
                 }
 
-                if (MovePiece == null)
+                if (MovePiece.IsNone)
                 {
                     return false;
                 }
@@ -358,150 +359,31 @@ namespace Ragnarok.Shogi
         }
 
         #region シリアライズ/デシリアライズ
-        [DataMember(Order = 1, IsRequired = true)]
-        private uint serializeBits = 0;
-
-        /// <summary>
-        /// Squareをシリアライズします。
-        /// </summary>
-        /// <remarks>
-        /// 11～99の値にシリアライズされます。
-        /// （0～81の値にシリアライズすると、0の解釈がnull or 11のどちらでも
-        /// 可能になってしまうため、値を減らすことはしていません）
-        /// </remarks>
-        private static byte SerializeSquare(Square square)
+        protected Move(SerializationInfo info, StreamingContext text)
         {
-            if (square.IsEmpty)
-            {
-                return 0;
-            }
-
-            // 11 ～ 99
-            return (byte)(
-                square.File * (Board.BoardSize + 1) +
-                square.Rank);
+            BWType = (BWType)info.GetValue(nameof(BWType), typeof(BWType));
+            IsPromote = info.GetBoolean(nameof(IsPromote));
+            DstSquare = (Square)info.GetValue(nameof(DstSquare), typeof(Square));
+            SrcSquare = (Square)info.GetValue(nameof(SrcSquare), typeof(Square));
+            DropPieceType = (PieceType)info.GetInt32(nameof(DropPieceType));
+            HasSameSquareAsPrev = info.GetBoolean(nameof(HasSameSquareAsPrev));
+            MovePiece = (Piece)info.GetValue(nameof(MovePiece), typeof(Piece));
+            TookPiece = (Piece)info.GetValue(nameof(TookPiece), typeof(Piece));
+            SpecialMoveType = (SpecialMoveType)info.GetInt32(nameof(SpecialMoveType));
         }
 
-        /// <summary>
-        /// Squareをデシリアライズします。
-        /// </summary>
-        private static Square DeserializeSquare(uint bits)
+        [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            if (bits == 0)
-            {
-                return Square.Empty;
-            }
-
-            var file = (int)bits / (Board.BoardSize + 1);
-            var rank = (int)bits % (Board.BoardSize + 1);
-            return new Square(file, rank);
-        }
-
-        /// <summary>
-        /// シリアライズを行います。
-        /// </summary>
-        [CLSCompliant(false)]
-        public uint Serialize()
-        {
-            uint bits = 0;
-
-            // 2bit
-            bits |= (uint)BWType;
-            // 1bit
-            bits |= ((uint)(IsPromote ? 1 : 0) << 2);
-            // 7bit
-            bits |= ((uint)SerializeSquare(DstSquare) << 3);
-            // 7bit
-            bits |= (ActionType == ActionType.Drop ?
-                ((uint)(DropPieceType + 100) << 10) :
-                ((uint)SerializeSquare(SrcSquare) << 10) );
-            // 1bit
-            bits |= ((uint)(HasSameSquareAsPrev ? 1 : 0) << 17);
-
-            // 5bit
-            if (MovePiece != null)
-            {
-                bits |= ((uint)MovePiece.Serialize() << 18);
-            }
-
-            // 5bit
-            if (TookPiece != null)
-            {
-                bits |= ((uint)TookPiece.Serialize() << 23);
-            }
-
-            // 4bit
-            if (SpecialMoveType != SpecialMoveType.None)
-            {
-                bits |= ((uint)SpecialMoveType << 28);
-            }
-
-            return bits;
-        }
-
-        /// <summary>
-        /// デシリアライズを行います。
-        /// </summary>
-        [CLSCompliant(false)]
-        public void Deserialize(uint bits)
-        {
-            uint tmp;
-
-            // 2bit
-            BWType = (BWType)((bits >> 0) & 0x03);
-            // 1bit
-            IsPromote = (((bits >> 2) & 0x01) != 0);
-            // 7bit
-            DstSquare = DeserializeSquare((bits >> 3) & 0x7f);
-            // 7bit
-            tmp = ((bits >> 10) & 0x7f);
-            if (tmp >= 100)
-                DropPieceType = (PieceType)(tmp - 100);
-            else
-                SrcSquare = DeserializeSquare(tmp);
-            // 1bit
-            HasSameSquareAsPrev = (((bits >> 17) & 0x01) != 0);
-
-            // 5bit
-            tmp = ((bits >> 18) & 0x1f);
-            if (tmp != 0)
-            {
-                MovePiece = new Piece();
-                MovePiece.Deserialize(tmp);
-            }
-
-            // 5bit
-            tmp = ((bits >> 23) & 0x1f);
-            if (tmp != 0)
-            {
-                TookPiece = new Piece();
-                TookPiece.Deserialize(tmp);
-            }
-
-            // 4bit
-            tmp = ((bits >> 28) & 0x0f);
-            if (tmp != 0)
-            {
-                SpecialMoveType = (SpecialMoveType)tmp;
-            }
-        }
-
-        /// <summary>
-        /// シリアライズ前に呼ばれます。
-        /// </summary>
-        [OnSerializing()]
-        private void BeforeSerialize(StreamingContext context)
-        {
-            this.serializeBits = Serialize();
-        }
-
-        /// <summary>
-        /// デシリアライズ後に呼ばれます。
-        /// </summary>
-        [OnDeserialized()]
-        private void AfterDeserialize(StreamingContext context)
-        {
-            Deserialize(this.serializeBits);
+            info.AddValue(nameof(BWType), BWType);
+            info.AddValue(nameof(IsPromote), IsPromote);
+            info.AddValue(nameof(DstSquare), DstSquare);
+            info.AddValue(nameof(SrcSquare), SrcSquare);
+            info.AddValue(nameof(DropPieceType), DropPieceType);
+            info.AddValue(nameof(HasSameSquareAsPrev), HasSameSquareAsPrev);
+            info.AddValue(nameof(MovePiece), MovePiece);
+            info.AddValue(nameof(TookPiece), TookPiece);
+            info.AddValue(nameof(SpecialMoveType), SpecialMoveType);
         }
         #endregion
 
@@ -538,7 +420,7 @@ namespace Ragnarok.Shogi
         /// </summary>
         public static Move CreateMove(BWType turn, Square src, Square dst,
                                       Piece movePiece, bool isPromote,
-                                      Piece tookPiece = null)
+                                      Piece tookPiece = default)
         {
             if (turn == BWType.None)
             {
@@ -558,13 +440,13 @@ namespace Ragnarok.Shogi
                     "移動先のマスが正しくありません。", nameof(dst));
             }
 
-            if (movePiece == null || !movePiece.Validate())
+            if (!movePiece.Validate())
             {
                 throw new ArgumentException(
                     "動かす駒が正しくありません。", nameof(movePiece));
             }
 
-            if (tookPiece != null && !tookPiece.Validate())
+            if (!tookPiece.IsNone && !tookPiece.Validate())
             {
                 throw new ArgumentException(
                     "取った駒が正しくありません。", nameof(tookPiece));

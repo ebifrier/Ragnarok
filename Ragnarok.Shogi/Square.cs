@@ -4,15 +4,17 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Security.Permissions;
 
 namespace Ragnarok.Shogi
 {
     /// <summary>
     /// 駒の位置を保存します。
     /// </summary>
+    [Serializable()]
     [DataContract()]
     [TypeConverter(typeof(SquareConverter))]
-    public readonly struct Square : IEquatable<Square>
+    public readonly struct Square : IEquatable<Square>, ISerializable
     {
         /// <summary>
         /// 空のマスを取得します。
@@ -42,7 +44,7 @@ namespace Ragnarok.Shogi
         /// </summary>
         public int Index
         {
-            get { return ((File - 1) * 9 + (Rank - 1)); }
+            get { return ((File - 1) * Board.BoardSize + (Rank - 1)); }
         }
 
         /// <summary>
@@ -226,8 +228,25 @@ namespace Ragnarok.Shogi
                 throw new IndexOutOfRangeException();
             }
 
-            File = (index % 9) + 1;
-            Rank = (index / 9) + 1;
+            File = (index % Board.BoardSize) + 1;
+            Rank = (index / Board.BoardSize) + 1;
+        }
+
+        /// <summary>
+        /// Squareをデシリアライズします。
+        /// </summary>
+        private Square(SerializationInfo info, StreamingContext text)
+            : this(info.GetInt32(nameof(Index)))
+        {
+        }
+
+        /// <summary>
+        /// Squareをシリアライズします。
+        /// </summary>
+        [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue(nameof(Index), Index);
         }
     }
 }

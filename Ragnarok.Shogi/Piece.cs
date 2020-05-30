@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Runtime.Serialization;
+using System.Security.Permissions;
 
 namespace Ragnarok.Shogi
 {
@@ -64,7 +64,7 @@ namespace Ragnarok.Shogi
     /// </summary>
     [Serializable()]
     [DataContract()]
-    public class Piece : IEquatable<Piece>
+    public readonly struct Piece : IEquatable<Piece>, ISerializable
     {
         /// <summary>
         /// 無し
@@ -133,7 +133,6 @@ namespace Ragnarok.Shogi
         public PieceType PieceType
         {
             get;
-            set;
         }
 
         /// <summary>
@@ -142,7 +141,6 @@ namespace Ragnarok.Shogi
         public bool IsPromoted
         {
             get;
-            set;
         }
 
         /// <summary>
@@ -154,6 +152,14 @@ namespace Ragnarok.Shogi
             {
                 return ((int)PieceType + (IsPromoted ? 9 : 0));
             }
+        }
+
+        /// <summary>
+        /// 駒が空かどうかを調べます。
+        /// </summary>
+        public bool IsNone
+        {
+            get { return (PieceType == PieceType.None); }
         }
 
         /// <summary>
@@ -169,11 +175,6 @@ namespace Ragnarok.Shogi
         /// </summary>
         public bool Validate()
         {
-            if (!EnumUtil.IsDefined(PieceType))
-            {
-                return false;
-            }
-
             switch (PieceType)
             {
                 case PieceType.Hisya:
@@ -213,7 +214,7 @@ namespace Ragnarok.Shogi
                 return result.Value;
             }
 
-            return Equals(other as Piece);
+            return Equals((Piece)other);
         }
 
         /// <summary>
@@ -265,77 +266,47 @@ namespace Ragnarok.Shogi
             return !(lhs == rhs);
         }
 
-        #region シリアライズ
-        [DataMember(Order = 1, IsRequired = true)]
-        private byte serializeBits = 0;
-
         /// <summary>
-        /// シリアライズを行います。
+        /// == 演算子を実装します。(nullとの比較用)
         /// </summary>
-        [CLSCompliant(false)]
-        public byte Serialize()
+        public static bool operator ==(Piece lhs, Piece? rhs)
         {
-            byte bits = 0;
+            if (rhs == null)
+            {
+                return lhs.IsNone;
+            }
 
-            // 4bits
-            bits |= (byte)((uint)PieceType << 0);
-            // 1bits
-            bits |= (byte)((uint)(IsPromoted ? 1 : 0) << 4);
-
-            return bits;
+            return Util.GenericEquals(lhs, rhs);
         }
 
         /// <summary>
-        /// デシリアライズを行います。
+        /// != 演算子を実装します。(nullとの比較用)
         /// </summary>
-        [CLSCompliant(false)]
-        public void Deserialize(uint bits)
+        public static bool operator !=(Piece lhs, Piece? rhs)
         {
-            PieceType = (PieceType)((bits >> 0) & 0x0f);
-            IsPromoted = (((bits >> 4) & 0x01) != 0);
+            return !(lhs == rhs);
         }
-
-        /// <summary>
-        /// シリアライズ前に呼ばれます。
-        /// </summary>
-        [OnSerializing()]
-        private void BeforeSerialize(StreamingContext context)
-        {
-            this.serializeBits = Serialize();
-        }
-
-        /// <summary>
-        /// デシリアライズ後に呼ばれます。
-        /// </summary>
-        [OnDeserialized()]
-        private void AfterDeserialize(StreamingContext context)
-        {
-            Deserialize(this.serializeBits);
-        }
-        #endregion
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public Piece(PieceType piece, bool promoted)
+        public Piece(PieceType piece, bool promoted = false)
         {
             PieceType = piece;
             IsPromoted = promoted;
         }
 
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        public Piece(PieceType piece)
-            : this(piece, false)
+        private Piece(SerializationInfo info, StreamingContext text)
         {
+            PieceType = (PieceType)info.GetInt32(nameof(PieceType));
+            IsPromoted = info.GetBoolean(nameof(IsPromoted));
         }
 
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        public Piece()
+        [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
+            info.AddValue(nameof(PieceType), PieceType);
+            info.AddValue(nameof(IsPromoted), IsPromoted);
         }
     }
 }

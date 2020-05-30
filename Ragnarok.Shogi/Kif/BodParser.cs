@@ -255,8 +255,8 @@ namespace Ragnarok.Shogi.Kif
                                                      string handPieceText)
         {
             // 駒の種類を取得します。
-            var piece = KifUtil.CharToPiece(handPieceText[0]);
-            if (piece == null)
+            var nullablePiece = KifUtil.CharToPiece(handPieceText[0]);
+            if (nullablePiece == null)
             {
                 throw new ShogiException(
                     string.Format(
@@ -266,6 +266,7 @@ namespace Ragnarok.Shogi.Kif
                         handPieceText));
             }
 
+            var piece = nullablePiece.Value;
             if (piece.IsPromoted)
             {
                 throw new ShogiException(

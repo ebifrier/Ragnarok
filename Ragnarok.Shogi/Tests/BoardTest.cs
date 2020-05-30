@@ -101,9 +101,9 @@ namespace Ragnarok.Shogi.Tests
             Assert.True(board.CanMove(move));
 
             // 駒が設定されてないと動けません。
-            MethodUtil.SetPropertyValue(move, "MovePiece", new Piece());
+            MethodUtil.SetPropertyValue(move, "MovePiece", Piece.To);
             Assert.False(board.CanMove(move));
-            MethodUtil.SetPropertyValue(move, "MovePiece", new Piece(PieceType.Kyo, false));
+            MethodUtil.SetPropertyValue(move, "MovePiece", Piece.Kyo);
 
             // 84の駒は移動できません。
             MethodUtil.SetPropertyValue(move, "SrcSquare", new Square(8, 4));

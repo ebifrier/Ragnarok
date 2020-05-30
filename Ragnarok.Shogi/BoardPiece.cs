@@ -64,7 +64,7 @@ namespace Ragnarok.Shogi
         {
             return (self != null ?
                 new Piece(self.PieceType, self.IsPromoted) :
-                null);
+                Piece.None);
         }
 
         /// <summary>

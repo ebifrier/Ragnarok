@@ -674,7 +674,7 @@ namespace Ragnarok.Shogi
                 move.ActionType == ActionType.Drop ?
                 new Piece(move.DropPieceType) :
                 move.MovePiece);
-            if (fromPiece == null)
+            if (fromPiece.IsNone)
             {
                 return null;
             }

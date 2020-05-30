@@ -169,7 +169,7 @@ namespace Ragnarok.Shogi.Csa
         /// </summary>
         public static string PieceToStr(Piece piece)
         {
-            if (piece == null || piece.PieceType == PieceType.None)
+            if (piece.PieceType == PieceType.None)
             {
                 return "* ";
             }
@@ -203,15 +203,14 @@ namespace Ragnarok.Shogi.Csa
         /// <summary>
         /// CSA形式の指し手を解析します。
         /// </summary>
-        public static Piece StrToPiece(string str)
+        public static Piece? StrToPiece(string str)
         {
             if (string.IsNullOrEmpty(str))
             {
                 return null;
             }
 
-            Piece piece;
-            if (!PieceTable.TryGetValue(str, out piece))
+            if (!PieceTable.TryGetValue(str, out var piece))
             {
                 return null;
             }
@@ -240,7 +239,7 @@ namespace Ragnarok.Shogi.Csa
                 return null;
             }
 
-            return new BoardPiece(piece, bwType);
+            return new BoardPiece(piece.Value, bwType);
         }
     }
 }

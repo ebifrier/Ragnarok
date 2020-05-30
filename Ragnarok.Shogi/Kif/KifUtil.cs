@@ -292,10 +292,9 @@ namespace Ragnarok.Shogi.Kif
         /// <summary>
         /// 駒文字を駒に変換します。(先後の情報はなし)
         /// </summary>
-        public static Piece CharToPiece(char pieceCh)
+        public static Piece? CharToPiece(char pieceCh)
         {
-            Piece piece;
-            if (!CharToPieceDic.TryGetValue(pieceCh, out piece))
+            if (!CharToPieceDic.TryGetValue(pieceCh, out var piece))
             {
                 return null;
             }
@@ -335,7 +334,7 @@ namespace Ragnarok.Shogi.Kif
             }
 
             var bwType = (bwTypeCh == 'v' ? BWType.White : BWType.Black);
-            return new BoardPiece(piece, bwType);
+            return new BoardPiece(piece.Value, bwType);
         }
 
         /// <summary>
@@ -343,19 +342,13 @@ namespace Ragnarok.Shogi.Kif
         /// </summary>
         public static string PieceToChar(Piece piece)
         {
-            if (piece != null && !piece.Validate())
+            if (!piece.IsNone && !piece.Validate())
             {
                 throw new ArgumentException(
                     "pieceが不正です。", nameof(piece));
             }
 
-            if (piece == null)
-            {
-                return "・";
-            }
-
-            char ch;
-            if (!PieceToCharDic.TryGetValue(piece, out ch))
+            if (!PieceToCharDic.TryGetValue(piece, out var ch))
             {
                 return null;
             }

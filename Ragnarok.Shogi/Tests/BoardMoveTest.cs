@@ -30,8 +30,9 @@ namespace Ragnarok.Shogi.Tests
                 from tookPromoted in new bool[] { false, true }
                 from promote in new bool[] { false, true }
                 let pcPiece = new Piece(pc, promoted)
-                let tookPiece = (tookPc != PieceType.None ?
-                    new Piece(tookPc, tookPromoted) : null)
+                let tookPiece = (tookPc != PieceType.None
+                    ? new Piece(tookPc, tookPromoted)
+                    : Piece.None)
                 where pcPiece.Validate()
                 where tookPiece == null || tookPiece.Validate()
                 where (dst.Rank % 2) == 1 && (dst.File % 3) == 1

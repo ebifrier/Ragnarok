@@ -135,7 +135,7 @@ namespace Ragnarok.Shogi.Csa
             return new PieceSquare
             {
                 Square = new Square(file, rank),
-                Piece = piece,
+                Piece = piece.Value,
             };
         }
 

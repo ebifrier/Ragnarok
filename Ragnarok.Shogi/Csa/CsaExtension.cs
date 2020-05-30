@@ -221,12 +221,13 @@ namespace Ragnarok.Shogi.Csa
                 : new Square(dstFile, dstRank));
 
             // 駒
-            var piece = CsaUtil.StrToPiece(m.Groups[6].Value);
-            if (piece == null || piece.PieceType == PieceType.None)
+            var nullablePiece = CsaUtil.StrToPiece(m.Groups[6].Value);
+            if (nullablePiece == null)
             {
                 return null;
             }
 
+            var piece = nullablePiece.Value;
             if (srcSquare.IsEmpty)
             {
                 // 駒打ちの場合

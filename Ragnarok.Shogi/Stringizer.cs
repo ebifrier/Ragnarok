@@ -116,11 +116,6 @@ namespace Ragnarok.Shogi
         /// </summary>
         public static string ToString(Piece piece)
         {
-            if (piece == null)
-            {
-                throw new ArgumentNullException(nameof(piece));
-            }
-
             if (!piece.IsPromoted)
             {
                 switch (piece.PieceType)

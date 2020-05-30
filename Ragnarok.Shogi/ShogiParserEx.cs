@@ -678,7 +678,7 @@ namespace Ragnarok.Shogi
             Piece result;
             if (!PieceTable.TryGetValue(text, out result))
             {
-                return null;
+                return Piece.None;
             }
 
             return result;
@@ -958,7 +958,7 @@ namespace Ragnarok.Shogi
 
                 // 駒の種類
                 var piece = GetPiece(m.Groups[5].Value);
-                if (piece == null)
+                if (piece.IsNone)
                 {
                     return null;
                 }

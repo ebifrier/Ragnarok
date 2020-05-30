@@ -49,11 +49,6 @@ namespace Ragnarok.Shogi
         public IEnumerable<Move> ListupMoves(Piece piece, BWType bwType,
                                              Square dstSquare)
         {
-            if (piece == null)
-            {
-                throw new ArgumentNullException(nameof(piece));
-            }
-
             // 打てる駒をすべて列挙します。
             if (!piece.IsPromoted && GetHand(piece.PieceType, bwType) > 0)
             {
