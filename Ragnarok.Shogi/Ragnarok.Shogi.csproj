@@ -117,7 +117,6 @@
     <Compile Include="File\IKifuWriter.cs" />
     <Compile Include="File\Tests\TestUtil.cs" />
     <Compile Include="Hand.cs" />
-    <Compile Include="HangameSkillLevel.cs" />
     <Compile Include="KifuHeader.cs" />
     <Compile Include="KifuObject.cs" />
     <Compile Include="KifuReader.cs" />
