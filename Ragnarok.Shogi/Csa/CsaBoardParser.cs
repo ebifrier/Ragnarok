@@ -153,7 +153,7 @@ namespace Ragnarok.Shogi.Csa
             line.Skip(2).TakeBy(4)
                 .Select(_ => new string(_.ToArray()))
                 .Select(_ => ParsePiece(_))
-                .ForEach(_ => this.board[_.Square] = null);
+                .ForEach(_ => this.board[_.Square] = Piece.None);
         }
         #endregion
 
@@ -177,7 +177,7 @@ namespace Ragnarok.Shogi.Csa
             if (line.Substring(2).StartsWith("00AL", StringComparison.InvariantCulture))
             {
                 // 残りの駒をすべて手番側の持ち駒に設定します。
-                EnumUtil.GetValues<PieceType>()
+                PieceUtil.RawTypes()
                     .ForEach(_ => Board.SetHand(
                         _, bwType, this.board.GetLeavePieceCount(_)));
             }
@@ -198,11 +198,11 @@ namespace Ragnarok.Shogi.Csa
             // 駒位置が"00"の場合は持ち駒となります。
             if (ps.Square.GetFile() != 0)
             {
-                this.board[ps.Square] = new BoardPiece(ps.Piece, bwType);
+                this.board[ps.Square] = PieceUtil.Modify(ps.Piece, bwType);
             }
             else
             {
-                this.board.IncHand(ps.Piece.PieceType, bwType);
+                this.board.IncHand(ps.Piece.GetRawType(), bwType);
             }
         }
         #endregion
@@ -234,7 +234,6 @@ namespace Ragnarok.Shogi.Csa
             var pieceList = line.Skip(2).TakeBy(3)
                 .Select(_ => new string(_.ToArray()))
                 .Select(_ => CsaUtil.StrToBoardPiece(_))
-                .Where(_ => _ != null)
                 .ToList();
             if (pieceList.Count != Board.BoardSize ||
                 pieceList.Any(_ => _ == null))
@@ -251,10 +250,9 @@ namespace Ragnarok.Shogi.Csa
 
             pieceList.ForEachWithIndex((piece, index) =>
             {
-                var isNone = (piece.PieceType == PieceType.None);
                 var file = Board.BoardSize - index;
 
-                this.board[file, rank] = (isNone ? null : piece);
+                this.board[file, rank] = piece ?? Piece.None;
             });
 
             this.parsedRank += 1;

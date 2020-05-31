@@ -210,7 +210,7 @@ namespace Ragnarok.Shogi
                 return false;
             }
 
-            if (bm.MovePiece == Piece.Ryu || bm.MovePiece == Piece.Uma)
+            if (bm.MovePiece == Piece.Dragon || bm.MovePiece == Piece.Horse)
             {
                 // 竜、馬の場合、「直」は使わずに「右左」のみを使用します。
                 if (boardMoveList.Count == 1)
@@ -571,7 +571,7 @@ namespace Ragnarok.Shogi
                 return boardMoveList;
             }
 
-            if ((move.Piece == Piece.Ryu || move.Piece == Piece.Uma) &&
+            if ((move.Piece == Piece.Dragon || move.Piece == Piece.Horse) &&
                 boardMoveList.Count == 2)
             {
                 // 馬と竜の場合は'直'ではなく、右と左しか使いません。
@@ -672,9 +672,8 @@ namespace Ragnarok.Shogi
 
             var fromPiece = (
                 move.ActionType == ActionType.Drop ?
-                new Piece(move.DropPieceType) :
-                move.MovePiece);
-            if (fromPiece.IsNone)
+                move.DropPieceType : move.MovePiece);
+            if (fromPiece.IsNone())
             {
                 return null;
             }

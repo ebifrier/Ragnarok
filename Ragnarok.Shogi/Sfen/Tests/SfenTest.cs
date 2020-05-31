@@ -64,37 +64,37 @@ namespace Ragnarok.Shogi.Sfen.Tests
         {
             var board = new Board(false);
 
-            board[9, 1] = new BoardPiece(Piece.Kyo, BWType.White);
-            board[6, 1] = new BoardPiece(Piece.Kei, BWType.White);
-            board[2, 1] = new BoardPiece(Piece.Kei, BWType.White);
-            board[1, 1] = new BoardPiece(Piece.Kyo, BWType.White);
-            board[3, 2] = new BoardPiece(Piece.Kyo, BWType.White);
-            board[2, 2] = new BoardPiece(Piece.Hisya, BWType.White);
-            board[2, 3] = new BoardPiece(Piece.Gyoku, BWType.White);
-            board[9, 4] = new BoardPiece(Piece.Hu, BWType.White);
-            board[8, 4] = new BoardPiece(Piece.Hu, BWType.White);
-            board[5, 4] = new BoardPiece(Piece.Ryu, BWType.Black);
-            board[2, 5] = new BoardPiece(Piece.Kin, BWType.Black);
-            board[1, 5] = new BoardPiece(Piece.Hu, BWType.White);
-            board[9, 6] = new BoardPiece(Piece.Hu, BWType.Black);
-            board[8, 6] = new BoardPiece(Piece.Hu, BWType.Black);
-            board[7, 6] = new BoardPiece(Piece.Gyoku, BWType.Black);
-            board[6, 6] = new BoardPiece(Piece.Kin, BWType.Black);
-            board[5, 6] = new BoardPiece(Piece.Kei, BWType.Black);
-            board[3, 6] = new BoardPiece(Piece.Hu, BWType.Black);
-            board[1, 6] = new BoardPiece(Piece.Hu, BWType.Black);
-            board[4, 7] = new BoardPiece(Piece.Hu, BWType.Black);
-            board[5, 8] = new BoardPiece(Piece.Gin, BWType.Black);
-            board[9, 9] = new BoardPiece(Piece.Kyo, BWType.Black);
-            board[4, 9] = new BoardPiece(Piece.Kei, BWType.Black);
-            board[1, 9] = new BoardPiece(Piece.Uma, BWType.White);
+            board[9, 1] = Piece.WhiteLance;
+            board[6, 1] = Piece.WhiteKnight;
+            board[2, 1] = Piece.WhiteKnight;
+            board[1, 1] = Piece.WhiteLance;
+            board[3, 2] = Piece.WhiteLance;
+            board[2, 2] = Piece.WhiteRook;
+            board[2, 3] = Piece.WhiteKing;
+            board[9, 4] = Piece.WhitePawn;
+            board[8, 4] = Piece.WhitePawn;
+            board[5, 4] = Piece.BlackDragon;
+            board[2, 5] = Piece.BlackGold;
+            board[1, 5] = Piece.WhitePawn;
+            board[9, 6] = Piece.BlackPawn;
+            board[8, 6] = Piece.BlackPawn;
+            board[7, 6] = Piece.BlackKing;
+            board[6, 6] = Piece.BlackGold;
+            board[5, 6] = Piece.BlackKnight;
+            board[3, 6] = Piece.BlackPawn;
+            board[1, 6] = Piece.BlackPawn;
+            board[4, 7] = Piece.BlackPawn;
+            board[5, 8] = Piece.BlackSilver;
+            board[9, 9] = Piece.BlackLance;
+            board[4, 9] = Piece.BlackKnight;
+            board[1, 9] = Piece.WhiteHorse;
 
             // 駒台の設定
-            board.SetHand(PieceType.Kaku, BWType.Black, 1);
-            board.SetHand(PieceType.Kin, BWType.Black, 2);
-            board.SetHand(PieceType.Gin, BWType.Black, 2);
-            board.SetHand(PieceType.Hu, BWType.Black, 10);
-            board.SetHand(PieceType.Gin, BWType.White, 1);
+            board.SetHand(Piece.Bishop, BWType.Black, 1);
+            board.SetHand(Piece.Gold, BWType.Black, 2);
+            board.SetHand(Piece.Silver, BWType.Black, 2);
+            board.SetHand(Piece.Pawn, BWType.Black, 10);
+            board.SetHand(Piece.Silver, BWType.White, 1);
 
             // 手番
             board.Turn = BWType.White;
@@ -175,7 +175,7 @@ namespace Ragnarok.Shogi.Sfen.Tests
 
             BoardAndMoveTest(
                 "l8/4+R4/1L2pgn2/1Ps1k2S1/P2p1SP2/LlP2b2p/ppNGP4/2S6/2KG5" +
-                " w RBG6P2n2p 1",
+                " w 6PBRG2p2n 1",
 
                 "7g7f 3c3d 2g2f 2b3c 8h3c+ 2a3c 5i6h 8b4b 6h7h 5a6b " +
                 "7h8h 6b7b 3i4h 2c2d 7i7h 4b2b 4i5h 3a3b 6g6f 7b8b " +

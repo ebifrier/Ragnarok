@@ -205,7 +205,7 @@ namespace Ragnarok.Shogi.Kif
         /// <summary>
         /// bod形式の各駒を読み取ります。
         /// </summary>
-        private BoardPiece ParsePiece(int file, int rank, string line)
+        private Piece ParsePiece(int file, int rank, string line)
         {
             var index = (Board.BoardSize - file) * 2 + 1;
             var pieceStr = line.Substring(index, 2);
@@ -217,12 +217,7 @@ namespace Ragnarok.Shogi.Kif
                     $"局面の{rank}段目の駒'{pieceStr}'が正しくありません。");
             }
 
-            if (piece.PieceType == PieceType.None)
-            {
-                return null;
-            }
-
-            return piece;
+            return piece.Value;
         }
 
         /// <summary>
@@ -251,7 +246,7 @@ namespace Ragnarok.Shogi.Kif
         /// <remarks>
         /// 各駒文字を最初の漢字で表し、後に続く漢数字でその数を示します。
         /// </remarks>
-        private Tuple<PieceType, int> ParseHandPiece(BWType bwType,
+        private Tuple<Piece, int> ParseHandPiece(BWType bwType,
                                                      string handPieceText)
         {
             // 駒の種類を取得します。
@@ -267,7 +262,7 @@ namespace Ragnarok.Shogi.Kif
             }
 
             var piece = nullablePiece.Value;
-            if (piece.IsPromoted)
+            if (piece.IsPromoted())
             {
                 throw new ShogiException(
                     string.Format(
@@ -286,7 +281,7 @@ namespace Ragnarok.Shogi.Kif
                 count = int.Parse(normalized, CultureInfo.CurrentCulture);
             }
 
-            return Tuple.Create(piece.PieceType, count);
+            return Tuple.Create(piece.GetPieceType(), count);
         }
     }
 }

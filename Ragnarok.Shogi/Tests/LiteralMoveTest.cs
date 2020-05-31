@@ -13,15 +13,14 @@ namespace Ragnarok.Shogi.Tests
     /// Moveに関するテストを行います。
     /// </summary>
     [TestFixture]
-    public sealed class MoveTest
+    public sealed class LiteralMoveTest
     {
         [Test]
         public void SerializeTest()
         {
             var validMoveList =
-                from sq in Board.AllSquares()
-                from pc in EnumUtil.GetValues<PieceType>()
-                from promoted in new bool[] { false, true }
+                from sq in Board.Squares()
+                from pc in PieceUtil.PieceTypes()
                 from rm in EnumUtil.GetValues<RankMoveType>()
                 from rf in EnumUtil.GetValues<RelFileType>()
                 from at in EnumUtil.GetValues<ActionType>()
@@ -29,7 +28,7 @@ namespace Ragnarok.Shogi.Tests
                 let move = new LiteralMove
                 {
                     DstSquare = sq,
-                    Piece = new Piece(pc, promoted),
+                    Piece = pc,
                     RankMoveType = rm,
                     RelFileType = rf,
                     ActionType = at,

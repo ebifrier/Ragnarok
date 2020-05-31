@@ -157,49 +157,49 @@ namespace Ragnarok.Shogi
                     return board;
 
                 case BoardType.HandicapKyo:
-                    board[1, 1] = null;
+                    board[1, 1] = Piece.None;
                     break;
                 case BoardType.HandicapRightKyo:
-                    board[9, 1] = null;
+                    board[9, 1] = Piece.None;
                     break;
                 case BoardType.HandicapKaku:
-                    board[2, 2] = null;
+                    board[2, 2] = Piece.None;
                     break;
                 case BoardType.HandicapHisya:
-                    board[8, 2] = null;
+                    board[8, 2] = Piece.None;
                     break;
                 case BoardType.HandicapHisyaKyo:
-                    board[1, 1] = null;
-                    board[8, 2] = null;
+                    board[1, 1] = Piece.None;
+                    board[8, 2] = Piece.None;
                     break;
                 case BoardType.Handicap2:
-                    board[2, 2] = null;
-                    board[8, 2] = null;
+                    board[2, 2] = Piece.None;
+                    board[8, 2] = Piece.None;
                     break;
                 case BoardType.Handicap3:
-                    board[9, 1] = null;
+                    board[9, 1] = Piece.None;
                     goto case BoardType.Handicap2;
                 case BoardType.Handicap4:
-                    board[1, 1] = null;
-                    board[9, 1] = null;
+                    board[1, 1] = Piece.None;
+                    board[9, 1] = Piece.None;
                     goto case BoardType.Handicap2;
                 case BoardType.Handicap5:
-                    board[8, 1] = null;
+                    board[8, 1] = Piece.None;
                     goto case BoardType.Handicap4;
                 case BoardType.HandicapLeft5:
-                    board[2, 1] = null;
+                    board[2, 1] = Piece.None;
                     goto case BoardType.Handicap4;
                 case BoardType.Handicap6:
-                    board[2, 1] = null;
-                    board[8, 1] = null;
+                    board[2, 1] = Piece.None;
+                    board[8, 1] = Piece.None;
                     goto case BoardType.Handicap4;
                 case BoardType.Handicap8:
-                    board[3, 1] = null;
-                    board[7, 1] = null;
+                    board[3, 1] = Piece.None;
+                    board[7, 1] = Piece.None;
                     goto case BoardType.Handicap6;
                 case BoardType.Handicap10:
-                    board[4, 1] = null;
-                    board[6, 1] = null;
+                    board[4, 1] = Piece.None;
+                    board[6, 1] = Piece.None;
                     goto case BoardType.Handicap8;
                 default:
                     throw new ShogiException(

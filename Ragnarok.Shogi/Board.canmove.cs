@@ -92,55 +92,41 @@ namespace Ragnarok.Shogi
             var relRank = move.DstSquare.GetRank() - move.SrcSquare.GetRank();
             var piece = move.MovePiece;
 
-            if (piece.IsPromoted)
+            // 成り駒が指定の場所に動けるか調べます。
+            switch (piece.GetPieceType())
             {
-                // 成り駒が指定の場所に動けるか調べます。
-                switch (piece.PieceType)
-                {
-                    case PieceType.Gyoku:
-                        return CanMoveWithTable(move.BWType, relFile, relRank, MoveTableGyoku);
-                    case PieceType.Hisya:
-                        if (CanMoveWithTable(move.BWType, relFile, relRank, MoveTableGyoku))
-                        {
-                            return true;
-                        }
-                        return CanMoveHisya(move.SrcSquare, relFile, relRank);
-                    case PieceType.Kaku:
-                        if (CanMoveWithTable(move.BWType, relFile, relRank, MoveTableGyoku))
-                        {
-                            return true;
-                        }
-                        return CanMoveKaku(move.SrcSquare, relFile, relRank);
-                    case PieceType.Kin:
-                    case PieceType.Gin:
-                    case PieceType.Kei:
-                    case PieceType.Kyo:
-                    case PieceType.Hu:
-                        return CanMoveWithTable(move.BWType, relFile, relRank, MoveTableKin);
-                }
-            }
-            else
-            {
-                // 成り駒以外の駒が指定の場所に動けるか調べます。
-                switch (piece.PieceType)
-                {
-                    case PieceType.Gyoku:
-                        return CanMoveWithTable(move.BWType, relFile, relRank, MoveTableGyoku);
-                    case PieceType.Hisya:
-                        return CanMoveHisya(move.SrcSquare, relFile, relRank);
-                    case PieceType.Kaku:
-                        return CanMoveKaku(move.SrcSquare, relFile, relRank);
-                    case PieceType.Kin:
-                        return CanMoveWithTable(move.BWType, relFile, relRank, MoveTableKin);
-                    case PieceType.Gin:
-                        return CanMoveWithTable(move.BWType, relFile, relRank, MoveTableGin);
-                    case PieceType.Kei:
-                        return CanMoveWithTable(move.BWType, relFile, relRank, MoveTableKei);
-                    case PieceType.Kyo:
-                        return CanMoveKyo(move.BWType, move.SrcSquare, relFile, relRank);
-                    case PieceType.Hu:
-                        return CanMoveWithTable(move.BWType, relFile, relRank, MoveTableHu);
-                }
+                case Piece.Pawn:
+                    return CanMoveWithTable(move.BWType, relFile, relRank, MoveTableHu);
+                case Piece.Knight:
+                    return CanMoveWithTable(move.BWType, relFile, relRank, MoveTableKei);
+                case Piece.Lance:
+                    return CanMoveKyo(move.BWType, move.SrcSquare, relFile, relRank);
+                case Piece.Silver:
+                    return CanMoveWithTable(move.BWType, relFile, relRank, MoveTableGin);
+                case Piece.Rook:
+                    return CanMoveHisya(move.SrcSquare, relFile, relRank);
+                case Piece.Bishop:
+                    return CanMoveKaku(move.SrcSquare, relFile, relRank);
+                case Piece.ProPawn:
+                case Piece.ProLance:
+                case Piece.ProKnight:
+                case Piece.ProSilver:
+                case Piece.Gold:
+                    return CanMoveWithTable(move.BWType, relFile, relRank, MoveTableKin);
+                case Piece.Horse:
+                    if (CanMoveWithTable(move.BWType, relFile, relRank, MoveTableGyoku))
+                    {
+                        return true;
+                    }
+                    return CanMoveKaku(move.SrcSquare, relFile, relRank);
+                case Piece.Dragon:
+                    if (CanMoveWithTable(move.BWType, relFile, relRank, MoveTableGyoku))
+                    {
+                        return true;
+                    }
+                    return CanMoveHisya(move.SrcSquare, relFile, relRank);
+                case Piece.King:
+                    return CanMoveWithTable(move.BWType, relFile, relRank, MoveTableGyoku);
             }
 
             return false;
@@ -177,7 +163,7 @@ namespace Ragnarok.Shogi
             while (baseRank != destRank)
             {
                 // 自分の駒があっても相手の駒があってもダメです。
-                if (this[baseFile, baseRank] != null)
+                if (!this[baseFile, baseRank].IsNone())
                 {
                     return false;
                 }
@@ -224,7 +210,7 @@ namespace Ragnarok.Shogi
             while (baseFile != newFile || baseRank != newRank)
             {
                 // 自分の駒があっても相手の駒があってもダメです。
-                if (this[baseFile, baseRank] != null)
+                if (!this[baseFile, baseRank].IsNone())
                 {
                     return false;
                 }
@@ -264,7 +250,7 @@ namespace Ragnarok.Shogi
             while (baseFile != newFile || baseRank != newRank)
             {
                 // 自分の駒があっても相手の駒があってもダメです。
-                if (this[baseFile, baseRank] != null)
+                if (!this[baseFile, baseRank].IsNone())
                 {
                     return false;
                 }
@@ -290,26 +276,27 @@ namespace Ragnarok.Shogi
             }
 
             var piece = this[square];
-            if (piece == null || piece.BWType != bwType)
+            if (piece.IsNone() || piece.GetColor() != bwType)
             {
                 return new Square[0];
             }
 
-            return GetCanMoveRange(piece.Piece, square, bwType);
+            return GetCanMoveRange(piece.GetPieceType(), square, bwType);
         }
 
         /// <summary>
         /// <paramref name="square"/>にある駒が移動できる
         /// 可能性のある位置をすべて列挙します。
         /// </summary>
-        private IEnumerable<Square> GetCanMoveRange(Piece piece, Square square, BWType bwType)
+        private IEnumerable<Square> GetCanMoveRange(Piece piece, Square square,
+                                                    BWType bwType)
         {
             if (!square.Validate())
             {
                 yield break;
             }
 
-            if (piece.IsNone)
+            if (piece.IsNone())
             {
                 yield break;
             }
@@ -318,124 +305,68 @@ namespace Ragnarok.Shogi
             var file = square.GetFile();
             var rank = square.GetRank();
 
-            if (piece.IsPromoted)
+            switch (piece.GetPieceType())
             {
-                // 成り駒の場合
-                switch (piece.PieceType)
-                {
-                    case PieceType.Gyoku:
-                    case PieceType.Hisya:
-                    case PieceType.Kaku:
-                        list = GetMoveRangeWithTable(bwType, square, MoveTableGyoku);
-                        foreach (var p in list)
-                        {
-                            yield return p;
-                        }
-                        break;
-                    case PieceType.Kin:
-                    case PieceType.Gin:
-                    case PieceType.Kei:
-                    case PieceType.Kyo:
-                    case PieceType.Hu:
-                        list = GetMoveRangeWithTable(bwType, square, MoveTableKin);
-                        foreach (var p in list)
-                        {
-                            yield return p;
-                        }
-                        break;
-                }
-            }
-            else
-            {
-                // 成り駒で無い場合
-                switch (piece.PieceType)
-                {
-                    case PieceType.Gyoku:
-                        list = GetMoveRangeWithTable(bwType, square, MoveTableGyoku);
-                        foreach (var p in list)
-                        {
-                            yield return p;
-                        }
-                        break;
-                    case PieceType.Kin:
-                        list = GetMoveRangeWithTable(bwType, square, MoveTableKin);
-                        foreach (var p in list)
-                        {
-                            yield return p;
-                        }
-                        break;
-                    case PieceType.Gin:
-                        list = GetMoveRangeWithTable(bwType, square, MoveTableGin);
-                        foreach (var p in list)
-                        {
-                            yield return p;
-                        }
-                        break;
-                    case PieceType.Kei:
-                        list = GetMoveRangeWithTable(bwType, square, MoveTableKei);
-                        foreach (var p in list)
-                        {
-                            yield return p;
-                        }
-                        break;
-                    case PieceType.Hu:
-                        list = GetMoveRangeWithTable(bwType, square, MoveTableHu);
-                        foreach (var p in list)
-                        {
-                            yield return p;
-                        }
-                        break;
-                    case PieceType.Kyo:
-                        for (var r = 1; r <= BoardSize; ++r)
-                        {
-                            yield return SquareUtil.Create(file, r);
-                        }
-                        break;
-                }
+                case Piece.Pawn:
+                    list = GetMoveRangeWithTable(bwType, square, MoveTableHu);
+                    foreach (var p in list)
+                    {
+                        yield return p;
+                    }
+                    break;
+                case Piece.Lance:
+                    for (var r = 1; r <= BoardSize; ++r)
+                    {
+                        yield return SquareUtil.Create(file, r);
+                    }
+                    break;
+                case Piece.Knight:
+                    list = GetMoveRangeWithTable(bwType, square, MoveTableKei);
+                    foreach (var p in list)
+                    {
+                        yield return p;
+                    }
+                    break;
+                case Piece.Silver:
+                    list = GetMoveRangeWithTable(bwType, square, MoveTableGin);
+                    foreach (var p in list)
+                    {
+                        yield return p;
+                    }
+                    break;
+                case Piece.ProPawn:
+                case Piece.ProLance:
+                case Piece.ProKnight:
+                case Piece.ProSilver:
+                case Piece.Gold:
+                    list = GetMoveRangeWithTable(bwType, square, MoveTableKin);
+                    foreach (var p in list)
+                    {
+                        yield return p;
+                    }
+                    break;
+                case Piece.King:
+                case Piece.Horse:
+                case Piece.Dragon:
+                    list = GetMoveRangeWithTable(bwType, square, MoveTableGyoku);
+                    foreach (var p in list)
+                    {
+                        yield return p;
+                    }
+                    break;
             }
 
             // 竜・馬の場合、近傍地点はすでに調査済みなので
             // 成りか不成りかで調査範囲を変更します。
-            var range = (piece.IsPromoted ? 2 : 1);
+            var range = (piece.IsPromoted() ? 2 : 1);
 
             // 飛車角は成り／不成りに関わらず調べる箇所があります。
-            switch (piece.PieceType)
+            switch (piece.GetRawType())
             {
-                case PieceType.Hisya:
-                    for (var f = 1; f <= BoardSize; ++f)
-                    {
-                        if (piece.IsPromoted && Math.Abs(file - f) < range)
-                        {
-                            continue;
-                        }
-
-                        if (!SquareUtil.Validate(f, rank))
-                        {
-                            continue;
-                        }
-
-                        yield return SquareUtil.Create(f, rank);
-                    }
-                    for (var r = 1; r <= BoardSize; ++r)
-                    {
-                        if (piece.IsPromoted && Math.Abs(rank - r) < range)
-                        {
-                            continue;
-                        }
-
-                        if (!SquareUtil.Validate(file, r))
-                        {
-                            continue;
-                        }
-
-                        yield return SquareUtil.Create(file, r);
-                    }
-                    break;
-
-                case PieceType.Kaku:
+                case Piece.Bishop:
                     for (var index = -BoardSize; index <= BoardSize; ++index)
                     {
-                        if (piece.IsPromoted && Math.Abs(index) < range)
+                        if (piece.IsPromoted() && Math.Abs(index) < range)
                         {
                             continue;
                         }
@@ -449,7 +380,7 @@ namespace Ragnarok.Shogi
                     }
                     for (var index = -BoardSize; index <= BoardSize; ++index)
                     {
-                        if (piece.IsPromoted && Math.Abs(index) < range)
+                        if (piece.IsPromoted() && Math.Abs(index) < range)
                         {
                             continue;
                         }
@@ -460,6 +391,37 @@ namespace Ragnarok.Shogi
                         }
 
                         yield return SquareUtil.Create(file + index, rank - index);
+                    }
+                    break;
+
+                case Piece.Rook:
+                    for (var f = 1; f <= BoardSize; ++f)
+                    {
+                        if (piece.IsPromoted() && Math.Abs(file - f) < range)
+                        {
+                            continue;
+                        }
+
+                        if (!SquareUtil.Validate(f, rank))
+                        {
+                            continue;
+                        }
+
+                        yield return SquareUtil.Create(f, rank);
+                    }
+                    for (var r = 1; r <= BoardSize; ++r)
+                    {
+                        if (piece.IsPromoted() && Math.Abs(rank - r) < range)
+                        {
+                            continue;
+                        }
+
+                        if (!SquareUtil.Validate(file, r))
+                        {
+                            continue;
+                        }
+
+                        yield return SquareUtil.Create(file, r);
                     }
                     break;
             }

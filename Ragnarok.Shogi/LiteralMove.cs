@@ -264,7 +264,7 @@ namespace Ragnarok.Shogi
                 }
             }
 
-            if (Piece.IsNone || !Piece.Validate())
+            if (!Piece.Validate())
             {
                 return false;
             }
@@ -286,7 +286,7 @@ namespace Ragnarok.Shogi
 
             // 竜打つ、同銀打ち、銀上打つ、などは存在しません。
             if (ActionType == ActionType.Drop &&
-                (Piece.IsPromoted ||
+                (Piece.IsPromoted() ||
                  SameAsOld ||
                  RelFileType != RelFileType.None ||
                  RankMoveType != RankMoveType.None))
@@ -297,9 +297,9 @@ namespace Ragnarok.Shogi
             // 金と玉、成り駒は成れません。
             if ((ActionType == ActionType.Promote ||
                  ActionType == ActionType.Unpromote) &&
-                (Piece.IsPromoted ||
-                 Piece.PieceType == PieceType.Kin ||
-                 Piece.PieceType == PieceType.Gyoku))
+                (Piece.IsPromoted() ||
+                 Piece.GetPieceType() == Piece.Gold ||
+                 Piece.GetPieceType() == Piece.King))
             {
                 return false;
             }

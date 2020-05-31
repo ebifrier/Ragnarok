@@ -102,16 +102,17 @@ namespace Ragnarok.Shogi.Sfen
                     }
 
                     var piece = SfenUtil.SfenToPiece(c);
-                    if (piece == null)
+                    if (piece.IsNone())
                     {
                         throw new SfenException(
                             "SFEN形式の駒'" + c + "'が正しくありません。");
                     }
 
-                    var type = piece.PieceType;
-                    if (promoted && type != PieceType.Gyoku && type != PieceType.Kin)
+                    if (promoted &&
+                        piece.GetRawType() != Piece.King &&
+                        piece.GetRawType() != Piece.Gold)
                     {
-                        piece = new BoardPiece(piece.PieceType, promoted, piece.BWType);
+                        piece = piece.Modify(promoted);
                     }
 
                     board[file, rank] = piece;
@@ -149,7 +150,7 @@ namespace Ragnarok.Shogi.Sfen
                 else
                 {
                     var piece = SfenUtil.SfenToPiece(c);
-                    if (piece == null)
+                    if (piece.IsNone())
                     {
                         throw new SfenException(
                             "SFEN形式の持ち駒'" + c + "'が正しくありません。");
@@ -157,7 +158,7 @@ namespace Ragnarok.Shogi.Sfen
 
                     // 持ち駒の数は0以上に合わせます。
                     var pcount = Math.Max(count, 1);
-                    board.SetHand(piece.PieceType, piece.BWType, pcount);
+                    board.SetHand(piece.GetRawType(), piece.GetColor(), pcount);
                     count = 0;
                 }
             }
@@ -221,7 +222,7 @@ namespace Ragnarok.Shogi.Sfen
             {
                 var piece = board[file, rank];
 
-                if (piece == null)
+                if (piece.IsNone())
                 {
                     // 駒がない場合
                     spaceCount += 1;
@@ -252,11 +253,11 @@ namespace Ragnarok.Shogi.Sfen
         private static string HandToSfen(Board board)
         {
             var handList =
-                from turn in new BWType[] { BWType.Black, BWType.White }
-                from pieceType in EnumUtil.GetValues<PieceType>()
+                from turn in BWTypeUtil.BlackWhite()
+                from pieceType in PieceUtil.RawTypes()
                 let obj = new
                 {
-                    Piece = new BoardPiece(pieceType, false, turn),
+                    Piece = pieceType.Modify(turn),
                     Count = board.GetHand(pieceType, turn),
                 }
                 where obj.Count > 0

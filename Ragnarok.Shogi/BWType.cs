@@ -39,8 +39,17 @@ namespace Ragnarok.Shogi
     /// <summary>
     /// <see cref="BWType"/>の拡張メソッド用クラスです。
     /// </summary>
-    public static class BWTypeExtension
+    public static class BWTypeUtil
     {
+        /// <summary>
+        /// Black, Whiteを返します。
+        /// </summary>
+        public static IEnumerable<BWType> BlackWhite()
+        {
+            yield return BWType.Black;
+            yield return BWType.White;
+        }
+
         /// <summary>
         /// 手番の先後を入れ替えます。
         /// </summary>

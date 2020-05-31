@@ -113,21 +113,21 @@ namespace Ragnarok.Shogi
         private static Dictionary<string, Piece> PieceTable =
             new Dictionary<string, Piece>()
         {
-            {"玉", Piece.Gyoku},
-            {"王", Piece.Gyoku},
-            {"飛", Piece.Hisya},
-            {"角", Piece.Kaku},
-            {"金", Piece.Kin},
-            {"銀", Piece.Gin},
-            {"桂", Piece.Kei},
-            {"香", Piece.Kyo},
-            {"歩", Piece.Hu},
+            {"玉", Piece.King},
+            {"王", Piece.King},
+            {"飛", Piece.Rook},
+            {"角", Piece.Bishop},
+            {"金", Piece.Gold},
+            {"銀", Piece.Silver},
+            {"桂", Piece.Knight},
+            {"香", Piece.Lance},
+            {"歩", Piece.Pawn},
 
             /* 以下、成り駒 */
-            {"龍", Piece.Ryu},
-            {"竜", Piece.Ryu},
-            {"馬", Piece.Uma},
-            {"と", Piece.To},
+            {"龍", Piece.Dragon},
+            {"竜", Piece.Dragon},
+            {"馬", Piece.Horse},
+            {"と", Piece.ProPawn},
         };
 
         /// <summary>
@@ -330,12 +330,12 @@ namespace Ragnarok.Shogi
             foreach (var pair in tmpTable)
             {
                 // 成銀など成り駒を設定します。
-                if (!pair.Value.IsPromoted &&
-                    (pair.Value.PieceType == PieceType.Gin ||
-                     pair.Value.PieceType == PieceType.Kei ||
-                     pair.Value.PieceType == PieceType.Kyo))
+                if (!pair.Value.IsPromoted() &&
+                    (pair.Value == Piece.Silver ||
+                     pair.Value == Piece.Knight ||
+                     pair.Value == Piece.Lance))
                 {
-                    var piece = new Piece(pair.Value.PieceType, true);
+                    var piece = pair.Value.Promote();
                     
                     foreach (var item in ActionTable)
                     {
@@ -345,9 +345,9 @@ namespace Ragnarok.Shogi
                         }                        
                     }
                 }
-                else if (pair.Value.PieceType == PieceType.Kin)
+                else if (pair.Value == Piece.Gold)
                 {
-                    resultTable.Add("と" + pair.Key, Piece.To);
+                    resultTable.Add("と" + pair.Key, Piece.ProPawn);
                 }
             }
 
@@ -466,7 +466,7 @@ namespace Ragnarok.Shogi
 
                 // 駒の種類
                 var piece = GetPiece(m.Groups[5].Value);
-                if (piece.IsNone)
+                if (piece.IsNone())
                 {
                     return null;
                 }

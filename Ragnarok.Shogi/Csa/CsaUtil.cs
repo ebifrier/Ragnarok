@@ -18,20 +18,20 @@ namespace Ragnarok.Shogi.Csa
             {
                 { "* ", Piece.None }, // null pruning など
                 { "**", Piece.None },
-                { "OU", Piece.Gyoku },
-                { "HI", Piece.Hisya },
-                { "KA", Piece.Kaku },
-                { "KI", Piece.Kin },
-                { "GI", Piece.Gin },
-                { "KE", Piece.Kei},
-                { "KY", Piece.Kyo  },
-                { "FU", Piece.Hu },
-                { "RY", Piece.Ryu },
-                { "UM", Piece.Uma },
-                { "NG", Piece.NariGin },
-                { "NK", Piece.NariKei },
-                { "NY", Piece.NariKyo },
-                { "TO", Piece.To },
+                { "OU", Piece.King },
+                { "HI", Piece.Rook },
+                { "KA", Piece.Bishop },
+                { "KI", Piece.Gold },
+                { "GI", Piece.Silver },
+                { "KE", Piece.Knight},
+                { "KY", Piece.Lance  },
+                { "FU", Piece.Pawn },
+                { "RY", Piece.Dragon },
+                { "UM", Piece.Horse },
+                { "NG", Piece.ProSilver },
+                { "NK", Piece.ProKnight },
+                { "NY", Piece.ProLance },
+                { "TO", Piece.ProPawn },
             };
 
         /// <summary>
@@ -169,7 +169,7 @@ namespace Ragnarok.Shogi.Csa
         /// </summary>
         public static string PieceToStr(Piece piece)
         {
-            if (piece.PieceType == PieceType.None)
+            if (piece.IsNone())
             {
                 return "* ";
             }
@@ -188,15 +188,15 @@ namespace Ragnarok.Shogi.Csa
         /// <summary>
         /// 駒のCSA表示文字列を取得します。
         /// </summary>
-        public static string BoardPieceToStr(BoardPiece piece)
+        public static string BoardPieceToStr(Piece piece)
         {
-            if (piece == null || piece.PieceType == PieceType.None)
+            if (piece.IsNone())
             {
                 return " * ";
             }
 
-            var turnStr = (piece.BWType == BWType.Black ? '+' : '-');
-            var pieceStr = PieceToStr(piece.Piece);
+            var turnStr = (piece.GetColor() == BWType.Black ? '+' : '-');
+            var pieceStr = PieceToStr(piece.GetPieceType());
             return $"{turnStr}{pieceStr}";
         }
 
@@ -221,7 +221,7 @@ namespace Ragnarok.Shogi.Csa
         /// <summary>
         /// CSA形式の指し手を解析します。
         /// </summary>
-        public static BoardPiece StrToBoardPiece(string str)
+        public static Piece? StrToBoardPiece(string str)
         {
             if (string.IsNullOrEmpty(str))
             {
@@ -239,7 +239,7 @@ namespace Ragnarok.Shogi.Csa
                 return null;
             }
 
-            return new BoardPiece(piece.Value, bwType);
+            return PieceUtil.Modify(piece.Value, bwType);
         }
     }
 }

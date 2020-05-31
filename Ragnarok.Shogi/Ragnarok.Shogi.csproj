@@ -100,7 +100,6 @@
     <Compile Include="Board.mate.cs" />
     <Compile Include="BoardComparer.cs" />
     <Compile Include="BoardExtension.cs" />
-    <Compile Include="BoardPiece.cs" />
     <Compile Include="BoardType.cs" />
     <Compile Include="BWType.cs" />
     <Compile Include="Csa\CsaBoard.cs" />
@@ -163,8 +162,9 @@
     <Compile Include="Tests\CheckMatedTest.cs" />
     <Compile Include="Tests\ConvertMoveTest.cs" />
     <Compile Include="Tests\MoveStatisticsTest.cs" />
-    <Compile Include="Tests\MoveTest.cs" />
+    <Compile Include="Tests\LiteralMoveTest.cs" />
     <Compile Include="Tests\PawnDropCheckMateTest.cs" />
+    <Compile Include="Tests\PieceTest.cs" />
     <Compile Include="Tests\ScoreTest.cs" />
     <Compile Include="Tests\ShogiParserTest.cs" />
     <Compile Include="Tests\ShogiParserExTest.cs" />

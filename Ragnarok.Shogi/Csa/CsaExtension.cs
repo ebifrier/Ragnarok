@@ -94,12 +94,12 @@ namespace Ragnarok.Shogi.Csa
 
             var piece = (
                 move.ActionType == ActionType.Drop ?
-                new Piece(move.DropPieceType) :
+                move.DropPieceType :
                 move.MovePiece);
             if (move.IsPromote)
             {
                 // 駒を成った場合は、なった後の駒を出力します。
-                piece = new Piece(piece.PieceType, true);
+                piece = piece.Promote();
             }
 
             sb.Append(CsaUtil.PieceToStr(piece));
@@ -231,22 +231,22 @@ namespace Ragnarok.Shogi.Csa
             if (srcSquare.IsEmpty())
             {
                 // 駒打ちの場合
-                return Move.CreateDrop(side, dstSquare, piece.PieceType);
+                return Move.CreateDrop(side, dstSquare, piece.GetRawType());
             }
             else
             {
                 // 駒の移動の場合、成りの判定を行います。
                 var srcPiece = board[srcSquare];
-                if (srcPiece == null || !srcPiece.Validate())
+                if (srcPiece.IsNone())
                 {
                     return null;
                 }
 
                 // CSA形式の場合、駒が成ると駒の種類が変わります。
-                var isPromote = (!srcPiece.IsPromoted && piece.IsPromoted);
+                var isPromote = (!srcPiece.IsPromoted() && piece.IsPromoted());
                 if (isPromote)
                 {
-                    piece = new Piece(piece.PieceType, false);
+                    piece = piece.GetRawType();
                 }
 
                 return Move.CreateMove(side, srcSquare, dstSquare, piece, isPromote);

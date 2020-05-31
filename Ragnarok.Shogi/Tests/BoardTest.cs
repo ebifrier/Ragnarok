@@ -97,13 +97,13 @@ namespace Ragnarok.Shogi.Tests
 
             var move = Move.CreateMove(
                 BWType.Black, SquareUtil.Create(8, 3), SquareUtil.Create(8, 2),
-                new Piece(PieceType.Kyo, false), true);
+                Piece.Lance, true);
             Assert.True(board.CanMove(move));
 
             // 駒が設定されてないと動けません。
-            MethodUtil.SetPropertyValue(move, "MovePiece", Piece.To);
+            MethodUtil.SetPropertyValue(move, "MovePiece", Piece.ProPawn);
             Assert.False(board.CanMove(move));
-            MethodUtil.SetPropertyValue(move, "MovePiece", Piece.Kyo);
+            MethodUtil.SetPropertyValue(move, "MovePiece", Piece.Lance);
 
             // 84の駒は移動できません。
             MethodUtil.SetPropertyValue(move, "SrcSquare", SquareUtil.Create(8, 4));
@@ -124,7 +124,7 @@ namespace Ragnarok.Shogi.Tests
 
             var move = Move.CreateMove(
                 BWType.White, SquareUtil.Create(9, 7), SquareUtil.Create(9, 8),
-                new Piece(PieceType.Hu, false), true);
+                Piece.Pawn, true);
             Assert.True(board.CanMove(move));
 
             // 84の駒は移動できません。
@@ -144,23 +144,23 @@ namespace Ragnarok.Shogi.Tests
             var board = MakeBoard1(BWType.Black);
 
             var list = board
-                .ListupMoves(Piece.Ryu, BWType.Black, SquareUtil.Create(4, 1))
+                .ListupMoves(Piece.Dragon, BWType.Black, SquareUtil.Create(4, 1))
                 .ToList();
             Assert.AreEqual(1, list.Count);
             Assert.AreEqual(SquareUtil.Create(7, 1), list[0].SrcSquare);
 
             list = board
-                .ListupMoves(Piece.Ryu, BWType.Black, SquareUtil.Create(3, 2))
+                .ListupMoves(Piece.Dragon, BWType.Black, SquareUtil.Create(3, 2))
                 .ToList();
             Assert.AreEqual(0, list.Count);
 
             list = board
-                .ListupMoves(Piece.Uma, BWType.Black, SquareUtil.Create(4, 7))
+                .ListupMoves(Piece.Horse, BWType.Black, SquareUtil.Create(4, 7))
                 .ToList();
             Assert.AreEqual(2, list.Count);
 
             list = board
-                .ListupMoves(Piece.Kin, BWType.Black, SquareUtil.Create(5, 7))
+                .ListupMoves(Piece.Gold, BWType.Black, SquareUtil.Create(5, 7))
                 .ToList();
             Assert.AreEqual(2, list.Count);
         }
@@ -171,7 +171,7 @@ namespace Ragnarok.Shogi.Tests
             var board = MakeBoard1(BWType.White);
 
             var list = board
-                .ListupMoves(Piece.Gin, BWType.White, SquareUtil.Create(6, 5))
+                .ListupMoves(Piece.Silver, BWType.White, SquareUtil.Create(6, 5))
                 .ToList();
             Assert.AreEqual(2, list.Count);
         }

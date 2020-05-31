@@ -106,63 +106,41 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 駒の種類を文字列で取得します。
         /// </summary>
-        public static string ToString(PieceType pieceType)
-        {
-            return ToString(new Piece(pieceType, false));
-        }
-
-        /// <summary>
-        /// 駒の種類を文字列で取得します。
-        /// </summary>
         public static string ToString(Piece piece)
         {
-            if (!piece.IsPromoted)
+            switch (piece.GetPieceType())
             {
-                switch (piece.PieceType)
-                {
-                    case PieceType.None:
-                        return "○";
-                    case PieceType.Hisya:
-                        return "飛";
-                    case PieceType.Kaku:
-                        return "角";
-                    case PieceType.Gyoku:
-                        return "玉";
-                    case PieceType.Kin:
-                        return "金";
-                    case PieceType.Gin:
-                        return "銀";
-                    case PieceType.Kei:
-                        return "桂";
-                    case PieceType.Kyo:
-                        return "香";
-                    case PieceType.Hu:
-                        return "歩";
-                }
-            }
-            else
-            {
-                switch (piece.PieceType)
-                {
-                    case PieceType.None:
-                        return "無";
-                    case PieceType.Hisya:
-                        return "龍";
-                    case PieceType.Kaku:
-                        return "馬";
-                    case PieceType.Gyoku:
-                        return "玉";
-                    case PieceType.Kin:
-                        return "金";
-                    case PieceType.Gin:
-                        return "成銀";
-                    case PieceType.Kei:
-                        return "成桂";
-                    case PieceType.Kyo:
-                        return "成香";
-                    case PieceType.Hu:
-                        return "と";
-                }
+                case Piece.None:
+                    return "○";
+                case Piece.Pawn:
+                    return "歩";
+                case Piece.Lance:
+                    return "香";
+                case Piece.Knight:
+                    return "桂";
+                case Piece.Silver:
+                    return "銀";
+                case Piece.Bishop:
+                    return "角";
+                case Piece.Rook:
+                    return "飛";
+                case Piece.Gold:
+                    return "金";
+                case Piece.King:
+                    return "玉";
+
+                case Piece.ProPawn:
+                    return "と";
+                case Piece.ProLance:
+                    return "成香";
+                case Piece.ProKnight:
+                    return "成桂";
+                case Piece.ProSilver:
+                    return "成銀";
+                case Piece.Horse:
+                    return "馬";
+                case Piece.Dragon:
+                    return "龍";
             }
 
             return "不明";

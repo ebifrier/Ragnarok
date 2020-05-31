@@ -45,14 +45,14 @@ namespace Ragnarok.Shogi.Kif.Tests
                 "先手の持駒：歩");
 
             var board0 = new Board(false);
-            board0[2, 1] = new BoardPiece(Piece.Kei, BWType.White);
-            board0[1, 1] = new BoardPiece(Piece.Kyo, BWType.White);
-            board0[3, 2] = new BoardPiece(Piece.Kin, BWType.White);
-            board0[2, 2] = new BoardPiece(Piece.Kaku, BWType.White);
-            board0[3, 3] = new BoardPiece(Piece.Hu, BWType.White);
-            board0[1, 3] = new BoardPiece(Piece.Hu, BWType.White);
-            board0[2, 9] = new BoardPiece(Piece.Hisya, BWType.Black);
-            board0.SetHand(PieceType.Hu, BWType.Black, 1);
+            board0[2, 1] = Piece.WhiteKnight;
+            board0[1, 1] = Piece.WhiteLance;
+            board0[3, 2] = Piece.WhiteGold;
+            board0[2, 2] = Piece.WhiteBishop;
+            board0[3, 3] = Piece.WhitePawn;
+            board0[1, 3] = Piece.WhitePawn;
+            board0[2, 9] = Piece.BlackRook;
+            board0.SetHand(Piece.Pawn, BWType.Black, 1);
 
             Assert.True(Board.BoardEquals(board0, board1));
         }
@@ -76,14 +76,14 @@ namespace Ragnarok.Shogi.Kif.Tests
                 "下手の持駒：なし");
 
             var board0 = new Board(false);
-            board0[6, 3] = new BoardPiece(Piece.Hu, BWType.White);
-            board0[6, 4] = new BoardPiece(Piece.Gin, BWType.White);
-            board0[5, 4] = new BoardPiece(Piece.Hu, BWType.White);
-            board0[7, 5] = new BoardPiece(Piece.Hu, BWType.White);
-            board0[7, 6] = new BoardPiece(Piece.Hu, BWType.Black);
-            board0[6, 6] = new BoardPiece(Piece.Hu, BWType.Black);
-            board0[5, 6] = new BoardPiece(Piece.Hu, BWType.Black);
-            board0[6, 7] = new BoardPiece(Piece.Gin, BWType.Black);
+            board0[6, 3] = Piece.WhitePawn;
+            board0[6, 4] = Piece.WhiteSilver;
+            board0[5, 4] = Piece.WhitePawn;
+            board0[7, 5] = Piece.WhitePawn;
+            board0[7, 6] = Piece.BlackPawn;
+            board0[6, 6] = Piece.BlackPawn;
+            board0[5, 6] = Piece.BlackPawn;
+            board0[6, 7] = Piece.BlackSilver;
 
             Assert.True(Board.BoardEquals(board0, board1));
         }

@@ -12,7 +12,16 @@ namespace Ragnarok.Shogi
     [DataContract()]
     public enum Square
     {
-        Empty = 0
+        Empty = 0,
+        SQ11, SQ21, SQ31, SQ41, SQ51, SQ61, SQ71, SQ81, SQ91,
+        SQ12, SQ22, SQ32, SQ42, SQ52, SQ62, SQ72, SQ82, SQ92,
+        SQ13, SQ23, SQ33, SQ43, SQ53, SQ63, SQ73, SQ83, SQ93,
+        SQ14, SQ24, SQ34, SQ44, SQ54, SQ64, SQ74, SQ84, SQ94,
+        SQ15, SQ25, SQ35, SQ45, SQ55, SQ65, SQ75, SQ85, SQ95,
+        SQ16, SQ26, SQ36, SQ46, SQ56, SQ66, SQ76, SQ86, SQ96,
+        SQ17, SQ27, SQ37, SQ47, SQ57, SQ67, SQ77, SQ87, SQ97,
+        SQ18, SQ28, SQ38, SQ48, SQ58, SQ68, SQ78, SQ88, SQ98,
+        SQ19, SQ29, SQ39, SQ49, SQ59, SQ69, SQ79, SQ89, SQ99,
     }
 
     /// <summary>
@@ -25,7 +34,7 @@ namespace Ragnarok.Shogi
         /// </summary>
         public static Square Create(int file, int rank)
         {
-            return (Square)((file - 1) * Board.BoardSize + (rank - 1)) + 1;
+            return (Square)((rank - 1) * Board.BoardSize + (file - 1)) + 1;
         }
 
         /// <summary>
@@ -33,7 +42,7 @@ namespace Ragnarok.Shogi
         /// </summary>
         public static int GetFile(this Square sq)
         {
-            return (((int)sq - 1) / Board.BoardSize) + 1;
+            return (((int)sq - 1) % Board.BoardSize) + 1;
         }
 
         /// <summary>
@@ -41,7 +50,7 @@ namespace Ragnarok.Shogi
         /// </summary>
         public static int GetRank(this Square sq)
         {
-            return (((int)sq - 1) % Board.BoardSize) + 1;
+            return (((int)sq - 1) / Board.BoardSize) + 1;
         }
 
         /// <summary>

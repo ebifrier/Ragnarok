@@ -37,7 +37,7 @@ namespace Ragnarok.Shogi.Tests
             var move = Move.CreateDrop(
                 BWType.Black,
                 SquareUtil.Create(2, 7),
-                PieceType.Hu);
+                Piece.Pawn);
 
             Assert.False(board.CanMove(move));
             Assert.False(board.DoMove(move));
@@ -71,10 +71,40 @@ namespace Ragnarok.Shogi.Tests
             var move = Move.CreateDrop(
                 BWType.White,
                 SquareUtil.Create(9, 5),
-                PieceType.Hu);
+                Piece.Pawn);
 
             Assert.False(board.CanMove(move));
             Assert.False(board.DoMove(move));
+        }
+
+        [Test]
+        public void MateTest3()
+        {
+            var bod =
+                "後手の持駒：歩四　香　金　\n" +
+                "  ９ ８ ７ ６ ５ ４ ３ ２ １\n" +
+                "+---------------------------+\n" +
+                "| 馬 龍 ・ ・ ・ ・ ・v桂v香|一\n" +
+                "| ・ ・ ・ ・ ・v歩v玉 ・ ・|二\n" +
+                "| ・ ・ ・ ・v歩 ・ ・v歩 ・|三\n" +
+                "| ・ ・ ・ ・ ・ ・v金 ・v歩|四\n" +
+                "| ・v歩 ・ ・ ・ ・v銀 ・ ・|五\n" +
+                "| ・ ・ 銀 歩v馬 ・ ・ 歩 歩|六\n" +
+                "| 歩 歩 桂 ・v杏 ・ 桂 ・ ・|七\n" +
+                "| 玉 銀 ・ ・ ・ ・ ・ ・ 香|八\n" +
+                "| ・ ・ 金 ・v龍 ・ ・ ・ ・|九\n" +
+                "+---------------------------+\n" +
+                "先手の持駒：歩四　桂　銀　金　\n" +
+                "手数＝122";
+            var board = Board.ParseBod(bod);
+
+            var move = Move.CreateDrop(
+                BWType.Black,
+                SquareUtil.Create(3, 3),
+                Piece.Pawn);
+
+            Assert.True(board.CanMove(move));
+            Assert.True(board.DoMove(move));
         }
     }
 }

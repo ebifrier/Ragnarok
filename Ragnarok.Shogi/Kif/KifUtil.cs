@@ -50,20 +50,20 @@ namespace Ragnarok.Shogi.Kif
             new Dictionary<char, Piece>
             {
                 { '・', Piece.None },
-                { '玉', Piece.Gyoku },
-                { '飛', Piece.Hisya },
-                { '龍', Piece.Ryu },
-                { '角', Piece.Kaku },
-                { '馬', Piece.Uma },
-                { '金', Piece.Kin },
-                { '銀', Piece.Gin },
-                { '全', Piece.NariGin },
-                { '桂', Piece.Kei },
-                { '圭', Piece.NariKei },
-                { '香', Piece.Kyo },
-                { '杏', Piece.NariKyo },
-                { '歩', Piece.Hu },
-                { 'と', Piece.To },
+                { '玉', Piece.King },
+                { '飛', Piece.Rook },
+                { '龍', Piece.Dragon },
+                { '角', Piece.Bishop },
+                { '馬', Piece.Horse },
+                { '金', Piece.Gold },
+                { '銀', Piece.Silver },
+                { '全', Piece.ProSilver },
+                { '桂', Piece.Knight },
+                { '圭', Piece.ProKnight },
+                { '香', Piece.Lance },
+                { '杏', Piece.ProLance },
+                { '歩', Piece.Pawn },
+                { 'と', Piece.ProPawn },
             };
 
         private static readonly Dictionary<Piece, char> PieceToCharDic =
@@ -305,7 +305,7 @@ namespace Ragnarok.Shogi.Kif
         /// <summary>
         /// 'vと'などの文字を駒に変換します。(先後の情報ありS)
         /// </summary>
-        public static BoardPiece StrToPiece(string str)
+        public static Piece? StrToPiece(string str)
         {
             if (str == null)
             {
@@ -334,7 +334,7 @@ namespace Ragnarok.Shogi.Kif
             }
 
             var bwType = (bwTypeCh == 'v' ? BWType.White : BWType.Black);
-            return new BoardPiece(piece.Value, bwType);
+            return PieceUtil.Modify(piece.Value, bwType);
         }
 
         /// <summary>
@@ -342,7 +342,7 @@ namespace Ragnarok.Shogi.Kif
         /// </summary>
         public static string PieceToChar(Piece piece)
         {
-            if (!piece.IsNone && !piece.Validate())
+            if (piece.IsNone())
             {
                 throw new ArgumentException(
                     "pieceが不正です。", nameof(piece));
@@ -359,26 +359,20 @@ namespace Ragnarok.Shogi.Kif
         /// <summary>
         /// 駒文字列に駒を変換します。
         /// </summary>
-        public static string PieceToStr(BoardPiece piece)
+        public static string PieceToStr(Piece piece)
         {
-            if (piece != null && !piece.Validate())
-            {
-                throw new ArgumentException(
-                    "駒の状態が正しくありません。", nameof(piece));
-            }
-
-            if (piece == null)
+            if (piece.IsNone())
             {
                 return " ・";
             }
 
-            var pieceStr = PieceToChar(piece.Piece);
+            var pieceStr = PieceToChar(piece.GetPieceType());
             if (pieceStr == null)
             {
                 return null;
             }
 
-            var turnCh = (piece.BWType == BWType.White ? 'v' : ' ');
+            var turnCh = (piece.GetColor() == BWType.White ? 'v' : ' ');
             return (turnCh + pieceStr);
         }
     }

@@ -52,7 +52,7 @@ namespace Ragnarok.Shogi.Sfen
             if (move.ActionType == ActionType.Drop)
             {
                 // 駒打ちの場合
-                var piece = SfenUtil.PieceTypeToSfen(move.DropPieceType);
+                var piece = SfenUtil.PieceToSfen(move.DropPieceType);
 
                 return $"{piece}*{dstFile}{dstRank}";
             }
@@ -93,8 +93,8 @@ namespace Ragnarok.Shogi.Sfen
                 return null;
             }
 
-            var dropPieceType = SfenUtil.SfenToPieceType(sfen[0]);
-            if (dropPieceType != PieceType.None)
+            var dropPieceType = SfenUtil.SfenToPiece(sfen[0]);
+            if (!dropPieceType.IsNone())
             {
                 // 駒打ちの場合
                 if ((sfen[1] != '*') ||
@@ -126,7 +126,7 @@ namespace Ragnarok.Shogi.Sfen
                 var dstFile = (sfen[2] - '1') + 1;
                 var dstRank = (sfen[3] - 'a') + 1;
                 var piece = board[srcFile, srcRank];
-                if (piece == null)
+                if (piece.IsNone())
                 {
                     return null;
                 }
@@ -136,9 +136,9 @@ namespace Ragnarok.Shogi.Sfen
                     board.Turn,
                     SquareUtil.Create(srcFile, srcRank),
                     SquareUtil.Create(dstFile, dstRank),
-                    piece.Piece,
+                    piece.GetPieceType(),
                     promote,
-                    BoardPiece.GetPiece(board[dstFile, dstRank]));
+                    board[dstFile, dstRank].GetPieceType());
             }
         }
 
@@ -167,7 +167,7 @@ namespace Ragnarok.Shogi.Sfen
         /// 連続したSFEN形式の指し手を、連続した指し手に変換します。
         /// </summary>
         public static IEnumerable<Move> SfenToMoveList(this Board board,
-                                                            IEnumerable<string> sfenList)
+                                                       IEnumerable<string> sfenList)
         {
             if (board == null)
             {

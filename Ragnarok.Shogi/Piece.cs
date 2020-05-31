@@ -10,7 +10,7 @@ namespace Ragnarok.Shogi
     /// 駒の種類です。
     /// </summary>
     [DataContract()]
-    public enum PieceType
+    public enum Piece
     {
         /// <summary>
         /// 特になし。
@@ -18,295 +18,308 @@ namespace Ragnarok.Shogi
         [EnumMember()]
         None = 0,
         /// <summary>
-        /// 玉
+        /// 歩
         /// </summary>
         [EnumMember()]
-        Gyoku = 1,
-        /// <summary>
-        /// 飛車
-        /// </summary>
-        [EnumMember()]
-        Hisya = 2,
-        /// <summary>
-        /// 角
-        /// </summary>
-        [EnumMember()]
-        Kaku = 3,
-        /// <summary>
-        /// 金
-        /// </summary>
-        [EnumMember()]
-        Kin = 4,
-        /// <summary>
-        /// 銀
-        /// </summary>
-        [EnumMember()]
-        Gin = 5,
-        /// <summary>
-        /// 桂馬
-        /// </summary>
-        [EnumMember()]
-        Kei = 6,
+        Pawn = 1,
         /// <summary>
         /// 香車
         /// </summary>
         [EnumMember()]
-        Kyo = 7,
+        Lance = 2,
         /// <summary>
-        /// 歩
+        /// 桂馬
         /// </summary>
         [EnumMember()]
-        Hu = 8,
+        Knight = 3,
+        /// <summary>
+        /// 銀
+        /// </summary>
+        [EnumMember()]
+        Silver = 4,
+        /// <summary>
+        /// 角
+        /// </summary>
+        [EnumMember()]
+        Bishop = 5,
+        /// <summary>
+        /// 飛車
+        /// </summary>
+        [EnumMember()]
+        Rook = 6,
+        /// <summary>
+        /// 金
+        /// </summary>
+        [EnumMember()]
+        Gold = 7,
+        /// <summary>
+        /// 玉
+        /// </summary>
+        [EnumMember()]
+        King = 8,
+        /// <summary>
+        /// と金
+        /// </summary>
+        [EnumMember()]
+        ProPawn = Pawn | Promote,
+        /// <summary>
+        /// 成香
+        /// </summary>
+        [EnumMember()]
+        ProLance = Lance | Promote,
+        /// <summary>
+        /// 成桂
+        /// </summary>
+        [EnumMember()]
+        ProKnight = Knight | Promote,
+        /// <summary>
+        /// 成銀
+        /// </summary>
+        [EnumMember()]
+        ProSilver = Silver | Promote,
+        /// <summary>
+        /// 馬
+        /// </summary>
+        [EnumMember()]
+        Horse = Bishop | Promote,
+        /// <summary>
+        /// 竜
+        /// </summary>
+        [EnumMember()]
+        Dragon = Rook | Promote,
+        /// <summary>
+        /// 未使用
+        /// </summary>
+        [EnumMember()]
+        Queen = Gold | Promote,
+
+        [EnumMember()]
+        BlackPawn = Pawn,
+        [EnumMember()]
+        BlackLance = Lance,
+        [EnumMember()]
+        BlackKnight = Knight,
+        [EnumMember()]
+        BlackSilver = Silver,
+        [EnumMember()]
+        BlackBishop = Bishop,
+        [EnumMember()]
+        BlackRook = Rook,
+        [EnumMember()]
+        BlackGold = Gold,
+        [EnumMember()]
+        BlackKing = King,
+        [EnumMember()]
+        BlackProPawn = ProPawn,
+        [EnumMember()]
+        BlackProLance = ProLance,
+        [EnumMember()]
+        BlackProKnight = ProKnight,
+        [EnumMember()]
+        BlackProSilver = ProSilver,
+        [EnumMember()]
+        BlackHorse = Horse,
+        [EnumMember()]
+        BlackDragon = Dragon,
+
+        [EnumMember()]
+        WhitePawn = Pawn | White,
+        [EnumMember()]
+        WhiteLance = Lance | White,
+        [EnumMember()]
+        WhiteKnight = Knight | White,
+        [EnumMember()]
+        WhiteSilver = Silver | White,
+        [EnumMember()]
+        WhiteBishop = Bishop | White,
+        [EnumMember()]
+        WhiteRook = Rook | White,
+        [EnumMember()]
+        WhiteGold = Gold | White,
+        [EnumMember()]
+        WhiteKing = King | White,
+        [EnumMember()]
+        WhiteProPawn = ProPawn | White,
+        [EnumMember()]
+        WhiteProLance = ProLance | White,
+        [EnumMember()]
+        WhiteProKnight = ProKnight | White,
+        [EnumMember()]
+        WhiteProSilver = ProSilver | White,
+        [EnumMember()]
+        WhiteHorse = Horse | White,
+        [EnumMember()]
+        WhiteDragon = Dragon | White,
+
+        /// <summary>
+        /// 成フラグ
+        /// </summary>
+        Promote = 8,
+        /// <summary>
+        /// 白番フラグ
+        /// </summary>
+        White = 16,
     }
 
     /// <summary>
     /// 成り・不成も含めた駒の種類です。
     /// </summary>
-    [Serializable()]
-    [DataContract()]
-    public readonly struct Piece : IEquatable<Piece>, ISerializable
+    public static class PieceUtil
     {
         /// <summary>
-        /// 無し
+        /// 成りを含まない駒をすべて列挙します。
         /// </summary>
-        public static readonly Piece None = new Piece(PieceType.None, false);
-        /// <summary>
-        /// 飛車
-        /// </summary>
-        public static readonly Piece Hisya = new Piece(PieceType.Hisya, false);
-        /// <summary>
-        /// 角
-        /// </summary>
-        public static readonly Piece Kaku = new Piece(PieceType.Kaku, false);
-        /// <summary>
-        /// 玉
-        /// </summary>
-        public static readonly Piece Gyoku = new Piece(PieceType.Gyoku, false);
-        /// <summary>
-        /// 金
-        /// </summary>
-        public static readonly Piece Kin = new Piece(PieceType.Kin, false);
-        /// <summary>
-        /// 銀
-        /// </summary>
-        public static readonly Piece Gin = new Piece(PieceType.Gin, false);
-        /// <summary>
-        /// 桂馬
-        /// </summary>
-        public static readonly Piece Kei = new Piece(PieceType.Kei, false);
-        /// <summary>
-        /// 香車
-        /// </summary>
-        public static readonly Piece Kyo = new Piece(PieceType.Kyo, false);
-        /// <summary>
-        /// 歩
-        /// </summary>
-        public static readonly Piece Hu = new Piece(PieceType.Hu, false);
-        /// <summary>
-        /// 龍
-        /// </summary>
-        public static readonly Piece Ryu = new Piece(PieceType.Hisya, true);
-        /// <summary>
-        /// 馬
-        /// </summary>
-        public static readonly Piece Uma = new Piece(PieceType.Kaku, true);
-        /// <summary>
-        /// 成銀
-        /// </summary>
-        public static readonly Piece NariGin = new Piece(PieceType.Gin, true);
-        /// <summary>
-        /// 成桂
-        /// </summary>
-        public static readonly Piece NariKei = new Piece(PieceType.Kei, true);
-        /// <summary>
-        /// 成香
-        /// </summary>
-        public static readonly Piece NariKyo = new Piece(PieceType.Kyo, true);
-        /// <summary>
-        /// と金
-        /// </summary>
-        public static readonly Piece To = new Piece(PieceType.Hu, true);
-
-        /// <summary>
-        /// 基本となる駒の種類を取得または設定します。
-        /// </summary>
-        public PieceType PieceType
+        public static IEnumerable<Piece> RawTypes()
         {
-            get;
-        }
-
-        /// <summary>
-        /// 成り駒かどうかを取得または設定します。
-        /// </summary>
-        public bool IsPromoted
-        {
-            get;
-        }
-
-        /// <summary>
-        /// 駒のインデックスを取得します。
-        /// </summary>
-        public int Index
-        {
-            get
+            for (var piece = Piece.Pawn; piece <= Piece.King; ++piece)
             {
-                return ((int)PieceType + (IsPromoted ? 9 : 0));
+                yield return piece;
             }
         }
 
         /// <summary>
-        /// 駒が空かどうかを調べます。
+        /// 成りを含む駒をすべて列挙します。
         /// </summary>
-        public bool IsNone
+        public static IEnumerable<Piece> PieceTypes()
         {
-            get { return (PieceType == PieceType.None); }
-        }
-
-        /// <summary>
-        /// オブジェクトのクローンを取得します。
-        /// </summary>
-        public Piece Clone()
-        {
-            return new Piece(PieceType, IsPromoted);
-        }
-
-        /// <summary>
-        /// オブジェクトの各プロパティが正しく設定されているか調べます。
-        /// </summary>
-        public bool Validate()
-        {
-            switch (PieceType)
+            for (var piece = Piece.Pawn; piece < Piece.Queen; ++piece)
             {
-                case PieceType.Hisya:
-                case PieceType.Kaku:
-                case PieceType.Gin:
-                case PieceType.Kei:
-                case PieceType.Kyo:
-                case PieceType.Hu:
-                    break;
-                case PieceType.Gyoku:
-                case PieceType.Kin:
-                    return !IsPromoted;
-                default:
-                    // Noneもここになります。
-                    return false;
+                yield return piece;
+            }
+        }
+
+        /// <summary>
+        /// 黒番・白番の駒をすべて列挙します。
+        /// </summary>
+        public static IEnumerable<Piece> BlackWhitePieces()
+        {
+            foreach (var piece in PieceTypes())
+            {
+                yield return piece;
             }
 
-            return true;
+            foreach (var piece in PieceTypes())
+            {
+                yield return Modify(piece, BWType.White);
+            }
+        }
+
+        /// <summary>
+        /// 駒の成り・不成を設定します。
+        /// </summary>
+        public static Piece Modify(this Piece piece, bool isPromote)
+        {
+            return (isPromote ? piece.Promote() : piece.Unpromote());
+        }
+
+        /// <summary>
+        /// 駒の手番を設定します。
+        /// </summary>
+        public static Piece Modify(this Piece piece, BWType bwType)
+        {
+            return (bwType == BWType.White
+                ? piece | Piece.White
+                : piece & ~Piece.White);
+        }
+
+        /// <summary>
+        /// 手番情報を取得します。
+        /// </summary>
+        public static BWType GetColor(this Piece piece)
+        {
+            return ((piece & Piece.White) != 0 ? BWType.White : BWType.Black);
+        }
+
+        /// <summary>
+        /// 駒の手番を反転させます。
+        /// </summary>
+        public static Piece FlipColor(this Piece piece)
+        {
+            var bwType = GetColor(piece);
+
+            return Modify(piece, bwType.Flip());
+        }
+
+        /// <summary>
+        /// 手番情報を削除した駒情報を取得します。
+        /// </summary>
+        public static Piece GetPieceType(this Piece piece)
+        {
+            return (Piece)((int)piece & 15);
+        }
+
+        /// <summary>
+        /// 手番情報と成り情報を削除した駒情報を取得します。
+        /// </summary>
+        /// <remarks>
+        /// 玉の場合は正しい駒を返しません。
+        /// </remarks>
+        public static Piece GetRawType(this Piece piece)
+        {
+            return piece.GetPieceType() == Piece.King
+                ? Piece.King
+                : (Piece)((int)piece & 7);
+        }
+
+        /// <summary>
+        /// 成り駒かどうかを取得します。
+        /// </summary>
+        public static bool IsPromoted(this Piece piece)
+        {
+            return (
+                piece.GetRawType() != Piece.King &&
+                (piece & Piece.Promote) != 0);
+        }
+
+        /// <summary>
+        /// 駒を成ります。
+        /// </summary>
+        public static Piece Promote(this Piece piece)
+        {
+            if (piece.GetRawType() == Piece.King ||
+                piece.GetRawType() == Piece.Gold)
+            {
+                return piece;
+            }
+
+            return (piece | Piece.Promote);
+        }
+
+        /// <summary>
+        /// 駒を成らずとします。
+        /// </summary>
+        public static Piece Unpromote(this Piece piece)
+        {
+            if (piece.GetRawType() == Piece.King)
+            {
+                return piece;
+            }
+
+            return (piece & ~Piece.Promote);
+        }
+
+        /// <summary>
+        /// 駒がPiece.Noneかどうか確認します。
+        /// </summary>
+        public static bool IsNone(this Piece piece)
+        {
+            return (piece.GetRawType() == Piece.None);
+        }
+
+        /// <summary>
+        /// 駒が正しいか確認します。
+        /// </summary>
+        public static bool Validate(this Piece piece)
+        {
+            return (piece != Piece.None);
         }
 
         /// <summary>
         /// 駒の種類を文字列で取得します。
         /// </summary>
-        public override string ToString()
+        public static string ToString(this Piece piece)
         {
-            return Stringizer.ToString(this);
-        }
-
-        /// <summary>
-        /// オブジェクトの比較を行います。
-        /// </summary>
-        public override bool Equals(object other)
-        {
-            var result = this.PreEquals(other);
-            if (result.HasValue)
-            {
-                return result.Value;
-            }
-
-            return Equals((Piece)other);
-        }
-
-        /// <summary>
-        /// オブジェクトの比較を行います。
-        /// </summary>
-        public bool Equals(Piece other)
-        {
-            if ((object)other == null)
-            {
-                return false;
-            }
-
-            if (PieceType != other.PieceType)
-            {
-                return false;
-            }
-
-            if (IsPromoted != other.IsPromoted)
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        /// <summary>
-        /// ハッシュコードを取得します。
-        /// </summary>
-        public override int GetHashCode()
-        {
-            return (
-                PieceType.GetHashCode() ^
-                IsPromoted.GetHashCode());
-        }
-
-        /// <summary>
-        /// == 演算子を実装します。
-        /// </summary>
-        public static bool operator ==(Piece lhs, Piece rhs)
-        {
-            return Util.GenericEquals(lhs, rhs);
-        }
-
-        /// <summary>
-        /// != 演算子を実装します。
-        /// </summary>
-        public static bool operator !=(Piece lhs, Piece rhs)
-        {
-            return !(lhs == rhs);
-        }
-
-        /// <summary>
-        /// == 演算子を実装します。(nullとの比較用)
-        /// </summary>
-        public static bool operator ==(Piece lhs, Piece? rhs)
-        {
-            if (rhs == null)
-            {
-                return lhs.IsNone;
-            }
-
-            return Util.GenericEquals(lhs, rhs);
-        }
-
-        /// <summary>
-        /// != 演算子を実装します。(nullとの比較用)
-        /// </summary>
-        public static bool operator !=(Piece lhs, Piece? rhs)
-        {
-            return !(lhs == rhs);
-        }
-
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        public Piece(PieceType piece, bool promoted = false)
-        {
-            PieceType = piece;
-            IsPromoted = promoted;
-        }
-
-        private Piece(SerializationInfo info, StreamingContext text)
-        {
-            PieceType = (PieceType)info.GetInt32(nameof(PieceType));
-            IsPromoted = info.GetBoolean(nameof(IsPromoted));
-        }
-
-        [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
-        public void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            info.AddValue(nameof(PieceType), PieceType);
-            info.AddValue(nameof(IsPromoted), IsPromoted);
+            return Stringizer.ToString(piece);
         }
     }
 }

@@ -152,10 +152,10 @@ namespace Ragnarok.Shogi.Kif
         private static string HandToBod(Board board, BWType turn)
         {
             var list =
-                from pieceType in EnumUtil.GetValues<PieceType>()
+                from pieceType in PieceUtil.RawTypes()
                 let obj = new
                 {
-                    Piece = new Piece(pieceType, false),
+                    Piece = pieceType,
                     Count = board.GetHand(pieceType, turn),
                 }
                 where obj.Count > 0

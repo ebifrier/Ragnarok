@@ -12,18 +12,18 @@ namespace Ragnarok.Shogi.Sfen
         private static readonly char[] SfenPieceList =
         {
             '?', // None = 0
-            'K', // Gyoku = 1
-            'R', // Hisya = 2
-            'B', // Kaku = 3
-            'G', // Kin = 4
-            'S', // Gin = 5
-            'N', // Kei = 6
-            'L', // Kyo = 7
-            'P', // Hu = 8
+            'P', // Pawn = 1
+            'L', // Lance = 2
+            'N', // Knight = 3
+            'S', // Silver = 4
+            'B', // Bishop = 5
+            'R', // Rook = 6
+            'G', // Gold = 7
+            'K', // King = 8
         };
 
         /// <summary>
-        /// SFEN形式の対応する駒文字(大文字)を取得します。
+        /// SFEN形式の対応する駒文字(手番/成り不成りの区別あり）を取得します。
         /// </summary>
         /// <remarks>
         /// 先手の玉：K、後手の玉：k （Kingの頭文字）
@@ -35,48 +35,16 @@ namespace Ragnarok.Shogi.Sfen
         /// 先手の香車：L、後手の香車：l （Lanceの頭文字）
         /// 先手の歩：P、後手の歩：p （Pawnの頭文字）
         /// </remarks>
-        public static string PieceTypeToSfen(PieceType pieceType)
+        public static string PieceToSfen(Piece piece)
         {
-            return new string(SfenPieceList[(int)pieceType], 1);
-        }
+            var c = SfenPieceList[(int)piece.GetRawType()];
 
-        /// <summary>
-        /// SFEN形式の対応する駒文字(手番/成り不成りの区別あり）を取得します。
-        /// </summary>
-        public static string PieceToSfen(BoardPiece piece)
-        {
-            if (piece == null)
-            {
-                throw new ArgumentNullException(nameof(piece));
-            }
-
-            var c = SfenPieceList[(int)piece.PieceType];
-
-            if (piece.BWType == BWType.White)
+            if (piece.GetColor() == BWType.White)
             {
                 c = char.ToLowerInvariant(c);
             }
 
-            return ((piece.IsPromoted ? "+" : "") + c);
-        }
-
-        /// <summary>
-        /// 文字をSFEN形式の駒として解釈します。
-        /// </summary>
-        /// <remarks>
-        /// 大文字小文字は無視します。
-        /// </remarks>
-        public static PieceType SfenToPieceType(char piece)
-        {
-            for (var i = 0; i < SfenPieceList.Length; ++i)
-            {
-                if (char.ToUpperInvariant(piece) == SfenPieceList[i])
-                {
-                    return (PieceType)i;
-                }
-            }
-
-            return PieceType.None;
+            return ((piece.IsPromoted() ? "+" : "") + c);
         }
 
         /// <summary>
@@ -85,22 +53,22 @@ namespace Ragnarok.Shogi.Sfen
         /// <remarks>
         /// 大文字の場合は先手、小文字の場合は後手となります。
         /// </remarks>
-        public static BoardPiece SfenToPiece(char piece)
+        public static Piece SfenToPiece(char pieceCh)
         {
             for (var i = 0; i < SfenPieceList.Length; ++i)
             {
-                if (piece == SfenPieceList[i])
+                if (pieceCh == SfenPieceList[i])
                 {
-                    return new BoardPiece((PieceType)i, false, BWType.Black);
+                    return ((Piece)i).Modify(BWType.Black);
                 }
 
-                if (piece == char.ToLowerInvariant(SfenPieceList[i]))
+                if (pieceCh == char.ToLowerInvariant(SfenPieceList[i]))
                 {
-                    return new BoardPiece((PieceType)i, false, BWType.White);
+                    return ((Piece)i).Modify(BWType.White);
                 }
             }
 
-            return null;
+            return Piece.None;
         }
     }
 }

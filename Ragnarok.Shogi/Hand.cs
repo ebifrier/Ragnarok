@@ -57,19 +57,19 @@ namespace Ragnarok.Shogi
     /// 00TT0HH0 AA0KKK0G GG0EEEE0Y YY0UUUUU
     /// </remarks>
     [DataContract()]
-    public class Hand : IEquatable<Hand>
+    public sealed class Hand : IEquatable<Hand>
     {
         private static readonly ShiftBitsMask[] SBM = new ShiftBitsMask[]
         {
             new ShiftBitsMask(0, 0),  // None
-            new ShiftBitsMask(28, 2), // Gyoku
-            new ShiftBitsMask(25, 2), // Hisya
-            new ShiftBitsMask(22, 2), // Kaku
-            new ShiftBitsMask(18, 3), // Kin
-            new ShiftBitsMask(14, 3), // Gin
-            new ShiftBitsMask(10, 3), // Kei
-            new ShiftBitsMask(6, 3),  // Kyo
-            new ShiftBitsMask(0, 5),  // Hu
+            new ShiftBitsMask(0, 5),  // Pawn
+            new ShiftBitsMask(6, 3),  // Lance
+            new ShiftBitsMask(10, 3), // Knight
+            new ShiftBitsMask(14, 3), // Silver
+            new ShiftBitsMask(22, 2), // Bishop
+            new ShiftBitsMask(25, 2), // Rook
+            new ShiftBitsMask(18, 3), // Gold
+            new ShiftBitsMask(28, 2), // King
         };
 
         /// <summary>
@@ -112,9 +112,9 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 持ち駒の数を取得します。
         /// </summary>
-        public int Get(PieceType pieceType)
+        public int Get(Piece pieceType)
         {
-            if (pieceType > PieceType.Hu)
+            if (pieceType > Piece.Promote)
             {
                 throw new ArgumentException(
                     "pieceTypeの値が不正です。", nameof(pieceType));
@@ -127,15 +127,15 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 持ち駒の数を設定します。
         /// </summary>
-        public void Set(PieceType pieceType, int count)
+        public void Set(Piece pieceType, int count)
         {
-            if (pieceType > PieceType.Hu)
+            if (pieceType > Piece.Promote)
             {
                 throw new ArgumentException(
                     "pieceTypeの値が不正です。", nameof(pieceType));
             }
 
-            if (pieceType == PieceType.Gyoku && count > 0)
+            if (pieceType == Piece.King && count > 0)
             {
                 throw new ShogiException(
                     "玉を駒台に乗せることはできません。");
@@ -155,9 +155,9 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 持ち駒の数を増やします。
         /// </summary>
-        private void Add(PieceType pieceType, int add)
+        private void Add(Piece pieceType, int add)
         {
-            if (pieceType > PieceType.Hu)
+            if (pieceType > Piece.Promote)
             {
                 throw new ArgumentException(
                     "pieceTypeの値が不正です。", nameof(pieceType));
@@ -170,7 +170,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 持ち駒の数を増やします。
         /// </summary>
-        public void Increment(PieceType pieceType)
+        public void Increment(Piece pieceType)
         {
             Add(pieceType, +1);
         }
@@ -178,7 +178,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 持ち駒の数を減らします。
         /// </summary>
-        public void Decrement(PieceType pieceType)
+        public void Decrement(Piece pieceType)
         {
             Add(pieceType, -1);
         }

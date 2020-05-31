@@ -21,40 +21,28 @@ namespace Ragnarok.Shogi.Tests
             // すべてのマスをテストすると時間がかかりすぎるため、
             // 移動元・移動先共にテストするマスを絞っています。
             var validMoveList =
-                from turn in new BWType[] { BWType.Black, BWType.White }
-                from dst in Board.AllSquares()
-                from src in Board.AllSquares()
-                from pc in EnumUtil.GetValues<PieceType>()
-                from promoted in new bool[] { false, true }
-                from tookPc in EnumUtil.GetValues<PieceType>()
-                from tookPromoted in new bool[] { false, true }
+                from turn in BWTypeUtil.BlackWhite()
+                from dst in Board.Squares()
+                from src in Board.Squares()
+                from pc in PieceUtil.PieceTypes()
+                from tookPc in PieceUtil.PieceTypes().Concat(new []{ Piece.None })
                 from promote in new bool[] { false, true }
-                let pcPiece = new Piece(pc, promoted)
-                let tookPiece = (tookPc != PieceType.None
-                    ? new Piece(tookPc, tookPromoted)
-                    : Piece.None)
-                where pcPiece.Validate()
-                where tookPiece == null || tookPiece.Validate()
                 where (dst.GetRank() % 2) == 1 && (dst.GetFile() % 3) == 1
                 where (src.GetRank() % 2) == 1 && (src.GetFile() % 3) == 1
-                let bmove = Move.CreateMove(
-                    turn, src, dst,
-                    pcPiece, promote,
-                    tookPiece)
+                let bmove = Move.CreateMove(turn, src, dst, pc, promote, tookPc)
                 where bmove.Validate()
                 select bmove;
 
             var validDropList =
-                from turn in new BWType[] { BWType.Black, BWType.White }
-                from dst in Board.AllSquares()
-                from pc in EnumUtil.GetValues<PieceType>()
-                where pc != PieceType.None
+                from turn in BWTypeUtil.BlackWhite()
+                from dst in Board.Squares()
+                from pc in PieceUtil.RawTypes()
                 let bmove = Move.CreateDrop(turn, dst, pc)
                 where bmove.Validate()
                 select bmove;
 
             var specialMoveList =
-                from turn in new BWType[] { BWType.Black, BWType.White }
+                from turn in BWTypeUtil.BlackWhite()
                 from special in EnumUtil.GetValues<SpecialMoveType>()
                 where special != SpecialMoveType.None
                 let bmove = Move.CreateSpecialMove(turn, special)

@@ -102,7 +102,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 駒を打つ場合の駒を取得または設定します。
         /// </summary>
-        public PieceType DropPieceType
+        public Piece DropPieceType
         {
             get;
             private set;
@@ -119,11 +119,11 @@ namespace Ragnarok.Shogi
                 {
                     return ActionType.None;
                 }
-                else if (DropPieceType != PieceType.None)
+                else if (!DropPieceType.IsNone())
                 {
                     return ActionType.Drop;
                 }
-                else if (!SrcSquare.IsEmpty() && !MovePiece.IsNone)
+                else if (!SrcSquare.IsEmpty() && !MovePiece.IsNone())
                 {
                     return (IsPromote ? ActionType.Promote : ActionType.None);
                 }
@@ -186,7 +186,7 @@ namespace Ragnarok.Shogi
                     CultureInfo.CurrentCulture,
                     "{0}同　{1}{2}({3}{4})",
                     Stringizer.ToString(BWType),
-                    MovePiece,
+                    Stringizer.ToString(MovePiece),
                     Stringizer.ToString(ActionType),
                     SrcSquare.GetFile(),
                     SrcSquare.GetRank());
@@ -199,7 +199,7 @@ namespace Ragnarok.Shogi
                     Stringizer.ToString(BWType),
                     IntConverter.Convert(NumberType.Big, DstSquare.GetFile()),
                     IntConverter.Convert(NumberType.Kanji, DstSquare.GetRank()),
-                    MovePiece,
+                    Stringizer.ToString(MovePiece),
                     Stringizer.ToString(ActionType),
                     SrcSquare.GetFile(),
                     SrcSquare.GetRank());
@@ -233,7 +233,7 @@ namespace Ragnarok.Shogi
                     return false;
                 }
 
-                if (!MovePiece.IsNone)
+                if (!MovePiece.IsNone())
                 {
                     return false;
                 }
@@ -256,7 +256,7 @@ namespace Ragnarok.Shogi
                     return false;
                 }
 
-                if (MovePiece.IsNone)
+                if (MovePiece.IsNone())
                 {
                     return false;
                 }
@@ -365,7 +365,7 @@ namespace Ragnarok.Shogi
             IsPromote = info.GetBoolean(nameof(IsPromote));
             DstSquare = (Square)info.GetValue(nameof(DstSquare), typeof(Square));
             SrcSquare = (Square)info.GetValue(nameof(SrcSquare), typeof(Square));
-            DropPieceType = (PieceType)info.GetInt32(nameof(DropPieceType));
+            DropPieceType = (Piece)info.GetInt32(nameof(DropPieceType));
             HasSameSquareAsPrev = info.GetBoolean(nameof(HasSameSquareAsPrev));
             MovePiece = (Piece)info.GetValue(nameof(MovePiece), typeof(Piece));
             TookPiece = (Piece)info.GetValue(nameof(TookPiece), typeof(Piece));
@@ -394,7 +394,7 @@ namespace Ragnarok.Shogi
         {
             BWType = BWType.None;
             IsPromote = false;
-            DropPieceType = PieceType.None;
+            DropPieceType = Piece.None;
         }
 
         /// <summary>
@@ -446,7 +446,7 @@ namespace Ragnarok.Shogi
                     "動かす駒が正しくありません。", nameof(movePiece));
             }
 
-            if (!tookPiece.IsNone && !tookPiece.Validate())
+            if (!tookPiece.IsNone() && !tookPiece.Validate())
             {
                 throw new ArgumentException(
                     "取った駒が正しくありません。", nameof(tookPiece));
@@ -467,7 +467,7 @@ namespace Ragnarok.Shogi
         /// 駒を打つ手を生成します。
         /// </summary>
         public static Move CreateDrop(BWType turn, Square dst,
-                                      PieceType dropPieceType)
+                                      Piece dropPieceType)
         {
             if (turn == BWType.None)
             {
@@ -481,7 +481,7 @@ namespace Ragnarok.Shogi
                     "Squareの値が正しくありません。", nameof(dst));
             }
 
-            if (dropPieceType == PieceType.None)
+            if (dropPieceType.IsNone())
             {
                 throw new ArgumentException(
                     "Enumの値が正しくありません。", nameof(dropPieceType));
@@ -491,7 +491,7 @@ namespace Ragnarok.Shogi
             {
                 BWType = turn,
                 DstSquare = dst,
-                DropPieceType = dropPieceType,
+                DropPieceType = dropPieceType.GetRawType(),
             };
         }
     }
