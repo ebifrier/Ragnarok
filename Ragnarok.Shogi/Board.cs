@@ -158,15 +158,12 @@ namespace Ragnarok.Shogi
                 hashValue += zobrist[(int)sq, (int)pc, pc.GetColor().GetIndex()];
             }
 
-            foreach (var bwType in BWTypeUtil.BlackWhite())
+            foreach (var piece in PieceUtil.PieceTypes())
             {
-                foreach (var piece in PieceUtil.RawTypes())
+                var count = GetHand(piece);
+                while (count-- > 0)
                 {
-                    var count = GetHand(piece, bwType);
-                    while (count-- > 0)
-                    {
-                        hashValue += zobristHand[(int)piece, bwType.GetIndex()];
-                    }
+                    hashValue += zobristHand[(int)piece, piece.GetColor().GetIndex()];
                 }
             }
 
@@ -415,41 +412,41 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 持ち駒の数を取得します。
         /// </summary>
-        public int GetHand(Piece pieceType, BWType bwType)
+        public int GetHand(Piece piece)
         {
-            var handBox = GetHand(bwType);
+            var handBox = GetHand(piece.GetColor());
 
-            return handBox.Get(pieceType);
+            return handBox.Get(piece.GetRawType());
         }
 
         /// <summary>
         /// 持ち駒の数を設定します。
         /// </summary>
-        public void SetHand(Piece pieceType, BWType bwType, int count)
+        public void SetHand(Piece piece, int count)
         {
-            var handBox = GetHand(bwType);
+            var handBox = GetHand(piece.GetColor());
 
-            handBox.Set(pieceType, count);
+            handBox.Set(piece.GetRawType(), count);
         }
 
         /// <summary>
         /// 持ち駒の数を増やします。
         /// </summary>
-        public void IncHand(Piece pieceType, BWType bwType)
+        public void IncHand(Piece piece)
         {
-            var handBox = GetHand(bwType);
+            var handBox = GetHand(piece.GetColor());
 
-            handBox.Increment(pieceType);
+            handBox.Increment(piece.GetRawType());
         }
 
         /// <summary>
         /// 持ち駒の数を減らします。
         /// </summary>
-        public void DecHand(Piece pieceType, BWType bwType)
+        public void DecHand(Piece piece)
         {
-            var handBox = GetHand(bwType);
+            var handBox = GetHand(piece.GetColor());
 
-            handBox.Decrement(pieceType);
+            handBox.Decrement(piece.GetRawType());
         }
 
         /// <summary>
@@ -457,7 +454,7 @@ namespace Ragnarok.Shogi
         /// </summary>
         public static int GetMaxPieceCount(Piece pieceType)
         {
-            return MaxPieceCountList[(int)pieceType];
+            return MaxPieceCountList[(int)pieceType.GetRawType()];
         }
 
         /// <summary>
@@ -472,8 +469,8 @@ namespace Ragnarok.Shogi
         {
             var funcs = new F[]
             {
-                new F(_ => GetHand(_, BWType.Black)),
-                new F(_ => GetHand(_, BWType.White)),
+                new F(_ => GetHand(_.Modify(BWType.Black))),
+                new F(_ => GetHand(_.Modify(BWType.White))),
                 new F(_ => Squares()
                     .Select(sq => this[sq])
                     .Sum(p => p.GetRawType() == _ ? 1 : 0)),
@@ -533,7 +530,7 @@ namespace Ragnarok.Shogi
                 // 駒打ちの場合は、その駒を駒台に戻します。
                 this[move.DstSquare] = Piece.None;
 
-                IncHand(move.DropPieceType, move.BWType);
+                IncHand(move.DropPieceType.Modify(move.BWType));
             }
             else
             {
@@ -548,14 +545,11 @@ namespace Ragnarok.Shogi
                 // 駒を取った場合は、その駒を元に戻します。
                 if (!move.TookPiece.IsNone())
                 {
-                    this[move.DstSquare] = PieceUtil.Modify(
-                        move.TookPiece,
+                    this[move.DstSquare] = move.TookPiece.Modify(
                         move.BWType.Flip());
 
                     // 駒を取ったはずなので、その分を駒台から減らします。
-                    DecHand(
-                        move.TookPiece.GetRawType(),
-                        move.BWType);
+                    DecHand(move.TookPiece.GetRawType().Modify(move.BWType));
                 }
                 else
                 {
@@ -766,7 +760,9 @@ namespace Ragnarok.Shogi
         /// </summary>
         private bool CheckAndMakeDrop(Move move, MoveFlags flags)
         {
-            if (GetHand(move.DropPieceType, move.BWType) <= 0)
+            var dropPiece = move.DropPieceType.Modify(move.BWType);
+
+            if (GetHand(dropPiece) <= 0)
             {
                 return false;
             }
@@ -798,8 +794,7 @@ namespace Ragnarok.Shogi
                 this[move.DstSquare] = PieceUtil.Modify(
                     move.DropPieceType, move.BWType);
 
-                DecHand(move.DropPieceType, move.BWType);
-
+                DecHand(dropPiece);
                 MoveDone(move);
             }
 
@@ -829,20 +824,20 @@ namespace Ragnarok.Shogi
                 return false;
             }
 
-            var newPiece = PieceUtil.Modify(Piece.Pawn, bwType);
+            var newPiece = Piece.Pawn.Modify(bwType);
             var oldPiece = this[square];
 
             // 打ち歩詰の判定には、実際に歩を打ってみるのが簡単なため、
             // 必要なプロパティのみ更新し、詰まされているか調べます。
             this[square] = newPiece;
-            DecHand(Piece.Pawn, bwType);
+            DecHand(newPiece);
             Turn = Turn.Flip();
 
             // 打ち歩詰かどうか確認します。
             var mated = IsCheckMated();
 
             this[square] = oldPiece;
-            IncHand(Piece.Pawn, bwType);
+            IncHand(newPiece);
             Turn = Turn.Flip();
 
             return mated;
@@ -939,7 +934,7 @@ namespace Ragnarok.Shogi
                 // 移動先に駒があれば、それを自分のものにします。
                 if (!dstPiece.IsNone())
                 {
-                    IncHand(dstPiece.GetRawType(), move.BWType);
+                    IncHand(dstPiece.GetRawType().Modify(move.BWType));
 
                     // 取った駒を記憶しておきます。
                     move.TookPiece = dstPiece.GetPieceType();
@@ -1142,7 +1137,7 @@ namespace Ragnarok.Shogi
                 from bwType in BWTypeUtil.BlackWhite()
                 let countList = (
                     from type in PieceUtil.RawTypes()
-                    let count = GetHand(type, bwType)
+                    let count = GetHand(type.Modify(bwType))
                     select new { Piece = type, Count = count }
                     ).ToList()
                 select new { BWType = bwType, CountList = countList };
@@ -1152,7 +1147,7 @@ namespace Ragnarok.Shogi
                 var flipped = _.BWType.Flip();
 
                 _.CountList.ForEach(__ =>
-                    SetHand(__.Piece, flipped, __.Count));
+                    SetHand(__.Piece.Modify(flipped), __.Count));
             });
         }
 
@@ -1185,19 +1180,19 @@ namespace Ragnarok.Shogi
                 return false;
             }
 
-            foreach (var bwType in new BWType[] { BWType.Black, BWType.White })
+            // 局面上の駒の数を確認します。
+            foreach (var rawType in PieceUtil.RawTypes())
             {
-                // 局面上の駒の数を確認します。
-                foreach (var rawType in PieceUtil.RawTypes())
+                var count = GetTotalPieceCount(rawType);
+                var maxCount = GetMaxPieceCount(rawType);
+                if (count > maxCount)
                 {
-                    var count = GetTotalPieceCount(rawType);
-                    var maxCount = GetMaxPieceCount(rawType);
-                    if (count > maxCount)
-                    {
-                        return false;
-                    }
+                    return false;
                 }
+            }
 
+            foreach (var bwType in BWTypeUtil.BlackWhite())
+            {
                 // ２歩の確認を行います。
                 for (var file = 1; file <= BoardSize; ++file)
                 {

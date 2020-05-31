@@ -235,9 +235,12 @@ namespace Ragnarok.Shogi.Kif
 
             // 持ち駒をまとめて設定します。
             handText
-                .Split(new char[] { '　', ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries)
+                .Split(
+                    new char[] { '　', ' ', '\t' },
+                    StringSplitOptions.RemoveEmptyEntries)
                 .Select(_ => ParseHandPiece(bwType, _))
-                .ForEach(_ => this.board.SetHand(_.Item1, bwType, _.Item2));
+                .ForEach(_ =>
+                    this.board.SetHand(_.Item1.Modify(bwType), _.Item2));
         }
 
         /// <summary>
@@ -247,7 +250,7 @@ namespace Ragnarok.Shogi.Kif
         /// 各駒文字を最初の漢字で表し、後に続く漢数字でその数を示します。
         /// </remarks>
         private Tuple<Piece, int> ParseHandPiece(BWType bwType,
-                                                     string handPieceText)
+                                                 string handPieceText)
         {
             // 駒の種類を取得します。
             var nullablePiece = KifUtil.CharToPiece(handPieceText[0]);

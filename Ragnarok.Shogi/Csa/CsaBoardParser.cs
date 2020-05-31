@@ -177,9 +177,9 @@ namespace Ragnarok.Shogi.Csa
             if (line.Substring(2).StartsWith("00AL", StringComparison.InvariantCulture))
             {
                 // 残りの駒をすべて手番側の持ち駒に設定します。
-                PieceUtil.RawTypes()
+                PieceUtil.RawTypes(bwType)
                     .ForEach(_ => Board.SetHand(
-                        _, bwType, this.board.GetLeavePieceCount(_)));
+                        _, this.board.GetLeavePieceCount(_)));
             }
             else
             {
@@ -198,11 +198,11 @@ namespace Ragnarok.Shogi.Csa
             // 駒位置が"00"の場合は持ち駒となります。
             if (ps.Square.GetFile() != 0)
             {
-                this.board[ps.Square] = PieceUtil.Modify(ps.Piece, bwType);
+                this.board[ps.Square] = ps.Piece.Modify(bwType);
             }
             else
             {
-                this.board.IncHand(ps.Piece.GetRawType(), bwType);
+                this.board.IncHand(ps.Piece.Modify(bwType).GetRawType());
             }
         }
         #endregion

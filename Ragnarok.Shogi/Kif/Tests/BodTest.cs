@@ -52,7 +52,7 @@ namespace Ragnarok.Shogi.Kif.Tests
             board0[3, 3] = Piece.WhitePawn;
             board0[1, 3] = Piece.WhitePawn;
             board0[2, 9] = Piece.BlackRook;
-            board0.SetHand(Piece.Pawn, BWType.Black, 1);
+            board0.SetHand(Piece.BlackPawn, 1);
 
             Assert.True(Board.BoardEquals(board0, board1));
         }

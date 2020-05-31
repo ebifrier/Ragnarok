@@ -158,7 +158,7 @@ namespace Ragnarok.Shogi.Sfen
 
                     // 持ち駒の数は0以上に合わせます。
                     var pcount = Math.Max(count, 1);
-                    board.SetHand(piece.GetRawType(), piece.GetColor(), pcount);
+                    board.SetHand(piece, pcount);
                     count = 0;
                 }
             }
@@ -254,11 +254,11 @@ namespace Ragnarok.Shogi.Sfen
         {
             var handList =
                 from turn in BWTypeUtil.BlackWhite()
-                from pieceType in PieceUtil.RawTypes()
+                from piece in PieceUtil.RawTypes(turn)
                 let obj = new
                 {
-                    Piece = pieceType.Modify(turn),
-                    Count = board.GetHand(pieceType, turn),
+                    Piece = piece,
+                    Count = board.GetHand(piece),
                 }
                 where obj.Count > 0
                 let count = obj.Count > 1 ? $"{obj.Count}" : ""

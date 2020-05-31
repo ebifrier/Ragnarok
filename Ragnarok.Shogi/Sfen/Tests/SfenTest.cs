@@ -90,11 +90,11 @@ namespace Ragnarok.Shogi.Sfen.Tests
             board[1, 9] = Piece.WhiteHorse;
 
             // 駒台の設定
-            board.SetHand(Piece.Bishop, BWType.Black, 1);
-            board.SetHand(Piece.Gold, BWType.Black, 2);
-            board.SetHand(Piece.Silver, BWType.Black, 2);
-            board.SetHand(Piece.Pawn, BWType.Black, 10);
-            board.SetHand(Piece.Silver, BWType.White, 1);
+            board.SetHand(Piece.BlackBishop, 1);
+            board.SetHand(Piece.BlackGold, 2);
+            board.SetHand(Piece.BlackSilver, 2);
+            board.SetHand(Piece.BlackPawn, 10);
+            board.SetHand(Piece.WhiteSilver, 1);
 
             // 手番
             board.Turn = BWType.White;

@@ -169,11 +169,13 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 成りを含まない駒をすべて列挙します。
         /// </summary>
-        public static IEnumerable<Piece> RawTypes()
+        public static IEnumerable<Piece> RawTypes(BWType? color = null)
         {
             for (var piece = Piece.Pawn; piece <= Piece.King; ++piece)
             {
-                yield return piece;
+                yield return (color != null
+                    ? piece.Modify(color.Value)
+                    : piece);
             }
         }
 

@@ -52,7 +52,7 @@ namespace Ragnarok.Shogi
                                              Square dstSquare)
         {
             // 打てる駒をすべて列挙します。
-            if (!piece.IsPromoted() && GetHand(piece.GetRawType(), bwType) > 0)
+            if (!piece.IsPromoted() && GetHand(piece.GetRawType().Modify(bwType)) > 0)
             {
                 var move = Move.CreateDrop(bwType, dstSquare, piece.GetRawType());
 
@@ -256,7 +256,7 @@ namespace Ragnarok.Shogi
                 Piece.Knight,
             };
             var dropPieceType = pieceList
-                .Where(_ => clone.GetHand(_, Turn) > 0)
+                .Where(_ => clone.GetHand(_.Modify(Turn)) > 0)
                 .FirstOrDefault();
             if (!dropPieceType.IsNone() &&
                 Squares().Any(_ => !clone.IsDropAndChecked(Turn, dropPieceType, _)))
