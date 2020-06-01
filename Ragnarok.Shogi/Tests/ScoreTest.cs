@@ -53,18 +53,18 @@ namespace Ragnarok.Shogi
             Assert.AreEqual(ScoreType.Mate, score.ScoreType);
             Assert.AreEqual(mate, score.Mate);
             Assert.AreEqual(isWin, score.IsMateWin);
-            Assert.AreEqual(Score.MateScore * (isWin ? +1 : -1), score.Value);
+            Assert.AreEqual((Score.MateScore - mate) * (isWin ? +1 : -1), score.Value);
 
             score.Neg();
             Assert.AreEqual(mate, score.Mate);
             Assert.AreEqual(!isWin, score.IsMateWin);
-            Assert.AreEqual(Score.MateScore * (isWin ? -1 : +1), score.Value);
+            Assert.AreEqual((Score.MateScore - mate) * (isWin ? -1 : +1), score.Value);
 
             score.Neg();
             Assert.AreEqual(mate, score.Mate);
             Assert.AreEqual(!!isWin, score.IsMateWin);
             //Assert.AreEqual(text, score.Text);
-            Assert.AreEqual(Score.MateScore * (isWin ? +1 : -1), score.Value);
+            Assert.AreEqual((Score.MateScore - mate) * (isWin ? +1 : -1), score.Value);
         }
 
         [Test()]

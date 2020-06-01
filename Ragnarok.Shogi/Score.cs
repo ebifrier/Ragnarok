@@ -89,7 +89,9 @@ namespace Ragnarok.Shogi
                 Turn = turn,
                 Mate = mate,
                 IsMateWin = isMateWin,
-                Value = (isMateWin ? MateScore : -MateScore)
+                Value = (isMateWin
+                    ? MateScore - mate
+                    : -MateScore + mate)
             };
         }
 
