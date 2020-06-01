@@ -61,6 +61,14 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
+        /// 駒を打つ場合の駒を取得または設定します。
+        /// </summary>
+        public Piece DropPiece
+        {
+            get { return MovePiece; }
+        }
+
+        /// <summary>
         /// 先手の手か後手の手かを取得または設定します。
         /// </summary>
         public Colour Colour
@@ -82,7 +90,7 @@ namespace Ragnarok.Shogi
         /// 駒の移動元を取得または設定します。
         /// </summary>
         /// <remarks>
-        /// 駒打ちの場合はnullになります。
+        /// 駒打ちの場合はEmptyになります。
         /// </remarks>
         public Square SrcSquare
         {
@@ -100,15 +108,6 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
-        /// 駒を打つ場合の駒を取得または設定します。
-        /// </summary>
-        public Piece DropPieceType
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
         /// 駒打ち・成りなどの動作を取得します。
         /// </summary>
         public ActionType ActionType
@@ -119,11 +118,11 @@ namespace Ragnarok.Shogi
                 {
                     return ActionType.None;
                 }
-                else if (!DropPieceType.IsNone())
+                else if (SrcSquare.IsEmpty())
                 {
                     return ActionType.Drop;
                 }
-                else if (!SrcSquare.IsEmpty() && !MovePiece.IsNone())
+                else if (!MovePiece.IsNone())
                 {
                     return (IsPromote ? ActionType.Promote : ActionType.None);
                 }
@@ -151,7 +150,7 @@ namespace Ragnarok.Shogi
         /// <remarks>
         /// 「同飛」などと出力するためのもので、それ以上の意味はありません。
         /// </remarks>
-        public bool HasSameSquareAsPrev
+        public bool SameAsPrev
         {
             get;
             set;
@@ -178,9 +177,9 @@ namespace Ragnarok.Shogi
                     Stringizer.ToString(Colour),
                     IntConverter.Convert(NumberType.Big, DstSquare.GetFile()),
                     IntConverter.Convert(NumberType.Kanji, DstSquare.GetRank()),
-                    Stringizer.ToString(DropPieceType));
+                    Stringizer.ToString(DropPiece));
             }
-            else if (HasSameSquareAsPrev)
+            else if (SameAsPrev)
             {
                 return string.Format(
                     CultureInfo.CurrentCulture,
@@ -223,17 +222,17 @@ namespace Ragnarok.Shogi
             else if (ActionType == ActionType.Drop)
             {
                 // 駒打ちの場合
+                if (DropPiece.IsNone())
+                {
+                    return false;
+                }
+
                 if (!DstSquare.Validate())
                 {
                     return false;
                 }
                 
                 if (!SrcSquare.IsEmpty())
-                {
-                    return false;
-                }
-
-                if (!MovePiece.IsNone())
                 {
                     return false;
                 }
@@ -246,6 +245,11 @@ namespace Ragnarok.Shogi
             else
             {
                 // 駒打ちでない場合
+                if (MovePiece.IsNone())
+                {
+                    return false;
+                }
+
                 if (!DstSquare.Validate())
                 {
                     return false;
@@ -256,7 +260,8 @@ namespace Ragnarok.Shogi
                     return false;
                 }
 
-                if (MovePiece.IsNone())
+                if (!TookPiece.IsNone() &&
+                    TookPiece.GetColour() == MovePiece.GetColour())
                 {
                     return false;
                 }
@@ -289,6 +294,11 @@ namespace Ragnarok.Shogi
                 return false;
             }
 
+            if (MovePiece != other.MovePiece)
+            {
+                return false;
+            }
+
             if (Colour != other.Colour)
             {
                 return false;
@@ -305,16 +315,6 @@ namespace Ragnarok.Shogi
             }
 
             if (IsPromote != other.IsPromote)
-            {
-                return false;
-            }
-
-            if (MovePiece != other.MovePiece)
-            {
-                return false;
-            }
-
-            if (DropPieceType != other.DropPieceType)
             {
                 return false;
             }
@@ -349,11 +349,10 @@ namespace Ragnarok.Shogi
         public override int GetHashCode()
         {
             return (
+                MovePiece.GetHashCode() ^
                 Colour.GetHashCode() ^
                 DstSquare.GetHashCode() ^
                 SrcSquare.GetHashCode() ^
-                MovePiece.GetHashCode() ^
-                DropPieceType.GetHashCode() ^
                 IsPromote.GetHashCode() ^
                 SpecialMoveType.GetHashCode());
         }
@@ -361,28 +360,26 @@ namespace Ragnarok.Shogi
         #region シリアライズ/デシリアライズ
         protected Move(SerializationInfo info, StreamingContext text)
         {
+            MovePiece = (Piece)info.GetValue(nameof(MovePiece), typeof(Piece));
             Colour = (Colour)info.GetValue(nameof(Colour), typeof(Colour));
-            IsPromote = info.GetBoolean(nameof(IsPromote));
             DstSquare = (Square)info.GetValue(nameof(DstSquare), typeof(Square));
             SrcSquare = (Square)info.GetValue(nameof(SrcSquare), typeof(Square));
-            DropPieceType = (Piece)info.GetInt32(nameof(DropPieceType));
-            HasSameSquareAsPrev = info.GetBoolean(nameof(HasSameSquareAsPrev));
-            MovePiece = (Piece)info.GetValue(nameof(MovePiece), typeof(Piece));
+            IsPromote = info.GetBoolean(nameof(IsPromote));
             TookPiece = (Piece)info.GetValue(nameof(TookPiece), typeof(Piece));
+            SameAsPrev = info.GetBoolean(nameof(SameAsPrev));
             SpecialMoveType = (SpecialMoveType)info.GetInt32(nameof(SpecialMoveType));
         }
 
         [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
+            info.AddValue(nameof(MovePiece), MovePiece);
             info.AddValue(nameof(Colour), Colour);
-            info.AddValue(nameof(IsPromote), IsPromote);
             info.AddValue(nameof(DstSquare), DstSquare);
             info.AddValue(nameof(SrcSquare), SrcSquare);
-            info.AddValue(nameof(DropPieceType), DropPieceType);
-            info.AddValue(nameof(HasSameSquareAsPrev), HasSameSquareAsPrev);
-            info.AddValue(nameof(MovePiece), MovePiece);
+            info.AddValue(nameof(IsPromote), IsPromote);
             info.AddValue(nameof(TookPiece), TookPiece);
+            info.AddValue(nameof(SameAsPrev), SameAsPrev);
             info.AddValue(nameof(SpecialMoveType), SpecialMoveType);
         }
         #endregion
@@ -392,9 +389,8 @@ namespace Ragnarok.Shogi
         /// </summary>
         public Move()
         {
-            Colour = Colour.None;
+            MovePiece = Piece.None;
             IsPromote = false;
-            DropPieceType = Piece.None;
         }
 
         /// <summary>
@@ -410,22 +406,22 @@ namespace Ragnarok.Shogi
 
             return new Move
             {
-                Colour = turn,
                 SpecialMoveType = smoveType,
+                Colour = turn,
             };
         }
 
         /// <summary>
         /// 移動手を生成します。
         /// </summary>
-        public static Move CreateMove(Colour turn, Square src, Square dst,
-                                      Piece movePiece, bool isPromote,
-                                      Piece tookPiece = default)
+        public static Move CreateMove(Piece movePiece, Square src, Square dst,
+                                      bool isPromote = false,
+                                      Piece tookPiece = Piece.None)
         {
-            if (turn == Colour.None)
+            if (!movePiece.Validate())
             {
                 throw new ArgumentException(
-                    "Enumの値が正しくありません。", nameof(turn));
+                    "動かす駒が正しくありません。", nameof(movePiece));
             }
 
             if (!src.Validate())
@@ -440,24 +436,12 @@ namespace Ragnarok.Shogi
                     "移動先のマスが正しくありません。", nameof(dst));
             }
 
-            if (!movePiece.Validate())
-            {
-                throw new ArgumentException(
-                    "動かす駒が正しくありません。", nameof(movePiece));
-            }
-
-            if (!tookPiece.IsNone() && !tookPiece.Validate())
-            {
-                throw new ArgumentException(
-                    "取った駒が正しくありません。", nameof(tookPiece));
-            }
-
             return new Move
             {
-                Colour = turn,
+                MovePiece = movePiece,
+                Colour = movePiece.GetColour(),
                 SrcSquare = src,
                 DstSquare = dst,
-                MovePiece = movePiece,
                 IsPromote = isPromote,
                 TookPiece = tookPiece,
             };
@@ -466,13 +450,12 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 駒を打つ手を生成します。
         /// </summary>
-        public static Move CreateDrop(Colour turn, Square dst,
-                                      Piece dropPieceType)
+        public static Move CreateDrop(Piece dropPiece, Square dst)
         {
-            if (turn == Colour.None)
+            if (dropPiece.IsNone())
             {
                 throw new ArgumentException(
-                    "Enumの値が正しくありません。", nameof(turn));
+                    "Enumの値が正しくありません。", nameof(dropPiece));
             }
 
             if (!dst.Validate())
@@ -481,17 +464,11 @@ namespace Ragnarok.Shogi
                     "Squareの値が正しくありません。", nameof(dst));
             }
 
-            if (dropPieceType.IsNone())
-            {
-                throw new ArgumentException(
-                    "Enumの値が正しくありません。", nameof(dropPieceType));
-            }
-
             return new Move
             {
-                Colour = turn,
+                MovePiece = dropPiece.Unpromote(),
+                Colour = dropPiece.GetColour(),
                 DstSquare = dst,
-                DropPieceType = dropPieceType.GetRawType(),
             };
         }
     }

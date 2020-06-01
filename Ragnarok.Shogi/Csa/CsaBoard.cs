@@ -116,7 +116,7 @@ namespace Ragnarok.Shogi.Csa
             {
                 var piece = board[file, rank];
 
-                yield return CsaUtil.BoardPieceToStr(piece);
+                yield return CsaUtil.PieceToStr(piece);
             }
         }
 
@@ -131,7 +131,7 @@ namespace Ragnarok.Shogi.Csa
             var handList =
                 from rawType in PieceUtil.RawTypes()
                 let count = board.GetHand(rawType.Modify(turn))
-                let str = $"00{CsaUtil.PieceToStr(rawType)}"
+                let str = $"00{CsaUtil.PieceTypeToStr(rawType)}"
                 let list = Enumerable.Range(1, count).Select(_ => str)
                 select string.Join("", list.ToArray());
 

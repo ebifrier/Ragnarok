@@ -24,20 +24,20 @@ namespace Ragnarok.Shogi.Tests
                 from turn in ColourUtil.BlackWhite()
                 from dst in Board.Squares()
                 from src in Board.Squares()
-                from pc in PieceUtil.PieceTypes()
+                from pc in PieceUtil.PieceTypes(turn)
                 from tookPc in PieceUtil.PieceTypes().Concat(new []{ Piece.None })
                 from promote in new bool[] { false, true }
                 where (dst.GetRank() % 2) == 1 && (dst.GetFile() % 3) == 1
                 where (src.GetRank() % 2) == 1 && (src.GetFile() % 3) == 1
-                let bmove = Move.CreateMove(turn, src, dst, pc, promote, tookPc)
+                let bmove = Move.CreateMove(pc, src, dst, promote, tookPc.Modify(turn.Flip()))
                 where bmove.Validate()
                 select bmove;
 
             var validDropList =
                 from turn in ColourUtil.BlackWhite()
                 from dst in Board.Squares()
-                from pc in PieceUtil.RawTypes()
-                let bmove = Move.CreateDrop(turn, dst, pc)
+                from pc in PieceUtil.RawTypes(turn)
+                let bmove = Move.CreateDrop(pc, dst)
                 where bmove.Validate()
                 select bmove;
 

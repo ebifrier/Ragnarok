@@ -120,7 +120,7 @@ namespace Ragnarok.Shogi
                 var newMove = move.Clone();
 
                 // 同○○なら、相手の直前の手と列段を合わせます。
-                if (newMove.SameAsOld)
+                if (newMove.SameAsPrev)
                 {
                     newMove.File = this.opponentMove.File;
                     newMove.Rank = this.opponentMove.Rank;
@@ -128,7 +128,7 @@ namespace Ragnarok.Shogi
                 else if (newMove.File == this.opponentMove.File &&
                          newMove.Rank == this.opponentMove.Rank)
                 {
-                    newMove.SameAsOld = true;
+                    newMove.SameAsPrev = true;
                 }
 
                 return newMove;

@@ -167,16 +167,17 @@ namespace Ragnarok.Shogi.Csa
         /// <summary>
         /// 駒のCSA表示文字列を取得します。
         /// </summary>
-        public static string PieceToStr(Piece piece)
+        public static string PieceTypeToStr(Piece piece)
         {
             if (piece.IsNone())
             {
                 return "* ";
             }
 
+            var pieceType = piece.GetPieceType();
             foreach (var pair in PieceTable)
             {
-                if (pair.Value == piece)
+                if (pair.Value == pieceType)
                 {
                     return pair.Key;
                 }
@@ -188,7 +189,7 @@ namespace Ragnarok.Shogi.Csa
         /// <summary>
         /// 駒のCSA表示文字列を取得します。
         /// </summary>
-        public static string BoardPieceToStr(Piece piece)
+        public static string PieceToStr(Piece piece)
         {
             if (piece.IsNone())
             {
@@ -196,14 +197,14 @@ namespace Ragnarok.Shogi.Csa
             }
 
             var turnStr = (piece.GetColour() == Colour.Black ? '+' : '-');
-            var pieceStr = PieceToStr(piece.GetPieceType());
+            var pieceStr = PieceTypeToStr(piece.GetPieceType());
             return $"{turnStr}{pieceStr}";
         }
 
         /// <summary>
         /// CSA形式の指し手を解析します。
         /// </summary>
-        public static Piece? StrToPiece(string str)
+        public static Piece? StrToPieceType(string str)
         {
             if (string.IsNullOrEmpty(str))
             {
@@ -221,7 +222,7 @@ namespace Ragnarok.Shogi.Csa
         /// <summary>
         /// CSA形式の指し手を解析します。
         /// </summary>
-        public static Piece? StrToBoardPiece(string str)
+        public static Piece? StrToPiece(string str)
         {
             if (string.IsNullOrEmpty(str))
             {
@@ -233,13 +234,13 @@ namespace Ragnarok.Shogi.Csa
                 str[0] == '-' ? Colour.White :
                 Colour.None);
 
-            var piece = StrToPiece(str.Length > 2 ? str.Substring(1) : str);
+            var piece = StrToPieceType(str.Length > 2 ? str.Substring(1) : str);
             if (piece == null)
             {
                 return null;
             }
 
-            return PieceUtil.Modify(piece.Value, colour);
+            return piece.Value.Modify(colour);
         }
     }
 }

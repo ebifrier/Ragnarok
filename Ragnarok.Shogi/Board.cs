@@ -534,7 +534,7 @@ namespace Ragnarok.Shogi
                 // 駒打ちの場合は、その駒を駒台に戻します。
                 this[move.DstSquare] = Piece.None;
 
-                IncHand(move.DropPieceType.Modify(move.Colour));
+                IncHand(move.DropPiece.Modify(move.Colour));
             }
             else
             {
@@ -549,11 +549,10 @@ namespace Ragnarok.Shogi
                 // 駒を取った場合は、その駒を元に戻します。
                 if (!move.TookPiece.IsNone())
                 {
-                    this[move.DstSquare] = move.TookPiece.Modify(
-                        move.Colour.Flip());
+                    this[move.DstSquare] = move.TookPiece;
 
                     // 駒を取ったはずなので、その分を駒台から減らします。
-                    DecHand(move.TookPiece.GetRawType().Modify(move.Colour));
+                    DecHand(move.TookPiece.Modify(move.Colour));
                 }
                 else
                 {
@@ -764,7 +763,7 @@ namespace Ragnarok.Shogi
         /// </summary>
         private bool CheckAndMakeDrop(Move move, MoveFlags flags)
         {
-            var dropPiece = move.DropPieceType.Modify(move.Colour);
+            var dropPiece = move.DropPiece;
 
             if (GetHand(dropPiece) <= 0)
             {
@@ -779,14 +778,14 @@ namespace Ragnarok.Shogi
             }
 
             // 駒が置けるか確かめます。
-            if (!CanDrop(move.Colour, move.DstSquare, move.DropPieceType))
+            if (!CanDrop(move.Colour, move.DstSquare, move.DropPiece))
             {
                 return false;
             }
 
             // 打ち歩詰のチェックを行います。
             if (EnumUtil.HasFlag(flags, MoveFlags.CheckPawnDropCheckMate) &&
-                move.DropPieceType == Piece.Pawn &&
+                move.DropPiece.GetPieceType() == Piece.Pawn &&
                 IsPawnDropCheckMate(move.Colour, move.DstSquare))
             {
                 return false;
@@ -796,7 +795,7 @@ namespace Ragnarok.Shogi
             {
                 // 駒を盤面に置き、持ち駒から駒を減らします。
                 this[move.DstSquare] = PieceUtil.Modify(
-                    move.DropPieceType, move.Colour);
+                    move.DropPiece, move.Colour);
 
                 DecHand(dropPiece);
                 MoveDone(move);
@@ -808,12 +807,20 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 打ち歩詰のチェックを行います。
         /// </summary>
-        private bool IsPawnDropCheckMate(Colour colour, Square square)
+        public bool IsPawnDropCheckMate(Colour colour, Square square)
         {
 #if OUTE_SHOGI
             // 王手将棋では打ち歩詰めを反則にしません。
             return false;
 #else
+            var pawnPiece = Piece.Pawn.Modify(colour);
+
+            // マスに駒がある場合や駒がない場合は歩を打てません。
+            if (!this[square].IsNone() || GetHand(pawnPiece) <= 0)
+            {
+                return false;
+            }
+
             // 歩の前に敵の玉がいるか確認します。
             var rankDif = (colour == Colour.Black ? -1 : +1);
             if (!SquareUtil.Validate(square.GetFile(), square.GetRank() + rankDif))
@@ -821,27 +828,23 @@ namespace Ragnarok.Shogi
                 return false;
             }
 
-            var gyoku = this[square.GetFile(), square.GetRank() + rankDif];
-            if (gyoku.GetPieceType() != Piece.King ||
-                gyoku.GetColour() != colour.Flip())
+            var king = this[square.GetFile(), square.GetRank() + rankDif];
+            if (king != Piece.King.Modify(colour.Flip()))
             {
                 return false;
             }
 
-            var newPiece = Piece.Pawn.Modify(colour);
-            var oldPiece = this[square];
-
             // 打ち歩詰の判定には、実際に歩を打ってみるのが簡単なため、
             // 必要なプロパティのみ更新し、詰まされているか調べます。
-            this[square] = newPiece;
-            DecHand(newPiece);
+            this[square] = pawnPiece;
+            DecHand(pawnPiece);
             Turn = Turn.Flip();
 
             // 打ち歩詰かどうか確認します。
             var mated = IsCheckMated();
 
-            this[square] = oldPiece;
-            IncHand(newPiece);
+            this[square] = Piece.None;
+            IncHand(pawnPiece);
             Turn = Turn.Flip();
 
             return mated;
@@ -911,7 +914,7 @@ namespace Ragnarok.Shogi
             }
 
             // これはエラーだけど。。。ｗ
-            if (srcPiece.GetPieceType() != move.MovePiece)
+            if (srcPiece != move.MovePiece)
             {
                 return false;
             }
@@ -938,10 +941,10 @@ namespace Ragnarok.Shogi
                 // 移動先に駒があれば、それを自分のものにします。
                 if (!dstPiece.IsNone())
                 {
-                    IncHand(dstPiece.GetRawType().Modify(move.Colour));
+                    IncHand(dstPiece.Modify(move.Colour));
 
                     // 取った駒を記憶しておきます。
-                    move.TookPiece = dstPiece.GetPieceType();
+                    move.TookPiece = dstPiece;
                 }
 
                 // 移動後の駒の成り/不成りを決定します。
@@ -949,13 +952,13 @@ namespace Ragnarok.Shogi
                     srcPiece.IsPromoted() ||
                     move.ActionType == ActionType.Promote);
 
-                this[move.DstSquare] = srcPiece.Modify(promoted).Modify(move.Colour);
+                this[move.DstSquare] = srcPiece.Modify(promoted);
 
                 // 移動前の位置からは駒をなくします。
                 this[move.SrcSquare] = Piece.None;
 
                 // 前回の指し手と位置が同じか調べます。
-                move.HasSameSquareAsPrev = (move.DstSquare == PrevMovedSquare);
+                move.SameAsPrev = (move.DstSquare == PrevMovedSquare);
 
                 MoveDone(move);
             }
@@ -1058,10 +1061,9 @@ namespace Ragnarok.Shogi
                 return false;
             }
 
-            var colour = piece.GetColour();
             var pieceType = piece.GetPieceType();
             var normalizedRank = (
-                colour == Colour.White ?
+                piece.GetColour() == Colour.White ?
                 (BoardSize + 1) - dstSquare.GetRank() :
                 dstSquare.GetRank());
 
@@ -1093,7 +1095,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 玉の数を取得します。
         /// </summary>
-        private int GetGyokuCount(Colour colour)
+        private int GetKingCount(Colour colour)
         {
             return GetPieceCount(Piece.King.Modify(colour));
         }
@@ -1207,8 +1209,8 @@ namespace Ragnarok.Shogi
             }
 
             // 玉の数をカウントします。
-            if (GetGyokuCount(Colour.Black) > 1 ||
-                GetGyokuCount(Colour.White) > 1)
+            if (GetKingCount(Colour.Black) > 1 ||
+                GetKingCount(Colour.White) > 1)
             {
                 return false;
             }

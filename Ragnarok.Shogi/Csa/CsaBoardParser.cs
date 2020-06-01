@@ -122,7 +122,7 @@ namespace Ragnarok.Shogi.Csa
         private PieceSquare ParsePiece(string str)
         {
             var pieceStr = str.Substring(2);
-            var piece = CsaUtil.StrToPiece(pieceStr);
+            var piece = CsaUtil.StrToPieceType(pieceStr);
 
             if (piece == null)
             {
@@ -211,7 +211,7 @@ namespace Ragnarok.Shogi.Csa
             }
             else
             {
-                this.board.IncHand(piece.GetRawType());
+                this.board.IncHand(piece);
             }
         }
         #endregion
@@ -242,7 +242,7 @@ namespace Ragnarok.Shogi.Csa
 
             var pieceList = line.Skip(2).TakeBy(3)
                 .Select(_ => new string(_.ToArray()))
-                .Select(_ => CsaUtil.StrToBoardPiece(_))
+                .Select(_ => CsaUtil.StrToPiece(_))
                 .ToList();
             if (pieceList.Count != Board.BoardSize ||
                 pieceList.Any(_ => _ == null))

@@ -182,7 +182,7 @@ namespace Ragnarok.Shogi
             result.Append(ToString(move.RankMoveType));
             result.Append(ToString(move.ActionType));
 
-            if (move.SameAsOld)
+            if (move.SameAsPrev)
             {
                 var hasSpace = (
                     (style != MoveTextStyle.Simple) &&

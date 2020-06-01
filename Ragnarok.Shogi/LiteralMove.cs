@@ -110,7 +110,7 @@ namespace Ragnarok.Shogi
         /// 同○○かどうかを取得または設定します。
         /// </summary>
         [DataMember(Order = 2, IsRequired = true)]
-        public bool SameAsOld
+        public bool SameAsPrev
         {
             get;
             set;
@@ -251,7 +251,7 @@ namespace Ragnarok.Shogi
                 return true;
             }
 
-            if (!SameAsOld)
+            if (!SameAsPrev)
             {
                 if (File < 1 || 9 < File)
                 {
@@ -287,7 +287,7 @@ namespace Ragnarok.Shogi
             // 竜打つ、同銀打ち、銀上打つ、などは存在しません。
             if (ActionType == ActionType.Drop &&
                 (Piece.IsPromoted() ||
-                 SameAsOld ||
+                 SameAsPrev ||
                  RelFileType != RelFileType.None ||
                  RankMoveType != RankMoveType.None))
             {
@@ -355,13 +355,13 @@ namespace Ragnarok.Shogi
                 return false;
             }
 
-            if (SameAsOld != other.SameAsOld)
+            if (SameAsPrev != other.SameAsPrev)
             {
                 return false;
             }
 
             // 指し手が同○○でないときだけ、段・列の判定をします。
-            if (!SameAsOld &&
+            if (!SameAsPrev &&
                 (File != other.File || Rank != other.Rank))
             {
                 return false;
@@ -398,14 +398,14 @@ namespace Ragnarok.Shogi
             {
                 var baseHashCode =
                     Colour.GetHashCode() ^
-                    SameAsOld.GetHashCode() ^
+                    SameAsPrev.GetHashCode() ^
                     RelFileType.GetHashCode() ^
                     RankMoveType.GetHashCode() ^
                     ActionType.GetHashCode() ^
                     Piece.GetHashCode() ^
                     SrcSquare.GetHashCode();
 
-                if (SameAsOld)
+                if (SameAsPrev)
                 {
                     return baseHashCode;
                 }

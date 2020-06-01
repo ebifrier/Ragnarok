@@ -169,12 +169,12 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 成りを含まない駒をすべて列挙します。
         /// </summary>
-        public static IEnumerable<Piece> RawTypes(Colour? color = null)
+        public static IEnumerable<Piece> RawTypes(Colour colour = Colour.None)
         {
             for (var piece = Piece.Pawn; piece <= Piece.King; ++piece)
             {
-                yield return (color != null
-                    ? piece.Modify(color.Value)
+                yield return (colour != Colour.None
+                    ? piece.Modify(colour)
                     : piece);
             }
         }
@@ -182,11 +182,13 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 成りを含む駒をすべて列挙します。
         /// </summary>
-        public static IEnumerable<Piece> PieceTypes()
+        public static IEnumerable<Piece> PieceTypes(Colour colour = Colour.None)
         {
             for (var piece = Piece.Pawn; piece < Piece.Queen; ++piece)
             {
-                yield return piece;
+                yield return (colour != Colour.None
+                    ? piece.Modify(colour)
+                    : piece);
             }
         }
 
@@ -219,9 +221,10 @@ namespace Ragnarok.Shogi
         /// </summary>
         public static Piece Modify(this Piece piece, Colour colour)
         {
-            return (colour == Colour.White
-                ? piece | Piece.White
-                : piece & ~Piece.White);
+            return (
+                colour == Colour.Black ? piece & ~Piece.White :
+                colour == Colour.White ? piece | Piece.White :
+                piece);
         }
 
         /// <summary>

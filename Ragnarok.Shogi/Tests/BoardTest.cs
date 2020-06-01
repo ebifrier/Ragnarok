@@ -18,44 +18,40 @@ namespace Ragnarok.Shogi.Tests
         private void CanMoveTo(Board board, Move move,
                                List<Tuple<Square, bool>> availables)
         {
-            for (var file = 1; file <= Board.BoardSize; ++file)
+            foreach (var sq in Board.Squares())
             {
-                for (var rank = 1; rank <= Board.BoardSize; ++rank)
+                var avail = availables.FirstOrDefault(_ => _.Item1 == sq);
+
+                MethodUtil.SetPropertyValue(move, nameof(Move.DstSquare), sq);
+                if (avail != null)
                 {
-                    var sq = SquareUtil.Create(file, rank);
-                    var avail = availables.FirstOrDefault(_ => _.Item1 == sq);
-
-                    MethodUtil.SetPropertyValue(move, "DstSquare", sq);
-                    if (avail != null)
+                    if (avail.Item2)
                     {
-                        if (avail.Item2)
-                        {
-                            // 成りが必須の場合
-                            move.IsPromote = false;
-                            Assert.False(board.CanMove(move));
-
-                            move.IsPromote = true;
-                            Assert.True(board.CanMove(move));
-                        }
-                        else
-                        {
-                            // 成りが必須でない場合
-                            move.IsPromote = false;
-                            Assert.True(board.CanMove(move));
-
-                            move.IsPromote = true;
-                            Assert.AreEqual(Board.CanPromote(move), board.CanMove(move));
-                        }
-                    }
-                    else
-                    {
-                        // そもそも移動できる場所ではない
+                        // 成りが必須の場合
                         move.IsPromote = false;
                         Assert.False(board.CanMove(move));
 
                         move.IsPromote = true;
-                        Assert.False(board.CanMove(move));
+                        Assert.True(board.CanMove(move));
                     }
+                    else
+                    {
+                        // 成りが必須でない場合
+                        move.IsPromote = false;
+                        Assert.True(board.CanMove(move));
+
+                        move.IsPromote = true;
+                        Assert.AreEqual(Board.CanPromote(move), board.CanMove(move));
+                    }
+                }
+                else
+                {
+                    // そもそも移動できる場所ではない
+                    move.IsPromote = false;
+                    Assert.False(board.CanMove(move));
+
+                    move.IsPromote = true;
+                    Assert.False(board.CanMove(move));
                 }
             }
         }
@@ -96,8 +92,9 @@ namespace Ragnarok.Shogi.Tests
             var board = MakeBoard1(Colour.Black);
 
             var move = Move.CreateMove(
-                Colour.Black, SquareUtil.Create(8, 3), SquareUtil.Create(8, 2),
-                Piece.Lance, true);
+                Piece.BlackLance,
+                Square.SQ83, Square.SQ82,
+                true);
             Assert.True(board.CanMove(move));
 
             // 駒が設定されてないと動けません。
@@ -106,14 +103,14 @@ namespace Ragnarok.Shogi.Tests
             MethodUtil.SetPropertyValue(move, "MovePiece", Piece.Lance);
 
             // 84の駒は移動できません。
-            MethodUtil.SetPropertyValue(move, "SrcSquare", SquareUtil.Create(8, 4));
+            MethodUtil.SetPropertyValue(move, "SrcSquare", Square.SQ84);
             Assert.False(board.CanMove(move));
-            MethodUtil.SetPropertyValue(move, "SrcSquare", SquareUtil.Create(8, 3));
+            MethodUtil.SetPropertyValue(move, "SrcSquare", Square.SQ83);
 
             CanMoveTo(board, move, new List<Tuple<Square, bool>>
             {
-                Tuple.Create(SquareUtil.Create(8, 2), false),
-                Tuple.Create(SquareUtil.Create(8, 1), true),
+                Tuple.Create(Square.SQ82, false),
+                Tuple.Create(Square.SQ81, true),
             });
         }
 
@@ -123,18 +120,18 @@ namespace Ragnarok.Shogi.Tests
             var board = MakeBoard1(Colour.White);
 
             var move = Move.CreateMove(
-                Colour.White, SquareUtil.Create(9, 7), SquareUtil.Create(9, 8),
-                Piece.Pawn, true);
+                Piece.WhitePawn, Square.SQ97, Square.SQ98,
+                true);
             Assert.True(board.CanMove(move));
 
             // 84の駒は移動できません。
-            MethodUtil.SetPropertyValue(move, "SrcSquare", SquareUtil.Create(8, 4));
+            MethodUtil.SetPropertyValue(move, "SrcSquare", Square.SQ84);
             Assert.False(board.CanMove(move));
-            MethodUtil.SetPropertyValue(move, "SrcSquare", SquareUtil.Create(9, 7));
+            MethodUtil.SetPropertyValue(move, "SrcSquare", Square.SQ97);
 
             CanMoveTo(board, move, new List<Tuple<Square, bool>>
             {
-                Tuple.Create(SquareUtil.Create(9, 8), false),
+                Tuple.Create(Square.SQ98, false),
             });
         }
 
@@ -144,23 +141,23 @@ namespace Ragnarok.Shogi.Tests
             var board = MakeBoard1(Colour.Black);
 
             var list = board
-                .ListupMoves(Piece.Dragon, Colour.Black, SquareUtil.Create(4, 1))
+                .ListupMoves(Piece.BlackDragon, Square.SQ41)
                 .ToList();
             Assert.AreEqual(1, list.Count);
-            Assert.AreEqual(SquareUtil.Create(7, 1), list[0].SrcSquare);
+            Assert.AreEqual(Square.SQ71, list[0].SrcSquare);
 
             list = board
-                .ListupMoves(Piece.Dragon, Colour.Black, SquareUtil.Create(3, 2))
+                .ListupMoves(Piece.BlackDragon, Square.SQ32)
                 .ToList();
             Assert.AreEqual(0, list.Count);
 
             list = board
-                .ListupMoves(Piece.Horse, Colour.Black, SquareUtil.Create(4, 7))
+                .ListupMoves(Piece.BlackHorse, Square.SQ47)
                 .ToList();
             Assert.AreEqual(2, list.Count);
 
             list = board
-                .ListupMoves(Piece.Gold, Colour.Black, SquareUtil.Create(5, 7))
+                .ListupMoves(Piece.BlackGold, Square.SQ57)
                 .ToList();
             Assert.AreEqual(2, list.Count);
         }
@@ -171,7 +168,7 @@ namespace Ragnarok.Shogi.Tests
             var board = MakeBoard1(Colour.White);
 
             var list = board
-                .ListupMoves(Piece.Silver, Colour.White, SquareUtil.Create(6, 5))
+                .ListupMoves(Piece.WhiteSilver, Square.SQ65)
                 .ToList();
             Assert.AreEqual(2, list.Count);
         }

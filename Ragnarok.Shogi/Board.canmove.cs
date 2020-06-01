@@ -282,15 +282,14 @@ namespace Ragnarok.Shogi
                 return new Square[0];
             }
 
-            return GetCanMoveRange(piece.GetPieceType(), square, colour);
+            return GetCanMoveRange(piece, square);
         }
 
         /// <summary>
         /// <paramref name="square"/>にある駒が移動できる
         /// 可能性のある位置をすべて列挙します。
         /// </summary>
-        private IEnumerable<Square> GetCanMoveRange(Piece piece, Square square,
-                                                    Colour colour)
+        private IEnumerable<Square> GetCanMoveRange(Piece piece, Square square)
         {
             if (!square.Validate())
             {
@@ -303,6 +302,7 @@ namespace Ragnarok.Shogi
             }
 
             IEnumerable<Square> list;
+            var colour = piece.GetColour();
             var file = square.GetFile();
             var rank = square.GetRank();
 

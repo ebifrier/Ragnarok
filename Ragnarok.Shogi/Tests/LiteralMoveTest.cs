@@ -32,7 +32,7 @@ namespace Ragnarok.Shogi.Tests
                     RankMoveType = rm,
                     RelFileType = rf,
                     ActionType = at,
-                    SameAsOld = same,
+                    SameAsPrev = same,
                 }
                 where move.Validate()
                 select move;

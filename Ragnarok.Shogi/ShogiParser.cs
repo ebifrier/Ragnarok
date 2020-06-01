@@ -446,8 +446,8 @@ namespace Ragnarok.Shogi
                 // 「同～」であるかどうかを特定します。
                 // ３同銀などの指し手を受理しないように、数字があれば、
                 // ちゃんと二つとも設定されているか調べます。
-                move.SameAsOld = m.Groups[4].Success;
-                if (!move.SameAsOld || file != null || rank != null)
+                move.SameAsPrev = m.Groups[4].Success;
+                if (!move.SameAsPrev || file != null || rank != null)
                 {
                     // 筋
                     if (file == null)

@@ -343,7 +343,7 @@ namespace Ragnarok.Shogi
                 return null;
             }
 
-            if (move.SameAsOld && board.PrevMovedSquare.IsEmpty())
+            if (move.SameAsPrev && board.PrevMovedSquare.IsEmpty())
             {
                 return null;
             }
@@ -357,7 +357,7 @@ namespace Ragnarok.Shogi
             // 移動後の位置を取得します。
             // 同○○なら前回の位置を使います。
             var dstSquare = move.DstSquare;
-            if (move.SameAsOld)
+            if (move.SameAsPrev)
             {
                 move = move.Clone();
                 move.DstSquare = board.PrevMovedSquare;
@@ -366,7 +366,7 @@ namespace Ragnarok.Shogi
             }
 
             var boardMoveList = board.ListupMoves(
-                move.Piece, colour, dstSquare)
+                move.Piece.Modify(colour), dstSquare)
                 .ToList();
 
             // 複数の指し手の中から適切な一つを選びます。
@@ -440,7 +440,7 @@ namespace Ragnarok.Shogi
                     referenceMove.ActionType == ActionType.Promote ?
                     referenceMove.ActionType :
                     ActionType.None),
-                SameAsOld = (board.PrevMovedSquare == nextPos),
+                SameAsPrev = (board.PrevMovedSquare == nextPos),
             };
 
             // 移動元情報を使う場合は、これで終わりです。
@@ -670,17 +670,14 @@ namespace Ragnarok.Shogi
                 };
             }
 
-            var fromPiece = (
-                move.ActionType == ActionType.Drop ?
-                move.DropPieceType : move.MovePiece);
+            var fromPiece = move.MovePiece;
             if (fromPiece.IsNone())
             {
                 return null;
             }
 
             // 駒の種類と最終位置から、あり得る指し手をすべて検索します。
-            var boardMoveList = board.ListupMoves(
-                fromPiece, move.Colour, move.DstSquare)
+            var boardMoveList = board.ListupMoves(fromPiece, move.DstSquare)
                 .ToList();
 
             return FilterLiteralFromMove(

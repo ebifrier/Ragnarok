@@ -33,13 +33,13 @@ namespace Ragnarok.Shogi.Tests
                 ShogiParser.ParseMove("同角", true),
                 new LiteralMove
                 {
-                    SameAsOld = true,
+                    SameAsPrev = true,
                     Piece = Piece.Bishop,
                 });
 
             var gin68 = new LiteralMove
             {
-                DstSquare = SquareUtil.Create(6, 8),
+                DstSquare = Square.SQ68,
                 Piece = Piece.Silver,
             };
             Assert.AreEqual(
@@ -56,14 +56,14 @@ namespace Ragnarok.Shogi.Tests
                 ShogiParser.ParseMove("４６歩", true),
                 new LiteralMove
                 {
-                    DstSquare = SquareUtil.Create(4, 6),
+                    DstSquare = Square.SQ46,
                     Piece = Piece.Pawn,
                 });
             Assert.AreEqual(
                 ShogiParser.ParseMove("３２金", true),
                 new LiteralMove
                 {
-                    DstSquare = SquareUtil.Create(3, 2),
+                    DstSquare = Square.SQ32,
                     Piece = Piece.Gold,
                 });
 
@@ -91,7 +91,7 @@ namespace Ragnarok.Shogi.Tests
                 ShogiParser.ParseMove("１３馬右", true),
                 new LiteralMove
                 {
-                    DstSquare = SquareUtil.Create(1, 3),
+                    DstSquare = Square.SQ13,
                     Piece = Piece.Horse,
                     RelFileType = RelFileType.Right,
                 });
@@ -99,7 +99,7 @@ namespace Ragnarok.Shogi.Tests
                 ShogiParser.ParseMove("１３馬左引", true),
                 new LiteralMove
                 {
-                    DstSquare = SquareUtil.Create(1, 3),
+                    DstSquare = Square.SQ13,
                     Piece = Piece.Horse,
                     RankMoveType = RankMoveType.Back,
                     RelFileType = RelFileType.Left,
@@ -108,7 +108,7 @@ namespace Ragnarok.Shogi.Tests
                 ShogiParser.ParseMove("１３歩不成", true),
                 new LiteralMove
                 {
-                    DstSquare = SquareUtil.Create(1, 3),
+                    DstSquare = Square.SQ13,
                     Piece = Piece.Pawn,
                     ActionType = ActionType.Unpromote,
                 });
@@ -116,7 +116,7 @@ namespace Ragnarok.Shogi.Tests
                 ShogiParser.ParseMove("５５馬", true),
                 new LiteralMove
                 {
-                    DstSquare = SquareUtil.Create(5, 5),
+                    DstSquare = Square.SQ55,
                     Piece = Piece.Horse,
                 });
              Assert.AreEqual(
@@ -124,7 +124,7 @@ namespace Ragnarok.Shogi.Tests
                 new LiteralMove
                 {
                     Piece = Piece.Bishop,
-                    DstSquare = SquareUtil.Create(6, 2),
+                    DstSquare = Square.SQ62,
                     RankMoveType = RankMoveType.Up,
                     Colour = Colour.White,
                 });
@@ -146,21 +146,21 @@ namespace Ragnarok.Shogi.Tests
             Assert.AreEqual(
                 new LiteralMove
                 {
-                    SameAsOld = true,
+                    SameAsPrev = true,
                     Piece = Piece.Pawn,
                 },
                 ShogiParser.ParseMove("同歩", true));
             Assert.AreEqual(
                 new LiteralMove
                 {
-                    SameAsOld = true,
+                    SameAsPrev = true,
                     Piece = Piece.Dragon,
                 },
                 ShogiParser.ParseMove("同　竜", true));
             Assert.AreEqual(
                 new LiteralMove
                 {
-                    SameAsOld = true,
+                    SameAsPrev = true,
                     Piece = Piece.ProSilver,
                     RankMoveType = RankMoveType.Up,
                     RelFileType = RelFileType.Left,

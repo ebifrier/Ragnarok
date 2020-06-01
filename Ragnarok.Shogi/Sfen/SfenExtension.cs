@@ -51,8 +51,8 @@ namespace Ragnarok.Shogi.Sfen
 
             if (move.ActionType == ActionType.Drop)
             {
-                // 駒打ちの場合
-                var piece = SfenUtil.PieceToSfen(move.DropPieceType);
+                // 駒打ちの場合（駒は常に大文字で出力します）
+                var piece = SfenUtil.PieceToSfen(move.DropPiece.GetRawType());
 
                 return $"{piece}*{dstFile}{dstRank}";
             }
@@ -108,7 +108,8 @@ namespace Ragnarok.Shogi.Sfen
                 var dstRank = (sfen[3] - 'a') + 1;
 
                 return Move.CreateDrop(
-                    board.Turn, SquareUtil.Create(dstFile, dstRank), dropPieceType);
+                    dropPieceType.Modify(board.Turn),
+                    SquareUtil.Create(dstFile, dstRank));
             }
             else
             {
@@ -133,12 +134,11 @@ namespace Ragnarok.Shogi.Sfen
 
                 var promote = (sfen.Length > 4 && sfen[4] == '+');
                 return Move.CreateMove(
-                    board.Turn,
+                    piece.Modify(board.Turn),
                     SquareUtil.Create(srcFile, srcRank),
                     SquareUtil.Create(dstFile, dstRank),
-                    piece.GetPieceType(),
                     promote,
-                    board[dstFile, dstRank].GetPieceType());
+                    board[dstFile, dstRank]);
             }
         }
 

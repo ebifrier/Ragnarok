@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using NUnit.Framework;
 
 namespace Ragnarok.Shogi.Tests
@@ -34,11 +33,8 @@ namespace Ragnarok.Shogi.Tests
                 "手数＝130";
             var board = Board.ParseBod(bod);
 
-            var move = Move.CreateDrop(
-                Colour.Black,
-                SquareUtil.Create(2, 7),
-                Piece.Pawn);
-
+            var move = Move.CreateDrop(Piece.BlackPawn, Square.SQ27);
+            Assert.True(board.IsPawnDropCheckMate(move.Colour, move.DstSquare));
             Assert.False(board.CanMove(move));
             Assert.False(board.DoMove(move));
         }
@@ -68,11 +64,8 @@ namespace Ragnarok.Shogi.Tests
                 "後手番\n";
             var board = Board.ParseBod(bod);
 
-            var move = Move.CreateDrop(
-                Colour.White,
-                SquareUtil.Create(9, 5),
-                Piece.Pawn);
-
+            var move = Move.CreateDrop(Piece.WhitePawn, Square.SQ95);
+            Assert.True(board.IsPawnDropCheckMate(move.Colour, move.DstSquare));
             Assert.False(board.CanMove(move));
             Assert.False(board.DoMove(move));
         }
@@ -98,11 +91,8 @@ namespace Ragnarok.Shogi.Tests
                 "手数＝122";
             var board = Board.ParseBod(bod);
 
-            var move = Move.CreateDrop(
-                Colour.Black,
-                SquareUtil.Create(3, 3),
-                Piece.Pawn);
-
+            var move = Move.CreateDrop(Piece.BlackPawn, Square.SQ33);
+            Assert.False(board.IsPawnDropCheckMate(move.Colour, move.DstSquare));
             Assert.True(board.CanMove(move));
             Assert.True(board.DoMove(move));
         }

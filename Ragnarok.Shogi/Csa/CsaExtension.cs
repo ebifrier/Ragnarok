@@ -92,17 +92,14 @@ namespace Ragnarok.Shogi.Csa
                 sb.Append("00");
             }
 
-            var piece = (
-                move.ActionType == ActionType.Drop ?
-                move.DropPieceType :
-                move.MovePiece);
+            var piece = move.MovePiece;
             if (move.IsPromote)
             {
                 // 駒を成った場合は、なった後の駒を出力します。
                 piece = piece.Promote();
             }
 
-            sb.Append(CsaUtil.PieceToStr(piece));
+            sb.Append(CsaUtil.PieceTypeToStr(piece));
 
             return sb.ToString();
         }
@@ -221,7 +218,7 @@ namespace Ragnarok.Shogi.Csa
                 : SquareUtil.Create(dstFile, dstRank));
 
             // 駒
-            var nullablePiece = CsaUtil.StrToPiece(m.Groups[6].Value);
+            var nullablePiece = CsaUtil.StrToPieceType(m.Groups[6].Value);
             if (nullablePiece == null)
             {
                 return null;
@@ -231,7 +228,7 @@ namespace Ragnarok.Shogi.Csa
             if (srcSquare.IsEmpty())
             {
                 // 駒打ちの場合
-                return Move.CreateDrop(side, dstSquare, piece.GetRawType());
+                return Move.CreateDrop(piece.Modify(side), dstSquare);
             }
             else
             {
@@ -249,7 +246,8 @@ namespace Ragnarok.Shogi.Csa
                     piece = piece.GetRawType();
                 }
 
-                return Move.CreateMove(side, srcSquare, dstSquare, piece, isPromote);
+                return Move.CreateMove(
+                    piece.Modify(side), srcSquare, dstSquare, isPromote);
             }
         }
 
