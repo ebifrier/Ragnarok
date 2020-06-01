@@ -222,6 +222,7 @@ namespace Ragnarok.Shogi
         public static Piece Modify(this Piece piece, Colour colour)
         {
             return (
+                piece == Piece.None ? piece :
                 colour == Colour.Black ? piece & ~Piece.White :
                 colour == Colour.White ? piece | Piece.White :
                 piece);

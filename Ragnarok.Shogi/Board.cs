@@ -311,10 +311,27 @@ namespace Ragnarok.Shogi
         /// <paramref name="dstSquare"/> にある駒を取得します。
         /// </summary>
         [SuppressMessage("Design", "CA1043:インデクサーには整数または文字列引数を使用します")]
-        public Piece this[Square square]
+        public Piece this[Square sq]
         {
-            get { return this[square.GetFile(), square.GetRank()]; }
-            set { this[square.GetFile(), square.GetRank()] = value; }
+            get
+            {
+                if (!sq.Validate())
+                {
+                    return Piece.None;
+                }
+
+                // Squareの計算方法と合わせています。
+                return this.board[(int)sq - 1];
+            }
+            set
+            {
+                if (!sq.Validate())
+                {
+                    throw new ArgumentException("fileかrankが正しくありません。");
+                }
+
+                this.board[(int)sq - 1] = value;
+            }
         }
 
         /// <summary>
@@ -329,9 +346,8 @@ namespace Ragnarok.Shogi
                     return Piece.None;
                 }
 
-                var file2 = BoardSize - file;
-                var rank2 = rank - 1;
-                return this.board[rank2 * 9 + file2];
+                // Squareの計算方法と合わせています。
+                return this.board[(rank - 1) * BoardSize + (file - 1)];
             }
             set
             {
@@ -340,9 +356,7 @@ namespace Ragnarok.Shogi
                     throw new ArgumentException("fileかrankが正しくありません。");
                 }
 
-                var file2 = BoardSize - file;
-                var rank2 = rank - 1;
-                this.board[rank2 * 9 + file2] = value;
+                this.board[(rank - 1) * BoardSize + (file - 1)] = value;
             }
         }
 
@@ -644,6 +658,43 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
+        /// 指定の駒が存在するマスをすべて列挙します。
+        /// </summary>
+        public IEnumerable<Square> PieceSquares(Piece pieceType, Colour turn,
+                                                int exceptRank = 0)
+        {
+            return PieceSquares(pieceType.Modify(turn), exceptRank);
+        }
+
+        /// <summary>
+        /// 指定の駒が存在するマスをすべて列挙します。
+        /// </summary>
+        /// <param name="exceptRank">
+        /// 駒打ち可能なマスを列挙するときに使います。
+        /// <paramref name="exceptRank"/>が1であれば歩と香車が打てる範囲を
+        /// <paramref name="exceptRank"/>が2であれば桂馬が打てる範囲を
+        /// それぞれ返します。
+        /// </param>
+        public IEnumerable<Square> PieceSquares(Piece piece, int exceptRank = 0)
+        {
+            var colour = piece.GetColour();
+            var startRank = 1 + (colour != Colour.White ? exceptRank : 0);
+            var endRank = BoardSize - (colour != Colour.White ? 0 : exceptRank);
+
+            for (var rank = startRank; rank <= endRank; ++rank)
+            {
+                for (var file = 1; file <= BoardSize; ++file)
+                {
+                    var sq = SquareUtil.Create(file, rank);
+                    if (this.board[(int)sq - 1] == piece)
+                    {
+                        yield return sq;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
         /// その指し手が実際に実現できるか調べます。
         /// </summary>
         public bool CanMove(Move move, MoveFlags flags = MoveFlags.CanMoveDefault)
@@ -794,8 +845,7 @@ namespace Ragnarok.Shogi
             if (!EnumUtil.HasFlag(flags, MoveFlags.CheckOnly))
             {
                 // 駒を盤面に置き、持ち駒から駒を減らします。
-                this[move.DstSquare] = PieceUtil.Modify(
-                    move.DropPiece, move.Colour);
+                this[move.DstSquare] = move.DropPiece;
 
                 DecHand(dropPiece);
                 MoveDone(move);
@@ -976,58 +1026,44 @@ namespace Ragnarok.Shogi
                 throw new ArgumentNullException(nameof(move));
             }
 
-            return CanPromote(move.MovePiece, move.Colour,
+            return CanPromote(move.MovePiece,
                               move.DstSquare, move.SrcSquare);
         }
 
         /// <summary>
         /// 駒が成れるか調べます。
         /// </summary>
-        public static bool CanPromote(Piece piece, Colour colour,
+        public static bool CanPromote(Piece piece,
                                       Square dstSquare, Square srcSquare)
         {
-            if (!dstSquare.Validate())
+            // 既に成っている駒を成ることはできません。
+            if (piece.IsPromoted())
             {
                 return false;
             }
 
-            // 駒の移動でない場合は成れません。
-            if (!srcSquare.Validate())
+            if (piece.GetColour() != Colour.White)
             {
-                return false;
+                // 1,2,3の段の時だけ、成ることができます。
+                if (srcSquare.GetRank() > 3 && dstSquare.GetRank() > 3)
+                {
+                    return false;
+                }
             }
-
-            // 既に成っている駒を再度成ることはできません。
-            if (piece.IsNone() || piece.IsPromoted())
+            else
             {
-                return false;
-            }
-
-            var srcRank = srcSquare.GetRank();
-            var dstRank = dstSquare.GetRank();
-
-            if (colour == Colour.White)
-            {
-                srcRank = (BoardSize + 1) - srcRank;
-                dstRank = (BoardSize + 1) - dstRank;
-            }
-
-            // 1,2,3の段の時だけ、成ることができます。
-            if (srcRank > 3 && dstRank > 3)
-            {
-                return false;
+                // 7,8,9の段の時だけ、成ることができます。
+                if (srcSquare.GetRank() < 7 && dstSquare.GetRank() < 7)
+                {
+                    return false;
+                }
             }
 
             // 金玉は成れません。
             var pieceType = piece.GetPieceType();
-            if (pieceType == Piece.None ||
-                pieceType == Piece.King ||
-                pieceType == Piece.Gold)
-            {
-                return false;
-            }
-
-            return true;
+            return (
+                pieceType != Piece.King &&
+                pieceType != Piece.Gold);
         }
 
         /// <summary>
@@ -1050,30 +1086,17 @@ namespace Ragnarok.Shogi
         /// </summary>
         public static bool IsPromoteForce(Piece piece, Square dstSquare)
         {
-            if (!dstSquare.Validate())
+            switch (piece.GetPieceType())
             {
-                return false;
-            }
-
-            // 駒の移動元に自分の駒がなければダメ
-            if (piece.IsNone() || piece.IsPromoted())
-            {
-                return false;
-            }
-
-            var pieceType = piece.GetPieceType();
-            var normalizedRank = (
-                piece.GetColour() == Colour.White ?
-                (BoardSize + 1) - dstSquare.GetRank() :
-                dstSquare.GetRank());
-
-            if (pieceType == Piece.Knight)
-            {
-                return (normalizedRank <= 2);
-            }
-            else if (pieceType == Piece.Lance || pieceType == Piece.Pawn)
-            {
-                return (normalizedRank == 1);
+                case Piece.Knight:
+                    return (piece.GetColour() != Colour.White
+                        ? dstSquare.GetRank() <= 2
+                        : dstSquare.GetRank() >= 8);
+                case Piece.Lance:
+                case Piece.Pawn:
+                    return (piece.GetColour() != Colour.White
+                        ? dstSquare.GetRank() <= 1
+                        : dstSquare.GetRank() >= 9);
             }
 
             return false;
@@ -1446,8 +1469,6 @@ namespace Ragnarok.Shogi
         /// </summary>
         public Board(bool isInitPiece)
         {
-            this.board = new Piece[81];
-
             if (isInitPiece)
             {
                 this[1, 9] = Piece.BlackLance;
