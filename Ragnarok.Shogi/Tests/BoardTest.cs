@@ -136,6 +136,52 @@ namespace Ragnarok.Shogi.Tests
         }
 
         [Test()]
+        public void HashTest()
+        {
+            /*
+            後手の持駒：飛　桂　香　歩三
+              ９ ８ ７ ６ ５ ４ ３ ２ １
+            +---------------------------+
+            |v香 ・ 龍 ・ ・ ・ ・ ・ ・|一
+            | ・ ・ ・ ・v玉 ・ ・ ・ ・|二
+            | ・ 香v歩 ・v金 ・v桂 ・ ・|三
+            | ・ 歩v銀v銀v金 ・ ・ 銀 ・|四
+            | 歩 ・ ・ ・ ・ 歩 歩 ・ ・|五
+            | 香 ・ 歩 ・ 馬 ・ ・ ・v歩|六
+            |v歩 ・ 桂 金 ・ ・ ・ ・ ・|七
+            | ・ 玉 銀 金 ・ ・ 馬 ・ ・|八
+            | ・ ・ ・ ・ ・ ・ ・ ・ ・|九
+            +---------------------------+
+            先手の持駒：桂　歩七
+            */
+
+            var sfen =
+                "l1+R6/4k4/1Lp1g1n2/1Pssg2S1/P4PP2/L1P1+B3p/p1NG5/1KSG2+B2/9" +
+                " b N7Prnl3p 1";
+            var board1 = Board.ParseSfen(sfen);
+            var board2 = Board.ParseSfen(sfen);
+
+            Assert.AreEqual(board1.HashValue, board2.HashValue);
+            Assert.AreNotSame(board1.HashValue, (new Board()).HashValue);
+
+            board2.SetHand(Piece.BlackPawn, 6);
+            Assert.AreNotSame(board1.HashValue, board2.HashValue);
+
+            board2 = board1.Clone();
+            board2.SetHand(Piece.BlackKnight, 0);
+            board2.SetHand(Piece.WhiteKnight, 2);
+            Assert.AreNotSame(board1.HashValue, board2.HashValue);
+
+            board2 = board1.Clone();
+            board2[9, 1] = board2[9, 1].FlipColor();
+            Assert.AreNotSame(board1.HashValue, board2.HashValue);
+
+            board2 = board1.Clone();
+            board2[7, 6] = board2[7, 6].FlipColor();
+            Assert.AreNotSame(board1.HashValue, board2.HashValue);
+        }
+
+        [Test()]
         public void ListupBlackTest()
         {
             var board = MakeBoard1(Colour.Black);

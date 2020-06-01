@@ -121,6 +121,8 @@ namespace Ragnarok.Shogi
         BlackHorse = Horse,
         [EnumMember()]
         BlackDragon = Dragon,
+        [EnumMember()]
+        BlackQueen = Queen,
 
         [EnumMember()]
         WhitePawn = Pawn | White,
@@ -150,6 +152,8 @@ namespace Ragnarok.Shogi
         WhiteHorse = Horse | White,
         [EnumMember()]
         WhiteDragon = Dragon | White,
+        [EnumMember()]
+        WhiteQueen = Queen | White,
 
         /// <summary>
         /// 成フラグ

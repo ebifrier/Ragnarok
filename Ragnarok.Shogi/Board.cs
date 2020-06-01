@@ -95,8 +95,8 @@ namespace Ragnarok.Shogi
             }
         }
 
-        private static long[,,] zobrist = new long[SquareCount, 9 * 2, 2];
-        private static long[,] zobristHand = new long[9 * 2, 2];
+        private static long[] zobrist = new long[
+            (SquareCount + 1) * (int)Piece.WhiteQueen];
         private static long zobristTurn;
 
         /// <summary>
@@ -132,16 +132,13 @@ namespace Ragnarok.Shogi
             var random = new Random();
 
             // 駒の成りと不成りも入れる
-            for (var piece = 0; piece < 9 * 2; ++piece)
+            foreach (var piece in PieceUtil.BlackWhitePieces())
             {
                 for (var sqi = 0; sqi < SquareCount; ++sqi)
                 {
-                    zobrist[sqi, piece, 0] = (long)(random.NextDouble() * 0xfffffffffffffe);
-                    zobrist[sqi, piece, 1] = (long)(random.NextDouble() * 0xfffffffffffffe);
+                    var index = sqi * (int)Piece.WhiteQueen + (int)piece;
+                    zobrist[index] = (long)(random.NextDouble() * 0xfffffffffffffe);
                 }
-
-                zobristHand[piece, 0] = (long)(random.NextDouble() * 0xfffffffffffffe);
-                zobristHand[piece, 1] = (long)(random.NextDouble() * 0xfffffffffffffe);
             }
 
             zobristTurn = 1;
@@ -156,10 +153,10 @@ namespace Ragnarok.Shogi
 
             foreach (var sq in Squares())
             {
-                var pc = this[sq];
-                if (pc.IsNone()) continue;
+                var piece = this[sq];
+                if (piece.IsNone()) continue;
 
-                hashValue += zobrist[(int)sq, (int)pc, pc.GetColour().GetIndex()];
+                hashValue += zobrist[(int)sq * (int)Piece.WhiteQueen + (int)piece];
             }
 
             foreach (var piece in PieceUtil.PieceTypes())
@@ -167,7 +164,7 @@ namespace Ragnarok.Shogi
                 var count = GetHand(piece);
                 while (count-- > 0)
                 {
-                    hashValue += zobristHand[(int)piece, piece.GetColour().GetIndex()];
+                    hashValue += zobrist[(int)piece];
                 }
             }
 
@@ -719,9 +716,14 @@ namespace Ragnarok.Shogi
         /// </summary>
         private bool CheckAndMakeMove(Move move, MoveFlags flags)
         {
-            if (move == null || !move.Validate())
+            if (move == null)
             {
                 throw new ArgumentNullException(nameof(move));
+            }
+
+            if (!move.Validate())
+            {
+                return false;
             }
 
             // 投了などの特殊な指し手がある場合はゲームが既に終了しているので
