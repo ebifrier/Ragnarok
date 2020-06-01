@@ -207,7 +207,7 @@ namespace Ragnarok.Shogi
             }
 
             // 駒落ちの場合、最初に指すのは上手=後手となります。
-            board.Turn = BWType.White;
+            board.Turn = Colour.White;
             return board;
         }
     }

@@ -46,7 +46,7 @@ namespace Ragnarok.Shogi.Csa
 
             var comp = new Board();
             var comp2 = new Board();
-            comp2.Turn = BWType.White;
+            comp2.Turn = Colour.White;
 
             if (Board.BoardEquals(board, comp))
             {
@@ -58,8 +58,8 @@ namespace Ragnarok.Shogi.Csa
             }
             else
             {
-                var bhand = HandToCsa(board, BWType.Black);
-                var whand = HandToCsa(board, BWType.White);
+                var bhand = HandToCsa(board, Colour.Black);
+                var whand = HandToCsa(board, Colour.White);
 
                 if (!string.IsNullOrEmpty(bhand))
                 {
@@ -83,15 +83,15 @@ namespace Ragnarok.Shogi.Csa
         /// <summary>
         /// 手番をCSA形式に変換します。
         /// </summary>
-        private static string TurnToCsa(BWType turn)
+        private static string TurnToCsa(Colour turn)
         {
-            if (turn == BWType.None)
+            if (turn == Colour.None)
             {
                 throw new CsaException(
                     "局面の手番が正しくありません。");
             }
 
-            return (turn == BWType.Black ? "+" : "-");
+            return (turn == Colour.Black ? "+" : "-");
         }
 
         /// <summary>
@@ -126,7 +126,7 @@ namespace Ragnarok.Shogi.Csa
         /// <example>
         /// P+00KIOOFU
         /// </example>
-        private static string HandToCsa(Board board, BWType turn)
+        private static string HandToCsa(Board board, Colour turn)
         {
             var handList =
                 from rawType in PieceUtil.RawTypes()
@@ -143,7 +143,7 @@ namespace Ragnarok.Shogi.Csa
             }
             else
             {
-                var turnStr = (turn == BWType.Black ? "+" : "-");
+                var turnStr = (turn == Colour.Black ? "+" : "-");
                 var arrayStr = string.Join("", array);
                 return $"P{turnStr}{arrayStr}";
             }

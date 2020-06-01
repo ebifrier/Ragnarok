@@ -217,7 +217,7 @@ namespace Ragnarok.Shogi
         /// 手番を取得または設定します。
         /// </summary>
         [DataMember(Order = 10, IsRequired = true)]
-        public BWType BWType
+        public Colour Colour
         {
             get;
             set; 
@@ -350,7 +350,7 @@ namespace Ragnarok.Shogi
                 return false;
             }
 
-            if (BWType != other.BWType)
+            if (Colour != other.Colour)
             {
                 return false;
             }
@@ -397,7 +397,7 @@ namespace Ragnarok.Shogi
             else
             {
                 var baseHashCode =
-                    BWType.GetHashCode() ^
+                    Colour.GetHashCode() ^
                     SameAsOld.GetHashCode() ^
                     RelFileType.GetHashCode() ^
                     RankMoveType.GetHashCode() ^

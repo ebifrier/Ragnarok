@@ -126,7 +126,7 @@ namespace Ragnarok.Shogi.Tests
                     Piece = Piece.Bishop,
                     DstSquare = SquareUtil.Create(6, 2),
                     RankMoveType = RankMoveType.Up,
-                    BWType = BWType.White,
+                    Colour = Colour.White,
                 });
 
             Assert.AreEqual(
@@ -200,21 +200,21 @@ namespace Ragnarok.Shogi.Tests
                 new LiteralMove
                 {
                     SpecialMoveType = SpecialMoveType.Interrupt,
-                    BWType = BWType.Black,
+                    Colour = Colour.Black,
                 },
                 ShogiParser.ParseMove("▲中断", true));
             Assert.AreEqual(
                 new LiteralMove
                 {
                     SpecialMoveType = SpecialMoveType.Sennichite,
-                    BWType = BWType.White,
+                    Colour = Colour.White,
                 },
                 ShogiParser.ParseMove("△千日手", true));
             Assert.AreEqual(
                 new LiteralMove
                 {
                     SpecialMoveType = SpecialMoveType.TimeUp,
-                    BWType = BWType.Black,
+                    Colour = Colour.Black,
                 },
                 ShogiParser.ParseMove("▼時間切れ", true));
             Assert.AreEqual(

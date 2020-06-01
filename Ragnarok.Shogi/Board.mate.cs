@@ -12,20 +12,20 @@ namespace Ragnarok.Shogi
         /// に動かすことが可能な指し手をすべて列挙します。
         /// </summary>
         private IEnumerable<Move> GetAvailableMove(Piece target,
-                                                   BWType bwType,
+                                                   Colour colour,
                                                    Square srcSquare,
                                                    Square dstSquare)
         {
             var piece = this[srcSquare];
             if (piece.IsNone() ||
                 piece.GetPieceType() != target ||
-                piece.GetColor() != bwType)
+                piece.GetColour() != colour)
             {
                 yield break;
             }
 
             var move = Move.CreateMove(
-                bwType, srcSquare, dstSquare, piece.GetPieceType(), false);
+                colour, srcSquare, dstSquare, piece.GetPieceType(), false);
 
             // 成り駒でなければ、成る可能性があります。
             if (!piece.IsPromoted())
@@ -48,13 +48,13 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 駒の種類と新しい位置から、可能な指し手をすべて検索します。
         /// </summary>
-        public IEnumerable<Move> ListupMoves(Piece piece, BWType bwType,
+        public IEnumerable<Move> ListupMoves(Piece piece, Colour colour,
                                              Square dstSquare)
         {
             // 打てる駒をすべて列挙します。
-            if (!piece.IsPromoted() && GetHand(piece.GetRawType().Modify(bwType)) > 0)
+            if (!piece.IsPromoted() && GetHand(piece.GetRawType().Modify(colour)) > 0)
             {
-                var move = Move.CreateDrop(bwType, dstSquare, piece.GetRawType());
+                var move = Move.CreateDrop(colour, dstSquare, piece.GetRawType());
 
                 // 駒打ちが可能なら、それも該当手となります。
                 if (CanMove(move, MoveFlags.CheckOnly))
@@ -64,10 +64,10 @@ namespace Ragnarok.Shogi
             }
 
             // 移動による指し手をすべて列挙します。
-            var srcRange = GetCanMoveRange(piece, dstSquare, bwType.Flip());
+            var srcRange = GetCanMoveRange(piece, dstSquare, colour.Flip());
             foreach (var srcSquare in srcRange)
             {
-                var moves = GetAvailableMove(piece, bwType, srcSquare, dstSquare);
+                var moves = GetAvailableMove(piece, colour, srcSquare, dstSquare);
 
                 foreach (var move in moves)
                 {
@@ -79,11 +79,11 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 駒の種類にかかわりなく、指定の位置に着手可能な指し手をすべて列挙します。
         /// </summary>
-        public IEnumerable<Move> ListupMoves(BWType bwType, Square dstSquare)
+        public IEnumerable<Move> ListupMoves(Colour colour, Square dstSquare)
         {
             return
                 from piece in PieceUtil.PieceTypes()
-                from move in ListupMoves(piece, bwType, dstSquare)
+                from move in ListupMoves(piece, colour, dstSquare)
                 select move;
         }
 
@@ -100,30 +100,30 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 玉のいる位置を取得します。
         /// </summary>
-        public Square GetGyoku(BWType bwType)
+        public Square GetKing(Colour colour)
         {
             var list =
                 from sq in Board.Squares()
                 let piece = this[sq]
-                where piece == PieceUtil.Modify(Piece.King, bwType)
+                where piece == Piece.King.Modify(colour)
                 select sq;
 
             return list.FirstOrDefault();
         }
 
         /// <summary>
-        /// <paramref name="bwType"/>側の玉が王手されているか調べます。
+        /// <paramref name="colour"/>側の玉が王手されているか調べます。
         /// </summary>
-        public bool IsChecked(BWType bwType)
+        public bool IsChecked(Colour colour)
         {
-            var gyoku = GetGyoku(bwType);
-            if (!gyoku.Validate())
+            var king = GetKing(colour);
+            if (!king.Validate())
             {
                 return false;
             }
 
             // 玉の位置に移動できる駒があれば王手されています。
-            return ListupMoves(bwType.Flip(), gyoku).Any();
+            return ListupMoves(colour.Flip(), king).Any();
         }
 
         /// <summary>
@@ -146,7 +146,7 @@ namespace Ragnarok.Shogi
         /// <paramref name="square"/>に<paramref name="pieceType"/>を打ち、
         /// なお王手されているか確認します。
         /// </summary>
-        private bool IsDropAndChecked(BWType bwType, Piece pieceType,
+        private bool IsDropAndChecked(Colour colour, Piece pieceType,
                                       Square square)
         {
             var piece = this[square];
@@ -155,10 +155,10 @@ namespace Ragnarok.Shogi
                 return true;
             }
 
-            var move = Move.CreateDrop(bwType, square, pieceType);
+            var move = Move.CreateDrop(colour, square, pieceType);
             if (DoMove(move, MoveFlags.DoMoveDefault & ~MoveFlags.CheckPawnDropCheckMate))
             {
-                if (!IsChecked(bwType))
+                if (!IsChecked(colour))
                 {
                     Undo();
                     return false;
@@ -175,11 +175,11 @@ namespace Ragnarok.Shogi
         /// <paramref name="srcSquare"/>の駒を<paramref name="dstSquare"/>
         /// に動かすことが可能な指し手を指してみて、なお王手されているか確認します。
         /// </summary>
-        private bool IsMoveAndChecked(BWType bwType, Square srcSquare,
+        private bool IsMoveAndChecked(Colour colour, Square srcSquare,
                                       Square dstSquare)
         {
             var piece = this[srcSquare];
-            if (piece.IsNone() || piece.GetColor() != bwType)
+            if (piece.IsNone() || piece.GetColour() != colour)
             {
                 return true;
             }
@@ -193,7 +193,7 @@ namespace Ragnarok.Shogi
             }
 
             var move = Move.CreateMove(
-                bwType, srcSquare, dstSquare, piece.GetPieceType(), false);
+                colour, srcSquare, dstSquare, piece.GetPieceType(), false);
 
             // 成り駒でなければ、成る可能性があります。
             if (!piece.IsPromoted())
@@ -201,7 +201,7 @@ namespace Ragnarok.Shogi
                 move.IsPromote = true;
                 if (DoMove(move))
                 {
-                    var check = IsChecked(bwType);
+                    var check = IsChecked(colour);
                     Undo();
                     return check;
                 }
@@ -210,7 +210,7 @@ namespace Ragnarok.Shogi
             move.IsPromote = false;
             if (DoMove(move))
             {
-                var check = IsChecked(bwType);
+                var check = IsChecked(colour);
                 Undo();
                 return check;
             }

@@ -35,7 +35,7 @@ namespace Ragnarok.Shogi.Tests
             var board = Board.ParseBod(bod);
 
             var move = Move.CreateDrop(
-                BWType.Black,
+                Colour.Black,
                 SquareUtil.Create(2, 7),
                 Piece.Pawn);
 
@@ -69,7 +69,7 @@ namespace Ragnarok.Shogi.Tests
             var board = Board.ParseBod(bod);
 
             var move = Move.CreateDrop(
-                BWType.White,
+                Colour.White,
                 SquareUtil.Create(9, 5),
                 Piece.Pawn);
 
@@ -99,7 +99,7 @@ namespace Ragnarok.Shogi.Tests
             var board = Board.ParseBod(bod);
 
             var move = Move.CreateDrop(
-                BWType.Black,
+                Colour.Black,
                 SquareUtil.Create(3, 3),
                 Piece.Pawn);
 

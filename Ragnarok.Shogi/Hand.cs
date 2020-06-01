@@ -75,9 +75,9 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public Hand(BWType bwType, int mask)
+        public Hand(Colour colour, int mask)
         {
-            BWType = bwType;
+            Colour = colour;
             Mask = mask;
         }
 
@@ -86,7 +86,7 @@ namespace Ragnarok.Shogi
         /// </summary>
         public Hand Clone()
         {
-            return new Hand(BWType, Mask);
+            return new Hand(Colour, Mask);
         }
 
         /// <summary>
@@ -103,7 +103,7 @@ namespace Ragnarok.Shogi
         /// 先手側か後手側かを取得します。
         /// </summary>
         [DataMember(Order = 2, IsRequired = true)]
-        public BWType BWType
+        public Colour Colour
         {
             get;
             private set;
@@ -196,7 +196,7 @@ namespace Ragnarok.Shogi
         /// </summary>
         public bool Validate()
         {
-            if (!Enum.IsDefined(typeof(BWType), BWType))
+            if (!Enum.IsDefined(typeof(Colour), Colour))
             {
                 return false;
             }
@@ -233,7 +233,7 @@ namespace Ragnarok.Shogi
                 return false;
             }
 
-            if (BWType != other.BWType)
+            if (Colour != other.Colour)
             {
                 return false;
             }
@@ -248,7 +248,7 @@ namespace Ragnarok.Shogi
         {
             return (
                 Mask.GetHashCode() ^
-                BWType.GetHashCode());
+                Colour.GetHashCode());
         }
     }
 }

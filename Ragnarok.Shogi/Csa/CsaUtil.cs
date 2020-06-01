@@ -195,7 +195,7 @@ namespace Ragnarok.Shogi.Csa
                 return " * ";
             }
 
-            var turnStr = (piece.GetColor() == BWType.Black ? '+' : '-');
+            var turnStr = (piece.GetColour() == Colour.Black ? '+' : '-');
             var pieceStr = PieceToStr(piece.GetPieceType());
             return $"{turnStr}{pieceStr}";
         }
@@ -228,10 +228,10 @@ namespace Ragnarok.Shogi.Csa
                 return null;
             }
 
-            var bwType = (
-                str[0] == '+' ? BWType.Black :
-                str[0] == '-' ? BWType.White :
-                BWType.None);
+            var colour = (
+                str[0] == '+' ? Colour.Black :
+                str[0] == '-' ? Colour.White :
+                Colour.None);
 
             var piece = StrToPiece(str.Length > 2 ? str.Substring(1) : str);
             if (piece == null)
@@ -239,7 +239,7 @@ namespace Ragnarok.Shogi.Csa
                 return null;
             }
 
-            return PieceUtil.Modify(piece.Value, bwType);
+            return PieceUtil.Modify(piece.Value, colour);
         }
     }
 }

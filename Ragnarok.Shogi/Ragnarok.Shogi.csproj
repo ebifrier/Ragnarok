@@ -101,7 +101,7 @@
     <Compile Include="BoardComparer.cs" />
     <Compile Include="BoardExtension.cs" />
     <Compile Include="BoardType.cs" />
-    <Compile Include="BWType.cs" />
+    <Compile Include="Colour.cs" />
     <Compile Include="Csa\CsaBoard.cs" />
     <Compile Include="Csa\CsaBoardParser.cs" />
     <Compile Include="Csa\CsaException.cs" />

@@ -63,7 +63,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public static Score CreateValue(BWType turn, int value = 0,
+        public static Score CreateValue(Colour turn, int value = 0,
                                         ScoreBound bound = ScoreBound.Exact)
         {
             return new Score()
@@ -78,7 +78,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public static Score CreateMate(BWType turn, int mate,
+        public static Score CreateMate(Colour turn, int mate,
                                        bool isMateWin,
                                        ScoreBound bound = ScoreBound.Exact)
         {
@@ -101,7 +101,7 @@ namespace Ragnarok.Shogi
         /// -98
         /// +456↑
         /// </example>
-        public static Score ParseValue(string text, BWType turn,
+        public static Score ParseValue(string text, Colour turn,
                                        ScoreBound bound = ScoreBound.Exact)
         {
             if (string.IsNullOrEmpty(text))
@@ -130,7 +130,7 @@ namespace Ragnarok.Shogi
         /// -10
         /// +5↑
         /// </example>
-        public static Score ParseMate(string text, BWType turn,
+        public static Score ParseMate(string text, Colour turn,
                                       ScoreBound bound = ScoreBound.Exact)
         {
             if (string.IsNullOrEmpty(text))
@@ -227,7 +227,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 評価値が先後どちらを基準にしているかを取得します。
         /// </summary>
-        public BWType Turn
+        public Colour Turn
         {
             get;
             private set;
@@ -258,7 +258,7 @@ namespace Ragnarok.Shogi
         {
             get
             {
-                return (Turn == BWType.White ? -this : this);
+                return (Turn == Colour.White ? -this : this);
             }
         }
 
@@ -293,8 +293,8 @@ namespace Ragnarok.Shogi
                 }
 
                 return (
-                    Turn == BWType.Black ? "先手" :
-                    Turn == BWType.White ? "後手" : "");
+                    Turn == Colour.Black ? "先手" :
+                    Turn == Colour.White ? "後手" : "");
             }
             set { this.name = value; }
         }

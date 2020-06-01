@@ -51,11 +51,12 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// テーブルを使用し、指定の相対位置に動けるか調べます。(先手専用)
         /// </summary>
-        private bool CanMoveWithTable(BWType bwType, int relFile, int relRank,
-                                      int[][] table)
+        private static bool CanMoveWithTable(Colour colour,
+                                             int relFile, int relRank,
+                                             int[][] table)
         {
             // 後手側なら上下反転します。
-            var sign = (bwType == BWType.White ? -1 : +1);
+            var sign = (colour == Colour.White ? -1 : +1);
 
             relRank *= sign;
             return table.Any(_ => relFile == _[0] && relRank == _[1]);
@@ -64,12 +65,12 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// テーブルを使用し、指定の相対位置に動けるか調べます。(先手専用)
         /// </summary>
-        private IEnumerable<Square> GetMoveRangeWithTable(BWType bwType,
-                                                          Square square,
-                                                          int[][] table)
+        private static IEnumerable<Square> GetMoveRangeWithTable(Colour colour,
+                                                                 Square square,
+                                                                 int[][] table)
         {
             // 後手側なら上下反転します。
-            var sign = (bwType == BWType.White ? -1 : +1);
+            var sign = (colour == Colour.White ? -1 : +1);
 
             foreach (var elem in table)
             {
@@ -96,13 +97,13 @@ namespace Ragnarok.Shogi
             switch (piece.GetPieceType())
             {
                 case Piece.Pawn:
-                    return CanMoveWithTable(move.BWType, relFile, relRank, MoveTableHu);
+                    return CanMoveWithTable(move.Colour, relFile, relRank, MoveTableHu);
                 case Piece.Knight:
-                    return CanMoveWithTable(move.BWType, relFile, relRank, MoveTableKei);
+                    return CanMoveWithTable(move.Colour, relFile, relRank, MoveTableKei);
                 case Piece.Lance:
-                    return CanMoveKyo(move.BWType, move.SrcSquare, relFile, relRank);
+                    return CanMoveKyo(move.Colour, move.SrcSquare, relFile, relRank);
                 case Piece.Silver:
-                    return CanMoveWithTable(move.BWType, relFile, relRank, MoveTableGin);
+                    return CanMoveWithTable(move.Colour, relFile, relRank, MoveTableGin);
                 case Piece.Rook:
                     return CanMoveHisya(move.SrcSquare, relFile, relRank);
                 case Piece.Bishop:
@@ -112,21 +113,21 @@ namespace Ragnarok.Shogi
                 case Piece.ProKnight:
                 case Piece.ProSilver:
                 case Piece.Gold:
-                    return CanMoveWithTable(move.BWType, relFile, relRank, MoveTableKin);
+                    return CanMoveWithTable(move.Colour, relFile, relRank, MoveTableKin);
                 case Piece.Horse:
-                    if (CanMoveWithTable(move.BWType, relFile, relRank, MoveTableGyoku))
+                    if (CanMoveWithTable(move.Colour, relFile, relRank, MoveTableGyoku))
                     {
                         return true;
                     }
                     return CanMoveKaku(move.SrcSquare, relFile, relRank);
                 case Piece.Dragon:
-                    if (CanMoveWithTable(move.BWType, relFile, relRank, MoveTableGyoku))
+                    if (CanMoveWithTable(move.Colour, relFile, relRank, MoveTableGyoku))
                     {
                         return true;
                     }
                     return CanMoveHisya(move.SrcSquare, relFile, relRank);
                 case Piece.King:
-                    return CanMoveWithTable(move.BWType, relFile, relRank, MoveTableGyoku);
+                    return CanMoveWithTable(move.Colour, relFile, relRank, MoveTableGyoku);
             }
 
             return false;
@@ -135,7 +136,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 香車が指定の場所に動けるか判断します。
         /// </summary>
-        private bool CanMoveKyo(BWType bwType, Square basePos, int relFile, int relRank)
+        private bool CanMoveKyo(Colour colour, Square basePos, int relFile, int relRank)
         {
             // 香車は横には動けません。
             if (relFile != 0)
@@ -144,8 +145,8 @@ namespace Ragnarok.Shogi
             }
 
             // 反対方向には動けません。
-            if ((bwType == BWType.Black && relRank >= 0) ||
-                (bwType == BWType.White && relRank <= 0))
+            if ((colour == Colour.Black && relRank >= 0) ||
+                (colour == Colour.White && relRank <= 0))
             {
                 return false;
             }
@@ -268,7 +269,7 @@ namespace Ragnarok.Shogi
         /// <paramref name="square"/>にある駒が移動できる
         /// 可能性のある位置をすべて列挙します。
         /// </summary>
-        private IEnumerable<Square> GetCanMoveRange(Square square, BWType bwType)
+        private IEnumerable<Square> GetCanMoveRange(Square square, Colour colour)
         {
             if (!square.Validate())
             {
@@ -276,12 +277,12 @@ namespace Ragnarok.Shogi
             }
 
             var piece = this[square];
-            if (piece.IsNone() || piece.GetColor() != bwType)
+            if (piece.IsNone() || piece.GetColour() != colour)
             {
                 return new Square[0];
             }
 
-            return GetCanMoveRange(piece.GetPieceType(), square, bwType);
+            return GetCanMoveRange(piece.GetPieceType(), square, colour);
         }
 
         /// <summary>
@@ -289,7 +290,7 @@ namespace Ragnarok.Shogi
         /// 可能性のある位置をすべて列挙します。
         /// </summary>
         private IEnumerable<Square> GetCanMoveRange(Piece piece, Square square,
-                                                    BWType bwType)
+                                                    Colour colour)
         {
             if (!square.Validate())
             {
@@ -308,7 +309,7 @@ namespace Ragnarok.Shogi
             switch (piece.GetPieceType())
             {
                 case Piece.Pawn:
-                    list = GetMoveRangeWithTable(bwType, square, MoveTableHu);
+                    list = GetMoveRangeWithTable(colour, square, MoveTableHu);
                     foreach (var p in list)
                     {
                         yield return p;
@@ -321,14 +322,14 @@ namespace Ragnarok.Shogi
                     }
                     break;
                 case Piece.Knight:
-                    list = GetMoveRangeWithTable(bwType, square, MoveTableKei);
+                    list = GetMoveRangeWithTable(colour, square, MoveTableKei);
                     foreach (var p in list)
                     {
                         yield return p;
                     }
                     break;
                 case Piece.Silver:
-                    list = GetMoveRangeWithTable(bwType, square, MoveTableGin);
+                    list = GetMoveRangeWithTable(colour, square, MoveTableGin);
                     foreach (var p in list)
                     {
                         yield return p;
@@ -339,7 +340,7 @@ namespace Ragnarok.Shogi
                 case Piece.ProKnight:
                 case Piece.ProSilver:
                 case Piece.Gold:
-                    list = GetMoveRangeWithTable(bwType, square, MoveTableKin);
+                    list = GetMoveRangeWithTable(colour, square, MoveTableKin);
                     foreach (var p in list)
                     {
                         yield return p;
@@ -348,7 +349,7 @@ namespace Ragnarok.Shogi
                 case Piece.King:
                 case Piece.Horse:
                 case Piece.Dragon:
-                    list = GetMoveRangeWithTable(bwType, square, MoveTableGyoku);
+                    list = GetMoveRangeWithTable(colour, square, MoveTableGyoku);
                     foreach (var p in list)
                     {
                         yield return p;

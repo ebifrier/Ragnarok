@@ -63,7 +63,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 先手の手か後手の手かを取得または設定します。
         /// </summary>
-        public BWType BWType
+        public Colour Colour
         {
             get;
             private set;
@@ -167,7 +167,7 @@ namespace Ragnarok.Shogi
                 return string.Format(
                     CultureInfo.CurrentCulture,
                     "{0}{1}",
-                    Stringizer.ToString(BWType),
+                    Stringizer.ToString(Colour),
                     EnumUtil.GetLabel(SpecialMoveType));
             }
             else if (ActionType == ActionType.Drop)
@@ -175,7 +175,7 @@ namespace Ragnarok.Shogi
                 return string.Format(
                     CultureInfo.CurrentCulture,
                     "{0}{1}{2}{3}打",
-                    Stringizer.ToString(BWType),
+                    Stringizer.ToString(Colour),
                     IntConverter.Convert(NumberType.Big, DstSquare.GetFile()),
                     IntConverter.Convert(NumberType.Kanji, DstSquare.GetRank()),
                     Stringizer.ToString(DropPieceType));
@@ -185,7 +185,7 @@ namespace Ragnarok.Shogi
                 return string.Format(
                     CultureInfo.CurrentCulture,
                     "{0}同　{1}{2}({3}{4})",
-                    Stringizer.ToString(BWType),
+                    Stringizer.ToString(Colour),
                     Stringizer.ToString(MovePiece),
                     Stringizer.ToString(ActionType),
                     SrcSquare.GetFile(),
@@ -196,7 +196,7 @@ namespace Ragnarok.Shogi
                 return string.Format(
                     CultureInfo.CurrentCulture,
                     "{0}{1}{2}{3}{4}({5}{6})",
-                    Stringizer.ToString(BWType),
+                    Stringizer.ToString(Colour),
                     IntConverter.Convert(NumberType.Big, DstSquare.GetFile()),
                     IntConverter.Convert(NumberType.Kanji, DstSquare.GetRank()),
                     Stringizer.ToString(MovePiece),
@@ -211,7 +211,7 @@ namespace Ragnarok.Shogi
         /// </summary>
         public bool Validate()
         {
-            if (BWType == BWType.None)
+            if (Colour == Colour.None)
             {
                 return false;
             }
@@ -289,7 +289,7 @@ namespace Ragnarok.Shogi
                 return false;
             }
 
-            if (BWType != other.BWType)
+            if (Colour != other.Colour)
             {
                 return false;
             }
@@ -349,7 +349,7 @@ namespace Ragnarok.Shogi
         public override int GetHashCode()
         {
             return (
-                BWType.GetHashCode() ^
+                Colour.GetHashCode() ^
                 DstSquare.GetHashCode() ^
                 SrcSquare.GetHashCode() ^
                 MovePiece.GetHashCode() ^
@@ -361,7 +361,7 @@ namespace Ragnarok.Shogi
         #region シリアライズ/デシリアライズ
         protected Move(SerializationInfo info, StreamingContext text)
         {
-            BWType = (BWType)info.GetValue(nameof(BWType), typeof(BWType));
+            Colour = (Colour)info.GetValue(nameof(Colour), typeof(Colour));
             IsPromote = info.GetBoolean(nameof(IsPromote));
             DstSquare = (Square)info.GetValue(nameof(DstSquare), typeof(Square));
             SrcSquare = (Square)info.GetValue(nameof(SrcSquare), typeof(Square));
@@ -375,7 +375,7 @@ namespace Ragnarok.Shogi
         [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            info.AddValue(nameof(BWType), BWType);
+            info.AddValue(nameof(Colour), Colour);
             info.AddValue(nameof(IsPromote), IsPromote);
             info.AddValue(nameof(DstSquare), DstSquare);
             info.AddValue(nameof(SrcSquare), SrcSquare);
@@ -392,7 +392,7 @@ namespace Ragnarok.Shogi
         /// </summary>
         public Move()
         {
-            BWType = BWType.None;
+            Colour = Colour.None;
             IsPromote = false;
             DropPieceType = Piece.None;
         }
@@ -400,7 +400,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 特殊な指し手を生成します。
         /// </summary>
-        public static Move CreateSpecialMove(BWType turn, SpecialMoveType smoveType)
+        public static Move CreateSpecialMove(Colour turn, SpecialMoveType smoveType)
         {
             if (smoveType == SpecialMoveType.None)
             {
@@ -410,7 +410,7 @@ namespace Ragnarok.Shogi
 
             return new Move
             {
-                BWType = turn,
+                Colour = turn,
                 SpecialMoveType = smoveType,
             };
         }
@@ -418,11 +418,11 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 移動手を生成します。
         /// </summary>
-        public static Move CreateMove(BWType turn, Square src, Square dst,
+        public static Move CreateMove(Colour turn, Square src, Square dst,
                                       Piece movePiece, bool isPromote,
                                       Piece tookPiece = default)
         {
-            if (turn == BWType.None)
+            if (turn == Colour.None)
             {
                 throw new ArgumentException(
                     "Enumの値が正しくありません。", nameof(turn));
@@ -454,7 +454,7 @@ namespace Ragnarok.Shogi
 
             return new Move
             {
-                BWType = turn,
+                Colour = turn,
                 SrcSquare = src,
                 DstSquare = dst,
                 MovePiece = movePiece,
@@ -466,10 +466,10 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 駒を打つ手を生成します。
         /// </summary>
-        public static Move CreateDrop(BWType turn, Square dst,
+        public static Move CreateDrop(Colour turn, Square dst,
                                       Piece dropPieceType)
         {
-            if (turn == BWType.None)
+            if (turn == Colour.None)
             {
                 throw new ArgumentException(
                     "Enumの値が正しくありません。", nameof(turn));
@@ -489,7 +489,7 @@ namespace Ragnarok.Shogi
 
             return new Move
             {
-                BWType = turn,
+                Colour = turn,
                 DstSquare = dst,
                 DropPieceType = dropPieceType.GetRawType(),
             };

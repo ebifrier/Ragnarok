@@ -40,7 +40,7 @@ namespace Ragnarok.Shogi.Sfen
         /// <summary>
         /// 手番を読み取ります。
         /// </summary>
-        private static BWType ParseTurn(string text)
+        private static Colour ParseTurn(string text)
         {
             if (text.Length != 1 ||
                 (text[0] != 'b' && text[0] != 'w'))
@@ -50,9 +50,9 @@ namespace Ragnarok.Shogi.Sfen
             }
 
             return (
-                text[0] == 'b' ? BWType.Black :
-                text[0] == 'w' ? BWType.White :
-                BWType.None);
+                text[0] == 'b' ? Colour.Black :
+                text[0] == 'w' ? Colour.White :
+                Colour.None);
         }
 
         /// <summary>
@@ -188,15 +188,15 @@ namespace Ragnarok.Shogi.Sfen
         /// <summary>
         /// 手番をSFEN形式に変換します。
         /// </summary>
-        private static string TurnToSfen(BWType turn)
+        private static string TurnToSfen(Colour turn)
         {
-            if (turn == BWType.None)
+            if (turn == Colour.None)
             {
                 throw new SfenException(
                     "局面の手番が正しくありません。");
             }
 
-            return (turn == BWType.Black ? "b" : "w");
+            return (turn == Colour.Black ? "b" : "w");
         }
 
         /// <summary>
@@ -253,7 +253,7 @@ namespace Ragnarok.Shogi.Sfen
         private static string HandToSfen(Board board)
         {
             var handList =
-                from turn in BWTypeUtil.BlackWhite()
+                from turn in ColourUtil.BlackWhite()
                 from piece in PieceUtil.RawTypes(turn)
                 let obj = new
                 {

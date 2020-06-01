@@ -86,13 +86,13 @@ namespace Ragnarok.Shogi.Kif
             // 手番
             if (Regex.IsMatch(line, @"^\s*(下手|先手)番"))
             {
-                SetTurn(BWType.Black);
+                SetTurn(Colour.Black);
                 return true;
             }
 
             if (Regex.IsMatch(line, @"^\s*(上手|後手)番"))
             {
-                SetTurn(BWType.White);
+                SetTurn(Colour.White);
                 return true;
             }
 
@@ -108,13 +108,13 @@ namespace Ragnarok.Shogi.Kif
                 // 持駒の解析
                 if (item.Key == "先手の持駒" || item.Key == "下手の持駒")
                 {
-                    ParseHand(BWType.Black, item.Value);
+                    ParseHand(Colour.Black, item.Value);
                     return true;
                 }
 
                 if (item.Key == "後手の持駒" || item.Key == "上手の持駒")
                 {
-                    ParseHand(BWType.White, item.Value);
+                    ParseHand(Colour.White, item.Value);
                     return true;
                 }
             }
@@ -135,7 +135,7 @@ namespace Ragnarok.Shogi.Kif
         {
             if (!this.turnHandled)
             {
-                this.board.Turn = BWType.White;
+                this.board.Turn = Colour.White;
                 this.turnHandled = true;
             }
         }
@@ -143,9 +143,9 @@ namespace Ragnarok.Shogi.Kif
         /// <summary>
         /// 強制的に手番を設定します。
         /// </summary>
-        private void SetTurn(BWType bwType)
+        private void SetTurn(Colour turn)
         {
-            this.board.Turn = bwType;
+            this.board.Turn = turn;
             this.turnHandled = true;
         }
 
@@ -226,7 +226,7 @@ namespace Ragnarok.Shogi.Kif
         /// <example>
         /// 後手の持駒：飛　角　金　銀　桂　香　歩四　
         /// </example>
-        private void ParseHand(BWType bwType, string handText)
+        private void ParseHand(Colour colour, string handText)
         {
             if (handText == "なし")
             {
@@ -238,9 +238,9 @@ namespace Ragnarok.Shogi.Kif
                 .Split(
                     new char[] { '　', ' ', '\t' },
                     StringSplitOptions.RemoveEmptyEntries)
-                .Select(_ => ParseHandPiece(bwType, _))
+                .Select(_ => ParseHandPiece(colour, _))
                 .ForEach(_ =>
-                    this.board.SetHand(_.Item1.Modify(bwType), _.Item2));
+                    this.board.SetHand(_.Item1.Modify(colour), _.Item2));
         }
 
         /// <summary>
@@ -249,7 +249,7 @@ namespace Ragnarok.Shogi.Kif
         /// <remarks>
         /// 各駒文字を最初の漢字で表し、後に続く漢数字でその数を示します。
         /// </remarks>
-        private Tuple<Piece, int> ParseHandPiece(BWType bwType,
+        private Tuple<Piece, int> ParseHandPiece(Colour colour,
                                                  string handPieceText)
         {
             // 駒の種類を取得します。
@@ -260,7 +260,7 @@ namespace Ragnarok.Shogi.Kif
                     string.Format(
                         CultureInfo.CurrentCulture,
                         "{0}手の持ち駒'{1}'が正しくありません。",
-                        bwType == BWType.Black ? "先" : "後",
+                        colour == Colour.Black ? "先" : "後",
                         handPieceText));
             }
 
@@ -271,7 +271,7 @@ namespace Ragnarok.Shogi.Kif
                     string.Format(
                         CultureInfo.CurrentCulture,
                         "{0}手の持ち駒に成り駒があります。",
-                        bwType == BWType.Black ? "先" : "後"));
+                        colour == Colour.Black ? "先" : "後"));
             }
 
             // 駒の数指定があれば、それを解析します。
@@ -284,7 +284,7 @@ namespace Ragnarok.Shogi.Kif
                 count = int.Parse(normalized, CultureInfo.CurrentCulture);
             }
 
-            return Tuple.Create(piece.GetPieceType(), count);
+            return Tuple.Create(piece.GetRawType(), count);
         }
     }
 }

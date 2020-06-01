@@ -21,7 +21,7 @@ namespace Ragnarok.Shogi.Tests
             // すべてのマスをテストすると時間がかかりすぎるため、
             // 移動元・移動先共にテストするマスを絞っています。
             var validMoveList =
-                from turn in BWTypeUtil.BlackWhite()
+                from turn in ColourUtil.BlackWhite()
                 from dst in Board.Squares()
                 from src in Board.Squares()
                 from pc in PieceUtil.PieceTypes()
@@ -34,7 +34,7 @@ namespace Ragnarok.Shogi.Tests
                 select bmove;
 
             var validDropList =
-                from turn in BWTypeUtil.BlackWhite()
+                from turn in ColourUtil.BlackWhite()
                 from dst in Board.Squares()
                 from pc in PieceUtil.RawTypes()
                 let bmove = Move.CreateDrop(turn, dst, pc)
@@ -42,7 +42,7 @@ namespace Ragnarok.Shogi.Tests
                 select bmove;
 
             var specialMoveList =
-                from turn in BWTypeUtil.BlackWhite()
+                from turn in ColourUtil.BlackWhite()
                 from special in EnumUtil.GetValues<SpecialMoveType>()
                 where special != SpecialMoveType.None
                 let bmove = Move.CreateSpecialMove(turn, special)

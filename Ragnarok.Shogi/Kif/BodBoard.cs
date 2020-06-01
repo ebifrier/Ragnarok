@@ -107,17 +107,17 @@ namespace Ragnarok.Shogi.Kif
             }
             else
             {
-                result.Add("後手の持駒：" + HandToBod(board, BWType.White));
+                result.Add("後手の持駒：" + HandToBod(board, Colour.White));
                 result.Add("  ９ ８ ７ ６ ５ ４ ３ ２ １");
                 result.Add("+---------------------------+");
                 result.AddRange(
                     Enumerable.Range(1, Board.BoardSize)
                         .Select(_ => RankToBod(board, _)));
                 result.Add("+---------------------------+");
-                result.Add("先手の持駒：" + HandToBod(board, BWType.Black));
+                result.Add("先手の持駒：" + HandToBod(board, Colour.Black));
                 result.Add("手数＝" + board.MoveCount);
 
-                if (board.Turn == BWType.White)
+                if (board.Turn == Colour.White)
                 {
                     result.Add("後手番");
                 }
@@ -149,7 +149,7 @@ namespace Ragnarok.Shogi.Kif
         /// <summary>
         /// 持ち駒を文字列に直します。
         /// </summary>
-        private static string HandToBod(Board board, BWType turn)
+        private static string HandToBod(Board board, Colour turn)
         {
             var list =
                 from pieceType in PieceUtil.RawTypes()

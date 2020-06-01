@@ -184,11 +184,11 @@ namespace Ragnarok.Shogi
             switch (referenceMove.RankMoveType)
             {
                 case RankMoveType.Back:
-                    return (bm.BWType == BWType.Black
+                    return (bm.Colour == Colour.Black
                                 ? (rankMove > 0)
                                 : (rankMove < 0));
                 case RankMoveType.Up:
-                    return (bm.BWType == BWType.Black
+                    return (bm.Colour == Colour.Black
                                 ? (rankMove < 0)
                                 : (rankMove > 0));
                 case RankMoveType.Sideways:
@@ -231,11 +231,11 @@ namespace Ragnarok.Shogi
                     switch (referenceMove.RelFileType)
                     {
                         case RelFileType.Left:
-                            return (bm.BWType == BWType.Black
+                            return (bm.Colour == Colour.Black
                                         ? (fileDif > 0)
                                         : (fileDif < 0));
                         case RelFileType.Right:
-                            return (bm.BWType == BWType.Black
+                            return (bm.Colour == Colour.Black
                                         ? (fileDif < 0)
                                         : (fileDif > 0));
                         case RelFileType.None:
@@ -251,15 +251,15 @@ namespace Ragnarok.Shogi
                 switch (referenceMove.RelFileType)
                 {
                     case RelFileType.Left:
-                        return (bm.BWType == BWType.Black
+                        return (bm.Colour == Colour.Black
                                     ? (fileMove < 0)
                                     : (fileMove > 0));
                     case RelFileType.Right:
-                        return (bm.BWType == BWType.Black
+                        return (bm.Colour == Colour.Black
                                     ? (fileMove > 0)
                                     : (fileMove < 0));
                     case RelFileType.Straight:
-                        return (bm.BWType == BWType.Black
+                        return (bm.Colour == Colour.Black
                                     ? (rankMove < 0)
                                     : (rankMove > 0)) &&
                                (fileMove == 0);
@@ -330,7 +330,7 @@ namespace Ragnarok.Shogi
         /// 指し手情報を取得します。
         /// </summary>
         public static Move ConvertMoveFromLiteral(this Board board, LiteralMove move,
-                                                  BWType bwType,
+                                                  Colour colour,
                                                   bool multipleIsNull = false)
         {
             if (board == null)
@@ -351,7 +351,7 @@ namespace Ragnarok.Shogi
             if (move.IsSpecialMove)
             {
                 return Move.CreateSpecialMove(
-                    bwType, move.SpecialMoveType);
+                    colour, move.SpecialMoveType);
             }
 
             // 移動後の位置を取得します。
@@ -366,7 +366,7 @@ namespace Ragnarok.Shogi
             }
 
             var boardMoveList = board.ListupMoves(
-                move.Piece, bwType, dstSquare)
+                move.Piece, colour, dstSquare)
                 .ToList();
 
             // 複数の指し手の中から適切な一つを選びます。
@@ -432,7 +432,7 @@ namespace Ragnarok.Shogi
             var nextPos = referenceMove.DstSquare;
             var move = new LiteralMove
             {
-                BWType = referenceMove.BWType,
+                Colour = referenceMove.Colour,
                 Piece = fromPiece,
                 File = nextPos.GetFile(),
                 Rank = nextPos.GetRank(),
@@ -536,7 +536,7 @@ namespace Ragnarok.Shogi
             // 段情報でフィルターされた場合は、段の移動情報を付加します。
             if (tmpMoveList.Count != boardMoveList.Count)
             {
-                var relRank2 = relRank * referenceMove.BWType.Sign();
+                var relRank2 = relRank * referenceMove.Colour.Sign();
 
                 if (relRank2 < 0)
                 {
@@ -582,7 +582,7 @@ namespace Ragnarok.Shogi
                 // 動かす前の駒が相方に比べて右にあるか左にあるか調べます。
                 // 先手の場合は筋が小さい方が右です。
                 var relFile = prevPos.GetFile() - other.SrcSquare.GetFile();
-                relFile *= (referenceMove.BWType == BWType.White ? -1 : +1);
+                relFile *= (referenceMove.Colour == Colour.White ? -1 : +1);
 
                 if (relFile == 0)
                 {
@@ -618,7 +618,7 @@ namespace Ragnarok.Shogi
                 // 列情報でフィルターされた場合は、列の移動情報を付加します。
                 if (tmpMoveList.Count != boardMoveList.Count)
                 {
-                    var relFile2 = relFile * referenceMove.BWType.Sign();
+                    var relFile2 = relFile * referenceMove.Colour.Sign();
 
                     if (relFile2 < 0)
                     {
@@ -665,7 +665,7 @@ namespace Ragnarok.Shogi
             {
                 return new LiteralMove
                 {
-                    BWType = move.BWType,
+                    Colour = move.Colour,
                     SpecialMoveType = move.SpecialMoveType,
                 };
             }
@@ -680,7 +680,7 @@ namespace Ragnarok.Shogi
 
             // 駒の種類と最終位置から、あり得る指し手をすべて検索します。
             var boardMoveList = board.ListupMoves(
-                fromPiece, move.BWType, move.DstSquare)
+                fromPiece, move.Colour, move.DstSquare)
                 .ToList();
 
             return FilterLiteralFromMove(

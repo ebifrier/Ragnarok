@@ -36,12 +36,12 @@ namespace Ragnarok.Shogi
     /// </summary>
     public static class Stringizer
     {
-        private static readonly Dictionary<BWType, string> BWTypeTable =
-            new Dictionary<BWType, string>
+        private static readonly Dictionary<Colour, string> ColourTable =
+            new Dictionary<Colour, string>
             {
-                {BWType.None, ""},
-                {BWType.Black, "▲"},
-                {BWType.White, "△"},
+                {Colour.None, ""},
+                {Colour.Black, "▲"},
+                {Colour.White, "△"},
             };
 
         private static readonly Dictionary<RelFileType, string> RelPosTypeTable =
@@ -74,9 +74,9 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 手番を△や▲に変換します。
         /// </summary>
-        public static string ToString(BWType bwType)
+        public static string ToString(Colour colour)
         {
-            return BWTypeTable[bwType];
+            return ColourTable[colour];
         }
 
         /// <summary>
@@ -169,7 +169,7 @@ namespace Ragnarok.Shogi
                 // 必要なら▲△を先頭に入れます。
                 if (style == MoveTextStyle.Normal)
                 {
-                    turnStr = ToString(move.BWType);
+                    turnStr = ToString(move.Colour);
                 }
 
                 return (turnStr + EnumUtil.GetLabel(move.SpecialMoveType));
@@ -212,7 +212,7 @@ namespace Ragnarok.Shogi
             // 必要なら▲△を先頭に入れます。
             if (style == MoveTextStyle.Normal)
             {
-                result.Insert(0, ToString(move.BWType));
+                result.Insert(0, ToString(move.Colour));
             }
 
             if (!move.SrcSquare.IsEmpty() && style == MoveTextStyle.KifFile)

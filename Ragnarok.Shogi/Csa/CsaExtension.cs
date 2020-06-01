@@ -66,8 +66,8 @@ namespace Ragnarok.Shogi.Csa
 
             var sb = new StringBuilder();
             sb.Append(
-                move.BWType == BWType.Black ? "+" :
-                move.BWType == BWType.White ? "-" :
+                move.Colour == Colour.Black ? "+" :
+                move.Colour == Colour.White ? "-" :
                 "");
 
             if (!move.SrcSquare.IsEmpty())
@@ -200,9 +200,9 @@ namespace Ragnarok.Shogi.Csa
 
             var c = m.Groups[1].Value;
             var side = (
-                c == "+" ? BWType.Black :
-                c == "-" ? BWType.White :
-                BWType.None);
+                c == "+" ? Colour.Black :
+                c == "-" ? Colour.White :
+                Colour.None);
 
             // 移動前の位置
             var srcFile = int.Parse(m.Groups[2].Value, CultureInfo.InvariantCulture);

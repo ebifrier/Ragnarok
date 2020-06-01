@@ -116,7 +116,7 @@ namespace Ragnarok.Shogi.Tests
             var board = kifu.CreateBoard();
             Assert.NotNull(board);
             Assert.True(board.Validate());
-            Assert.AreEqual(BWType.Black, board.Turn);
+            Assert.AreEqual(Colour.Black, board.Turn);
 
             // 桂
             TestMove(board, "73桂左");

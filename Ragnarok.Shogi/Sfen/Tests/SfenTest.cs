@@ -97,7 +97,7 @@ namespace Ragnarok.Shogi.Sfen.Tests
             board.SetHand(Piece.WhiteSilver, 1);
 
             // 手番
-            board.Turn = BWType.White;
+            board.Turn = Colour.White;
 
             Assert.True(Board.BoardEquals(
                 Board.ParseSfen("l2n3nl/6lr1/7k1/pp2+R4/7Gp/PPKGN1P1P/5P3/4S4/L4N2+b w B2G2S10Ps 1"),
@@ -195,7 +195,7 @@ namespace Ragnarok.Shogi.Sfen.Tests
         [Test()]
         public void SpecialMoveTest()
         {
-            var move = Move.CreateSpecialMove(BWType.Black, SpecialMoveType.Interrupt);
+            var move = Move.CreateSpecialMove(Colour.Black, SpecialMoveType.Interrupt);
 
             Assert.True(move.IsSpecialMove);
             Assert.AreEqual(SpecialMoveType.Interrupt, move.SpecialMoveType);

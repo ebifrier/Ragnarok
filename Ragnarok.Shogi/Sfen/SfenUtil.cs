@@ -39,7 +39,7 @@ namespace Ragnarok.Shogi.Sfen
         {
             var c = SfenPieceList[(int)piece.GetRawType()];
 
-            if (piece.GetColor() == BWType.White)
+            if (piece.GetColour() == Colour.White)
             {
                 c = char.ToLowerInvariant(c);
             }
@@ -59,12 +59,12 @@ namespace Ragnarok.Shogi.Sfen
             {
                 if (pieceCh == SfenPieceList[i])
                 {
-                    return ((Piece)i).Modify(BWType.Black);
+                    return ((Piece)i).Modify(Colour.Black);
                 }
 
                 if (pieceCh == char.ToLowerInvariant(SfenPieceList[i]))
                 {
-                    return ((Piece)i).Modify(BWType.White);
+                    return ((Piece)i).Modify(Colour.White);
                 }
             }
 

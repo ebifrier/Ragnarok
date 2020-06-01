@@ -319,8 +319,8 @@ namespace Ragnarok.Shogi.Kif
             }
 
             // まず手番
-            var bwTypeCh = char.ToLowerInvariant(str[0]);
-            if (bwTypeCh != ' ' && bwTypeCh != 'v')
+            var colourCh = char.ToLowerInvariant(str[0]);
+            if (colourCh != ' ' && colourCh != 'v')
             {
                 return null;
             }
@@ -333,8 +333,8 @@ namespace Ragnarok.Shogi.Kif
                 return null;
             }
 
-            var bwType = (bwTypeCh == 'v' ? BWType.White : BWType.Black);
-            return PieceUtil.Modify(piece.Value, bwType);
+            var colour = (colourCh == 'v' ? Colour.White : Colour.Black);
+            return PieceUtil.Modify(piece.Value, colour);
         }
 
         /// <summary>
@@ -372,7 +372,7 @@ namespace Ragnarok.Shogi.Kif
                 return null;
             }
 
-            var turnCh = (piece.GetColor() == BWType.White ? 'v' : ' ');
+            var turnCh = (piece.GetColour() == Colour.White ? 'v' : ' ');
             return (turnCh + pieceStr);
         }
     }

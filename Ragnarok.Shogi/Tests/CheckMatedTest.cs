@@ -172,8 +172,8 @@ namespace Ragnarok.Shogi.Tests
                 "+---------------------------+\n" +
                 "先手の持駒：なし");
 
-            Assert.True(board.IsChecked(BWType.Black));
-            Assert.False(board.IsChecked(BWType.White));
+            Assert.True(board.IsChecked(Colour.Black));
+            Assert.False(board.IsChecked(Colour.White));
             Assert.True(board.IsCheckMated());
         }
 
@@ -199,8 +199,8 @@ namespace Ragnarok.Shogi.Tests
                 "+---------------------------+\n" +
                 "先手の持駒：なし");
 
-            Assert.True(board.IsChecked(BWType.Black));
-            Assert.False(board.IsChecked(BWType.White));
+            Assert.True(board.IsChecked(Colour.Black));
+            Assert.False(board.IsChecked(Colour.White));
             Assert.True(board.IsCheckMated());
         }
 
@@ -226,8 +226,8 @@ namespace Ragnarok.Shogi.Tests
                 "+---------------------------+\n" +
                 "先手の持駒：角");
 
-            Assert.True(board.IsChecked(BWType.Black));
-            Assert.False(board.IsChecked(BWType.White));
+            Assert.True(board.IsChecked(Colour.Black));
+            Assert.False(board.IsChecked(Colour.White));
             Assert.False(board.IsCheckMated());
         }
 
@@ -254,8 +254,8 @@ namespace Ragnarok.Shogi.Tests
                 "先手の持駒：歩\n" +
                 "後手番");
 
-            Assert.False(board.IsChecked(BWType.Black));
-            Assert.True(board.IsChecked(BWType.White));
+            Assert.False(board.IsChecked(Colour.Black));
+            Assert.True(board.IsChecked(Colour.White));
             Assert.True(board.IsCheckMated());
         }
 
@@ -282,8 +282,8 @@ namespace Ragnarok.Shogi.Tests
                 "先手の持駒：角　金二　歩二\n" +
                 "後手番");
 
-            Assert.False(board.IsChecked(BWType.Black));
-            Assert.True(board.IsChecked(BWType.White));
+            Assert.False(board.IsChecked(Colour.Black));
+            Assert.True(board.IsChecked(Colour.White));
             Assert.False(board.IsCheckMated());
         }
     }

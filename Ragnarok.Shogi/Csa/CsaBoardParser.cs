@@ -12,7 +12,7 @@ namespace Ragnarok.Shogi.Csa
     {
         private Board board;
         private int parsedRank;
-        private BWType turn;
+        private Colour turn;
 
         /// <summary>
         /// 局面を読み取り中か取得します。
@@ -21,7 +21,7 @@ namespace Ragnarok.Shogi.Csa
         {
             get
             {
-                return ((this.turn == BWType.None) ||
+                return ((this.turn == Colour.None) ||
                         (this.parsedRank != 0 && this.parsedRank != 9));
             }
         }
@@ -47,7 +47,7 @@ namespace Ragnarok.Shogi.Csa
                         "局面が正しく読み込まれていません。");
                 }
 
-                if (this.turn == BWType.None)
+                if (this.turn == Colour.None)
                 {
                     throw new InvalidOperationException(
                         "手番が正しく読み込まれていません。");
@@ -74,7 +74,7 @@ namespace Ragnarok.Shogi.Csa
             var ch0 = trimmedLine[0];
             if (trimmedLine.Length == 1 && (ch0 == '+' || ch0 == '-'))
             {
-                this.turn = (ch0 == '+' ? BWType.Black : BWType.White);
+                this.turn = (ch0 == '+' ? Colour.Black : Colour.White);
                 return true;
             }
 
@@ -121,8 +121,6 @@ namespace Ragnarok.Shogi.Csa
         /// </remarks>
         private PieceSquare ParsePiece(string str)
         {
-            var file = (int)(str[0] - '0');
-            var rank = (int)(str[1] - '0');
             var pieceStr = str.Substring(2);
             var piece = CsaUtil.StrToPiece(pieceStr);
 
@@ -132,10 +130,19 @@ namespace Ragnarok.Shogi.Csa
                     str + ": CSA形式の駒を正しく読み込めませんでした。");
             }
 
+            var file = str[0] - '0';
+            var rank = str[1] - '0';
+            var square = SquareUtil.Create(file, rank);
+            /*if (!square.Validate())
+            {
+                throw new ShogiException(
+                    str + ": CSA形式の駒を正しく読み込めませんでした。");
+            }*/
+
             return new PieceSquare
             {
-                Square = SquareUtil.Create(file, rank),
                 Piece = piece.Value,
+                Square = square,
             };
         }
 
@@ -166,7 +173,7 @@ namespace Ragnarok.Shogi.Csa
         /// </example>
         private void ParseBoardP(string line)
         {
-            var bwType = (line[1] == '+' ? BWType.Black : BWType.White);
+            var colour = (line[1] == '+' ? Colour.Black : Colour.White);
 
             // 局面は駒を全くおかない状態で初期化します。
             if (this.board == null)
@@ -177,7 +184,7 @@ namespace Ragnarok.Shogi.Csa
             if (line.Substring(2).StartsWith("00AL", StringComparison.InvariantCulture))
             {
                 // 残りの駒をすべて手番側の持ち駒に設定します。
-                PieceUtil.RawTypes(bwType)
+                PieceUtil.RawTypes(colour)
                     .ForEach(_ => Board.SetHand(
                         _, this.board.GetLeavePieceCount(_)));
             }
@@ -186,23 +193,25 @@ namespace Ragnarok.Shogi.Csa
                 line.Skip(2).TakeBy(4)
                     .Select(_ => new string(_.ToArray()))
                     .Select(_ => ParsePiece(_))
-                    .ForEach(_ => SetPiece(bwType, _));
+                    .ForEach(_ => SetPiece(colour, _));
             }
         }
 
         /// <summary>
         /// 持ち駒の数を増やします。
         /// </summary>
-        private void SetPiece(BWType bwType, PieceSquare ps)
+        private void SetPiece(Colour colour, PieceSquare ps)
         {
+            var piece = ps.Piece.Modify(colour);
+
             // 駒位置が"00"の場合は持ち駒となります。
             if (ps.Square.GetFile() != 0)
             {
-                this.board[ps.Square] = ps.Piece.Modify(bwType);
+                this.board[ps.Square] = piece;
             }
             else
             {
-                this.board.IncHand(ps.Piece.Modify(bwType).GetRawType());
+                this.board.IncHand(piece.GetRawType());
             }
         }
         #endregion

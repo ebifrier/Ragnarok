@@ -141,14 +141,14 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 手番を変換するときに使います。
         /// </summary>
-        private static readonly Dictionary<string, BWType> BWTypeTable =
-            new Dictionary<string, BWType>()
+        private static readonly Dictionary<string, Colour> ColourTable =
+            new Dictionary<string, Colour>()
         {
-            {"▲", BWType.Black},
-            {"▼", BWType.Black},
+            {"▲", Colour.Black},
+            {"▼", Colour.Black},
 
-            {"△", BWType.White},
-            {"▽", BWType.White},
+            {"△", Colour.White},
+            {"▽", Colour.White},
         };
 
         /// <summary>
@@ -218,17 +218,17 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 文字列から手番を特定します。
         /// </summary>
-        private static BWType GetBWType(string text)
+        private static Colour GetColour(string text)
         {
             if (string.IsNullOrEmpty(text))
             {
-                return BWType.None;
+                return Colour.None;
             }
 
-            BWType result;
-            if (!BWTypeTable.TryGetValue(text, out result))
+            Colour result;
+            if (!ColourTable.TryGetValue(text, out result))
             {
-                return BWType.None;
+                return Colour.None;
             }
 
             return result;
@@ -313,7 +313,7 @@ namespace Ragnarok.Shogi
             var pattern = string.Format(
                 CultureInfo.CurrentCulture,
                 @"^({0})?({1})",
-                ConvertToRegexPattern(BWTypeTable),
+                ConvertToRegexPattern(ColourTable),
                 ConvertToRegexPattern(SpecialMoveTable));
 
             return new Regex(pattern, RegexOptions.Compiled);
@@ -374,7 +374,7 @@ namespace Ragnarok.Shogi
             var moveRegexPattern = string.Format(
                 CultureInfo.CurrentCulture,
                 @"^\s*({0})?({1})?({1})?(?:({2})\s*)?({3})({4})?({5})?({6})?([(](\d)(\d)[)])?",
-                ConvertToRegexPattern(BWTypeTable),
+                ConvertToRegexPattern(ColourTable),
                 ConvertToRegexPattern(NumberTable),
                 ConvertToRegexPattern(SameAsOldTable),
                 ConvertToRegexPattern(PieceTable),
@@ -416,7 +416,7 @@ namespace Ragnarok.Shogi
             if (m.Success)
             {
                 // 手番が指定されていればそれを取得します。
-                move.BWType = GetBWType(m.Groups[1].Value);
+                move.Colour = GetColour(m.Groups[1].Value);
 
                 // 投了などの指し手の種類を取得します。
                 var smoveType = GetSpecialMoveType(m.Groups[2].Value);
@@ -436,7 +436,7 @@ namespace Ragnarok.Shogi
                 }
 
                 // 手番が指定されていれば、それを取得します。
-                move.BWType = GetBWType(m.Groups[1].Value);
+                move.Colour = GetColour(m.Groups[1].Value);
 
                 // 33同銀などを有効にします。
                 // 筋・段
