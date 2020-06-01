@@ -396,7 +396,8 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 特殊な指し手を生成します。
         /// </summary>
-        public static Move CreateSpecialMove(Colour turn, SpecialMoveType smoveType)
+        public static Move CreateSpecial(SpecialMoveType smoveType,
+                                         Colour turn = Colour.None)
         {
             if (smoveType == SpecialMoveType.None)
             {

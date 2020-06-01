@@ -195,7 +195,7 @@ namespace Ragnarok.Shogi.Sfen.Tests
         [Test()]
         public void SpecialMoveTest()
         {
-            var move = Move.CreateSpecialMove(Colour.Black, SpecialMoveType.Interrupt);
+            var move = Move.CreateSpecial(SpecialMoveType.Interrupt, Colour.Black);
 
             Assert.True(move.IsSpecialMove);
             Assert.AreEqual(SpecialMoveType.Interrupt, move.SpecialMoveType);

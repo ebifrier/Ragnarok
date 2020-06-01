@@ -270,9 +270,8 @@ namespace Ragnarok.Shogi.Kif
                 {
                     nodes.Add(new MoveNode
                     {
-                        Move = Move.CreateSpecialMove(
-                            smove.Colour,
-                            smove.SpecialMoveType)
+                        Move = Move.CreateSpecial(
+                            smove.SpecialMoveType, smove.Colour)
                     });
                 }
 

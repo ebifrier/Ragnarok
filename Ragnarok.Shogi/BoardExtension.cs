@@ -350,8 +350,7 @@ namespace Ragnarok.Shogi
 
             if (move.IsSpecialMove)
             {
-                return Move.CreateSpecialMove(
-                    colour, move.SpecialMoveType);
+                return Move.CreateSpecial(move.SpecialMoveType, colour);
             }
 
             // 移動後の位置を取得します。

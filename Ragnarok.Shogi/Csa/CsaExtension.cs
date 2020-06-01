@@ -163,7 +163,7 @@ namespace Ragnarok.Shogi.Csa
                         m.Groups[1].Value + ": 対応していないCSA形式の指し手です。");
             }
 
-            return Move.CreateSpecialMove(board.Turn, smoveType);
+            return Move.CreateSpecial(smoveType, board.Turn);
         }
 
         /// <summary>

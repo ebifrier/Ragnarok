@@ -85,7 +85,7 @@ namespace Ragnarok.Shogi.Sfen
             var type = SfenToSpecialMoveType(sfen);
             if (type != SpecialMoveType.None)
             {
-                return Move.CreateSpecialMove(board.Turn, type);
+                return Move.CreateSpecial(type, board.Turn);
             }
 
             if (sfen.Length < 4)

@@ -1076,9 +1076,7 @@ namespace Ragnarok.Shogi
                 throw new ArgumentNullException(nameof(move));
             }
 
-            return IsPromoteForce(
-                PieceUtil.Modify(move.MovePiece, move.Colour),
-                move.DstSquare);
+            return IsPromoteForce(move.MovePiece, move.DstSquare);
         }
 
         /// <summary>

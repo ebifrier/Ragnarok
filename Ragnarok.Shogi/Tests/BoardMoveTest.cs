@@ -45,7 +45,7 @@ namespace Ragnarok.Shogi.Tests
                 from turn in ColourUtil.BlackWhite()
                 from special in EnumUtil.GetValues<SpecialMoveType>()
                 where special != SpecialMoveType.None
-                let bmove = Move.CreateSpecialMove(turn, special)
+                let bmove = Move.CreateSpecial(special, turn)
                 where bmove.Validate()
                 select bmove;
 
