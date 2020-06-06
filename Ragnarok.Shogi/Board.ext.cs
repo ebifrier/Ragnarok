@@ -40,9 +40,9 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// bod形式に局面を変換します。
         /// </summary>
-        public string ToBod()
+        public string ToBod(int? moveCount = null)
         {
-            return BodBoard.BoardToBod(this);
+            return BodBoard.BoardToBod(this, moveCount);
         }
 
         /// <summary>

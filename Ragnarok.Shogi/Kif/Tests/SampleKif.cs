@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 
 namespace Ragnarok.Shogi.Kif.Tests
 {
-    internal static partial class SampleKif
+    public static class SampleKif
     {
         /// <summary>
         /// 指定の名前を持つ棋譜をリソースから読み込みます。

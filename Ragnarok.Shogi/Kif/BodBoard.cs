@@ -85,7 +85,7 @@ namespace Ragnarok.Shogi.Kif
         /// 
         /// 後手番
         /// </example>
-        public static string BoardToBod(Board board)
+        public static string BoardToBod(Board board, int? moveCount = null)
         {
             if (board == null)
             {
@@ -115,7 +115,7 @@ namespace Ragnarok.Shogi.Kif
                         .Select(_ => RankToBod(board, _)));
                 result.Add("+---------------------------+");
                 result.Add("先手の持駒：" + HandToBod(board, Colour.Black));
-                result.Add("手数＝" + board.MoveCount);
+                result.Add("手数＝" + (moveCount ?? board.MoveCount));
 
                 if (board.Turn == Colour.White)
                 {
