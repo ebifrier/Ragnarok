@@ -81,6 +81,36 @@ namespace Ragnarok.Shogi
 
             Assert.Catch(() => Score.ParseMate("dde+3dts", Colour.Black));
         }
+
+        [Test()]
+        public void WinRateTest()
+        {
+            var Delta = 1e-5;
+
+            Assert.AreEqual(100.0,
+                Score.CreateMate(Colour.Black, 1, true).WinRate,
+                Delta);
+            Assert.AreEqual(100.0,
+                Score.CreateValue(Colour.Black, 3000).WinRate,
+                1.0);
+            Assert.AreEqual(100.0,
+                Score.CreateValue(Colour.White, 3000).WinRate,
+                1.0);
+
+            Assert.AreEqual(0.0,
+                Score.CreateMate(Colour.White, 1, false).WinRate,
+                Delta);
+            Assert.AreEqual(0.0,
+                Score.CreateValue(Colour.White, -3000).WinRate,
+                1.0);
+
+            Assert.AreEqual(50.0,
+                Score.CreateValue(Colour.Black, 0).WinRate,
+                Delta);
+            Assert.AreEqual(50.0,
+                Score.CreateValue(Colour.White, 0).WinRate,
+                Delta);
+        }
     }
 }
 #endif

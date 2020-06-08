@@ -245,6 +245,17 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
+        /// 評価値から計算される勝率を取得します。
+        /// </summary>
+        public double WinRate
+        {
+            get
+            {
+                return 100.0 / (1.0 + Math.Exp(-Value / 600.0));
+            }
+        }
+
+        /// <summary>
         /// 評価値の特性を取得します。
         /// </summary>
         public ScoreBound ScoreBound
