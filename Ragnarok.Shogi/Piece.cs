@@ -177,9 +177,7 @@ namespace Ragnarok.Shogi
         {
             for (var piece = Piece.Pawn; piece <= Piece.King; ++piece)
             {
-                yield return (colour != Colour.None
-                    ? piece.With(colour)
-                    : piece);
+                yield return piece.With(colour);
             }
         }
 
@@ -190,9 +188,7 @@ namespace Ragnarok.Shogi
         {
             for (var piece = Piece.Pawn; piece < Piece.Queen; ++piece)
             {
-                yield return (colour != Colour.None
-                    ? piece.With(colour)
-                    : piece);
+                yield return piece.With(colour);
             }
         }
 
@@ -208,7 +204,7 @@ namespace Ragnarok.Shogi
 
             foreach (var piece in PieceTypes())
             {
-                yield return With(piece, Colour.White);
+                yield return piece.With(Colour.White);
             }
         }
 
@@ -226,7 +222,6 @@ namespace Ragnarok.Shogi
         public static Piece With(this Piece piece, Colour colour)
         {
             return (
-                piece == Piece.None ? piece :
                 colour == Colour.Black ? piece & ~Piece.White :
                 colour == Colour.White ? piece | Piece.White :
                 piece);
@@ -243,7 +238,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 駒の手番を反転させます。
         /// </summary>
-        public static Piece FlipColor(this Piece piece)
+        public static Piece FlipColour(this Piece piece)
         {
             var colour = GetColour(piece);
 
@@ -261,9 +256,6 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 手番情報と成り情報を削除した駒情報を取得します。
         /// </summary>
-        /// <remarks>
-        /// 玉の場合は正しい駒を返しません。
-        /// </remarks>
         public static Piece GetRawType(this Piece piece)
         {
             return piece.GetPieceType() == Piece.King

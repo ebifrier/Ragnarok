@@ -1139,7 +1139,7 @@ namespace Ragnarok.Shogi
             // すべての駒の先後を入れ替えます。
             Board.Squares()
                 .Where(_ => !this[_].IsNone())
-                .ForEach(_ => this[_] = this[_].FlipColor());
+                .ForEach(_ => this[_] = this[_].FlipColour());
 
             // 各駒の位置を入れ替えます。
             for (var rank = 1; rank <= Board.BoardSize / 2 + 1; ++rank)

@@ -60,7 +60,7 @@ namespace Ragnarok.Shogi
             }
 
             // 移動による指し手をすべて列挙します。
-            var srcRange = GetCanMoveRange(piece.FlipColor(), dstSquare);
+            var srcRange = GetCanMoveRange(piece.FlipColour(), dstSquare);
             foreach (var srcSquare in srcRange)
             {
                 var moves = GetAvailableMove(piece, srcSquare, dstSquare);

@@ -173,11 +173,11 @@ namespace Ragnarok.Shogi.Tests
             Assert.AreNotSame(board1.HashValue, board2.HashValue);
 
             board2 = board1.Clone();
-            board2[9, 1] = board2[9, 1].FlipColor();
+            board2[9, 1] = board2[9, 1].FlipColour();
             Assert.AreNotSame(board1.HashValue, board2.HashValue);
 
             board2 = board1.Clone();
-            board2[7, 6] = board2[7, 6].FlipColor();
+            board2[7, 6] = board2[7, 6].FlipColour();
             Assert.AreNotSame(board1.HashValue, board2.HashValue);
         }
 
