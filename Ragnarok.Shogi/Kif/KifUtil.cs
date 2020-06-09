@@ -334,7 +334,7 @@ namespace Ragnarok.Shogi.Kif
             }
 
             var colour = (colourCh == 'v' ? Colour.White : Colour.Black);
-            return PieceUtil.Modify(piece.Value, colour);
+            return PieceUtil.With(piece.Value, colour);
         }
 
         /// <summary>

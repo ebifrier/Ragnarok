@@ -108,7 +108,7 @@ namespace Ragnarok.Shogi.Sfen
                 var dstRank = (sfen[3] - 'a') + 1;
 
                 return Move.CreateDrop(
-                    dropPieceType.Modify(board.Turn),
+                    dropPieceType.With(board.Turn),
                     SquareUtil.Create(dstFile, dstRank));
             }
             else
@@ -134,7 +134,7 @@ namespace Ragnarok.Shogi.Sfen
 
                 var promote = (sfen.Length > 4 && sfen[4] == '+');
                 return Move.CreateMove(
-                    piece.Modify(board.Turn),
+                    piece.With(board.Turn),
                     SquareUtil.Create(srcFile, srcRank),
                     SquareUtil.Create(dstFile, dstRank),
                     promote,

@@ -365,7 +365,7 @@ namespace Ragnarok.Shogi
             }
 
             var boardMoveList = board.ListupMoves(
-                move.Piece.Modify(colour), dstSquare)
+                move.Piece.With(colour), dstSquare)
                 .ToList();
 
             // 複数の指し手の中から適切な一つを選びます。

@@ -59,12 +59,12 @@ namespace Ragnarok.Shogi.Sfen
             {
                 if (pieceCh == SfenPieceList[i])
                 {
-                    return ((Piece)i).Modify(Colour.Black);
+                    return ((Piece)i).With(Colour.Black);
                 }
 
                 if (pieceCh == char.ToLowerInvariant(SfenPieceList[i]))
                 {
-                    return ((Piece)i).Modify(Colour.White);
+                    return ((Piece)i).With(Colour.White);
                 }
             }
 

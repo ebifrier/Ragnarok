@@ -178,7 +178,7 @@ namespace Ragnarok.Shogi
             for (var piece = Piece.Pawn; piece <= Piece.King; ++piece)
             {
                 yield return (colour != Colour.None
-                    ? piece.Modify(colour)
+                    ? piece.With(colour)
                     : piece);
             }
         }
@@ -191,7 +191,7 @@ namespace Ragnarok.Shogi
             for (var piece = Piece.Pawn; piece < Piece.Queen; ++piece)
             {
                 yield return (colour != Colour.None
-                    ? piece.Modify(colour)
+                    ? piece.With(colour)
                     : piece);
             }
         }
@@ -208,14 +208,14 @@ namespace Ragnarok.Shogi
 
             foreach (var piece in PieceTypes())
             {
-                yield return Modify(piece, Colour.White);
+                yield return With(piece, Colour.White);
             }
         }
 
         /// <summary>
         /// 駒の成り・不成を設定します。
         /// </summary>
-        public static Piece Modify(this Piece piece, bool isPromote)
+        public static Piece With(this Piece piece, bool isPromote)
         {
             return (isPromote ? piece.Promote() : piece.Unpromote());
         }
@@ -223,7 +223,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 駒の手番を設定します。
         /// </summary>
-        public static Piece Modify(this Piece piece, Colour colour)
+        public static Piece With(this Piece piece, Colour colour)
         {
             return (
                 piece == Piece.None ? piece :
@@ -247,7 +247,7 @@ namespace Ragnarok.Shogi
         {
             var colour = GetColour(piece);
 
-            return Modify(piece, colour.Flip());
+            return With(piece, colour.Flip());
         }
 
         /// <summary>

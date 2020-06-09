@@ -228,7 +228,7 @@ namespace Ragnarok.Shogi.Csa
             if (srcSquare.IsEmpty())
             {
                 // 駒打ちの場合
-                return Move.CreateDrop(piece.Modify(side), dstSquare);
+                return Move.CreateDrop(piece.With(side), dstSquare);
             }
             else
             {
@@ -247,7 +247,7 @@ namespace Ragnarok.Shogi.Csa
                 }
 
                 return Move.CreateMove(
-                    piece.Modify(side), srcSquare, dstSquare, isPromote);
+                    piece.With(side), srcSquare, dstSquare, isPromote);
             }
         }
 

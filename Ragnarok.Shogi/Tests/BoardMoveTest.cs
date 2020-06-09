@@ -29,7 +29,7 @@ namespace Ragnarok.Shogi.Tests
                 from promote in new bool[] { false, true }
                 where (dst.GetRank() % 2) == 1 && (dst.GetFile() % 3) == 1
                 where (src.GetRank() % 2) == 1 && (src.GetFile() % 3) == 1
-                let bmove = Move.CreateMove(pc, src, dst, promote, tookPc.Modify(turn.Flip()))
+                let bmove = Move.CreateMove(pc, src, dst, promote, tookPc.With(turn.Flip()))
                 where bmove.Validate()
                 select bmove;
 

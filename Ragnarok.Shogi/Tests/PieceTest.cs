@@ -13,11 +13,11 @@ namespace Ragnarok.Shogi
         public void GetColorTest()
         {
             PieceUtil.PieceTypes()
-                .Select(_ => _.Modify(Colour.Black))
+                .Select(_ => _.With(Colour.Black))
                 .ForEach(_ => Assert.AreEqual(Colour.Black, _.GetColour()));
 
             PieceUtil.PieceTypes()
-                .Select(_ => _.Modify(Colour.White))
+                .Select(_ => _.With(Colour.White))
                 .ForEach(_ => Assert.AreEqual(Colour.White, _.GetColour()));
         }
 

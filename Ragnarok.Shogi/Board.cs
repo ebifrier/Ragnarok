@@ -86,12 +86,9 @@ namespace Ragnarok.Shogi
         /// </summary>
         public static IEnumerable<Square> Squares()
         {
-            for (var rank = 1; rank <= Board.BoardSize; ++rank)
+            for (var index = 1; index <= 81; ++index)
             {
-                for (var file = 1; file <= Board.BoardSize; ++file)
-                {
-                    yield return SquareUtil.Create(file, rank);
-                }
+                yield return (Square)index;
             }
         }
 
@@ -484,8 +481,8 @@ namespace Ragnarok.Shogi
         {
             var funcs = new F[]
             {
-                new F(_ => GetHand(_.Modify(Colour.Black))),
-                new F(_ => GetHand(_.Modify(Colour.White))),
+                new F(_ => GetHand(_.With(Colour.Black))),
+                new F(_ => GetHand(_.With(Colour.White))),
                 new F(_ => Squares()
                     .Select(sq => this[sq])
                     .Sum(p => p.GetRawType() == _ ? 1 : 0)),
@@ -545,7 +542,7 @@ namespace Ragnarok.Shogi
                 // 駒打ちの場合は、その駒を駒台に戻します。
                 this[move.DstSquare] = Piece.None;
 
-                IncHand(move.DropPiece.Modify(move.Colour));
+                IncHand(move.DropPiece.With(move.Colour));
             }
             else
             {
@@ -563,7 +560,7 @@ namespace Ragnarok.Shogi
                     this[move.DstSquare] = move.TookPiece;
 
                     // 駒を取ったはずなので、その分を駒台から減らします。
-                    DecHand(move.TookPiece.Modify(move.Colour));
+                    DecHand(move.TookPiece.With(move.Colour));
                 }
                 else
                 {
@@ -660,7 +657,7 @@ namespace Ragnarok.Shogi
         public IEnumerable<Square> PieceSquares(Piece pieceType, Colour turn,
                                                 int exceptRank = 0)
         {
-            return PieceSquares(pieceType.Modify(turn), exceptRank);
+            return PieceSquares(pieceType.With(turn), exceptRank);
         }
 
         /// <summary>
@@ -865,7 +862,7 @@ namespace Ragnarok.Shogi
             // 王手将棋では打ち歩詰めを反則にしません。
             return false;
 #else
-            var pawnPiece = Piece.Pawn.Modify(colour);
+            var pawnPiece = Piece.Pawn.With(colour);
 
             // マスに駒がある場合や駒がない場合は歩を打てません。
             if (!this[square].IsNone() || GetHand(pawnPiece) <= 0)
@@ -881,7 +878,7 @@ namespace Ragnarok.Shogi
             }
 
             var king = this[square.GetFile(), square.GetRank() + rankDif];
-            if (king != Piece.King.Modify(colour.Flip()))
+            if (king != Piece.King.With(colour.Flip()))
             {
                 return false;
             }
@@ -993,7 +990,7 @@ namespace Ragnarok.Shogi
                 // 移動先に駒があれば、それを自分のものにします。
                 if (!dstPiece.IsNone())
                 {
-                    IncHand(dstPiece.Modify(move.Colour));
+                    IncHand(dstPiece.With(move.Colour));
 
                     // 取った駒を記憶しておきます。
                     move.TookPiece = dstPiece;
@@ -1004,7 +1001,7 @@ namespace Ragnarok.Shogi
                     srcPiece.IsPromoted() ||
                     move.ActionType == ActionType.Promote);
 
-                this[move.DstSquare] = srcPiece.Modify(promoted);
+                this[move.DstSquare] = srcPiece.With(promoted);
 
                 // 移動前の位置からは駒をなくします。
                 this[move.SrcSquare] = Piece.None;
@@ -1120,7 +1117,7 @@ namespace Ragnarok.Shogi
         /// </summary>
         private int GetKingCount(Colour colour)
         {
-            return GetPieceCount(Piece.King.Modify(colour));
+            return GetPieceCount(Piece.King.With(colour));
         }
 
         /// <summary>
@@ -1128,7 +1125,7 @@ namespace Ragnarok.Shogi
         /// </summary>
         public int GetPawnCount(Colour colour, int file)
         {
-            var target = Piece.Pawn.Modify(colour);
+            var target = Piece.Pawn.With(colour);
             return Enumerable.Range(1, BoardSize)
                 .Where(_ => this[file, _] == target)
                 .Count();
@@ -1165,7 +1162,7 @@ namespace Ragnarok.Shogi
                 from colour in ColourUtil.BlackWhite()
                 let countList = (
                     from rawType in PieceUtil.RawTypes()
-                    let count = GetHand(rawType.Modify(colour))
+                    let count = GetHand(rawType.With(colour))
                     select new { Piece = rawType, Count = count }
                     ).ToList()
                 select new { Colour = colour, CountList = countList };
@@ -1175,7 +1172,7 @@ namespace Ragnarok.Shogi
                 var flipped = _.Colour.Flip();
 
                 _.CountList.ForEach(data =>
-                    SetHand(data.Piece.Modify(flipped), data.Count));
+                    SetHand(data.Piece.With(flipped), data.Count));
             });
         }
 

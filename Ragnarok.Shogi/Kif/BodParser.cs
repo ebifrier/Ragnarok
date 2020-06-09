@@ -240,7 +240,7 @@ namespace Ragnarok.Shogi.Kif
                     StringSplitOptions.RemoveEmptyEntries)
                 .Select(_ => ParseHandPiece(colour, _))
                 .ForEach(_ =>
-                    this.board.SetHand(_.Item1.Modify(colour), _.Item2));
+                    this.board.SetHand(_.Item1.With(colour), _.Item2));
         }
 
         /// <summary>

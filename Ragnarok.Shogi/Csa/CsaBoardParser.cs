@@ -202,7 +202,7 @@ namespace Ragnarok.Shogi.Csa
         /// </summary>
         private void SetPiece(Colour colour, PieceSquare ps)
         {
-            var piece = ps.Piece.Modify(colour);
+            var piece = ps.Piece.With(colour);
 
             // 駒位置が"00"の場合は持ち駒となります。
             if (ps.Square.GetFile() != 0)

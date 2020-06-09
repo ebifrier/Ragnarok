@@ -130,7 +130,7 @@ namespace Ragnarok.Shogi.Csa
         {
             var handList =
                 from rawType in PieceUtil.RawTypes()
-                let count = board.GetHand(rawType.Modify(turn))
+                let count = board.GetHand(rawType.With(turn))
                 let str = $"00{CsaUtil.PieceTypeToStr(rawType)}"
                 let list = Enumerable.Range(1, count).Select(_ => str)
                 select string.Join("", list.ToArray());

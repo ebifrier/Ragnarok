@@ -156,7 +156,7 @@ namespace Ragnarok.Shogi.Kif
                 let obj = new
                 {
                     Piece = pieceType,
-                    Count = board.GetHand(pieceType.Modify(turn)),
+                    Count = board.GetHand(pieceType.With(turn)),
                 }
                 where obj.Count > 0
                 select string.Format(

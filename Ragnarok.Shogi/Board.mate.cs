@@ -101,7 +101,7 @@ namespace Ragnarok.Shogi
             var list =
                 from sq in Board.Squares()
                 let piece = this[sq]
-                where piece == Piece.King.Modify(colour)
+                where piece == Piece.King.With(colour)
                 select sq;
 
             return list.FirstOrDefault();
@@ -246,7 +246,7 @@ namespace Ragnarok.Shogi
                 Piece.Knight,
             };
             var dropPieceType = pieceList
-                .Select(_ => _.Modify(Turn))
+                .Select(_ => _.With(Turn))
                 .Where(_ => clone.GetHand(_) > 0)
                 .FirstOrDefault();
             if (!dropPieceType.IsNone() &&

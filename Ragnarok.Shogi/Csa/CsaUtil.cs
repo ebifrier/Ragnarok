@@ -240,7 +240,7 @@ namespace Ragnarok.Shogi.Csa
                 return null;
             }
 
-            return piece.Value.Modify(colour);
+            return piece.Value.With(colour);
         }
     }
 }
