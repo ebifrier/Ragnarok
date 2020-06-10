@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace Ragnarok.Shogi
 {
@@ -81,7 +82,8 @@ namespace Ragnarok.Shogi
         /// ファイル名からデフォルトの値に設定します。
         /// </remarks>
         public static void SaveFile(string filepath, KifuObject kifuObj,
-                                    KifuFormat? format = null)
+                                    KifuFormat? format = null,
+                                    Encoding encoding = null)
         {
             if (string.IsNullOrEmpty(filepath))
             {
@@ -93,8 +95,9 @@ namespace Ragnarok.Shogi
                 format = GetFormat(filepath);
             }
 
+            encoding = encoding ?? KifuObject.DefaultEncoding;
             using (var stream = new FileStream(filepath, FileMode.Create))
-            using (var writer = new StreamWriter(stream, KifuObject.DefaultEncoding))
+            using (var writer = new StreamWriter(stream, encoding))
             {
                 Save(writer, kifuObj, format.Value);
             }

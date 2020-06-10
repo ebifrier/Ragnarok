@@ -4,9 +4,12 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
+using Hnx8.ReadJEnc;
+
 namespace Ragnarok.Shogi
 {
     using File;
+    using Net;
 
     /// <summary>
     /// 棋譜の読み込みを行います。
@@ -16,17 +19,28 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 棋譜をファイルから読み込みます。
         /// </summary>
-        public static KifuObject LoadFile(string filepath)
+        public static KifuObject Load(Uri url, Encoding encoding = null)
         {
-            if (string.IsNullOrEmpty(filepath))
+            var GetBytes = new Func<byte[]>(() =>
             {
-                throw new ArgumentNullException(nameof(filepath));
+                switch (url.Scheme)
+                {
+                    case "file":
+                        return System.IO.File.ReadAllBytes(url.LocalPath);
+                    case "http":
+                    case "https":
+                        return WebUtil.RequestHttp(url.ToString(), null);
+                    default:
+                        throw new ArgumentException($"{url}: 不明なスキームです。");
+                }
+            });
+
+            if (url == null)
+            {
+                throw new ArgumentNullException(nameof(url));
             }
 
-            using (var reader = new StreamReader(filepath, KifuObject.DefaultEncoding))
-            {
-                return Load(reader);
-            }
+            return LoadFrom(GetBytes(), encoding);
         }
 
         /// <summary>
@@ -40,6 +54,29 @@ namespace Ragnarok.Shogi
             }
 
             return LoadFrom(reader.ReadToEnd());
+        }
+
+        /// <summary>
+        /// エンコーディングを自動で判別し、棋譜を読み込みます。
+        /// </summary>
+        public static KifuObject LoadFrom(byte[] data, Encoding encoding = null)
+        {
+            if (data == null)
+            {
+                throw new ArgumentNullException(nameof(data));
+            }
+
+            string text;
+            if (encoding != null)
+            {
+                text = encoding.GetString(data);
+            }
+            else
+            {
+                ReadJEnc.JP.GetEncoding(data, data.Length, out text);
+            }
+
+            return LoadFrom(text);
         }
 
         /// <summary>
