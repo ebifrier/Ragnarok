@@ -223,7 +223,7 @@ namespace Ragnarok.Shogi
         /// </summary>
         public bool Equals(Hand other)
         {
-            if ((object)other == null)
+            if (other == null)
             {
                 return false;
             }
@@ -239,6 +239,16 @@ namespace Ragnarok.Shogi
             }
 
             return true;
+        }
+
+        public static bool operator==(Hand x, Hand y)
+        {
+            return Util.GenericEquals(x, y);
+        }
+
+        public static bool operator !=(Hand x, Hand y)
+        {
+            return !(x == y);
         }
 
         /// <summary>

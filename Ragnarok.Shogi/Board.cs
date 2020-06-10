@@ -1240,7 +1240,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// オブジェクトの等値性を判定します。
         /// </summary>
-        public static bool BoardEquals(Board x, Board y)
+        public static bool BoardEquals(Board x, Board y, bool compareTurn = true)
         {
             var result = Util.PreEquals(x, y);
             if (result != null)
@@ -1248,20 +1248,23 @@ namespace Ragnarok.Shogi
                 return result.Value;
             }
 
-            if (!Squares().All(_ => x[_] == y[_]))
+            if (x.blackHandBox != y.blackHandBox ||
+                x.whiteHandBox != y.whiteHandBox)
             {
                 return false;
             }
 
-            if (!x.blackHandBox.Equals(y.blackHandBox) ||
-                !x.whiteHandBox.Equals(y.whiteHandBox))
+            if (compareTurn && x.turn != y.turn)
             {
                 return false;
             }
 
-            if (x.turn != y.turn)
+            for (var i = 0; i < BoardSize * BoardSize; ++i)
             {
-                return false;
+                if (x.board[i] != y.board[i])
+                {
+                    return false;
+                }
             }
 
             return true;

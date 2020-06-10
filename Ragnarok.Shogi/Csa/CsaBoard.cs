@@ -44,17 +44,9 @@ namespace Ragnarok.Shogi.Csa
                 throw new ArgumentNullException(nameof(board));
             }
 
-            var comp = new Board();
-            var comp2 = new Board();
-            comp2.Turn = Colour.White;
-
-            if (Board.BoardEquals(board, comp))
+            if (Board.BoardEquals(board, new Board(), false))
             {
-                return "PI\n+";
-            }
-            else if (Board.BoardEquals(board, comp2))
-            {
-                return "PI\n-";
+                return (board.Turn == Colour.Black ? "PI\n+" : "PI\n-");
             }
             else
             {
