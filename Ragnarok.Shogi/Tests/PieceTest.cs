@@ -296,6 +296,70 @@ namespace Ragnarok.Shogi
         }
 
         [Test]
+        public void WithColourTest()
+        {
+            Assert.AreEqual(BlackPawn, BlackPawn.With(Colour.Black));
+            Assert.AreEqual(BlackLance, BlackLance.With(Colour.Black));
+            Assert.AreEqual(BlackKnight, BlackKnight.With(Colour.Black));
+            Assert.AreEqual(BlackSilver, BlackSilver.With(Colour.Black));
+            Assert.AreEqual(BlackBishop, BlackBishop.With(Colour.Black));
+            Assert.AreEqual(BlackRook, BlackRook.With(Colour.Black));
+            Assert.AreEqual(BlackGold, BlackGold.With(Colour.Black));
+            Assert.AreEqual(BlackKing, BlackKing.With(Colour.Black));
+            Assert.AreEqual(BlackProPawn, BlackProPawn.With(Colour.Black));
+            Assert.AreEqual(BlackProLance, BlackProLance.With(Colour.Black));
+            Assert.AreEqual(BlackProKnight, BlackProKnight.With(Colour.Black));
+            Assert.AreEqual(BlackProSilver, BlackProSilver.With(Colour.Black));
+            Assert.AreEqual(BlackHorse, BlackHorse.With(Colour.Black));
+            Assert.AreEqual(BlackDragon, BlackDragon.With(Colour.Black));
+
+            Assert.AreEqual(WhitePawn, BlackPawn.With(Colour.White));
+            Assert.AreEqual(WhiteLance, BlackLance.With(Colour.White));
+            Assert.AreEqual(WhiteKnight, BlackKnight.With(Colour.White));
+            Assert.AreEqual(WhiteSilver, BlackSilver.With(Colour.White));
+            Assert.AreEqual(WhiteBishop, BlackBishop.With(Colour.White));
+            Assert.AreEqual(WhiteRook, BlackRook.With(Colour.White));
+            Assert.AreEqual(WhiteGold, BlackGold.With(Colour.White));
+            Assert.AreEqual(WhiteKing, BlackKing.With(Colour.White));
+            Assert.AreEqual(WhiteProPawn, BlackProPawn.With(Colour.White));
+            Assert.AreEqual(WhiteProLance, BlackProLance.With(Colour.White));
+            Assert.AreEqual(WhiteProKnight, BlackProKnight.With(Colour.White));
+            Assert.AreEqual(WhiteProSilver, BlackProSilver.With(Colour.White));
+            Assert.AreEqual(WhiteHorse, BlackHorse.With(Colour.White));
+            Assert.AreEqual(WhiteDragon, BlackDragon.With(Colour.White));
+
+            Assert.AreEqual(BlackPawn, WhitePawn.With(Colour.Black));
+            Assert.AreEqual(BlackLance, WhiteLance.With(Colour.Black));
+            Assert.AreEqual(BlackKnight, WhiteKnight.With(Colour.Black));
+            Assert.AreEqual(BlackSilver, WhiteSilver.With(Colour.Black));
+            Assert.AreEqual(BlackBishop, WhiteBishop.With(Colour.Black));
+            Assert.AreEqual(BlackRook, WhiteRook.With(Colour.Black));
+            Assert.AreEqual(BlackGold, WhiteGold.With(Colour.Black));
+            Assert.AreEqual(BlackKing, WhiteKing.With(Colour.Black));
+            Assert.AreEqual(BlackProPawn, WhiteProPawn.With(Colour.Black));
+            Assert.AreEqual(BlackProLance, WhiteProLance.With(Colour.Black));
+            Assert.AreEqual(BlackProKnight, WhiteProKnight.With(Colour.Black));
+            Assert.AreEqual(BlackProSilver, WhiteProSilver.With(Colour.Black));
+            Assert.AreEqual(BlackHorse, WhiteHorse.With(Colour.Black));
+            Assert.AreEqual(BlackDragon, WhiteDragon.With(Colour.Black));
+
+            Assert.AreEqual(WhitePawn, WhitePawn.With(Colour.White));
+            Assert.AreEqual(WhiteLance, WhiteLance.With(Colour.White));
+            Assert.AreEqual(WhiteKnight, WhiteKnight.With(Colour.White));
+            Assert.AreEqual(WhiteSilver, WhiteSilver.With(Colour.White));
+            Assert.AreEqual(WhiteBishop, WhiteBishop.With(Colour.White));
+            Assert.AreEqual(WhiteRook, WhiteRook.With(Colour.White));
+            Assert.AreEqual(WhiteGold, WhiteGold.With(Colour.White));
+            Assert.AreEqual(WhiteKing, WhiteKing.With(Colour.White));
+            Assert.AreEqual(WhiteProPawn, WhiteProPawn.With(Colour.White));
+            Assert.AreEqual(WhiteProLance, WhiteProLance.With(Colour.White));
+            Assert.AreEqual(WhiteProKnight, WhiteProKnight.With(Colour.White));
+            Assert.AreEqual(WhiteProSilver, WhiteProSilver.With(Colour.White));
+            Assert.AreEqual(WhiteHorse, WhiteHorse.With(Colour.White));
+            Assert.AreEqual(WhiteDragon, WhiteDragon.With(Colour.White));
+        }
+
+        [Test]
         public void GetRawTypeTest()
         {
             Assert.AreEqual(Pawn, BlackPawn.GetRawType());

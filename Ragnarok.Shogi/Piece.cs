@@ -197,23 +197,15 @@ namespace Ragnarok.Shogi
         /// </summary>
         public static IEnumerable<Piece> BlackWhitePieces()
         {
-            foreach (var piece in PieceTypes())
+            foreach (var piece in PieceTypes(Colour.Black))
             {
                 yield return piece;
             }
 
-            foreach (var piece in PieceTypes())
+            foreach (var piece in PieceTypes(Colour.White))
             {
-                yield return piece.With(Colour.White);
+                yield return piece;
             }
-        }
-
-        /// <summary>
-        /// 駒の成り・不成を設定します。
-        /// </summary>
-        public static Piece With(this Piece piece, bool isPromote)
-        {
-            return (isPromote ? piece.Promote() : piece.Unpromote());
         }
 
         /// <summary>
@@ -221,10 +213,12 @@ namespace Ragnarok.Shogi
         /// </summary>
         public static Piece With(this Piece piece, Colour colour)
         {
-            return (
-                colour == Colour.Black ? piece & ~Piece.White :
-                colour == Colour.White ? piece | Piece.White :
-                piece);
+            switch (colour)
+            {
+                case Colour.Black: return piece & ~Piece.White;
+                case Colour.White: return piece | Piece.White;
+                default: return piece;
+            }
         }
 
         /// <summary>
@@ -242,7 +236,7 @@ namespace Ragnarok.Shogi
         {
             var colour = GetColour(piece);
 
-            return With(piece, colour.Flip());
+            return piece.With(colour.Flip());
         }
 
         /// <summary>

@@ -112,7 +112,7 @@ namespace Ragnarok.Shogi.Sfen
                         piece.GetRawType() != Piece.King &&
                         piece.GetRawType() != Piece.Gold)
                     {
-                        piece = piece.With(promoted);
+                        piece = piece.Promote();
                     }
 
                     board[file, rank] = piece;

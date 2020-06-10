@@ -997,11 +997,10 @@ namespace Ragnarok.Shogi
                 }
 
                 // 移動後の駒の成り/不成りを決定します。
-                var promoted = (
-                    srcPiece.IsPromoted() ||
-                    move.ActionType == ActionType.Promote);
-
-                this[move.DstSquare] = srcPiece.With(promoted);
+                this[move.DstSquare] = 
+                    move.ActionType == ActionType.Promote
+                    ? srcPiece.Promote()
+                    : srcPiece;
 
                 // 移動前の位置からは駒をなくします。
                 this[move.SrcSquare] = Piece.None;
