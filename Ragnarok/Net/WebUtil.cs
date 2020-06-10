@@ -21,8 +21,10 @@ namespace Ragnarok.Net
         {
             DefaultTimeout = -1;
             IsConvertPostParamSpaceToPlus = false;
-            
+
             // セキュリティ証明をパスします。
+            ServicePointManager.Expect100Continue = true;
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             ServicePointManager.ServerCertificateValidationCallback +=
                 (sender, certificate, chain, sslPolicyErrors) => true;
         }
