@@ -179,10 +179,10 @@
     <None Include="GenFiles\make_evals.bat" />
     <None Include="GenFiles\make_evals.rb" />
     <EmbeddedResource Include="Kif\Tests\Sample\Ki2_Error.ki2" />
-    <EmbeddedResource Include="Kif\Tests\Sample\Ki2_Illegal.KI2" />
-    <EmbeddedResource Include="Kif\Tests\Sample\Ki2_Test1.KI2" />
-    <EmbeddedResource Include="Kif\Tests\Sample\Ki2_Test2.KI2" />
-    <EmbeddedResource Include="Kif\Tests\Sample\Ki2_Test3.KI2" />
+    <EmbeddedResource Include="Kif\Tests\Sample\Ki2_Illegal.ki2" />
+    <EmbeddedResource Include="Kif\Tests\Sample\Ki2_Test1.ki2" />
+    <EmbeddedResource Include="Kif\Tests\Sample\Ki2_Test2.ki2" />
+    <EmbeddedResource Include="Kif\Tests\Sample\Ki2_Test3.ki2" />
     <EmbeddedResource Include="Kif\Tests\Sample\Kif_Comment.kif" />
     <EmbeddedResource Include="Kif\Tests\Sample\Kif_PV.kif" />
     <EmbeddedResource Include="Kif\Tests\Sample\Kif_PV2.kif" />
@@ -191,6 +191,7 @@
     <EmbeddedResource Include="Kif\Tests\Sample\Kif_CheckMate.kif" />
     <EmbeddedResource Include="Kif\Tests\Sample\Kif_VariationShort.kif" />
     <EmbeddedResource Include="Kif\Tests\Sample\Kif_VariationShortMain.kif" />
+    <EmbeddedResource Include="Kif\Tests\Sample\Ki2_LongLong.ki2" />
     <None Include="packages.config" />
     <None Include="Ragnarok.Shogi.snk" />
   </ItemGroup>

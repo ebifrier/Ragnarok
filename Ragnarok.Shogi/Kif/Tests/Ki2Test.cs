@@ -58,9 +58,9 @@ namespace Ragnarok.Shogi.Kif.Tests
         [Test()]
         public void NormalTest()
         {
-            TestKif(SampleKif.Get("Ki2_Test1.KI2"));
-            TestKif(SampleKif.Get("Ki2_Test2.KI2"));
-            TestKif(SampleKif.Get("Ki2_Test3.KI2"));
+            TestKif(SampleKif.Get("Ki2_Test1.ki2"));
+            TestKif(SampleKif.Get("Ki2_Test2.ki2"));
+            TestKif(SampleKif.Get("Ki2_Test3.ki2"));
         }
 
         /// <summary>
@@ -69,7 +69,7 @@ namespace Ragnarok.Shogi.Kif.Tests
         [Test()]
         public void IllegalTest()
         {
-            TestKif(SampleKif.Get("Ki2_Illegal.KI2"));
+            TestKif(SampleKif.Get("Ki2_Illegal.ki2"));
         }
 
         /// <summary>
