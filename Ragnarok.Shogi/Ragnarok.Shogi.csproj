@@ -190,6 +190,7 @@
     <EmbeddedResource Include="Kif\Tests\Sample\Kif_VariationMiss.kif" />
     <EmbeddedResource Include="Kif\Tests\Sample\Kif_CheckMate.kif" />
     <EmbeddedResource Include="Kif\Tests\Sample\Kif_VariationShort.kif" />
+    <EmbeddedResource Include="Kif\Tests\Sample\Kif_VariationShortMain.kif" />
     <None Include="packages.config" />
     <None Include="Ragnarok.Shogi.snk" />
   </ItemGroup>
@@ -209,6 +210,9 @@
     <Analyzer Include="..\packages\Microsoft.NetCore.Analyzers.2.9.6\analyzers\dotnet\cs\Microsoft.NetCore.CSharp.Analyzers.dll" />
     <Analyzer Include="..\packages\Microsoft.NetFramework.Analyzers.2.9.6\analyzers\dotnet\cs\Microsoft.NetFramework.Analyzers.dll" />
     <Analyzer Include="..\packages\Microsoft.NetFramework.Analyzers.2.9.6\analyzers\dotnet\cs\Microsoft.NetFramework.CSharp.Analyzers.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Kif\Tests\Sample\Kif_UTF8.kif" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

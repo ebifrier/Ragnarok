@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 
 namespace Ragnarok.Shogi.Kif.Tests
 {
@@ -11,15 +12,30 @@ namespace Ragnarok.Shogi.Kif.Tests
         /// <summary>
         /// 指定の名前を持つ棋譜をリソースから読み込みます。
         /// </summary>
-        public static string Get(string resourceName)
+        public static string Get(string resourceName, Encoding encoding = null)
+        {
+            var asm = Assembly.GetExecutingAssembly();
+            var ns = typeof(SampleKif).Namespace + ".Sample.";
+            encoding = encoding ?? KifuObject.DefaultEncoding;
+
+            using (var stream = asm.GetManifestResourceStream(ns + resourceName))
+            using (var reader = new StreamReader(stream, encoding))
+            {
+                return reader.ReadToEnd();
+            }
+        }
+
+        /// <summary>
+        /// 棋譜をオブジェクトとして読み込みます。
+        /// </summary>
+        public static KifuObject LoadKif(string resourceName)
         {
             var asm = Assembly.GetExecutingAssembly();
             var ns = typeof(SampleKif).Namespace + ".Sample.";
 
             using (var stream = asm.GetManifestResourceStream(ns + resourceName))
-            using (var reader = new StreamReader(stream, KifuObject.DefaultEncoding))
             {
-                return reader.ReadToEnd();
+                return KifuReader.LoadFrom(stream);
             }
         }
 

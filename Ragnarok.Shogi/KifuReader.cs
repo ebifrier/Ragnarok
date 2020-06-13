@@ -9,7 +9,6 @@ using Hnx8.ReadJEnc;
 namespace Ragnarok.Shogi
 {
     using File;
-    using Net;
 
     /// <summary>
     /// 棋譜の読み込みを行います。
@@ -17,43 +16,34 @@ namespace Ragnarok.Shogi
     public static class KifuReader
     {
         /// <summary>
-        /// 棋譜をファイルから読み込みます。
+        /// ファイルから棋譜を読み込みます。
         /// </summary>
-        public static KifuObject Load(Uri url, Encoding encoding = null)
+        public static KifuObject Load(string filepath, Encoding encoding = null)
         {
-            var GetBytes = new Func<byte[]>(() =>
+            if (string.IsNullOrEmpty(filepath))
             {
-                switch (url.Scheme)
-                {
-                    case "file":
-                        return System.IO.File.ReadAllBytes(url.LocalPath);
-                    case "http":
-                    case "https":
-                        return WebUtil.RequestHttp(url.ToString(), null);
-                    default:
-                        throw new ArgumentException($"{url}: 不明なスキームです。");
-                }
-            });
-
-            if (url == null)
-            {
-                throw new ArgumentNullException(nameof(url));
+                throw new ArgumentNullException(nameof(filepath));
             }
 
-            return LoadFrom(GetBytes(), encoding);
+            var data = System.IO.File.ReadAllBytes(filepath);
+            return LoadFrom(data, encoding);
         }
 
         /// <summary>
-        /// 棋譜を文字列から読み込みます。
+        /// エンコーディングを自動で判別し、Streamから棋譜を読み込みます。
         /// </summary>
-        public static KifuObject Load(TextReader reader)
+        public static KifuObject LoadFrom(Stream stream, Encoding encoding = null)
         {
-            if (reader == null)
+            if (stream == null)
             {
-                throw new ArgumentNullException(nameof(reader));
+                throw new ArgumentNullException(nameof(stream));
             }
 
-            return LoadFrom(reader.ReadToEnd());
+            using (var memoryStream = new MemoryStream())
+            {
+                stream.CopyTo(memoryStream);
+                return LoadFrom(memoryStream.ToArray(), encoding);
+            }
         }
 
         /// <summary>

@@ -10,6 +10,7 @@ using NUnit.Framework;
 namespace Ragnarok.Shogi.Kif.Tests
 {
     using File.Tests;
+    using System.Text;
 
     [TestFixture()]
     public sealed class KifTest
@@ -48,77 +49,37 @@ namespace Ragnarok.Shogi.Kif.Tests
         /// <summary>
         /// 棋譜の読み込みテストを行います。
         /// </summary>
-        private static void TestKif(string path)
+        private static void TestKif(string resourceName, int moveCount,
+                                    Encoding encoding = null)
         {
-            var text = string.Empty;
-            using (var reader = new StreamReader(path, KifuObject.DefaultEncoding))
-            {
-                text = reader.ReadToEnd();
-            }
-
-            // 棋譜の読み込み
-            var kifu = KifuReader.LoadFrom(text);
-            Assert.NotNull(kifu);
-
-            // 手数を取得
-            var countObj = GetMoveCount(text);
-            Assert.NotNull(countObj);
-
-            var count = countObj.Value + (kifu.Error != null ? -2 : -1);
-            Assert.LessOrEqual(count, kifu.MoveList.Count());
-
-            // 入出力テストを行います。
-            TestUtil.ReadWriteTest(kifu, KifuFormat.Kif, count);
-        }
-
-        /// <summary>
-        /// 詰みが含まれる棋譜のテスト
-        /// </summary>
-        [Test()]
-        public void CheckMateTest()
-        {
-            var sample = SampleKif.Get("Kif_CheckMate.kif");
-
-            // 棋譜の読み込み
-            var kifu = KifuReader.LoadFrom(sample);
+            // 棋譜の読み込み（エンコーディングは自動判定）
+            var kifu = SampleKif.LoadKif(resourceName);
             Assert.NotNull(kifu);
             Assert.Null(kifu.Error);
 
             // 手数を確認
-            var count = 32;
-            Assert.AreEqual(count, kifu.MoveList.Count());
+            Assert.AreEqual(moveCount, kifu.MoveList.Count());
 
             // 入出力テストを行います。
-            TestUtil.ReadWriteTest(kifu, KifuFormat.Kif, count);
+            TestUtil.ReadWriteTest(kifu, KifuFormat.Kif, moveCount);
 
             // 書き込みテスト
+            var sample = SampleKif.Get(resourceName, encoding);
             var kif = KifuWriter.WriteTo(kifu, KifuFormat.Kif);
             CompareWithoutSpace(sample, kif);
         }
 
         /// <summary>
-        /// 変化が含まれる棋譜のテスト
+        /// 棋譜の読み込み・保存テスト
         /// </summary>
         [Test()]
-        public void VariationTest()
+        public void ReadWriteTest()
         {
-            var sample = SampleKif.Get("Kif_Variation.kif");
-
-            // 棋譜の読み込み
-            var kifu = KifuReader.LoadFrom(sample);
-            Assert.NotNull(kifu);
-            Assert.Null(kifu.Error);
-
-            // 手数を確認
-            var count = 132;
-            Assert.AreEqual(count, kifu.MoveList.Count());
-
-            // 入出力テストを行います。
-            TestUtil.ReadWriteTest(kifu, KifuFormat.Kif, count);
-
-            // 書き込みテスト
-            var kif = KifuWriter.WriteTo(kifu, KifuFormat.Kif);
-            CompareWithoutSpace(sample, kif);
+            TestKif("Kif_CheckMate.kif", 32);
+            TestKif("Kif_Variation.kif", 132);
+            TestKif("Kif_PV.kif", 55);
+            TestKif("Kif_PV2.kif", 30);
+            TestKif("Kif_UTF8.kif", 35, Encoding.UTF8);
         }
 
         /// <summary>
@@ -173,18 +134,19 @@ namespace Ragnarok.Shogi.Kif.Tests
                 "  10 ６二玉(51)     (00:01 / 00:00:05)\n" +
                 "  11 ８八玉(78)     (01:10 / 00:10:28)\n" +
                 "  12 ７二玉(62)     (01:01 / 00:01:06)\n" +
-                "  13 ４八銀(39)     (01:40 / 00:12:08)\n";
+                "  13 ４八銀(39)     (01:40 / 00:12:08)\n" +
+                "  14 中断           (10:10 / 00:11:16)\n";
             var durations = new string[]
             {
                 "00:01:38", "00:00:01", "00:02:17", "00:00:01", "00:01:38",
                 "00:00:01", "00:02:19", "00:00:01", "00:01:26", "00:00:01",
-                "00:01:10", "00:01:01", "00:01:40",
+                "00:01:10", "00:01:01", "00:01:40", "00:10:10"
             };
             var totalDurations = new string[]
             {
                 "00:01:38", "00:00:01", "00:03:55", "00:00:02", "00:05:33",
                 "00:00:03", "00:07:52", "00:00:04", "00:09:18", "00:00:05",
-                "00:10:28", "00:01:06", "00:12:08",
+                "00:10:28", "00:01:06", "00:12:08", "00:11:16"
             };
 
             // 棋譜の読み込み
@@ -327,56 +289,6 @@ namespace Ragnarok.Shogi.Kif.Tests
         }
 
         /// <summary>
-        /// コメントに変化や評価値が含まれる棋譜のテスト
-        /// </summary>
-        [Test()]
-        public void PVCommentTest()
-        {
-            var sample = SampleKif.Get("Kif_PV.kif");
-
-            // 棋譜の読み込み
-            var kifu = KifuReader.LoadFrom(sample);
-            Assert.NotNull(kifu);
-            Assert.Null(kifu.Error);
-
-            // 手数の確認
-            var count = 55;
-            Assert.AreEqual(count, kifu.MoveList.Count());
-
-            // 入出力テストを行います。
-            TestUtil.ReadWriteTest(kifu, KifuFormat.Kif, count);
-
-            // 書き込みテスト
-            var kif = KifuWriter.WriteTo(kifu, KifuFormat.Kif);
-            CompareWithoutSpace(sample, kif);
-        }
-
-        /// <summary>
-        /// コメントに変化や評価値が含まれる棋譜のテスト
-        /// </summary>
-        [Test()]
-        public void PVComment2Test()
-        {
-            var sample = SampleKif.Get("Kif_PV2.kif");
-
-            // 棋譜の読み込み
-            var kifu = KifuReader.LoadFrom(sample);
-            Assert.NotNull(kifu);
-            Assert.Null(kifu.Error);
-
-            // 手数の確認
-            var count = 30;
-            Assert.AreEqual(count, kifu.MoveList.Count());
-
-            // 入出力テストを行います。
-            TestUtil.ReadWriteTest(kifu, KifuFormat.Kif, count);
-
-            // 書き込みテスト
-            var kif = KifuWriter.WriteTo(kifu, KifuFormat.Kif);
-            CompareWithoutSpace(sample, kif);
-        }
-
-        /// <summary>
         /// 81Dojoの棋譜読み込みテスト
         /// </summary>
         [Test()]
@@ -396,21 +308,22 @@ namespace Ragnarok.Shogi.Kif.Tests
                 "   3 ２六歩(27)   ( 0:3/)\n" +
                 "   4 ５四歩(53)   ( 0:1/)\n" +
                 "   5 ４八銀(39)   ( 0:3/)\n" +
-                "   6 ８四歩(83)   ( 0:4/)\n";
+                "   6 ８四歩(83)   ( 0:4/)\n" +
+                "   7 投了         ( 0:10/)\n";
 
             var durations = new int[]
             {
-                5, 1, 3, 1, 3, 4
+                5, 1, 3, 1, 3, 4, 10
             };
             var totalDurations = new int[]
             {
-                5, 1, 8, 2, 11, 6
+                5, 1, 8, 2, 11, 6, 21
             };
 
             // 棋譜の読み込み
             var kifu = KifuReader.LoadFrom(content);
             Assert.NotNull(kifu);
-            Assert.AreEqual(6, kifu.MoveList.Count());
+            Assert.AreEqual(7, kifu.MoveList.Count());
 
             var node = kifu.RootNode;
             for (var i = 0; i < durations.Length; ++i)
