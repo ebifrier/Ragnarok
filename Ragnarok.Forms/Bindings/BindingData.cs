@@ -13,7 +13,6 @@ namespace Ragnarok.Forms.Bindings
         private readonly ReentrancyLock recurceLock = new ReentrancyLock();
         private readonly IPropertyObject targetPropertyObject;
         private readonly IPropertyObject sourcePropertyObject;
-        private object oldValue;
 
         /// <summary>
         /// コンストラクタ
@@ -163,7 +162,8 @@ namespace Ragnarok.Forms.Bindings
                         newValue);
                 }
 
-                if (Util.GenericEquals(newValue, this.oldValue) ||
+                var oldValue = GetSourcePropertyValue();
+                if (Util.GenericEquals(newValue, oldValue) ||
                     ReferenceEquals(newValue, FormsValue.UnsetValue))
                 {
                     return;
@@ -172,8 +172,7 @@ namespace Ragnarok.Forms.Bindings
                 // 値の変更後、プロパティ値変更イベントを送ります。
                 SetSourcePropertyValue(newValue);
 
-                this.oldValue = newValue;
-                FirePropertyChanged(newValue, this.oldValue);
+                FirePropertyChanged(newValue, oldValue);
             }
         }
 
@@ -214,7 +213,8 @@ namespace Ragnarok.Forms.Bindings
                         newValue);
                 }
 
-                if (Util.GenericEquals(newValue, this.oldValue) ||
+                var oldValue = GetTargetPropertyValue();
+                if (Util.GenericEquals(newValue, oldValue) ||
                     ReferenceEquals(newValue, FormsValue.UnsetValue))
                 {
                     return;
@@ -224,8 +224,7 @@ namespace Ragnarok.Forms.Bindings
                 SetTargetPropertyValue(newValue);
 
                 // oldValueにはsource側のオリジナルデータを設定します。
-                this.oldValue = newValue;
-                FirePropertyChanged(newValue, this.oldValue);                
+                FirePropertyChanged(newValue, oldValue);                
             }
         }
         #endregion
