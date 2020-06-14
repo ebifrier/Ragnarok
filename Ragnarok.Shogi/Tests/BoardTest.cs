@@ -87,7 +87,7 @@ namespace Ragnarok.Shogi.Tests
         }
 
         [Test()]
-        public void MoveBlackTest1()
+        public void MoveBlackTest()
         {
             var board = MakeBoard1(Colour.Black);
 
@@ -115,7 +115,7 @@ namespace Ragnarok.Shogi.Tests
         }
 
         [Test()]
-        public void MoveWhiteTest1()
+        public void MoveWhiteTest()
         {
             var board = MakeBoard1(Colour.White);
 
@@ -133,6 +133,39 @@ namespace Ragnarok.Shogi.Tests
             {
                 Tuple.Create(Square.SQ98, false),
             });
+        }
+
+        [Test()]
+        public void DoublePawnTest()
+        {
+            /*
+            後手の持駒：飛　桂　香　歩三
+              ９ ８ ７ ６ ５ ４ ３ ２ １
+            +---------------------------+
+            |v香 ・ 龍 ・ ・ ・ ・ ・ ・|一
+            | ・ ・ ・ ・v玉 ・ ・ ・ ・|二
+            | ・ 香v歩 ・v金 ・v桂 ・ ・|三
+            | ・ 歩v銀v銀v金 ・ ・ 銀 ・|四
+            | 歩 ・ ・ ・ ・ 歩 歩 ・ ・|五
+            | 香 ・ 歩 ・ 馬 ・ ・ ・v歩|六
+            |v歩 ・ 桂 金 ・ ・ ・ ・ ・|七
+            | ・ 玉 銀 金 ・ ・ 馬 ・ ・|八
+            | ・ ・ ・ ・ ・ ・ ・ ・ ・|九
+            +---------------------------+
+            先手の持駒：桂　歩七
+            */
+
+            var board = MakeBoard1(Colour.Black);
+            var move = Move.CreateDrop(Piece.BlackPawn, Square.SQ34);
+            Assert.False(board.CanMove(move));
+            move = Move.CreateDrop(Piece.BlackPawn, Square.SQ93);
+            Assert.False(board.CanMove(move));
+
+            board = MakeBoard1(Colour.White);
+            move = Move.CreateDrop(Piece.WhitePawn, Square.SQ75);
+            Assert.False(board.CanMove(move));
+            move = Move.CreateDrop(Piece.WhitePawn, Square.SQ13);
+            Assert.False(board.CanMove(move));
         }
 
         [Test()]
@@ -267,8 +300,10 @@ namespace Ragnarok.Shogi.Tests
             Assert.NotNull(board2);
             Assert.True(board2.Validate());
 
-            board1.FlipPieces();
-            Assert.True(Board.BoardEquals(board1, board2));
+            var flippedBoard = board1.FlipPieces();
+            Assert.True(Board.BoardEquals(flippedBoard, board2));
+
+            Assert.True(Board.BoardEquals(flippedBoard.FlipPieces(), board1));
         }
     }
 }

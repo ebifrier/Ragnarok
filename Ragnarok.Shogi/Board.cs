@@ -7,6 +7,8 @@ using System.Runtime.Serialization;
 
 namespace Ragnarok.Shogi
 {
+    using static Piece;
+
     /// <summary>
     /// 指し手を指すときのオプションです。
     /// </summary>
@@ -93,7 +95,7 @@ namespace Ragnarok.Shogi
         }
 
         private static long[] zobrist = new long[
-            (SquareCount + 1) * (int)Piece.WhiteQueen];
+            (SquareCount + 1) * (int)WhiteQueen];
         private static long zobristTurn;
 
         /// <summary>
@@ -133,7 +135,7 @@ namespace Ragnarok.Shogi
             {
                 for (var sqi = 0; sqi < SquareCount; ++sqi)
                 {
-                    var index = sqi * (int)Piece.WhiteQueen + (int)piece;
+                    var index = sqi * (int)WhiteQueen + (int)piece;
                     zobrist[index] = (long)(random.NextDouble() * 0xfffffffffffffe);
                 }
             }
@@ -151,9 +153,9 @@ namespace Ragnarok.Shogi
             foreach (var sq in Squares())
             {
                 var piece = this[sq];
-                if (piece.IsNone()) continue;
+                if (piece == None) continue;
 
-                hashValue += zobrist[(int)sq * (int)Piece.WhiteQueen + (int)piece];
+                hashValue += zobrist[(int)sq * (int)WhiteQueen + (int)piece];
             }
 
             foreach (var piece in PieceUtil.PieceTypes())
@@ -311,7 +313,7 @@ namespace Ragnarok.Shogi
             {
                 if (!sq.Validate())
                 {
-                    return Piece.None;
+                    return None;
                 }
 
                 // Squareの計算方法と合わせています。
@@ -337,7 +339,7 @@ namespace Ragnarok.Shogi
             {
                 if (!SquareUtil.Validate(file, rank))
                 {
-                    return Piece.None;
+                    return None;
                 }
 
                 // Squareの計算方法と合わせています。
@@ -540,7 +542,7 @@ namespace Ragnarok.Shogi
             else if (move.ActionType == ActionType.Drop)
             {
                 // 駒打ちの場合は、その駒を駒台に戻します。
-                this[move.DstSquare] = Piece.None;
+                this[move.DstSquare] = None;
 
                 IncHand(move.DropPiece.With(move.Colour));
             }
@@ -555,7 +557,7 @@ namespace Ragnarok.Shogi
                 }
 
                 // 駒を取った場合は、その駒を元に戻します。
-                if (!move.TookPiece.IsNone())
+                if (move.TookPiece != None)
                 {
                     this[move.DstSquare] = move.TookPiece;
 
@@ -564,7 +566,7 @@ namespace Ragnarok.Shogi
                 }
                 else
                 {
-                    this[move.DstSquare] = Piece.None;
+                    this[move.DstSquare] = None;
                 }
 
                 this[move.SrcSquare] = movedPiece;
@@ -742,28 +744,26 @@ namespace Ragnarok.Shogi
                 }
             }
 
+            // 手番があわなければ失敗とします。
+            if (EnumUtil.HasFlag(flags, MoveFlags.CheckTurn))
             {
-                // 手番があわなければ失敗とします。
-                if (EnumUtil.HasFlag(flags, MoveFlags.CheckTurn))
+                if (this.turn == Colour.None || this.turn != move.Colour)
                 {
-                    if (this.turn == Colour.None || this.turn != move.Colour)
-                    {
-                        return false;
-                    }
+                    return false;
                 }
+            }
 
-                if (move.IsSpecialMove)
-                {
-                    return CheckAndMakeSpecialMove(move, flags);
-                }
-                else if (move.ActionType == ActionType.Drop)
-                {
-                    return CheckAndMakeDrop(move, flags);
-                }
-                else
-                {
-                    return CheckAndMakeMoveOnly(move, flags);
-                }
+            if (move.IsSpecialMove)
+            {
+                return CheckAndMakeSpecialMove(move, flags);
+            }
+            else if (move.ActionType == ActionType.Drop)
+            {
+                return CheckAndMakeDrop(move, flags);
+            }
+            else
+            {
+                return CheckAndMakeMoveOnly(move, flags);
             }
         }
 
@@ -815,27 +815,15 @@ namespace Ragnarok.Shogi
         {
             var dropPiece = move.DropPiece;
 
-            if (GetHand(dropPiece) <= 0)
-            {
-                return false;
-            }
-
-            // 駒を打つ場所に駒があれば、当然失敗です。
-            var piece = this[move.DstSquare];
-            if (!piece.IsNone())
-            {
-                return false;
-            }
-
             // 駒が置けるか確かめます。
-            if (!CanDrop(move.Colour, move.DstSquare, move.DropPiece))
+            if (!CanDrop(dropPiece, move.DstSquare))
             {
                 return false;
             }
 
             // 打ち歩詰のチェックを行います。
             if (EnumUtil.HasFlag(flags, MoveFlags.CheckPawnDropCheckMate) &&
-                move.DropPiece.GetPieceType() == Piece.Pawn &&
+                dropPiece.GetPieceType() == Pawn &&
                 IsPawnDropCheckMate(move.Colour, move.DstSquare))
             {
                 return false;
@@ -844,7 +832,7 @@ namespace Ragnarok.Shogi
             if (!EnumUtil.HasFlag(flags, MoveFlags.CheckOnly))
             {
                 // 駒を盤面に置き、持ち駒から駒を減らします。
-                this[move.DstSquare] = move.DropPiece;
+                this[move.DstSquare] = dropPiece;
 
                 DecHand(dropPiece);
                 MoveDone(move);
@@ -862,10 +850,10 @@ namespace Ragnarok.Shogi
             // 王手将棋では打ち歩詰めを反則にしません。
             return false;
 #else
-            var pawnPiece = Piece.Pawn.With(colour);
+            var pawnPiece = Pawn.With(colour);
 
             // マスに駒がある場合や駒がない場合は歩を打てません。
-            if (!this[square].IsNone() || GetHand(pawnPiece) <= 0)
+            if (this[square] != None || GetHand(pawnPiece) <= 0)
             {
                 return false;
             }
@@ -878,7 +866,7 @@ namespace Ragnarok.Shogi
             }
 
             var king = this[square.GetFile(), square.GetRank() + rankDif];
-            if (king != Piece.King.With(colour.Flip()))
+            if (king != King.With(colour.Flip()))
             {
                 return false;
             }
@@ -892,7 +880,7 @@ namespace Ragnarok.Shogi
             // 打ち歩詰かどうか確認します。
             var mated = IsCheckMated();
 
-            this[square] = Piece.None;
+            this[square] = None;
             IncHand(pawnPiece);
             Turn = Turn.Flip();
 
@@ -903,36 +891,42 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 指定の位置に駒が打てるか調べます。
         /// </summary>
-        public bool CanDrop(Colour colour, Square square, Piece pieceType)
+        public bool CanDrop(Piece piece, Square square)
         {
-            if (!this[square].IsNone())
+            if (this[square] != None)
             {
                 return false;
             }
 
-            var rank =
-                ( colour == Colour.Black
+            if (piece.GetPieceType() != piece.GetRawType() ||
+                GetHand(piece) <= 0)
+            {
+                return false;
+            }
+
+            var colour = piece.GetColour();
+            var rank = (colour == Colour.Black
                 ? square.GetRank()
                 : (BoardSize + 1) - square.GetRank());
 
-            switch (pieceType)
+            switch (piece.GetPieceType())
             {
-                case Piece.None: // これは打てない
+                case None: // これは打てない
                     return false;
-                case Piece.Pawn:
+                case Pawn:
                     // 2歩のチェックを行います。
-                    if (GetPawnCount(colour, square.GetFile()) > 0)
+                    if (GetFilePawnCount(colour, square.GetFile()) > 0)
                     {
                         return false;
                     }
-                    goto case Piece.Lance;
-                case Piece.Lance:
+                    goto case Lance;
+                case Lance:
                     if (rank == 1)
                     {
                         return false;
                     }
                     break;
-                case Piece.Knight:
+                case Knight:
                     if (rank < 3) // 1,2はダメ
                     {
                         return false;
@@ -950,14 +944,14 @@ namespace Ragnarok.Shogi
         {
             // 駒の移動元に自分の駒がなければダメ
             var srcPiece = this[move.SrcSquare];
-            if (srcPiece.IsNone() || srcPiece.GetColour() != move.Colour)
+            if (srcPiece == None || srcPiece.GetColour() != move.Colour)
             {
                 return false;
             }
 
             // 駒の移動先に自分の駒があったらダメ
             var dstPiece = this[move.DstSquare];
-            if (!dstPiece.IsNone() && dstPiece.GetColour() == move.Colour)
+            if (dstPiece != None && dstPiece.GetColour() == move.Colour)
             {
                 return false;
             }
@@ -988,7 +982,7 @@ namespace Ragnarok.Shogi
             if (!EnumUtil.HasFlag(flags, MoveFlags.CheckOnly))
             {
                 // 移動先に駒があれば、それを自分のものにします。
-                if (!dstPiece.IsNone())
+                if (dstPiece != None)
                 {
                     IncHand(dstPiece.With(move.Colour));
 
@@ -1003,7 +997,7 @@ namespace Ragnarok.Shogi
                     : srcPiece;
 
                 // 移動前の位置からは駒をなくします。
-                this[move.SrcSquare] = Piece.None;
+                this[move.SrcSquare] = None;
 
                 // 前回の指し手と位置が同じか調べます。
                 move.SameAsPrev = (move.DstSquare == PrevMovedSquare);
@@ -1060,8 +1054,8 @@ namespace Ragnarok.Shogi
             // 金玉は成れません。
             var pieceType = piece.GetPieceType();
             return (
-                pieceType != Piece.King &&
-                pieceType != Piece.Gold);
+                pieceType != King &&
+                pieceType != Gold);
         }
 
         /// <summary>
@@ -1084,12 +1078,12 @@ namespace Ragnarok.Shogi
         {
             switch (piece.GetPieceType())
             {
-                case Piece.Knight:
+                case Knight:
                     return (piece.GetColour() != Colour.White
                         ? dstSquare.GetRank() <= 2
                         : dstSquare.GetRank() >= 8);
-                case Piece.Lance:
-                case Piece.Pawn:
+                case Lance:
+                case Pawn:
                     return (piece.GetColour() != Colour.White
                         ? dstSquare.GetRank() <= 1
                         : dstSquare.GetRank() >= 9);
@@ -1103,12 +1097,9 @@ namespace Ragnarok.Shogi
         /// </summary>
         public int GetPieceCount(Piece piece)
         {
-            var list =
-                from sq in Board.Squares()
-                where this[sq] == piece
-                select sq;
-
-            return list.Count();
+            return Squares()
+                .Where(_ => this[_] == piece)
+                .Count();
         }
 
         /// <summary>
@@ -1116,15 +1107,15 @@ namespace Ragnarok.Shogi
         /// </summary>
         private int GetKingCount(Colour colour)
         {
-            return GetPieceCount(Piece.King.With(colour));
+            return GetPieceCount(King.With(colour));
         }
 
         /// <summary>
         /// 指定の筋にある歩の数を確認します。
         /// </summary>
-        public int GetPawnCount(Colour colour, int file)
+        public int GetFilePawnCount(Colour colour, int file)
         {
-            var target = Piece.Pawn.With(colour);
+            var target = Pawn.With(colour);
             return Enumerable.Range(1, BoardSize)
                 .Where(_ => this[file, _] == target)
                 .Count();
@@ -1133,46 +1124,27 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 盤上の駒や持ち駒の先手・後手をすべて入れ替えます。
         /// </summary>
-        public void FlipPieces()
+        public Board FlipPieces()
         {
-            // すべての駒の先後を入れ替えます。
-            Board.Squares()
-                .Where(_ => !this[_].IsNone())
-                .ForEach(_ => this[_] = this[_].FlipColour());
-
-            // 各駒の位置を入れ替えます。
-            for (var rank = 1; rank <= Board.BoardSize / 2 + 1; ++rank)
+            var board = new Board(false)
             {
-                // ５段目は途中の列まで交換します。
-                var fileMax = Board.BoardSize / (rank == 5 ? 2 : 1);
-                for (var file = 1; file <= fileMax; ++file)
-                {
-                    var sq1 = SquareUtil.Create(file, rank);
-                    var sq2 = sq1.Flip();
+                Turn = Turn, // 手番はそのまま
+                PrevMovedSquare = PrevMovedSquare.Flip()
+            };
 
-                    var p = this[sq1];
-                    this[sq1] = this[sq2];
-                    this[sq2] = p;
-                }
-            }
+            // 盤上の駒の戦後と位置を入れ替えます。
+            Squares()
+                .Where(_ => this[_] != None)
+                .ForEach(_ => board[_.Flip()] = this[_].FlipColour());
 
             // 持ち駒の先後を入れ替えます。(数を設定し直します)
-            var result =
-                from colour in ColourUtil.BlackWhite()
-                let countList = (
-                    from rawType in PieceUtil.RawTypes()
-                    let count = GetHand(rawType.With(colour))
-                    select new { Piece = rawType, Count = count }
-                    ).ToList()
-                select new { Colour = colour, CountList = countList };
-
-            result.ToList().ForEach(_ =>
+            foreach (var colour in ColourUtil.BlackWhite())
             {
-                var flipped = _.Colour.Flip();
+                PieceUtil.RawTypes(colour)
+                    .ForEach(_ => board.SetHand(_.FlipColour(), GetHand(_)));
+            }
 
-                _.CountList.ForEach(data =>
-                    SetHand(data.Piece.With(flipped), data.Count));
-            });
+            return board;
         }
 
         /// <summary>
@@ -1180,26 +1152,22 @@ namespace Ragnarok.Shogi
         /// </summary>
         public bool Validate()
         {
-            if (this.blackHandBox == null ||
-                !this.blackHandBox.Validate())
+            if (this.blackHandBox?.Validate() != true)
             {
                 return false;
             }
 
-            if (this.whiteHandBox == null ||
-                !this.whiteHandBox.Validate())
+            if (this.whiteHandBox?.Validate() != true)
             {
                 return false;
             }
 
-            if (!Enum.IsDefined(typeof(Colour), this.turn) ||
-                this.turn == Colour.None)
+            if (this.turn == Colour.None)
             {
                 return false;
             }
 
-            if (this.moveList == null ||
-                this.moveList.Any(move => !move.Validate()))
+            if (this.moveList?.Any(move => !move.Validate()) != false)
             {
                 return false;
             }
@@ -1215,16 +1183,15 @@ namespace Ragnarok.Shogi
                 }
             }
 
-            foreach (var colour in ColourUtil.BlackWhite())
+            // ２歩の確認を行います。
+            var doublePawnList =
+                from colour in ColourUtil.BlackWhite()
+                from file in Enumerable.Range(1, BoardSize)
+                where GetFilePawnCount(colour, file) > 1
+                select file;
+            if (doublePawnList.Any())
             {
-                // ２歩の確認を行います。
-                for (var file = 1; file <= BoardSize; ++file)
-                {
-                    if (GetPawnCount(colour, file) > 1)
-                    {
-                        return false;
-                    }
-                }
+                return false;
             }
 
             // 玉の数をカウントします。
@@ -1301,7 +1268,7 @@ namespace Ragnarok.Shogi
                     var index = (rank - 1) * BoardSize + (file - 1);
                     var piece = this[file, rank];
                     
-                    // Piece.Noneが0のため、
+                    // Noneが0のため、
                     // 正しいピースのシリアライズデータは０以外の
                     // 数字となります。
                     result[index] = (piece == null ?
@@ -1325,7 +1292,7 @@ namespace Ragnarok.Shogi
                 {
                     var index = (rank - 1) * BoardSize + (file - 1);
 
-                    // Piece.Noneが0のため、
+                    // Noneが0のため、
                     // 正しいピースのシリアライズデータは０以外の
                     // 数字となります。
                     Piece piece = null;
@@ -1470,36 +1437,36 @@ namespace Ragnarok.Shogi
         {
             if (isInitPiece)
             {
-                this[1, 9] = Piece.BlackLance;
-                this[2, 9] = Piece.BlackKnight;
-                this[3, 9] = Piece.BlackSilver;
-                this[4, 9] = Piece.BlackGold;
-                this[5, 9] = Piece.BlackKing;
-                this[6, 9] = Piece.BlackGold;
-                this[7, 9] = Piece.BlackSilver;
-                this[8, 9] = Piece.BlackKnight;
-                this[9, 9] = Piece.BlackLance;
-                this[2, 8] = Piece.BlackRook;
-                this[8, 8] = Piece.BlackBishop;
+                this[1, 9] = BlackLance;
+                this[2, 9] = BlackKnight;
+                this[3, 9] = BlackSilver;
+                this[4, 9] = BlackGold;
+                this[5, 9] = BlackKing;
+                this[6, 9] = BlackGold;
+                this[7, 9] = BlackSilver;
+                this[8, 9] = BlackKnight;
+                this[9, 9] = BlackLance;
+                this[2, 8] = BlackRook;
+                this[8, 8] = BlackBishop;
                 for (var file = 1; file <= BoardSize; ++file)
                 {
-                    this[file, 7] = Piece.BlackPawn;
+                    this[file, 7] = BlackPawn;
                 }
 
-                this[1, 1] = Piece.WhiteLance;
-                this[2, 1] = Piece.WhiteKnight;
-                this[3, 1] = Piece.WhiteSilver;
-                this[4, 1] = Piece.WhiteGold;
-                this[5, 1] = Piece.WhiteKing;
-                this[6, 1] = Piece.WhiteGold;
-                this[7, 1] = Piece.WhiteSilver;
-                this[8, 1] = Piece.WhiteKnight;
-                this[9, 1] = Piece.WhiteLance;
-                this[2, 2] = Piece.WhiteBishop;
-                this[8, 2] = Piece.WhiteRook;
+                this[1, 1] = WhiteLance;
+                this[2, 1] = WhiteKnight;
+                this[3, 1] = WhiteSilver;
+                this[4, 1] = WhiteGold;
+                this[5, 1] = WhiteKing;
+                this[6, 1] = WhiteGold;
+                this[7, 1] = WhiteSilver;
+                this[8, 1] = WhiteKnight;
+                this[9, 1] = WhiteLance;
+                this[2, 2] = WhiteBishop;
+                this[8, 2] = WhiteRook;
                 for (var file = 1; file <= BoardSize; ++file)
                 {
-                    this[file, 3] = Piece.WhitePawn;
+                    this[file, 3] = WhitePawn;
                 }
             }
         }

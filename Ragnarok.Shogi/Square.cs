@@ -66,6 +66,11 @@ namespace Ragnarok.Shogi
         /// </summary>
         public static Square Flip(this Square sq)
         {
+            if (sq.IsEmpty())
+            {
+                return sq;
+            }
+
             return Create(
                 (Board.BoardSize + 1) - sq.GetFile(),
                 (Board.BoardSize + 1) - sq.GetRank());
