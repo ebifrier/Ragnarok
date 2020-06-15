@@ -45,7 +45,10 @@ namespace Ragnarok.Forms
         public static void InvalidateCommand()
         {
             UIProcess(() =>
-                Input.CommandManager.InvalidateRequerySuggested());
+            {
+                Input.CommandManager.InvalidateRequerySuggested();
+                Application.DoEvents();
+            });
         }
 
         /// <summary>
