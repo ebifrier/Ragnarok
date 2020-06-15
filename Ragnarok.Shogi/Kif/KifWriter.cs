@@ -111,48 +111,57 @@ namespace Ragnarok.Shogi.Kif
         private void WriteMoveNodeKif(TextWriter writer, MoveNode node,
                                       Board board, bool hasVariation)
         {
-            if (node == null)
-            {
-                return;
-            }
+            var moves = new List<Move>();
 
-            // とりあえず指し手を書きます。
-            if (node.Move != null)
+            while (node != null)
             {
-                WriteMakeKif(writer, node, board, hasVariation);
-
-                if (!board.DoMove(node.Move))
+                // とりあえず指し手を書きます。
+                if (node.Move != null)
                 {
-                    Log.Error("{0}の指し手が正しくありません。", node.Move);
-                    return;
+                    WriteMakeKif(writer, node, board, hasVariation);
+
+                    if (!board.DoMove(node.Move))
+                    {
+                        Log.Error("{0}の指し手が正しくありません。", node.Move);
+                        return;
+                    }
+
+                    moves.Add(node.Move);
+                }
+
+                // ついでにコメント行も出力します。
+                // 先頭ノードは指し手がありませんが
+                // コメントは存在することがあります。
+                WriteComment(writer, node);
+
+                if (node.NextNodes.Count == 1)
+                {
+                    // 超手数の場合でもスタックが溢れないようにします。
+                    node = node.NextNode;
+                    hasVariation = false;
+                }
+                else
+                {
+                    // 次の指し手があればそれも出力します。
+                    for (var i = 0; i < node.NextNodes.Count; ++i)
+                    {
+                        var child = node.NextNodes[i];
+                        var hasVariationNext = (i < node.NextNodes.Count - 1);
+
+                        if (i > 0)
+                        {
+                            writer.WriteLine();
+                            writer.WriteLine();
+                            writer.WriteLine("変化：{0}手", child.MoveCount);
+                        }
+
+                        WriteMoveNodeKif(writer, child, board, hasVariationNext);
+                    }
+                    break;
                 }
             }
 
-            // ついでにコメント行も出力します。
-            // 先頭ノードは指し手がありませんが
-            // コメントは存在することがあります。
-            WriteComment(writer, node);
-
-            // 次の指し手があればそれも出力します。
-            for (var i = 0; i < node.NextNodes.Count; ++i)
-            {
-                var child = node.NextNodes[i];
-                var hasVariationNext = (i < node.NextNodes.Count - 1);
-
-                if (i > 0)
-                {
-                    writer.WriteLine();
-                    writer.WriteLine();
-                    writer.WriteLine("変化：{0}手", child.MoveCount);
-                }
-
-                WriteMoveNodeKif(writer, child, board, hasVariationNext);
-            }
-
-            if (node.Move != null)
-            {
-                board.Undo();
-            }
+            moves.ForEach(_ => board.Undo());
         }
 
         /// <summary>
