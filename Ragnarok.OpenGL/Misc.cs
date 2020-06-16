@@ -9,14 +9,13 @@ using OpenTK.Graphics.OpenGL;
 
 namespace Ragnarok.OpenGL
 {
-    using Ragnarok.Utility;
+    using Utility;
 
     /// <summary>
     /// OpenGLのユーティリティクラスです。
     /// </summary>
     public static class Misc
     {
-
         /// <summary>
         /// OpenGLのバージョン番号を整数値で返します。
         /// </summary>

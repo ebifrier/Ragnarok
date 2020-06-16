@@ -110,6 +110,7 @@
     <Compile Include="AnimationTextureCache.cs" />
     <Compile Include="GLException.cs" />
     <Compile Include="GLWrap.cs" />
+    <Compile Include="Initializer.cs" />
     <Compile Include="Misc.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RenderBuffer.cs" />
