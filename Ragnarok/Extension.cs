@@ -258,7 +258,7 @@ namespace Ragnarok
         /// <summary>
         /// リストの要素をすべて削除し、新しいコレクションを代入します。
         /// </summary>
-        public static void Assign<T>(this List<T> list, IEnumerable<T> collection)
+        public static void Assign<T>(this IList<T> list, IEnumerable<T> collection)
         {
             if (list == null)
             {
@@ -266,7 +266,7 @@ namespace Ragnarok
             }
 
             list.Clear();
-            list.AddRange(collection);
+            collection.ForEach(_ => list.Add(_));
         }
 
         /// <summary>
