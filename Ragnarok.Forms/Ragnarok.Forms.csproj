@@ -114,12 +114,24 @@
     <Compile Include="Controls\InfoControl.Designer.cs">
       <DependentUpon>InfoControl.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Controls\MovableForm.resx">
+      <DependentUpon>MovableForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <Compile Include="Controls\MovableForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Controls\MovableForm.Designer.cs">
+      <DependentUpon>MovableForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\VersionForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Controls\VersionForm.Designer.cs">
       <DependentUpon>VersionForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controls\WindowOperation\WindowMover.cs" />
+    <Compile Include="Controls\WindowOperation\WindowOperationBase.cs" />
+    <Compile Include="Controls\WindowOperation\WindowScaler.cs" />
     <Compile Include="Converter\EnumToBooleanConverter.cs" />
     <Compile Include="Converter\IValueConverter.cs" />
     <Compile Include="Converter\NegValueConverter.cs" />
