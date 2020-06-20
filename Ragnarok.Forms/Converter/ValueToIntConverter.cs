@@ -36,7 +36,7 @@ namespace Ragnarok.Forms.Converter
         {
             get;
             set;
-        }
+        } = RoundingMode.Floor;
 
         /// <summary>
         /// 整数値に変換します。
@@ -74,15 +74,7 @@ namespace Ragnarok.Forms.Converter
         /// </summary>
         public object ConvertBack(object value, Type targetType, object parameter)
         {
-            return value;
-        }
-
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        public ValueToIntConverter()
-        {
-            RoundingMode = RoundingMode.Floor;
+            return System.Convert.ChangeType(value, targetType, CultureInfo.CurrentCulture);
         }
     }
 }
