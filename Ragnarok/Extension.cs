@@ -13,40 +13,43 @@ namespace Ragnarok
         /// <summary>
         /// foreachのlinq版。
         /// </summary>
-        public static IEnumerable<T> ForEach<T>(this IEnumerable<T> source,
-                                                Action<T> action)
+        public static void ForEach<T>(this IEnumerable<T> source, params Action<T>[] actions)
         {
             if (source == null)
             {
-                return null;
+                return;
             }
 
             foreach (var item in source)
             {
-                action(item);
+                foreach (var action in actions)
+                {
+                    action(item);
+                }
             }
-
-            return source;
         }
 
         /// <summary>
         /// each_with_index@ruby のlinq版。
         /// </summary>
-        public static IEnumerable<T> ForEachWithIndex<T>(this IEnumerable<T> source,
-                                                         Action<T, int> action)
+        public static void ForEachWithIndex<T>(this IEnumerable<T> source,
+                                               params Action<T, int>[] actions)
         {
             if (source == null)
             {
-                return null;
+                return;
             }
 
             var index = 0;
             foreach (var item in source)
             {
-                action(item, index++);
-            }
+                foreach (var action in actions)
+                {
+                    action(item, index);
+                }
 
-            return source;
+                index += 1;
+            }
         }
 
         /// <summary>
@@ -134,6 +137,29 @@ namespace Ragnarok
             else
             {
                 return false;
+            }
+        }
+
+        /// <summary>
+        /// <paramref name="source"/>に<paramref name="actions"/>を適用し、その要素列を返します。
+        /// </summary>
+        public static IEnumerable<T> Apply<T>(this IEnumerable<T> source,
+                                              params Action<T>[] actions)
+            where T : class
+        {
+            if (source == null)
+            {
+                yield break;
+            }
+
+            foreach (var item in source)
+            {
+                foreach (var action in actions)
+                {
+                    action(item);
+                }
+
+                yield return item;
             }
         }
 
