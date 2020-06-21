@@ -200,15 +200,8 @@ namespace Ragnarok.Shogi
                 cloned.redoList = new List<Move>();
             }
 
-            // 各位置に駒を設定します。
-            for (var rank = 1; rank <= BoardSize; ++rank)
-            {
-                for (var file = 1; file <= BoardSize; ++file)
-                {
-                    cloned[file, rank] = this[file, rank];
-                }
-            }
-
+            // 駒をコピーします。
+            Array.Copy(this.board, cloned.board, this.board.Length);
             return cloned;
         }
 
@@ -379,7 +372,7 @@ namespace Ragnarok.Shogi
         /// </summary>
         public long HashValue
         {
-            get { return /*this.hashValue*/CalcHashValue(); }
+            get { return CalcHashValue(); }
         }
 
         /// <summary>
