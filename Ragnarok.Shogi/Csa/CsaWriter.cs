@@ -16,7 +16,7 @@ namespace Ragnarok.Shogi.Csa
         /// <summary>
         /// ヘッダ部分を出力します。
         /// </summary>
-        private void WriteHeader(TextWriter writer, KifuObject kifu)
+        private static void WriteHeader(TextWriter writer, KifuObject kifu)
         {
             writer.WriteLine("' ----  Ragnarok 棋譜ファイル  ----");
             writer.WriteLine("V2.2");
@@ -50,7 +50,7 @@ namespace Ragnarok.Shogi.Csa
         /// <summary>
         /// 局面を出力します。
         /// </summary>
-        private void WriteBoard(TextWriter writer, Board board)
+        private static void WriteBoard(TextWriter writer, Board board)
         {
             writer.WriteLine(board.ToCsa());
         }
@@ -58,7 +58,7 @@ namespace Ragnarok.Shogi.Csa
         /// <summary>
         /// CSA形式の指し手を出力します。
         /// </summary>
-        private void WriteMoveNode(TextWriter writer, MoveNode node)
+        private static void WriteMoveNode(TextWriter writer, MoveNode node)
         {
             // 各指し手行を出力します。
             for (node = node.NextNode; node != null; node = node.NextNode)

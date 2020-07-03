@@ -63,7 +63,7 @@ namespace Ragnarok.Shogi.Kif
         /// <summary>
         /// コメント行かどうか調べます。
         /// </summary>
-        private bool IsCommentLine(string line)
+        private static bool IsCommentLine(string line)
         {
             if (line == null)
             {
@@ -416,7 +416,7 @@ namespace Ragnarok.Shogi.Kif
         /// <summary>
         /// ノードの中に含まれる'変化がある指し手番号のセット'を作成します。
         /// </summary>
-        private HashSet<int> MakeVariationLineSet(KifMoveNode head)
+        private static HashSet<int> MakeVariationLineSet(KifMoveNode head)
         {
             var result = new HashSet<int>();
 
@@ -434,7 +434,7 @@ namespace Ragnarok.Shogi.Kif
         /// <summary>
         /// 変化を既存のノードに追加します。
         /// </summary>
-        private void MergeVariation(KifMoveNode node, KifMoveNode source)
+        private static void MergeVariation(KifMoveNode node, KifMoveNode source)
         {
             while (node.MoveCount != source.MoveCount)
             {
@@ -561,7 +561,7 @@ namespace Ragnarok.Shogi.Kif
         /// <summary>
         /// 着手時間を取得します。
         /// </summary>
-        private TimeSpan ParseDuration(string input)
+        private static TimeSpan ParseDuration(string input)
         {
             var m = DurationRegex1.Match(input);
             if (m.Success)

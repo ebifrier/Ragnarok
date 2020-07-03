@@ -119,7 +119,7 @@ namespace Ragnarok.Shogi.Csa
         /// <remarks>
         /// 00OU など４文字形式の駒をパースします。
         /// </remarks>
-        private PieceSquare ParsePiece(string str)
+        private static PieceSquare ParsePiece(string str)
         {
             var pieceStr = str.Substring(2);
             var piece = CsaUtil.StrToPieceType(pieceStr);

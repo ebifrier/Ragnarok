@@ -205,7 +205,7 @@ namespace Ragnarok.Shogi.Kif
         /// <summary>
         /// bod形式の各駒を読み取ります。
         /// </summary>
-        private Piece ParsePiece(int file, int rank, string line)
+        private static Piece ParsePiece(int file, int rank, string line)
         {
             var index = (Board.BoardSize - file) * 2 + 1;
             var pieceStr = line.Substring(index, 2);
@@ -249,8 +249,8 @@ namespace Ragnarok.Shogi.Kif
         /// <remarks>
         /// 各駒文字を最初の漢字で表し、後に続く漢数字でその数を示します。
         /// </remarks>
-        private Tuple<Piece, int> ParseHandPiece(Colour colour,
-                                                 string handPieceText)
+        private static Tuple<Piece, int> ParseHandPiece(Colour colour,
+                                                        string handPieceText)
         {
             // 駒の種類を取得します。
             var nullablePiece = KifUtil.CharToPiece(handPieceText[0]);

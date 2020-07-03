@@ -10,7 +10,7 @@ namespace Ragnarok.Shogi
     [TestFixture()]
     public sealed class ScoreTest
     {
-        private void AssertValue(string text, int value, ScoreBound bound)
+        private static void AssertValue(string text, int value, ScoreBound bound)
         {
             var score = Score.ParseValue(text, Colour.Black);
             Assert.AreEqual(ScoreType.Value, score.ScoreType);
@@ -47,7 +47,7 @@ namespace Ragnarok.Shogi
             Assert.Catch(() => Score.ParseValue("テスト", Colour.White));
         }
 
-        private void AssertMate(string text, int mate, bool isWin)
+        private static void AssertMate(string text, int mate, bool isWin)
         {
             var score = Score.ParseMate(text, Colour.Black);
             Assert.AreEqual(ScoreType.Mate, score.ScoreType);

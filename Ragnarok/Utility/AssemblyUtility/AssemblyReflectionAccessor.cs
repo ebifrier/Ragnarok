@@ -29,7 +29,7 @@ namespace Ragnarok.Utility.AssemblyUtility
         /// <remarks>
         /// <paramref name="assemblyName"/>がnullなら起動アセンブリを読み込みます。
         /// </remarks>
-        private Assembly LoadAssembly(string assemblyName)
+        private static Assembly LoadAssembly(string assemblyName)
         {
             if (assemblyName == null)
             {

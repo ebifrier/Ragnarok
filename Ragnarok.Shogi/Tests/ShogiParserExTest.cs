@@ -290,13 +290,13 @@ namespace Ragnarok.Shogi.Tests
             Assert.Null(ShogiParserEx.ParseMove("▲投了A", true));
         }
 
-        private void AssertPlayer(ShogiPlayer expected, ShogiPlayer actual)
+        private static void AssertPlayer(ShogiPlayer expected, ShogiPlayer actual)
         {
             Assert.AreEqual(expected.Nickname, actual.Nickname);
             Assert.AreEqual(expected.SkillLevel, actual.SkillLevel);
         }
 
-        private void AssertPlayerNot(ShogiPlayer expected, ShogiPlayer actual)
+        private static void AssertPlayerNot(ShogiPlayer expected, ShogiPlayer actual)
         {
             Assert.AreEqual(expected.Nickname, actual.Nickname);
             Assert.AreNotEqual(expected.SkillLevel, actual.SkillLevel);

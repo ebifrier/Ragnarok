@@ -289,7 +289,7 @@ namespace Ragnarok.Shogi
         /// <paramref name="square"/>にある駒が移動できる
         /// 可能性のある位置をすべて列挙します。
         /// </summary>
-        private IEnumerable<Square> GetCanMoveRange(Piece piece, Square square)
+        private static IEnumerable<Square> GetCanMoveRange(Piece piece, Square square)
         {
             if (!square.Validate())
             {

@@ -104,7 +104,7 @@ namespace Ragnarok.Shogi.Sfen.Tests
                 board));
         }
 
-        private List<Move> MakeMoveList(string sfen)
+        private static List<Move> MakeMoveList(string sfen)
         {
             var board = new Board();
 
@@ -127,7 +127,7 @@ namespace Ragnarok.Shogi.Sfen.Tests
             Assert.AreEqual(1, moveList.Count);
         }
 
-        private void BoardAndMoveTest(string boardSfen, string moveListSfen)
+        private static void BoardAndMoveTest(string boardSfen, string moveListSfen)
         {
             // 指し手から局面を作ります。
             var board1 = new Board();

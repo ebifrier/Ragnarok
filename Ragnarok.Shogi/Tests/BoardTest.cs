@@ -15,8 +15,8 @@ namespace Ragnarok.Shogi.Tests
         /// <summary>
         /// 駒の各移動先に対して、その手が指せるのかどうかをチェックします。
         /// </summary>
-        private void CanMoveTo(Board board, Move move,
-                               List<Tuple<Square, bool>> availables)
+        private static void CanMoveTo(Board board, Move move,
+                                      List<Tuple<Square, bool>> availables)
         {
             foreach (var sq in Board.Squares())
             {
@@ -56,7 +56,7 @@ namespace Ragnarok.Shogi.Tests
             }
         }
 
-        private Board MakeBoard1(Colour turn)
+        private static Board MakeBoard1(Colour turn)
         {
             /*
             後手の持駒：飛　桂　香　歩三

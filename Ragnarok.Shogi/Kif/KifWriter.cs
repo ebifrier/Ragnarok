@@ -25,7 +25,7 @@ namespace Ragnarok.Shogi.Kif
         /// <summary>
         /// ヘッダ部分を出力します。
         /// </summary>
-        private void WriteHeader(TextWriter writer, KifuObject kifu)
+        private static void WriteHeader(TextWriter writer, KifuObject kifu)
         {
             writer.WriteLine("# ----  棋譜ファイル  ----");
 
@@ -57,7 +57,7 @@ namespace Ragnarok.Shogi.Kif
         /// <summary>
         /// コメント行を出力します。
         /// </summary>
-        private void WriteComment(TextWriter writer, MoveNode node)
+        private static void WriteComment(TextWriter writer, MoveNode node)
         {
             foreach (var pvInfo in node.PVInfoList)
             {
@@ -82,7 +82,7 @@ namespace Ragnarok.Shogi.Kif
         /// <summary>
         /// ki2形式の指し手を出力します。
         /// </summary>
-        private void WriteMoveNodeKi2(TextWriter writer, MoveNode node, Board board)
+        private static void WriteMoveNodeKi2(TextWriter writer, MoveNode node, Board board)
         {
             // 先頭ノードは指し手がありませんが
             // コメントは存在することがあります。
@@ -167,8 +167,8 @@ namespace Ragnarok.Shogi.Kif
         /// <summary>
         /// 指し手行を出力します。
         /// </summary>
-        private void WriteMakeKif(TextWriter writer, MoveNode node,
-                                  Board board, bool hasVariation)
+        private static void WriteMakeKif(TextWriter writer, MoveNode node,
+                                         Board board, bool hasVariation)
         {
             var lmove = board.ConvertLiteralFromMove(node.Move, true);
             if (lmove == null || !lmove.Validate())

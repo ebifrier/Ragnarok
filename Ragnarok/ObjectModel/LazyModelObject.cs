@@ -99,8 +99,8 @@ namespace Ragnarok.ObjectModel
         /// <summary>
         /// 与えられた全プロパティの更新通知を出します。
         /// </summary>
-        private void NotifyPropertyChanged(ILazyModel model,
-                                           IEnumerable<string> propertyList)
+        private static void NotifyPropertyChanged(ILazyModel model,
+                                                  IEnumerable<string> propertyList)
         {
             foreach (var propertyName in propertyList)
             {

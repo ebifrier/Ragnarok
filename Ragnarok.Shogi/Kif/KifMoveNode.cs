@@ -228,7 +228,7 @@ namespace Ragnarok.Shogi
         /// <summary>
         /// 棋譜コメントから評価値や変化の取得します。
         /// </summary>
-        private PVInfo ParsePVInfo(string comment, Board board)
+        private static PVInfo ParsePVInfo(string comment, Board board)
         {
             var m = KifAnalyzedVariationRegex.Match(comment);
             if (!m.Success)

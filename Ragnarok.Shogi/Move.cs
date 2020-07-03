@@ -360,6 +360,11 @@ namespace Ragnarok.Shogi
         #region シリアライズ/デシリアライズ
         protected Move(SerializationInfo info, StreamingContext text)
         {
+            if (info == null)
+            {
+                throw new ArgumentNullException(nameof(info));
+            }
+
             MovePiece = (Piece)info.GetValue(nameof(MovePiece), typeof(Piece));
             Colour = (Colour)info.GetValue(nameof(Colour), typeof(Colour));
             DstSquare = (Square)info.GetValue(nameof(DstSquare), typeof(Square));
@@ -373,6 +378,11 @@ namespace Ragnarok.Shogi
         [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
+            if (info == null)
+            {
+                throw new ArgumentNullException(nameof(info));
+            }
+
             info.AddValue(nameof(MovePiece), MovePiece);
             info.AddValue(nameof(Colour), Colour);
             info.AddValue(nameof(DstSquare), DstSquare);

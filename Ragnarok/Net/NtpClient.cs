@@ -23,8 +23,17 @@ namespace Ragnarok.Net
         /// 時刻同期の間隔です。
         /// </summary>
         private static readonly TimeSpan SyncInterval = TimeSpan.FromDays(1);
-
-        private static readonly Timer timer;
+        /// <summary>
+        /// 時刻を裏で同期するためのタイマーを開始します。
+        /// </summary>
+        /// <remarks>
+        /// 時刻同期には時間がかかることがあるため、裏で同期します。
+        /// </remarks>
+        private static readonly Timer timer = new Timer(
+            _ => SynchronizeTime(),
+            null,
+            TimeSpan.Zero,
+            SyncInterval);
         private static TimeSpan offsetSpan = TimeSpan.Zero;
 
         /// <summary>
@@ -76,30 +85,6 @@ namespace Ragnarok.Net
             "ntp3.jst.mfeed.ad.jp",
             "ntp4.jst.mfeed.ad.jp",
         };
-
-        /// <summary>
-        /// 時刻を裏で同期するためのタイマーを開始します。
-        /// </summary>
-        /// <remarks>
-        /// 時刻同期には時間がかかることがあるため、裏で同期します。
-        /// </remarks>
-        static NtpClient()
-        {
-            // 何もしないと、コンパイラによってはtimerが未使用であるという
-            // 警告が出るので、こうすることでそれを抑制しています。
-            // 特に意味はないです。
-            if (timer != null)
-            {
-                timer.Dispose();
-                timer = null;
-            }
-
-            timer = new Timer(
-                _ => SynchronizeTime(),
-                null,
-                TimeSpan.Zero,
-                SyncInterval);
-        }
 
         /// <summary>
         /// NTPサーバーから得られた日本標準時を利用して、

@@ -44,6 +44,11 @@ namespace Ragnarok.Shogi.Kif.Tests
         /// </summary>
         public static List<List<string>> GetCommentList(string kif)
         {
+            if (string.IsNullOrEmpty(kif))
+            {
+                throw new ArgumentNullException(nameof(kif));
+            }
+
             var lines = kif
                 .Split(new char[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries)
                 .SkipWhile(_ => !_.Contains("手数----指手---------消費時間"))

@@ -36,7 +36,7 @@ namespace Ragnarok.Utility.Tests
         /// <summary>
         /// シリアライズandデシリアライズで同じ型に戻るか調べます。
         /// </summary>
-        private void TypeTest(Type type)
+        private static void TypeTest(Type type)
         {
             var selialized = TypeSerializer.Serialize(type);
 

@@ -57,7 +57,7 @@ namespace Ragnarok.Shogi.Kif.Tests
             Assert.True(Board.BoardEquals(board0, board1));
         }
 
-        public void ParseTest2()
+        public static void ParseTest2()
         {
             var board1 = ParseBoard(
                 "上手の持駒：なし\n" +

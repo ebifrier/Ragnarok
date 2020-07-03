@@ -31,7 +31,7 @@ namespace Ragnarok.Shogi
             AddRange(elements);
         }
         
-        /// <summary>
+        /*/// <summary>
         /// インターフェイスへのアクセスが同期されている (スレッド セーフである) かどうかを示す値を取得します。
         /// </summary>
         public bool IsSynchronized
@@ -45,7 +45,7 @@ namespace Ragnarok.Shogi
         public object SyncRoot
         {
             get { return null; }
-        }
+        }*/
 
         /// <summary>
         /// 読み込み専用かどうかを取得します。
@@ -55,13 +55,13 @@ namespace Ragnarok.Shogi
             get { return false; }
         }
 
-        /// <summary>
+        /*/// <summary>
         /// 固定サイズのコレクションかどうかを取得します。
         /// </summary>
         public bool IsFixedSize
         {
             get { return false; }
-        }
+        }*/
 
         /// <summary>
         /// コレクションに格納できる要素の数を取得または設定します。

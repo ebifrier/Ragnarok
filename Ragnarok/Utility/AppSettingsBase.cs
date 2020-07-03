@@ -263,7 +263,7 @@ namespace Ragnarok.Utility
                 // 自動的に設定を保存します。
                 // 付いてないプロパティは明示的にロードorセーブを
                 // しないと保存されません。
-                if (e.PropertyName.StartsWith("AS_"))
+                if (e.PropertyName.StartsWith("AS_", StringComparison.InvariantCulture))
                 {
                     Save();
                 }
