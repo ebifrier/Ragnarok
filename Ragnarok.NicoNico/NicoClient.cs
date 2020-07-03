@@ -60,8 +60,8 @@ namespace Ragnarok.NicoNico
         /// </summary>
         public LoginData LoginData
         {
-            get { return GetValue<LoginData>("LoginData"); }
-            private set { SetValue("LoginData", value); }
+            get { return GetValue<LoginData>(nameof(LoginData)); }
+            private set { SetValue(nameof(LoginData), value); }
         }
 
         /// <summary>
@@ -69,8 +69,8 @@ namespace Ragnarok.NicoNico
         /// </summary>
         public LoginState LoginState
         {
-            get { return GetValue<LoginState>("LoginState"); }
-            private set { SetValue("LoginState", value); }
+            get { return GetValue<LoginState>(nameof(LoginState)); }
+            private set { SetValue(nameof(LoginState), value); }
         }
 
         /// <summary>
@@ -78,8 +78,8 @@ namespace Ragnarok.NicoNico
         /// </summary>
         public CookieContainer CookieContainer
         {
-            get { return GetValue<CookieContainer>("CookieContainer"); }
-            private set { SetValue("CookieContainer", value); }
+            get { return GetValue<CookieContainer>(nameof(CookieContainer)); }
+            private set { SetValue(nameof(CookieContainer), value); }
         }
 
         /// <summary>
@@ -102,8 +102,8 @@ namespace Ragnarok.NicoNico
         /// </summary>
         public AccountInfo AccountInfo
         {
-            get { return GetValue<AccountInfo>("AccountInfo"); }
-            private set { SetValue("AccountInfo", value); }
+            get { return GetValue<AccountInfo>(nameof(AccountInfo)); }
+            private set { SetValue(nameof(AccountInfo), value); }
         }
 
         /// <summary>

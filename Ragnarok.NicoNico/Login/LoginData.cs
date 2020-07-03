@@ -55,8 +55,8 @@ namespace Ragnarok.NicoNico.Login
         [DataMember(Order = 1)]
         public LoginMethod LoginMethod
         {
-            get { return GetValue<LoginMethod>("LoginMethod"); }
-            set { SetValue("LoginMethod", value); }
+            get { return GetValue<LoginMethod>(nameof(LoginMethod)); }
+            set { SetValue(nameof(LoginMethod), value); }
         }
 
         /// <summary>
@@ -65,8 +65,8 @@ namespace Ragnarok.NicoNico.Login
         [DataMember(Order = 2)]
         public string Mail
         {
-            get { return GetValue<string>("Mail"); }
-            set { SetValue("Mail", value); }
+            get { return GetValue<string>(nameof(Mail)); }
+            set { SetValue(nameof(Mail), value); }
         }
 
         /// <summary>
@@ -75,8 +75,8 @@ namespace Ragnarok.NicoNico.Login
         [DataMember(Order = 3)]
         public string Password
         {
-            get { return GetValue<string>("Password"); }
-            set { SetValue("Password", value); }
+            get { return GetValue<string>(nameof(Password)); }
+            set { SetValue(nameof(Password), value); }
         }
 
         /// <summary>
@@ -85,8 +85,8 @@ namespace Ragnarok.NicoNico.Login
         [DataMember(Order = 4)]
         public BrowserType BrowserType
         {
-            get { return GetValue<BrowserType>("BrowserType"); }
-            set { SetValue("BrowserType", value); }
+            get { return GetValue<BrowserType>(nameof(BrowserType)); }
+            set { SetValue(nameof(BrowserType), value); }
         }
 
         /// <summary>
