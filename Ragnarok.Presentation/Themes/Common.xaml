@@ -83,4 +83,28 @@
         <Setter Property="Focusable" Value="False" />
         <Setter Property="Template" Value="{StaticResource ButtonsTemplate}" />
     </Style>
+
+    <!-- OKボタンが並んだコントロールです。-->
+    <ControlTemplate x:Key="OKButtonsTemplate">
+        <Border Background="LightGray">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <Button Grid.Column="1"
+                        Content="OK" MinWidth="65"
+                        VerticalAlignment="Stretch"
+                        Margin="10"
+                        Padding="4,2,4,2"
+                        Command="{x:Static t:RagnarokCommands.OK}" />
+            </Grid>
+        </Border>
+    </ControlTemplate>
+
+    <Style x:Key="OKButtonsStyle" TargetType="Control">
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Template" Value="{StaticResource OKButtonsTemplate}" />
+    </Style>
 </ResourceDictionary>
