@@ -83,7 +83,7 @@ namespace Ragnarok.Sound.Backend
             }
         }
 
-        private SoundStopReason ConvertReason(StopEventCause cause)
+        private static SoundStopReason ConvertReason(StopEventCause cause)
         {
             switch (cause)
             {

@@ -483,8 +483,8 @@ namespace Ragnarok.Utility
         /// <summary>
         /// プロパティ値が新旧で変わっているか調べます。
         /// </summary>
-        private bool CheckPropertyChanged(KeyValuePair<string, object> propertyPair,
-                                          Dictionary<string, object> oldPropertyStorage)
+        private static bool CheckPropertyChanged(KeyValuePair<string, object> propertyPair,
+                                                 Dictionary<string, object> oldPropertyStorage)
         {
             // 古いプロパティセットにプロパティが存在しないか、
             // 値が変わっていたらそのプロパティは"変更された"
@@ -699,8 +699,8 @@ namespace Ragnarok.Utility
         /// <summary>
         /// 値をシリアライズして書き込みます。
         /// </summary>
-        private void WriteXmlValue(XmlWriter writer, string propertyName,
-                                   Type valueType, object value)
+        private static void WriteXmlValue(XmlWriter writer, string propertyName,
+                                          Type valueType, object value)
         {
             try
             {

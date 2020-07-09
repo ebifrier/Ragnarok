@@ -22,7 +22,7 @@ namespace Ragnarok.Utility
 
             public int GetHashCode(string obj)
             {
-                return obj.ToLowerInvariant().GetHashCode();
+                return obj.ToUpperInvariant().GetHashCode();
             }
         }
         /// <summary>

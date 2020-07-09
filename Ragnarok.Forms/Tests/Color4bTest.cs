@@ -21,7 +21,7 @@ namespace Ragnarok.Forms.Tests
     [TestFixture]
     public sealed class Color4bTest
     {
-        private List<Tuple<string, Color4b>> GetColor4bList()
+        private static List<Tuple<string, Color4b>> GetColor4bList()
         {
             var flags = BindingFlags.GetProperty | BindingFlags.Public |
                         BindingFlags.Static;
@@ -34,7 +34,7 @@ namespace Ragnarok.Forms.Tests
                 .ToList();
         }
 
-        private List<Tuple<string, Color>> GetDrawingColorList()
+        private static List<Tuple<string, Color>> GetDrawingColorList()
         {
             var flags = BindingFlags.GetProperty | BindingFlags.Public |
                         BindingFlags.Static;
