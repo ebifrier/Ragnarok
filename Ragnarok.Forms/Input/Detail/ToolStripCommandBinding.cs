@@ -9,15 +9,15 @@ namespace Ragnarok.Forms.Input.Detail
     /// <summary>
     /// ToolStripButton用のバインディングクラスです。
     /// </summary>
-    internal sealed class ToolStripButtonCommandBinding : CommandBindingBase
+    internal sealed class ToolStripCommandBinding : CommandBindingBase
     {
-        private ToolStripButton target;
+        private ToolStrip target;
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public ToolStripButtonCommandBinding(ToolStripButton target, ICommand command,
-                                             Func<object> commandParameterCallback)
+        public ToolStripCommandBinding(ToolStrip target, ICommand command,
+                                       Func<object> commandParameterCallback)
             : base(target, command, commandParameterCallback)
         {
             this.target = target;

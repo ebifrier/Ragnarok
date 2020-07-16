@@ -151,8 +151,10 @@
     <Compile Include="Input\Detail\ButtonCommandBindingFactory.cs" />
     <Compile Include="Input\Detail\MenuItemCommandBinding.cs" />
     <Compile Include="Input\Detail\MenuItemCommandBindingFactory.cs" />
-    <Compile Include="Input\Detail\ToolStripButtonCommandBinding.cs" />
-    <Compile Include="Input\Detail\ToolStripButtonCommandBindingFactory.cs" />
+    <Compile Include="Input\Detail\ToolStripCommandBinding.cs" />
+    <Compile Include="Input\Detail\ToolStripItemCommandBinding.cs" />
+    <Compile Include="Input\Detail\ToolStripCommandBindingFactory.cs" />
+    <Compile Include="Input\Detail\ToolStripItemCommandBindingFactory.cs" />
     <Compile Include="Input\RelayCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tests\Color4bTest.cs" />
