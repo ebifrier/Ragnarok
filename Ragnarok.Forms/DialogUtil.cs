@@ -193,31 +193,5 @@ namespace Ragnarok.Forms
             }
         }
         #endregion
-
-        #region 色選択
-        /// <summary>
-        /// 色選択ダイアログを表示します。
-        /// </summary>
-        public static Color? ShowColorDialog(Color? defaultColor, IWin32Window owner = null)
-        {
-            using (var dialog = new ColorDialog())
-            {
-                // 必要ならデフォルト色を設定します。
-                if (defaultColor != null)
-                {
-                    dialog.Color = defaultColor.Value;
-                }
-
-                // OKボタンが押されたら、その色を返します。
-                var result = dialog.ShowDialog(owner);
-                if (result != DialogResult.OK)
-                {
-                    return null;
-                }
-
-                return dialog.Color;
-            }
-        }
-        #endregion
     }
 }
