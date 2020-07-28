@@ -178,9 +178,6 @@
   <ItemGroup>
     <EmbeddedResource Include="Csa\Tests\SampleCsa.csa" />
     <None Include="default.build" />
-    <None Include="GenFiles\kifu.kif" />
-    <None Include="GenFiles\make_evals.bat" />
-    <None Include="GenFiles\make_evals.rb" />
     <EmbeddedResource Include="Kif\Tests\Sample\Ki2_Error.ki2" />
     <EmbeddedResource Include="Kif\Tests\Sample\Ki2_Illegal.ki2" />
     <EmbeddedResource Include="Kif\Tests\Sample\Ki2_Test1.ki2" />
