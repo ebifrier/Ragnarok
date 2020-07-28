@@ -11,6 +11,145 @@ namespace Ragnarok.Shogi.Tests
     [TestFixture]
     public sealed class ConvertMoveTest
     {
+        private static readonly Board TestBoard = Board.ParseBod(
+            "後手の持駒：歩　\n" +
+            "  ９ ８ ７ ６ ５ ４ ３ ２ １\n" +
+            "+---------------------------+\n" +
+            "|v香v玉 ・ 銀 ・ 銀 ・ ・ ・|一\n" +
+            "| ・v飛 ・v金 ・ ・v金 ・ ・|二\n" +
+            "|v桂 ・v歩 ・ 銀 ・ ・ 歩 ・|三\n" +
+            "|v歩 ・v角v歩v歩v歩v歩 ・v歩|四\n" +
+            "| ・ ・ ・ ・ ・v桂 ・ ・ ・|五\n" +
+            "| 歩 歩 歩 ・ 歩 ・ ・ ・ 歩|六\n" +
+            "| ・ ・ 角 歩 ・ 歩 歩 ・ ・|七\n" +
+            "| ・ ・ 金 ・ ・ 金 玉 飛 ・|八\n" +
+            "| 香 桂 ・ ・ ・ ・ ・ 桂 香|九\n" +
+            "+---------------------------+\n" +
+            "先手の持駒：歩　香　銀\n" +
+            "手数＝0\n");
+
+        [Test]
+        public void ConvertLiteralFromMoveBlackTest()
+        {
+            var board = TestBoard.Clone();
+            Assert.NotNull(board);
+            Assert.True(board.Validate());
+            Assert.AreEqual(Colour.Black, board.Turn);
+
+            var lmove = board.ConvertLiteralFromMove(
+                Move.CreateMove(Piece.BlackSilver, Square.SQ61, Square.SQ52),
+                false);
+            Assert.NotNull(lmove);
+            Assert.AreEqual(Piece.BlackSilver, lmove.Piece);
+            Assert.AreEqual(Square.SQ52, lmove.DstSquare);
+            Assert.AreEqual(Square.Empty, lmove.SrcSquare);
+            Assert.AreEqual(RelFileType.Left, lmove.RelFileType);
+            Assert.AreEqual(RankMoveType.Back, lmove.RankMoveType);
+            Assert.AreEqual(ActionType.Unpromote, lmove.ActionType);
+
+            lmove = board.ConvertLiteralFromMove(
+                Move.CreateMove(Piece.BlackSilver, Square.SQ61, Square.SQ52, true),
+                false);
+            Assert.NotNull(lmove);
+            Assert.AreEqual(Piece.BlackSilver, lmove.Piece);
+            Assert.AreEqual(Square.SQ52, lmove.DstSquare);
+            Assert.AreEqual(Square.Empty, lmove.SrcSquare);
+            Assert.AreEqual(RelFileType.Left, lmove.RelFileType);
+            Assert.AreEqual(RankMoveType.Back, lmove.RankMoveType);
+            Assert.AreEqual(ActionType.Promote, lmove.ActionType);
+
+            lmove = board.ConvertLiteralFromMove(
+                Move.CreateMove(Piece.BlackSilver, Square.SQ53, Square.SQ52),
+                false);
+            Assert.NotNull(lmove);
+            Assert.AreEqual(Piece.BlackSilver, lmove.Piece);
+            Assert.AreEqual(Square.SQ52, lmove.DstSquare);
+            Assert.AreEqual(Square.Empty, lmove.SrcSquare);
+            Assert.AreEqual(RankMoveType.Up, lmove.RankMoveType);
+            Assert.AreEqual(ActionType.Unpromote, lmove.ActionType);
+
+            lmove = board.ConvertLiteralFromMove(
+                Move.CreateMove(Piece.BlackSilver, Square.SQ53, Square.SQ52, true),
+                false);
+            Assert.NotNull(lmove);
+            Assert.AreEqual(Piece.BlackSilver, lmove.Piece);
+            Assert.AreEqual(Square.SQ52, lmove.DstSquare);
+            Assert.AreEqual(Square.Empty, lmove.SrcSquare);
+            Assert.AreEqual(RankMoveType.Up, lmove.RankMoveType);
+            Assert.AreEqual(ActionType.Promote, lmove.ActionType);
+
+            lmove = board.ConvertLiteralFromMove(
+                Move.CreateDrop(Piece.BlackSilver, Square.SQ52),
+                false);
+            Assert.NotNull(lmove);
+            Assert.AreEqual(Piece.BlackSilver, lmove.Piece);
+            Assert.AreEqual(Square.SQ52, lmove.DstSquare);
+            Assert.AreEqual(Square.Empty, lmove.SrcSquare);
+            Assert.AreEqual(ActionType.Drop, lmove.ActionType);
+        }
+
+        [Test]
+        public void ConvertLiteralFromMoveWhiteTest()
+        {
+            var board = TestBoard.FlipPieces().Clone();
+
+            Assert.NotNull(board);
+            Console.WriteLine(board.ToBod());
+            Assert.True(board.Validate());
+            Assert.AreEqual(Colour.Black, board.Turn);
+
+            var lmove = board.ConvertLiteralFromMove(
+                Move.CreateMove(Piece.WhiteSilver, Square.SQ49, Square.SQ58),
+                false);
+            Assert.NotNull(lmove);
+            Assert.AreEqual(Piece.WhiteSilver, lmove.Piece);
+            Assert.AreEqual(Square.SQ58, lmove.DstSquare);
+            Assert.AreEqual(Square.Empty, lmove.SrcSquare);
+            Assert.AreEqual(RelFileType.Left, lmove.RelFileType);
+            Assert.AreEqual(RankMoveType.Back, lmove.RankMoveType);
+            Assert.AreEqual(ActionType.Unpromote, lmove.ActionType);
+
+            lmove = board.ConvertLiteralFromMove(
+                Move.CreateMove(Piece.WhiteSilver, Square.SQ49, Square.SQ58, true),
+                false);
+            Assert.NotNull(lmove);
+            Assert.AreEqual(Piece.WhiteSilver, lmove.Piece);
+            Assert.AreEqual(Square.SQ58, lmove.DstSquare);
+            Assert.AreEqual(Square.Empty, lmove.SrcSquare);
+            Assert.AreEqual(RelFileType.Left, lmove.RelFileType);
+            Assert.AreEqual(RankMoveType.Back, lmove.RankMoveType);
+            Assert.AreEqual(ActionType.Promote, lmove.ActionType);
+
+            lmove = board.ConvertLiteralFromMove(
+                Move.CreateMove(Piece.WhiteSilver, Square.SQ57, Square.SQ58),
+                false);
+            Assert.NotNull(lmove);
+            Assert.AreEqual(Piece.WhiteSilver, lmove.Piece);
+            Assert.AreEqual(Square.SQ58, lmove.DstSquare);
+            Assert.AreEqual(Square.Empty, lmove.SrcSquare);
+            Assert.AreEqual(RankMoveType.Up, lmove.RankMoveType);
+            Assert.AreEqual(ActionType.Unpromote, lmove.ActionType);
+
+            lmove = board.ConvertLiteralFromMove(
+                Move.CreateMove(Piece.WhiteSilver, Square.SQ57, Square.SQ58, true),
+                false);
+            Assert.NotNull(lmove);
+            Assert.AreEqual(Piece.WhiteSilver, lmove.Piece);
+            Assert.AreEqual(Square.SQ58, lmove.DstSquare);
+            Assert.AreEqual(Square.Empty, lmove.SrcSquare);
+            Assert.AreEqual(RankMoveType.Up, lmove.RankMoveType);
+            Assert.AreEqual(ActionType.Promote, lmove.ActionType);
+
+            lmove = board.ConvertLiteralFromMove(
+                Move.CreateDrop(Piece.WhiteSilver, Square.SQ58),
+                false);
+            Assert.NotNull(lmove);
+            Assert.AreEqual(Piece.WhiteSilver, lmove.Piece);
+            Assert.AreEqual(Square.SQ58, lmove.DstSquare);
+            Assert.AreEqual(Square.Empty, lmove.SrcSquare);
+            Assert.AreEqual(ActionType.Drop, lmove.ActionType);
+        }
+
         private static void TestMove(Board board, LiteralMove lmove, bool makeMove = false)
         {
             var newMove = board.NormalizeMove(lmove);

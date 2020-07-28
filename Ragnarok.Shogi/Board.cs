@@ -1045,10 +1045,8 @@ namespace Ragnarok.Shogi
             }
 
             // 金玉は成れません。
-            var pieceType = piece.GetPieceType();
-            return (
-                pieceType != King &&
-                pieceType != Gold);
+            var rawType = piece.GetRawType();
+            return (rawType != King && rawType != Gold);
         }
 
         /// <summary>
@@ -1115,7 +1113,7 @@ namespace Ragnarok.Shogi
         }
 
         /// <summary>
-        /// 盤上の駒や持ち駒の先手・後手をすべて入れ替えます。
+        /// 盤上の駒や持ち駒の先手・後手をすべて入れ替えた局面を新たに作成します。
         /// </summary>
         public Board FlipPieces()
         {

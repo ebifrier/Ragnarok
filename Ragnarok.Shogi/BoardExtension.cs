@@ -429,16 +429,21 @@ namespace Ragnarok.Shogi
             }
 
             var nextPos = referenceMove.DstSquare;
-            var move = new LiteralMove
+
+            // ベースとなるLiteralMoveを作成します。
+            // 必要であればこのオブジェクトに引・寄などの属性を付けていきます。
+            var baseMove = new LiteralMove
             {
                 Colour = referenceMove.Colour,
                 Piece = fromPiece,
                 File = nextPos.GetFile(),
                 Rank = nextPos.GetRank(),
-                ActionType = ( // '打', '不成'は消える可能性があります。
-                    referenceMove.ActionType == ActionType.Promote ?
-                    referenceMove.ActionType :
-                    ActionType.None),
+                ActionType = ( // '打'は消える可能性があります。
+                    referenceMove.ActionType == ActionType.Promote
+                    ? ActionType.Promote
+                    : referenceMove.ActionType != ActionType.Drop && Board.CanPromote(referenceMove)
+                    ? ActionType.Unpromote
+                    : ActionType.None),
                 SameAsPrev = (board.PrevMovedSquare == nextPos),
             };
 
@@ -447,48 +452,53 @@ namespace Ragnarok.Shogi
             //　 駒打ちの場合は"打"が必ずつきます）
             if (useSrcSquare)
             {
-                move.SrcSquare = referenceMove.SrcSquare;
-                move.ActionType = referenceMove.ActionType;
-                return move;
+                baseMove.SrcSquare = referenceMove.SrcSquare;
+                baseMove.ActionType = referenceMove.ActionType;
+                return baseMove;
             }
 
             // 駒打ち、成り、不成りなどでフィルターします。
-            var tmpMoveList = FilterAction(move, referenceMove, moveList);
+            var tmpMoveList = FilterAction(baseMove, referenceMove, moveList);
             if (!tmpMoveList.Any())
             {
                 return null;
             }
 
             // 段の位置でフィルターします。
-            tmpMoveList = FilterRank(move, referenceMove, tmpMoveList);
+            tmpMoveList = FilterRank(baseMove, referenceMove, tmpMoveList);
             if (!tmpMoveList.Any())
             {
                 return null;
             }
 
             // 列の位置でフィルターします。
-            tmpMoveList = FilterFile(move, referenceMove, tmpMoveList);
+            tmpMoveList = FilterFile(baseMove, referenceMove, tmpMoveList);
             if (!tmpMoveList.Any())
             {
                 return null;
             }
 
-            return move;
+            return baseMove;
         }
 
         /// <summary>
         /// 指し手の種類で手をフィルターし、Moveに適切なRankMoveTypeを設定します。
         /// </summary>
         private static List<Move> FilterAction(LiteralMove move,
-                                                    Move referenceMove,
-                                                    List<Move> boardMoveList)
+                                               Move referenceMove,
+                                               List<Move> boardMoveList)
         {
-            var tmpMoveList = boardMoveList.Where(
-                mv => mv.ActionType == referenceMove.ActionType)
+            var actionType = referenceMove.ActionType;
+            var tmpMoveList = boardMoveList.Where(mv => mv.ActionType == actionType)
                 .ToList();
             if (tmpMoveList.Count != boardMoveList.Count)
             {
-                move.ActionType = referenceMove.ActionType;
+                move.ActionType =
+                    actionType == ActionType.Promote || actionType == ActionType.Drop
+                    ? actionType
+                    : Board.CanPromote(referenceMove)
+                    ? ActionType.Unpromote
+                    : ActionType.None;
             }
 
             return tmpMoveList;
