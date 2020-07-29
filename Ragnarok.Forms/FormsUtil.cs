@@ -36,7 +36,7 @@ namespace Ragnarok.Forms
 
             Util.SetPropertyChangedCaller(CallPropertyChanged);
             Util.SetColletionChangedCaller(CallCollectionChanged);
-            Util.SetEventCaller(_ => UIProcess(_, false));
+            Util.SetEventCaller(_ => UIProcess(_));
         }
 
         /// <summary>
@@ -68,11 +68,40 @@ namespace Ragnarok.Forms
         /// <summary>
         /// UIThread上でメソッドを実行します。
         /// </summary>
-        public static void UIProcess(Action func, bool isAlwaysQueue=false)
+        public static void UIProcess(this Control control, Action func)
         {
-            if (isAlwaysQueue || Synchronizer.InvokeRequired)
+            if (control?.InvokeRequired == true)
             {
-                Synchronizer.BeginInvoke(func);
+                control.BeginInvoke(func);
+            }
+            else
+            {
+                func?.Invoke();
+            }
+        }
+
+        /// <summary>
+        /// UIThread上でメソッドを実行するようにメソッドを登録します。
+        /// </summary>
+        public static void UIProcess(Action func)
+        {
+            if (Synchronizer == null)
+            {
+                throw new InvalidOperationException(
+                    "Ragnarok.Formsは初期化されていません。");
+            }
+
+            Synchronizer.UIProcess(func);
+        }
+
+        /// <summary>
+        /// UIThread上でメソッドを実行します。
+        /// </summary>
+        public static void UIProcessSync(this Control control, Action func)
+        {
+            if (control?.InvokeRequired == true)
+            {
+                control.Invoke(func);
             }
             else
             {
@@ -85,9 +114,23 @@ namespace Ragnarok.Forms
         /// </summary>
         public static void UIProcessSync(Action func)
         {
-            if (Synchronizer.InvokeRequired)
+            if (Synchronizer == null)
             {
-                Synchronizer.Invoke(func);
+                throw new InvalidOperationException(
+                    "Ragnarok.Formsは初期化されていません。");
+            }
+
+            Synchronizer.UIProcessSync(func);
+        }
+
+        /// <summary>
+        /// UIThread上でメソッドを実行するようにメソッドを登録します。
+        /// </summary>
+        public static void UIDispatch(this Control control, Action func)
+        {
+            if (control != null)
+            {
+                control.BeginInvoke(func);
             }
             else
             {
@@ -96,18 +139,17 @@ namespace Ragnarok.Forms
         }
 
         /// <summary>
-        /// UIThread上でメソッドを実行します。
+        /// UIThread上でメソッドを実行するようにメソッドを登録します。
         /// </summary>
-        public static void UIProcess(this Control control, Action func)
+        public static void UIDispatch(Action func)
         {
-            if (control?.InvokeRequired == true)
+            if (Synchronizer == null)
             {
-                control.BeginInvoke(func);
+                throw new InvalidOperationException(
+                    "Ragnarok.Formsは初期化されていません。");
             }
-            else
-            {
-                func?.Invoke();
-            }
+
+            Synchronizer.UIDispatch(func);
         }
 
         /// <summary>
@@ -134,16 +176,16 @@ namespace Ragnarok.Forms
                     "PropertyChangedの呼び出しに失敗しました。");
             }
 
-            /*// 個々のDelegate単位で呼び出すスレッドを変更します。
-            foreach (PropertyChangedEventHandler child in
+            // 個々のDelegate単位で呼び出すスレッドを変更します。
+            /*foreach (PropertyChangedEventHandler child in
                      handler.GetInvocationList())
             {
-                var target = child.Target as Control;
-
                 try
                 {
+                    var target = child.Target as Control;
+
                     // 必要があれば指定のスレッド上で実行します。
-                    if (target != null && target.InvokeRequired)
+                    if (target?.InvokeRequired == true)
                     {
                         target.BeginInvoke(child, sender, e);
                     }
@@ -188,12 +230,12 @@ namespace Ragnarok.Forms
             /*foreach (NotifyCollectionChangedEventHandler child in
                      handler.GetInvocationList())
             {
-                var target = child.Target as Control;
-
                 try
                 {
+                    var target = child.Target as Control;
+
                     // 必要があれば指定のスレッド上で実行します。
-                    if (target != null && target.InvokeRequired)
+                    if (target?.InvokeRequired == true)
                     {
                         // コレクションの状態が変わる前に変更通知を出す
                         // 必要があるため、Invokeを使っています。
