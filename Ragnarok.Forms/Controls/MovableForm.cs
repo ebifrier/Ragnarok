@@ -100,7 +100,8 @@ namespace Ragnarok.Forms.Controls
             }
 
             // 開始可能なオペレーションがあるなら、それを開始します。
-            if (e.Button == MouseButtons.Left)
+            if (e.Button == MouseButtons.Left &&
+                WindowState == FormWindowState.Normal)
             {
                 var wp = e.Location;
                 foreach (var starter in this.starters)
@@ -128,8 +129,10 @@ namespace Ragnarok.Forms.Controls
             {
                 this.operation.Operate(wp);
             }
-            else
+            else if (WindowState == FormWindowState.Normal)
             {
+                this.ShowCursor();
+
                 // オペレーションがない場合は、
                 // 必要に合わせてマウスカーソルを変更します。
                 foreach (var starter in this.starters)
@@ -142,6 +145,10 @@ namespace Ragnarok.Forms.Controls
                         break;
                     }
                 }
+            }
+            else
+            {
+                this.HideCursor();
             }
         }
 

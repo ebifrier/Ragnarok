@@ -243,5 +243,53 @@ namespace Ragnarok.Forms
         {
             return new Point(Convert.ToInt32(p.X), Convert.ToInt32(p.Y));
         }
+
+        private static Cursor TransparentCursor = MakeTransparentCursor();
+
+        /// <summary>
+        /// 透明なカーソルを作成します。
+        /// </summary>
+        private static Cursor MakeTransparentCursor()
+        {
+            using (var bitmap = new Bitmap(1, 1))
+            {
+                using (var g = Graphics.FromImage(bitmap))
+                {
+                    g.FillRectangle(Brushes.Black, g.VisibleClipBounds);
+                }
+                bitmap.MakeTransparent();
+
+                // 作成した画像でCursorのインスタンスを作成
+                var handle = bitmap.GetHicon();
+                var icon = Icon.FromHandle(handle);
+                return new Cursor(icon.Handle);
+            }
+        }
+
+        /// <summary>
+        /// マウスカーソルをデフォルト表示に戻します。
+        /// </summary>
+        public static void ShowCursor(this Form form)
+        {
+            if (form == null)
+            {
+                throw new ArgumentNullException(nameof(form));
+            }
+
+            form.Cursor = Cursors.Default;
+        }
+
+        /// <summary>
+        /// マウスカーソルに透明な画像を設定します。
+        /// </summary>
+        public static void HideCursor(this Form form)
+        {
+            if (form == null)
+            {
+                throw new ArgumentNullException(nameof(form));
+            }
+
+            form.Cursor = TransparentCursor;
+        }
     }
 }
