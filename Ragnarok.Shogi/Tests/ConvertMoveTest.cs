@@ -94,7 +94,6 @@ namespace Ragnarok.Shogi.Tests
             var board = TestBoard.FlipPieces().Clone();
 
             Assert.NotNull(board);
-            Console.WriteLine(board.ToBod());
             Assert.True(board.Validate());
             Assert.AreEqual(Colour.Black, board.Turn);
 
