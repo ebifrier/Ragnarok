@@ -508,8 +508,8 @@ namespace Ragnarok.Shogi
         /// 段で指し手をフィルターし、Moveに適切なRankMoveTypeを設定します。
         /// </summary>
         private static List<Move> FilterRank(LiteralMove move,
-                                                  Move referenceMove,
-                                                  List<Move> boardMoveList)
+                                             Move referenceMove,
+                                             List<Move> boardMoveList)
         {
             // 駒の移動前情報が必要です。
             var nextPos = referenceMove.DstSquare;
@@ -568,8 +568,8 @@ namespace Ragnarok.Shogi
         /// 列で指し手をフィルターし、Moveに適切なRelPosTypeを設定します。
         /// </summary>
         private static List<Move> FilterFile(LiteralMove move,
-                                                  Move referenceMove,
-                                                  List<Move> boardMoveList)
+                                             Move referenceMove,
+                                             List<Move> boardMoveList)
         {
             // 駒の移動前情報が必要です。
             var nextPos = referenceMove.DstSquare;
@@ -793,68 +793,5 @@ namespace Ragnarok.Shogi
             newLMove.OriginalText = lmove.OriginalText;
             return newLMove;
         }
-
-#if false
-        /// <summary>
-        /// <paramref name="fromNumber"/>手からの指し手リストを作成します。
-        /// </summary>
-        /// <remarks>
-        /// 主に指し手を文字列化するために使います。
-        /// <paramref name="useSrcSquare"/>を真にすると、差し手の後に
-        /// 古い位置の情報が付加されるようになります。(例: 32金(22))
-        /// </remarks>
-        public static List<LiteralMove> MakeMoveList(this Board board,
-                                                      int fromNumber,
-                                                      bool useSrcSquare)
-        {
-            if (board == null)
-            {
-                throw new ArgumentNullException(nameof(board));
-            }
-
-            if (fromNumber < 0)
-            {
-                throw new ArgumentException("fromNumber");
-            }
-
-            // 指し手を文字列化するためには、指し手とそのときの局面
-            // が必要なので、一度局面の手を戻し局面を設定した後、
-            // もう一度手を進めていきます。
-            var clonedBoard = board.Clone();
-            var boardMoveList = new LinkedList<Move>();
-
-            // 局面を戻しながら指し手を取得します。
-            while (clonedBoard.MoveCount > fromNumber)
-            {
-                var boardMove = clonedBoard.Undo();
-                if (boardMove == null)
-                {
-                    return null;
-                }
-
-                boardMoveList.AddFirst(boardMove);
-            }
-
-            // 文字列化するための指し手リストを取得します。
-            var moveList = new List<LiteralMove>();
-            foreach (var boardMove in boardMoveList)
-            {
-                var move = ConvertMove(clonedBoard, boardMove, useSrcSquare);
-                if (move == null)
-                {
-                    return null;
-                }
-
-                if (!clonedBoard.DoMove(boardMove))
-                {
-                    return null;
-                }
-
-                moveList.Add(move);
-            }
-
-            return moveList;
-        }
-#endif
     }
 }

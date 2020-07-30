@@ -184,9 +184,7 @@ namespace Ragnarok.Shogi
 
             if (move.SameAsPrev)
             {
-                var hasSpace = (
-                    (style != MoveTextStyle.Simple) &&
-                    (result.Length == 1 || style == MoveTextStyle.KifFile));
+                var hasSpace = (style != MoveTextStyle.Simple);
 
                 // 文字数によって、同の後の空白を入れるか決めます。
                 result.Insert(0, (hasSpace ? "同　" : "同"));
