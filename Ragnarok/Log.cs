@@ -95,7 +95,6 @@ namespace Ragnarok
             try
             {
                 var thisAsm = Assembly.GetExecutingAssembly();
-                var entryAsm = Assembly.GetEntryAssembly();
 
                 // ロガーを作成する前に、必要なオブジェクトを
                 // 読み込んでおきます。
@@ -106,11 +105,11 @@ namespace Ragnarok
                 // 実行ファイルと同じパスからappname.exe.nlogやNLog.configを検索します。
                 var configFileNames = new string[]
                 {
-                    Path.GetFileName(entryAsm.CodeBase) + ".nlog",
+                    Path.GetFileName(thisAsm.CodeBase) + ".nlog",
                     "NLog.config",
                 };
 
-                var basePath = Path.GetDirectoryName(entryAsm.Location);
+                var basePath = Path.GetDirectoryName(thisAsm.Location);
                 foreach (var configFile in configFileNames)
                 {
                     var filename = Path.Combine(basePath, configFile);
