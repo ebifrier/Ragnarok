@@ -49,7 +49,7 @@ namespace Ragnarok.NicoNico.Provider.Tests
 
         private void EditAndFetchTest(VideoData expectedVideo)
         {
-            var param = ChannelTool.CreateDefaultPostParam();
+            var param = ChannelTool.CreateDefaultParam();
             param["initialized"] = 1;
             param["title"] = expectedVideo.Title;
             param["description"] = expectedVideo.Description;
@@ -84,7 +84,7 @@ namespace Ragnarok.NicoNico.Provider.Tests
                 Title = "test TEST5",
                 Description =
                     "対穴熊△3三角 講義<br>講師：藤井猛\n" +
-                    "\n" +
+                    $"{MathEx.MathUtil.RandDouble()}\n" +
                     "テストサン23",
                 TagList = new List<string> { "将棋", "テスト", "Abcd", "比較" },
                 StartTime = new DateTime(2016, 10, 1, 0, 0, 0),
