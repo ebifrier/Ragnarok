@@ -89,30 +89,19 @@ namespace Ragnarok.NicoNico.Provider.Tests
         }
 
         /// <summary>
-        /// ParseUploadedVideoListのテスト
+        /// ParseVideoListTestのテスト
         /// </summary>
         [Test()]
-        public void ParseUploadedVideoListTest()
+        public void UploadTest()
         {
-            var pageContent = LoadTestPage("uploads_sample.html");
-            var list = ChannelTool.ParseUploadedVideoList(pageContent);
-            Assert.NotNull(list);
-            Assert.AreEqual(2, list.Count());
+            var videoId = ChannelTool.RequestNewVideoId(ChannelId, "test.mp4", cc);
+            Assert.NotNull(videoId);
+            Assert.AreEqual("so", videoId.Substring(0, 2));
 
-            Assert.AreEqual(UploadedVideoStatus.Uploading, list[0].Status);
-            Assert.AreEqual("so35102761", list[0].Id);
-            Assert.AreEqual("57-38-913 将棋連盟が選ぶ 注目の一局913 中飛車特集 丸山忠久九段 vs 佐々木慎六段-n.mp4", list[0].Title);
-
-            Assert.AreEqual(UploadedVideoStatus.Success, list[1].Status);
-            Assert.AreEqual("so35102755", list[1].Id);
-            Assert.AreEqual("57-56-097 浪花道場 3手詰97-n.mp4", list[1].Title);
-
-            // エラーなど
-            list = ChannelTool.ParseUploadedVideoList("");
-            Assert.NotNull(list);
-            Assert.AreEqual(0, list.Count());
-            
-            Assert.Catch<ArgumentNullException>(() => ChannelTool.ParseUploadedVideoList(null));
+            var chunkUrl = ChannelTool.RequestUploadChunkUrl(ChannelId, videoId, cc);
+            Assert.NotNull(chunkUrl);
+            Assert.True(chunkUrl.Contains(
+                "/v2/channels/ch{ChannelId}/videos/{videoId}/file/chunks"));
         }
 
         /// <summary>
@@ -121,7 +110,7 @@ namespace Ragnarok.NicoNico.Provider.Tests
         [Test()]
         public void SearchTest()
         {
-            var list = ChannelTool.Search(cc, ChannelId, "", SearchOrder.BiggerFileId);
+            var list = ChannelTool.Search(cc, ChannelId, "", SearchSort.RegisteredAt);
             Assert.NotNull(list);
             Assert.AreEqual(20, list.Count());
 

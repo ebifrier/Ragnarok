@@ -49,31 +49,12 @@ namespace Ragnarok.NicoNico.Provider.Tests
 
         private void EditAndFetchTest(VideoData expectedVideo)
         {
-            var param = ChannelTool.CreateDefaultParam();
-            param["initialized"] = 1;
-            param["title"] = expectedVideo.Title;
-            param["description"] = expectedVideo.Description;
-            param["thmb_path"] = 13; // サムネイルはアップしたものを使う
-
-            param["is_apply_tag"] = 1;
-            param["tag1"] = "ゲーム";
-            var tags = expectedVideo.TagList;
-            for (var i = 0; i <= 8; ++i)
-            {
-                param[$"tag{i + 2}"] = (
-                    i < tags.Count() && !string.IsNullOrEmpty(tags[i]) ?
-                    ReplaceQuote(tags[i]) : "");
-            }
-
-            param["specify_uploaddate"] = "";
-            //param["uploaddate"] = expectedVideo.StartTime.ToString("yyyy-MM-dd HH:mm:ss");
-            param["visible_start_time"] = expectedVideo.StartTime.ToString("yyyy-MM-dd HH:mm:ss");
-            param["visible_end_time"] = expectedVideo.StartTime.AddDays(1).ToString("yyyy-MM-dd HH:mm:ss");
-            param["is_nicos"] = "0";
-            param["hide_flag"] = 1; // テストなので非表示にする
+            var param = ChannelTool.CreateUpdateJson(
+                expectedVideo.Title, expectedVideo.Description,
+                expectedVideo.StartTime, expectedVideo.StartTime.AddDays(1));
 
             Assert.NotNull(cc);
-            ChannelTool.RequestEdit(ChannelId, VideoId, param, cc);
+            ChannelTool.RequestUpdate(ChannelId, VideoId, param, cc);
         }
 
         [Test]
