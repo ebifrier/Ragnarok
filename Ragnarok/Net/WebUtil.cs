@@ -4,11 +4,11 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Net;
-using System.Web;
-using System.ComponentModel;
 
 namespace Ragnarok.Net
 {
+    using Utility;
+
     /// <summary>
     /// Web関連のユーティリティーメソッドを持ちます。
     /// </summary>
@@ -160,6 +160,37 @@ namespace Ragnarok.Net
         }
 
         /// <summary>
+        /// このアプリの標準的なHTTPリクエストを作成します。
+        /// </summary>
+        public static HttpWebRequest MakeJsonRequest(string url,
+                                                     CookieContainer cc = null)
+        {
+            var request = (HttpWebRequest)WebRequest.Create(url);
+
+            request.Method = "POST";
+            request.UserAgent = "Ragnarok.NicoNico";
+            request.AutomaticDecompression =
+                DecompressionMethods.Deflate |
+                DecompressionMethods.GZip;
+            request.KeepAlive = false;
+            request.ContentType = "application/json";
+
+            if (cc != null)
+            {
+                request.CookieContainer = cc;
+            }
+
+            // タイムアウトのデフォルト値が設定されていれば
+            // それを使ってネットワークに接続します。
+            if (DefaultTimeout > 0)
+            {
+                request.Timeout = DefaultTimeout;
+            }
+
+            return request;
+        }
+
+        /// <summary>
         /// POSTするデータを書き込みます。
         /// </summary>
         public static void WritePostData(HttpWebRequest request,
@@ -190,12 +221,51 @@ namespace Ragnarok.Net
         }
 
         /// <summary>
+        /// POSTするデータを書き込みます。
+        /// </summary>
+        public static void WriteJsonData(HttpWebRequest request,
+                                         Dictionary<string, object> param)
+        {
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+
+            // パラメータがあれば、POSTを無ければGETを使います。
+            var jsonStr = JsonUtil.Serialize(param);
+            var jsonData = Encoding.UTF8.GetBytes(jsonStr);
+            request.ContentType = "application/json";
+            request.ContentLength = jsonData.Length;
+
+            using (var reqStream = request.GetRequestStream())
+            {
+                reqStream.Write(jsonData, 0, jsonData.Length);
+            }
+        }
+
+        /// <summary>
         /// HTTPの取得要求を出します。
         /// </summary>
         public static byte[] RequestHttp(string url,
                                          Dictionary<string, object> param)
         {
             return RequestHttp(url, param, null);
+        }
+
+        /// <summary>
+        /// HTTPリクエストを出します。
+        /// </summary>
+        public static string RequestHttpText(HttpWebRequest request,
+                                             Encoding encoding = null)
+        {
+            var data = RequestHttp(request);
+            if (data == null)
+            {
+                return string.Empty;
+            }
+
+            encoding = encoding ?? Encoding.UTF8;
+            return encoding.GetString(data);
         }
 
         /// <summary>
@@ -214,6 +284,23 @@ namespace Ragnarok.Net
 
             encoding = encoding ?? Encoding.UTF8;
             return encoding.GetString(buffer);
+        }
+
+        /// <summary>
+        /// HTTPリクエストを出します。
+        /// </summary>
+        public static dynamic RequestJson(HttpWebRequest request,
+                                          Encoding encoding = null)
+        {
+            var data = RequestHttp(request);
+            if (data == null)
+            {
+                return null;
+            }
+
+            encoding = encoding ?? Encoding.UTF8;
+            var resultJson = encoding.GetString(data);
+            return JsonUtil.Deserialize<dynamic>(resultJson);
         }
 
         /// <summary>
