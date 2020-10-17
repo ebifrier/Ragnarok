@@ -5,13 +5,11 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace Ragnarok.NicoNico.Provider
 {
     using Net;
     using Utility;
-    using Video;
 
     /// <summary>
     /// 動画の公開範囲を設定します。
@@ -61,20 +59,84 @@ namespace Ragnarok.NicoNico.Provider
     }
 
     /// <summary>
+    /// 動画ステータスを保持します。
+    /// </summary>
+    public sealed class VideoStatus
+    {
+        /// <summary>
+        /// 動画の投稿状態を取得します。
+        /// </summary>
+        /// <remarks>
+        /// PREPARING-REGISTER
+        /// REGISTERING
+        /// REGISTERED
+        /// DELETED
+        /// </remarks>
+        public string PostStatus
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 動画エンコードの状態を取得します。
+        /// </summary>
+        /// <remarks>
+        /// ACCEPTED
+        /// TRANSCODING
+        /// UNDEFINED
+        /// TRANSFERED
+        /// TRANSFER-FAILED
+        /// </remarks>
+        public string VideoFileStatus
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// サムネイルの状態を取得します。
+        /// </summary>
+        /// <remarks>
+        /// NOT-AVAILABLE
+        /// </remarks>
+        public string ThumbnailStatus
+        {
+            get;
+            set;
+        }
+    }
+
+    /// <summary>
     /// ニコニコチャンネルで動画編集や動画アップロードを行うためのクラスです。
     /// </summary>
     public static class ChannelTool
     {
-        public readonly static string UploadUrl = @"https://www.upload.nicovideo.jp";
-        public readonly static string SearchUrl =  @"https://chtool.nicovideo.jp/video/video";
-        public readonly static string VideoDeleteUrl = UploadUrl + @"video/video_delete.php";
+        public readonly static string UrlBase = @"https://chtool.nicovideo.jp/video";
+        public readonly static string UploaUrldBase = @"https://www.upload.nicovideo.jp";
 
         /// <summary>
         /// 動画IDの取得用URLを作成します。
         /// </summary>
         public static string MakeGetVideoIdUrl(int channelId)
         {
-            return $"{UploadUrl}/v2/channels/ch{channelId}/videos";
+            return $"{UploaUrldBase}/v2/channels/ch{channelId}/videos";
+        }
+
+        /// <summary>
+        /// 動画用のサイトURLを作成します。
+        /// </summary>
+        public static string MakeVideoUrl(int channelId, string videoId, string subPath = null)
+        {
+            return $@"{UploaUrldBase}/v2/channels/ch{channelId}/videos/{videoId}{subPath}";
+        }
+
+        /// <summary>
+        /// 動画の状態を取得するURLを作成します。
+        /// </summary>
+        public static string MakeVideoStatusUrl(int channelId, string videoId)
+        {
+            return MakeVideoUrl(channelId, videoId, "/status");
         }
 
         /// <summary>
@@ -82,7 +144,7 @@ namespace Ragnarok.NicoNico.Provider
         /// </summary>
         public static string MakeGetUploadChunkUrl(int channelId, string videoId)
         {
-            return $"{UploadUrl}/v2/channels/ch{channelId}/videos/{videoId}/upload-chunk-stream";
+            return MakeVideoUrl(channelId, videoId, "/upload-chunk-stream");
         }
 
         /// <summary>
@@ -90,7 +152,15 @@ namespace Ragnarok.NicoNico.Provider
         /// </summary>
         public static string MakeThumbnailTimeUrl(int channelId, string videoId, int thumbnailId = 0)
         {
-            return $"{UploadUrl}/v2/channels/ch{channelId}/videos/{videoId}/scene-thumbnails/{thumbnailId}";
+            return MakeVideoUrl(channelId, videoId, $"/scene-thumbnails/{thumbnailId}");
+        }
+
+        /// <summary>
+        /// 動画登録用のサイトURLを作成します。
+        /// </summary>
+        public static string MakeVideoRegisterUrl(int channelId, string videoId)
+        {
+            return MakeVideoUrl(channelId, videoId, "/register");
         }
 
         /// <summary>
@@ -98,18 +168,7 @@ namespace Ragnarok.NicoNico.Provider
         /// </summary>
         public static string MakeSearchUrl(int channelId)
         {
-            return string.Format(
-                @"{0}?channel_id={1}",
-                SearchUrl, channelId);
-        }
-
-        /// <summary>
-        /// 動画編集用のサイトURLを作成します。
-        /// </summary>
-        public static string MakeVideoEditUrl(int channelId, string videoId, bool isRegister)
-        {
-            var postfix = isRegister ? "/register" : "";
-            return $@"{UploadUrl}channels/ch{channelId}/videos/{videoId}{postfix}";
+            return $"{UrlBase}/video?channel_id={channelId}";
         }
 
         /// <summary>
@@ -117,9 +176,7 @@ namespace Ragnarok.NicoNico.Provider
         /// </summary>
         public static string MakeVideoDeleteUrl(int channelId, string videoId)
         {
-            return string.Format(
-                @"{0}?channel_id={1}&fileid={2}&pageID=1",
-                VideoDeleteUrl, channelId, videoId);
+            return $"{UrlBase}/video_delete2?channel_id={channelId}&video_id={videoId}";
         }
 
         /// <summary>
@@ -173,6 +230,28 @@ namespace Ragnarok.NicoNico.Provider
             }
 
             return cc;
+        }
+
+        /// <summary>
+        /// 動画の状態を取得します。
+        /// </summary>
+        public static VideoStatus RequestStatus(int channelId, string videoId,
+                                                CookieContainer cc)
+        {
+            var url = MakeVideoStatusUrl(channelId, videoId);
+            var req = WebUtil.MakeJsonRequest(url, cc);
+            req.Method = "GET";
+            req.Headers["X-Frontend-Id"] = "23";
+            req.Headers["X-Frontend-Version"] = "1.0.0";
+            req.Headers["X-Request-With"] = "N-garage";
+
+            var result = WebUtil.RequestJson(req);
+            return new VideoStatus
+            {
+                PostStatus = result.data.postStatus,
+                VideoFileStatus = result.data.videoFileStatus,
+                ThumbnailStatus = result.data.thumbnailStatus,
+            };
         }
 
         #region VideoList
@@ -306,7 +385,28 @@ namespace Ragnarok.NicoNico.Provider
 
             var result = WebUtil.RequestJson(req);
             var subPath = result.data.url;
-            return $"{ChannelTool.UploadUrl}{subPath}";
+            return $"{UploaUrldBase}{subPath}";
+        }
+
+        /// <summary>
+        /// 動画のサムネイル時刻を設定します。
+        /// </summary>
+        public static void RequestSetThumbnailTime(int channelId, string videoId,
+                                                   TimeSpan thumbnailTime,
+                                                   CookieContainer cc)
+        {
+            var url = MakeThumbnailTimeUrl(channelId, videoId);
+            var req = WebUtil.MakeNormalRequest(url, cc);
+            req.Headers["X-Frontend-Id"] = "23";
+            req.Headers["X-Frontend-Version"] = "1.0.0";
+            req.Headers["X-Request-With"] = "N-garage";
+
+            WebUtil.WritePostData(req, new Dictionary<string, object>
+            {
+                ["timing"] = (int)thumbnailTime.TotalMilliseconds
+            });
+
+            var text = WebUtil.RequestHttpText(req);
         }
         #endregion
 
@@ -363,17 +463,19 @@ namespace Ragnarok.NicoNico.Provider
         /// 動画情報更新時に使うJSONデータを作成します。
         /// </summary>
         public static Dictionary<string, object> CreateUpdateJson(string title, string description,
-                                                                  DateTime startAt, DateTime? endAt = null)
+                                                                  DateTime startAt, DateTime? endAt = null,
+                                                                  bool isPublish = true)
         {
             var param = CreateDefaultParam();
             param["title"] = title;
             param["description"] = description;
+            param["publish"] = isPublish;
 
             var visibleSpan = new Dictionary<string, object>();
-            visibleSpan["visibleStartAt"] = startAt.ToString("yyyy-MM-ddTHH:mm:sszzzz");
+            visibleSpan["visibleStartAt"] = startAt.ToString("yyyy-MM-ddTHH:mm:ss.fffzzzz");
             if (endAt != null)
             {
-                visibleSpan["visibleEndAt"] = endAt.Value.ToString("yyyy-MM-ddTHH:mm:sszzzz");
+                visibleSpan["visibleEndAt"] = endAt.Value.ToString("yyyy-MM-ddTHH:mm:ss.fffzzzz");
             }
             param["visibleSpan"] = visibleSpan;
 
@@ -385,13 +487,14 @@ namespace Ragnarok.NicoNico.Provider
         /// </summary>
         public static Dictionary<string, object> CreateRegisterJson(string title, string description,
                                                                     List<string> tags,
-                                                                    DateTime startAt, DateTime? endAt = null)
+                                                                    DateTime startAt, DateTime? endAt = null,
+                                                                    bool isPublish = true)
         {
-            var param = CreateUpdateJson(title, description, startAt, endAt);
+            var param = CreateUpdateJson(title, description, startAt, endAt, isPublish);
             param["tags"] = tags;
             param["thumbnail"] = new Dictionary<string, object>
             {
-                ["selectThumbnailIndex"] = 0,
+                ["selectThumbnailIndex"] = "0",
             };
 
             return param;
@@ -402,13 +505,12 @@ namespace Ragnarok.NicoNico.Provider
         /// </summary>
         public static string RequestEdit(int channelId, string videoId,
                                          Dictionary<string, object> param,
-                                         bool isRegister,
-                                         CookieContainer cc)
+                                         CookieContainer cc, bool isFirst = true)
         {
             if (string.IsNullOrEmpty(videoId) || !videoId.StartsWith("so"))
             {
                 throw new ArgumentException(
-                    $"videoId is invalid value: {videoId}", "videoId");
+                    $"videoId is invalid value: {videoId}", nameof(videoId));
             }
 
             if (cc == null)
@@ -422,49 +524,45 @@ namespace Ragnarok.NicoNico.Provider
             cparam["channelId"] = $"ch{channelId}";
 
             // 実際に動画情報の更新リクエストを発行します。
-            var url = MakeVideoEditUrl(channelId, videoId, isRegister);
-            var req = WebUtil.MakeNormalRequest(url, cc);
+            var url = MakeVideoUrl(channelId, videoId);
+            var req = WebUtil.MakeJsonRequest(url, cc);
 
-            req.Method = (isRegister ? "POST" : "PUT");
+            req.Method = (isFirst ? "POST" : "PUT");
             req.Headers["X-Frontend-Id"] = "23";
             req.Headers["X-Frontend-Version"] = "1.0.0";
             req.Headers["X-Request-With"] = "N-garage";
             WebUtil.WriteJsonData(req, cparam);
 
-            var buffer = WebUtil.RequestHttp(req);
-            if (buffer == null)
-            {
-                return null;
-            }
-
-            var result = Encoding.UTF8.GetString(buffer);
-            if (string.IsNullOrEmpty(result))
-            {
-                return result;
-            }
-
-            //Save(@"E:\programs\develop\Ragnarok\index.html", result);
-            return result;
+            return WebUtil.RequestHttpText(req);
         }
 
         /// <summary>
         /// 動画情報の登録リクエストを発行します。
         /// </summary>
-        public static string RequestRegister(int channelId, string videoId,
-                                             Dictionary<string, object> param,
-                                             CookieContainer cc)
-        {
-            return RequestEdit(channelId, videoId, param, true, cc);
-        }
-
-        /// <summary>
-        /// 動画情報の更新リクエストを発行します。
-        /// </summary>
-        public static string RequestUpdate(int channelId, string videoId,
-                                           Dictionary<string, object> param,
+        public static void RequestRegister(int channelId, string videoId,
                                            CookieContainer cc)
         {
-            return RequestEdit(channelId, videoId, param, false, cc);
+            if (string.IsNullOrEmpty(videoId) || !videoId.StartsWith("so"))
+            {
+                throw new ArgumentException(
+                    $"videoId is invalid value: {videoId}", nameof(videoId));
+            }
+
+            if (cc == null)
+            {
+                throw new ArgumentNullException(nameof(cc));
+            }
+
+            // 実際に動画情報の更新リクエストを発行します。
+            var url = MakeVideoRegisterUrl(channelId, videoId);
+            var req = WebUtil.MakeNormalRequest(url, cc);
+
+            req.Method = "POST";
+            req.Headers["X-Frontend-Id"] = "23";
+            req.Headers["X-Frontend-Version"] = "1.0.0";
+            req.Headers["X-Request-With"] = "N-garage";
+
+            WebUtil.RequestHttp(req);
         }
         #endregion
 
@@ -478,7 +576,7 @@ namespace Ragnarok.NicoNico.Provider
             if (string.IsNullOrEmpty(videoId) || !videoId.StartsWith("so"))
             {
                 throw new ArgumentException(
-                    $"videoId is invalid value: {videoId}", "videoId");
+                    $"videoId is invalid value: {videoId}", nameof(videoId));
             }
 
             if (cc == null)
@@ -486,13 +584,29 @@ namespace Ragnarok.NicoNico.Provider
                 throw new ArgumentNullException(nameof(cc));
             }
 
-            // 動画更新時に必要になる必須パラメータを設定します。
-            var param = new Dictionary<string, object>();
-            param["channel_id"] = channelId;
+            var url = MakeVideoDeleteUrl(channelId, videoId);
+
+            // CSRFを取得するためのリクエストを発行します。
+            var result = WebUtil.RequestHttpText(url, null, cc);
+            if (string.IsNullOrEmpty(result))
+            {
+                return result;
+            }
+
+            var regex = new Regex("<input type=\"hidden\" name=\"_csrf\" value=\"([^\"]+)\">");
+            var m = regex.Match(result);
+            if (!m.Success)
+            {
+                return null;
+            }
+
+            var param = new Dictionary<string, object>()
+            {
+                ["_csrf"] = m.Groups[1].Value
+            };
 
             // 実際に動画情報の更新リクエストを発行します。
-            var url = MakeVideoDeleteUrl(channelId, videoId);
-            var result = WebUtil.RequestHttpText(url, param, cc, Encoding.UTF8);
+            result = WebUtil.RequestHttpText(url, param, cc);
             if (string.IsNullOrEmpty(result))
             {
                 return result;
@@ -528,7 +642,7 @@ namespace Ragnarok.NicoNico.Provider
             // パラメータはGET用のエンコードを行います。
             var url = MakeSearchUrl(channelId);
             var encodedParam = WebUtil.EncodeParam(param);
-            var searchUrl = string.Format("{0}&{1}", url, encodedParam);
+            var searchUrl = $"{url}&{encodedParam}";
 
             return WebUtil.RequestHttpText(searchUrl, null, cc, Encoding.UTF8);
         }
@@ -546,7 +660,7 @@ namespace Ragnarok.NicoNico.Provider
         {
             if (cc == null)
             {
-                throw new ArgumentNullException("cc");
+                throw new ArgumentNullException(nameof(cc));
             }
 
             var text = RequestSearch(

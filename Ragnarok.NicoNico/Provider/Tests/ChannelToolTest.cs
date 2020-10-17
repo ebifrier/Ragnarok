@@ -101,7 +101,10 @@ namespace Ragnarok.NicoNico.Provider.Tests
             var chunkUrl = ChannelTool.RequestUploadChunkUrl(ChannelId, videoId, cc);
             Assert.NotNull(chunkUrl);
             Assert.True(chunkUrl.Contains(
-                "/v2/channels/ch{ChannelId}/videos/{videoId}/file/chunks"));
+                $"/v2/channels/ch{ChannelId}/videos/{videoId}/file/chunks"));
+
+            var status = ChannelTool.RequestStatus(ChannelId, videoId, cc);
+            Assert.AreEqual("CREATED", status.PostStatus);
         }
 
         /// <summary>

@@ -150,7 +150,6 @@
     <Compile Include="Provider\ChannelLoginData.cs" />
     <Compile Include="Provider\ChannelTool.cs" />
     <Compile Include="Provider\ChannelToolException.cs" />
-    <Compile Include="Provider\ChannelUploadedVideoData.cs" />
     <Compile Include="Provider\ChannelVideoData.cs" />
     <Compile Include="Provider\CommunityData.cs" />
     <Compile Include="Provider\CommunityInfo.cs" />
@@ -180,9 +179,6 @@
       <Project>{58e7ea68-4850-452c-b15c-cd376fc60198}</Project>
       <Name>Ragnarok</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Provider\Tests\uploads_sample.html" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Provider\Tests\videos_sample.html" />

@@ -331,7 +331,6 @@ namespace Ragnarok.Net
         /// <summary>
         /// HTTPリクエストを出します。
         /// </summary>
-        /// <exception cref="WebException" />
         public static byte[] RequestHttp(HttpWebRequest request)
         {
             if (request == null)

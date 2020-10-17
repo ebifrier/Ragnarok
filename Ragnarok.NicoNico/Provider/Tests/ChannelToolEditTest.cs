@@ -54,7 +54,7 @@ namespace Ragnarok.NicoNico.Provider.Tests
                 expectedVideo.StartTime, expectedVideo.StartTime.AddDays(1));
 
             Assert.NotNull(cc);
-            ChannelTool.RequestUpdate(ChannelId, VideoId, param, cc);
+            ChannelTool.RequestEdit(ChannelId, VideoId, param, cc);
         }
 
         [Test]
