@@ -146,6 +146,7 @@ namespace Ragnarok.Net
             request.AutomaticDecompression =
                 DecompressionMethods.Deflate |
                 DecompressionMethods.GZip;
+            request.ContentType = "application/x-www-form-urlencoded";
             request.CookieContainer = cc;
             request.KeepAlive = false;
 
@@ -231,15 +232,22 @@ namespace Ragnarok.Net
                 throw new ArgumentNullException(nameof(request));
             }
 
+            if (param == null)
+            {
+                return;
+            }
+
             // パラメータがあれば、POSTを無ければGETを使います。
             var jsonStr = JsonUtil.Serialize(param);
             var jsonData = Encoding.UTF8.GetBytes(jsonStr);
-            request.ContentType = "application/json";
-            request.ContentLength = jsonData.Length;
-
-            using (var reqStream = request.GetRequestStream())
+            if (jsonData.Length > 0)
             {
-                reqStream.Write(jsonData, 0, jsonData.Length);
+                request.ContentLength = jsonData.Length;
+
+                using (var reqStream = request.GetRequestStream())
+                {
+                    reqStream.Write(jsonData, 0, jsonData.Length);
+                }
             }
         }
 
