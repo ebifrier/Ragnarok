@@ -251,7 +251,7 @@ namespace Ragnarok.Shogi
         {
             get
             {
-                return 100.0 / (1.0 + Math.Exp(-Value / 600.0));
+                return 100.0 / (1.0 + Math.Exp(-Value / 1000.0));
             }
         }
 
