@@ -78,6 +78,7 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="nunit.framework, Version=3.12.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
       <HintPath>..\packages\NUnit.3.12.0\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
@@ -146,19 +147,12 @@
     <Compile Include="NicoString.cs" />
     <Compile Include="NicoUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Provider\ChannelLoginData.cs" />
-    <Compile Include="Provider\ChannelTool.cs" />
-    <Compile Include="Provider\ChannelToolException.cs" />
-    <Compile Include="Provider\ChannelUploadedVideoData.cs" />
-    <Compile Include="Provider\ChannelVideoData.cs" />
     <Compile Include="Provider\CommunityData.cs" />
     <Compile Include="Provider\CommunityInfo.cs" />
     <Compile Include="Provider\CommunityLevelInfo.cs" />
     <Compile Include="Provider\CommunityLevelTable.cs" />
     <Compile Include="Provider\NicoProviderException.cs" />
     <Compile Include="Provider\ProviderType.cs" />
-    <Compile Include="Provider\Tests\ChannelToolEditTest.cs" />
-    <Compile Include="Provider\Tests\ChannelToolTest.cs" />
     <Compile Include="StrUtil.cs" />
     <Compile Include="Video\Mylist.cs" />
     <Compile Include="Video\NicoVideoException.cs" />
@@ -179,12 +173,6 @@
       <Project>{58e7ea68-4850-452c-b15c-cd376fc60198}</Project>
       <Name>Ragnarok</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Provider\Tests\uploads_sample.html" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Provider\Tests\videos_sample.html" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
