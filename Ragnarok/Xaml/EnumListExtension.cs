@@ -10,7 +10,7 @@ namespace Ragnarok.Xaml
     /// <summary>
     /// Enumに付随するラベル名などを取得可能なクラスです。
     /// </summary>
-    public class EnumWrapper : Ragnarok.Utility.EnumWrapper<object>
+    public class EnumWrapper : Utility.EnumWrapper<object>
     {
         /// <summary>
         /// コンストラクタ
