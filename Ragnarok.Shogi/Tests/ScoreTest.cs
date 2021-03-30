@@ -90,17 +90,17 @@ namespace Ragnarok.Shogi
             Assert.AreEqual(100.0,
                 Score.CreateMate(Colour.Black, 1, true).WinRate,
                 Delta);
-            Assert.AreEqual(100.0,
+            Assert.AreEqual(95.0,
                 Score.CreateValue(Colour.Black, 3000).WinRate,
                 1.0);
-            Assert.AreEqual(100.0,
+            Assert.AreEqual(95.0,
                 Score.CreateValue(Colour.White, 3000).WinRate,
                 1.0);
 
             Assert.AreEqual(0.0,
                 Score.CreateMate(Colour.White, 1, false).WinRate,
                 Delta);
-            Assert.AreEqual(0.0,
+            Assert.AreEqual(5.0,
                 Score.CreateValue(Colour.White, -3000).WinRate,
                 1.0);
 
