@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
-using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
+using OpenTK.Windowing.Common;
+using OpenTK.Windowing.Desktop;
 
 using Ragnarok.Utility;
 
@@ -94,15 +95,10 @@ namespace Ragnarok.OpenGL
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public Texture()
+        public Texture(IGraphicsContext context)
         {
-            this.context = GraphicsContext.CurrentContext;
-            if (this.context == null)
-            {
-                throw new GLException(
-                    "OpenGLコンテキストが設定されていません＞＜");
-            }
-
+            this.context = context ??
+                throw new ArgumentNullException(nameof(context));
             AddTexture(this);
         }
 
@@ -156,7 +152,6 @@ namespace Ragnarok.OpenGL
         /// <summary>
         /// テクスチャ名(ID)を取得します。
         /// </summary>
-        [CLSCompliant(false)]
         public uint TextureName
         {
             get { return this.glTexture; }
@@ -237,7 +232,7 @@ namespace Ragnarok.OpenGL
         /// </summary>
         private void ValidateContext()
         {
-            if (this.context != GraphicsContext.CurrentContext)
+            if (!this.context.IsCurrent)
             {
                 throw new GLException(
                     "OpenGLコンテキストが正しく設定れていません＞＜");

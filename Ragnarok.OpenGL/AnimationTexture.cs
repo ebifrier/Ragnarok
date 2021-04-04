@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
+using OpenTK.Windowing.Common;
 
 using Ragnarok.Utility;
 
@@ -13,11 +14,15 @@ namespace Ragnarok.OpenGL
     /// </summary>
     public class AnimationTexture : ICachable
     {
+        private readonly IGraphicsContext context;
+
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public AnimationTexture()
+        public AnimationTexture(IGraphicsContext context)
         {
+            this.context = context ??
+                throw new ArgumentNullException(nameof(context));
             TextureList = new List<Texture>();
         }
 
@@ -152,9 +157,9 @@ namespace Ragnarok.OpenGL
         /// <summary>
         /// ビットマップからテクスチャを読み込みます。
         /// </summary>
-        private static Texture LoadTexture(Bitmap bitmap)
+        private Texture LoadTexture(Bitmap bitmap)
         {
-            var tex = new Texture();
+            var tex = new Texture(this.context);
             if (!tex.Create(bitmap))
             {
                 throw new RagnarokException(

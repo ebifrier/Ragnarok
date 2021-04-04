@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using OpenTK;
-using OpenTK.Graphics;
+using OpenTK.Windowing.Common;
 using OpenTK.Graphics.OpenGL;
 
 namespace Ragnarok.OpenGL
@@ -15,7 +14,6 @@ namespace Ragnarok.OpenGL
     /// Deleteされる必要がありますが、DisposeメソッドはGC用のスレッドで呼ばれるため
     /// そこで廃棄できません。
     /// </remarks>
-    [CLSCompliant(false)]
     public sealed class TextureDisposer
     {
         private readonly static object syncInstance = new object();

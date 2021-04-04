@@ -5,6 +5,7 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Drawing.Text;
 using System.Linq;
+using OpenTK.Windowing.Common;
 
 using Ragnarok.Utility;
 
@@ -28,9 +29,9 @@ namespace Ragnarok.OpenGL
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public TextTexture()
+        public TextTexture(IGraphicsContext context)
         {
-            this.texture = new Texture();
+            this.texture = new Texture(context);
         }
 
         /// <summary>

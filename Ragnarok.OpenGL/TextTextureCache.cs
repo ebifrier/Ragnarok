@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using OpenTK;
-using OpenTK.Graphics;
+using OpenTK.Windowing.Common;
 
 using Ragnarok.Utility;
 
@@ -79,7 +78,6 @@ namespace Ragnarok.OpenGL
     /// <summary>
     /// 文字列用のテクスチャをキャッシュします。
     /// </summary>
-    [CLSCompliant(false)]
     public sealed class TextTextureCache
     {
         private readonly CacheCollection<TextTextureKey, TextTexture> cache;
@@ -105,7 +103,7 @@ namespace Ragnarok.OpenGL
         /// </summary>
         private TextTexture CreateTextTexture(TextTextureKey key)
         {
-            var textTexture = new TextTexture()
+            var textTexture = new TextTexture(this.context)
             {
                 Text = key.Text,
                 TextureFont = key.TextureFont,
@@ -122,7 +120,7 @@ namespace Ragnarok.OpenGL
         public TextTexture GetTextTexture(string text,
                                           TextTextureFont textureFont)
         {
-            if (this.context != GraphicsContext.CurrentContext)
+            if (!this.context.IsCurrent)
             {
                 throw new GLException(
                     "OpenGLコンテキストが正しく設定れていません＞＜");
