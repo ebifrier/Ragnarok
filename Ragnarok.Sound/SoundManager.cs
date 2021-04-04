@@ -27,8 +27,8 @@ namespace Ragnarok.Sound
             try
             {
                 this.backend =
-#if USE_SOUND_CSCORE
-                    new Backend.SoundManagerBackend_CSCore();
+#if USE_SOUND_NAUDIO
+                    new Backend.SoundManagerBackend_NAudio();
 #elif USE_SOUND_IRRKLANG
                     new Backend.SoundManagerBackend_IrrKlang();
 #else
