@@ -33,7 +33,7 @@ namespace Ragnarok
     /// </summary>
     public static class Util
     {
-        private static readonly Encoding SJisEncoding;
+        public static readonly Encoding SJisEncoding;
 
         private static PropertyChangedEventCaller propertyChangedCaller;
         private static CollectionChangedEventCaller collectionChangedCaller;
