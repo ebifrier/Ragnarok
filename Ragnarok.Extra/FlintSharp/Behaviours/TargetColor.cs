@@ -84,7 +84,6 @@ namespace FlintSharp.Behaviours
         /// <param name="targetColor">The target color. This is a 32 bit color of the form 0xAARRGGBB.</param>
         /// <param name="rate">Adjusts how quickly the particle reaches the target color.
         /// Larger numbers cause it to approach the target color more quickly.</param>
-        [CLSCompliant(false)]
         public TargetColor(uint targetColor, double rate)
             : this(Color4b.FromValue(targetColor), rate)
         {
@@ -95,7 +94,6 @@ namespace FlintSharp.Behaviours
         {
         }
 
-        [CLSCompliant(false)]
         public TargetColor(uint targetColor)
             : this(Color4b.FromValue(targetColor))
         {

@@ -59,7 +59,6 @@ namespace Ragnarok.Utility
         /// <summary>
         /// 色成分が上位ビットからARGB順に並んでいる値から色を作成します。
         /// </summary>
-        [CLSCompliant(false)]
         public static Color4b FromValue(uint value)
         {
             return Color4b.FromArgb(
@@ -108,7 +107,6 @@ namespace Ragnarok.Utility
         /// <summary>
         /// ARGBの成分が含まれたuint型として値を取得します。
         /// </summary>
-        [CLSCompliant(false)]
         public uint Value
         {
             get

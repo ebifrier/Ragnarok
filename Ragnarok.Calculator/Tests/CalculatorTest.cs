@@ -24,6 +24,7 @@ namespace Ragnarok.Calculator.Tests
 
             //Assert.AreEqual(Calculator.Default.Run("2.4e14"), 2.4e14);
         }
+
         [Test()]
         public void CompareTest()
         {

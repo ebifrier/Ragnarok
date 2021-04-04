@@ -81,7 +81,6 @@ namespace FlintSharp.Behaviours
         /// </summary>
         /// <param name="startColor">The 32bit (ARGB) color of the particle at the beginning of its life.</param>
         /// <param name="endColor">The 32bit (ARGB) color of the particle at the end of its life.</param>
-        [CLSCompliant(false)]
         public ColorChange(uint startColor, uint endColor)
         {
             m_startColor = Color4b.FromValue(startColor);
