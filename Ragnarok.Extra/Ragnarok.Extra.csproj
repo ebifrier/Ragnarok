@@ -7,10 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Portable.Xaml" Version="0.26.0" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Ragnarok.Calculator\Ragnarok.Calculator.csproj" />
     <ProjectReference Include="..\Ragnarok.Sound\Ragnarok.Sound.csproj" />
     <ProjectReference Include="..\Ragnarok\Ragnarok.csproj" />
