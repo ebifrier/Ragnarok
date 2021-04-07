@@ -57,6 +57,7 @@ namespace Ragnarok.Extra.Effect
             Opacity = 1.0;
             //Transform = new Matrix44d();
             InheritedOpacity = 1.0;
+            IsVisible = true;
 
             // 値をForeverにすると、子要素があってもなくてもオブジェクトが
             // 終了しなくなります。
@@ -104,6 +105,27 @@ namespace Ragnarok.Extra.Effect
         public event EventHandler Terminated;
 
         #region 基本プロパティ
+        /// <summary>
+        /// コントロールの表示を行うかどうかを取得または設定します。
+        /// </summary>
+        public bool IsVisible
+        {
+            get
+            {
+                var isParentVisible = Parent?.IsVisible;
+                if (isParentVisible == false)
+                {
+                    return false;
+                }
+
+                return GetValue<bool>(nameof(IsVisible));
+            }
+            set
+            {
+                SetValue(nameof(IsVisible), value);
+            }
+        }
+
         /// <summary>
         /// イメージの基本パスを取得または設定します。
         /// </summary>
@@ -645,7 +667,7 @@ namespace Ragnarok.Extra.Effect
         /// </summary>
         public void DoEnterFrame(TimeSpan elapsedTime, object state)
         {
-            if (RemoveMe)
+            if (RemoveMe || !IsVisible)
             {
                 return;
             }
@@ -732,7 +754,7 @@ namespace Ragnarok.Extra.Effect
         public void DoRender()
         {
             // 未初期化の場合は描画処理を行いません。
-            if (RemoveMe || !this.initialized || !this.started)
+            if (RemoveMe || !IsVisible || !this.initialized || !this.started)
             {
                 return;
             }
