@@ -37,7 +37,7 @@ namespace Ragnarok.Extra.Effect
     public class EffectObject : NotifyObject, IFrameObject
     {
         private readonly ReentrancyLock dataContextSync = new ReentrancyLock();
-        private int startTick = 0;
+        private long startTick = 0;
         private TimeSpan progressSpan = TimeSpan.Zero;
         private bool dataContextInherits = true;
         private bool initialized;
@@ -525,7 +525,7 @@ namespace Ragnarok.Extra.Effect
             }
 
             // 初回の呼び出し時に時刻を設定します。
-            var now = Environment.TickCount;
+            var now = Environment.TickCount64;
             if (this.startTick == 0)
             {
                 this.startTick = now;
