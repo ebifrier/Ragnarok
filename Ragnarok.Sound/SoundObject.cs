@@ -9,7 +9,7 @@ namespace Ragnarok.Sound
     /// </summary>
     public class SoundObject : MarshalByRefObject
     {
-        private Backend.ISoundObjectBackend backend;
+        private readonly Backend.ISoundObjectBackend backend;
 
         /// <summary>
         /// コンストラクタ

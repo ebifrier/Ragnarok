@@ -24,10 +24,7 @@ namespace Ragnarok.Sound.Backend
         /// <summary>
         /// 音声を再生できるかどうかを取得します。
         /// </summary>
-        public bool CanUseSound
-        {
-            get => true;
-        }
+        public bool CanUseSound => true;
 
         /// <summary>
         /// ボリュームを0-1の間で取得または設定します。
@@ -87,7 +84,8 @@ namespace Ragnarok.Sound.Backend
             }
 
             // 音量を設定します。
-            sound.Volume = MathUtil.Between(0.0f, 1.0f, (float)(Volume * volume));
+            sound.Volume = MathUtil.Between(
+                0.0f, 1.0f, (float)(Volume * volume));
             sound.Play();
 
             return sound;

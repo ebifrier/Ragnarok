@@ -41,10 +41,7 @@ namespace Ragnarok.Sound.Backend
         /// <summary>
         /// 内部オブジェクトを取得します。
         /// </summary>
-        public object State
-        {
-            get { return this.player; }
-        }
+        public object State => this.player;
 
         /// <summary>
         /// 音量を0.0～1.0の範囲で取得または設定します。
@@ -58,18 +55,13 @@ namespace Ragnarok.Sound.Backend
         /// <summary>
         /// 再生長さを取得します。
         /// </summary>
-        public TimeSpan Length
-        {
-            get { return TimeSpan.FromMilliseconds(0); }
-        }
+        public TimeSpan Length => TimeSpan.FromMilliseconds(0);
 
         /// <summary>
         /// 再生中かどうかを取得します。
         /// </summary>
-        public bool IsPlaying
-        {
-            get { return (this.player.PlaybackState == PlaybackState.Playing); }
-        }
+        public bool IsPlaying =>
+            this.player.PlaybackState == PlaybackState.Playing;
 
         /// <summary>
         /// 再生します。
