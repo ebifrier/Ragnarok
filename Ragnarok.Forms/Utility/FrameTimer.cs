@@ -161,11 +161,11 @@ namespace Ragnarok.Forms.Utility
         /// </summary>
         private double WaitNextFrame(out bool frameSkipped)
         {
-            var diff = Environment.TickCount - this.prevTick;
+            var diff = Environment.TickCount64 - this.prevTick;
             if (diff > FrameTime)
             {
                 // 時間が過ぎている。
-                this.prevTick = Environment.TickCount;
+                this.prevTick = Environment.TickCount64;
                 frameSkipped = true;
                 return diff;
             }
@@ -179,7 +179,7 @@ namespace Ragnarok.Forms.Utility
             }
 
             var nextTime = this.prevTick + (FrameTime - 1.0);
-            if (Environment.TickCount < nextTime)
+            if (Environment.TickCount64 < nextTime)
             {
                 Thread.Sleep(0);
             }

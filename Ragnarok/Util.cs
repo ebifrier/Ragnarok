@@ -33,12 +33,17 @@ namespace Ragnarok
     /// </summary>
     public static class Util
     {
-        private static readonly Encoding SJisEncoding =
-            Encoding.GetEncoding("Shift_JIS");
+        public static readonly Encoding SJisEncoding;
 
         private static PropertyChangedEventCaller propertyChangedCaller;
         private static CollectionChangedEventCaller collectionChangedCaller;
         private static Action<Action> eventCaller;
+
+        static Util()
+        {
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            SJisEncoding = Encoding.GetEncoding("shift_jis");
+        }
 
         /// <summary>
         /// EntryAssemblyのディレクトリパスを取得します。

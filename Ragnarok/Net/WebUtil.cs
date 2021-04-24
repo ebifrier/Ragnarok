@@ -254,37 +254,13 @@ namespace Ragnarok.Net
         /// <summary>
         /// HTTPの取得要求を出します。
         /// </summary>
-        public static byte[] RequestHttp(string url,
-                                         Dictionary<string, object> param)
-        {
-            return RequestHttp(url, param, null);
-        }
-
-        /// <summary>
-        /// HTTPリクエストを出します。
-        /// </summary>
-        public static string RequestHttpText(HttpWebRequest request,
-                                             Encoding encoding = null)
-        {
-            var data = RequestHttp(request);
-            if (data == null)
-            {
-                return string.Empty;
-            }
-
-            encoding = encoding ?? Encoding.UTF8;
-            return encoding.GetString(data);
-        }
-
-        /// <summary>
-        /// HTTPの取得要求を出します。
-        /// </summary>
         public static string RequestHttpText(string url,
-                                             Dictionary<string, object> param,
-                                             CookieContainer cc,
-                                             Encoding encoding = null)
+                                             Dictionary<string, object> param = null,
+                                             CookieContainer cc = null,
+                                             Encoding encoding = null,
+                                             Dictionary<string, string> headers = null)
         {
-            var buffer = RequestHttp(url, param, cc);
+            var buffer = RequestHttp(url, param, cc, headers);
             if (buffer == null)
             {
                 return null;
@@ -292,6 +268,39 @@ namespace Ragnarok.Net
 
             encoding = encoding ?? Encoding.UTF8;
             return encoding.GetString(buffer);
+        }
+
+        /// <summary>
+        /// HTTPリクエストを出します。
+        /// </summary>
+        public static byte[] RequestHttp(string url,
+                                         Dictionary<string, object> param = null,
+                                         CookieContainer cc = null,
+                                         Dictionary<string, string> headers = null)
+        {
+            HttpWebRequest request = null;
+
+            try
+            {
+                request = MakeNormalRequest(url, cc);
+                if (headers != null)
+                {
+                    foreach (var header in headers)
+                    {
+                        request.Headers[header.Key] = header.Value;
+                    }
+                }
+                WritePostData(request, param);
+
+                return RequestHttp(request);
+            }
+            finally
+            {
+                if (request != null)
+                {
+                    request.Abort();
+                }
+            }
         }
 
         /// <summary>
@@ -309,31 +318,6 @@ namespace Ragnarok.Net
             encoding = encoding ?? Encoding.UTF8;
             var resultJson = encoding.GetString(data);
             return JsonUtil.Deserialize<dynamic>(resultJson);
-        }
-
-        /// <summary>
-        /// HTTPリクエストを出します。
-        /// </summary>
-        public static byte[] RequestHttp(string url,
-                                         Dictionary<string, object> param,
-                                         CookieContainer cc)
-        {
-            HttpWebRequest request = null;
-
-            try
-            {
-                request = MakeNormalRequest(url, cc);
-                WritePostData(request, param);
-
-                return RequestHttp(request);
-            }
-            finally
-            {
-                if (request != null)
-                {
-                    request.Abort();
-                }
-            }
         }
 
         /// <summary>

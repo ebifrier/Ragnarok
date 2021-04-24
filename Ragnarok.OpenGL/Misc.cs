@@ -4,7 +4,6 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using OpenTK;
 using OpenTK.Graphics.OpenGL;
 
 namespace Ragnarok.OpenGL
@@ -480,14 +479,14 @@ namespace Ragnarok.OpenGL
                     output = pname + ": " + result1f;
                     break;
                 case GLType.FloatArray2:
-                    Vector2 result2f;
-                    GL.GetFloat(pname, out result2f);
-                    output = pname + ": ( " + result2f.X + ", " + result2f.Y + " )";
+                    var result2f = new float[2];
+                    GL.GetFloat(pname, result2f);
+                    output = pname + ": ( " + result2f[0] + ", " + result2f[1] + " )";
                     break;
                 case GLType.FloatArray4:
-                    Vector4 result4f;
-                    GL.GetFloat(pname, out result4f);
-                    output = pname + ": ( " + result4f.X + ", " + result4f.Y + ", " + result4f.Z + ", " + result4f.W + " )";
+                    var result4f = new float[4];
+                    GL.GetFloat(pname, result4f);
+                    output = pname + ": ( " + result4f[0] + ", " + result4f[1] + ", " + result4f[2] + ", " + result4f[3] + " )";
                     break;
                 default:
                     throw new NotImplementedException();

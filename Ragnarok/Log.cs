@@ -105,7 +105,7 @@ namespace Ragnarok
                 // 実行ファイルと同じパスからappname.exe.nlogやNLog.configを検索します。
                 var configFileNames = new string[]
                 {
-                    Path.GetFileName(thisAsm.CodeBase) + ".nlog",
+                    Path.GetFileName(thisAsm.Location) + ".nlog",
                     "NLog.config",
                 };
 

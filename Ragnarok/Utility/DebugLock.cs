@@ -63,7 +63,7 @@ namespace Ragnarok.Utility
         public static void WriteStackTrace()
         {
             var traceList =
-#if !MONO
+#if !MONO && false
                 PdbUtility.GetAllThreadStackTrace();
 #else
                 new List<string>();

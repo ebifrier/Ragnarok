@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using OpenTK;
-using OpenTK.Graphics;
+using OpenTK.Windowing.Common;
 
 namespace Ragnarok.OpenGL
 {
@@ -14,7 +13,6 @@ namespace Ragnarok.OpenGL
     /// スクリーンより大きい画像はビデオカードによっては表示できないことがあるため、
     /// このクラスでは各画像をクロッピングして管理します。
     /// </remarks>
-    [CLSCompliant(false)]
     public static class TextureCache
     {
         public readonly static long AnimationTextureCacheCapacity = 20L * 1024 * 1024; // 20MB
@@ -71,9 +69,9 @@ namespace Ragnarok.OpenGL
         /// <summary>
         /// テクスチャをキャッシュから探し、もしなければ読み込みます。
         /// </summary>
-        public static Texture GetTexture(string imagePath)
+        public static Texture GetTexture(IGraphicsContext context, string imagePath)
         {
-            var animTexture = GetAnimationTexture(imagePath, 1);
+            var animTexture = GetAnimationTexture(context, imagePath, 1);
             if (animTexture == null || animTexture.TextureList.Count != 1)
             {
                 return null;
@@ -85,13 +83,13 @@ namespace Ragnarok.OpenGL
         /// <summary>
         /// アニメーション用テクスチャをキャッシュから探し、もしなければ読み込みます。
         /// </summary>
-        public static AnimationTexture GetAnimationTexture(string imagePath,
+        public static AnimationTexture GetAnimationTexture(IGraphicsContext context,
+                                                           string imagePath,
                                                            int count)
         {
-            var context = GraphicsContext.CurrentContext;
             if (context == null)
             {
-                throw new InvalidOperationException("OpenGLのコンテキストがありません。");
+                throw new ArgumentNullException(nameof(context));
             }
 
             if (string.IsNullOrEmpty(imagePath))
@@ -111,13 +109,13 @@ namespace Ragnarok.OpenGL
         /// <summary>
         /// 指定のフォントで指定の文字列を描画するためのテクスチャを取得します。
         /// </summary>
-        public static TextTexture GetTextTexture(string text,
+        public static TextTexture GetTextTexture(IGraphicsContext context,
+                                                 string text,
                                                  TextTextureFont font)
         {
-            var context = GraphicsContext.CurrentContext;
             if (context == null)
             {
-                throw new InvalidOperationException("OpenGLのコンテキストがありません。");
+                throw new ArgumentNullException(nameof(context));
             }
 
             if (text == null)

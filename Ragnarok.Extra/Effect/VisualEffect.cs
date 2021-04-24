@@ -63,7 +63,6 @@ namespace Ragnarok.Extra.Effect
         /// <summary>
         /// パーティクルのレンダラーを取得または設定します。
         /// </summary>
-        [CLSCompliant(false)]
         public Renderer ParticleRenderer
         {
             get { return GetValue<Renderer>(nameof(ParticleRenderer)); }
@@ -73,7 +72,6 @@ namespace Ragnarok.Extra.Effect
         /// <summary>
         /// パーティクルの放出元リストを取得します。
         /// </summary>
-        [CLSCompliant(false)]
         public EmitterCollection ParticleEmitters
         {
             get

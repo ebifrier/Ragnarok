@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
+using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 using Ragnarok.Utility;
@@ -206,7 +204,12 @@ namespace Ragnarok.Forms.Controls
         private void OnHttpLink(object sender, LinkLabelLinkClickedEventArgs e)
         {
             e.Link.Visited = true;
-            System.Diagnostics.Process.Start(e.Link.LinkData.ToString());
+
+            Process.Start(new ProcessStartInfo
+            {
+                UseShellExecute = true,
+                FileName = e.Link.LinkData.ToString()
+            });
         }
     }
 }

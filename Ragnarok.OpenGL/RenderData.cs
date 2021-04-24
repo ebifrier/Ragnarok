@@ -13,7 +13,6 @@ namespace Ragnarok.OpenGL
     /// <summary>
     /// 描画用のデータをまとめて持ちます。
     /// </summary>
-    [CLSCompliant(false)]
     public sealed class RenderData
     {
         /// <summary>

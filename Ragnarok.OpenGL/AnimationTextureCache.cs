@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using OpenTK;
-using OpenTK.Graphics;
+using OpenTK.Windowing.Common;
 
 using Ragnarok.Utility;
 
@@ -109,7 +109,7 @@ namespace Ragnarok.OpenGL
         /// </summary>
         private AnimationTexture CreateAnimationTexture(AnimationTextureKey key)
         {
-            var animTexture = new AnimationTexture();
+            var animTexture = new AnimationTexture(this.context);
 
             animTexture.Load(key.ImagePath, key.Count);
             return animTexture;
@@ -121,7 +121,7 @@ namespace Ragnarok.OpenGL
         public AnimationTexture GetAnimationTexture(string imagePath,
                                                     int count)
         {
-            if (this.context != GraphicsContext.CurrentContext)
+            if (!this.context.IsCurrent)
             {
                 throw new GLException(
                     "OpenGLコンテキストが正しく設定れていません＞＜");

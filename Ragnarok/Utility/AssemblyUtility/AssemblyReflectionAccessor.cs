@@ -62,17 +62,10 @@ namespace Ragnarok.Utility.AssemblyUtility
         public T FindAttribute<T>()
             where T : Attribute
         {
-            var result = this.attributes
-                .Where(_ => _.GetType().Equals(typeof(T)))
+            return this.attributes
+                .OfType<T>()
+                .Where(_ => _ != null)
                 .FirstOrDefault();
-
-            if (result == null)
-            {
-                throw new RagnarokException(
-                    $"属性 {typeof(T)} が {this.assembly.FullName} に存在しません。");
-            }
-
-            return (T)result;
         }
 
         /// <summary>
@@ -157,22 +150,22 @@ namespace Ragnarok.Utility.AssemblyUtility
             var util = new AssemblyReflectionUtil(assemblyName);
 
             var titleAttr = util.FindAttribute<AssemblyTitleAttribute>();
-            Title = titleAttr.Title;
+            Title = titleAttr?.Title;
 
             var nameInfo = util.Assembly.GetName();
-            Version = nameInfo.Version.ToString();
+            Version = nameInfo?.Version?.ToString();
 
             var descAttr = util.FindAttribute<AssemblyDescriptionAttribute>();
-            Description = descAttr.Description;
+            Description = descAttr?.Description;
 
             var productAttr = util.FindAttribute<AssemblyProductAttribute>();
-            Product = productAttr.Product;
+            Product = productAttr?.Product;
 
             var copyAttr = util.FindAttribute<AssemblyCopyrightAttribute>();
-            Copyright = copyAttr.Copyright;
+            Copyright = copyAttr?.Copyright;
 
             var companyAttr = util.FindAttribute<AssemblyCompanyAttribute>();
-            Company = companyAttr.Company;
+            Company = companyAttr?.Company;
         }
     }
 }
