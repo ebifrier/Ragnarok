@@ -482,9 +482,7 @@ namespace Ragnarok.OpenGL
                 using (var newImage = new Bitmap(targetWidth, targetHeight))
                 {
                     DrawHighQuality(
-                        newImage, image,
-                        Math.Min(image.Width, newImage.Width),
-                        Math.Min(image.Height, newImage.Height));
+                        newImage, image, image.Width, image.Height);
                     result = CreateInternal(newImage, image.Size, toPremultipliedAlpha);
                 }
             }
