@@ -34,7 +34,7 @@ namespace Ragnarok.Sound.Backend
         /// <summary>
         /// SEを再生します。
         /// </summary>
-        ISoundObjectBackend Play(string filename, double volume);
+        ISoundObjectBackend Play(IEnumerable<string> filenames, double volume);
     }
 
 
@@ -47,7 +47,7 @@ namespace Ragnarok.Sound.Backend
         /// <summary>
         /// SEを再生します。
         /// </summary>
-        public ISoundObjectBackend Play(string filename, double volume)
+        public ISoundObjectBackend Play(IEnumerable<string> filenames, double volume)
         {
             return new SoundObjectBackend_Dummy();
         }

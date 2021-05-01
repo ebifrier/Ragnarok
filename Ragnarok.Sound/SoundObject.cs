@@ -4,6 +4,8 @@ using System.Linq;
 
 namespace Ragnarok.Sound
 {
+    using MathEx;
+
     /// <summary>
     /// サウンドの管理用クラスです。
     /// </summary>
@@ -47,7 +49,7 @@ namespace Ragnarok.Sound
         public double Volume
         {
             get { return this.backend.Volume; }
-            set { this.backend.Volume = value; }
+            set { this.backend.Volume = MathUtil.Between(0.0f, 1.0f, value); }
         }
 
         /// <summary>

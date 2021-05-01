@@ -5,7 +5,6 @@ using System.Threading;
 
 namespace Ragnarok.Utility
 {
-
     /// <summary>
     /// イベントからハンドラの除去するために使います。
     /// </summary>

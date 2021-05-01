@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 
 namespace Ragnarok.Sound
 {
@@ -170,54 +169,50 @@ namespace Ragnarok.Sound
         /// <summary>
         /// SEを再生します。再生中のファイルがあればその再生の直後に鳴らします。
         /// </summary>
-        public SoundObject PlaySE(SoundInfo data)
+        public SoundObject PlaySE(string filename, double volume = 1.0,
+                                  bool checkPlayInterval = false,
+                                  bool ignoreError = false)
         {
-            if (data == null)
-            {
-                throw new ArgumentNullException(nameof(data));
-            }
-
-            lock (SyncRoot)
-            {
-                if (this.backend == null)
-                {
-                    return null;
-                }
-
-                var fullpath = GetSoundFilePath(data.FilePath);
-                if (data.CheckPlayInterval && !CheckLastPlayedTime(fullpath))
-                {
-                    return null;
-                }
-
-                var bsound = this.backend.Play(fullpath, data.Volume);
-                if (bsound == null)
-                {
-                    return null;
-                }
-
-                return new SoundObject(bsound);
-            }
+            return PlaySE(
+                new string[] { filename }, volume,
+                checkPlayInterval, ignoreError);
         }
 
         /// <summary>
         /// SEを再生します。再生中のファイルがあればその再生の直後に鳴らします。
         /// </summary>
-        public SoundObject PlaySE(string filename, double volume = 1.0,
+        public SoundObject PlaySE(IEnumerable<string> filenames,
+                                  double volume = 1.0,
                                   bool checkPlayInterval = false,
                                   bool ignoreError = false)
         {
             try
             {
-                var data = new SoundInfo
+                lock (SyncRoot)
                 {
-                    FilePath = filename,
-                    Volume = volume,
-                    CheckPlayInterval = checkPlayInterval,
-                    IgnoreError = ignoreError,
-                };
+                    if (this.backend == null || filenames == null)
+                    {
+                        return null;
+                    }
 
-                return PlaySE(data);
+                    var fullpathes = filenames
+                        .Select(_ => GetSoundFilePath(_))
+                        .Where(_ => !string.IsNullOrEmpty(_))
+                        .ToList();
+                    if (checkPlayInterval &&
+                        fullpathes.Any(_ => !CheckLastPlayedTime(_)))
+                    {
+                        return null;
+                    }
+
+                    var bsound = this.backend.Play(fullpathes, volume);
+                    if (bsound == null)
+                    {
+                        return null;
+                    }
+
+                    return new SoundObject(bsound);
+                }
             }
             catch (FileNotFoundException)
             {
@@ -230,7 +225,7 @@ namespace Ragnarok.Sound
                 {
                     Log.ErrorException(ex,
                         "{0}サウンドの再生に失敗しました。",
-                        Path.GetFileName(filename));
+                        filenames);
                 }
             }
 
