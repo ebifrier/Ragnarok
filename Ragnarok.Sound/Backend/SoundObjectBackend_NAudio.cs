@@ -16,8 +16,6 @@ namespace Ragnarok.Sound.Backend
     /// </remarks>
     internal sealed class SoundObjectBackend_NAudio : ISoundObjectBackend
     {
-        private IWavePlayer player;
-
         /// <summary>
         /// コンストラクタ
         /// </summary>
@@ -27,10 +25,6 @@ namespace Ragnarok.Sound.Backend
             {
                 throw new ArgumentNullException(nameof(sample));
             }
-
-            this.player = new WaveOut();
-            this.player.Init(sample);
-            this.player.PlaybackStopped += OnSoundStopped;
         }
 
         /// <summary>
@@ -41,15 +35,15 @@ namespace Ragnarok.Sound.Backend
         /// <summary>
         /// 内部オブジェクトを取得します。
         /// </summary>
-        public object State => this.player;
+        public object State => null;
 
         /// <summary>
         /// 音量を0.0～1.0の範囲で取得または設定します。
         /// </summary>
         public double Volume
         {
-            get { return this.player.Volume; }
-            set { this.player.Volume = (float)value; }
+            get;
+            set;
         }
 
         /// <summary>
@@ -60,15 +54,14 @@ namespace Ragnarok.Sound.Backend
         /// <summary>
         /// 再生中かどうかを取得します。
         /// </summary>
-        public bool IsPlaying =>
-            this.player.PlaybackState == PlaybackState.Playing;
+        public bool IsPlaying => true;
 
         /// <summary>
         /// 再生します。
         /// </summary>
         public void Play()
         {
-            this.player.Play();
+            //this.player.Play();
         }
 
         /// <summary>
@@ -76,7 +69,7 @@ namespace Ragnarok.Sound.Backend
         /// </summary>
         public void Stop(SoundStopReason reason)
         {
-            this.player.Stop();
+            //this.player.Stop();
         }
 
         /// <summary>

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using NAudio.Wave;
+using NAudio.Wave.SampleProviders;
 
 using Ragnarok.MathEx;
 
@@ -18,8 +19,22 @@ namespace Ragnarok.Sound.Backend
     /// </remarks>
     internal sealed class SoundManagerBackend_NAudio : ISoundManagerBackend
     {
-        private Dictionary<string, ISampleProvider> sampleCache = new();
+        private readonly IWavePlayer player;
+        private readonly WaveMixer32 mixer;
         private double volume = 1.0;
+
+        public SoundManagerBackend_NAudio()
+        {
+            this.mixer = new WaveMixer32(false);
+            this.player = new WaveOut
+            {
+                DesiredLatency = 300,
+                NumberOfBuffers = 2,
+            };
+            this.player.Init(this.mixer);
+            this.player.Play();
+            //this.player.PlaybackStopped += OnSoundStopped;
+        }
 
         /// <summary>
         /// 音声を再生できるかどうかを取得します。
@@ -42,7 +57,7 @@ namespace Ragnarok.Sound.Backend
         /// <summary>
         /// サウンドソースをキャッシュから取得し、なければファイルを読み込みます。
         /// </summary>
-        private ISampleProvider GetSoundSample(string filename)
+        private AudioFileReader GetSoundSample(string filename)
         {
             var filepath = Path.GetFullPath(filename);
             if (!File.Exists(filepath))
@@ -50,12 +65,8 @@ namespace Ragnarok.Sound.Backend
                 return null;
             }
 
-            if (sampleCache.TryGetValue(filepath, out ISampleProvider sample))
-            {
-                return sample;
-            }
-
-            return new AudioFileReader(filepath);
+            var sample = new AudioFileReader(filepath);
+            return sample;
         }
 
         /// <summary>
@@ -84,10 +95,11 @@ namespace Ragnarok.Sound.Backend
             }
 
             // 音量を設定します。
-            sound.Volume = MathUtil.Between(
-                0.0f, 1.0f, (float)(Volume * volume));
-            sound.Play();
+            var realVolume = (float)(Volume * volume);
+            realVolume = MathUtil.Between(0.0f, 1.0f, realVolume);
+            var wave = new WaveChannel32(sample, realVolume, 0.5f);
 
+            this.mixer.AddInputStream(wave);
             return sound;
         }
     }
