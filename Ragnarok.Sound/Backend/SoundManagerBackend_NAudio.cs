@@ -6,7 +6,6 @@ using System.Linq;
 using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
 
-using Ragnarok;
 using Ragnarok.MathEx;
 
 namespace Ragnarok.Sound.Backend
@@ -34,12 +33,7 @@ namespace Ragnarok.Sound.Backend
                 ReadFully = true,
             };
 
-            this.player = new WaveOut
-            {
-                DesiredLatency = 300,
-                NumberOfBuffers = 2,
-            };
-
+            this.player = new DirectSoundOut(200);
             this.player.Init(this.mixer);
             this.player.Play();
         }
