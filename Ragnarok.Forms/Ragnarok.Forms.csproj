@@ -6,6 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.4" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Ragnarok\Ragnarok.csproj" />
   </ItemGroup>
 
