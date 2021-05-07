@@ -158,7 +158,7 @@ namespace Ragnarok.ObjectModel
         /// <summary>
         /// 指定の名前のプロパティが含まれているか調べます。
         /// </summary>
-        protected bool Contains(string name)
+        public bool Contains(string name)
         {
             using (LazyLock())
             {
