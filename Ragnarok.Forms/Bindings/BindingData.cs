@@ -122,7 +122,7 @@ namespace Ragnarok.Forms.Bindings
             }
 
             Util.SafeCall(() => handler(
-                Binding.Control,
+                Binding.Component,
                 new BindingPropertyChangedEventArgs(
                     Binding.BindingPropertyName, newValue, oldValue)));
         }
@@ -150,7 +150,7 @@ namespace Ragnarok.Forms.Bindings
                 if (Binding.CoerceValue != null)
                 {
                     newValue = Binding.CoerceValue(
-                        Binding.Control, newValue);
+                        Binding.Component, newValue);
                 }
 
                 // 文字列へのフォーマットを行います。
@@ -201,7 +201,7 @@ namespace Ragnarok.Forms.Bindings
                 if (Binding.CoerceValue != null)
                 {
                     newValue = Binding.CoerceValue(
-                        Binding.Control, newValue);
+                        Binding.Component, newValue);
                 }
 
                 // 文字列へのフォーマットを行います。
@@ -246,13 +246,17 @@ namespace Ragnarok.Forms.Bindings
             Unbound.SafeRaiseEvent(this, EventArgs.Empty);
             Unbound = null;
 
-            var component = Binding.BindableTarget as Component;
-            if (component != null)
+            var target = Binding.BindableTarget as Component;
+            if (target != null)
             {
-                component.Disposed -= OnUnbind;
+                target.Disposed -= OnUnbind;
             }
 
-            Binding.Control.Disposed -= OnUnbind;
+            if (Binding.Component != null)
+            {
+                Binding.Component.Disposed -= OnUnbind;
+            }
+
             Binding.IsBinding = false;
         }
 
@@ -278,111 +282,19 @@ namespace Ragnarok.Forms.Bindings
             // 初期化時は、ソースからコントロールへ値を反映します。
             OnSourceValueChanged(this, EventArgs.Empty);
 
-            var component = Binding.BindableTarget as Component;
-            if (component != null)
+            var target = Binding.BindableTarget as Component;
+            if (target != null)
             {
-                component.Disposed += OnUnbind;
+                target.Disposed += OnUnbind;
             }
 
-            Binding.Control.Disposed += OnUnbind;
+            if (Binding.Component != null)
+            {
+                Binding.Component.Disposed += OnUnbind;
+            }
+
             Binding.IsBinding = true;
         }
-
-        /*/// <summary>
-        /// ソースデータをバインディングします。
-        /// </summary>
-        private void BindDataSource(object dataSource, string propertyName)
-        {
-            if (!IsHandleToTarget(true))
-            {
-                // Source -> Targetへの通知が有効でない場合は何も設定しません。
-                return;
-            }
-
-            var propertyObj = dataSource as INotifyPropertyChanged;
-            if (propertyObj != null)
-            {
-                var handler = new PropertyChangedEventHandler((sender, e) =>
-                {
-                    if (e.PropertyName == propertyName)
-                    {
-                        OnSourceValueChanged(sender, e);
-                    }
-                });
-
-                propertyObj.PropertyChanged += handler;
-                Unbound += (_, __) => propertyObj.PropertyChanged -= handler;
-                return;
-            }
-        }
-
-        /// <summary>
-        /// 実際のバインディング処理を行い、失敗であれば偽を返します。
-        /// </summary>
-        private void BindBindableTarget(object bindableTarget, string propertyName)
-        {
-            if (!IsHandleToSource(true))
-            {
-                // Source -> Targetへの通知が有効でない場合は何も設定しません。
-                return;
-            }
-
-            // TargetがComponent型の場合は、'PropertyName'+Changed
-            // という名前のイベントでプロパティの変更を把握します。
-            var component = bindableTarget as Component;
-            if (component != null)
-            {
-                // 名前が"PropertyName + Changed"のイベントを検索します。
-                var eventName = propertyName + "Changed";
-                var ev = component.GetType().GetEvent(eventName);
-                if (ev != null)
-                {
-                    var handler = new EventHandler(OnTargetValueChanged);
-
-                    ev.AddEventHandler(component, handler);
-                    Unbound += (_, __) => ev.RemoveEventHandler(component, handler);
-                    return;
-                }
-                else if (propertyName == "SelectedItem")
-                {
-                    // プロパティ名がSelectedItemの場合はイベントがないことがあるので、
-                    // SelectedIndexChangedを代りに探してみます。
-                    ev = component.GetType().GetEvent("SelectedIndexChanged");
-                    if (ev != null)
-                    {
-                        var handler = new EventHandler(OnTargetValueChanged);
-
-                        ev.AddEventHandler(component, handler);
-                        Unbound += (_, __) => ev.RemoveEventHandler(component, handler);
-                        return;
-                    }
-                }
-
-                throw new InvalidOperationException(
-                    string.Format(
-                        "'{0}': 指定のプロパティかその変更イベントが" +
-                        "コントロールに存在しません。",
-                        propertyName));
-            }
-
-            // TargetがINotifyPropertyChangedの場合は
-            // PropertyChangedイベントでプロパティの変更を把握します。
-            var propertyObj = bindableTarget as INotifyPropertyChanged;
-            if (propertyObj != null)
-            {
-                var handler = new PropertyChangedEventHandler((sender, e) =>
-                {
-                    if (e.PropertyName == propertyName)
-                    {
-                        OnTargetValueChanged(sender, e);
-                    }
-                });
-
-                propertyObj.PropertyChanged += handler;
-                Unbound += (_, __) => propertyObj.PropertyChanged -= handler;
-                return;
-            }
-        }*/
 
         /// <summary>
         /// 実際のバインディング処理を行い、失敗であれば偽を返します。
@@ -392,27 +304,26 @@ namespace Ragnarok.Forms.Bindings
         {
             // targetがComponent型の場合は、'PropertyName'+Changed
             // という名前のイベントでプロパティの変更を把握します。
-            var component = target as Component;
-            if (component != null)
+            if (target is IComponent)
             {
                 // 名前が"PropertyName + Changed"のイベントを検索します。
                 var eventName = propertyName + "Changed";
-                var ev = component.GetType().GetEvent(eventName);
+                var ev = target.GetType().GetEvent(eventName);
                 if (ev != null)
                 {
-                    ev.AddEventHandler(component, handler);
-                    Unbound += (_, __) => ev.RemoveEventHandler(component, handler);
+                    ev.AddEventHandler(target, handler);
+                    Unbound += (_, __) => ev.RemoveEventHandler(target, handler);
                     return;
                 }
                 else if (propertyName == "SelectedItem")
                 {
                     // プロパティ名がSelectedItemの場合はイベントがないことがあるので、
                     // SelectedIndexChangedを代りに探してみます。
-                    ev = component.GetType().GetEvent("SelectedIndexChanged");
+                    ev = target.GetType().GetEvent("SelectedIndexChanged");
                     if (ev != null)
                     {
-                        ev.AddEventHandler(component, handler);
-                        Unbound += (_, __) => ev.RemoveEventHandler(component, handler);
+                        ev.AddEventHandler(target, handler);
+                        Unbound += (_, __) => ev.RemoveEventHandler(target, handler);
                         return;
                     }
                 }

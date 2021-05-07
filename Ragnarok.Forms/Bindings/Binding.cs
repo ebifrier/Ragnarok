@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 namespace Ragnarok.Forms.Bindings
@@ -12,12 +11,12 @@ namespace Ragnarok.Forms.Bindings
     /// <summary>
     /// バインディングされたプロパティ値の変更を扱います。
     /// </summary>
-    public delegate void BindingPropertyChangedCallback(Control c, BindingPropertyChangedEventArgs e);
+    public delegate void BindingPropertyChangedCallback(IComponent c, BindingPropertyChangedEventArgs e);
 
     /// <summary>
     /// 値の正規化を行います。
     /// </summary>
-    public delegate object CoerceBindingValueCallback(Control c, object baseValue);
+    public delegate object CoerceBindingValueCallback(IComponent c, object baseValue);
 
     /// <summary>
     /// バインディングを扱うクラスです。
@@ -27,7 +26,7 @@ namespace Ragnarok.Forms.Bindings
         /// <summary>
         /// バインディングコレクションを保持する親クラスを取得します。
         /// </summary>
-        public Control Control
+        public IComponent Component
         {
             get;
             internal set;

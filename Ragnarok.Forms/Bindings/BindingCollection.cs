@@ -17,15 +17,15 @@ namespace Ragnarok.Forms.Bindings
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public BindingsCollection(Control control)
+        public BindingsCollection(IComponent component = null)
         {
-            Control = control;
+            Component = component;
         }
 
         /// <summary>
         /// コレクションを保持するコントロールを取得します。
         /// </summary>
-        public Control Control
+        public IComponent Component
         {
             get;
             private set;
@@ -177,7 +177,7 @@ namespace Ragnarok.Forms.Bindings
                 throw new ArgumentNullException(nameof(binding));
             }
 
-            binding.Control = Control;
+            binding.Component = Component;
 
             var data = new BindingData(binding);
             data.Bind();

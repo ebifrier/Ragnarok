@@ -182,7 +182,7 @@ namespace Ragnarok.Forms
             {
                 try
                 {
-                    var target = child.Target as Control;
+                    var target = child.Target as Component;
 
                     // 必要があれば指定のスレッド上で実行します。
                     if (target?.InvokeRequired == true)
@@ -232,7 +232,7 @@ namespace Ragnarok.Forms
             {
                 try
                 {
-                    var target = child.Target as Control;
+                    var target = child.Target as Component;
 
                     // 必要があれば指定のスレッド上で実行します。
                     if (target?.InvokeRequired == true)
