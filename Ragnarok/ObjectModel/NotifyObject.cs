@@ -1,7 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.Serialization;
 
 namespace Ragnarok.ObjectModel
@@ -48,21 +49,19 @@ namespace Ragnarok.ObjectModel
     /// </remarks>
     [Serializable()]
     [DataContract()]
-    public class NotifyObject : IParentModel, ILazyModel
+    public class NotifyObject : IParentModel, ILazyModel, IEnumerable<KeyValuePair<string, object>>
     {
         #region copy to DynamicViewModel
         [field: NonSerialized]
-        private object syncRoot = new object();
+        private object syncRoot = new();
         [field: NonSerialized]
-        private List<object> dependModelList = new List<object>();
+        private List<object> dependModelList = new();
         [field: NonSerialized]
-        private LazyModelObject lazyModelObject = new LazyModelObject();
+        private LazyModelObject lazyModelObject = new();
         [field: NonSerialized]
-        private Dictionary<string, object> propDic =
-            new Dictionary<string, object>();
+        private Dictionary<string, object> propDic = new();
         [field: NonSerialized]
-        private List<PropertyChangedObject> propObjects =
-            new List<PropertyChangedObject>();
+        private List<PropertyChangedObject> changedList = new();
 
         /// <summary>
         /// 逆シリアル前に呼ばれます。
@@ -78,7 +77,7 @@ namespace Ragnarok.ObjectModel
             this.dependModelList = new List<object>();
             this.lazyModelObject = new LazyModelObject();
             this.propDic = new Dictionary<string, object>();
-            this.propObjects = new List<PropertyChangedObject>();
+            this.changedList = new List<PropertyChangedObject>();
         }
 
         /// <summary>
@@ -145,6 +144,36 @@ namespace Ragnarok.ObjectModel
         }
 
         /// <summary>
+        /// プロパティの数を取得します。
+        /// </summary>
+        public int Count
+        {
+            get
+            {
+                using (LazyLock())
+                {
+                    return this.propDic.Count;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 持っているプロパティの巡回用メソッドを定義します。
+        /// </summary>
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetPropertyData().GetEnumerator();
+        }
+
+        /// <summary>
+        /// 持っているプロパティの巡回用メソッドを定義します。
+        /// </summary>
+        public IEnumerator<KeyValuePair<string, object>> GetEnumerator()
+        {
+            return GetPropertyData().GetEnumerator();
+        }
+
+        /// <summary>
         /// オブジェクトに登録されたプロパティデータを取得します。
         /// </summary>
         public Dictionary<string, object> GetPropertyData()
@@ -167,17 +196,50 @@ namespace Ragnarok.ObjectModel
         }
 
         /// <summary>
+        /// 指定の名前のプロパティの値がもしあれば、それを取得します。
+        /// </summary>
+        public bool TryGetValue<T>(string name, out T value)
+        {
+            using (LazyLock())
+            {
+                if (!this.propDic.TryGetValue(name, out object current))
+                {
+                    value = default;
+                    return false;
+                }
+
+                value = (T)current;
+                return true;
+            }
+        }
+
+        /// <summary>
+        /// 指定の名前のプロパティの削除を試し、もし削除出来たら真を返します。
+        /// </summary>
+        public bool Remove(string name)
+        {
+            using (LazyLock())
+            {
+                var removed = this.propDic.Remove(name);
+                if (removed)
+                {
+                    this.RaisePropertyChanged(name);
+                }
+
+                return removed;
+            }
+        }
+
+        /// <summary>
         /// 内部辞書に保持されたプロパティ値を取得します。
         /// </summary>
         protected T GetValue<T>(string name)
         {
             using (LazyLock())
             {
-                object current;
-
-                if (!this.propDic.TryGetValue(name, out current))
+                if (!this.propDic.TryGetValue(name, out object current))
                 {
-                    return default(T);
+                    return default;
                 }
 
                 return (T)current;
@@ -191,28 +253,10 @@ namespace Ragnarok.ObjectModel
         {
             using (LazyLock())
             {
-                object current;
-
-                if (!this.propDic.TryGetValue(name, out current) ||
+                if (!this.propDic.TryGetValue(name, out object current) ||
                     !Util.GenericEquals(current, value))
                 {
                     this.propDic[name] = value;
-
-                    this.RaisePropertyChanged(name);
-                }
-            }
-        }
-
-        /// <summary>
-        /// プロパティに値を設定し、必要ならプロパティ変更通知を出します。
-        /// </summary>
-        protected void SetValue<T>(string name, T value, ref T property)
-        {
-            using (LazyLock())
-            {
-                if (!Util.GenericEquals(property, value))
-                {
-                    property = value;
 
                     this.RaisePropertyChanged(name);
                 }
@@ -235,7 +279,7 @@ namespace Ragnarok.ObjectModel
                 return;
             }
 
-            var propObj = new PropertyChangedObject
+            var changed = new PropertyChangedObject
             {
                 Name = propertyName,
                 InternalHandler = handler,
@@ -252,9 +296,9 @@ namespace Ragnarok.ObjectModel
 
             using (LazyLock())
             {
-                this.propObjects.Add(propObj);
+                this.changedList.Add(changed);
 
-                PropertyChanged += propObj.Handler;
+                PropertyChanged += changed.Handler;
             }
         }
 
@@ -276,7 +320,7 @@ namespace Ragnarok.ObjectModel
 
             using (LazyLock())
             {
-                var target = this.propObjects.FirstOrDefault(obj =>
+                var target = this.changedList.FirstOrDefault(obj =>
                     obj.Name == propertyName &&
                     obj.InternalHandler == handler);
                 if (target == null)
@@ -284,7 +328,7 @@ namespace Ragnarok.ObjectModel
                     return;
                 }
 
-                this.propObjects.Remove(target);
+                this.changedList.Remove(target);
 
                 PropertyChanged -= target.Handler;
             }
