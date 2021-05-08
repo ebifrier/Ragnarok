@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Reflection;
 using System.ComponentModel;
+using System.Linq;
+using System.Reflection;
 
 namespace Ragnarok.ObjectModel
 {
-    using Ragnarok.Utility;
+    using Utility;
 
     /// <summary>
     /// モデルクラスの各プロパティを実装します。
@@ -19,7 +17,6 @@ namespace Ragnarok.ObjectModel
     /// </remarks>
     public static class ModelExtensions
     {
-        #region copy to DynamicViewModel
         /// <summary>
         /// 型ごとの依存するプロパティの集合を保持します。
         /// </summary>
@@ -27,8 +24,7 @@ namespace Ragnarok.ObjectModel
         /// DependOnPropertyAttribute属性を持つプロパティの集合です。
         /// </remarks>
         private static readonly Dictionary<Type, MultiMap<TypeProperty, string>>
-            dependPropertyDic =
-            new Dictionary<Type, MultiMap<TypeProperty, string>>();
+            dependPropertyDic = new();
 
         /// <summary>
         /// プロパティの比較を行います。
@@ -126,54 +122,6 @@ namespace Ragnarok.ObjectModel
         }
 
         /// <summary>
-        /// 与えられたラムダ式からプロパティ名を抜き出して、イベントを発行します。
-        /// </summary>
-        /// <remarks>
-        /// Dateプロパティを更新したい場合は、
-        ///   RaisePropertyChanged(() => Date);
-        /// としてください。
-        /// ただし、すごく遅いので要注意。
-        /// </remarks>
-        public static void RaisePropertyChanged(this IModel self,
-                                                Expression<Func<object>> expression)
-        {
-            MemberExpression member;
-            UnaryExpression unary;
-            string propertyName;
-
-            if (expression == null)
-            {
-                throw new ArgumentNullException(nameof(expression));
-            }
-
-            // 以下のコンパイル結果はclrのバージョンによって
-            // 変わる可能性があります。
-            if ((member = expression.Body as MemberExpression) != null)
-            {
-                propertyName = member.Member.Name;
-            }
-            else if ((unary = expression.Body as UnaryExpression) != null)
-            {
-                member = unary.Operand as MemberExpression;
-                if (member == null)
-                {
-                    throw new ArgumentException(
-                        "メンバを扱う単項式である必要があります。",
-                        nameof(expression));
-                }
-
-                propertyName = member.Member.Name;
-            }
-            else
-            {
-                throw new ArgumentException(
-                    "単項式である必要があります。", nameof(expression));
-            }
-
-            self.RaisePropertyChanged(propertyName);
-        }
-
-        /// <summary>
         /// プロパティ値とその関連プロパティ値の変更を通知します。
         /// </summary>
         /// <remarks>
@@ -186,7 +134,7 @@ namespace Ragnarok.ObjectModel
             self.VerifyProperty(sender, e);
 #endif
 
-            if (!object.ReferenceEquals(self, sender))
+            if (!ReferenceEquals(self, sender))
             {
                 throw new ArgumentException(
                     "selfとsenderの内容が一致しません。", nameof(sender));
@@ -210,17 +158,6 @@ namespace Ragnarok.ObjectModel
         {
 #if DEBUG && false
             self.VerifyProperty(sender, e);
-#endif
-
-            // DynamicViewModelにも全く同じコードを使うので、
-            // そのための#ifです。
-#if CLR_GE_4_0 && RGN_DYNAMICVIEWMODEL
-            if (self is System.Dynamic.DynamicObject)
-            {
-                // このオブジェクトのプロパティとしてプロパティの
-                // 変更通知を出します。
-                self.RaiseSimplePropertyChanged(e);
-            }
 #endif
 
             // 変更されたプロパティに依存するプロパティがあれば
@@ -248,7 +185,6 @@ namespace Ragnarok.ObjectModel
                     "プロパティ名がありません。", nameof(e));
             }
 
-#if !RGN_DYNAMICVIEWMODEL
             // 変更通知の対象となるプロパティを取得します。
             var propertyDic = MethodUtil.GetPropertyDic(sender.GetType());
             if (propertyDic == null)
@@ -262,7 +198,6 @@ namespace Ragnarok.ObjectModel
                 throw new InvalidOperationException(
                     $"型'{sender.GetType()}'にプロパティ'{e.PropertyName}'は存在しません。");
             }
-#endif
         }
 
         /// <summary>
@@ -283,9 +218,7 @@ namespace Ragnarok.ObjectModel
         private static void RaiseSimplePropertyChanged(
             this IModel self, PropertyChangedEventArgs e)
         {
-            var lazyModel = self as ILazyModel;
-
-            if (lazyModel != null)
+            if (self is ILazyModel lazyModel)
             {
                 LazyModel_RaisePropertyChanged(lazyModel, e);
             }
@@ -353,15 +286,13 @@ namespace Ragnarok.ObjectModel
 
                 foreach (var attr in attrList)
                 {
-                    var dependAttr = attr as DependOnPropertyAttribute;
-                    if (dependAttr == null)
+                    if (attr is not DependOnPropertyAttribute dependAttr)
                     {
                         continue;
                     }
 
                     // 依存先の型がないときは自分の型と同じになります。
-                    var dependType = 
-                        (dependAttr.DependType ?? targetType);
+                    var dependType = dependAttr.DependType ?? targetType;
 
                     // 依存先プロパティの名前がないときは、
                     // 依存先のプロパティ名は依存元と同じになります。
@@ -388,8 +319,8 @@ namespace Ragnarok.ObjectModel
         {
             lock (dependPropertyDic)
             {
-                MultiMap<TypeProperty, string> dependMap;
-                if (dependPropertyDic.TryGetValue(targetType, out dependMap))
+                if (dependPropertyDic.TryGetValue(
+                    targetType, out MultiMap<TypeProperty, string> dependMap))
                 {
                     return dependMap;
                 }
@@ -448,8 +379,7 @@ namespace Ragnarok.ObjectModel
                 // もしそのモデルオブジェクトがINotifyPropertyChangedを
                 // 継承していれば、そのオブジェクトのプロパティ値変更情報を
                 // 使います。
-                var notify = model as INotifyPropertyChanged;
-                if (notify != null)
+                if (model is INotifyPropertyChanged notify)
                 {
                     notify.PropertyChanged += self.DependModel_PropertyChanged;
                 }
@@ -494,8 +424,7 @@ namespace Ragnarok.ObjectModel
                 self.DependModelList.RemoveAt(index);
 
                 // 必要ならPropertyChangedを外します。
-                var notify = model as INotifyPropertyChanged;
-                if (notify != null)
+                if (model is INotifyPropertyChanged notify)
                 {
                     notify.PropertyChanged -= self.DependModel_PropertyChanged;
                 }
@@ -515,7 +444,7 @@ namespace Ragnarok.ObjectModel
             lock (self)
             {
                 return (self.DependModelList.FindIndex(
-                    obj => object.ReferenceEquals(obj, model)) >= 0);
+                    obj => ReferenceEquals(obj, model)) >= 0);
             }
         }
 
@@ -538,6 +467,5 @@ namespace Ragnarok.ObjectModel
             }
         }
         #endregion
-        #endregion copy to DynamicViewModel
     }
 }

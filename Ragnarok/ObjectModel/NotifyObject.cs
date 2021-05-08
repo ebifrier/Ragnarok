@@ -51,7 +51,6 @@ namespace Ragnarok.ObjectModel
     [DataContract()]
     public class NotifyObject : IParentModel, ILazyModel, IEnumerable<KeyValuePair<string, object>>
     {
-        #region copy to DynamicViewModel
         [field: NonSerialized]
         private object syncRoot = new();
         [field: NonSerialized]
@@ -333,6 +332,5 @@ namespace Ragnarok.ObjectModel
                 PropertyChanged -= target.Handler;
             }
         }
-        #endregion copy to DynamicViewModel
     }
 }

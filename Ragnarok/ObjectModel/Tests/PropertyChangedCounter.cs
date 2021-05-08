@@ -1,17 +1,14 @@
 ﻿#if TESTS
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.ComponentModel;
-using NUnit.Framework;
+using System.Linq;
 
 namespace Ragnarok.ObjectModel.Tests
 {
     internal class PropertyChangedCounter : NotifyObject
     {
-        private readonly Dictionary<string, int> countDic =
-            new Dictionary<string, int>();
+        private readonly Dictionary<string, int> countDic = new();
 
         /// <summary>
         /// 各プロパティの変更通知が何回呼ばれたか取得します。
@@ -20,8 +17,7 @@ namespace Ragnarok.ObjectModel.Tests
         {
             get
             {
-                var count = 0;
-                if (this.countDic.TryGetValue(key, out count))
+                if (this.countDic.TryGetValue(key, out int count))
                 {
                     return count;
                 }
@@ -37,8 +33,7 @@ namespace Ragnarok.ObjectModel.Tests
 
         protected override void OnPropertyChanged(PropertyChangedEventArgs e)
         {
-            var count = 0;
-            if (this.countDic.TryGetValue(e.PropertyName, out count))
+            if (this.countDic.TryGetValue(e.PropertyName, out int count))
             {
                 this.countDic[e.PropertyName] = count + 1;
             }

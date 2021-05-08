@@ -57,7 +57,7 @@ namespace Ragnarok.Update
         /// <summary>
         /// ダウンロードアイテムの数を取得します。
         /// </summary>
-        public int Count
+        public int ItemCount
         {
             get
             {
@@ -212,7 +212,7 @@ namespace Ragnarok.Update
             {
                 this.itemList.Add(item);
 
-                this.RaisePropertyChanged(nameof(Count));
+                this.RaisePropertyChanged(nameof(ItemCount));
             }
         }
 
