@@ -361,13 +361,13 @@ namespace Ragnarok.Extra.Effect
         /// <remarks>
         /// ワールド座標系に直すため、親の変換行列なども考慮に入れています。
         /// </remarks>
-        [DependOnProperty(nameof(Parent))]
-        [DependOnProperty(nameof(LocalTransform))]
-        [DependOnProperty(nameof(CenterPoint))]
-        [DependOnProperty(nameof(BaseScale))]
-        [DependOnProperty(nameof(Coord))]
-        [DependOnProperty(nameof(Scale))]
-        [DependOnProperty(nameof(RotateZ))]
+        [DependOn(nameof(Parent))]
+        [DependOn(nameof(LocalTransform))]
+        [DependOn(nameof(CenterPoint))]
+        [DependOn(nameof(BaseScale))]
+        [DependOn(nameof(Coord))]
+        [DependOn(nameof(Scale))]
+        [DependOn(nameof(RotateZ))]
         public Matrix44d Transform
         {
             get

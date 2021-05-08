@@ -282,11 +282,11 @@ namespace Ragnarok.ObjectModel
             foreach (var property in propertyList)
             {
                 var attrList = property.GetCustomAttributes(
-                    typeof(DependOnPropertyAttribute), true);
+                    typeof(DependOnAttribute), true);
 
                 foreach (var attr in attrList)
                 {
-                    if (attr is not DependOnPropertyAttribute dependAttr)
+                    if (attr is not DependOnAttribute dependAttr)
                     {
                         continue;
                     }

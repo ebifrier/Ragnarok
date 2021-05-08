@@ -18,25 +18,25 @@ namespace Ragnarok.ObjectModel.Tests
             get { return this.model; }
         }
 
-        [DependOnProperty(typeof(BaseModel))]
+        [DependOn(typeof(BaseModel))]
         public int BaseProperty1
         {
             get { return 1; }
         }
 
-        [DependOnProperty(typeof(BaseModel))]
+        [DependOn(typeof(BaseModel))]
         public int BaseProperty2
         {
             get { return 2; }
         }
 
-        [DependOnProperty(typeof(BaseModel))]
+        [DependOn(typeof(BaseModel))]
         public int InheritProperty1
         {
             get { return 3; }
         }
 
-        [DependOnProperty(typeof(BaseModel))]
+        [DependOn(typeof(BaseModel))]
         public int InheritProperty2
         {
             get { return 4; }

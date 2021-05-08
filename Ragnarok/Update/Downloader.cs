@@ -71,7 +71,7 @@ namespace Ragnarok.Update
         /// <summary>
         /// ダウンロード中のアイテム数を取得します。
         /// </summary>
-        [DependOnProperty("Count")]
+        [DependOn("Count")]
         public int LeaveCount
         {
             get
@@ -104,7 +104,7 @@ namespace Ragnarok.Update
         /// <summary>
         /// ダウンロードの進捗割合をパーセンテージで取得します。
         /// </summary>
-        [DependOnProperty("ProgressRate")]
+        [DependOn("ProgressRate")]
         public int ProgressPercentage
         {
             get

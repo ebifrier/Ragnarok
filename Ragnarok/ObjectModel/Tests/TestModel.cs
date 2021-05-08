@@ -14,21 +14,21 @@ namespace Ragnarok.ObjectModel.Tests
             set { SetValue(nameof(BaseProperty1), value); }
         }
 
-        [DependOnProperty(nameof(BaseProperty1))]
+        [DependOn(nameof(BaseProperty1))]
         public int BaseProperty2
         {
             get { return GetValue<int>(nameof(BaseProperty2)); }
             set { SetValue(nameof(BaseProperty2), value); }
         }
 
-        [DependOnProperty(nameof(BaseProperty1))]
+        [DependOn(nameof(BaseProperty1))]
         public int InheritProperty1
         {
             get { return GetValue<int>(nameof(InheritProperty1)); }
             set { SetValue(nameof(InheritProperty1), value); }
         }
 
-        [DependOnProperty(nameof(BaseProperty2))]
+        [DependOn(nameof(BaseProperty2))]
         public int InheritProperty2
         {
             get { return GetValue<int>(nameof(InheritProperty2)); }
@@ -47,7 +47,7 @@ namespace Ragnarok.ObjectModel.Tests
 
     internal class DerivedModel : BaseModel
     {
-        [DependOnProperty(typeof(BaseModel), nameof(InheritProperty1))]
+        [DependOn(typeof(BaseModel), nameof(InheritProperty1))]
         public int DerivedProperty1
         {
             get { return GetValue<int>(nameof(DerivedProperty1)); }

@@ -77,7 +77,7 @@ namespace Ragnarok.Forms.Utility
         /// <summary>
         /// フレーム時間を取得します。
         /// </summary>
-        [DependOnProperty("TargetFPS")]
+        [DependOn("TargetFPS")]
         public double FrameTime
         {
             get { return (1000.0 / TargetFPS); }

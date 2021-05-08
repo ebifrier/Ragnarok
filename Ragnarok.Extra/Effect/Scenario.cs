@@ -54,7 +54,7 @@ namespace Ragnarok.Extra.Effect
         /// <summary>
         /// シナリオの実行が始まっているかどうかを取得します。
         /// </summary>
-        [DependOnProperty("Target")]
+        [DependOn("Target")]
         public bool IsBegan
         {
             get { return (Target != null); }

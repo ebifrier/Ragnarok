@@ -74,7 +74,7 @@ namespace Ragnarok.Extra.Effect.Animation
         /// <summary>
         /// アニメーションの実行時間[ミリ秒]を取得します。
         /// </summary>
-        [DependOnProperty("Duration")]
+        [DependOn("Duration")]
         public double DurationMilliseconds
         {
             get { return Duration.TotalMilliseconds; }
@@ -92,7 +92,7 @@ namespace Ragnarok.Extra.Effect.Animation
         /// <summary>
         /// アニメーションの開始時間[ミリ秒]を取得します。
         /// </summary>
-        [DependOnProperty("BeginTime")]
+        [DependOn("BeginTime")]
         public double BeginTimeMilliseconds
         {
             get { return BeginTime.TotalMilliseconds; }
