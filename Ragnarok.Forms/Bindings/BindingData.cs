@@ -4,10 +4,10 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 
-using Ragnarok.Utility;
-
 namespace Ragnarok.Forms.Bindings
 {
+    using Ragnarok.Utility;
+
     internal sealed class BindingData
     {
         private readonly ReentrancyLock recurceLock = new ReentrancyLock();
