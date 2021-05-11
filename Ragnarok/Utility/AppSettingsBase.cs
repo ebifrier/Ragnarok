@@ -180,6 +180,15 @@ namespace Ragnarok.Utility
         }
 
         /// <summary>
+        /// 設定ファイルのファイル名を取得または設定します。
+        /// </summary>
+        public string FileName
+        {
+            get { return Path.GetFileName(Location); }
+            set { Location = Path.Combine(Path.GetDirectoryName(Location), value); }
+        }
+
+        /// <summary>
         /// プロパティ名から値を取得または設定します。
         /// </summary>
         public object this[string propertyName]
@@ -800,10 +809,7 @@ namespace Ragnarok.Utility
                 Environment.SpecialFolder.LocalApplicationData);
 
             Location = Path.Combine(
-                Path.Combine(
-                    Path.Combine(basePath, asmcmp.Company),
-                    asmprd.Product),
-                "user.config");
+                basePath, asmcmp.Company, asmprd.Product, "user.config");
         }
 
         /// <summary>
@@ -811,7 +817,7 @@ namespace Ragnarok.Utility
         /// </summary>
         protected AppSettingsBase()
         {
-            var asm = Assembly.GetExecutingAssembly();
+            var asm = Assembly.GetEntryAssembly();
             SetLocationFromAssembly(asm);
 
             // プロパティ値をDictionaryで管理しているので、
