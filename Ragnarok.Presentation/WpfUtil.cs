@@ -6,10 +6,8 @@ using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
-using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using System.Runtime.InteropServices;
 
@@ -27,8 +25,8 @@ namespace Ragnarok.Presentation
         [StructLayout(LayoutKind.Sequential)]
         private struct Win32Point
         {
-            public Int32 X;
-            public Int32 Y;
+            public int X;
+            public int Y;
         };
 
         [DllImport("user32.dll")]
@@ -44,7 +42,7 @@ namespace Ragnarok.Presentation
             Initializer.Initialize();
 
             // NLog用の設定
-            NLog.Targets.Target.Register<Utility.NLogControlTarget>("WpfControl");
+            NLog.Targets.Target.Register<Utility.NLogControlTarget>("WPFControl");
 
             Util.SetPropertyChangedCaller(CallPropertyChanged);
             Util.SetColletionChangedCaller(CallCollectionChanged);
@@ -70,25 +68,14 @@ namespace Ragnarok.Presentation
         /// <summary>
         /// UIスレッドに関連づけられたディスパッチャーを取得します。
         /// </summary>
-        public static Dispatcher UIDispatcher
-        {
-            get
-            {
-                if (Application.Current == null)
-                {
-                    return null;
-                }
-
-                return Application.Current.Dispatcher;
-            }
-        }
+        public static Dispatcher UIDispatcher => Application.Current?.Dispatcher;
 
         /// <summary>
         /// 与えられた手続きをUIスレッド上で実行します。
         /// </summary>
         public static void UIProcess(Action func)
         {
-            var dispatcher = WPFUtil.UIDispatcher;
+            var dispatcher = UIDispatcher;
 
             if (dispatcher == null || dispatcher.CheckAccess())
             {
@@ -105,7 +92,7 @@ namespace Ragnarok.Presentation
         /// </summary>
         public static void UIDispatch(Action func)
         {
-            var dispatcher = WPFUtil.UIDispatcher;
+            var dispatcher = UIDispatcher;
 
             if (dispatcher == null)
             {
@@ -297,8 +284,8 @@ namespace Ragnarok.Presentation
                                                        double imageWidth,
                                                        double imageHeight)
         {
-            var halfPixelW = (imageWidth != 0.0 ? 0.5 / imageWidth : 0.0);
-            var halfPixelH = (imageHeight != 0.0 ? 0.5 / imageHeight : 0.0);
+            var halfPixelW = imageWidth != 0.0 ? 0.5 / imageWidth : 0.0;
+            var halfPixelH = imageHeight != 0.0 ? 0.5 / imageHeight : 0.0;
 
             return new MeshGeometry3D
             {
@@ -385,7 +372,7 @@ namespace Ragnarok.Presentation
             // 線分と点の距離なので点Pは端点の外には出れません。
             t = MathUtil.Between(0.0, 1.0, t);
 
-            return (cp + t * l).Length;
+            return (cp + (t * l)).Length;
         }
         #endregion
 
@@ -395,7 +382,7 @@ namespace Ragnarok.Presentation
         public static IEnumerable<TChild> GetChildren<TChild>(this DependencyObject parent)
             where TChild : DependencyObject
         {
-            if ((object)parent == null)
+            if (parent is null)
             {
                 yield return null;
             }
@@ -406,7 +393,7 @@ namespace Ragnarok.Presentation
                 var childDep = VisualTreeHelper.GetChild(parent, i);
                 var child = childDep as TChild;
 
-                if ((object)child != null)
+                if (child is not null)
                 {
                     yield return child;
                 }
@@ -442,7 +429,7 @@ namespace Ragnarok.Presentation
                 return;
             }
 
-            WPFUtil.UIProcess(() =>
+            UIProcess(() =>
             {
                 try
                 {
