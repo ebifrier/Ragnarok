@@ -1,0 +1,26 @@
+﻿<Window x:Class="Ragnarok.Presentation.Control.ProgressDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+        Title="途中経過"
+        mc:Ignorable="d" 
+        d:DesignHeight="106" d:DesignWidth="300"
+        SizeToContent="WidthAndHeight" ResizeMode="NoResize">
+    <Grid MinWidth="300">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="5" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        
+        <Label Content="送信中。。。" />
+        
+        <StackPanel Grid.Row="2"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Center">
+            <Button Content="キャンセル"
+                    Click="CancelBUtton_Click" />
+        </StackPanel>
+    </Grid>
+</Window>

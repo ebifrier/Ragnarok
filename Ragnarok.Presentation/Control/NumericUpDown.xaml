@@ -1,0 +1,64 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                    xmlns:l="clr-namespace:Ragnarok.Presentation.Control">
+    <SolidColorBrush x:Key="buttonGlyphForeground" Color="#FF000000" />
+
+    <DataTemplate x:Key="upGlyph">
+        <Path Width="7" Height="4" Data="M 0,3 C0,3 0,4 0,4 0,4 3,4 3,4 3,4 3,3 3,3 3,3 4,3 4,3 4,3 4,4 4,4 4,4 7,4 7,4 7,4 7,3 7,3 7,3 6,3 6,3 6,3 6,2 6,2 6,2 5,2 5,2 5,2 5,1 5,1 5,1 4,1 4,1 4,1 4,0 4,0 4,0 3,0 3,0 3,0 3,1 3,1 3,1 2,1 2,1 2,1 2,2 2,2 2,2 1,2 1,2 1,2 1,3 1,3 1,3 0,3 0,3 z"
+              Fill="{StaticResource buttonGlyphForeground}"/>
+    </DataTemplate>
+
+    <DataTemplate x:Key="downGlyph">
+        <Path Width="7" Height="4" Data="M 0,1 C0,1 0,0 0,0 0,0 3,0 3,0 3,0 3,1 3,1 3,1 4,1 4,1 4,1 4,0 4,0 4,0 7,0 7,0 7,0 7,1 7,1 7,1 6,1 6,1 6,1 6,2 6,2 6,2 5,2 5,2 5,2 5,3 5,3 5,3 4,3 4,3 4,3 4,4 4,4 4,4 3,4 3,4 3,4 3,3 3,3 3,3 2,3 2,3 2,3 2,2 2,2 2,2 1,2 1,2 1,2 1,1 1,1 1,1 0,1 0,1 z"
+              Fill="{StaticResource buttonGlyphForeground}"/>
+    </DataTemplate>
+
+    <ControlTemplate x:Key="numericUpDown" TargetType="{x:Type l:NumericUpDown}">
+        <Grid Name="layoutBase">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="15" />
+            </Grid.ColumnDefinitions>
+        
+            <TextBox Grid.RowSpan="2" Grid.Column="0" MaxLines="1"
+                     Name="TextBoxPart"
+                     Background="{TemplateBinding Background}"
+                     ContextMenu="{TemplateBinding ContextMenu}"
+                     FontFamily="{TemplateBinding FontFamily}" 
+                     FontSize="{TemplateBinding FontSize}" 
+                     FontStretch="{TemplateBinding FontStretch}"
+                     FontStyle="{TemplateBinding FontStyle}" 
+                     FontWeight="{TemplateBinding FontWeight}" 
+                     Foreground="{TemplateBinding Foreground}" 
+                     TabIndex="{TemplateBinding TabIndex}"
+                     HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                     VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                     Text="{Binding Text, RelativeSource={RelativeSource TemplatedParent}}"
+                     TextAlignment="{TemplateBinding HorizontalContentAlignment}"
+                     />
+
+            <RepeatButton Grid.Row="0" Grid.Column="1"
+                          Name="UpButtonPart"
+                          ContentTemplate="{StaticResource upGlyph}" />
+
+            <RepeatButton Grid.Row="1" Grid.Column="1"
+                          Name="DownButtonPart"
+                          ContentTemplate="{StaticResource downGlyph}" />
+        </Grid>
+    </ControlTemplate>
+    
+    <Style TargetType="{x:Type l:NumericUpDown}">
+        <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"/>
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}"/>
+        <Setter Property="HorizontalContentAlignment" Value="Right" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Template" Value="{StaticResource numericUpDown}" />
+    </Style>
+</ResourceDictionary>
