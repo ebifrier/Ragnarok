@@ -1,9 +1,7 @@
 # Ignore directories
 obj/
 bin/
-Debug/
-Release/
-packages/
+.vs/
 
 # Ignore extensions
 *.old
@@ -12,8 +10,3 @@ packages/
 *.sdf
 *.userprefs
 *~
-
-externals/net/tmp/
-Ragnarok/Ragnarok.xml
-Ragnarok.Presentation/Ragnarok.Presentation.xml
-.vs/
