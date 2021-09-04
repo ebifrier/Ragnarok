@@ -1,0 +1,72 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                    xmlns:l="clr-namespace:Ragnarok.Presentation.Control">
+    <Style x:Key="gridStyle" TargetType="Grid">
+        <Setter Property="Background"
+                Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
+    </Style>
+    
+    <Style x:Key="buttonStyle" TargetType="Button">
+        <Setter Property="MinWidth" Value="60" />
+        <Setter Property="Focusable" Value="True" />
+        <Setter Property="Visibility" Value="Visible" />
+
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Content, RelativeSource={RelativeSource Self}}"
+                         Value="{x:Null}">
+                <Setter Property="Visibility" Value="Hidden" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    
+    <ControlTemplate x:Key="genericDialog"
+                     TargetType="l:GenericDialog">
+        <Grid Style="{StaticResource gridStyle}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0"
+                       Background="{TemplateBinding Background}"
+                       ContextMenu="{TemplateBinding ContextMenu}"
+                       FontFamily="{TemplateBinding FontFamily}" 
+                       FontSize="{TemplateBinding FontSize}" 
+                       FontStretch="{TemplateBinding FontStretch}"
+                       FontStyle="{TemplateBinding FontStyle}" 
+                       FontWeight="{TemplateBinding FontWeight}" 
+                       Foreground="{TemplateBinding Foreground}" 
+                       Text="{Binding Message, RelativeSource={RelativeSource TemplatedParent}}"
+                       TextWrapping="Wrap"
+                       Margin="30,20,30,20"
+                       MaxWidth="400" />
+
+            <DockPanel Grid.Row="1"
+                       Background="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}">
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Right">
+                    <Button Name="Button1Part"
+                            Style="{StaticResource buttonStyle}"
+                            Content="{Binding Button1Text, RelativeSource={RelativeSource TemplatedParent}}"
+                            Margin="13,13,7,13" />
+                    
+                    <Button Name="Button2Part"
+                            Style="{StaticResource buttonStyle}"
+                            Content="{Binding Button2Text, RelativeSource={RelativeSource TemplatedParent}}"
+                            Margin="7,13,13,13" />
+                </StackPanel>
+            </DockPanel>
+        </Grid>
+    </ControlTemplate>
+    
+    <Style TargetType="l:GenericDialog">
+        <Setter Property="ResizeMode" Value="NoResize" />
+        <Setter Property="ShowInTaskbar" Value="False" />
+        <Setter Property="SizeToContent" Value="WidthAndHeight" />
+        <Setter Property="WindowStyle" Value="SingleBorderWindow" />
+        <Setter Property="Title" Value="ダイアログ" />
+
+        <Setter Property="Template" Value="{StaticResource genericDialog}" />
+    </Style>
+</ResourceDictionary>

@@ -1,0 +1,16 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/Ragnarok.Presentation;component/Control/ColorPicker/ColorPicker.xaml" />
+        <ResourceDictionary Source="/Ragnarok.Presentation;component/Control/ColorButton.xaml" />
+        <ResourceDictionary Source="/Ragnarok.Presentation;component/Control/DateTimeEditControl.xaml" />
+        <ResourceDictionary Source="/Ragnarok.Presentation;component/Control/DecoratedText.xaml" />
+        <ResourceDictionary Source="/Ragnarok.Presentation;component/Control/EvaluationControl.xaml" />
+        <ResourceDictionary Source="/Ragnarok.Presentation;component/Control/GenericDialog.xaml" />
+        <ResourceDictionary Source="/Ragnarok.Presentation;component/Control/MessageStatusBar.xaml" />
+        <ResourceDictionary Source="/Ragnarok.Presentation;component/Control/NumericUpDown.xaml" />
+        <ResourceDictionary Source="/Ragnarok.Presentation;component/Control/TimeSpanEditControl.xaml" />
+        <ResourceDictionary Source="/Ragnarok.Presentation;component/Control/TimeSpanView.xaml" />
+        <ResourceDictionary Source="/Ragnarok.Presentation;component/Control/WatermarkTextBox.xaml" />        
+    </ResourceDictionary.MergedDictionaries>
+</ResourceDictionary>

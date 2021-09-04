@@ -19,9 +19,8 @@ namespace Ragnarok
     /// </remarks>
     public static class Log
     {
-        private static ConcurrentDictionary<string, object> targetDic =
-             new ConcurrentDictionary<string, object>();
-        private static readonly Logger logger = null;
+        private static readonly ConcurrentDictionary<string, object> targetDic = new ();
+        private static readonly Logger logger;
 
         /// <summary>
         /// 出力対象となるコントロールとその名前を追加。
@@ -77,12 +76,12 @@ namespace Ragnarok
                     return;
                 }
 #endif
-                Log.FatalException(ex,
+                FatalException(ex,
                     "未処理の例外が発生しました。");
             }
             else
             {
-                Log.Fatal(
+                Fatal(
                     "未処理の例外が発生しました。");
             }
         }

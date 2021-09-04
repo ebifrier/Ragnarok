@@ -1,0 +1,135 @@
+﻿<Window x:Class="Ragnarok.Presentation.Update.UpdateWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:p="http://schemas.garnet-alice.net/ragnarok/xaml/presentation"
+        xmlns:w="clr-namespace:Ragnarok.Presentation"
+        xmlns:u="clr-namespace:Ragnarok.Presentation.Utility"
+        mc:Ignorable="d" x:Name="window"
+        Title="ソフトウェア アップデート" ResizeMode="CanResize"
+        Height="387" Width="460">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="UpdateCommon.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            
+            <Style x:Key="myTitleStyle" TargetType="TextBlock"
+                   BasedOn="{StaticResource titleStyle}">
+                <Setter Property="Text"
+                        Value="新バージョンがリリースされています！" />
+                
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding IsDownloaded, ElementName=window}"
+                                 Value="True">
+                        <Setter Property="Text"
+                                Value="新バージョンのダウンロードが完了しました！" />
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+
+            <Style x:Key="myDescriptionStyle" TargetType="TextBlock"
+                   BasedOn="{StaticResource normalStyle}">
+                <Setter Property="Text">
+                    <Setter.Value>
+                        <MultiBinding StringFormat="新しいバージョンの {0} をダウンロードしますか？ (現在のバージョン: {2})">
+                            <Binding Path="AssemblyTitle" />
+                            <Binding Path="LatestVersion" />
+                            <Binding Path="InstalledVersion" />
+                        </MultiBinding>
+                    </Setter.Value>
+                </Setter>
+
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding IsDownloaded, ElementName=window}"
+                                 Value="True">
+                        <Setter Property="Text">
+                            <Setter.Value>
+                                <MultiBinding StringFormat="新しいバージョンの {0} に更新しますか？ (現在のバージョン: {2})">
+                                    <Binding Path="AssemblyTitle" />
+                                    <Binding Path="LatestVersion" />
+                                    <Binding Path="InstalledVersion" />
+                                </MultiBinding>
+                            </Setter.Value>
+                        </Setter>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+
+            <!-- 更新履歴などをブラウザで表示します。-->
+            <ControlTemplate x:Key="descriptionTemplate">
+                <Grid Margin="5,10,10,5">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="5" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="10" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0"
+                               Style="{StaticResource myTitleStyle}" />
+                    <TextBlock Grid.Row="2"
+                               Style="{StaticResource myDescriptionStyle}"
+                               TextWrapping="Wrap" />
+                    
+                    <TextBlock Grid.Row="4"
+                               Style="{StaticResource titleStyle}"
+                               Text="更新履歴:" />
+                    <Border Grid.Row="5"
+                            BorderBrush="Gray"
+                            BorderThickness="1">
+                        <WebBrowser u:WebBrowserUtil.BindableSource="{Binding ReleaseNotesLink}" />
+                    </Border>
+                </Grid>
+            </ControlTemplate>
+            
+            <!-- 下のボタンなどを表示します。-->
+            <ControlTemplate x:Key="buttonTemplate">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    
+                    <Button Grid.Column="1"
+                            Command="{x:Static w:RagnarokCommands.OK}"
+                            Margin="10,10,0,10"
+                            Content="更新する" />
+                    <Button Grid.Column="2"
+                            Command="{x:Static w:RagnarokCommands.Cancel}"
+                            Margin="10"
+                            Content="後で通知する" />
+                </Grid>
+            </ControlTemplate>
+        </ResourceDictionary>
+    </Window.Resources>
+    
+    <Window.Icon>
+        <StaticResource ResourceKey="iconSource" />
+    </Window.Icon>
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <StaticResource ResourceKey="thumbImage" />
+
+        <ContentControl Grid.Column="1"
+                        Template="{StaticResource descriptionTemplate}"
+                        Focusable="False" />
+        
+        <ContentControl Grid.Row="1" Grid.Column="1"
+                        Template="{StaticResource buttonTemplate}"
+                        Focusable="False" />
+    </Grid>
+</Window>
