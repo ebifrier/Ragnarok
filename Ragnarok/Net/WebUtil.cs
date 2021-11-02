@@ -273,6 +273,21 @@ namespace Ragnarok.Net
         /// <summary>
         /// HTTPリクエストを出します。
         /// </summary>
+        public static string RequestHttpText(HttpWebRequest request,
+                                             Encoding encoding)
+        {
+            var data = RequestHttp(request);
+            if (data == null)
+            {
+                return null;
+            }
+
+            return encoding.GetString(data);
+        }
+
+        /// <summary>
+        /// HTTPリクエストを出します。
+        /// </summary>
         public static byte[] RequestHttp(string url,
                                          Dictionary<string, object> param = null,
                                          CookieContainer cc = null,
