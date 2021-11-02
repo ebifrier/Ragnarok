@@ -9,6 +9,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Ragnarok.Calculator\Ragnarok.Calculator.csproj" />
     <ProjectReference Include="..\Ragnarok.Sound\Ragnarok.Sound.csproj" />
+    <ProjectReference Include="..\Ragnarok.Xaml\Ragnarok.Xaml.csproj" />
     <ProjectReference Include="..\Ragnarok\Ragnarok.csproj" />
   </ItemGroup>
 

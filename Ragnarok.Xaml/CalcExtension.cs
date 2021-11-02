@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Markup;
 
-namespace Ragnarok.Extra.Xaml
+namespace Ragnarok.Xaml
 {
     using Calculator;
 
