@@ -21,7 +21,7 @@ namespace Ragnarok.ObjectModel
         /// 型ごとの依存するプロパティの集合を保持します。
         /// </summary>
         /// <remarks>
-        /// DependOnPropertyAttribute属性を持つプロパティの集合です。
+        /// DependOnAttribute属性を持つプロパティの集合です。
         /// </remarks>
         private static readonly Dictionary<Type, MultiMap<TypeProperty, string>>
             dependPropertyDic = new();
@@ -35,7 +35,7 @@ namespace Ragnarok.ObjectModel
             {
                 if (attrProp.Type != key.Type)
                 {
-                    // IModelのDependPropertyListはDependOnProperty属性として
+                    // IModelのDependPropertyListはDependOn属性として
                     // 付加された型がキーになります。それがイベントのsenderの型と
                     // 比較されこの型の同値関係が判定されます。
                     // sender.GetType().IsSubclassOf(attrType) と判定されたとき
@@ -275,7 +275,7 @@ namespace Ragnarok.ObjectModel
             var result = new MultiMap<TypeProperty, string>(
                 new TypePropertyComparer());
 
-            // このクラスのプロパティから、DependOnPropertyAttributeを持つ
+            // このクラスのプロパティから、DependOnAttributeを持つ
             // ものを抜き出します。
             //
             // 作成するものがMultiMapなので、Linqは使いにくいです。
