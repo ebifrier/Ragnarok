@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Markup;
 
-namespace Ragnarok.Extra.Xaml
+namespace Ragnarok.Xaml
 {
     /// <summary>
     /// Enumに付随するラベル名などを取得可能なクラスです。

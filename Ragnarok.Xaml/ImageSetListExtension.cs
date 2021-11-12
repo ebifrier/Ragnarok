@@ -6,7 +6,7 @@ using System.Windows.Markup;
 
 using Ragnarok.Utility;
 
-namespace Ragnarok.Extra.Xaml
+namespace Ragnarok.Xaml
 {
     /// <summary>
     /// ディレクトリ中の画像をリストアップするための拡張です。

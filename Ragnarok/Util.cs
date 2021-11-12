@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -34,6 +35,7 @@ namespace Ragnarok
     public static class Util
     {
         public static readonly Encoding SJisEncoding;
+        public static CultureInfo DefaultCulture;
 
         private static PropertyChangedEventCaller propertyChangedCaller;
         private static CollectionChangedEventCaller collectionChangedCaller;
@@ -43,6 +45,7 @@ namespace Ragnarok
         {
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             SJisEncoding = Encoding.GetEncoding("shift_jis");
+            DefaultCulture = new("ja-JP");
         }
 
         /// <summary>

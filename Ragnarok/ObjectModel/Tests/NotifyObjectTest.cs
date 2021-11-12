@@ -11,7 +11,7 @@ namespace Ragnarok.ObjectModel.Tests
     public class NotifyObjectTest
     {
         [Test()]
-        public void DependOnPropertyBaseTest()
+        public void DependOnBaseTest()
         {
             var obj = new BaseModel();
 
@@ -35,7 +35,7 @@ namespace Ragnarok.ObjectModel.Tests
         }
 
         [Test()]
-        public void DependOnPropertyDerivedTest()
+        public void DependOnDerivedTest()
         {
             var obj = new DerivedModel
             {

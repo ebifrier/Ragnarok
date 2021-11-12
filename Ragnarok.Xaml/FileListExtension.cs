@@ -7,7 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Markup;
 
-namespace Ragnarok.Extra.Xaml
+namespace Ragnarok.Xaml
 {
     /// <summary>
     /// ファイルパスを扱います。
