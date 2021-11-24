@@ -56,7 +56,7 @@ namespace Ragnarok.Utility
         private const string IntRegexPattern = @"\G\s*((\+|\-)?[0-9]+)";
         private const string DoubleRegexPattern = @"\G\s*((\+|\-)?[0-9]+([.][0-9.]+)?)";
 
-        private static readonly Regex WordRegex = new Regex(
+        private static readonly Regex WordRegex = new(
             WordRegexPattern, RegexOptions.Compiled);
         private static readonly Regex CommaQuotedTextRegex = CreateRegexWithDelimiters(
             QuotedTextRegexPattern, RegexOptions.Compiled, ",");
@@ -71,7 +71,6 @@ namespace Ragnarok.Utility
         private Regex textRegex;        
         private Regex intRegex;
         private Regex doubleRegex;
-        private string[] delimiters = { "," };
         private readonly string text;
         private string peek;
         private int index;
@@ -131,8 +130,6 @@ namespace Ragnarok.Utility
             {
                 return;
             }
-
-            this.delimiters = delimiters;
 
             if (delimiters.Length == 1 && delimiters[0] == ",")
             {
