@@ -107,8 +107,6 @@ namespace Ragnarok.OpenGL
                 // 座標系の設定
                 GL.PushMatrix();
                 SetMatrix();
-                //gl.Translate(0, 0, ZOrder);
-
                 SetMesh();
                 GL.PopMatrix();
 
@@ -166,9 +164,16 @@ namespace Ragnarok.OpenGL
             {
                 case BlendType.Diffuse:
                     GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+                    GL.Disable(EnableCap.AlphaTest);
                     break;
                 case BlendType.Emissive:
                     GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.One);
+                    GL.Disable(EnableCap.AlphaTest);
+                    break;
+                case BlendType.Copy:
+                    GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+                    GL.Enable(EnableCap.AlphaTest);
+                    GL.AlphaFunc(AlphaFunction.Greater, 0.9f);
                     break;
             }
         }
