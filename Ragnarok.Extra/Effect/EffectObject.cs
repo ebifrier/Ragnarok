@@ -24,8 +24,9 @@ namespace Ragnarok.Extra.Effect
         /// 加算合成による描画を行います。
         /// </summary>
         Emissive,
-        /// <summary>
-        /// エッジを黒と仮定して色をコピーします。
+        /// <summary> 
+        /// ある程度高い不透明度がある場合しか、データのコピーを行わないようにします。
+        /// エッジが不透明になるのを避けたい場合に使ってください。
         /// </summary>
         Copy,
     }

@@ -171,6 +171,8 @@ namespace Ragnarok.OpenGL
                     GL.Disable(EnableCap.AlphaTest);
                     break;
                 case BlendType.Copy:
+                    // ある程度高い不透明度がある場合しか、データのコピーを行わないようにします。
+                    // エッジが不透明になるのを避けたい場合に使います。
                     GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
                     GL.Enable(EnableCap.AlphaTest);
                     GL.AlphaFunc(AlphaFunction.Greater, 0.9f);
