@@ -30,22 +30,12 @@ namespace Ragnarok.Extra.Effect
     public class VisualEffect : EffectObject
     {
         /// <summary>
-        /// デフォルトのサウンドマネージャを取得または設定します。
-        /// </summary>
-        public static IEffectSoundManager DefaultSoundManager
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
         /// コンストラクタ
         /// </summary>
         public VisualEffect()
         {
             Blend = BlendType.Diffuse;
             AnimationImageCount = 1;
-            SoundManager = DefaultSoundManager;
             StartSoundVolume = 1.0;
         }
 
@@ -165,7 +155,11 @@ namespace Ragnarok.Extra.Effect
         /// </summary>
         public IEffectSoundManager SoundManager
         {
-            get { return GetValue<IEffectSoundManager>(nameof(SoundManager)); }
+            get
+            {
+                var manager = GetValue<IEffectSoundManager>(nameof(SoundManager));
+                return manager ?? (Parent as VisualEffect)?.SoundManager;
+            }
             set { SetValue(nameof(SoundManager), value); }
         }
 
