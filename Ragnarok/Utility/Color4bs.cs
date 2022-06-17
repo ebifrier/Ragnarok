@@ -1177,5 +1177,13 @@ namespace Ragnarok.Utility
         {
             get { return Color4b.FromValue(0xFF9ACD32); }
         }
+
+        /// <summary>
+        /// レベッカパープルを取得します。
+        /// </summary>
+        public static Color4b RebeccaPurple
+        {
+            get { return Color4b.FromValue(0xFF663399); }
+        }
     }
 }
