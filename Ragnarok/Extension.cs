@@ -273,15 +273,6 @@ namespace Ragnarok
         }
 
         /// <summary>
-        /// Listクラスをリサイズします。
-        /// </summary>
-        public static void Resize<T>(this List<T> list, int size)
-            where T : new()
-        {
-            Resize(list, size, new T());
-        }
-
-        /// <summary>
         /// リストの要素をすべて削除し、新しいコレクションを代入します。
         /// </summary>
         public static void Assign<T>(this IList<T> list, IEnumerable<T> collection)
