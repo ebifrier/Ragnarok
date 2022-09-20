@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Windows.Forms;
 
 using Ragnarok.MathEx;
@@ -37,6 +38,54 @@ namespace Ragnarok.Forms
             Util.SetPropertyChangedCaller(CallPropertyChanged);
             Util.SetColletionChangedCaller(CallCollectionChanged);
             Util.SetEventCaller(_ => UIProcess(_));
+        }
+
+        /// <summary>
+        /// デザインモード中かどうかを判定します。
+        /// </summary>
+        /// <remarks>
+        /// Control.DesignModeではコンストラクタで使えない or 正しく値を返さないことがある
+        /// 等のバグがあるため新しい判定用関数を作っています。
+        /// </remarks>
+        public static bool IsDesignMode(Control control)
+        {
+            // コンストラクタでは正しく判定されません。
+            if (control.Site?.DesignMode == true)
+            {
+                return true;
+            }
+
+            // .NET Frameworkでは動きますが、.NET Coreでは正しく判定されないことがあります。
+            if (LicenseManager.UsageMode == LicenseUsageMode.Designtime)
+            {
+                return true;
+            }
+
+            // 親コントロールにデザインモードのコントロールがあるか
+            for (Control parent = control; parent != null; parent = parent.Parent)
+            {
+                if (parent.Site?.DesignMode == true)
+                {
+                    return true;
+                }
+            }
+
+            // 実行ファイル名に VisualStudio が含まれていれば、デザインモードであると思われます。
+            // ただのハックです。
+            var asm = Assembly.GetExecutingAssembly();
+            if (asm.Location.Contains("VisualStudio", StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+
+            // プロセス名に devenv が含まれていればデザインモードであると思われます。
+            var proc = System.Diagnostics.Process.GetCurrentProcess();
+            if (string.Equals(proc.ProcessName, "devenv", StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+
+            return false;
         }
 
         /// <summary>
