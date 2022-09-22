@@ -266,7 +266,8 @@ namespace Ragnarok.ObjectModel
         /// プロパティごとにプロパティ変更通知を受け取るようにします。
         /// </summary>
         public void AddPropertyChangedHandler(string propertyName,
-                                              PropertyChangedEventHandler handler)
+                                              PropertyChangedEventHandler handler,
+                                              bool callNow = false)
         {
             if (string.IsNullOrEmpty(propertyName))
             {
@@ -298,6 +299,12 @@ namespace Ragnarok.ObjectModel
                 this.changedList.Add(changed);
 
                 PropertyChanged += changed.Handler;
+            }
+
+            // 初回呼び出しを行います。
+            if (callNow)
+            {
+                handler(this, new PropertyChangedEventArgs(propertyName));
             }
         }
 
