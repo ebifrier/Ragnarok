@@ -141,8 +141,7 @@ namespace Ragnarok.Forms.Utility
             {
                 try
                 {
-                    var frameSkipped = false;
-                    var diff = WaitNextFrame(out frameSkipped);
+                    var diff = WaitNextFrame(out bool frameSkipped);
 
                     // 各フレームの処理を行います。
                     // (念のため同期してメソッドを呼び出します)
