@@ -89,14 +89,34 @@ namespace Ragnarok.Forms
         }
 
         /// <summary>
+        /// 指定のミリ秒後に与えられたアクションをwinformsのスレッドから呼び出します。
+        /// </summary>
+        public static void Delay(Action action, int milliseconds)
+        {
+            var timer = new Timer();
+            timer.Tick += (s, e) =>
+            {
+                timer.Stop(); // 一度しかコールしないようにしています。
+                action();
+            };
+
+            timer.Interval = milliseconds;
+            timer.Start();
+        }
+
+        /// <summary>
         /// コマンドの状態をすべて更新します。
         /// </summary>
-        public static void InvalidateCommand()
+        public static void InvalidateCommand(bool doEvents = true)
         {
             UIProcess(() =>
             {
                 Input.CommandManager.InvalidateRequerySuggested();
-                Application.DoEvents();
+
+                if (doEvents)
+                {
+                    Application.DoEvents();
+                }
             });
         }
 
