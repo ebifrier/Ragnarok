@@ -84,13 +84,21 @@ namespace Ragnarok.Utility
             {
                 if (this.success)
                 {
-                    // 元のファイルを削除し、tmpファイルを規定の名前に変えます。
-                    if (File.Exists(OriginalFileName))
+                    try
                     {
-                        File.Delete(OriginalFileName);
-                    }
+                        // 元のファイルを削除し、tmpファイルを規定の名前に変えます。
+                        if (File.Exists(OriginalFileName))
+                        {
+                            File.Delete(OriginalFileName);
+                        }
 
-                    File.Move(TmpFileName, OriginalFileName);
+                        File.Move(TmpFileName, OriginalFileName);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.ErrorException(ex,
+                            "一時ファイルの置きかえに失敗しました。");
+                    }
                 }
                 else
                 {
