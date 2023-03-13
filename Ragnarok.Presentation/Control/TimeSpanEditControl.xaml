@@ -7,7 +7,7 @@
         <Setter Property="IsTabStop" Value="True" />
     </Style>
     <Style x:Key="timeLabelStyle" TargetType="l:NumericUpDown">
-        <Setter Property="Margin" Value="True" />
+        <Setter Property="Margin" Value="2" />
     </Style>
 
     <!-- 秒と時刻で投票期間などを設定します。-->
