@@ -17,11 +17,12 @@ namespace Ragnarok.Utility
         /// <summary>
         /// オブジェクトをJSON形式にシリアライズします。
         /// </summary>
-        public static string Serialize<T>(T value)
+        public static string Serialize<T>(T value, bool indent = false)
         {
             try
             {
-                return JsonConvert.SerializeObject(value);
+                var format = indent ? Formatting.Indented : Formatting.None;
+                return JsonConvert.SerializeObject(value, format);
             }
             catch (Exception ex)
             {
