@@ -99,15 +99,22 @@ namespace Ragnarok.Presentation.Control
             using (var result = this.syncLock.Lock())
             {
                 if (result == null) return;
+                if (this.yearsPart == null || this.monthesPart == null) return;
 
-                var years = this.yearsPart != null ?
-                    Convert.ToInt32(this.yearsPart.Value) :
-                    Value.Year;
+                if (this.monthesPart.Value < 1)
+                {
+                    this.yearsPart.Value -= 1;
+                    this.monthesPart.Value = 12;
+                }
 
-                var monthes = this.monthesPart != null ?
-                    Convert.ToInt32(this.monthesPart.Value) :
-                    Value.Month;
+                if (this.monthesPart.Value > 12)
+                {
+                    this.yearsPart.Value += 1;
+                    this.monthesPart.Value = 1;
+                }
 
+                var years = Convert.ToInt32(this.yearsPart.Value);
+                var monthes = Convert.ToInt32(this.monthesPart.Value);
                 Value = new DateTime(years, monthes, 1);
             }
         }

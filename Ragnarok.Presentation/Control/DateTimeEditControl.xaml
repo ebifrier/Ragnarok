@@ -34,7 +34,7 @@
             <Label Grid.Column="5" Content="月" />
             <l:NumericUpDown Grid.Column="4"
                              x:Name="Part_Monthes"
-                             Width="45" Minimum="1" Maximum="12"
+                             Width="45" Minimum="0" Maximum="13"
                              Style="{StaticResource dateTimeStyle}" />
         </Grid>
     </ControlTemplate>
