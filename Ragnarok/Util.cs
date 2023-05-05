@@ -295,6 +295,14 @@ namespace Ragnarok
         /// <summary>
         /// <paramref name="self"/>がMinValueやMaxValueでないなら真を返します。
         /// </summary>
+        public static bool IsNormal(this DateTime self)
+        {
+            return (self != DateTime.MinValue && self != DateTime.MaxValue);
+        }
+
+        /// <summary>
+        /// <paramref name="self"/>がMinValueやMaxValueでないなら真を返します。
+        /// </summary>
         public static bool IsNormal(this TimeSpan self)
         {
             return (self != TimeSpan.MinValue && self != TimeSpan.MaxValue);
@@ -526,7 +534,7 @@ namespace Ragnarok
 
             if (!quotes.Any())
             {
-                quotes = new char[] {'\'', '\"'};
+                quotes = new char[] { '\'', '\"' };
             }
 
             var trimmedText = text.TrimStart(quotes);
