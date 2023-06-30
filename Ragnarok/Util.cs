@@ -162,16 +162,6 @@ namespace Ragnarok
         }
 
         /// <summary>
-        /// オブジェクトの中身を交換します。
-        /// </summary>
-        public static void Swap<T>(ref T x, ref T y)
-        {
-            T tmp = x;
-            x = y;
-            y = tmp;
-        }
-
-        /// <summary>
         /// 例外が致命的なものならその例外をthrowします。
         /// </summary>
         public static void ThrowIfFatal(Exception ex)
@@ -191,10 +181,7 @@ namespace Ragnarok
         {
             try
             {
-                if (caller != null)
-                {
-                    caller();
-                }
+                caller?.Invoke();
             }
             catch (Exception ex)
             {
@@ -227,7 +214,7 @@ namespace Ragnarok
                 }
             }
 
-            return default(TResult);
+            return default;
         }
 
         /// <summary>
@@ -246,7 +233,7 @@ namespace Ragnarok
 
             // objectとして比較します。比較の仕方を間違えると
             // 無限ループになるので注意が必要です。
-            if (ReferenceEquals(lhs, null) || ReferenceEquals(rhs, null))
+            if (lhs is null || rhs is null)
             {
                 return false;
             }
@@ -283,7 +270,7 @@ namespace Ragnarok
 
                 // objectとして比較します。比較の仕方を間違えると
                 // 無限ループになるので注意が必要です。
-                if (ReferenceEquals(lhs, null) || ReferenceEquals(rhs, null))
+                if (lhs is null || rhs is null)
                 {
                     return false;
                 }
@@ -297,7 +284,7 @@ namespace Ragnarok
         /// </summary>
         public static bool IsNormal(this DateTime self)
         {
-            return (self != DateTime.MinValue && self != DateTime.MaxValue);
+            return self != DateTime.MinValue && self != DateTime.MaxValue;
         }
 
         /// <summary>
@@ -417,7 +404,7 @@ namespace Ragnarok
             for (var length = Math.Min(hankakuLength, self.Length);
                  length > 0; --length)
             {
-                var substr = self.Substring(0, length);
+                var substr = self[..length];
                 var hanLen = substr.HankakuLength();
 
                 // utf8 => sjisの変換に失敗した場合はすべて全角文字であると仮定します。
@@ -551,23 +538,21 @@ namespace Ragnarok
                 throw new ArgumentNullException(nameof(stream));
             }
 
-            using (var result = new MemoryStream())
-            {
-                var buffer = new byte[1024];
-                var size = 0;
+            using var result = new MemoryStream();
+            var buffer = new byte[1024];
+            var size = 0;
 
-                while ((size = stream.Read(buffer, 0, buffer.Length)) > 0)
-                {
-                    result.Write(buffer, 0, size);
+            while ((size = stream.Read(buffer, 0, buffer.Length)) > 0)
+            {
+                result.Write(buffer, 0, size);
 #if MONO
                     // MONOだとReadがタイムアウトするため
                     if (size < buffer.Length) break;
 #endif
-                }
-
-                result.Flush();
-                return result.ToArray();
             }
+
+            result.Flush();
+            return result.ToArray();
         }
 
         /// <summary>
@@ -575,10 +560,8 @@ namespace Ragnarok
         /// </summary>
         public static string ReadToEnd(Stream stream, Encoding encoding)
         {
-            using (var reader = new StreamReader(stream, encoding))
-            {
-                return reader.ReadToEnd();
-            }
+            using var reader = new StreamReader(stream, encoding);
+            return reader.ReadToEnd();
         }
 
         /// <summary>
@@ -586,12 +569,10 @@ namespace Ragnarok
         /// </summary>
         public static IEnumerable<string> ReadLines(Stream stream, Encoding encoding)
         {
-            using (var reader = new StreamReader(stream, encoding))
+            using var reader = new StreamReader(stream, encoding);
+            while (!reader.EndOfStream)
             {
-                while (!reader.EndOfStream)
-                {
-                    yield return reader.ReadLine();
-                }
+                yield return reader.ReadLine();
             }
         }
 
@@ -691,7 +672,7 @@ namespace Ragnarok
         public static Type FindTypeFromCurrentDomain(string name)
         {
             var type = Type.GetType(name);
-            if ((object)type != null)
+            if (type is not null)
             {
                 return type;
             }
