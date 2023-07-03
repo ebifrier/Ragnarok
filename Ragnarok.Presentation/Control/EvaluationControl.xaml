@@ -3,7 +3,6 @@
                     xmlns:c="clr-namespace:Ragnarok.Presentation.Converter"
                     xmlns:l="clr-namespace:Ragnarok.Presentation.Control">
     
-    <c:ImageConverter x:Key="imageConverter" />
     <c:BooleanToVisibilityConverter x:Key="visibilityConverter"
                                     DefaultHiddenValue="Collapsed" />
 
@@ -13,7 +12,7 @@
             <Image x:Name="image"
                    Stretch="None"
                    Source="{Binding SelectedImagePath,
-                                    Converter={StaticResource imageConverter},
+                                    Converter={x:Static c:ImageConverter.Default},
                                     RelativeSource={RelativeSource TemplatedParent}}"
                    RenderOptions.BitmapScalingMode="HighQuality" />
             

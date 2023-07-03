@@ -4,8 +4,7 @@
                     xmlns:t="clr-namespace:Ragnarok.Presentation"
                     xmlns:l="clr-namespace:Ragnarok.Presentation.Control"
                     xmlns:conv="clr-namespace:Ragnarok.Presentation.Converter">
-    <conv:ImageConverter x:Key="imageConverter_" />
-    
+
     <!-- 文字を画像に変換するテンプレートです。-->
     <DataTemplate x:Key="ImageTemplate" DataType="BitmapImage">
         <Image Source="{Binding}" />
@@ -17,7 +16,7 @@
             <Image>
                 <Image.Source>
                     <FormatConvertedBitmap
-                        Source="{Binding Converter={StaticResource imageConverter_}}"
+                        Source="{Binding}"
                         DestinationFormat="Gray8" />
                 </Image.Source>
 
@@ -25,7 +24,7 @@
                      なってしまうため不透明度を設定します。-->
                 <Image.OpacityMask>
                     <ImageBrush
-                        ImageSource="{Binding Converter={StaticResource imageConverter_}}"
+                        ImageSource="{Binding}"
                         Opacity="0.5" />
                 </Image.OpacityMask>
             </Image>

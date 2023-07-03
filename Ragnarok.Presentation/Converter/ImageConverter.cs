@@ -21,6 +21,11 @@ namespace Ragnarok.Presentation.Converter
     public class ImageConverter : IValueConverter
     {
         /// <summary>
+        /// デフォルトのコンバーターを取得します。
+        /// </summary>
+        public static readonly ImageConverter Default = new();
+
+        /// <summary>
         /// URLから画像を読み込みます。
         /// </summary>
         public object Convert(object value, Type targetType,
