@@ -1,13 +1,11 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                    xmlns:t="clr-namespace:Ragnarok.Presentation"
-                    xmlns:l="clr-namespace:Ragnarok.Presentation.Control"
-                    xmlns:conv="clr-namespace:Ragnarok.Presentation.Converter">
+                    xmlns:t="clr-namespace:Ragnarok.Presentation">
 
     <!-- 文字を画像に変換するテンプレートです。-->
     <DataTemplate x:Key="ImageTemplate" DataType="BitmapImage">
-        <Image Source="{Binding}" />
+        <Image Source="{Binding TargetNullValue={x:Null}}" />
     </DataTemplate>
 
     <!-- 使用不可時の画像を表示するテンプレートです。-->
@@ -16,7 +14,7 @@
             <Image>
                 <Image.Source>
                     <FormatConvertedBitmap
-                        Source="{Binding}"
+                        Source="{Binding TargetNullValue={x:Null}}"
                         DestinationFormat="Gray8" />
                 </Image.Source>
 
@@ -24,7 +22,7 @@
                      なってしまうため不透明度を設定します。-->
                 <Image.OpacityMask>
                     <ImageBrush
-                        ImageSource="{Binding}"
+                        ImageSource="{Binding TargetNullValue={x:Null}}"
                         Opacity="0.5" />
                 </Image.OpacityMask>
             </Image>

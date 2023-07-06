@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
-using System.Net;
 using System.IO;
-using System.Text;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
-using System.Globalization;
 
 using Ragnarok.Net;
 
@@ -35,10 +33,9 @@ namespace Ragnarok.Presentation.Converter
             var uri = value as Uri;
             if (uri == null)
             {
-                var str = value as string;
-                if (str == null)
+                if (value is not string str)
                 {
-                    return (parameter as BitmapSource);
+                    return parameter as BitmapSource;
                 }
 
                 uri = new Uri(str, UriKind.RelativeOrAbsolute);

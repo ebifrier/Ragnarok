@@ -12,6 +12,7 @@
             <Image x:Name="image"
                    Stretch="None"
                    Source="{Binding SelectedImagePath,
+                                    TargetNullValue={x:Null},
                                     Converter={x:Static c:ImageConverter.Default},
                                     RelativeSource={RelativeSource TemplatedParent}}"
                    RenderOptions.BitmapScalingMode="HighQuality" />
