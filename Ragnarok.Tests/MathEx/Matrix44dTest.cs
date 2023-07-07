@@ -1,5 +1,4 @@
-﻿#if TESTS
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
@@ -104,4 +103,3 @@ namespace Ragnarok.MathEx.Tests
         }
     }
 }
-#endif

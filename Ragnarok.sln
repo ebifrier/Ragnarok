@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31105.61
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33801.468
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ragnarok", "Ragnarok\Ragnarok.csproj", "{04C19C5F-6501-4D4C-B269-EEE170675E0F}"
 EndProject
@@ -19,7 +19,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ragnarok.UpdatePack", "Ragn
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ragnarok.Presentation", "Ragnarok.Presentation\Ragnarok.Presentation.csproj", "{AEA662DB-7E22-4040-AE5C-F2DE541C0BE2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ragnarok.Xaml", "Ragnarok.Xaml\Ragnarok.Xaml.csproj", "{3FC18936-97D8-4B37-8031-097DBE847E9D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ragnarok.Xaml", "Ragnarok.Xaml\Ragnarok.Xaml.csproj", "{3FC18936-97D8-4B37-8031-097DBE847E9D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ragnarok.Calculator.Tests", "Ragnarok.Calculator.Tests\Ragnarok.Calculator.Tests.csproj", "{C08B6348-DBD4-4DBD-A565-34E10DD2C1D8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ragnarok.Tests", "Ragnarok.Tests\Ragnarok.Tests.csproj", "{5C8A9A17-F180-4A67-8431-94F4BFC49A7D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,6 +67,14 @@ Global
 		{3FC18936-97D8-4B37-8031-097DBE847E9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3FC18936-97D8-4B37-8031-097DBE847E9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3FC18936-97D8-4B37-8031-097DBE847E9D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C08B6348-DBD4-4DBD-A565-34E10DD2C1D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C08B6348-DBD4-4DBD-A565-34E10DD2C1D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C08B6348-DBD4-4DBD-A565-34E10DD2C1D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C08B6348-DBD4-4DBD-A565-34E10DD2C1D8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5C8A9A17-F180-4A67-8431-94F4BFC49A7D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C8A9A17-F180-4A67-8431-94F4BFC49A7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C8A9A17-F180-4A67-8431-94F4BFC49A7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C8A9A17-F180-4A67-8431-94F4BFC49A7D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
