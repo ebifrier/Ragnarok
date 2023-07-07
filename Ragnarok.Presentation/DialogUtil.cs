@@ -208,10 +208,10 @@ namespace Ragnarok.Presentation
                 var p = WPFUtil.GetMousePosition(dialog);
                 var screenPos = dialog.PointToScreen(p);
 
-                dialog.WindowStartupLocation = WindowStartupLocation.Manual;
-                dialog.Left = screenPos.X - (dialog.ActualWidth / 2);
-                dialog.Top = screenPos.Y - (dialog.ActualHeight / 2);
-                dialog.AdjustInDisplay();
+                dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                //dialog.Left = screenPos.X - (dialog.ActualWidth / 2);
+                //dialog.Top = screenPos.Y - (dialog.ActualHeight / 2);
+                //dialog.AdjustInDisplay();
             };
 
             return dialog.ShowDialog();
