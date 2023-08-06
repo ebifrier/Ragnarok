@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.IO;
-using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
 
@@ -46,18 +45,27 @@ namespace Ragnarok.Presentation.Converter
                 if (!uri.IsAbsoluteUri || uri.IsLoopback || uri.Scheme == "pack")
                 {
                     // ローカル環境ならそのまま読み込めます。
-                    return new BitmapImage(uri);
+                    var bitmap = new BitmapImage();
+
+                    bitmap.BeginInit();
+                    bitmap.UriSource = uri;
+                    bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                    bitmap.EndInit();
+                    bitmap.Freeze();
+                    return bitmap;
                 }
                 else if (uri.Scheme == "http")
                 {
                     // ネットワーク先にあるときは自前で読み込む必要があります。
                     var data = WebUtil.RequestHttp(uri.ToString(), null);
-                    var image = new BitmapImage();
+                    var bitmap = new BitmapImage();
 
-                    image.BeginInit();
-                    image.StreamSource = new MemoryStream(data);
-                    image.EndInit();
-                    return image;
+                    bitmap.BeginInit();
+                    bitmap.StreamSource = new MemoryStream(data);
+                    bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                    bitmap.EndInit();
+                    bitmap.Freeze();
+                    return bitmap;
                 }
                 else
                 {
