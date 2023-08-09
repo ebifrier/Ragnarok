@@ -1,16 +1,27 @@
-#if !MONO && false
+#if !MONO
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Diagnostics;
-using System.Threading;
 using Microsoft.Diagnostics.Runtime;
-using Microsoft.Diagnostics.Runtime.Utilities;
-using Microsoft.Diagnostics.Runtime.Utilities.Pdb;
 
 namespace Ragnarok.Utility
 {
+    /// <summary>
+    /// スレッドのスタックトレース情報を保持します。
+    /// </summary>
+    public sealed class PdbThread
+    {
+        /// <summary>
+        /// スレッドIDを取得します。
+        /// </summary>
+        public int ThreadID { get; set; }
+
+        /// <summary>
+        /// スレッドのスタックトレースを取得します。
+        /// </summary>
+        public List<string> StackTrace { get; set; }
+    }
+
     /// <summary>
     /// スタックトレースなどを表示してからロックします。
     /// </summary>
@@ -19,44 +30,39 @@ namespace Ragnarok.Utility
         /// <summary>
         /// 全スレッドのスタックトレースを取得します。
         /// </summary>
-        public static List<string> GetAllThreadStackTrace()
+        public static List<PdbThread> GetThreadList()
         {
             try
             {
-                var pid = Process.GetCurrentProcess().Id;
+                var pid = Environment.ProcessId;
+                using var dataTarget = DataTarget.CreateSnapshotAndAttach(pid);
+ 
+                var clrInfo = dataTarget.ClrVersions[0];
+                using var runtime = clrInfo.CreateRuntime();
 
-                using (var dataTarget = DataTarget.AttachToProcess(pid, 5000, AttachFlag.Passive))
-                {
-                    var clrInfo = dataTarget.ClrVersions[0];
-                    var runtime = clrInfo.CreateRuntime();
-
-                    var list = new List<string>();
-
-                    foreach (var thread in runtime.Threads)
+                return runtime.Threads
+                    .Where(_ => _?.IsAlive == true)
+                    .Select(_ => new PdbThread
                     {
-                        var trace = MakeStackTrace(thread);
-                        if (!trace.Any())
-                        {
-                            continue;
-                        }
-
-                        list.Add($"  thread {thread.ManagedThreadId}:");
-                        trace.ForEach(_ => list.Add(_));
-                    }
-
-                    return list;
-                }
+                        ThreadID = _.ManagedThreadId,
+                        StackTrace = MakeStackTrace(_),
+                    })
+                    .Where(_ => _.StackTrace.Any())
+                    .ToList();
             }
-            catch
+            catch (Exception ex)
             {
-                return new List<string>();
+                Log.ErrorException(ex,
+                    "全スレッドのスタックトレースの取得に失敗しました。");
+
+                return new List<PdbThread>();
             }
         }
 
         private static List<string> MakeStackTrace(ClrThread thread)
         {
-            return thread.StackTrace
-                .Select(_ => $"{_.InstructionPointer,10:x} {_.StackPointer,10:x} {_.DisplayString}")
+            return thread.EnumerateStackTrace()
+                .Select(_ => $"  at {_.InstructionPointer,10:x} {_.StackPointer,10:x} {_}")
                 .ToList();
         }
     }

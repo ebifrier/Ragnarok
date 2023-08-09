@@ -1,8 +1,7 @@
-﻿#if !MONO && false
+﻿#if !MONO
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using NUnit.Framework;
 
 namespace Ragnarok.Utility.Tests
@@ -11,10 +10,17 @@ namespace Ragnarok.Utility.Tests
     public sealed class PdbUtilityTest
     {
         [Test()]
-        public void GetAllThreadStackTraceTest()
+        public void GetThreadListTest()
         {
-            var traceList = PdbUtility.GetAllThreadStackTrace();
-            Assert.Greater(traceList.Count(), 0);
+            var threadList = PdbUtility.GetThreadList();
+            Assert.Greater(threadList.Count(), 0);
+
+            var found = threadList
+                .SelectMany(_ => _.StackTrace)
+                .Where(_ => _.Contains(nameof(GetThreadListTest)))
+                .Any();
+            Assert.True(found,
+                $"スタックトレースに{nameof(GetThreadListTest)}が見つかりませんでした。");
         }
     }
 }
