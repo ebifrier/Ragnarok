@@ -6,33 +6,21 @@ using System.Threading;
 namespace Ragnarok.Utility
 {
     /// <summary>
-    /// スタックトレースなどを表示してからロックします。
+    /// ロックの確保に失敗した場合は、全スレッドのスタックトレースを出力します。
     /// </summary>
     /// <remarks>
     /// 必ずusingと一緒に使ってください。
     /// </remarks>
     public sealed class DebugLock : IDisposable
     {
-        private static long idCounter = 0;
         private object locker;
-        private readonly long lockId;
-
-        /// <summary>
-        /// 次のIDを取得します。
-        /// </summary>
-        private static long GetNextId()
-        {
-            return Interlocked.Increment(ref idCounter);
-        }
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public DebugLock(object locker)
+        public DebugLock(object locker, double seconds = 30)
         {
-            this.lockId = GetNextId();
-
-            if (!Monitor.TryEnter(locker, TimeSpan.FromSeconds(30)))
+            if (!Monitor.TryEnter(locker, TimeSpan.FromSeconds(seconds)))
             {
                 WriteStackTrace();
 
@@ -62,21 +50,35 @@ namespace Ragnarok.Utility
         /// </summary>
         public static void WriteStackTrace()
         {
-            var traceList =
-#if !MONO && false
-                PdbUtility.GetAllThreadStackTrace();
+            Log.Error("{0}",
+                string.Join(Environment.NewLine, GetStackTrace()));
+        }
+
+        /// <summary>
+        /// 全スレッドのスタックトレースを表示用に取得します。
+        /// </summary>
+        public static List<string> GetStackTrace()
+        {
+            var threadList =
+#if !MONO
+                PdbUtility.GetThreadList();
 #else
-                new List<string>();
+                new List<PdbThread>();
 #endif
 
-            // ヘッダー
-            traceList.Insert(0, "DeadLock!!! stacktrace");
-            
-            // カレントスレッドの情報を追加します。
-            traceList.Add($"  thread {Environment.CurrentManagedThreadId}:");
-            traceList.Add(Environment.StackTrace);
+            var messageList = new List<string>
+            {
+                "DeadLock!!! stacktrace",
+                $"thread {Environment.CurrentManagedThreadId}:",
+                Environment.StackTrace,
+            };
 
-            Log.Error("{0}", string.Join(Environment.NewLine, traceList));
+            messageList.AddRange(threadList
+                .SelectMany(_ =>
+                    new List<string> { $"thread {_.ThreadID}:" }
+                    .Concat(_.StackTrace)));
+
+            return messageList;
         }
 
         /// <summary>
@@ -86,13 +88,11 @@ namespace Ragnarok.Utility
         {
             if (disposing)
             {
-                var tmpLocker = Interlocked.Exchange(ref this.locker, null);
-                if (tmpLocker == null)
+                var tmp = Interlocked.Exchange(ref this.locker, null);
+                if (tmp != null)
                 {
-                    Log.Error("Disposeが２度呼び出されています。");
+                    Monitor.Exit(tmp);
                 }
-
-                Monitor.Exit(tmpLocker);
             }
         }
     }
