@@ -42,7 +42,8 @@ namespace Ragnarok.Presentation.Converter
 
             try
             {
-                if (!uri.IsAbsoluteUri || uri.IsLoopback || uri.Scheme == "pack")
+                if (!uri.IsAbsoluteUri || uri.IsLoopback ||
+                    uri.Scheme == "pack" || uri.Scheme == "file")
                 {
                     // ローカル環境ならそのまま読み込めます。
                     var bitmap = new BitmapImage();
