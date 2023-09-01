@@ -10,13 +10,15 @@ using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using System.Windows.Threading;
 using System.Runtime.InteropServices;
+using NLog;
 
 using Ragnarok.MathEx;
 using Ragnarok.Utility;
-using NLog;
 
 namespace Ragnarok.Presentation
 {
+    using Utility;
+
     /// <summary>
     /// ユーティリティクラスです。
     /// </summary>
@@ -43,7 +45,8 @@ namespace Ragnarok.Presentation
             Initializer.Initialize();
 
             // NLog用の設定
-            NLog.Targets.Target.Register<Utility.NLogControlTarget>("WPFControl");
+            LogManager.Setup().SetupExtensions(builder =>
+                builder.RegisterTarget<NLogControlTarget>("WPFControl"));
 
             Util.SetPropertyChangedCaller(CallPropertyChanged);
             Util.SetColletionChangedCaller(CallCollectionChanged);
