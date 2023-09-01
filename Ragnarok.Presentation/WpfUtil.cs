@@ -13,6 +13,7 @@ using System.Runtime.InteropServices;
 
 using Ragnarok.MathEx;
 using Ragnarok.Utility;
+using NLog;
 
 namespace Ragnarok.Presentation
 {
