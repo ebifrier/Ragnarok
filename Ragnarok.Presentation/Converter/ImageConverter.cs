@@ -51,6 +51,7 @@ namespace Ragnarok.Presentation.Converter
                     bitmap.BeginInit();
                     bitmap.UriSource = uri;
                     bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                    bitmap.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
                     bitmap.EndInit();
                     bitmap.Freeze();
                     return bitmap;
@@ -64,6 +65,7 @@ namespace Ragnarok.Presentation.Converter
                     bitmap.BeginInit();
                     bitmap.StreamSource = new MemoryStream(data);
                     bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                    bitmap.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
                     bitmap.EndInit();
                     bitmap.Freeze();
                     return bitmap;
