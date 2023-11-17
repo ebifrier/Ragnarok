@@ -54,7 +54,7 @@ namespace Ragnarok.Utility
         private const string QuotedTextRegexPattern = @"\G\s*""((\""|[^""])*?)""";
         private const string TextRegexPattern = @"\G\s*(.*?)";
         private const string IntRegexPattern = @"\G\s*((\+|\-)?[0-9]+)";
-        private const string DoubleRegexPattern = @"\G\s*((\+|\-)?[0-9]+([.][0-9.]+)?)";
+        private const string DoubleRegexPattern = @"\G\s*([\+\-]?\d+(\.\d+([eE][-+]?\d+)?)?)";
 
         private static readonly Regex WordRegex = new(
             WordRegexPattern, RegexOptions.Compiled);
