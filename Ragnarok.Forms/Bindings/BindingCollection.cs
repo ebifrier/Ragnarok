@@ -10,7 +10,7 @@ namespace Ragnarok.Forms.Bindings
     /// </summary>
     public class BindingsCollection
     {
-        private readonly List<BindingData> bindingList = new List<BindingData>();
+        private readonly List<Binding> bindingList = new List<Binding>();
 
         /// <summary>
         /// コンストラクタ
@@ -126,12 +126,9 @@ namespace Ragnarok.Forms.Bindings
                            BindingPropertyChangedCallback propertyChanged = null,
                            CoerceBindingValueCallback coerceValue = null)
         {
-            var binding = new Binding
+            var binding = new Binding(bindableTarget, bindingPropertyName,
+                                      dataSource, dataSourcePropertyName)
             {
-                BindableTarget = bindableTarget,
-                BindingPropertyName = bindingPropertyName,
-                DataSource = dataSource,
-                DataSourcePropertyName = dataSourcePropertyName,
                 Mode = mode,
                 Converter = converter,
                 PropertyChanged = propertyChanged,
@@ -150,12 +147,9 @@ namespace Ragnarok.Forms.Bindings
                            BindingPropertyChangedCallback propertyChanged,
                            CoerceBindingValueCallback coerceValue = null)
         {
-            var binding = new Binding
+            var binding = new Binding(bindableTarget, bindingPropertyName,
+                                      dataSource, dataSourcePropertyName)
             {
-                BindableTarget = bindableTarget,
-                BindingPropertyName = bindingPropertyName,
-                DataSource = dataSource,
-                DataSourcePropertyName = dataSourcePropertyName,
                 Mode = mode,
                 StringFormat = format,
                 PropertyChanged = propertyChanged,
@@ -175,12 +169,9 @@ namespace Ragnarok.Forms.Bindings
                 throw new ArgumentNullException(nameof(binding));
             }
 
-            binding.Component = Component;
+            binding.Bind(Component);
 
-            var data = new BindingData(binding);
-            data.Bind();
-
-            this.bindingList.Add(data);
+            this.bindingList.Add(binding);
             return binding;
         }
     }
