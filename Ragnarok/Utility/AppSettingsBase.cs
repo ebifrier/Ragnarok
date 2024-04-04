@@ -786,9 +786,9 @@ namespace Ragnarok.Utility
         }
 
         /// <summary>
-        /// アセンブリから保存場所を設定します。
+        /// アセンブリからデフォルトの保存場所を取得します。
         /// </summary>
-        public void SetLocationFromAssembly(Assembly asm)
+        public static string GetDefaultDirectory(Assembly asm)
         {
             if (asm == null)
             {
@@ -808,8 +808,8 @@ namespace Ragnarok.Utility
             var basePath = Environment.GetFolderPath(
                 Environment.SpecialFolder.LocalApplicationData);
 
-            Location = Path.Combine(
-                basePath, asmcmp.Company, asmprd.Product, "user.config");
+            return Path.Combine(
+                basePath, asmcmp.Company, asmprd.Product);
         }
 
         /// <summary>
@@ -817,8 +817,9 @@ namespace Ragnarok.Utility
         /// </summary>
         protected AppSettingsBase()
         {
-            var asm = Assembly.GetEntryAssembly();
-            SetLocationFromAssembly(asm);
+            Location = Path.Combine(
+                GetDefaultDirectory(Assembly.GetEntryAssembly()),
+                "user.config");
 
             // プロパティ値をDictionaryで管理しているので、
             // デフォルト値がないと呼び出しに失敗することがあります。
