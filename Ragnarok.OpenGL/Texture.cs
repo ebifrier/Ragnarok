@@ -501,8 +501,6 @@ namespace Ragnarok.OpenGL
                         newImage, image, image.Width, image.Height);
                     result = CreateInternal(newImage, image.Size);
                 }
-
-                GC.Collect();
             }
             else
             {
