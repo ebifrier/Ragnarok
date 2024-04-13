@@ -5,13 +5,21 @@ using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Windowing.Common;
-using OpenTK.Windowing.Desktop;
 
 using Ragnarok.Utility;
 
 namespace Ragnarok.OpenGL
 {
     using Imaging = System.Drawing.Imaging;
+
+    /// <summary>
+    /// テクスチャの補完方法を指定します。
+    /// </summary>
+    public enum FilterType
+    {
+        Nearest,
+        Linear,
+    }
 
     /// <summary>
     /// OpenGL用のテクスチャを管理します。
@@ -166,6 +174,24 @@ namespace Ragnarok.OpenGL
         }
 
         /// <summary>
+        /// テクスチャ読み込み後にmipmapを作成するかどうかを取得または設定します。
+        /// </summary>
+        public bool UseMipmap
+        {
+            get;
+            set;
+        } = true;
+
+        /// <summary>
+        /// テクスチャの補完方法を取得または設定します。
+        /// </summary>
+        public FilterType FilterType
+        {
+            get;
+            set;
+        } = FilterType.Linear;
+
+        /// <summary>
         /// テクスチャ画像の幅をPixel数で取得します。
         /// </summary>
         /// <remarks>
@@ -313,6 +339,23 @@ namespace Ragnarok.OpenGL
             }
         }
 
+        private static int GetGLFilter(FilterType filter, bool useMipmap = false)
+        {
+            return filter switch
+            {
+                FilterType.Nearest =>
+                    (int)(useMipmap
+                        ? TextureMinFilter.NearestMipmapNearest
+                        : TextureMinFilter.Nearest),
+                FilterType.Linear =>
+                    (int)(useMipmap
+                        ? TextureMinFilter.LinearMipmapLinear
+                        : TextureMinFilter.Linear),
+                _ => throw new InvalidOperationException(
+                    $"{filter}: unknown enum value"),
+            };
+        }
+
         /// <summary>
         /// テクスチャデータの作成を行います。
         /// </summary>
@@ -323,8 +366,7 @@ namespace Ragnarok.OpenGL
         /// またこのメソッドには所有権を渡してもよいイメージオブジェクトを
         /// 与えてください。
         /// </remarks>
-        private bool CreateInternal(Bitmap image, Size originalSize,
-                                    bool toPremultipliedAlpha)
+        private bool CreateInternal(Bitmap image, Size originalSize)
         {
             uint texture = 0;
 
@@ -338,11 +380,6 @@ namespace Ragnarok.OpenGL
 
             try
             {
-                if (toPremultipliedAlpha)
-                {
-                    MakePremutipliedAlpha(bitmapData);
-                }
-
                 GLWrap.Wrap(() => GL.BindTexture(TextureTarget.Texture2D, texture));
 
                 // TexParameterのGenerateMipmapを使う場合
@@ -378,21 +415,21 @@ namespace Ragnarok.OpenGL
             GLWrap.Wrap(() => GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Clamp));
 
             // glGenerateMipmapを使う場合
-            if (GenerateMipmapSupportLevel == 2)
+            if (UseMipmap && GenerateMipmapSupportLevel == 2)
             {
                 GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
             }
             
-            if (GenerateMipmapSupportLevel > 0)
+            if (UseMipmap && GenerateMipmapSupportLevel > 0)
             {
                 // Mipmapを使う場合はフィルターを設定
-                GLWrap.Wrap(() => GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.LinearMipmapLinear));
-                GLWrap.Wrap(() => GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear));
+                GLWrap.Wrap(() => GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, GetGLFilter(FilterType, UseMipmap)));
+                GLWrap.Wrap(() => GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, GetGLFilter(FilterType)));
             }
             else
             {
-                GLWrap.Wrap(() => GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear));
-                GLWrap.Wrap(() => GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear));
+                GLWrap.Wrap(() => GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, GetGLFilter(FilterType)));
+                GLWrap.Wrap(() => GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, GetGLFilter(FilterType)));
             }
 
             GL.BindTexture(TextureTarget.Texture2D, 0);
@@ -405,43 +442,13 @@ namespace Ragnarok.OpenGL
             Height = image.Height;
             OriginalWidth = originalSize.Width;
             OriginalHeight = originalSize.Height;
-            IsPremultipliedAlpha = toPremultipliedAlpha;
             return true;
-        }
-
-        /// <summary>
-        /// α乗算済み画像データに変換します。
-        /// </summary>
-        private static void MakePremutipliedAlpha(BitmapData data)
-        {
-            if (data.PixelFormat != Imaging.PixelFormat.Format32bppArgb)
-            {
-                throw new InvalidOperationException(
-                    "対応していないピクセルフォーマットです。");
-            }
-
-            unsafe
-            {
-                for (var y = 0; y < data.Height; ++y)
-                {
-                    byte* p = (byte*)data.Scan0 + (data.Stride * y);
-
-                    for (var x = 0; x < data.Width; ++x)
-                    {
-                        var a = p[x * 4 + 0];
-
-                        p[x * 4 + 1] = (byte)((p[x * 4 + 1] * a + 255) >> 8);
-                        p[x * 4 + 2] = (byte)((p[x * 4 + 2] * a + 255) >> 8);
-                        p[x * 4 + 3] = (byte)((p[x * 4 + 3] * a + 255) >> 8);
-                    }
-                }
-            }
         }
 
         /// <summary>
         /// イメージデータからテクスチャの作成を行います。
         /// </summary>
-        public bool Create(Bitmap image, bool toPremultipliedAlpha = false)
+        public bool Create(Bitmap image)
         {
             if (image == null)
             {
@@ -483,7 +490,7 @@ namespace Ragnarok.OpenGL
                 {
                     DrawHighQuality(
                         newImage, image, image.Width, image.Height);
-                    result = CreateInternal(newImage, image.Size, toPremultipliedAlpha);
+                    result = CreateInternal(newImage, image.Size);
                 }
             }
             else
@@ -491,7 +498,7 @@ namespace Ragnarok.OpenGL
                 // imageの内容が変わる可能性があるため、ここでCloneしています。
                 using (var newImage = (Bitmap)image.Clone())
                 {
-                    result = CreateInternal(newImage, image.Size, toPremultipliedAlpha);
+                    result = CreateInternal(newImage, image.Size);
                 }
             }
 
@@ -531,7 +538,7 @@ namespace Ragnarok.OpenGL
         /// <summary>
         /// ファイルからテクスチャを作成します。
         /// </summary>
-        public bool Load(string filepath, bool toPremultipliedAlpha = false)
+        public bool Load(string filepath)
         {
             using (var image = new Bitmap(filepath))
             {
@@ -540,7 +547,7 @@ namespace Ragnarok.OpenGL
                     return false;
                 }
 
-                return Create(image, toPremultipliedAlpha);
+                return Create(image);
             }
         }
 
