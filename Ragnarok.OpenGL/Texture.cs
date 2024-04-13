@@ -457,28 +457,37 @@ namespace Ragnarok.OpenGL
 
             ValidateContext();
 
-            int[] textureMaxSize = { 0 };
-            GLWrap.Wrap(() => GL.GetInteger(GetPName.MaxTextureSize, textureMaxSize));
+            int[] textureMaxSizes = { 0 };
+            GLWrap.Wrap(() => GL.GetInteger(GetPName.MaxTextureSize, textureMaxSizes));
 
-            // 2のn乗値の中から、元の画像サイズを超えるような
-            // 一番小さな値を探します。
-            int targetWidth = textureMaxSize[0];
-            for (int size = 1; size <= textureMaxSize[0]; size *= 2)
+            var textureMaxSize = textureMaxSizes[0];
+            var targetWidth = image.Width;
+            var targetHeight = image.Height;
+
+            if (!Misc.HasExtension("GL_ARB_texture_non_power_of_two") ||
+                image.Width >= textureMaxSize ||
+                image.Height >= textureMaxSize)
             {
-                if (image.Width < size)
+                // 2のn乗値の中から、元の画像サイズを超えるような
+                // 一番小さな値を探します。
+                targetWidth = textureMaxSize;
+                for (int size = 1; size <= textureMaxSize; size *= 2)
                 {
-                    targetWidth = size;
-                    break;
+                    if (image.Width < size)
+                    {
+                        targetWidth = size;
+                        break;
+                    }
                 }
-            }
 
-            int targetHeight = textureMaxSize[0];
-            for (int size = 1; size <= textureMaxSize[0]; size *= 2)
-            {
-                if (image.Height < size)
+                targetHeight = textureMaxSize;
+                for (int size = 1; size <= textureMaxSize; size *= 2)
                 {
-                    targetHeight = size;
-                    break;
+                    if (image.Height < size)
+                    {
+                        targetHeight = size;
+                        break;
+                    }
                 }
             }
 
@@ -492,17 +501,14 @@ namespace Ragnarok.OpenGL
                         newImage, image, image.Width, image.Height);
                     result = CreateInternal(newImage, image.Size);
                 }
+
+                GC.Collect();
             }
             else
             {
-                // imageの内容が変わる可能性があるため、ここでCloneしています。
-                using (var newImage = (Bitmap)image.Clone())
-                {
-                    result = CreateInternal(newImage, image.Size);
-                }
+                result = CreateInternal(image, image.Size);
             }
 
-            GC.Collect();
             return result;
         }
 
