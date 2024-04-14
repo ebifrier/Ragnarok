@@ -22,7 +22,7 @@ namespace Ragnarok.OpenGL
             Size = DefaultFont.SizeInPoints;
             Color = Color.White;
             EdgeColor = Color.Black;
-            EdgeLength = 1.0;
+            EdgeLength = 0.0;
         }
 
         /// <summary>
