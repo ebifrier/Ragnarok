@@ -293,6 +293,8 @@ namespace Ragnarok.OpenGL
         {
             var bitmap = new Bitmap(bounds.Width, bounds.Height,
                                     PixelFormat.Format32bppArgb);
+            var backColor = EdgeLength > 0 ? EdgeColor : Color;
+            ClearBitmap(bitmap, Color.FromArgb(0, backColor));
 
             using (var g = Graphics.FromImage(bitmap))
             using (var path = new GraphicsPath())
@@ -327,15 +329,56 @@ namespace Ragnarok.OpenGL
                     edgePen.MiterLimit = 1;
 
                     // MONOで使えないため使わないようにする。
-                    //edgePath.Widen(pen, new Matrix());
+                    //edgePath.Widen(edgePen, new Matrix());
 
                     g.DrawPath(edgePen, edgePath);
                 }
-
+                
                 g.FillPath(brush, path);
             }
 
             return bitmap;
+        }
+
+        /// <summary>
+        /// 指定の色で<paramref name="image"/>を初期化します。
+        /// </summary>
+        /// <remarks>
+        /// g.Clear()では、アルファ値=0のカラーで初期化すると
+        /// 色情報部分がなぜか黒(0,0,0)になってしまいます。
+        /// 色情報を保存しつつ、アルファ値を0にするためには
+        /// このメソッドを使う必要があります。
+        /// </remarks>
+        private static void ClearBitmap(Bitmap image, Color color)
+        {
+            var data = image.LockBits(
+                new Rectangle(0, 0, image.Width, image.Height),
+                ImageLockMode.ReadWrite,
+                PixelFormat.Format32bppArgb);
+
+            try
+            {
+                unsafe
+                {
+                    var argb = color.ToArgb();
+                    var h = data.Height;
+                    var w = data.Width;
+
+                    for (var y = 0; y < h; ++y)
+                    {
+                        int* p = (int*)((byte*)data.Scan0 + (data.Stride * y));
+                        
+                        for (var x = 0; x < w; ++x)
+                        {
+                            p[x] = argb;
+                        }
+                    }
+                }
+            }
+            finally
+            {
+                image.UnlockBits(data);
+            }
         }
 
         /// <summary>
