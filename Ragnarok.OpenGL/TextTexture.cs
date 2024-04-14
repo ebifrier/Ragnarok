@@ -318,19 +318,18 @@ namespace Ragnarok.OpenGL
 
                 if (EdgeLength > 0.0)
                 {
-                    using (var pen = new Pen(EdgeColor, (float)EdgeLength))
-                    using (var path2 = (GraphicsPath)path.Clone())
-                    {
-                        // GraphicsPath.GetBoundsではPen.MiterLimitの値が考慮され
-                        // デフォルト値=10のままだと、GetBoundsの返り値が
-                        // 異様に大きな矩形になってしまいます。
-                        pen.MiterLimit = 1;
+                    using var edgePen = new Pen(EdgeColor, (float)EdgeLength);
+                    using var edgePath = (GraphicsPath)path.Clone();
 
-                        // MONOで使えないため使わないようにする。
-                        //path2.Widen(pen, new Matrix());
+                    // GraphicsPath.GetBoundsではPen.MiterLimitの値が考慮され
+                    // デフォルト値=10のままだと、GetBoundsの返り値が
+                    // 異様に大きな矩形になってしまいます。
+                    edgePen.MiterLimit = 1;
 
-                        g.DrawPath(pen, path2);
-                    }
+                    // MONOで使えないため使わないようにする。
+                    //edgePath.Widen(pen, new Matrix());
+
+                    g.DrawPath(edgePen, edgePath);
                 }
 
                 g.FillPath(brush, path);
