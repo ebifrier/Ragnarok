@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using OpenTK;
 using OpenTK.Graphics.OpenGL;
 
 using Ragnarok.Extra.Effect;
@@ -100,43 +99,43 @@ namespace Ragnarok.OpenGL
                 }
 
                 GL.Color4(Color.R, Color.G, Color.B, Color.A);
-                SetBlend();
+                SetBlend(Blend);
 
-                BindTexture();
+                BindTexture(Texture);
 
                 // 座標系の設定
                 GL.PushMatrix();
-                SetMatrix();
+                SetMatrix(Transform);
                 SetMesh();
                 GL.PopMatrix();
 
-                //UnbindTexture(gl);
+                UnbindTexture();
             }
         }
 
         /// <summary>
         /// 変換行列の設定を行います。
         /// </summary>
-        private void SetMatrix()
+        public static void SetMatrix(Matrix44d matrix)
         {
-            if (Transform == null)
+            if (matrix == null)
             {
                 GL.LoadIdentity();
             }
             else
             {
-                GL.LoadMatrix(Transform.AsColumnMajorArray);
+                GL.LoadMatrix(matrix.AsColumnMajorArray);
             }
         }
 
         /// <summary>
         /// テクスチャのバインドを行います。
         /// </summary>
-        private void BindTexture()
+        public static void BindTexture(Texture texture)
         {
-            if (Texture != null && Texture.TextureName != 0)
+            if (texture != null && texture.TextureName != 0)
             {
-                Texture.Bind();
+                texture.Bind();
             }
             else
             {
@@ -147,20 +146,17 @@ namespace Ragnarok.OpenGL
         /// <summary>
         /// テクスチャのアンバインドを行います。
         /// </summary>
-        private void UnbindTexture()
+        public static void UnbindTexture()
         {
-            if (Texture != null)
-            {
-                Texture.Unbind();
-            }
+            Texture.Unbind();
         }
 
         /// <summary>
         /// 描画のブレンド方法を指定します。
         /// </summary>
-        private void SetBlend()
+        public static void SetBlend(BlendType blend)
         {
-            switch (Blend)
+            switch (blend)
             {
                 case BlendType.Diffuse:
                     GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
