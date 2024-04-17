@@ -11,9 +11,13 @@ namespace Ragnarok.OpenGL
     public static class Initializer
     {
         /// <summary>
-        /// 最適なGPUを選択します。ウィンドウの作成前に呼んで下さい。
+        /// 優先的にNVIDIA GPUを使うようにします。ウィンドウの作成前に呼んで下さい。
         /// </summary>
-        public static void InitializeGraphics()
+        /// <remarks>
+        /// ノートパソコンなどでは内臓GPUは優先的に使われることがあるため
+        /// 外付けのNVIDIA GPUを優先的に使うようにします。
+        /// </remarks>
+        public static void PrioritizeNvidiaGPU()
         {
 #if !MONO
             try
