@@ -23,6 +23,11 @@ namespace Ragnarok.Presentation.Converter
         public static readonly ImageConverter Default = new();
 
         /// <summary>
+        /// デフォルトのキャッシュオプションを取得または設定します。
+        /// </summary>
+        public BitmapCacheOption CacheOption = BitmapCacheOption.OnLoad;
+
+        /// <summary>
         /// URLから画像を読み込みます。
         /// </summary>
         public object Convert(object value, Type targetType,
@@ -50,7 +55,7 @@ namespace Ragnarok.Presentation.Converter
 
                     bitmap.BeginInit();
                     bitmap.UriSource = uri;
-                    bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                    bitmap.CacheOption = CacheOption;
                     bitmap.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
                     bitmap.EndInit();
                     bitmap.Freeze();
@@ -64,7 +69,7 @@ namespace Ragnarok.Presentation.Converter
 
                     bitmap.BeginInit();
                     bitmap.StreamSource = new MemoryStream(data);
-                    bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                    bitmap.CacheOption = CacheOption;
                     bitmap.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
                     bitmap.EndInit();
                     bitmap.Freeze();
