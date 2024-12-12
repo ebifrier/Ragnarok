@@ -1,6 +1,5 @@
 
 using System;
-using System.Runtime.Serialization;
 
 namespace Codehaus.Parsec
 {
@@ -8,17 +7,12 @@ namespace Codehaus.Parsec
     /// This exception represents an illegal parser state that should not happen.
     /// This exception being thrown means a bug in the parser application.
     /// </summary>
-    [Serializable]
     public class IllegalParserStateException : SystemException
     {
         public IllegalParserStateException() { }
         public IllegalParserStateException(string msg) : base(msg) { }
         public IllegalParserStateException(string msg, Exception innerException)
             : base(msg, innerException) { }
-
-        protected IllegalParserStateException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {}
     }
 
 
@@ -31,8 +25,7 @@ namespace Codehaus.Parsec
     /// <author>  Ben Yu
     /// 
     /// </author>
-    [Serializable]
-    public class UserException : System.Exception
+    public class UserException : Exception
     {
         /// <summary> Get the index in the original source.</summary>
         public int Index
@@ -43,12 +36,6 @@ namespace Codehaus.Parsec
             }
         }
         private readonly int ind;
-
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            base.GetObjectData(info, context);
-            info.AddValue("Index", Index);
-        }
 
         public UserException() { }
         public UserException(string msg) : base(msg) { }
@@ -84,7 +71,7 @@ namespace Codehaus.Parsec
         /// </param>
         /// <param name="arg1">the chained exception.
         /// </param>
-        public UserException(int ind, string msg, System.Exception arg1)
+        public UserException(int ind, string msg, Exception arg1)
             : base(msg, arg1)
         {
             this.ind = ind;
@@ -95,15 +82,10 @@ namespace Codehaus.Parsec
         /// </param>
         /// <param name="cause">the chained exception.
         /// </param>
-        public UserException(int ind, System.Exception cause)
+        public UserException(int ind, Exception cause)
             : base("user exception", cause)
         {
             this.ind = ind;
-        }
-        protected UserException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-            this.ind = info.GetInt32("Index");
         }
     }
 }

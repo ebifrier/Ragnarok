@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
 
 namespace Ragnarok.Utility
@@ -10,7 +9,6 @@ namespace Ragnarok.Utility
     /// <summary>
     /// 解析失敗時に投げられる例外です。
     /// </summary>
-    [Serializable()]
     public class ParseException : Exception
     {
         /// <summary>
@@ -33,14 +31,6 @@ namespace Ragnarok.Utility
         /// </summary>
         public ParseException(string message, Exception innerException)
             : base(message, innerException)
-        {
-        }
-
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        protected ParseException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
         {
         }
     }

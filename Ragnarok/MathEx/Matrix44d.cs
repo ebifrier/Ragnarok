@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Runtime.Serialization;
 
 namespace Ragnarok.MathEx
 {
     /// <summary>
     /// 行列用の例外クラスです。
     /// </summary>
-    [Serializable()]
     public class MatrixException : Exception
     {
         /// <summary>
@@ -34,14 +30,6 @@ namespace Ragnarok.MathEx
         /// </summary>
         public MatrixException(string message, Exception innerException)
             : base(message, innerException)
-        {
-        }
-
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        protected MatrixException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
         {
         }
     }

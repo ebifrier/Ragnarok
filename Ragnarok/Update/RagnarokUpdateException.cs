@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
 
 namespace Ragnarok
 {
     /// <summary>
     /// Ragnarok.Update用の例外クラスです。
     /// </summary>
-    [Serializable()]
     public class RagnarokUpdateException : Exception
     {
         /// <summary>
@@ -31,14 +29,6 @@ namespace Ragnarok
         /// </summary>
         public RagnarokUpdateException(string message, Exception innerException)
             : base(message, innerException)
-        {
-        }
-
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        protected RagnarokUpdateException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
         {
         }
     }
