@@ -1,5 +1,4 @@
 using System;
-using System.Runtime.Serialization;
 
 namespace Codehaus.Parsec
 {
@@ -10,8 +9,7 @@ namespace Codehaus.Parsec
     /// 
     /// 2004-11-12
     /// </author>
-    [Serializable]
-    public class ParserException : System.SystemException
+    public class ParserException : SystemException
     {
         /// <summary> Get the parsing trace.</summary>
         /// <returns> the parsing trace
@@ -108,7 +106,7 @@ namespace Codehaus.Parsec
         public void WriteParsingTrace()
         {
             using (System.IO.StreamWriter temp_writer =
-                new System.IO.StreamWriter(System.Console.OpenStandardError(), System.Console.Error.Encoding))
+                new System.IO.StreamWriter(Console.OpenStandardError(), Console.Error.Encoding))
             {
                 temp_writer.AutoFlush = true;
                 WriteParsingTrace(temp_writer);
@@ -174,7 +172,7 @@ namespace Codehaus.Parsec
         /// <param name="pos">the position.
         /// </param>
         //UPGRADE_NOTE: Exception 'java.lang.Throwable' was converted to 'System.Exception' which has different behavior. "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1100'"
-        public ParserException(System.Exception cause, ParseError err, string mname, Pos pos)
+        public ParserException(Exception cause, ParseError err, string mname, Pos pos)
             : base(mname, cause)
         {
             this.err = err;
@@ -193,17 +191,12 @@ namespace Codehaus.Parsec
         /// <param name="pos">the position.
         /// </param>
         //UPGRADE_NOTE: Exception 'java.lang.Throwable' was converted to 'System.Exception' which has different behavior. "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1100'"
-        public ParserException(string message, System.Exception cause, ParseError err, string mname, Pos pos)
+        public ParserException(string message, Exception cause, ParseError err, string mname, Pos pos)
             : base(message, cause)
         {
             this.err = err;
             this.pos = pos;
             this.module = mname;
-        }
-
-        protected ParserException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
         }
     }
 }

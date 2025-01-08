@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Runtime.Serialization;
 
 namespace Ragnarok.Utility
 {
@@ -115,14 +114,6 @@ namespace Ragnarok.Utility
         /// コンストラクタ
         /// </summary>
         public MultiMap()
-        {
-        }
-
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        private MultiMap(SerializationInfo info, StreamingContext context)
-            : base(info, context)
         {
         }
     }
