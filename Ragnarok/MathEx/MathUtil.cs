@@ -245,6 +245,14 @@ namespace Ragnarok.MathEx
         }
 
         /// <summary>
+        /// a～bに値が収まるようにvを調整します。
+        /// </summary>
+        public static TimeSpan Between(TimeSpan a, TimeSpan b, TimeSpan v)
+        {
+            return Max(a, Min(v, b));
+        }
+
+        /// <summary>
         /// 内積を計算します。
         /// </summary>
         public static double InnerProduct(double x, double y)
