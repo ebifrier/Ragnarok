@@ -24,139 +24,28 @@ namespace Ragnarok.OpenGL
     /// <summary>
     /// OpenGL用のテクスチャを管理します。
     /// </summary>
-    public class Texture : IDisposable, ICachable
+    public class Texture : GLObject, ICachable
     {
-        private readonly static object textureListSync = new object();
-        private readonly static List<WeakReference> textureList = new List<WeakReference>();
-
-        /// <summary>
-        /// テクスチャリストに作成済みのテクスチャを追加します。
-        /// </summary>
-        private static void AddTexture(Texture texture)
-        {
-            if (texture == null)
-            {
-                throw new ArgumentNullException(nameof(texture));
-            }
-
-            lock (textureListSync)
-            {
-                textureList.Add(new WeakReference(texture));
-            }
-        }
-
-        /// <summary>
-        /// テクスチャリストからのテクスチャを削除します。
-        /// </summary>
-        private static void RemoveTexture(Texture texture)
-        {
-            if (texture == null)
-            {
-                throw new ArgumentNullException(nameof(texture));
-            }
-
-            lock (textureListSync)
-            {
-                textureList.RemoveIf(_ => _.Target == texture);
-            }
-        }
-
-        /// <summary>
-        /// 現在のコンテキストが持つテクスチャをすべて削除します。
-        /// </summary>
-        /// <remarks>
-        /// OpenGLの終了時に呼ばれます。
-        /// </remarks>
-        public static void DeleteAll(IGraphicsContext context)
-        {
-            lock (textureListSync)
-            {
-                for (int index = 0; index < textureList.Count; )
-                {
-                    var texture = textureList[index].Target as Texture;
-                    if (texture == null)
-                    {
-                        // 要素を削除したため、indexの更新は行いません。
-                        textureList.RemoveAt(index);
-                        continue;
-                    }
-
-                    if (texture.Context == context)
-                    {
-                        // テクスチャを削除
-                        texture.Destroy();
-
-                        // 要素を削除したため、indexの更新は行いません。
-                        textureList.RemoveAt(index);
-                        continue;
-                    }
-
-                    index += 1;
-                }
-            }
-        }
-        
-        private readonly IGraphicsContext context;
         private int glTexture;
-        private bool disposed;
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
         public Texture(IGraphicsContext context)
+            : base(context)
         {
-            this.context = context ??
-                throw new ArgumentNullException(nameof(context));
-            AddTexture(this);
-        }
-
-        /// <summary>
-        /// ファイナライザ
-        /// </summary>
-        ~Texture()
-        {
-            Dispose(false);
-        }
-
-        /// <summary>
-        /// テクスチャの削除を行います。
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        /// テクスチャの削除を行います。
-        /// </summary>
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!this.disposed)
-            {
-                Destroy();
-
-                if (disposing)
-                {
-                    RemoveTexture(this);
-                }
-
-                this.disposed = true;
-            }
         }
 
         /// <summary>
         /// テクスチャを削除します。
         /// </summary>
-        public void Destroy()
+        public override void Destroy()
         {
-            //ValidateContext();
-
             if (this.glTexture != 0)
             {
                 var texture = this.glTexture;
                 GLDisposer.AddTarget(
-                    this.context,
+                    Context,
                     () => GL.DeleteTexture(texture));
                 this.glTexture = 0;
             }
@@ -166,14 +55,6 @@ namespace Ragnarok.OpenGL
             OriginalWidth = 0;
             OriginalHeight = 0;
             IsPremultipliedAlpha = false;
-        }
-
-        /// <summary>
-        /// テクスチャ名のコンテキストを取得します。
-        /// </summary>
-        public IGraphicsContext Context
-        {
-            get { return this.context; }
         }
 
         /// <summary>
@@ -270,18 +151,6 @@ namespace Ragnarok.OpenGL
         public long ObjectSize
         {
             get { return (4 * Width * Height); }
-        }
-
-        /// <summary>
-        /// コンテキストの確認を行います。
-        /// </summary>
-        private void ValidateContext()
-        {
-            if (!this.context.IsCurrent)
-            {
-                throw new GLException(
-                    "OpenGLコンテキストが正しく設定れていません＞＜");
-            }
         }
 
         /// <summary>
