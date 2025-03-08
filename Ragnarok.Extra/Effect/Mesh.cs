@@ -37,15 +37,8 @@ namespace Ragnarok.Extra.Effect
                 throw new ArgumentNullException(nameof(indices));
             }
 
-            VertexArray = vertices.ToArray();
+            VertexArray = GenFloats(vertices, uvs).ToArray();
             IndexArray = indices.ToArray();
-            TextureUVArray = uvs.ToArray();
-
-            if (VertexArray.Length != TextureUVArray.Length)
-            {
-                throw new ArgumentException(
-                    "頂点配列とテクスチャUV配列の数が一致しません。");
-            }
 
             if (IndexArray.Length % 3 != 0)
             {
@@ -54,19 +47,23 @@ namespace Ragnarok.Extra.Effect
             }
         }
 
-        /// <summary>
-        /// 頂点配列を取得します。
-        /// </summary>
-        public Point3d[] VertexArray
+        private static IEnumerable<float> GenFloats(IEnumerable<Point3d> vertices,
+                                                    IEnumerable<Pointd> uvs)
         {
-            get;
-            private set;
+            foreach (var (vertex, uv) in vertices.Zip(uvs))
+            {
+                yield return (float)vertex.X;
+                yield return (float)vertex.Y;
+                yield return (float)vertex.Z;
+                yield return (float)uv.X;
+                yield return (float)uv.Y;
+            }
         }
 
         /// <summary>
-        /// テクスチャのUV配列を取得します。
+        /// 頂点配列を取得します。
         /// </summary>
-        public Pointd[] TextureUVArray
+        public float[] VertexArray
         {
             get;
             private set;
