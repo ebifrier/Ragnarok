@@ -97,7 +97,7 @@ namespace Ragnarok.OpenGL
         }
         
         private readonly IGraphicsContext context;
-        private uint glTexture;
+        private int glTexture;
         private bool disposed;
 
         /// <summary>
@@ -134,11 +134,7 @@ namespace Ragnarok.OpenGL
         {
             if (!this.disposed)
             {
-                if (TextureName != 0)
-                {
-                    TextureDisposer.AddDeleteTexture(this.context, TextureName);
-                    this.glTexture = 0;
-                }
+                Destroy();
 
                 if (disposing)
                 {
@@ -147,6 +143,29 @@ namespace Ragnarok.OpenGL
 
                 this.disposed = true;
             }
+        }
+
+        /// <summary>
+        /// テクスチャを削除します。
+        /// </summary>
+        public void Destroy()
+        {
+            //ValidateContext();
+
+            if (this.glTexture != 0)
+            {
+                var texture = this.glTexture;
+                GLDisposer.AddTarget(
+                    this.context,
+                    () => GL.DeleteTexture(texture));
+                this.glTexture = 0;
+            }
+
+            Width = 0;
+            Height = 0;
+            OriginalWidth = 0;
+            OriginalHeight = 0;
+            IsPremultipliedAlpha = false;
         }
 
         /// <summary>
@@ -160,7 +179,7 @@ namespace Ragnarok.OpenGL
         /// <summary>
         /// テクスチャ名(ID)を取得します。
         /// </summary>
-        public uint TextureName
+        public int TextureName
         {
             get { return this.glTexture; }
         }
@@ -368,7 +387,7 @@ namespace Ragnarok.OpenGL
         /// </remarks>
         private bool CreateInternal(Bitmap image, Size originalSize)
         {
-            uint texture = 0;
+            int texture = 0;
 
             GLWrap.Wrap(() => GL.GenTextures(1, out texture));
 
@@ -553,26 +572,6 @@ namespace Ragnarok.OpenGL
 
                 return Create(image);
             }
-        }
-
-        /// <summary>
-        /// テクスチャを削除します。
-        /// </summary>
-        public void Destroy()
-        {
-            ValidateContext();
-
-            if (this.glTexture != 0)
-            {
-                TextureDisposer.AddDeleteTexture(this.context, this.glTexture);
-                this.glTexture = 0;
-            }
-            
-            Width = 0;
-            Height = 0;
-            OriginalWidth = 0;
-            OriginalHeight = 0;
-            IsPremultipliedAlpha = false;
         }
     }
 }
