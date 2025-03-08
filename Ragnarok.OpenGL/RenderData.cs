@@ -197,7 +197,7 @@ namespace Ragnarok.OpenGL
             GL.Begin(BeginMode.Triangles);
 #endif
 
-            for (int i = 0; i < Mesh.IndexArray.Count; ++i)
+            for (int i = 0; i < Mesh.IndexArray.Length; ++i)
             {
                 var index = Mesh.IndexArray[i];
 

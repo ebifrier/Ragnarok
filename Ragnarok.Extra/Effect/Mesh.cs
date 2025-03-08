@@ -27,27 +27,27 @@ namespace Ragnarok.Extra.Effect
                 throw new ArgumentNullException(nameof(vertices));
             }
 
-            if (indices == null)
-            {
-                throw new ArgumentNullException(nameof(indices));
-            }
-
             if (uvs == null)
             {
                 throw new ArgumentNullException(nameof(uvs));
             }
 
-            VertexArray = vertices.ToList();
-            IndexArray = indices.ToList();
-            TextureUVArray = uvs.ToList();
+            if (indices == null)
+            {
+                throw new ArgumentNullException(nameof(indices));
+            }
 
-            if (VertexArray.Count != TextureUVArray.Count)
+            VertexArray = vertices.ToArray();
+            IndexArray = indices.ToArray();
+            TextureUVArray = uvs.ToArray();
+
+            if (VertexArray.Length != TextureUVArray.Length)
             {
                 throw new ArgumentException(
                     "頂点配列とテクスチャUV配列の数が一致しません。");
             }
 
-            if (IndexArray.Count % 3 != 0)
+            if (IndexArray.Length % 3 != 0)
             {
                 throw new ArgumentException(
                     "インデックス配列は三角形による指定をお願いします。");
@@ -57,7 +57,7 @@ namespace Ragnarok.Extra.Effect
         /// <summary>
         /// 頂点配列を取得します。
         /// </summary>
-        public List<Point3d> VertexArray
+        public Point3d[] VertexArray
         {
             get;
             private set;
@@ -66,7 +66,7 @@ namespace Ragnarok.Extra.Effect
         /// <summary>
         /// テクスチャのUV配列を取得します。
         /// </summary>
-        public List<Pointd> TextureUVArray
+        public Pointd[] TextureUVArray
         {
             get;
             private set;
@@ -75,7 +75,7 @@ namespace Ragnarok.Extra.Effect
         /// <summary>
         /// インデックス配列を取得します。
         /// </summary>
-        public List<int> IndexArray
+        public int[] IndexArray
         {
             get;
             private set;

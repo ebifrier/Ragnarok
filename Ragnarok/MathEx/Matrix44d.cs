@@ -326,17 +326,18 @@ namespace Ragnarok.MathEx
         {
             get
             {
-                var ar = new List<double>();
+                var ar = new double[Rows * Columns];
+                var index = 0;
 
                 for (int i = 0; i < Rows; i++)
                 {
                     for (int j = 0; j < Columns; j++)
                     {
-                        ar.Add(this[i, j]);
+                        ar[index++] = this[i, j];
                     }
                 }
 
-                return ar.ToArray();
+                return ar;
             }
         }
 
@@ -348,17 +349,18 @@ namespace Ragnarok.MathEx
         {
             get
             {
-                var ar = new List<double>();
+                var ar = new double[Rows * Columns];
+                var index = 0;
 
                 for (int j = 0; j < Columns; j++)
                 {
                     for (int i = 0; i < Rows; i++)
                     {
-                        ar.Add(this[i, j]);
+                        ar[index++] = this[i, j];
                     }
                 }
 
-                return ar.ToArray();
+                return ar;
             }
         }
         #endregion
