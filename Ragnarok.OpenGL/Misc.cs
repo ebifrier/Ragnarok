@@ -29,7 +29,7 @@ namespace Ragnarok.OpenGL
 
         private static int GetVersion()
         {
-            var version = GLWrap.Wrap(() => GL.GetString(StringName.Version));
+            var version = GLw.C(() => GL.GetString(StringName.Version));
             if (string.IsNullOrEmpty(version))
             {
                 return 0;
@@ -61,10 +61,10 @@ namespace Ragnarok.OpenGL
             try
             {
                 int count = 0;
-                GLWrap.Wrap(() => GL.GetInteger(GetPName.NumExtensions, out count));
+                GLw.C(() => GL.GetInteger(GetPName.NumExtensions, out count));
 
                 return Enumerable.Range(0, count)
-                    .Select(_ => GLWrap.Wrap(() =>
+                    .Select(_ => GLw.C(() =>
                         GL.GetString(StringNameIndexed.Extensions, _)))
                     .ToList();
             }

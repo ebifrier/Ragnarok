@@ -258,7 +258,7 @@ namespace Ragnarok.OpenGL
         {
             int texture = 0;
 
-            GLWrap.Wrap(() => GL.GenTextures(1, out texture));
+            GLw.C(() => GL.GenTextures(1, out texture));
 
             //  Lock the image bits (so that we can pass them to OGL).
             var bitmapData = image.LockBits(
@@ -268,19 +268,19 @@ namespace Ragnarok.OpenGL
 
             try
             {
-                GLWrap.Wrap(() => GL.BindTexture(TextureTarget.Texture2D, texture));
+                GLw.C(() => GL.BindTexture(TextureTarget.Texture2D, texture));
 
                 // TexParameterのGenerateMipmapを使う場合
                 if (GenerateMipmapSupportLevel == 1)
                 {
                     // glTexImage2Dの前にmipmapの使用設定を行う
                     //GLWrap.Wrap(() => GL.Hint(HintTarget.GenerateMipmapHint, HintMode.Nicest));
-                    GLWrap.Wrap(() => GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.GenerateMipmap, 1));
+                    GLw.C(() => GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.GenerateMipmap, 1));
                 }
 
                 //  テクスチャデータをセットします。
 #if true
-                GLWrap.Wrap(() => GL.TexImage2D(
+                GLw.C(() => GL.TexImage2D(
                     TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba8,
                     image.Width, image.Height, 0,
                     OpenTK.Graphics.OpenGL.PixelFormat.Bgra,
@@ -299,8 +299,8 @@ namespace Ragnarok.OpenGL
                 image.UnlockBits(bitmapData);
             }
 
-            GLWrap.Wrap(() => GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Clamp));
-            GLWrap.Wrap(() => GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Clamp));
+            GLw.C(() => GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Clamp));
+            GLw.C(() => GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Clamp));
 
             // glGenerateMipmapを使う場合
             if (UseMipmap && GenerateMipmapSupportLevel == 2)
@@ -311,13 +311,13 @@ namespace Ragnarok.OpenGL
             if (UseMipmap && GenerateMipmapSupportLevel > 0)
             {
                 // Mipmapを使う場合はフィルターを設定
-                GLWrap.Wrap(() => GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, GetGLFilter(FilterType, UseMipmap)));
-                GLWrap.Wrap(() => GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, GetGLFilter(FilterType)));
+                GLw.C(() => GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, GetGLFilter(FilterType, UseMipmap)));
+                GLw.C(() => GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, GetGLFilter(FilterType)));
             }
             else
             {
-                GLWrap.Wrap(() => GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, GetGLFilter(FilterType)));
-                GLWrap.Wrap(() => GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, GetGLFilter(FilterType)));
+                GLw.C(() => GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, GetGLFilter(FilterType)));
+                GLw.C(() => GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, GetGLFilter(FilterType)));
             }
 
             GL.BindTexture(TextureTarget.Texture2D, 0);
@@ -346,7 +346,7 @@ namespace Ragnarok.OpenGL
             ValidateContext();
 
             int[] textureMaxSizes = { 0 };
-            GLWrap.Wrap(() => GL.GetInteger(GetPName.MaxTextureSize, textureMaxSizes));
+            GLw.C(() => GL.GetInteger(GetPName.MaxTextureSize, textureMaxSizes));
 
             var textureMaxSize = textureMaxSizes[0];
             var targetWidth = image.Width;

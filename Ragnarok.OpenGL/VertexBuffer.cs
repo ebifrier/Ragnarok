@@ -51,17 +51,17 @@ namespace Ragnarok.OpenGL
                 {
                     if (vertexBufferName != 0)
                     {
-                        GL.DeleteBuffer(vertexBufferName);
+                        GLw.C(() => GL.DeleteBuffer(vertexBufferName));
                     }
 
                     if (indexBufferName != 0)
                     {
-                        GL.DeleteBuffer(indexBufferName);
+                        GLw.C(() => GL.DeleteBuffer(indexBufferName));
                     }
 
                     if (vertexArrayName != 0)
                     {
-                        GL.DeleteVertexArray(vertexArrayName);
+                        GLw.C(() => GL.DeleteVertexArray(vertexArrayName));
                     }
                 });
 
@@ -87,25 +87,25 @@ namespace Ragnarok.OpenGL
                 vertexName = GL.GenBuffer();
                 indexName = GL.GenBuffer();
 
-                GL.BindVertexArray(arrayName);
+                GLw.C(() => GL.BindVertexArray(arrayName));
 
-                GL.BindBuffer(BufferTarget.ArrayBuffer, vertexName);
-                GL.VertexAttribPointer(0, 3,
+                GLw.C(() => GL.BindBuffer(BufferTarget.ArrayBuffer, vertexName));
+                GLw.C(() => GL.VertexAttribPointer(0, 3,
                     VertexAttribPointerType.Float,
                     false,
                     5 * sizeof(float),
-                    0);
-                GL.EnableVertexAttribArray(0);
+                    0));
+                GLw.C(() => GL.EnableVertexAttribArray(0));
 
-                GL.VertexAttribPointer(1, 2,
+                GLw.C(() => GL.VertexAttribPointer(1, 2,
                     VertexAttribPointerType.Float,
                     false,
                     5 * sizeof(float),
-                    3 * sizeof(float));
-                GL.EnableVertexAttribArray(1);
+                    3 * sizeof(float)));
+                GLw.C(() => GL.EnableVertexAttribArray(1));
 
-                GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
-                GL.BindVertexArray(0);
+                GLw.C(() => GL.BindBuffer(BufferTarget.ArrayBuffer, 0));
+                GLw.C(() => GL.BindVertexArray(0));
 
                 Destroy();
                 this.glVertexArrayName = arrayName;
@@ -119,17 +119,17 @@ namespace Ragnarok.OpenGL
 
                 if (indexName != 0)
                 {
-                    GL.DeleteBuffer(indexName);
+                    GLw.C(() => GL.DeleteBuffer(indexName));
                 }
 
                 if (vertexName != 0)
                 {
-                    GL.DeleteBuffer(vertexName);
+                    GLw.C(() => GL.DeleteBuffer(vertexName));
                 }
 
                 if (arrayName != 0)
                 {
-                    GL.DeleteVertexArray(arrayName);
+                    GLw.C(() => GL.DeleteVertexArray(arrayName));
                 }
             }
         }
@@ -146,26 +146,29 @@ namespace Ragnarok.OpenGL
 
             ValidateContext();
 
-            GL.BindVertexArray(this.glVertexArrayName);
+            GLw.C(() => GL.BindVertexArray(this.glVertexArrayName));
 
-            GL.BindBuffer(BufferTarget.ArrayBuffer,
-                this.glVertexBufferName);
+            GLw.C(() => GL.BindBuffer(
+                BufferTarget.ArrayBuffer,
+                this.glVertexBufferName));
             if (mesh != null && !Equals(mesh, this.currentMesh))
             {
-                GL.BufferData(BufferTarget.ArrayBuffer,
+                GLw.C(() => GL.BufferData(
+                    BufferTarget.ArrayBuffer,
                     mesh.VertexArray.Length * sizeof(float),
                     mesh.VertexArray,
-                    BufferUsageHint.DynamicDraw);
+                    BufferUsageHint.DynamicDraw));
             }
 
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer,
-                this.glIndexBufferName);
+            GLw.C(() => GL.BindBuffer(
+                BufferTarget.ElementArrayBuffer,
+                this.glIndexBufferName));
             if (mesh != null && !Equals(mesh, this.currentMesh))
             {
-                GL.BufferData(BufferTarget.ElementArrayBuffer,
+                GLw.C(() => GL.BufferData(BufferTarget.ElementArrayBuffer,
                     mesh.IndexArray.Length * sizeof(int),
                     mesh.IndexArray,
-                    BufferUsageHint.DynamicDraw);
+                    BufferUsageHint.DynamicDraw));
             }
 
             this.currentMesh = mesh;
@@ -173,9 +176,9 @@ namespace Ragnarok.OpenGL
 
         public void EndMesh()
         {
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
-            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
-            GL.BindVertexArray(0);
+            GLw.C(() => GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0));
+            GLw.C(() => GL.BindBuffer(BufferTarget.ArrayBuffer, 0));
+            GLw.C(() => GL.BindVertexArray(0));
         }
     }
 }

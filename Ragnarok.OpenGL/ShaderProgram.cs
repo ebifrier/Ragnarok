@@ -88,7 +88,7 @@ namespace Ragnarok.OpenGL
             }
 
             ValidateContext();
-            GL.UseProgram(ProgramName);
+            GLw.C(() => GL.UseProgram(ProgramName));
         }
 
         /// <summary>
@@ -96,7 +96,7 @@ namespace Ragnarok.OpenGL
         /// </summary>
         public static void Unuse()
         {
-            GL.UseProgram(0);
+            GLw.C(() => GL.UseProgram(0));
         }
 
         /// <summary>
@@ -120,10 +120,10 @@ namespace Ragnarok.OpenGL
                     ShaderType.FragmentShader,
                     fragmentShaderSource);
 
-                programName = GL.CreateProgram();
-                GL.AttachShader(programName, vertexName);
-                GL.AttachShader(programName, fragmentName);
-                GL.LinkProgram(programName);
+                programName = GLw.C(GL.CreateProgram);
+                GLw.C(() => GL.AttachShader(programName, vertexName));
+                GLw.C(() => GL.AttachShader(programName, fragmentName));
+                GLw.C(() => GL.LinkProgram(programName));
                 GL.GetProgram(programName, GetProgramParameterName.LinkStatus, out int status);
                 if (status == 0)
                 {
@@ -134,8 +134,8 @@ namespace Ragnarok.OpenGL
 
                 // 先にDeleteShaderを呼んでおくと、
                 // DeleteProrgram時にシェーダーも同時に削除されるようになります。
-                GL.DeleteShader(vertexName);
-                GL.DeleteShader(fragmentName);
+                GLw.C(() => GL.DeleteShader(vertexName));
+                GLw.C(() => GL.DeleteShader(fragmentName));
 
                 Destroy();
                 ProgramName = programName;
@@ -148,17 +148,17 @@ namespace Ragnarok.OpenGL
 
                 if (fragmentName != 0)
                 {
-                    GL.DeleteShader(fragmentName);
+                    GLw.C(() => GL.DeleteShader(fragmentName));
                 }
 
                 if (vertexName != 0)
                 {
-                    GL.DeleteShader(vertexName);
+                    GLw.C(() => GL.DeleteShader(vertexName));
                 }
 
                 if (programName != 0)
                 {
-                    GL.DeleteProgram(programName);
+                    GLw.C(() => GL.DeleteProgram(programName));
                 }
                 
                 return false;
@@ -167,9 +167,9 @@ namespace Ragnarok.OpenGL
 
         private static int CreateShader(ShaderType shaderType, string source)
         {
-            var name = GL.CreateShader(shaderType);
-            GL.ShaderSource(name, source);
-            GL.CompileShader(name);
+            var name = GLw.C(() => GL.CreateShader(shaderType));
+            GLw.C(() => GL.ShaderSource(name, source));
+            GLw.C(() => GL.CompileShader(name));
 
             GL.GetShader(name, ShaderParameter.CompileStatus, out int status);
             if (status == 0)
@@ -184,19 +184,20 @@ namespace Ragnarok.OpenGL
 
         private static IEnumerable<UniformData> ListUniforms(int programName)
         {
-            GL.GetProgram(
+            int uniformCount = 0;
+            GLw.C(() => GL.GetProgram(
                 programName,
                 GetProgramParameterName.ActiveUniforms,
-                out int uniformCount);
+                out uniformCount));
 
             for (var i = 0; i < uniformCount; i++)
             {
-                GL.GetActiveUniform(
-                    programName,
-                    i, 256,
-                    out _, out _,
-                    out ActiveUniformType type,
-                    out string name);
+                ActiveUniformType type = ActiveUniformType.Bool;
+                string name = string.Empty;
+
+                GLw.C(() => GL.GetActiveUniform(
+                    programName, i, 256,
+                    out _, out _, out type, out name));
 
                 yield return new UniformData
                 {

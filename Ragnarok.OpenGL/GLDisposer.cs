@@ -107,7 +107,7 @@ namespace Ragnarok.OpenGL
         {
             lock (this.syncList)
             {
-                this.deleteList.ForEach(_ => _());
+                this.deleteList.ForEach(_ => GLw.C(() => _()));
                 this.deleteList.Clear();
             }
         }

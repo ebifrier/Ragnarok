@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using OpenTK;
 using OpenTK.Graphics.OpenGL;
 
 namespace Ragnarok.OpenGL
@@ -9,11 +8,16 @@ namespace Ragnarok.OpenGL
     /// <summary>
     /// OpenGLでエラーを扱うためのクラスです。
     /// </summary>
-    public static class GLWrap
+    public static class GLw
     {
-        public static void Wrap(Action action)
+        public static void C(Action action)
         {
-            action?.Invoke();
+            if (action == null)
+            {
+                throw new ArgumentNullException(nameof(action));
+            }
+
+            action();
 
             var err = GL.GetError();
             if (err != ErrorCode.NoError)
@@ -24,7 +28,7 @@ namespace Ragnarok.OpenGL
             }
         }
 
-        public static T Wrap<T>(Func<T> action)
+        public static T C<T>(Func<T> action)
         {
             if (action == null)
             {

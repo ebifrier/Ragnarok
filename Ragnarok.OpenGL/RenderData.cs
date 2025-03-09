@@ -150,11 +150,11 @@ namespace Ragnarok.OpenGL
                                    PrimitiveType primitiveType)
         {
             VertexBuffer.BeginMesh(mesh);
-            GL.DrawElements(
+            GLw.C(() => GL.DrawElements(
                 primitiveType,
                 mesh.IndexArray.Length,
                 DrawElementsType.UnsignedInt,
-                0);
+                0));
             VertexBuffer.EndMesh();
         }
 
@@ -166,7 +166,7 @@ namespace Ragnarok.OpenGL
             var loc = Shader.GetUniformLocation("projectionMatrix");
             if (loc >= 0)
             {
-                GL.UniformMatrix4(loc, false, ref projectionMatrix);
+                GLw.C(() => GL.UniformMatrix4(loc, false, ref projectionMatrix));
             }
         }
 
@@ -183,7 +183,7 @@ namespace Ragnarok.OpenGL
                 {
                     values[i] = (float)transform[i % 4, i / 4];
                 }
-                GL.UniformMatrix4(loc, 1, false, values);
+                GLw.C(() => GL.UniformMatrix4(loc, 1, false, values));
             }
         }
 
@@ -195,7 +195,7 @@ namespace Ragnarok.OpenGL
             var loc = Shader.GetUniformLocation("color");
             if (loc >= 0)
             {
-                GL.Uniform4(loc, color);
+                GLw.C(() => GL.Uniform4(loc, color));
             }
         }
 
