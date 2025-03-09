@@ -123,6 +123,16 @@ void main()
         }
 
         /// <summary>
+        /// テクスチャを描画するためのシェーダーを取得します。
+        /// </summary>
+        public ShaderProgram TexShaderProgram => this.texShaderProgram;
+
+        /// <summary>
+        /// 色を描画するためのシェーダーを取得します。
+        /// </summary>
+        public ShaderProgram ColorShaderProgram => this.colorShaderProgram;
+
+        /// <summary>
         /// Projection行列を取得します。
         /// </summary>
         public Matrix4 ProjectionMatrix
