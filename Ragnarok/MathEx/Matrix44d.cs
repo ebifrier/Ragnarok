@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
 
 namespace Ragnarok.MathEx
 {
@@ -285,6 +286,34 @@ namespace Ragnarok.MathEx
         }
 
         #region Row/Column major
+        /// <summary>
+        /// 矩形からその変換行列を作成します。
+        /// </summary>
+        public static Matrix44d FromRectangle(Rectangle rect)
+        {
+            var matrix = new Matrix44d();
+            matrix.Translate(
+                rect.Left + rect.Width / 2,
+                rect.Top + rect.Height / 2,
+                0.0);
+            matrix.Scale(rect.Width, rect.Height, 1.0);
+            return matrix;
+        }
+
+        /// <summary>
+        /// 矩形からその変換行列を作成します。
+        /// </summary>
+        public static Matrix44d FromRectangle(RectangleF rect)
+        {
+            var matrix = new Matrix44d();
+            matrix.Translate(
+                rect.Left + rect.Width / 2,
+                rect.Top + rect.Height / 2,
+                0.0);
+            matrix.Scale(rect.Width, rect.Height, 1.0);
+            return matrix;
+        }
+
         /// <summary>
         /// 行優先の配列から行列を作成します。
         /// </summary>

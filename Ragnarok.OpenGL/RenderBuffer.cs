@@ -171,25 +171,6 @@ void main()
         }
 
         /// <summary>
-        /// RectangleF型を同じ変換を行う行列に直します。
-        /// </summary>
-        /// <param name="transform">
-        /// 事前に積算する基準となる行列です。
-        /// </param>
-        private static Matrix44d ToMatrix(RectangleF bounds, Matrix44d transform)
-        {
-            var m = transform != null
-                ? transform.Clone()
-                : new Matrix44d();
-            m.Translate(
-                bounds.Left + bounds.Width / 2,
-                bounds.Top + bounds.Height / 2,
-                0.0);
-            m.Scale(bounds.Width, bounds.Height, 1.0);
-            return m;
-        }
-
-        /// <summary>
         /// 描画オブジェクトを追加します。
         /// </summary>
         public void AddRender(RenderData data)
@@ -316,7 +297,7 @@ void main()
                 Color = ncolor,
                 Mesh = mesh ?? Mesh.Default,
                 PrimitiveType = primitiveType,
-                Transform = ToMatrix(bounds, transform),
+                Transform = transform * Matrix44d.FromRectangle(bounds),
                 ZOrder = zorder,
                 Shader = texture != null
                     ? this.texShaderProgram
@@ -339,7 +320,7 @@ void main()
 
             var alphaByte = (byte)Math.Min(256 * opacity, 255);
             var color = Color.FromArgb(alphaByte, Color.White);
-            var transform2 = ToMatrix(bounds, transform);
+            var transform2 = transform * Matrix44d.FromRectangle(bounds);
 
             AddRender(blend, transform2, zorder,
                 color: color,
