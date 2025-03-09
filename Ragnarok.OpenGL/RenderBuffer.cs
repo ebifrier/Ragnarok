@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using OpenTK.Mathematics;
+using OpenTK.Graphics.OpenGL;
+using OpenTK.Windowing.Common;
 
 using Ragnarok.Extra.Effect;
 using Ragnarok.MathEx;
@@ -69,7 +72,9 @@ namespace Ragnarok.OpenGL
         /// </param>
         private static Matrix44d ToMatrix(RectangleF bounds, Matrix44d transform)
         {
-            var m = (transform != null ? transform.Clone() : new Matrix44d());
+            var m = transform != null
+                ? transform.Clone()
+                : new Matrix44d();
             m.Translate(
                 bounds.Left + bounds.Width / 2,
                 bounds.Top + bounds.Height / 2,
@@ -79,32 +84,9 @@ namespace Ragnarok.OpenGL
         }
 
         /// <summary>
-        /// 描画用リストを追加します。
-        /// </summary>
-        public void AddRenderAction(Action renderAction, double zorder)
-        {
-            if (renderAction == null)
-            {
-                throw new ArgumentNullException(nameof(renderAction));
-            }
-
-            lock (this.syncObject)
-            {
-                // ZOrder値に下駄をはかせます。
-                var data = new RenderData
-                {
-                    RenderAction = renderAction,
-                    ZOrder = BaseZOrder + zorder,
-                };
-
-                this.dataList.Add(data);
-            }
-        }
-
-        /// <summary>
         /// 描画オブジェクトを追加します。
         /// </summary>
-        private void AddRenderInternal(RenderData data)
+        public void AddRender(RenderData data)
         {
             if (data == null)
             {
@@ -121,93 +103,107 @@ namespace Ragnarok.OpenGL
         }
 
         /// <summary>
-        /// 描画オブジェクトを追加します。
+        /// 描画用リストを追加します。
         /// </summary>
-        public void AddRender(Texture texture, BlendType blend, Color color,
-                              Mesh mesh, Matrix44d transform, double zorder)
+        public void AddRenderAction(RenderAction renderAction, double zorder)
         {
-            if (mesh == null)
+            if (renderAction == null)
             {
-                throw new ArgumentNullException(nameof(mesh));
+                throw new ArgumentNullException(nameof(renderAction));
             }
 
-            AddRenderInternal(new RenderData
+            AddRender(new RenderData
+            {
+                RenderAction = renderAction,
+                Transform = new Matrix44d(),
+                Mesh = Mesh.Default,
+                ZOrder = zorder,
+                Shader = this.colorShaderProgram,
+                VertexBuffer = this.vertexBuffer,
+            });
+        }
+
+        /// <summary>
+        /// 描画オブジェクトを追加します。
+        /// </summary>
+        public void AddRender(BlendType blend,
+                              Matrix44d transform,
+                              double zorder,
+                              Color? color = null,
+                              Texture texture = null,
+                              Mesh mesh = null,
+                              PrimitiveType primitiveType = PrimitiveType.Triangles,
+                              double? opacity = null)
+        {
+            if (texture != null && texture.TextureName == 0)
+            {
+                throw new ArgumentException(
+                    "invalid argument", nameof(texture));
+            }
+
+            var ncolor = color ?? Color.White;
+            if (opacity != null)
+            {
+                var alpha = (byte)Math.Min(ncolor.A * opacity.Value, 255);
+                ncolor = Color.FromArgb(alpha, ncolor);
+            }
+
+            AddRender(new RenderData
             {
                 Texture = texture,
                 Blend = blend,
-                Color = color,
-                Mesh = mesh,
+                Color = ncolor,
+                Mesh = mesh ?? Mesh.Default,
+                PrimitiveType = primitiveType,
                 Transform = transform,
                 ZOrder = zorder,
+                Shader = texture != null
+                    ? this.texShaderProgram
+                    : this.colorShaderProgram,
+                VertexBuffer = this.vertexBuffer,
             });
         }
 
         /// <summary>
         /// 描画オブジェクトを追加します。
         /// </summary>
-        public void AddRender(Texture texture, BlendType blend, Color color,
-                              Matrix44d transform, double zorder)
+        public void AddRender(BlendType blend,
+                              RectangleF bounds,
+                              Matrix44d transform,
+                              double zorder,
+                              Color? color = null,
+                              Texture texture = null,
+                              Mesh mesh = null,
+                              PrimitiveType primitiveType = PrimitiveType.Triangles,
+                              double? opacity = null)
         {
-            AddRenderInternal(new RenderData
+            if (texture != null && texture.TextureName == 0)
             {
-                Mesh = DefaultMesh,
-                Texture = texture,
-                Blend = blend,
-                Color = color,
-                Transform = transform,
-                ZOrder = zorder,
-            });
-        }
-
-        /// <summary>
-        /// 描画オブジェクトを追加します。
-        /// </summary>
-        public void AddRender(BlendType blend, Color color, Mesh mesh,
-                              Matrix44d transform, double zorder)
-        {
-            if (mesh == null)
-            {
-                throw new ArgumentNullException(nameof(mesh));
+                throw new ArgumentException(
+                    "invalid argument", nameof(texture));
             }
 
-            AddRenderInternal(new RenderData
+            var ncolor = color ?? Color.White;
+            if (opacity != null)
             {
-                Blend = blend,
-                Color = color,
-                Mesh = mesh,
-                Transform = transform,
-                ZOrder = zorder,
-            });
-        }
+                var alpha = (byte)Math.Min(ncolor.A * opacity.Value, 255);
+                ncolor = Color.FromArgb(alpha, ncolor);
+            }
 
-        /// <summary>
-        /// 描画オブジェクトを追加します。
-        /// </summary>
-        public void AddRender(BlendType blend, Color color,
-                              Matrix44d transform, double zorder)
-        {
-            AddRenderInternal(new RenderData
+            AddRender(new RenderData
             {
-                Mesh = DefaultMesh,
+                Texture = texture,
                 Blend = blend,
-                Color = color,
-                Transform = transform,
+                Color = ncolor,
+                Mesh = mesh ?? Mesh.Default,
+                PrimitiveType = primitiveType,
+                Transform = ToMatrix(bounds, transform),
                 ZOrder = zorder,
+                Shader = texture != null
+                    ? this.texShaderProgram
+                    : this.colorShaderProgram,
+                VertexBuffer = this.vertexBuffer,
             });
-        }
-
-        /// <summary>
-        /// 描画オブジェクトを追加します。
-        /// </summary>
-        public void AddRender(BlendType blend, Color color,
-                              RectangleF bounds, Matrix44d transform,
-                              double zorder, double opacity = 1.0)
-        {
-            var alphaByte = (byte)Math.Min(color.A * opacity, 255);
-            var color2 = Color.FromArgb(alphaByte, color);
-            var transform2 = ToMatrix(bounds, transform);
-
-            AddRender(blend, color2, transform2, zorder);
         }
 
         /// <summary>
@@ -226,38 +222,9 @@ namespace Ragnarok.OpenGL
             var color = Color.FromArgb(alphaByte, Color.White);
             var transform2 = ToMatrix(bounds, transform);
 
-            AddRender(texture, blend, color, transform2, zorder);
-        }
-
-        /// <summary>
-        /// 描画オブジェクトを追加します。
-        /// </summary>
-        public void AddRender(Texture texture, BlendType blend,
-                              RectangleF bounds, Matrix44d transform,
-                              Mesh mesh, double zorder,
-                              double opacity = 1.0)
-        {
-            if (texture == null || texture.TextureName == 0)
-            {
-                return;
-            }
-
-            var alphaByte = (byte)Math.Min(256 * opacity, 255);
-            var color = Color.FromArgb(alphaByte, Color.White);
-            var transform2 = ToMatrix(bounds, transform);
-
-            AddRender(texture, blend, color, mesh, transform2, zorder);
-        }
-
-        /// <summary>
-        /// 描画オブジェクトを追加します。
-        /// </summary>
-        public void AddRender(BlendType blend, RectangleF bounds,
-                              Matrix44d transform, Color color, double zorder)
-        {
-            var transform2 = ToMatrix(bounds, transform);
-
-            AddRender(blend, color, transform2, zorder);
+            AddRender(blend, transform2, zorder,
+                color: color,
+                texture: texture);
         }
     }
 }
