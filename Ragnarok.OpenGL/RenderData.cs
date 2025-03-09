@@ -42,7 +42,7 @@ namespace Ragnarok.OpenGL
         {
             get;
             set;
-        }
+        } = BlendType.Diffuse;
 
         /// <summary>
         /// ブレンドカラーを取得または設定します。
@@ -51,7 +51,7 @@ namespace Ragnarok.OpenGL
         {
             get;
             set;
-        }
+        } = Color.White;
 
         /// <summary>
         /// メッシュを取得または設定します。
@@ -60,7 +60,7 @@ namespace Ragnarok.OpenGL
         {
             get;
             set;
-        }
+        } = Mesh.Default;
 
         /// <summary>
         /// 描画時の基本型を取得または設定します。
@@ -69,7 +69,7 @@ namespace Ragnarok.OpenGL
         {
             get;
             set;
-        }
+        } = PrimitiveType.Triangles;
 
         /// <summary>
         /// 変換行列を取得または設定します。
@@ -78,7 +78,7 @@ namespace Ragnarok.OpenGL
         {
             get;
             set;
-        }
+        } = Matrix44d.Identity;
 
         /// <summary>
         /// シェーダーを取得または設定します。
