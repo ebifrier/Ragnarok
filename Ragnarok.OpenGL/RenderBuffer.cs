@@ -250,7 +250,8 @@ void main()
                               Color? color = null,
                               Mesh mesh = null,
                               PrimitiveType primitiveType = PrimitiveType.Triangles,
-                              double? opacity = null)
+                              double? opacity = null,
+                              ShaderProgram shader = null)
         {
             if (renderAction == null)
             {
@@ -273,7 +274,7 @@ void main()
                 PrimitiveType = primitiveType,
                 Transform = transform,
                 ZOrder = zorder,
-                Shader = this.colorShaderProgram,
+                Shader = shader ?? this.colorShaderProgram,
                 VertexBuffer = this.vertexBuffer,
             });
         }
@@ -300,7 +301,8 @@ void main()
                               Texture texture = null,
                               Mesh mesh = null,
                               PrimitiveType primitiveType = PrimitiveType.Triangles,
-                              double? opacity = null)
+                              double? opacity = null,
+                              ShaderProgram shader = null)
         {
             if (texture != null && texture.TextureName == 0)
             {
@@ -324,7 +326,7 @@ void main()
                 PrimitiveType = primitiveType,
                 Transform = transform,
                 ZOrder = zorder,
-                Shader = GetShader(blend, texture),
+                Shader = shader ?? GetShader(blend, texture),
                 VertexBuffer = this.vertexBuffer,
             });
         }
@@ -340,7 +342,8 @@ void main()
                               Texture texture = null,
                               Mesh mesh = null,
                               PrimitiveType primitiveType = PrimitiveType.Triangles,
-                              double? opacity = null)
+                              double? opacity = null,
+                              ShaderProgram shader = null)
         {
             if (texture != null && texture.TextureName == 0)
             {
@@ -364,7 +367,7 @@ void main()
                 PrimitiveType = primitiveType,
                 Transform = transform * Matrix44d.FromRectangle(bounds),
                 ZOrder = zorder,
-                Shader = GetShader(blend, texture),
+                Shader = shader ?? GetShader(blend, texture),
                 VertexBuffer = this.vertexBuffer,
             });
         }
