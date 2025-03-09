@@ -24,6 +24,12 @@ namespace Ragnarok.OpenGL
         private int glIndexBufferName;
 
         /// <summary>
+        /// 頂点データを不用意に変更しないようにするため、
+        /// すでに設定したMeshを記憶するようにしています。
+        /// </summary>
+        private Mesh currentMesh;
+
+        /// <summary>
         /// コンストラクタ
         /// </summary>
         public VertexBuffer(IGraphicsContext context)
@@ -59,6 +65,7 @@ namespace Ragnarok.OpenGL
                     }
                 });
 
+            this.currentMesh = null;
             this.glVertexBufferName = 0;
             this.glIndexBufferName = 0;
             this.glVertexArrayName = 0;
@@ -127,7 +134,7 @@ namespace Ragnarok.OpenGL
             }
         }
 
-        public unsafe void BeginMesh(Mesh mesh)
+        public void BeginMesh(Mesh mesh)
         {
             if (this.glVertexArrayName == 0 ||
                 this.glVertexBufferName == 0 ||
@@ -141,17 +148,27 @@ namespace Ragnarok.OpenGL
 
             GL.BindVertexArray(this.glVertexArrayName);
 
-            GL.BindBuffer(BufferTarget.ArrayBuffer, this.glVertexBufferName);
-            GL.BufferData(BufferTarget.ArrayBuffer,
-                mesh.VertexArray.Length * sizeof(float),
-                mesh.VertexArray,
-                BufferUsageHint.DynamicDraw);
+            GL.BindBuffer(BufferTarget.ArrayBuffer,
+                this.glVertexBufferName);
+            if (mesh != null && !Equals(mesh, this.currentMesh))
+            {
+                GL.BufferData(BufferTarget.ArrayBuffer,
+                    mesh.VertexArray.Length * sizeof(float),
+                    mesh.VertexArray,
+                    BufferUsageHint.DynamicDraw);
+            }
 
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer, this.glIndexBufferName);
-            GL.BufferData(BufferTarget.ElementArrayBuffer,
-                mesh.IndexArray.Length * sizeof(int),
-                mesh.IndexArray,
-                BufferUsageHint.DynamicDraw);
+            GL.BindBuffer(BufferTarget.ElementArrayBuffer,
+                this.glIndexBufferName);
+            if (mesh != null && !Equals(mesh, this.currentMesh))
+            {
+                GL.BufferData(BufferTarget.ElementArrayBuffer,
+                    mesh.IndexArray.Length * sizeof(int),
+                    mesh.IndexArray,
+                    BufferUsageHint.DynamicDraw);
+            }
+
+            this.currentMesh = mesh;
         }
 
         public void EndMesh()
