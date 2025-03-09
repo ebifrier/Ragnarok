@@ -116,8 +116,14 @@ namespace Ragnarok.OpenGL
         public void Render(Matrix4 projectionMatrix)
         {
             SetBlend(Blend);
-            Shader.Use();
-            SetUniform(Shader, projectionMatrix);
+
+            if (Shader != null)
+            {
+                Shader.Use();
+                SetProjectionMatrix(projectionMatrix);
+                SetModelViewMatrix(Transform);
+                SetUniformColor(Color);
+            }
 
             if (Texture != null && Texture.TextureName != 0)
             {
@@ -153,32 +159,43 @@ namespace Ragnarok.OpenGL
         }
 
         /// <summary>
-        /// シェーダーにuniform変数を設定します。
+        /// シェーダーのuniform変数にProjection行列を設定します。
         /// </summary>
-        private void SetUniform(ShaderProgram shader,
-                                Matrix4 projectionMatrix)
+        public void SetProjectionMatrix(Matrix4 projectionMatrix)
         {
-            var loc = shader.GetUniformLocation("projectionMatrix");
+            var loc = Shader.GetUniformLocation("projectionMatrix");
             if (loc >= 0)
             {
                 GL.UniformMatrix4(loc, false, ref projectionMatrix);
             }
+        }
 
-            loc = shader.GetUniformLocation("modelViewMatrix");
+        /// <summary>
+        /// シェーダーのuniform変数にModelView行列を設定します。
+        /// </summary>
+        public void SetModelViewMatrix(Matrix44d transform)
+        {
+            var loc = Shader.GetUniformLocation("modelViewMatrix");
             if (loc >= 0)
             {
                 var values = new float[16];
                 for (var i = 0; i < 16; ++i)
                 {
-                    values[i] = (float)Transform[i % 4, i / 4];
+                    values[i] = (float)transform[i % 4, i / 4];
                 }
                 GL.UniformMatrix4(loc, 1, false, values);
             }
+        }
 
-            loc = shader.GetUniformLocation("color");
+        /// <summary>
+        /// シェーダーに描画色を設定します。
+        /// </summary>
+        public void SetUniformColor(Color color)
+        {
+            var loc = Shader.GetUniformLocation("color");
             if (loc >= 0)
             {
-                GL.Uniform4(loc, Color);
+                GL.Uniform4(loc, color);
             }
         }
 
