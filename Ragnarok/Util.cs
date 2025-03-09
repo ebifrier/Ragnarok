@@ -11,8 +11,6 @@ using System.Reflection;
 
 namespace Ragnarok
 {
-    using Ragnarok.Utility;
-
     /// <summary>
     /// PropertyChangedイベントを呼ぶメソッド型です。
     /// </summary>
@@ -561,6 +559,24 @@ namespace Ragnarok
         public static string ReadToEnd(Stream stream, Encoding encoding)
         {
             using var reader = new StreamReader(stream, encoding);
+            return reader.ReadToEnd();
+        }
+
+        /// <summary>
+        /// 埋め込みリソースからテキストを取得します。
+        /// </summary>
+        /// <remarks>
+        /// <paramref name="resourcePath"/>には名前空間を含めたパスを指定してください。
+        /// 例えば、"Ragnarok.Util.TestResource.txt" などになります。
+        /// <paramref name="encoding"/>は指定がなければUTF8になります。
+        /// </remarks>
+        public static string GetResourceString(Assembly asm,
+                                               string resourcePath,
+                                               Encoding encoding = null)
+        {
+            using var stream = asm.GetManifestResourceStream(resourcePath);
+            using var reader = new StreamReader(
+                stream, encoding ?? Encoding.UTF8);
             return reader.ReadToEnd();
         }
 
