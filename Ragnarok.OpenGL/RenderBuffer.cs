@@ -202,12 +202,14 @@ void main()
         /// <summary>
         /// 描画用リストを追加します。
         /// </summary>
-        public void AddRenderAction(RenderAction renderAction,
-                                    BlendType blend,
-                                    Matrix44d transform,
-                                    double zorder,
-                                    Color? color = null,
-                                    double? opacity = null)
+        public void AddRender(RenderAction renderAction,
+                              BlendType blend,
+                              Matrix44d transform,
+                              double zorder,
+                              Color? color = null,
+                              Mesh mesh = null,
+                              PrimitiveType primitiveType = PrimitiveType.Triangles,
+                              double? opacity = null)
         {
             if (renderAction == null)
             {
@@ -226,7 +228,9 @@ void main()
                 RenderAction = renderAction,
                 Blend = blend,
                 Color = ncolor,
-                Transform = Matrix44d.Identity,
+                Mesh = mesh ?? Mesh.Default,
+                PrimitiveType = primitiveType,
+                Transform = transform,
                 ZOrder = zorder,
                 Shader = this.colorShaderProgram,
                 VertexBuffer = this.vertexBuffer,
