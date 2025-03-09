@@ -207,19 +207,16 @@ namespace Ragnarok.OpenGL
             switch (blend)
             {
                 case BlendType.Diffuse:
-                    GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
-                    GL.Disable(EnableCap.AlphaTest);
+                    GLw.C(() => GL.BlendFunc(
+                        BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha));
                     break;
                 case BlendType.Emissive:
-                    GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.One);
-                    GL.Disable(EnableCap.AlphaTest);
+                    GLw.C(() => GL.BlendFunc(
+                        BlendingFactor.SrcAlpha, BlendingFactor.One));
                     break;
                 case BlendType.Copy:
-                    // ある程度高い不透明度がある場合しか、データのコピーを行わないようにします。
-                    // エッジが不透明になるのを避けたい場合に使います。
-                    GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
-                    GL.Enable(EnableCap.AlphaTest);
-                    GL.AlphaFunc(AlphaFunction.Greater, 0.9f);
+                    GLw.C(() => GL.BlendFunc(
+                        BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha));
                     break;
             }
         }

@@ -33,11 +33,27 @@ void main()
 #version 330 core
 in vec2 TexCoord;
 out vec4 FragColor;
-uniform sampler2D texure1;
+uniform sampler2D texture1;
 uniform vec4 color;
 void main()
 {
-    FragColor = texture(texure1, TexCoord) * color;
+    FragColor = texture(texture1, TexCoord) * color;
+}";
+
+        public static readonly string CopyFragmentShaderSource = @"
+#version 330 core
+in vec2 TexCoord;
+out vec4 FragColor;
+uniform sampler2D texture1;
+uniform vec4 color;
+void main()
+{
+    vec4 outColor = texture(texture1, TexCoord) * color;
+    if (outColor.a < 0.9)
+    {
+        discard;
+    }
+    FragColor = outColor;
 }";
 
         public static readonly string ColorFragmentShaderSource = @"
@@ -53,6 +69,7 @@ void main()
         private readonly List<RenderData> dataList = new();
         private ShaderProgram texShaderProgram;
         private ShaderProgram colorShaderProgram;
+        private ShaderProgram copyShaderProgram;
         private VertexBuffer vertexBuffer;
 
         public RenderBuffer(IGraphicsContext context)
@@ -60,6 +77,7 @@ void main()
         {
             this.texShaderProgram = new ShaderProgram(context);
             this.colorShaderProgram = new ShaderProgram(context);
+            this.copyShaderProgram = new ShaderProgram(context);
             this.vertexBuffer = new VertexBuffer(context);
 
             ResizeScreen(640, 360);
@@ -72,6 +90,7 @@ void main()
         {
             if (this.texShaderProgram == null ||
                 this.colorShaderProgram == null ||
+                this.copyShaderProgram == null ||
                 this.vertexBuffer == null)
             {
                 throw new ObjectDisposedException(
@@ -82,6 +101,8 @@ void main()
                 VertexShaderSource, TexFragmentShaderSource);
             this.colorShaderProgram.Create(
                 VertexShaderSource, ColorFragmentShaderSource);
+            this.copyShaderProgram.Create(
+                VertexShaderSource, CopyFragmentShaderSource);
             this.vertexBuffer.Create();
         }
 
@@ -102,6 +123,12 @@ void main()
                 this.colorShaderProgram = null;
             }
 
+            if (this.copyShaderProgram != null)
+            {
+                this.copyShaderProgram.Dispose();
+                this.copyShaderProgram = null;
+            }
+
             if (this.vertexBuffer != null)
             {
                 this.vertexBuffer.Dispose();
@@ -118,6 +145,15 @@ void main()
         /// 色を描画するためのシェーダーを取得します。
         /// </summary>
         public ShaderProgram ColorShaderProgram => this.colorShaderProgram;
+
+        /// <summary>
+        /// コピー時に使うシェーダーを取得します。
+        /// </summary>
+        /// <remarks>
+        /// コピー時はエッジを背景と混ぜないようにするため
+        /// 不透明度が低い場合は色を出力しないようにします。
+        /// </remarks>
+        public ShaderProgram CopyShaderProgram => this.copyShaderProgram;
 
         /// <summary>
         /// 頂点シェーダーを取得します。
@@ -242,6 +278,18 @@ void main()
             });
         }
 
+        private ShaderProgram GetShader(BlendType blend, Texture texture)
+        {
+            if (texture == null)
+            {
+                return this.colorShaderProgram;
+            }
+
+            return blend == BlendType.Copy
+                ? this.copyShaderProgram
+                : this.texShaderProgram;
+        }
+
         /// <summary>
         /// 描画オブジェクトを追加します。
         /// </summary>
@@ -276,9 +324,7 @@ void main()
                 PrimitiveType = primitiveType,
                 Transform = transform,
                 ZOrder = zorder,
-                Shader = texture != null
-                    ? this.texShaderProgram
-                    : this.colorShaderProgram,
+                Shader = GetShader(blend, texture),
                 VertexBuffer = this.vertexBuffer,
             });
         }
@@ -318,9 +364,7 @@ void main()
                 PrimitiveType = primitiveType,
                 Transform = transform * Matrix44d.FromRectangle(bounds),
                 ZOrder = zorder,
-                Shader = texture != null
-                    ? this.texShaderProgram
-                    : this.colorShaderProgram,
+                Shader = GetShader(blend, texture),
                 VertexBuffer = this.vertexBuffer,
             });
         }
