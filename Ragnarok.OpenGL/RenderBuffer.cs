@@ -14,15 +14,100 @@ namespace Ragnarok.OpenGL
     /// <summary>
     /// オブジェクトの描画順序をzorder順にするためのクラスです。
     /// </summary>
-    public sealed class RenderBuffer
+    public sealed class RenderBuffer : GLObject
     {
-        /// <summary>
-        /// デフォルトのメッシュデータです。
-        /// </summary>
-        private static readonly Mesh DefaultMesh = Mesh.CreateDefault(1, 1, 0, 0);
+        private static readonly string VertexShaderSource = @"
+#version 330 core
+layout(location = 0) in vec3 aPosition;
+layout(location = 1) in vec2 aTexCoord;
+uniform mat4 projectionMatrix;
+uniform mat4 modelViewMatrix;
+out vec2 TexCoord;
+void main()
+{
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(aPosition, 1.0);
+    TexCoord = aTexCoord;
+}";
+        
+        private static readonly string TexFragmentShaderSource = @"
+#version 330 core
+in vec2 TexCoord;
+out vec4 FragColor;
+uniform sampler2D texure1;
+uniform vec4 color;
+void main()
+{
+    FragColor = texture(texure1, TexCoord) * color;
+}";
 
-        private readonly object syncObject = new object();
-        private readonly List<RenderData> dataList = new List<RenderData>();
+        private static readonly string ColorFragmentShaderSource = @"
+#version 330 core
+out vec4 FragColor;
+uniform vec4 color;
+void main()
+{
+    FragColor = color;
+}";
+
+        private readonly object syncObject = new();
+        private readonly List<RenderData> dataList = new();
+        private ShaderProgram texShaderProgram;
+        private ShaderProgram colorShaderProgram;
+        private VertexBuffer vertexBuffer;
+
+        public RenderBuffer(IGraphicsContext context)
+            : base(context)
+        {
+            this.texShaderProgram = new ShaderProgram(context);
+            this.colorShaderProgram = new ShaderProgram(context);
+            this.vertexBuffer = new VertexBuffer(context);
+
+            ResizeScreen(640, 360);
+        }
+
+        /// <summary>
+        /// OpenGLオブジェクトを初期化します。
+        /// </summary>
+        public void Init()
+        {
+            if (this.texShaderProgram == null ||
+                this.colorShaderProgram == null ||
+                this.vertexBuffer == null)
+            {
+                throw new ObjectDisposedException(
+                    "オブジェクトはすでに破棄されています。");
+            }
+
+            this.texShaderProgram.Create(
+                VertexShaderSource, TexFragmentShaderSource);
+            this.colorShaderProgram.Create(
+                VertexShaderSource, ColorFragmentShaderSource);
+            this.vertexBuffer.Create();
+        }
+
+        /// <summary>
+        /// OpenGLオブジェクトを削除します。
+        /// </summary>
+        public override void Destroy()
+        {
+            if (this.texShaderProgram != null)
+            {
+                this.texShaderProgram.Dispose();
+                this.texShaderProgram = null;
+            }
+
+            if (this.colorShaderProgram != null)
+            {
+                this.colorShaderProgram.Dispose();
+                this.colorShaderProgram = null;
+            }
+
+            if (this.vertexBuffer != null)
+            {
+                this.vertexBuffer.Dispose();
+                this.vertexBuffer = null;
+            }
+        }
 
         /// <summary>
         /// 基準となるZOrder値を取得または設定します。
@@ -126,18 +211,31 @@ namespace Ragnarok.OpenGL
         /// <summary>
         /// 描画用リストを追加します。
         /// </summary>
-        public void AddRenderAction(RenderAction renderAction, double zorder)
+        public void AddRenderAction(RenderAction renderAction,
+                                    BlendType blend,
+                                    Matrix44d transform,
+                                    double zorder,
+                                    Color? color = null,
+                                    double? opacity = null)
         {
             if (renderAction == null)
             {
                 throw new ArgumentNullException(nameof(renderAction));
             }
 
+            var ncolor = color ?? Color.White;
+            if (opacity != null)
+            {
+                var alpha = (byte)Math.Min(ncolor.A * opacity.Value, 255);
+                ncolor = Color.FromArgb(alpha, ncolor);
+            }
+
             AddRender(new RenderData
             {
                 RenderAction = renderAction,
+                Blend = blend,
+                Color = ncolor,
                 Transform = new Matrix44d(),
-                Mesh = Mesh.Default,
                 ZOrder = zorder,
                 Shader = this.colorShaderProgram,
                 VertexBuffer = this.vertexBuffer,
