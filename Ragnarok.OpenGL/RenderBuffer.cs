@@ -38,18 +38,23 @@ namespace Ragnarok.OpenGL
         }
 
         /// <summary>
-        /// 登録されたデータをまとめて描画します。
+        /// Projection行列を取得します。
         /// </summary>
-        public void Render()
+        public Matrix4 ProjectionMatrix
         {
-            lock(this.syncObject)
-            {
-                var list =
-                    from data in this.dataList
-                    orderby data.ZOrder
-                    select data;
+            get;
+            private set;
+        }
 
-                list.ForEach(_ => _.Render());
+        /// <summary>
+        /// スクリーンサイズを修正し、Projection行列を更新します。
+        /// </summary>
+        public void ResizeScreen(int screenWidth, int screenHeight)
+        {
+            lock (this.syncObject)
+            {
+                ProjectionMatrix = Matrix4.CreateOrthographicOffCenter(
+                    0, screenWidth, screenHeight, 0, -1000, +1000);
             }
         }
 
@@ -61,6 +66,22 @@ namespace Ragnarok.OpenGL
             lock (this.syncObject)
             {
                 this.dataList.Clear();
+            }
+        }
+
+        /// <summary>
+        /// 登録されたデータをまとめて描画します。
+        /// </summary>
+        public void Render()
+        {
+            lock (this.syncObject)
+            {
+                var list =
+                    from data in this.dataList
+                    orderby data.ZOrder
+                    select data;
+
+                list.ForEach(_ => _.Render(ProjectionMatrix));
             }
         }
 
