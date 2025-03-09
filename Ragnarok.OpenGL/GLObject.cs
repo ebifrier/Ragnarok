@@ -60,7 +60,7 @@ namespace Ragnarok.OpenGL
                         // Dispose()呼び出し中に、要素が削除されることがあるため
                         // その確認を行います。
                         if (s_objects.Count > 0 &&
-                            Equals(s_objects[index], oldValue))
+                            ReferenceEquals(s_objects[index], oldValue))
                         {
                             s_objects.RemoveAt(index);
                         }
