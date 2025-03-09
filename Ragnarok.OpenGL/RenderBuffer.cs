@@ -235,7 +235,7 @@ void main()
                 RenderAction = renderAction,
                 Blend = blend,
                 Color = ncolor,
-                Transform = new Matrix44d(),
+                Transform = Matrix44d.Identity,
                 ZOrder = zorder,
                 Shader = this.colorShaderProgram,
                 VertexBuffer = this.vertexBuffer,
