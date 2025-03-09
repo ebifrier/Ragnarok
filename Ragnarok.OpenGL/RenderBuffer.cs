@@ -16,7 +16,7 @@ namespace Ragnarok.OpenGL
     /// </summary>
     public sealed class RenderBuffer : GLObject
     {
-        private static readonly string VertexShaderSource = @"
+        public static readonly string VertexShaderSource = @"
 #version 330 core
 layout(location = 0) in vec3 aPosition;
 layout(location = 1) in vec2 aTexCoord;
@@ -28,8 +28,8 @@ void main()
     gl_Position = projectionMatrix * modelViewMatrix * vec4(aPosition, 1.0);
     TexCoord = aTexCoord;
 }";
-        
-        private static readonly string TexFragmentShaderSource = @"
+
+        public static readonly string TexFragmentShaderSource = @"
 #version 330 core
 in vec2 TexCoord;
 out vec4 FragColor;
@@ -40,7 +40,7 @@ void main()
     FragColor = texture(texure1, TexCoord) * color;
 }";
 
-        private static readonly string ColorFragmentShaderSource = @"
+        public static readonly string ColorFragmentShaderSource = @"
 #version 330 core
 out vec4 FragColor;
 uniform vec4 color;
@@ -110,6 +110,21 @@ void main()
         }
 
         /// <summary>
+        /// テクスチャを描画するためのシェーダーを取得します。
+        /// </summary>
+        public ShaderProgram TexShaderProgram => this.texShaderProgram;
+
+        /// <summary>
+        /// 色を描画するためのシェーダーを取得します。
+        /// </summary>
+        public ShaderProgram ColorShaderProgram => this.colorShaderProgram;
+
+        /// <summary>
+        /// 頂点シェーダーを取得します。
+        /// </summary>
+        public VertexBuffer VertexBuffer => this.vertexBuffer;
+
+        /// <summary>
         /// 基準となるZOrder値を取得または設定します。
         /// </summary>
         /// <remarks>
@@ -121,16 +136,6 @@ void main()
             get;
             set;
         }
-
-        /// <summary>
-        /// テクスチャを描画するためのシェーダーを取得します。
-        /// </summary>
-        public ShaderProgram TexShaderProgram => this.texShaderProgram;
-
-        /// <summary>
-        /// 色を描画するためのシェーダーを取得します。
-        /// </summary>
-        public ShaderProgram ColorShaderProgram => this.colorShaderProgram;
 
         /// <summary>
         /// Projection行列を取得します。
