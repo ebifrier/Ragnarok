@@ -29,7 +29,7 @@ namespace Ragnarok.OpenGL
 
         private static int GetVersion()
         {
-            var version = GL.GetString(StringName.Version);
+            var version = GLWrap.Wrap(() => GL.GetString(StringName.Version));
             if (string.IsNullOrEmpty(version))
             {
                 return 0;
@@ -60,11 +60,12 @@ namespace Ragnarok.OpenGL
         {
             try
             {
-                var raw = GL.GetString(StringName.Extensions);
-                var splitter = new string[] { " " };
+                int count = 0;
+                GLWrap.Wrap(() => GL.GetInteger(GetPName.NumExtensions, out count));
 
-                return raw
-                    .Split(splitter, StringSplitOptions.RemoveEmptyEntries)
+                return Enumerable.Range(0, count)
+                    .Select(_ => GLWrap.Wrap(() =>
+                        GL.GetString(StringNameIndexed.Extensions, _)))
                     .ToList();
             }
             catch (Exception ex)
@@ -232,10 +233,6 @@ namespace Ragnarok.OpenGL
             string GLSLang = GL.GetString(StringName.ShadingLanguageVersion);
             string Vendor = GL.GetString(StringName.Vendor);
             string Version = GL.GetString(StringName.Version);
-
-            string ExtensionsRaw = GL.GetString(StringName.Extensions);
-            string[] splitter = new string[] { " " };
-            string[] Extensions = ExtensionsRaw.Split(splitter, StringSplitOptions.None);
 
             using (new Section(sb, "OpenGL Basic Information"))
             {
