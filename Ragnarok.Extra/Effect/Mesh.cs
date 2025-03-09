@@ -15,6 +15,8 @@ namespace Ragnarok.Extra.Effect
     /// </remarks>
     public class Mesh
     {
+        public static readonly Mesh Default = CreateDefaultImpl(1, 1, 0, 0);
+
         /// <summary>
         /// コンストラクタ
         /// </summary>
@@ -27,11 +29,6 @@ namespace Ragnarok.Extra.Effect
                 throw new ArgumentNullException(nameof(vertices));
             }
 
-            if (uvs == null)
-            {
-                throw new ArgumentNullException(nameof(uvs));
-            }
-
             if (indices == null)
             {
                 throw new ArgumentNullException(nameof(indices));
@@ -39,24 +36,32 @@ namespace Ragnarok.Extra.Effect
 
             VertexArray = GenFloats(vertices, uvs).ToArray();
             IndexArray = indices.ToArray();
-
-            if (IndexArray.Length % 3 != 0)
-            {
-                throw new ArgumentException(
-                    "インデックス配列は三角形による指定をお願いします。");
-            }
         }
 
         private static IEnumerable<float> GenFloats(IEnumerable<Point3d> vertices,
                                                     IEnumerable<Pointd> uvs)
         {
-            foreach (var (vertex, uv) in vertices.Zip(uvs))
+            if (uvs != null)
             {
-                yield return (float)vertex.X;
-                yield return (float)vertex.Y;
-                yield return (float)vertex.Z;
-                yield return (float)uv.X;
-                yield return (float)uv.Y;
+                foreach (var (vertex, uv) in vertices.Zip(uvs))
+                {
+                    yield return (float)vertex.X;
+                    yield return (float)vertex.Y;
+                    yield return (float)vertex.Z;
+                    yield return (float)uv.X;
+                    yield return (float)uv.Y;
+                }
+            }
+            else
+            {
+                foreach (var vertex in vertices)
+                {
+                    yield return (float)vertex.X;
+                    yield return (float)vertex.Y;
+                    yield return (float)vertex.Z;
+                    yield return 0.0f;
+                    yield return 0.0f;
+                }
             }
         }
 
@@ -83,6 +88,21 @@ namespace Ragnarok.Extra.Effect
         /// </summary>
         public static Mesh CreateDefault(double width, double height,
                                          double imageWidth, double imageHeight)
+        {
+            if (width == 1.0 && height == 1.0 &&
+                imageWidth == 0.0 && imageHeight == 0.0)
+            {
+                return Default;
+            }
+
+            return CreateDefaultImpl(width, height, imageWidth, imageHeight);
+        }
+
+        /// <summary>
+        /// 指定の座標を持った矩形モデルを作成します。
+        /// </summary>
+        private static Mesh CreateDefaultImpl(double width, double height,
+                                              double imageWidth, double imageHeight)
         {
             // テクスチャのUV座標をイメージの0.5ピクセル分ずらします。
             var halfPixelW = (imageWidth != 0.0 ? 0.5 / imageWidth : 0.0);
