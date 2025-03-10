@@ -160,8 +160,8 @@ namespace Ragnarok.OpenGL
                 {
                     GLw.C(() => GL.DeleteProgram(programName));
                 }
-                
-                return false;
+
+                throw;
             }
         }
 
