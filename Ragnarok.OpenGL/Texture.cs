@@ -299,13 +299,13 @@ namespace Ragnarok.OpenGL
                 image.UnlockBits(bitmapData);
             }
 
-            GLw.C(() => GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Clamp));
-            GLw.C(() => GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Clamp));
+            GLw.C(() => GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToEdge));
+            GLw.C(() => GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToEdge));
 
             // glGenerateMipmapを使う場合
             if (UseMipmap && GenerateMipmapSupportLevel == 2)
             {
-                GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
+                GLw.C(() => GL.GenerateMipmap(GenerateMipmapTarget.Texture2D));
             }
             
             if (UseMipmap && GenerateMipmapSupportLevel > 0)
@@ -320,7 +320,7 @@ namespace Ragnarok.OpenGL
                 GLw.C(() => GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, GetGLFilter(FilterType)));
             }
 
-            GL.BindTexture(TextureTarget.Texture2D, 0);
+            GLw.C(() => GL.BindTexture(TextureTarget.Texture2D, 0));
             
             // テクスチャの作成に成功したら、古いテクスチャを削除します。
             Destroy();
