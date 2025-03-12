@@ -47,19 +47,6 @@ namespace Ragnarok
         }
 
         /// <summary>
-        /// EntryAssemblyのディレクトリパスを取得します。
-        /// </summary>
-        public static string EntryAssemblyDirectory
-        {
-            get
-            {
-                var thisAsm = Assembly.GetEntryAssembly();
-
-                return Path.GetDirectoryName(thisAsm.Location);
-            }
-        }
-
-        /// <summary>
         /// PropertyChangedイベントを呼びだすデリゲートを設定します。
         /// </summary>
         /// <remarks>

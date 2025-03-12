@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Windows.Markup;
 
 namespace Ragnarok.Xaml
@@ -43,7 +41,7 @@ namespace Ragnarok.Xaml
         /// コンストラクタ
         /// </summary>
         public FileListExtension()
-            : this("*", null)
+            : this("*")
         {
         }
 
@@ -51,27 +49,8 @@ namespace Ragnarok.Xaml
         /// コンストラクタ
         /// </summary>
         public FileListExtension(string pattern)
-            : this(pattern, null)
         {
-        }
-
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        public FileListExtension(string pattern, string assembly)
-        {
-            Assembly = assembly;
             Pattern = pattern;
-        }
-
-        /// <summary>
-        /// 基本パスとなるアセンブリ名を取得または設定します。
-        /// </summary>
-        [DefaultValue((string)null)]
-        public string Assembly
-        {
-            get;
-            set;
         }
 
         /// <summary>
@@ -105,25 +84,6 @@ namespace Ragnarok.Xaml
         }
 
         /// <summary>
-        /// アセンブリ名に対応するアセンブリを取得します。
-        /// </summary>
-        private Assembly GetPathFromAssembly(string assemblyName)
-        {
-            if (string.IsNullOrEmpty(Assembly))
-            {
-                // デフォルト値
-                return System.Reflection.Assembly.GetEntryAssembly();
-            }
-            else
-            {
-                var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-
-                return assemblies
-                    .FirstOrDefault(_ => assemblyName == _.GetName().Name);
-            }
-        }
-
-        /// <summary>
         /// ファイル一覧を取得します。
         /// </summary>
         public override object ProvideValue(IServiceProvider service)
@@ -132,17 +92,7 @@ namespace Ragnarok.Xaml
 
             if (string.IsNullOrEmpty(basePath))
             {
-                // アセンブリのあるパスを基本検索パスとします。
-                var asm = GetPathFromAssembly(Assembly);
-                if (asm == null)
-                {
-                    throw new InvalidOperationException(string.Format(
-                        CultureInfo.CurrentCulture,
-                        "{0}: 指定されたアセンブリが存在しません。",
-                        Assembly));
-                }
-
-                basePath = Path.GetDirectoryName(asm.Location);
+                basePath = AppContext.BaseDirectory;
             }
 
             return Directory
