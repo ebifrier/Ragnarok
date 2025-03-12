@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
 
-using Ragnarok.Utility.AssemblyUtility;
+using Ragnarok.Utility;
 
 namespace Ragnarok.Update
 {
@@ -21,7 +19,7 @@ namespace Ragnarok.Update
     /// </summary>
     public sealed class Configuration
     {
-        private IAssemblyAccessor accessor;
+        private AssemblyAccessor accessor;
 
         /// <summary>
         /// アプリ名を取得します。
@@ -63,17 +61,8 @@ namespace Ragnarok.Update
 
         /// <summary>
         /// コンストラクタ
-        /// </summary>        
-        public Configuration(string assemblyName)
-            : this(assemblyName, true)
-        {
-        }
-
-        /// <summary>
-        /// コンストラクタ
         /// </summary>
-        public Configuration(string assemblyName,
-                             bool useReflectionBasedAssemblyAccessor)
+        public Configuration(string assemblyName)
         {
             try
             {
@@ -81,8 +70,7 @@ namespace Ragnarok.Update
                 SkipThisVersion = string.Empty;
 
                 // set some value from the binary
-                this.accessor = new AssemblyAccessor(
-                    assemblyName, useReflectionBasedAssemblyAccessor);
+                this.accessor = new AssemblyAccessor(assemblyName);
             }
             catch (Exception)
             {
