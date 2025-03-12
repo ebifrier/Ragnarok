@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
-using OpenTK.Graphics.OpenGL;
+using OpenTK.Graphics.OpenGL4;
 using OpenTK.Windowing.Common;
 
 using Ragnarok.Utility;
@@ -165,7 +165,6 @@ namespace Ragnarok.OpenGL
             }
 
             ValidateContext();
-            GL.PushAttrib(AttribMask.TextureBit);
             Bind();
         }
 
@@ -181,7 +180,6 @@ namespace Ragnarok.OpenGL
             }
 
             ValidateContext();
-            GL.PopAttrib();
         }
 
         /// <summary>
@@ -283,7 +281,7 @@ namespace Ragnarok.OpenGL
                 GLw.C(() => GL.TexImage2D(
                     TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba8,
                     image.Width, image.Height, 0,
-                    OpenTK.Graphics.OpenGL.PixelFormat.Bgra,
+                    OpenTK.Graphics.OpenGL4.PixelFormat.Bgra,
                     PixelType.UnsignedByte,
                     bitmapData.Scan0));
 #else

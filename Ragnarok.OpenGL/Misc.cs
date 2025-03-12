@@ -4,7 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using OpenTK.Graphics.OpenGL;
+using OpenTK.Graphics.OpenGL4;
 
 namespace Ragnarok.OpenGL
 {
@@ -101,12 +101,6 @@ namespace Ragnarok.OpenGL
         private static TextureFormat[] TextureFormats = new TextureFormat[]
         {
             new TextureFormat(PixelInternalFormat.Alpha, PixelFormat.Alpha, PixelType.UnsignedByte),
-            new TextureFormat(PixelInternalFormat.Alpha4, PixelFormat.Alpha, PixelType.UnsignedByte),
-            new TextureFormat(PixelInternalFormat.Alpha8, PixelFormat.Alpha, PixelType.UnsignedByte),
-            new TextureFormat(PixelInternalFormat.Alpha12, PixelFormat.Alpha, PixelType.UnsignedByte),
-            new TextureFormat(PixelInternalFormat.Alpha16, PixelFormat.Alpha, PixelType.UnsignedByte),
-            new TextureFormat((PixelInternalFormat)All.Alpha16fArb, PixelFormat.Alpha, PixelType.HalfFloat),
-            new TextureFormat((PixelInternalFormat)All.Alpha32fArb, PixelFormat.Alpha, PixelType.Float),
 
             new TextureFormat(PixelInternalFormat.DepthComponent, PixelFormat.DepthComponent, PixelType.Int),
             new TextureFormat(PixelInternalFormat.DepthComponent16, PixelFormat.DepthComponent, PixelType.Float),
@@ -177,21 +171,14 @@ namespace Ragnarok.OpenGL
             new TextureFormat(PixelInternalFormat.CompressedIntensity, PixelFormat.Luminance, PixelType.UnsignedByte),
             new TextureFormat(PixelInternalFormat.CompressedLuminance, PixelFormat.Luminance, PixelType.UnsignedByte),
             new TextureFormat(PixelInternalFormat.CompressedLuminanceAlpha, PixelFormat.LuminanceAlpha, PixelType.UnsignedByte),
-            new TextureFormat((PixelInternalFormat)All.CompressedLuminanceLatc1Ext, PixelFormat.Luminance, PixelType.UnsignedByte),
-            new TextureFormat((PixelInternalFormat)All.CompressedLuminanceAlphaLatc2Ext, PixelFormat.LuminanceAlpha, PixelType.UnsignedByte),
 
             new TextureFormat(PixelInternalFormat.CompressedRed, PixelFormat.Red, PixelType.UnsignedByte),
             new TextureFormat(PixelInternalFormat.CompressedRedRgtc1, PixelFormat.Red, PixelType.UnsignedByte),
-            new TextureFormat((PixelInternalFormat)All.CompressedRedGreenRgtc2Ext, PixelFormat.Rg, PixelType.UnsignedByte),
             new TextureFormat(PixelInternalFormat.CompressedRg, PixelFormat.Rg, PixelType.UnsignedByte),
             new TextureFormat(PixelInternalFormat.CompressedRgRgtc2, PixelFormat.Rg, PixelType.UnsignedByte),
             new TextureFormat(PixelInternalFormat.CompressedRgb, PixelFormat.Rgb, PixelType.UnsignedByte),
-            new TextureFormat((PixelInternalFormat)All.CompressedRgbFxt13Dfx, PixelFormat.Rgb, PixelType.UnsignedByte),
             new TextureFormat(PixelInternalFormat.CompressedRgba, PixelFormat.Rgba, PixelType.UnsignedByte),
-            new TextureFormat((PixelInternalFormat)All.CompressedRgbaFxt13Dfx, PixelFormat.Rgba, PixelType.UnsignedByte),
 
-            new TextureFormat((PixelInternalFormat)All.CompressedSignedLuminanceAlphaLatc2Ext, PixelFormat.LuminanceAlpha, PixelType.UnsignedByte),
-            new TextureFormat((PixelInternalFormat)All.CompressedSignedLuminanceLatc1Ext, PixelFormat.Luminance, PixelType.UnsignedByte),
             new TextureFormat(PixelInternalFormat.CompressedSignedRedRgtc1, PixelFormat.Red, PixelType.UnsignedByte),
             new TextureFormat(PixelInternalFormat.CompressedSignedRgRgtc2, PixelFormat.Rg, PixelType.UnsignedByte),
 
@@ -270,26 +257,10 @@ namespace Ragnarok.OpenGL
                 sb.AppendLine(Analyze(GetPName.Doublebuffer, GLType.Boolean));
                 sb.AppendLine(Analyze(GetPName.MaxColorAttachments, GLType.Int));
                 sb.AppendLine(Analyze(GetPName.MaxDrawBuffers, GLType.Int));
-                sb.AppendLine(Analyze(GetPName.AuxBuffers, GLType.Int));
                 sb.AppendLine(Analyze(GetPName.DrawBuffer, GLType.IntEnum));
                 sb.AppendLine(Analyze(GetPName.MaxSamples, GLType.Int));
                 sb.AppendLine(Analyze(GetPName.MaxViewportDims, GLType.IntArray2));
                 sb.AppendLine(Analyze(GetPName.Viewport, GLType.IntArray4));
-            }
-
-            using (new Section(sb, "Framebuffer channels"))
-            {
-                sb.AppendLine(Analyze(GetPName.RedBits, GLType.Int));
-                sb.AppendLine(Analyze(GetPName.GreenBits, GLType.Int));
-                sb.AppendLine(Analyze(GetPName.BlueBits, GLType.Int));
-                sb.AppendLine(Analyze(GetPName.AlphaBits, GLType.Int));
-                sb.AppendLine(Analyze(GetPName.DepthBits, GLType.Int));
-                sb.AppendLine(Analyze(GetPName.StencilBits, GLType.Int));
-
-                sb.AppendLine(Analyze(GetPName.AccumRedBits, GLType.Int));
-                sb.AppendLine(Analyze(GetPName.AccumGreenBits, GLType.Int));
-                sb.AppendLine(Analyze(GetPName.AccumBlueBits, GLType.Int));
-                sb.AppendLine(Analyze(GetPName.AccumAlphaBits, GLType.Int));
             }
 
             using (new Section(sb, "Textures"))
@@ -397,26 +368,6 @@ namespace Ragnarok.OpenGL
                 sb.AppendLine(Analyze(GetPName.MaxTransformFeedbackInterleavedComponents, GLType.Int));
                 sb.AppendLine(Analyze(GetPName.MaxTransformFeedbackSeparateAttribs, GLType.Int));
                 sb.AppendLine(Analyze(GetPName.MaxTransformFeedbackSeparateComponents, GLType.Int));
-            }
-
-            using (new Section(sb, "Fixed-Func Stacks, GL.Push* and GL.Pop*"))
-            {
-                sb.AppendLine(Analyze(GetPName.MaxClientAttribStackDepth, GLType.Int));
-                sb.AppendLine(Analyze(GetPName.MaxAttribStackDepth, GLType.Int));
-                sb.AppendLine(Analyze(GetPName.MaxProjectionStackDepth, GLType.Int));
-                sb.AppendLine(Analyze(GetPName.MaxModelviewStackDepth, GLType.Int));
-                sb.AppendLine(Analyze(GetPName.MaxTextureStackDepth, GLType.Int));
-                sb.AppendLine(Analyze(GetPName.MaxNameStackDepth, GLType.Int));
-            }
-
-            using (new Section(sb, "Fixed-Func misc. stuff"))
-            {
-                sb.AppendLine(Analyze(GetPName.MaxEvalOrder, GLType.Int));
-                sb.AppendLine(Analyze(GetPName.MaxClipPlanes, GLType.Int));
-                sb.AppendLine(Analyze(GetPName.MaxArrayTextureLayers, GLType.Int));
-                sb.AppendLine(Analyze(GetPName.MaxListNesting, GLType.Int));
-                sb.AppendLine(Analyze(GetPName.MaxLights, GLType.Int));
-                sb.AppendLine(Analyze(GetPName.MaxTextureCoords, GLType.Int));
             }
 
             return sb.ToString();
