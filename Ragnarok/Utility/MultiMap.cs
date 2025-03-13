@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace Ragnarok.Utility
@@ -9,7 +8,6 @@ namespace Ragnarok.Utility
     /// 重複したキーを許すDictionaryクラスです。 
     /// </summary>
     [Serializable()]
-    [SuppressMessage("Microsoft.Naming", "CA1710")]
     public sealed class MultiMap<TKey, TValue> : Dictionary<TKey, HashSet<TValue>>
     {
         /// <summary>
