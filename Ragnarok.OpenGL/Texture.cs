@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
-using OpenTK.Graphics.OpenGL4;
+using OpenTK.Graphics.OpenGL;
 using OpenTK.Windowing.Common;
 
 using Ragnarok.Utility;
@@ -272,7 +272,7 @@ namespace Ragnarok.OpenGL
                 if (GenerateMipmapSupportLevel == 1)
                 {
                     // glTexImage2Dの前にmipmapの使用設定を行う
-                    //GLWrap.Wrap(() => GL.Hint(HintTarget.GenerateMipmapHint, HintMode.Nicest));
+                    //GLw.C(() => GL.Hint(HintTarget.GenerateMipmapHint, HintMode.Nicest));
                     GLw.C(() => GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.GenerateMipmap, 1));
                 }
 
@@ -281,11 +281,11 @@ namespace Ragnarok.OpenGL
                 GLw.C(() => GL.TexImage2D(
                     TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba8,
                     image.Width, image.Height, 0,
-                    OpenTK.Graphics.OpenGL4.PixelFormat.Bgra,
+                    OpenTK.Graphics.OpenGL.PixelFormat.Bgra,
                     PixelType.UnsignedByte,
                     bitmapData.Scan0));
 #else
-                GLWrap.Wrap(() => GL.Build2DMipmaps(
+                GLw.C(() => GL.Build2DMipmaps(
                     TextureTarget.Texture2D, (int)OpenGL.GL_RGBA,
                     image.Width, image.Height,
                     OpenTK.Graphics.OpenGL.GL_BGRA, GL.GL_UNSIGNED_BYTE,

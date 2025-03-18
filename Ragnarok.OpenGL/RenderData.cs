@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using OpenTK.Graphics.OpenGL4;
-using OpenTK.Mathematics;
+using OpenTK.Graphics.OpenGL;
 
 using Ragnarok.Extra.Effect;
 using Ragnarok.MathEx;
@@ -81,24 +80,6 @@ namespace Ragnarok.OpenGL
         } = Matrix44d.Identity;
 
         /// <summary>
-        /// シェーダーを取得または設定します。
-        /// </summary>
-        public ShaderProgram Shader
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// 頂点バッファを取得または設定します。
-        /// </summary>
-        public VertexBuffer VertexBuffer
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
         /// ZOrderを取得または設定します。
         /// </summary>
         /// <remarks>
@@ -113,17 +94,10 @@ namespace Ragnarok.OpenGL
         /// <summary>
         /// オブジェクトの描画を行います。
         /// </summary>
-        public void Render(Matrix4 projectionMatrix)
+        public void Render()
         {
+            GL.Color4(Color);
             SetBlend(Blend);
-
-            if (Shader != null)
-            {
-                Shader.Use();
-                SetProjectionMatrix(projectionMatrix);
-                SetModelViewMatrix(Transform);
-                SetUniformColor(Color);
-            }
 
             if (Texture != null && Texture.TextureName != 0)
             {
@@ -136,67 +110,77 @@ namespace Ragnarok.OpenGL
             }
             else if (Mesh != null)
             {
-                RenderElements(Mesh, PrimitiveType);
+                RenderElements(Mesh, Transform, PrimitiveType);
             }
 
             Texture.Unbind();
-            ShaderProgram.Unuse();
         }
 
         /// <summary>
         /// 頂点要素からなるオブジェクトを描画します。
         /// </summary>
         public void RenderElements(Mesh mesh,
+                                   Matrix44d transform,
                                    PrimitiveType primitiveType)
         {
-            VertexBuffer.BeginMesh(mesh);
-            GLw.C(() => GL.DrawElements(
-                primitiveType,
-                mesh.IndexArray.Length,
-                DrawElementsType.UnsignedInt,
-                0));
-            VertexBuffer.EndMesh();
+            if (mesh == null)
+            {
+                return;
+            }
+
+            // 座標系の設定
+            GL.PushMatrix();
+            SetMatrix(transform);
+            RenderMesh(mesh, primitiveType);
+            GL.PopMatrix();
         }
 
         /// <summary>
-        /// シェーダーのuniform変数にProjection行列を設定します。
+        /// 変換行列の設定を行います。
         /// </summary>
-        public void SetProjectionMatrix(Matrix4 projectionMatrix)
+        private static void SetMatrix(Matrix44d matrix)
         {
-            var loc = Shader.GetUniformLocation("projectionMatrix");
-            if (loc >= 0)
+            if (matrix == null)
             {
-                GLw.C(() => GL.UniformMatrix4(loc, false, ref projectionMatrix));
+                GL.LoadIdentity();
+            }
+            else
+            {
+                GL.LoadMatrix(matrix.AsColumnMajorArray);
             }
         }
 
         /// <summary>
-        /// シェーダーのuniform変数にModelView行列を設定します。
+        /// メッシュの設定を行います。
         /// </summary>
-        public void SetModelViewMatrix(Matrix44d transform)
+        private void RenderMesh(Mesh mesh, PrimitiveType primitiveType)
         {
-            var loc = Shader.GetUniformLocation("modelViewMatrix");
-            if (loc >= 0)
+            var tx = 1.0f;
+            var ty = 1.0f;
+
+            if (Texture != null)
             {
-                var values = new float[16];
-                for (var i = 0; i < 16; ++i)
+                tx = (float)Texture.OriginalWidth / Texture.Width;
+                ty = (float)Texture.OriginalHeight / Texture.Height;
+            }
+
+            GL.Begin(primitiveType);
+
+            foreach (var index in mesh.IndexArray)
+            {
+                // UVの設定
+                if (mesh.TextureUVArray != null)
                 {
-                    values[i] = (float)transform[i % 4, i / 4];
+                    var uv = mesh.TextureUVArray[index];
+                    GL.TexCoord2((float)uv.X * tx, (float)uv.Y * ty);
                 }
-                GLw.C(() => GL.UniformMatrix4(loc, 1, false, values));
-            }
-        }
 
-        /// <summary>
-        /// シェーダーに描画色を設定します。
-        /// </summary>
-        public void SetUniformColor(Color color)
-        {
-            var loc = Shader.GetUniformLocation("color");
-            if (loc >= 0)
-            {
-                GLw.C(() => GL.Uniform4(loc, color));
+                // 頂点座標の設定
+                var pos = mesh.VertexArray[index];
+                GL.Vertex3((float)pos.X, (float)pos.Y, (float)pos.Z);
             }
+
+            GL.End();
         }
 
         /// <summary>
@@ -209,14 +193,18 @@ namespace Ragnarok.OpenGL
                 case BlendType.Diffuse:
                     GLw.C(() => GL.BlendFunc(
                         BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha));
+                    GLw.C(() => GL.Disable(EnableCap.AlphaTest));
                     break;
                 case BlendType.Emissive:
                     GLw.C(() => GL.BlendFunc(
                         BlendingFactor.SrcAlpha, BlendingFactor.One));
+                    GLw.C(() => GL.Disable(EnableCap.AlphaTest));
                     break;
                 case BlendType.Copy:
                     GLw.C(() => GL.BlendFunc(
                         BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha));
+                    GLw.C(() => GL.Enable(EnableCap.AlphaTest));
+                    GLw.C(() => GL.AlphaFunc(AlphaFunction.Greater, 0.9f));
                     break;
             }
         }
