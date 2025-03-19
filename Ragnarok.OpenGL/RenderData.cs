@@ -164,23 +164,25 @@ namespace Ragnarok.OpenGL
                 ty = (float)Texture.OriginalHeight / Texture.Height;
             }
 
-            GL.Begin(primitiveType);
-
-            foreach (var index in mesh.IndexArray)
+            // glBegin/glEndの間でglGetErrorを呼ぶとエラーになります。
+            GLw.C(() =>
             {
-                // UVの設定
-                if (mesh.TextureUVArray != null)
+                GL.Begin(primitiveType);
+                foreach (var index in mesh.IndexArray)
                 {
-                    var uv = mesh.TextureUVArray[index];
-                    GL.TexCoord2((float)uv.X * tx, (float)uv.Y * ty);
+                    // UVの設定
+                    if (mesh.TextureUVArray != null)
+                    {
+                        var uv = mesh.TextureUVArray[index];
+                        GL.TexCoord2((float)uv.X * tx, (float)uv.Y * ty);
+                    }
+
+                    // 頂点座標の設定
+                    var pos = mesh.VertexArray[index];
+                    GL.Vertex3((float)pos.X, (float)pos.Y, (float)pos.Z);
                 }
-
-                // 頂点座標の設定
-                var pos = mesh.VertexArray[index];
-                GL.Vertex3((float)pos.X, (float)pos.Y, (float)pos.Z);
-            }
-
-            GL.End();
+                GL.End();
+            });
         }
 
         /// <summary>
