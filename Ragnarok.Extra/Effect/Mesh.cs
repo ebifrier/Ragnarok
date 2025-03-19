@@ -34,41 +34,31 @@ namespace Ragnarok.Extra.Effect
                 throw new ArgumentNullException(nameof(indices));
             }
 
-            VertexArray = GenFloats(vertices, uvs).ToArray();
+            VertexArray = vertices.ToArray();
             IndexArray = indices.ToArray();
-        }
+            TextureUVArray = uvs?.ToArray();
 
-        private static IEnumerable<float> GenFloats(IEnumerable<Point3d> vertices,
-                                                    IEnumerable<Pointd> uvs)
-        {
-            if (uvs != null)
+            if (TextureUVArray != null &&
+                TextureUVArray.Length != VertexArray.Length)
             {
-                foreach (var (vertex, uv) in vertices.Zip(uvs))
-                {
-                    yield return (float)vertex.X;
-                    yield return (float)vertex.Y;
-                    yield return (float)vertex.Z;
-                    yield return (float)uv.X;
-                    yield return (float)uv.Y;
-                }
-            }
-            else
-            {
-                foreach (var vertex in vertices)
-                {
-                    yield return (float)vertex.X;
-                    yield return (float)vertex.Y;
-                    yield return (float)vertex.Z;
-                    yield return 0.0f;
-                    yield return 0.0f;
-                }
+                throw new ArgumentException(
+                    "頂点配列とテクスチャUV配列の数が一致しません。");
             }
         }
 
         /// <summary>
         /// 頂点配列を取得します。
         /// </summary>
-        public float[] VertexArray
+        public Point3d[] VertexArray
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// テクスチャのUV配列を取得します。
+        /// </summary>
+        public Pointd[] TextureUVArray
         {
             get;
             private set;
@@ -112,18 +102,18 @@ namespace Ragnarok.Extra.Effect
                 // 頂点配列
                 new Point3d[]
                 {
-                    new Point3d(-width / 2, -height / 2, 0.0),
-                    new Point3d(+width / 2, -height / 2, 0.0),
-                    new Point3d(-width / 2, +height / 2, 0.0),
-                    new Point3d(+width / 2, +height / 2, 0.0),
+                    new(-width / 2, -height / 2, 0.0),
+                    new(+width / 2, -height / 2, 0.0),
+                    new(-width / 2, +height / 2, 0.0),
+                    new(+width / 2, +height / 2, 0.0),
                 },
                 // テクスチャUV配列
                 new Pointd[]
                 {
-                    new Pointd(0.0,              0.0),
-                    new Pointd(1.0 - halfPixelW, 0.0),
-                    new Pointd(0.0,              1.0 - halfPixelH),
-                    new Pointd(1.0 - halfPixelW, 1.0 - halfPixelH),
+                    new(0.0,              0.0),
+                    new(1.0 - halfPixelW, 0.0),
+                    new(0.0,              1.0 - halfPixelH),
+                    new(1.0 - halfPixelW, 1.0 - halfPixelH),
                 },
                 // インデックス配列
                 new int[]
