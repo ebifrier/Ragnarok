@@ -11,6 +11,11 @@ namespace Ragnarok.Forms.Converter
     public class ValueToDecimalConverter : IValueConverter
     {
         /// <summary>
+        /// デフォルトの変換器です。
+        /// </summary>
+        public static readonly ValueToDecimalConverter Default = new();
+
+        /// <summary>
         /// コンストラクタ
         /// </summary>
         public ValueToDecimalConverter(Type type = null)
