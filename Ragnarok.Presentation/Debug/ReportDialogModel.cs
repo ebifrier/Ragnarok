@@ -199,7 +199,7 @@ namespace Ragnarok.Presentation.Debug
                     break;
                 }
 
-                if (Util.IsWhiteSpaceOnly(line))
+                if (line.IsWhiteSpaceOnly())
                 {
                     yield return result;
 
