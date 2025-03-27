@@ -12,6 +12,17 @@ using NLog.Config;
 namespace Ragnarok
 {
     /// <summary>
+    /// ログ出力用のオブジェクトです。
+    /// </summary>
+    public interface ILogObject
+    {
+        /// <summary>
+        /// ログ出力用の名前を取得します。
+        /// </summary>
+        string LogName { get; }
+    }
+
+    /// <summary>
     /// ログの出力を行うクラスです。
     /// </summary>
     /// <remarks>
