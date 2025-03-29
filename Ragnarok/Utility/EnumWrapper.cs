@@ -8,7 +8,7 @@ namespace Ragnarok.Utility
     /// <summary>
     /// Enumに付随するラベル名などを取得可能なクラスです。
     /// </summary>
-    public class EnumWrapper<T>
+    public class EnumWrapper<T>(T value)
     {
         /// <summary>
         /// 列挙値を取得または設定します。
@@ -17,7 +17,7 @@ namespace Ragnarok.Utility
         {
             get;
             set;
-        }
+        } = value;
 
         /// <summary>
         /// 設定されたラベル名を取得します。
@@ -49,8 +49,7 @@ namespace Ragnarok.Utility
         /// </summary>
         public override bool Equals(object obj)
         {
-            var wrapper = obj as EnumWrapper<T>;
-            if (wrapper != null)
+            if (obj is EnumWrapper<T> wrapper)
             {
                 return Value.Equals(wrapper.Value);
             }
@@ -65,14 +64,6 @@ namespace Ragnarok.Utility
         public override int GetHashCode()
         {
             return Value.GetHashCode();
-        }
-
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        public EnumWrapper(T value)
-        {
-            Value = value;
         }
     }
 }
