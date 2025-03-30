@@ -3,14 +3,35 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using Ragnarok.MathEx;
 
 namespace Ragnarok
 {
     /// <summary>
     /// ユーティリティクラスです。
     /// </summary>
-    public static class StringExtensions
+    public static partial class StringExtensions
     {
+        /// <summary>
+        /// 文字列長の範囲内で安全に部分文字列を取り出します。
+        /// </summary>
+        public static string SafeSubstr(this string value, Range range)
+        {
+            ArgumentNullException.ThrowIfNull(value, nameof(value));
+            ArgumentNullException.ThrowIfNull(range, nameof(range));
+
+            int start = range.Start.GetOffset(value.Length);
+            int end = range.End.GetOffset(value.Length);
+            int length = end - start;
+            if (length <= 0)
+            {
+                return string.Empty;
+            }
+
+            length = MathUtil.Between(0, value.Length - start, length);
+            return value.Substring(start, length);
+        }
+
         /// <summary>
         /// 全角文字を２文字分として文字数をカウントします。
         /// </summary>
@@ -89,46 +110,8 @@ namespace Ragnarok
             return self.All(IsWhiteSpaceEx);
         }
 
-        /// <summary>
-        /// 文字列中の空白があるインデックスを取得します。
-        /// </summary>
-        public static int IndexOfWhitespace(this string text)
-        {
-            if (string.IsNullOrEmpty(text))
-            {
-                return -1;
-            }
-
-            for (var i = 0; i < text.Length; ++i)
-            {
-                if (char.IsWhiteSpace(text[i]))
-                {
-                    return i;
-                }
-            }
-
-            return -1;
-        }
-
-        /// <summary>
-        /// <paramref name="c"/>が全角文字か調べます。
-        /// </summary>
-        public static bool IsZenkaku(this char c)
-        {
-            try
-            {
-                // sjisの2バイト文字はすべて全角なのでそれを利用して調べます。
-                var count = Util.SJisEncoding.GetByteCount(new char[] { c });
-
-                return (count == 2);
-            }
-            catch (EncoderFallbackException)
-            {
-                // sjisに変換できない文字だった場合は
-                // 全角文字であると仮定します。
-                return false;
-            }
-        }
+        [GeneratedRegex(@"\s+")]
+        private static partial Regex WhitespaceRegex();
 
         /// <summary>
         /// 空白文字をすべて削除します。
@@ -140,7 +123,7 @@ namespace Ragnarok
                 return text;
             }
 
-            return Regex.Replace(text, @"\s+", "");
+            return WhitespaceRegex().Replace(text, "");
         }
 
         /// <summary>
@@ -166,13 +149,12 @@ namespace Ragnarok
                 return text;
             }
 
-            if (!quotes.Any())
+            if (quotes.Length == 0)
             {
-                quotes = new char[] { '\'', '\"' };
+                quotes = ['\'', '\"'];
             }
 
-            var trimmedText = text.TrimStart(quotes);
-            return trimmedText.TrimEnd(quotes);
+            return text.TrimStart(quotes).TrimEnd(quotes);
         }
     }
 }
