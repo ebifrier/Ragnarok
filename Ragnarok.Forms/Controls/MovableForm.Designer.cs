@@ -34,15 +34,17 @@
             normalToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            toggleFixToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             contextMenuStrip.SuspendLayout();
             SuspendLayout();
             // 
             // contextMenuStrip
             // 
             contextMenuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
-            contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { maximumToolStripMenuItem, normalToolStripMenuItem, toolStripSeparator1, closeToolStripMenuItem });
+            contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { maximumToolStripMenuItem, normalToolStripMenuItem, toolStripSeparator1, toggleFixToolStripMenuItem, toolStripSeparator2, closeToolStripMenuItem });
             contextMenuStrip.Name = "contextMenuStrip";
-            contextMenuStrip.Size = new System.Drawing.Size(211, 110);
+            contextMenuStrip.Size = new System.Drawing.Size(211, 140);
             // 
             // maximumToolStripMenuItem
             // 
@@ -67,6 +69,17 @@
             closeToolStripMenuItem.Size = new System.Drawing.Size(210, 24);
             closeToolStripMenuItem.Text = "閉じる(&X)";
             // 
+            // toolStripSeparator2
+            // 
+            toolStripSeparator2.Name = "toolStripSeparator2";
+            toolStripSeparator2.Size = new System.Drawing.Size(207, 6);
+            // 
+            // toggleFixToolStripMenuItem
+            // 
+            toggleFixToolStripMenuItem.Name = "toggleFixToolStripMenuItem";
+            toggleFixToolStripMenuItem.Size = new System.Drawing.Size(210, 24);
+            toggleFixToolStripMenuItem.Text = "ウィンドウを固定する";
+            // 
             // MovableForm
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
@@ -87,5 +100,7 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem closeToolStripMenuItem;
         protected System.Windows.Forms.ContextMenuStrip contextMenuStrip;
+        private System.Windows.Forms.ToolStripMenuItem toggleFixToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
     }
 }

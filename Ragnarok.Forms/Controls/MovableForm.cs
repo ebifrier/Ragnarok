@@ -11,6 +11,7 @@ namespace Ragnarok.Forms.Controls
     {
         private IWindowOperationStarter[] starters;
         private WindowOperationBase operation;
+        private bool isWindowFixed = false;
         private bool saveAspect = false;
 
         public MovableForm()
@@ -19,9 +20,11 @@ namespace Ragnarok.Forms.Controls
 
             this.maximumToolStripMenuItem.Click += (_, __) => SetWindowState(FormWindowState.Maximized);
             this.normalToolStripMenuItem.Click += (_, __) => SetWindowState(FormWindowState.Normal);
+            this.toggleFixToolStripMenuItem.Click += (_, __) => IsWindowFixed = !IsWindowFixed;
             this.closeToolStripMenuItem.Click += (_, __) => Close();
 
             SetWindowState(WindowState);
+            SetWindowFixMenuTitle(IsWindowFixed);
             SaveAspectUpdated();
         }
 
@@ -70,6 +73,32 @@ namespace Ragnarok.Forms.Controls
         } = 24;
 
         /// <summary>
+        /// ウィンドウの可動/不動状態を取得または設定します。
+        /// </summary>
+        public bool IsWindowFixed
+        {
+            get { return this.isWindowFixed; }
+            set
+            {
+                if (this.isWindowFixed != value)
+                {
+                    this.isWindowFixed = value;
+                    this.operation?.End();
+                    this.operation = null;
+
+                    SetWindowFixMenuTitle(this.isWindowFixed);
+                }
+            }
+        }
+
+        private void SetWindowFixMenuTitle(bool isFixed)
+        {
+            this.toggleFixToolStripMenuItem.Text = isFixed
+                ? "ウィンドウを動かせるようにする"
+                : "ウィンドウを固定する";
+        }
+
+        /// <summary>
         /// リサイズ時にアスペクト比を保存するかどうかを取得または設定します。
         /// </summary>
         public bool SaveAspect
@@ -101,7 +130,8 @@ namespace Ragnarok.Forms.Controls
 
             // 開始可能なオペレーションがあるなら、それを開始します。
             if (e.Button == MouseButtons.Left &&
-                WindowState == FormWindowState.Normal)
+                WindowState == FormWindowState.Normal &&
+                !IsWindowFixed)
             {
                 var wp = e.Location;
                 foreach (var starter in this.starters)
@@ -129,7 +159,8 @@ namespace Ragnarok.Forms.Controls
             {
                 this.operation.Operate(wp);
             }
-            else if (WindowState == FormWindowState.Normal)
+            else if (WindowState == FormWindowState.Normal &&
+                     !IsWindowFixed)
             {
                 this.ShowCursor();
 
@@ -170,7 +201,7 @@ namespace Ragnarok.Forms.Controls
         {
             base.OnMouseDoubleClick(e);
 
-            if (e.Button == MouseButtons.Left)
+            if (e.Button == MouseButtons.Left && !IsWindowFixed)
             {
                 SetWindowState(WindowState == FormWindowState.Normal
                     ? FormWindowState.Maximized
