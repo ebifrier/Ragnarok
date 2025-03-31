@@ -6,13 +6,10 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Reflection;
 
 namespace Ragnarok
 {
-    using Ragnarok.Utility;
-
     /// <summary>
     /// PropertyChangedイベントを呼ぶメソッド型です。
     /// </summary>
@@ -35,7 +32,6 @@ namespace Ragnarok
     public static class Util
     {
         public static readonly Encoding SJisEncoding;
-        public static CultureInfo DefaultCulture;
 
         private static PropertyChangedEventCaller propertyChangedCaller;
         private static CollectionChangedEventCaller collectionChangedCaller;
@@ -45,20 +41,6 @@ namespace Ragnarok
         {
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             SJisEncoding = Encoding.GetEncoding("shift_jis");
-            DefaultCulture = new("ja-JP");
-        }
-
-        /// <summary>
-        /// EntryAssemblyのディレクトリパスを取得します。
-        /// </summary>
-        public static string EntryAssemblyDirectory
-        {
-            get
-            {
-                var thisAsm = Assembly.GetEntryAssembly();
-
-                return Path.GetDirectoryName(thisAsm.Location);
-            }
         }
 
         /// <summary>
@@ -280,44 +262,6 @@ namespace Ragnarok
         }
 
         /// <summary>
-        /// <paramref name="self"/>がMinValueやMaxValueでないなら真を返します。
-        /// </summary>
-        public static bool IsNormal(this DateTime self)
-        {
-            return self != DateTime.MinValue && self != DateTime.MaxValue;
-        }
-
-        /// <summary>
-        /// <paramref name="self"/>がMinValueやMaxValueでないなら真を返します。
-        /// </summary>
-        public static bool IsNormal(this TimeSpan self)
-        {
-            return (self != TimeSpan.MinValue && self != TimeSpan.MaxValue);
-        }
-
-        /// <summary>
-        /// TimeSpanのミリ秒部分を<paramref name="millis"/> / 1000 にします。
-        /// </summary>
-        public static TimeSpan MillisecondsTo(this TimeSpan self, int millis)
-        {
-            if (self == TimeSpan.MinValue || self == TimeSpan.MaxValue)
-            {
-                return self;
-            }
-
-            return TimeSpan.FromSeconds(
-                Math.Floor(self.TotalSeconds) + ((double)millis / 1000.0));
-        }
-
-        /// <summary>
-        /// TimeSpanのミリ秒部分を０にします。
-        /// </summary>
-        public static TimeSpan MillisecondsToZero(this TimeSpan self)
-        {
-            return MillisecondsTo(self, 0);
-        }
-
-        /// <summary>
         /// default(type)を取得します。
         /// </summary>
         public static object GetDefaultValue(Type type)
@@ -328,204 +272,6 @@ namespace Ragnarok
             }
 
             return null;
-        }
-
-        /// <summary>
-        /// <paramref name="value"/>がnullであれば<paramref name="defaultValue"/>
-        /// を、そうでなければ値をそのまま返します。
-        /// </summary>
-        public static T GetValue<T>(T value, T defaultValue)
-            where T : class
-        {
-            if (value == null)
-            {
-                return defaultValue;
-            }
-            else
-            {
-                return value;
-            }
-        }
-
-        /// <summary>
-        /// <paramref name="value"/>がnullであれば<paramref name="defaultValue"/>
-        /// を、そうでなければ値をそのまま返します。
-        /// </summary>
-        public static T GetNullableValue<T>(T? value, T defaultValue)
-            where T : struct
-        {
-            if (value == null)
-            {
-                return defaultValue;
-            }
-            else
-            {
-                return value.Value;
-            }
-        }
-
-        /// <summary>
-        /// 全角文字を２文字分として文字数をカウントします。
-        /// </summary>
-        public static int HankakuLength(this string self)
-        {
-            if (string.IsNullOrEmpty(self))
-            {
-                return 0;
-            }
-
-            try
-            {
-                // sjisの2バイト文字はすべて全角なのでそれを利用して調べます。
-                return SJisEncoding.GetByteCount(self);
-            }
-            catch (EncoderFallbackException)
-            {
-                return -1;
-            }
-        }
-
-        /// <summary>
-        /// 全角文字を２文字分として、必要な文字数以下になるように文字列を切り詰めます。
-        /// </summary>
-        /// <example>
-        /// てすと => (3) => て
-        /// てすと => (4) => てす
-        /// てtt => (3) => てt
-        /// oかeri => (3) => oか
-        /// </example>
-        public static string HankakuSubstring(this string self, int hankakuLength)
-        {
-            if (string.IsNullOrEmpty(self))
-            {
-                return self;
-            }
-
-            for (var length = Math.Min(hankakuLength, self.Length);
-                 length > 0; --length)
-            {
-                var substr = self[..length];
-                var hanLen = substr.HankakuLength();
-
-                // utf8 => sjisの変換に失敗した場合はすべて全角文字であると仮定します。
-                hanLen = (hanLen >= 0 ? hanLen : substr.Length * 2);
-                if (hanLen <= hankakuLength)
-                {
-                    return substr;
-                }
-            }
-
-            return string.Empty;
-        }
-
-        /// <summary>
-        /// 空白文字か調べます。
-        /// </summary>
-        public static bool IsWhiteSpaceEx(this char self)
-        {
-            return (
-                char.IsWhiteSpace(self) ||
-                self == '\u200c' ||
-                self == '\u200e');
-        }
-
-        /// <summary>
-        /// 空白文字のみで構成されているか調べます。
-        /// </summary>
-        public static bool IsWhiteSpaceOnly(this string self)
-        {
-            if (string.IsNullOrEmpty(self))
-            {
-                return true;
-            }
-
-            return self.All(IsWhiteSpaceEx);
-        }
-
-        /// <summary>
-        /// 文字列中の空白があるインデックスを取得します。
-        /// </summary>
-        public static int IndexOfWhitespace(this string text)
-        {
-            if (string.IsNullOrEmpty(text))
-            {
-                return -1;
-            }
-
-            for (var i = 0; i < text.Length; ++i)
-            {
-                if (char.IsWhiteSpace(text[i]))
-                {
-                    return i;
-                }
-            }
-
-            return -1;
-        }
-
-        /// <summary>
-        /// <paramref name="c"/>が全角文字か調べます。
-        /// </summary>
-        public static bool IsZenkaku(this char c)
-        {
-            try
-            {
-                // sjisの2バイト文字はすべて全角なのでそれを利用して調べます。
-                var count = SJisEncoding.GetByteCount(new char[] { c });
-
-                return (count == 2);
-            }
-            catch (EncoderFallbackException)
-            {
-                // sjisに変換できない文字だった場合は
-                // 全角文字であると仮定します。
-                return false;
-            }
-        }
-
-        /// <summary>
-        /// 空白文字をすべて削除します。
-        /// </summary>
-        public static string RemoveWhitespace(this string text)
-        {
-            if (string.IsNullOrEmpty(text))
-            {
-                return text;
-            }
-
-            return Regex.Replace(text, @"\s+", "");
-        }
-
-        /// <summary>
-        /// 特定の文字で前後をくくります。
-        /// </summary>
-        public static string Quote(this string text, string c)
-        {
-            if (string.IsNullOrEmpty(c))
-            {
-                return text;
-            }
-
-            return (c + text + c);
-        }
-
-        /// <summary>
-        /// 前後にある特定の文字列を削除します。
-        /// </summary>
-        public static string RemoveQuote(this string text, params char[] quotes)
-        {
-            if (string.IsNullOrEmpty(text))
-            {
-                return text;
-            }
-
-            if (!quotes.Any())
-            {
-                quotes = new char[] { '\'', '\"' };
-            }
-
-            var trimmedText = text.TrimStart(quotes);
-            return trimmedText.TrimEnd(quotes);
         }
 
         /// <summary>
@@ -561,6 +307,24 @@ namespace Ragnarok
         public static string ReadToEnd(Stream stream, Encoding encoding)
         {
             using var reader = new StreamReader(stream, encoding);
+            return reader.ReadToEnd();
+        }
+
+        /// <summary>
+        /// 埋め込みリソースからテキストを取得します。
+        /// </summary>
+        /// <remarks>
+        /// <paramref name="resourcePath"/>には名前空間を含めたパスを指定してください。
+        /// 例えば、"Ragnarok.Util.TestResource.txt" などになります。
+        /// <paramref name="encoding"/>は指定がなければUTF8になります。
+        /// </remarks>
+        public static string GetResourceString(Assembly asm,
+                                               string resourcePath,
+                                               Encoding encoding = null)
+        {
+            using var stream = asm.GetManifestResourceStream(resourcePath);
+            using var reader = new StreamReader(
+                stream, encoding ?? Encoding.UTF8);
             return reader.ReadToEnd();
         }
 
@@ -660,34 +424,6 @@ namespace Ragnarok
 
             // 自ディレクトリを作成。
             Directory.CreateDirectory(dirName);
-        }
-
-        /// <summary>
-        /// CurrentDomainのアセンブリ一覧から特定の名前を持つ型を探します。
-        /// </summary>
-        /// <remarks>
-        /// 型の取得において、自ら読み込んだアセンブリではType.GetType(string)
-        /// に失敗することがあります。
-        /// </remarks>
-        public static Type FindTypeFromCurrentDomain(string name)
-        {
-            var type = Type.GetType(name);
-            if (type is not null)
-            {
-                return type;
-            }
-
-            return GetCurrentDomainAssembliesType()
-                .Select(_ => _.GetType(name))
-                .FirstOrDefault(_ => _ != null);
-        }
-
-        /// <summary>
-        /// CurrentDomainのアセンブリ一覧を取得します。
-        /// </summary>
-        public static IEnumerable<Assembly> GetCurrentDomainAssembliesType()
-        {
-            return AppDomain.CurrentDomain.GetAssemblies();
         }
     }
 }

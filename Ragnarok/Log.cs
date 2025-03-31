@@ -12,6 +12,17 @@ using NLog.Config;
 namespace Ragnarok
 {
     /// <summary>
+    /// ログ出力用のオブジェクトです。
+    /// </summary>
+    public interface ILogObject
+    {
+        /// <summary>
+        /// ログ出力用の名前を取得します。
+        /// </summary>
+        string LogName { get; }
+    }
+
+    /// <summary>
     /// ログの出力を行うクラスです。
     /// </summary>
     /// <remarks>
@@ -93,6 +104,7 @@ namespace Ragnarok
         {
             try
             {
+                var baseDir = AppContext.BaseDirectory;
                 var thisAsm = Assembly.GetExecutingAssembly();
 
                 // ロガーを作成する前に、必要なオブジェクトを
@@ -104,21 +116,20 @@ namespace Ragnarok
                 // 実行ファイルと同じパスからappname.exe.nlogやNLog.configを検索します。
                 var configFileNames = new string[]
                 {
-                    Path.GetFileName(thisAsm.Location) + ".nlog",
+                    $"{thisAsm.ManifestModule.Name}.nlog",
                     "NLog.config",
                 };
 
-                var basePath = Path.GetDirectoryName(thisAsm.Location);
                 foreach (var configFile in configFileNames)
                 {
-                    var filename = Path.Combine(basePath, configFile);
-                    if (!File.Exists(filename))
+                    var filePath = Path.Combine(baseDir, configFile);
+                    if (!File.Exists(filePath))
                     {
                         continue;
                     }
 
                     LogManager.Configuration =
-                        new XmlLoggingConfiguration(filename);
+                        new XmlLoggingConfiguration(filePath);
                     break;
                 }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
 
 namespace Ragnarok.MathEx
 {
@@ -40,6 +41,10 @@ namespace Ragnarok.MathEx
     public class Matrix44d
     {
         /// <summary>
+        /// 単位行列
+        /// </summary>
+        public static readonly Matrix44d Identity = new();
+        /// <summary>
         /// 行列の行の数を取得します。
         /// </summary>
         public static readonly int Rows = 4;
@@ -48,7 +53,7 @@ namespace Ragnarok.MathEx
         /// </summary>
         public static readonly int Columns = 4;
 
-        private double[,] values;
+        private readonly double[,] values;
 
         /// <summary>
         /// コンストラクタ
@@ -56,7 +61,10 @@ namespace Ragnarok.MathEx
         public Matrix44d()
         {
             this.values = new double[4, 4];
-            SetIdentity();
+            this.values[0, 0] = 1.0;
+            this.values[1, 1] = 1.0;
+            this.values[2, 2] = 1.0;
+            this.values[3, 3] = 1.0;
         }
 
         /// <summary>
@@ -101,7 +109,7 @@ namespace Ragnarok.MathEx
         /// </summary>
         public bool IsIdentity
         {
-            get { return (this == new Matrix44d()); }
+            get { return (this == Identity); }
         }
 
         /// <summary>
@@ -140,6 +148,12 @@ namespace Ragnarok.MathEx
         /// </summary>
         public void Transpose()
         {
+            if (ReferenceEquals(this, Identity))
+            {
+                throw new MatrixException(
+                    "Identity matrix could not be changed.");
+            }
+
             for (int i = 0; i < Rows; i++)
             {
                 for (int j = 0; j < Columns; j++)
@@ -191,7 +205,7 @@ namespace Ragnarok.MathEx
         /// </summary>
         public bool Equals(Matrix44d other)
         {
-            if ((object)other == null)
+            if (other is null)
             {
                 return false;
             }
@@ -273,6 +287,34 @@ namespace Ragnarok.MathEx
 
         #region Row/Column major
         /// <summary>
+        /// 矩形からその変換行列を作成します。
+        /// </summary>
+        public static Matrix44d FromRectangle(Rectangle rect)
+        {
+            var matrix = new Matrix44d();
+            matrix.Translate(
+                rect.Left + rect.Width / 2,
+                rect.Top + rect.Height / 2,
+                0.0);
+            matrix.Scale(rect.Width, rect.Height, 1.0);
+            return matrix;
+        }
+
+        /// <summary>
+        /// 矩形からその変換行列を作成します。
+        /// </summary>
+        public static Matrix44d FromRectangle(RectangleF rect)
+        {
+            var matrix = new Matrix44d();
+            matrix.Translate(
+                rect.Left + rect.Width / 2,
+                rect.Top + rect.Height / 2,
+                0.0);
+            matrix.Scale(rect.Width, rect.Height, 1.0);
+            return matrix;
+        }
+
+        /// <summary>
         /// 行優先の配列から行列を作成します。
         /// </summary>
         public static Matrix44d FromRowMajorArray(double[] rowMajorArray)
@@ -326,17 +368,18 @@ namespace Ragnarok.MathEx
         {
             get
             {
-                var ar = new List<double>();
+                var ar = new double[Rows * Columns];
+                var index = 0;
 
                 for (int i = 0; i < Rows; i++)
                 {
                     for (int j = 0; j < Columns; j++)
                     {
-                        ar.Add(this[i, j]);
+                        ar[index++] = this[i, j];
                     }
                 }
 
-                return ar.ToArray();
+                return ar;
             }
         }
 
@@ -348,17 +391,18 @@ namespace Ragnarok.MathEx
         {
             get
             {
-                var ar = new List<double>();
+                var ar = new double[Rows * Columns];
+                var index = 0;
 
                 for (int j = 0; j < Columns; j++)
                 {
                     for (int i = 0; i < Rows; i++)
                     {
-                        ar.Add(this[i, j]);
+                        ar[index++] = this[i, j];
                     }
                 }
 
-                return ar.ToArray();
+                return ar;
             }
         }
         #endregion
@@ -372,6 +416,12 @@ namespace Ragnarok.MathEx
             if (mat == null)
             {
                 throw new ArgumentNullException(nameof(mat));
+            }
+
+            if (ReferenceEquals(this, Identity))
+            {
+                throw new MatrixException(
+                    "Identity matrix could not be changed.");
             }
 
             for (var i = 0; i < Rows; i++)
@@ -408,6 +458,12 @@ namespace Ragnarok.MathEx
                 throw new ArgumentNullException(nameof(mat));
             }
 
+            if (ReferenceEquals(this, Identity))
+            {
+                throw new MatrixException(
+                    "Identity matrix could not be changed.");
+            }
+
             for (var i = 0; i < Rows; i++)
             {
                 for (var j = 0; j < Columns; j++)
@@ -437,6 +493,12 @@ namespace Ragnarok.MathEx
         /// </summary>
         public void Multiply(double scale)
         {
+            if (ReferenceEquals(this, Identity))
+            {
+                throw new MatrixException(
+                    "Identity matrix could not be changed.");
+            }
+
             for (int i = 0; i < Rows; i++)
             {
                 for (int j = 0; j < Columns; j++)
@@ -515,6 +577,12 @@ namespace Ragnarok.MathEx
                 throw new ArgumentNullException(nameof(mat));
             }
 
+            if (ReferenceEquals(this, Identity))
+            {
+                throw new MatrixException(
+                    "Identity matrix could not be changed.");
+            }
+
             var clone = Clone();
             for (int i = 0; i < Rows; i++)
             {
@@ -539,6 +607,12 @@ namespace Ragnarok.MathEx
             if (mat == null)
             {
                 throw new ArgumentNullException(nameof(mat));
+            }
+
+            if (ReferenceEquals(this, Identity))
+            {
+                throw new MatrixException(
+                    "Identity matrix could not be changed.");
             }
 
             var clone = Clone();

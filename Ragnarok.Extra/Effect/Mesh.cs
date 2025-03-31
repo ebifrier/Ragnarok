@@ -15,6 +15,8 @@ namespace Ragnarok.Extra.Effect
     /// </remarks>
     public class Mesh
     {
+        public static readonly Mesh Default = CreateDefaultImpl(1, 1, 0, 0);
+
         /// <summary>
         /// コンストラクタ
         /// </summary>
@@ -32,32 +34,22 @@ namespace Ragnarok.Extra.Effect
                 throw new ArgumentNullException(nameof(indices));
             }
 
-            if (uvs == null)
-            {
-                throw new ArgumentNullException(nameof(uvs));
-            }
+            VertexArray = vertices.ToArray();
+            IndexArray = indices.ToArray();
+            TextureUVArray = uvs?.ToArray();
 
-            VertexArray = vertices.ToList();
-            IndexArray = indices.ToList();
-            TextureUVArray = uvs.ToList();
-
-            if (VertexArray.Count != TextureUVArray.Count)
+            if (TextureUVArray != null &&
+                TextureUVArray.Length != VertexArray.Length)
             {
                 throw new ArgumentException(
                     "頂点配列とテクスチャUV配列の数が一致しません。");
-            }
-
-            if (IndexArray.Count % 3 != 0)
-            {
-                throw new ArgumentException(
-                    "インデックス配列は三角形による指定をお願いします。");
             }
         }
 
         /// <summary>
         /// 頂点配列を取得します。
         /// </summary>
-        public List<Point3d> VertexArray
+        public Point3d[] VertexArray
         {
             get;
             private set;
@@ -66,7 +58,7 @@ namespace Ragnarok.Extra.Effect
         /// <summary>
         /// テクスチャのUV配列を取得します。
         /// </summary>
-        public List<Pointd> TextureUVArray
+        public Pointd[] TextureUVArray
         {
             get;
             private set;
@@ -75,7 +67,7 @@ namespace Ragnarok.Extra.Effect
         /// <summary>
         /// インデックス配列を取得します。
         /// </summary>
-        public List<int> IndexArray
+        public int[] IndexArray
         {
             get;
             private set;
@@ -87,6 +79,21 @@ namespace Ragnarok.Extra.Effect
         public static Mesh CreateDefault(double width, double height,
                                          double imageWidth, double imageHeight)
         {
+            if (width == 1.0 && height == 1.0 &&
+                imageWidth == 0.0 && imageHeight == 0.0)
+            {
+                return Default;
+            }
+
+            return CreateDefaultImpl(width, height, imageWidth, imageHeight);
+        }
+
+        /// <summary>
+        /// 指定の座標を持った矩形モデルを作成します。
+        /// </summary>
+        private static Mesh CreateDefaultImpl(double width, double height,
+                                              double imageWidth, double imageHeight)
+        {
             // テクスチャのUV座標をイメージの0.5ピクセル分ずらします。
             var halfPixelW = (imageWidth != 0.0 ? 0.5 / imageWidth : 0.0);
             var halfPixelH = (imageHeight != 0.0 ? 0.5 / imageHeight : 0.0);
@@ -95,18 +102,18 @@ namespace Ragnarok.Extra.Effect
                 // 頂点配列
                 new Point3d[]
                 {
-                    new Point3d(-width / 2, -height / 2, 0.0),
-                    new Point3d(+width / 2, -height / 2, 0.0),
-                    new Point3d(-width / 2, +height / 2, 0.0),
-                    new Point3d(+width / 2, +height / 2, 0.0),
+                    new(-width / 2, -height / 2, 0.0),
+                    new(+width / 2, -height / 2, 0.0),
+                    new(-width / 2, +height / 2, 0.0),
+                    new(+width / 2, +height / 2, 0.0),
                 },
                 // テクスチャUV配列
                 new Pointd[]
                 {
-                    new Pointd(0.0,              0.0),
-                    new Pointd(1.0 - halfPixelW, 0.0),
-                    new Pointd(0.0,              1.0 - halfPixelH),
-                    new Pointd(1.0 - halfPixelW, 1.0 - halfPixelH),
+                    new(0.0,              0.0),
+                    new(1.0 - halfPixelW, 0.0),
+                    new(0.0,              1.0 - halfPixelH),
+                    new(1.0 - halfPixelW, 1.0 - halfPixelH),
                 },
                 // インデックス配列
                 new int[]

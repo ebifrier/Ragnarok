@@ -9,6 +9,8 @@ using Ragnarok.MathEx;
 
 namespace Ragnarok.OpenGL
 {
+    public delegate void RenderAction(RenderData data);
+
     /// <summary>
     /// 描画用のデータをまとめて持ちます。
     /// </summary>
@@ -17,14 +19,14 @@ namespace Ragnarok.OpenGL
         /// <summary>
         /// 描画用のメソッドを取得または設定します。
         /// </summary>
-        public Action RenderAction
+        public RenderAction RenderAction
         {
             get;
             set;
         }
 
         /// <summary>
-        /// 描画用のテクスチャを取得します。
+        /// 描画用のテクスチャを取得または設定します。
         /// </summary>
         public Texture Texture
         {
@@ -33,43 +35,52 @@ namespace Ragnarok.OpenGL
         }
 
         /// <summary>
-        /// テクスチャのブレンド方法を取得します。
+        /// テクスチャのブレンド方法を取得または設定します。
         /// </summary>
         public BlendType Blend
         {
             get;
             set;
-        }
+        } = BlendType.Diffuse;
 
         /// <summary>
-        /// ブレンドカラーを取得します。
+        /// ブレンドカラーを取得または設定します。
         /// </summary>
         public Color Color
         {
             get;
             set;
-        }
+        } = Color.White;
 
         /// <summary>
-        /// メッシュを取得します。
+        /// メッシュを取得または設定します。
         /// </summary>
         public Mesh Mesh
         {
             get;
             set;
-        }
+        } = Mesh.Default;
 
         /// <summary>
-        /// 変換行列を取得します。
+        /// 描画時の基本型を取得または設定します。
+        /// </summary>
+        public PrimitiveType PrimitiveType
+        {
+            get;
+            set;
+        } = PrimitiveType.Triangles;
+
+        /// <summary>
+        /// 変換行列を取得または設定します。
         /// </summary>
         public Matrix44d Transform
         {
             get;
             set;
-        }
+        } = Matrix44d.Identity;
 
         /// <summary>
-        /// ZOrderを取得します。
+        /// ZOrderを取得または設定します。
         /// </summary>
         /// <remarks>
         /// ZOrderは数値が大きいほど画面に近くなります。
@@ -85,38 +96,49 @@ namespace Ragnarok.OpenGL
         /// </summary>
         public void Render()
         {
+            GL.Color4(Color);
+            SetBlend(Blend);
+
+            if (Texture != null && Texture.TextureName != 0)
+            {
+                Texture.Bind();
+            }
+
             if (RenderAction != null)
             {
-                GL.PushMatrix();
-                RenderAction();
-                GL.PopMatrix();
+                RenderAction(this);
             }
-            else
+            else if (Mesh != null)
             {
-                if (Mesh == null)
-                {
-                    return;
-                }
-
-                GL.Color4(Color.R, Color.G, Color.B, Color.A);
-                SetBlend(Blend);
-
-                BindTexture(Texture);
-
-                // 座標系の設定
-                GL.PushMatrix();
-                SetMatrix(Transform);
-                SetMesh();
-                GL.PopMatrix();
-
-                UnbindTexture();
+                RenderElements(Mesh, Transform, PrimitiveType);
             }
+
+            Texture.Unbind();
+        }
+
+        /// <summary>
+        /// 頂点要素からなるオブジェクトを描画します。
+        /// </summary>
+        public void RenderElements(Mesh mesh,
+                                   Matrix44d transform,
+                                   PrimitiveType primitiveType)
+        {
+            if (mesh == null)
+            {
+                return;
+            }
+
+            // 座標系の設定
+            GL.PushMatrix();
+            SetMatrix(transform);
+            RenderMesh(mesh, primitiveType);
+            GL.PopMatrix();
         }
 
         /// <summary>
         /// 変換行列の設定を行います。
         /// </summary>
-        public static void SetMatrix(Matrix44d matrix)
+        private static void SetMatrix(Matrix44d matrix)
         {
             if (matrix == null)
             {
@@ -129,26 +151,38 @@ namespace Ragnarok.OpenGL
         }
 
         /// <summary>
-        /// テクスチャのバインドを行います。
+        /// メッシュの設定を行います。
         /// </summary>
-        public static void BindTexture(Texture texture)
+        private void RenderMesh(Mesh mesh, PrimitiveType primitiveType)
         {
-            if (texture != null && texture.TextureName != 0)
-            {
-                texture.Bind();
-            }
-            else
-            {
-                GL.BindTexture(TextureTarget.Texture2D, 0);
-            }
-        }
+            var tx = 1.0f;
+            var ty = 1.0f;
 
-        /// <summary>
-        /// テクスチャのアンバインドを行います。
-        /// </summary>
-        public static void UnbindTexture()
-        {
-            Texture.Unbind();
+            if (Texture != null)
+            {
+                tx = (float)Texture.OriginalWidth / Texture.Width;
+                ty = (float)Texture.OriginalHeight / Texture.Height;
+            }
+
+            // glBegin/glEndの間でglGetErrorを呼ぶとエラーになります。
+            GLw.C(() =>
+            {
+                GL.Begin(primitiveType);
+                foreach (var index in mesh.IndexArray)
+                {
+                    // UVの設定
+                    if (mesh.TextureUVArray != null)
+                    {
+                        var uv = mesh.TextureUVArray[index];
+                        GL.TexCoord2((float)uv.X * tx, (float)uv.Y * ty);
+                    }
+
+                    // 頂点座標の設定
+                    var pos = mesh.VertexArray[index];
+                    GL.Vertex3((float)pos.X, (float)pos.Y, (float)pos.Z);
+                }
+                GL.End();
+            });
         }
 
         /// <summary>
@@ -159,58 +193,22 @@ namespace Ragnarok.OpenGL
             switch (blend)
             {
                 case BlendType.Diffuse:
-                    GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
-                    GL.Disable(EnableCap.AlphaTest);
+                    GLw.C(() => GL.BlendFunc(
+                        BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha));
+                    GLw.C(() => GL.Disable(EnableCap.AlphaTest));
                     break;
                 case BlendType.Emissive:
-                    GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.One);
-                    GL.Disable(EnableCap.AlphaTest);
+                    GLw.C(() => GL.BlendFunc(
+                        BlendingFactor.SrcAlpha, BlendingFactor.One));
+                    GLw.C(() => GL.Disable(EnableCap.AlphaTest));
                     break;
                 case BlendType.Copy:
-                    // ある程度高い不透明度がある場合しか、データのコピーを行わないようにします。
-                    // エッジが不透明になるのを避けたい場合に使います。
-                    GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
-                    GL.Enable(EnableCap.AlphaTest);
-                    GL.AlphaFunc(AlphaFunction.Greater, 0.9f);
+                    GLw.C(() => GL.BlendFunc(
+                        BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha));
+                    GLw.C(() => GL.Enable(EnableCap.AlphaTest));
+                    GLw.C(() => GL.AlphaFunc(AlphaFunction.Greater, 0.9f));
                     break;
             }
-        }
-
-        /// <summary>
-        /// メッシュの設定を行います。
-        /// </summary>
-        private void SetMesh()
-        {
-            var tx = 1.0;
-            var ty = 1.0;
-
-            if (Texture != null)
-            {
-                tx = (double)Texture.OriginalWidth / Texture.Width;
-                ty = (double)Texture.OriginalHeight / Texture.Height;
-            }
-
-            // 困ったことにOpenTKのバージョンによって使える方が異なる
-#if true
-            GL.Begin(PrimitiveType.Triangles);
-#else
-            GL.Begin(BeginMode.Triangles);
-#endif
-
-            for (int i = 0; i < Mesh.IndexArray.Count; ++i)
-            {
-                var index = Mesh.IndexArray[i];
-
-                // UVの設定
-                var uv = Mesh.TextureUVArray[index];
-                GL.TexCoord2(uv.X * tx, uv.Y * ty);
-
-                // 頂点座標の設定
-                var pos = Mesh.VertexArray[index];
-                GL.Vertex3(pos.X, pos.Y, pos.Z);
-            }
-
-            GL.End();
         }
     }
 }

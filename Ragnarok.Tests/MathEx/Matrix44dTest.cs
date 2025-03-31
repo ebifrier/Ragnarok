@@ -101,5 +101,19 @@ namespace Ragnarok.MathEx.Tests
             Assert.False(m.HasInverse);
             Assert.Catch<MatrixException>(() => m.Invert());
         }
+
+        [Test()]
+        public void IdentityTest()
+        {
+            var m = new Matrix44d();
+            m.Multiply(Matrix44d.Identity);
+            m.Prepend(Matrix44d.Identity);
+            Assert.AreEqual(m, Matrix44d.Identity);
+
+            Assert.Catch<MatrixException>(() =>
+                Matrix44d.Identity.Multiply(new Matrix44d()));
+            Assert.Catch<MatrixException>(() =>
+                Matrix44d.Identity.Add(new Matrix44d()));
+        }
     }
 }

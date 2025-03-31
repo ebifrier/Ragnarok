@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using OpenTK.Windowing.Common;
-using OpenTK.Graphics.OpenGL;
 
 namespace Ragnarok.OpenGL
 {
@@ -14,44 +13,45 @@ namespace Ragnarok.OpenGL
     /// Deleteされる必要がありますが、DisposeメソッドはGC用のスレッドで呼ばれるため
     /// そこで廃棄できません。
     /// </remarks>
-    public sealed class TextureDisposer
+    public sealed class GLDisposer
     {
-        private readonly static object syncInstance = new object();
-        private readonly static Dictionary<IGraphicsContext, TextureDisposer> instanceDic =
-            new Dictionary<IGraphicsContext, TextureDisposer>();
+        private readonly static object syncDisposer = new();
+        private readonly static Dictionary<IGraphicsContext, GLDisposer>
+            disposerDic = new();
 
         /// <summary>
-        /// シングルトンインスタンスを取得します。
+        /// contextに紐づけられたシングルトンインスタンスを取得します。
         /// </summary>
-        public static TextureDisposer GetInstance(IGraphicsContext context)
+        public static GLDisposer GetContextInstance(IGraphicsContext context)
         {
             if (context == null)
             {
                 throw new ArgumentNullException(nameof(context));
             }
 
-            lock (syncInstance)
+            lock (syncDisposer)
             {
-                TextureDisposer instance;
-                if (instanceDic.TryGetValue(context, out instance))
+                GLDisposer disposer;
+                if (disposerDic.TryGetValue(context, out disposer))
                 {
-                    return instance;
+                    return disposer;
                 }
 
-                instance = new TextureDisposer(context);
-                instanceDic.Add(context, instance);
-                return instance;
+                disposer = new GLDisposer(context);
+                disposerDic.Add(context, disposer);
+                return disposer;
             }
         }
 
         /// <summary>
         /// 削除するテクスチャを登録します。
         /// </summary>
-        public static void AddDeleteTexture(IGraphicsContext context, uint textureName)
+        public static void AddTarget(IGraphicsContext context,
+                                     Action callback)
         {
-            var instance = GetInstance(context);
+            var disposer = GetContextInstance(context);
 
-            instance.AddDeleteTexture(textureName);
+            disposer.AddTarget(callback);
         }
 
         /// <summary>
@@ -59,18 +59,18 @@ namespace Ragnarok.OpenGL
         /// </summary>
         public static void Update(IGraphicsContext context)
         {
-            var instance = GetInstance(context);
+            var disposer = GetContextInstance(context);
 
-            instance.Update();
+            disposer.Update();
         }
 
-        private readonly object syncRoot = new object();
-        private List<uint> deleteTextureList = new List<uint>();
+        private readonly object syncList = new();
+        private readonly List<Action> deleteList = new();
 
         /// <summary>
         /// private コンストラクタ
         /// </summary>
-        private TextureDisposer(IGraphicsContext context)
+        private GLDisposer(IGraphicsContext context)
         {
             Context = context;
         }
@@ -85,18 +85,18 @@ namespace Ragnarok.OpenGL
         }
 
         /// <summary>
-        /// 削除するテクスチャのリストに加えます。
+        /// 削除するオブジェクトをリストに加えます。
         /// </summary>
-        public void AddDeleteTexture(uint textureName)
+        public void AddTarget(Action callback)
         {
-            if (textureName == 0)
+            if (callback == null)
             {
                 return;
             }
 
-            lock (this.syncRoot)
+            lock (this.syncList)
             {
-                this.deleteTextureList.Add(textureName);
+                this.deleteList.Add(callback);
             }
         }
 
@@ -105,16 +105,11 @@ namespace Ragnarok.OpenGL
         /// </summary>
         public void Update()
         {
-            uint[] textureNames = null;
-
-            lock (this.syncRoot)
+            lock (this.syncList)
             {
-                textureNames = this.deleteTextureList.ToArray();
-                this.deleteTextureList = new List<uint>();
+                this.deleteList.ForEach(_ => GLw.C(() => _()));
+                this.deleteList.Clear();
             }
-
-            // テクスチャをまとめて削除します。
-            GL.DeleteTextures(textureNames.Length, textureNames);
         }
     }
 }

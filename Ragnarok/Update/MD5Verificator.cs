@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -17,7 +16,6 @@ namespace Ragnarok.Update
         /// <summary>
         /// MD5を計算します。
         /// </summary>
-        [SuppressMessage("Security", "CA5351:破られた暗号アルゴリズムを使用しない")]
         public static string ComputeMD5(string filename)
         {
             using (var stream = File.OpenRead(filename))

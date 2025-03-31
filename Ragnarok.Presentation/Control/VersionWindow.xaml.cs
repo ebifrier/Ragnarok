@@ -11,7 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-using Ragnarok.Utility.AssemblyUtility;
+using Ragnarok.Utility;
 
 namespace Ragnarok.Presentation.Control
 {
@@ -46,7 +46,7 @@ namespace Ragnarok.Presentation.Control
         {
             InitializeComponent();
 
-            AssemblyAccessor = new AssemblyAccessor(assemblyName, true);
+            AssemblyAccessor = new AssemblyAccessor(assemblyName);
         }
     }
 }

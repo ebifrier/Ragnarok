@@ -24,143 +24,43 @@ namespace Ragnarok.OpenGL
     /// <summary>
     /// OpenGL用のテクスチャを管理します。
     /// </summary>
-    public class Texture : IDisposable, ICachable
+    public class Texture : GLObject, ICachable
     {
-        private readonly static object textureListSync = new object();
-        private readonly static List<WeakReference> textureList = new List<WeakReference>();
-
-        /// <summary>
-        /// テクスチャリストに作成済みのテクスチャを追加します。
-        /// </summary>
-        private static void AddTexture(Texture texture)
-        {
-            if (texture == null)
-            {
-                throw new ArgumentNullException(nameof(texture));
-            }
-
-            lock (textureListSync)
-            {
-                textureList.Add(new WeakReference(texture));
-            }
-        }
-
-        /// <summary>
-        /// テクスチャリストからのテクスチャを削除します。
-        /// </summary>
-        private static void RemoveTexture(Texture texture)
-        {
-            if (texture == null)
-            {
-                throw new ArgumentNullException(nameof(texture));
-            }
-
-            lock (textureListSync)
-            {
-                textureList.RemoveIf(_ => _.Target == texture);
-            }
-        }
-
-        /// <summary>
-        /// 現在のコンテキストが持つテクスチャをすべて削除します。
-        /// </summary>
-        /// <remarks>
-        /// OpenGLの終了時に呼ばれます。
-        /// </remarks>
-        public static void DeleteAll(IGraphicsContext context)
-        {
-            lock (textureListSync)
-            {
-                for (int index = 0; index < textureList.Count; )
-                {
-                    var texture = textureList[index].Target as Texture;
-                    if (texture == null)
-                    {
-                        // 要素を削除したため、indexの更新は行いません。
-                        textureList.RemoveAt(index);
-                        continue;
-                    }
-
-                    if (texture.Context == context)
-                    {
-                        // テクスチャを削除
-                        texture.Destroy();
-
-                        // 要素を削除したため、indexの更新は行いません。
-                        textureList.RemoveAt(index);
-                        continue;
-                    }
-
-                    index += 1;
-                }
-            }
-        }
-        
-        private readonly IGraphicsContext context;
-        private uint glTexture;
-        private bool disposed;
+        private int glTexture;
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
         public Texture(IGraphicsContext context)
+            : base(context)
         {
-            this.context = context ??
-                throw new ArgumentNullException(nameof(context));
-            AddTexture(this);
         }
 
         /// <summary>
-        /// ファイナライザ
+        /// テクスチャを削除します。
         /// </summary>
-        ~Texture()
+        public override void Destroy()
         {
-            Dispose(false);
-        }
-
-        /// <summary>
-        /// テクスチャの削除を行います。
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        /// テクスチャの削除を行います。
-        /// </summary>
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!this.disposed)
+            if (this.glTexture != 0)
             {
-                if (TextureName != 0)
-                {
-                    TextureDisposer.AddDeleteTexture(this.context, TextureName);
-                    this.glTexture = 0;
-                }
-
-                if (disposing)
-                {
-                    RemoveTexture(this);
-                }
-
-                this.disposed = true;
+                var texture = this.glTexture;
+                GLDisposer.AddTarget(
+                    Context,
+                    () => GL.DeleteTexture(texture));
+                this.glTexture = 0;
             }
-        }
 
-        /// <summary>
-        /// テクスチャ名のコンテキストを取得します。
-        /// </summary>
-        public IGraphicsContext Context
-        {
-            get { return this.context; }
+            Width = 0;
+            Height = 0;
+            OriginalWidth = 0;
+            OriginalHeight = 0;
+            IsPremultipliedAlpha = false;
         }
 
         /// <summary>
         /// テクスチャ名(ID)を取得します。
         /// </summary>
-        public uint TextureName
+        public int TextureName
         {
             get { return this.glTexture; }
         }
@@ -254,18 +154,6 @@ namespace Ragnarok.OpenGL
         }
 
         /// <summary>
-        /// コンテキストの確認を行います。
-        /// </summary>
-        private void ValidateContext()
-        {
-            if (!this.context.IsCurrent)
-            {
-                throw new GLException(
-                    "OpenGLコンテキストが正しく設定れていません＞＜");
-            }
-        }
-
-        /// <summary>
         /// テクスチャに関する属性を保存します。
         /// </summary>
         public virtual void Push()
@@ -277,7 +165,6 @@ namespace Ragnarok.OpenGL
             }
 
             ValidateContext();
-            GL.PushAttrib(AttribMask.TextureBit);
             Bind();
         }
 
@@ -293,7 +180,6 @@ namespace Ragnarok.OpenGL
             }
 
             ValidateContext();
-            GL.PopAttrib();
         }
 
         /// <summary>
@@ -368,9 +254,9 @@ namespace Ragnarok.OpenGL
         /// </remarks>
         private bool CreateInternal(Bitmap image, Size originalSize)
         {
-            uint texture = 0;
+            int texture = 0;
 
-            GLWrap.Wrap(() => GL.GenTextures(1, out texture));
+            GLw.C(() => GL.GenTextures(1, out texture));
 
             //  Lock the image bits (so that we can pass them to OGL).
             var bitmapData = image.LockBits(
@@ -380,26 +266,26 @@ namespace Ragnarok.OpenGL
 
             try
             {
-                GLWrap.Wrap(() => GL.BindTexture(TextureTarget.Texture2D, texture));
+                GLw.C(() => GL.BindTexture(TextureTarget.Texture2D, texture));
 
                 // TexParameterのGenerateMipmapを使う場合
                 if (GenerateMipmapSupportLevel == 1)
                 {
                     // glTexImage2Dの前にmipmapの使用設定を行う
-                    //GLWrap.Wrap(() => GL.Hint(HintTarget.GenerateMipmapHint, HintMode.Nicest));
-                    GLWrap.Wrap(() => GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.GenerateMipmap, 1));
+                    //GLw.C(() => GL.Hint(HintTarget.GenerateMipmapHint, HintMode.Nicest));
+                    GLw.C(() => GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.GenerateMipmap, 1));
                 }
 
                 //  テクスチャデータをセットします。
 #if true
-                GLWrap.Wrap(() => GL.TexImage2D(
+                GLw.C(() => GL.TexImage2D(
                     TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba8,
                     image.Width, image.Height, 0,
                     OpenTK.Graphics.OpenGL.PixelFormat.Bgra,
                     PixelType.UnsignedByte,
                     bitmapData.Scan0));
 #else
-                GLWrap.Wrap(() => GL.Build2DMipmaps(
+                GLw.C(() => GL.Build2DMipmaps(
                     TextureTarget.Texture2D, (int)OpenGL.GL_RGBA,
                     image.Width, image.Height,
                     OpenTK.Graphics.OpenGL.GL_BGRA, GL.GL_UNSIGNED_BYTE,
@@ -411,28 +297,28 @@ namespace Ragnarok.OpenGL
                 image.UnlockBits(bitmapData);
             }
 
-            GLWrap.Wrap(() => GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Clamp));
-            GLWrap.Wrap(() => GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Clamp));
+            GLw.C(() => GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToEdge));
+            GLw.C(() => GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToEdge));
 
             // glGenerateMipmapを使う場合
             if (UseMipmap && GenerateMipmapSupportLevel == 2)
             {
-                GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
+                GLw.C(() => GL.GenerateMipmap(GenerateMipmapTarget.Texture2D));
             }
             
             if (UseMipmap && GenerateMipmapSupportLevel > 0)
             {
                 // Mipmapを使う場合はフィルターを設定
-                GLWrap.Wrap(() => GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, GetGLFilter(FilterType, UseMipmap)));
-                GLWrap.Wrap(() => GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, GetGLFilter(FilterType)));
+                GLw.C(() => GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, GetGLFilter(FilterType, UseMipmap)));
+                GLw.C(() => GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, GetGLFilter(FilterType)));
             }
             else
             {
-                GLWrap.Wrap(() => GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, GetGLFilter(FilterType)));
-                GLWrap.Wrap(() => GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, GetGLFilter(FilterType)));
+                GLw.C(() => GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, GetGLFilter(FilterType)));
+                GLw.C(() => GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, GetGLFilter(FilterType)));
             }
 
-            GL.BindTexture(TextureTarget.Texture2D, 0);
+            GLw.C(() => GL.BindTexture(TextureTarget.Texture2D, 0));
             
             // テクスチャの作成に成功したら、古いテクスチャを削除します。
             Destroy();
@@ -458,7 +344,7 @@ namespace Ragnarok.OpenGL
             ValidateContext();
 
             int[] textureMaxSizes = { 0 };
-            GLWrap.Wrap(() => GL.GetInteger(GetPName.MaxTextureSize, textureMaxSizes));
+            GLw.C(() => GL.GetInteger(GetPName.MaxTextureSize, textureMaxSizes));
 
             var textureMaxSize = textureMaxSizes[0];
             var targetWidth = image.Width;
@@ -553,26 +439,6 @@ namespace Ragnarok.OpenGL
 
                 return Create(image);
             }
-        }
-
-        /// <summary>
-        /// テクスチャを削除します。
-        /// </summary>
-        public void Destroy()
-        {
-            ValidateContext();
-
-            if (this.glTexture != 0)
-            {
-                TextureDisposer.AddDeleteTexture(this.context, this.glTexture);
-                this.glTexture = 0;
-            }
-            
-            Width = 0;
-            Height = 0;
-            OriginalWidth = 0;
-            OriginalHeight = 0;
-            IsPremultipliedAlpha = false;
         }
     }
 }

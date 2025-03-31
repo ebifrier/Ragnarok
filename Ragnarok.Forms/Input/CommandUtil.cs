@@ -128,8 +128,8 @@ namespace Ragnarok.Forms.Input
         /// <remarks>
         /// コマンド名はitem.Tagで指定され、そのコマンドをアイテムに設定します。
         /// </remarks>
-        public static void BindMenuCommandInternal(Type[] types, ToolStripItem item,
-                                                   Func<object> parameterCallback)
+        private static void BindMenuCommandInternal(Type[] types, ToolStripItem item,
+                                                    Func<object> parameterCallback)
         {
             if (types == null || !types.Any())
             {

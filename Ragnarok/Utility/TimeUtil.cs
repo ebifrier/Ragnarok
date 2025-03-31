@@ -67,5 +67,43 @@ namespace Ragnarok.Utility
             return XmlConvert.ToString(
                 date, XmlDateTimeSerializationMode.Utc);
         }
+
+        /// <summary>
+        /// <paramref name="self"/>がMinValueやMaxValueでないなら真を返します。
+        /// </summary>
+        public static bool IsNormal(this DateTime self)
+        {
+            return self != DateTime.MinValue && self != DateTime.MaxValue;
+        }
+
+        /// <summary>
+        /// <paramref name="self"/>がMinValueやMaxValueでないなら真を返します。
+        /// </summary>
+        public static bool IsNormal(this TimeSpan self)
+        {
+            return (self != TimeSpan.MinValue && self != TimeSpan.MaxValue);
+        }
+
+        /// <summary>
+        /// TimeSpanのミリ秒部分を<paramref name="millis"/> / 1000 にします。
+        /// </summary>
+        public static TimeSpan MillisecondsTo(this TimeSpan self, int millis)
+        {
+            if (self == TimeSpan.MinValue || self == TimeSpan.MaxValue)
+            {
+                return self;
+            }
+
+            return TimeSpan.FromSeconds(
+                Math.Floor(self.TotalSeconds) + ((double)millis / 1000.0));
+        }
+
+        /// <summary>
+        /// TimeSpanのミリ秒部分を０にします。
+        /// </summary>
+        public static TimeSpan MillisecondsToZero(this TimeSpan self)
+        {
+            return MillisecondsTo(self, 0);
+        }
     }
 }
