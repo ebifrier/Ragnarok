@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 
 namespace Ragnarok.MathEx
@@ -123,7 +122,6 @@ namespace Ragnarok.MathEx
         /// <summary>
         /// 各値を配列として取得します。
         /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1819")]
         public double[,] AsArray
         {
             get { return this.values; }
@@ -363,7 +361,6 @@ namespace Ragnarok.MathEx
         /// <summary>
         /// 行列を列優先の数字列に変換します。
         /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1819")]
         public double[] AsRowMajorArray
         {
             get
@@ -386,7 +383,6 @@ namespace Ragnarok.MathEx
         /// <summary>
         /// 行列を行優先の数字列に変換します。
         /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1819")]
         public double[] AsColumnMajorArray
         {
             get
