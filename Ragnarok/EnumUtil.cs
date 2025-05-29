@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 using Ragnarok.Utility;
 
@@ -18,9 +19,29 @@ namespace Ragnarok
         /// 古い.NETだとEnum.HasFlagが使えないため。
         /// </remarks>
         public static bool HasFlag<T>(this T value, T flag)
-            where T : struct
+            where T : Enum
         {
-            return (((int)(object)value & (int)(object)flag) != 0);
+            int intValue = Unsafe.As<T, int>(ref value);
+            int intFlag = Unsafe.As<T, int>(ref flag);
+            return (intValue & intFlag) != 0;
+        }
+
+        /// <summary>
+        /// Enumが指定のBitSet(1 << bit)を持っているか調べます。
+        /// </summary>
+        public static bool HasBitSet<T>(this T value, int bit)
+            where T : Enum
+        {
+            int intValue = Unsafe.As<T, int>(ref value);
+            return HasBitSet(intValue, bit);
+        }
+
+        /// <summary>
+        /// 値が指定のBitSet(1 << bit)を持っているか調べます。
+        /// </summary>
+        public static bool HasBitSet(int value, int bit)
+        {
+            return (value & (1 << bit)) != 0;
         }
 
         /// <summary>
