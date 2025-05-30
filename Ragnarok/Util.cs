@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace Ragnarok
 {
@@ -185,6 +185,52 @@ namespace Ragnarok
                 if (caller != null)
                 {
                     return caller();
+                }
+            }
+            catch (Exception ex)
+            {
+                if (logging)
+                {
+                    Log.ErrorException(ex,
+                        "Funcの呼び出しに失敗しました。");
+                }
+            }
+
+            return default;
+        }
+
+        /// <summary>
+        /// Actionをエラー処理つきで呼び出します。
+        /// </summary>
+        public static async Task SafeCallAsync(Func<Task> caller, bool logging = true)
+        {
+            try
+            {
+                if (caller != null)
+                {
+                    await caller();
+                }
+            }
+            catch (Exception ex)
+            {
+                if (logging)
+                {
+                    Log.ErrorException(ex,
+                        "Actionの呼び出しに失敗しました。");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Funcをエラー処理つきで呼び出します。
+        /// </summary>
+        public static async Task<TResult> SafeCallAsync<TResult>(Func<Task<TResult>> caller, bool logging = true)
+        {
+            try
+            {
+                if (caller != null)
+                {
+                    return await caller();
                 }
             }
             catch (Exception ex)
