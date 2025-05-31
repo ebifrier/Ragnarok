@@ -51,7 +51,7 @@ namespace Ragnarok.Utility
         /// <summary>
         /// DateTimeをUnix時間に変換します。
         /// </summary>
-        public static double DateTimeToUnixTime(DateTime date)
+        public static double DateTimeToUnixTime(this DateTime date)
         {
             var univ = date.ToUniversalTime();
             var diff = univ - Epoch;
@@ -66,6 +66,15 @@ namespace Ragnarok.Utility
         {
             return XmlConvert.ToString(
                 date, XmlDateTimeSerializationMode.Utc);
+        }
+
+        /// <summary>
+        /// <paramref name="self"/>がMinValueやMaxValueでないなら真を返します。
+        /// </summary>
+        public static bool IsNormal(this DateTimeOffset self)
+        {
+            return self != DateTimeOffset.MinValue &&
+                   self != DateTimeOffset.MaxValue;
         }
 
         /// <summary>
