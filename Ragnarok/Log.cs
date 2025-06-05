@@ -105,18 +105,12 @@ namespace Ragnarok
             try
             {
                 var baseDir = AppContext.BaseDirectory;
-                var thisAsm = Assembly.GetExecutingAssembly();
-
-                // ロガーを作成する前に、必要なオブジェクトを
-                // 読み込んでおきます。
-                /*TargetFactory.AddTargetsFromAssembly(thisAsm, "");
-                LayoutFactory.AddLayoutsFromAssembly(thisAsm, "");
-                LayoutRendererFactory.AddLayoutRenderersFromAssembly(thisAsm, "");*/
+                var asm = Assembly.GetEntryAssembly();
 
                 // 実行ファイルと同じパスからappname.exe.nlogやNLog.configを検索します。
                 var configFileNames = new string[]
                 {
-                    $"{thisAsm.ManifestModule.Name}.nlog",
+                    $"{asm.ManifestModule.Name}.nlog",
                     "NLog.config",
                 };
 
@@ -131,6 +125,15 @@ namespace Ragnarok
                     LogManager.Configuration =
                         new XmlLoggingConfiguration(filePath);
                     break;
+                }
+
+                // 外部ファイルがない場合は埋め込まれた設定ファイルを使います。
+                if (LogManager.Configuration == null)
+                {
+                    var ragAsm = Assembly.GetExecutingAssembly();
+                    var config = Util.GetResourceString(ragAsm, "Ragnarok.NLog.config");
+                    LogManager.Configuration =
+                        XmlLoggingConfiguration.CreateFromXmlString(config);
                 }
 
                 logger = LogManager.GetCurrentClassLogger();
