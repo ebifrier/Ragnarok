@@ -131,7 +131,7 @@ namespace Ragnarok
                 if (LogManager.Configuration == null)
                 {
                     var ragAsm = Assembly.GetExecutingAssembly();
-                    var config = Util.GetResourceString(ragAsm, "Ragnarok.NLog.config");
+                    var config = Util.GetResourceString(ragAsm, "Ragnarok.NLog.default");
                     LogManager.Configuration =
                         XmlLoggingConfiguration.CreateFromXmlString(config);
                 }
