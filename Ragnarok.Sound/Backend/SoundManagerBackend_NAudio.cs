@@ -57,27 +57,66 @@ namespace Ragnarok.Sound.Backend
         }
 
         /// <summary>
+        /// 読み込んだ音声を再生用フォーマット(this.waveFormat)へ変換します。
+        /// </summary>
+        /// <remarks>
+        /// サンプルレートやチャンネル数が異なるファイルでも、
+        /// リサンプリングとチャンネル変換を行うことで再生できるようにします。
+        /// </remarks>
+        private ISampleProvider ConvertToWaveFormat(ISampleProvider sample)
+        {
+            // チャンネル数を合わせます。
+            if (sample.WaveFormat.Channels != this.waveFormat.Channels)
+            {
+                if (sample.WaveFormat.Channels == 1 &&
+                    this.waveFormat.Channels == 2)
+                {
+                    sample = new MonoToStereoSampleProvider(sample);
+                }
+                else if (sample.WaveFormat.Channels == 2 &&
+                         this.waveFormat.Channels == 1)
+                {
+                    sample = new StereoToMonoSampleProvider(sample);
+                }
+                else
+                {
+                    throw new ArgumentException(
+                        "対応していないチャンネル数です。");
+                }
+            }
+
+            // サンプルレートを合わせます。
+            if (sample.WaveFormat.SampleRate != this.waveFormat.SampleRate)
+            {
+                sample = new WdlResamplingSampleProvider(
+                    sample, this.waveFormat.SampleRate);
+            }
+
+            return sample;
+        }
+
+        /// <summary>
+        /// IWaveProviderの内容をすべてバイト列として読み出します。
+        /// </summary>
+        private static byte[] ReadToEnd(IWaveProvider provider)
+        {
+            using var result = new MemoryStream();
+            var buffer = new byte[provider.WaveFormat.AverageBytesPerSecond];
+
+            int size;
+            while ((size = provider.Read(buffer, 0, buffer.Length)) > 0)
+            {
+                result.Write(buffer, 0, size);
+            }
+
+            return result.ToArray();
+        }
+
+        /// <summary>
         /// サウンドソースをキャッシュから取得し、なければファイルを読み込みます。
         /// </summary>
         private ISampleProvider GetSoundSample(string filename)
         {
-            WaveStream LoadWaveStream(string filepath)
-            {
-                var sample = new AudioFileReader(filepath);
-                var wave = new WaveChannel32(sample, 1.0f, 0.5f)
-                {
-                    PadWithZeroes = false,
-                };
-
-                if (!wave.WaveFormat.Equals(this.waveFormat))
-                {
-                    throw new ArgumentException(
-                        "対応していないサウンドフォーマットです。");
-                }
-
-                return wave;
-            }
-
             var filepath = Path.GetFullPath(filename);
             if (!File.Exists(filepath))
             {
@@ -87,8 +126,11 @@ namespace Ragnarok.Sound.Backend
             // キャッシュの確認を行います。
             if (!this.sampleCache.TryGetValue(filepath, out byte[] data))
             {
-                var wave = LoadWaveStream(filepath);
-                data = Util.ReadToEnd(wave);
+                // AudioFileReaderは32bit floatのISampleProviderを返すため、
+                // フォーマットを合わせたうえで生バイト列に変換して保持します。
+                using var reader = new AudioFileReader(filepath);
+                var sample = ConvertToWaveFormat(reader);
+                data = ReadToEnd(sample.ToWaveProvider());
 
                 this.sampleCache.Add(filepath, data);
             }
