@@ -224,8 +224,8 @@ namespace Ragnarok.Sound
                 if (!ignoreError)
                 {
                     Log.ErrorException(ex,
-                        "{0}サウンドの再生に失敗しました。",
-                        filenames);
+                        "{0}: サウンドの再生に失敗しました。",
+                        string.Join(", ", filenames));
                 }
             }
 

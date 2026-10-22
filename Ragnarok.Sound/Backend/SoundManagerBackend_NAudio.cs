@@ -150,13 +150,18 @@ namespace Ragnarok.Sound.Backend
                 return null;
             }
 
-            var samples = filenames
+            var filenameList = filenames.ToList();
+            var samples = filenameList
                 .Select(_ => GetSoundSample(_))
                 .ToList();
             if (samples.Any(_ => _ == null))
             {
+                var missings = filenameList
+                    .Where((_, i) => samples[i] == null)
+                    .Select(_ => Path.GetFullPath(_));
                 throw new InvalidDataException(
-                    "音声ファイルの読み込みに失敗しました。");
+                    "音声ファイルの読み込みに失敗しました。: " +
+                    string.Join(", ", missings));
             }
 
             // 音量を設定します。
